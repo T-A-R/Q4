@@ -161,12 +161,12 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         for (int i = 0; i < mConfig.size(); i++)
             mConfigMap.put(mConfig.get(i)[0], mConfig.get(i)[1]);
 
-        if (mConfigMap.get("audio").equals("1"))
+        if (mConfigMap.get("audio") != null && mConfigMap.get("audio").equals("1"))
             mAudio = new Audio(mConfigMap.get("audio_record_questions").split(","),
                     mConfigMap.get("audio_record_limit_time"),
                     mConfigMap.get("audio_speex_sample_rate"));
 
-        if (mConfigMap.get("photo_questionnaire").equals("1"))
+        if (mConfigMap.get("photo_questionnaire") != null && mConfigMap.get("photo_questionnaire").equals("1"))
             photoNumber = new Random().nextInt(Integer.parseInt(mConfigMap.get("count_questions_min"))) + 1;
 
 

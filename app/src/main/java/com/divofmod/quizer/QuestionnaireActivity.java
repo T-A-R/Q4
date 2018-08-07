@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.DataBase.DBReader;
 
@@ -160,7 +161,7 @@ public class QuestionnaireActivity extends AppCompatActivity implements View.OnC
 
                                   System.out.println("Отправка");
                                   mDictionaryForRequest = new Hashtable();
-                                  mDictionaryForRequest.put("login_admin", mSharedPreferences.getString("login_admin", ""));
+                                  mDictionaryForRequest.put(Constants.Shared.LOGIN_ADMIN, mSharedPreferences.getString("login_admin", ""));
                                   mDictionaryForRequest.put("login", mCommon.get(0)[7]);
                                   mDictionaryForRequest.put("sess_login", mSharedPreferences.getString("login", ""));
                                   mDictionaryForRequest.put("sess_passw", mSharedPreferences.getString("passw", ""));
@@ -222,7 +223,7 @@ public class QuestionnaireActivity extends AppCompatActivity implements View.OnC
                                           "names");
 
                                   mDictionaryForRequest = new Hashtable();
-                                  mDictionaryForRequest.put("login_admin", mSharedPreferences.getString("login_admin", ""));
+                                  mDictionaryForRequest.put(Constants.Shared.LOGIN_ADMIN, mSharedPreferences.getString("login_admin", ""));
                                   mDictionaryForRequest.put("login", mSharedPreferences.getString("login", ""));
                                   mDictionaryForRequest.put("passw", mSharedPreferences.getString("passw", ""));
 

@@ -40,9 +40,9 @@ public class PassportBlockActivity extends AppCompatActivity implements View.OnC
         setContentView(R.layout.activity_passport_block);
 
         mSharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
-        mSQLiteDatabase = new DBHelper(PassportBlockActivity.this,
+        mSQLiteDatabase = new DBHelper(this,
                 mSharedPreferences.getString("name_file", ""),
-                new File(getFilesDir().toString() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+                new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
                 getString(R.string.sql_file_name),
                 getString(R.string.old_sql_file_name)).getWritableDatabase();
 
@@ -62,7 +62,7 @@ public class PassportBlockActivity extends AppCompatActivity implements View.OnC
 
         mListView = (ListView) findViewById(R.id.passportListView);
         findViewById(R.id.passport_btn).setOnClickListener(this);
-        mPassportAdapter = new PassportAdapter(PassportBlockActivity.this, passports);
+        mPassportAdapter = new PassportAdapter(this, passports);
         mListView.setAdapter(mPassportAdapter);
     }
 
@@ -202,10 +202,10 @@ public class PassportBlockActivity extends AppCompatActivity implements View.OnC
     @Override
     public void onClick(View v) {
         if (mSharedPreferences.getString("passport_block_location", "").equals("1")) {
-            startActivity(new Intent(PassportBlockActivity.this, QuestionnaireActivity.class));
+            startActivity(new Intent(this, QuestionnaireActivity.class));
             finish();
         } else {
-            startActivity(new Intent(PassportBlockActivity.this, ProjectActivity.class));
+            startActivity(new Intent(this, ProjectActivity.class));
             finish();
         }
 
@@ -225,7 +225,7 @@ public class PassportBlockActivity extends AppCompatActivity implements View.OnC
 
     private void openQuitDialog() {
         AlertDialog.Builder quitDialog = new AlertDialog.Builder(
-                PassportBlockActivity.this);
+                this);
         quitDialog.setCancelable(true)
                 .setIcon(R.drawable.exit)
                 .setTitle("Выход из приложения")

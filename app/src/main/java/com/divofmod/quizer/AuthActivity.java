@@ -5,10 +5,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Environment;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -19,8 +18,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.DataBase.DBReader;
+import com.divofmod.quizer.Utils.Utils;
+import com.divofmod.quizer.model.Auth.AuthRequestModel;
+import com.divofmod.quizer.model.Auth.AuthResponseModel;
+import com.divofmod.quizer.model.Config.ConfigRequestModel;
+import com.divofmod.quizer.model.Config.ConfigResponseModel;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -55,14 +62,14 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     private String mNameFile;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
 
         mSharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
 
         mUrl = mSharedPreferences.getString("url", "");
-        mLoginAdmin = mSharedPreferences.getString("login_admin", "");
+        mLoginAdmin = mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, "");
 
         mLoginEditText = (EditText) findViewById(R.id.field_login);
         mPasswordEditText = (EditText) findViewById(R.id.field_password);
@@ -78,36 +85,40 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onClick(View v) {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+    public void onClick(final View v) {
+        final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(mSignInButton.getWindowToken(),
                 InputMethodManager.HIDE_NOT_ALWAYS);
         signIn();
     }
 
     private void signIn() {
-        if (!validateForm())
+        if (!validateForm()) {
             return;
+        }
 
         if (mLoginEditText.getText().toString().length() < 3) {
-            Toast.makeText(AuthActivity.this, "Неверный логин или пароль.",
+            Toast.makeText(this, "Неверный логин или пароль.",
                     Toast.LENGTH_SHORT).show();
             return;
         }
         if (!Internet.hasConnection(this)) {
             if (!mSharedPreferences.contains("name_file")) {
-                Toast.makeText(AuthActivity.this, "Автономный режим недоступен.",
+                Toast.makeText(this, "Автономный режим недоступен.",
                         Toast.LENGTH_SHORT).show();
             } else {
                 if (mLoginEditText.getText().toString().equals(mSharedPreferences.getString("login", "")) &&
                         DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))).equals(mSharedPreferences.getString("passw", ""))) {
-                    if (checkPassportBlock().equals("0"))
-                        startActivity(new Intent(AuthActivity.this, PassportBlockActivity.class));
-                    else startActivity(new Intent(AuthActivity.this, ProjectActivity.class));
+                    if (checkPassportBlock().equals("0")) {
+                        startActivity(new Intent(this, PassportBlockActivity.class));
+                    } else {
+                        startActivity(new Intent(this, ProjectActivity.class));
+                    }
                     finish();
-                } else
-                    Toast.makeText(AuthActivity.this, "Неверный логин или пароль.",
+                } else {
+                    Toast.makeText(this, "Неверный логин или пароль.",
                             Toast.LENGTH_SHORT).show();
+                }
             }
         } else {
 
@@ -116,19 +127,22 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
             mProgressBar.setVisibility(View.VISIBLE);
 
             mDictionaryForRequest = new Hashtable();
-            mDictionaryForRequest.put("name_form", "user_login");
-            mDictionaryForRequest.put("login_admin", mSharedPreferences.getString("login_admin", ""));
-            mDictionaryForRequest.put("login", mLoginEditText.getText().toString());
-            mDictionaryForRequest.put("passw", DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))));
+            final AuthRequestModel authRequestModel = new AuthRequestModel(
+                    "user_login",
+                    mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, ""),
+                    DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))),
+                    mLoginEditText.getText().toString());
 
-            OkHttpClient client = new OkHttpClient();
+            mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(authRequestModel));
+
+            final Call.Factory client = new OkHttpClient();
             client.newCall(new DoRequest(this).Post(mDictionaryForRequest, mSharedPreferences.getString("url", "")))
                     .enqueue(new Callback() {
 
                                  @Override
-                                 public void onFailure(Call call, IOException e) {
-                                     e.printStackTrace();
+                                 public void onFailure(final Call call, final IOException e) {
                                      runOnUiThread(new Runnable() {
+
                                          @Override
                                          public void run() {
                                              Toast.makeText(AuthActivity.this, "Ошибка. Попробуйте еще раз.",
@@ -141,34 +155,35 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                  }
 
                                  @Override
-                                 public void onResponse(Call call, final Response response) throws IOException {
+                                 public void onResponse(final Call call, final Response response) throws IOException {
+                                     final String responseJson = response.body().string();
 
-                                     String responseCallback = response.body().string();
-                                     String[] authArray = responseCallback.substring(1, responseCallback.length() - 1).split(";");
+                                     final AuthResponseModel authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
 
-                                     for (int i = 0; i < 4; i++) {
-                                         if (authArray[i].equals("0")) {
-                                             runOnUiThread(new Runnable() {
-                                                 @Override
-                                                 public void run() {
-                                                     Toast.makeText(AuthActivity.this, "Неверный логин или пароль.",
-                                                             Toast.LENGTH_SHORT).show();
-                                                     mProgressBar.setVisibility(View.INVISIBLE);
-                                                     mLoginPasswordFields.setVisibility(View.VISIBLE);
-                                                     mSignInButton.setVisibility(View.VISIBLE);
-                                                 }
-                                             });
-                                             return;
-                                         }
+                                     if (authResponseModel.getResult() == 0) {
+                                         runOnUiThread(new Runnable() {
+
+                                             @Override
+                                             public void run() {
+                                                 Toast.makeText(AuthActivity.this, "Неверный логин или пароль.",
+                                                         Toast.LENGTH_SHORT).show();
+                                                 mProgressBar.setVisibility(View.INVISIBLE);
+                                                 mLoginPasswordFields.setVisibility(View.VISIBLE);
+                                                 mSignInButton.setVisibility(View.VISIBLE);
+                                             }
+                                         });
+                                         return;
                                      }
 
-                                     SharedPreferences.Editor editor = mSharedPreferences.edit()
+                                     final SharedPreferences.Editor editor = mSharedPreferences.edit()
                                              .putString("login", mLoginEditText.getText().toString())
                                              .putString("passw", DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))))
-                                             .putString("user_project_id", authArray[3]);
+                                             .putString("user_project_id", authResponseModel.getUser_project_id());
                                      editor.apply();
 
-                                     download(authArray[0]);
+                                     downloadConfig(authResponseModel.getConfig_id());
+                                     // TODO: 8/7/18 WTF authArray[0]?
+//                                     download(authArray[0]);
                                  }
                              }
 
@@ -176,11 +191,61 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void downloadConfig(final String pConfigId) {
+        final Dictionary<String, String> mConfigDictionary = new Hashtable();
+
+        final ConfigRequestModel configRequestModel = new ConfigRequestModel(
+                mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, ""),
+                Constants.NameForm.DOWNLOAD_UPDATE,
+                mSharedPreferences.getString(Constants.Shared.LOGIN, ""),
+                mSharedPreferences.getString(Constants.Shared.PASSW, ""),
+                pConfigId
+        );
+
+        mConfigDictionary.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(configRequestModel));
+
+        final Call.Factory client = new OkHttpClient();
+        client.newCall(new DoRequest(this).Post(mConfigDictionary, mSharedPreferences.getString("url", "")))
+                .enqueue(new Callback() {
+
+                             @Override
+                             public void onFailure(final Call call, final IOException e) {
+                                 runOnUiThread(new Runnable() {
+
+                                     @Override
+                                     public void run() {
+                                         Toast.makeText(AuthActivity.this, "Ошибка. Попробуйте еще раз.",
+                                                 Toast.LENGTH_SHORT).show();
+                                         mProgressBar.setVisibility(View.INVISIBLE);
+                                         mLoginPasswordFields.setVisibility(View.VISIBLE);
+                                         mSignInButton.setVisibility(View.VISIBLE);
+                                     }
+                                 });
+                             }
+
+                             @Override
+                             public void onResponse(final Call call, final Response response) throws IOException {
+                                 final String responseJson = response.body().string();
+                                 final GsonBuilder gsonBuilder = new GsonBuilder();
+
+                                 final ConfigResponseModel configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
+                                 Utils.saveConfig(AuthActivity.this, configResponseModel);
+
+                                 // TODO: 8/7/18 check if result == 0, than show error
+
+                                 getQuota();
+//                                 startActivity(new Intent(AuthActivity.this, ProjectActivity.class));
+                             }
+                         }
+
+                );
+    }
+
     private void download(final String name_file) {
-        Dictionary<String, String> dictionary;
+        final Dictionary<String, String> dictionary;
         dictionary = new Hashtable();
         dictionary.put("name_form", "download_update");
-        dictionary.put("login_admin", mLoginAdmin);
+        dictionary.put(Constants.Shared.LOGIN_ADMIN, mLoginAdmin);
         dictionary.put("login", mLoginEditText.getText().toString());
         dictionary.put("passw", DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))));
         dictionary.put("name_file", name_file);
@@ -195,14 +260,15 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                         Context.MODE_PRIVATE).getString("name_file", ""));
                 new File(getFilesDir() + "/files/").mkdirs();
 
-                OkHttpClient client = new OkHttpClient();
+                final Call.Factory client = new OkHttpClient();
                 client.newCall(new DoRequest(this).Post(dictionary, mUrl))
                         .enqueue(new Callback() {
 
                             @Override
-                            public void onFailure(Call call, IOException e) {
+                            public void onFailure(final Call call, final IOException e) {
                                 e.printStackTrace();
                                 runOnUiThread(new Runnable() {
+
                                     @Override
                                     public void run() {
                                         Toast.makeText(AuthActivity.this, "Ошибка. Попробуйте еще раз.",
@@ -215,19 +281,18 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                             }
 
                             @Override
-                            public void onResponse(Call call, final Response response) throws IOException {
+                            public void onResponse(final Call call, final Response response) throws IOException {
 
-                                FileOutputStream fos = new FileOutputStream(new File(getFilesDir(), name_file));
-                                byte[] buffer = response.body().bytes();
+                                final FileOutputStream fos = new FileOutputStream(new File(getFilesDir(), name_file));
+                                final byte[] buffer = response.body().bytes();
                                 fos.write(buffer, 0, buffer.length);
 
                                 new ExtractAllFiles(new File(getFilesDir(), name_file).toString(),
                                         getFilesDir() + "/" + name_file.substring(0, name_file.length() - 4),
                                         getString(R.string.archive_password));
 
-                                SharedPreferences.Editor editor = mSharedPreferences.edit().putString("name_file", name_file);
+                                final SharedPreferences.Editor editor = mSharedPreferences.edit().putString("name_file", name_file);
                                 editor.apply();
-
 
                                 getQuota();
                             }
@@ -237,43 +302,47 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                 final SharedPreferences sharedPreferences = getSharedPreferences("data",
                         Context.MODE_PRIVATE);
 
-                SQLiteDatabase sqLiteDatabase = new DBHelper(AuthActivity.this,
+                final SQLiteDatabase sqLiteDatabase = new DBHelper(this,
                         sharedPreferences.getString("name_file", ""),
-                        new File(getFilesDir().toString() + getString(R.string.separator_path) + sharedPreferences.getString("name_file", "").substring(0, sharedPreferences.getString("name_file", "").length() - 4)),
+                        new File(getFilesDir() + getString(R.string.separator_path) + sharedPreferences.getString("name_file", "").substring(0, sharedPreferences.getString("name_file", "").length() - 4)),
                         getString(R.string.sql_file_name),
                         getString(R.string.old_sql_file_name)).getWritableDatabase();
 
-                ArrayList<String[]> mConfig = DBReader.read(sqLiteDatabase,
+                final ArrayList<String[]> mConfig = DBReader.read(sqLiteDatabase,
                         "config",
                         new String[]{"title", "value"});
 
                 sqLiteDatabase.close();
 
                 String temp = "12345";
-                for (int i = 0; i < mConfig.size(); i++)
+                for (int i = 0; i < mConfig.size(); i++) {
                     if (mConfig.get(i)[0].equals("delete_data_password")) {
                         temp = mConfig.get(i)[1];
                         break;
                     }
+                }
                 final String passwordToDelete = temp;
 
                 runOnUiThread(new Runnable() {
+
                     @Override
                     public void run() {
-                        View view = getLayoutInflater().inflate(R.layout.change_config_dialog, null);
+                        final View view = getLayoutInflater().inflate(R.layout.change_config_dialog, null);
 
-                        TextView quizzesNotSend = (TextView) view.findViewById(R.id.quizzes_not_send);
-                        TextView audioNotSend = (TextView) view.findViewById(R.id.audio_not_send);
+                        final TextView quizzesNotSend = (TextView) view.findViewById(R.id.quizzes_not_send);
+                        final TextView audioNotSend = (TextView) view.findViewById(R.id.audio_not_send);
                         quizzesNotSend.setText("Неотправленные анкеты: 0");
                         audioNotSend.setText("Неотправленные аудио: 0");
-                        if (!mSharedPreferences.getString("Quizzes", "").equals(""))
+                        if (!mSharedPreferences.getString("Quizzes", "").equals("")) {
                             quizzesNotSend.setText("Неотправленные анкеты: " + mSharedPreferences.getString("Quizzes", "").split(";").length);
-                        if (!mSharedPreferences.getString("Quizzes_audio", "").equals(""))
+                        }
+                        if (!mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
                             audioNotSend.setText("Неотправленные аудио: " + mSharedPreferences.getString("Quizzes_audio", "").split(";").length);
+                        }
 
                         final EditText deleteDataPassword = (EditText) view.findViewById(R.id.delete_data_password);
 
-                        AlertDialog dialog = new AlertDialog.Builder(AuthActivity.this)
+                        final AlertDialog dialog = new AlertDialog.Builder(AuthActivity.this)
                                 .setIcon(R.drawable.ico)
                                 .setTitle("Смена конфигурации")
                                 .setCancelable(false)
@@ -289,34 +358,34 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                             @Override
                             public void onShow(final DialogInterface dialog) {
 
-                                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                                final Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
                                 button.setOnClickListener(new View.OnClickListener() {
 
                                     @Override
-                                    public void onClick(View view) {
+                                    public void onClick(final View view) {
                                         mNameFile = name_file;
                                         startActivityForResult(new Intent(AuthActivity.this, SendQuizzesActivity.class), SEND_QUIZZES);
                                         dialog.dismiss();
                                     }
                                 });
 
-                                Button buttonNegative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+                                final Button buttonNegative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
                                 buttonNegative.setOnClickListener(new View.OnClickListener() {
 
                                     @Override
-                                    public void onClick(View view) {
+                                    public void onClick(final View view) {
                                         if (deleteDataPassword.getText().toString().isEmpty()) {
                                             deleteDataPassword.setError("Введте пароль!");
                                         } else {
                                             deleteDataPassword.setError(null);
-                                            if (!passwordToDelete.equals(deleteDataPassword.getText().toString()))
+                                            if (!passwordToDelete.equals(deleteDataPassword.getText().toString())) {
                                                 Toast.makeText(AuthActivity.this, "Неверный пароль", Toast.LENGTH_SHORT).show();
-                                            else {
+                                            } else {
                                                 deleteDirectory(new File(getFilesDir() + "/files/"));
                                                 deleteDirectory(new File(getFilesDir() + "/background/"));
                                                 deleteDirectory(new File(getFilesDir() + "/answerimages/"));
                                                 deleteDatabase(sharedPreferences.getString("name_file", ""));
-                                                SharedPreferences.Editor editor = sharedPreferences.edit()
+                                                final SharedPreferences.Editor editor = sharedPreferences.edit()
                                                         .putString("Quizzes", "")
                                                         .putString("Quizzes_audio", "")
                                                         .putString("Statistics_photo", "");
@@ -333,36 +402,40 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 });
             }
-        } else
+        } else {
             getQuota();
+        }
     }
 
-    public static void deleteDirectory(File dir) {
+    public static void deleteDirectory(final File dir) {
         if (dir.isDirectory()) {
-            String[] children = dir.list();
+            final String[] children = dir.list();
             for (int i = 0; i < children.length; i++) {
-                File f = new File(dir, children[i]);
+                final File f = new File(dir, children[i]);
                 deleteDirectory(f);
             }
             dir.delete();
-        } else dir.delete();
+        } else {
+            dir.delete();
+        }
     }
 
     private void getQuota() {
         mDictionaryForRequest = new Hashtable();
         mDictionaryForRequest.put("name_form", "quota_question_answer");
-        mDictionaryForRequest.put("login_admin", mLoginAdmin);
+        mDictionaryForRequest.put(Constants.Shared.LOGIN_ADMIN, mLoginAdmin);
         mDictionaryForRequest.put("login", mLoginEditText.getText().toString());
         mDictionaryForRequest.put("passw", DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))));
 
-        OkHttpClient client = new OkHttpClient();
+        final Call.Factory client = new OkHttpClient();
         client.newCall(new DoRequest(this).Post(mDictionaryForRequest, mUrl))
                 .enqueue(new Callback() {
 
                     @Override
-                    public void onFailure(Call call, IOException e) {
+                    public void onFailure(final Call call, final IOException e) {
                         e.printStackTrace();
                         runOnUiThread(new Runnable() {
+
                             @Override
                             public void run() {
                                 Toast.makeText(AuthActivity.this, "Ошибка. Попробуйте еще раз.",
@@ -376,13 +449,14 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                     }
 
                     @Override
-                    public void onResponse(Call call, final Response response) throws IOException {
+                    public void onResponse(final Call call, final Response response) throws IOException {
 
-                        String temp = response.body().string();
-                        String[] res = temp.substring(1, temp.length() - 1).split(";");
-                        for (String re : res) {
+                        final String temp = response.body().string();
+                        final String[] res = temp.substring(1, temp.length() - 1).split(";");
+                        for (final String re : res) {
                             if (re.equals("0")) {
                                 runOnUiThread(new Runnable() {
+
                                     @Override
                                     public void run() {
                                         Toast.makeText(AuthActivity.this, "Неверный логин или пароль.",
@@ -395,13 +469,14 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                 return;
                             }
                         }
-                        SharedPreferences.Editor editor = mSharedPreferences.edit()
+                        final SharedPreferences.Editor editor = mSharedPreferences.edit()
                                 .putString("quota", temp);
                         editor.apply();
-                        if (checkPassportBlock().equals("0"))
+                        if (checkPassportBlock().equals("0")) {
                             startActivity(new Intent(AuthActivity.this, PassportBlockActivity.class));
-                        else
+                        } else {
                             startActivity(new Intent(AuthActivity.this, ProjectActivity.class));
+                        }
                         finish();
                     }
                 });
@@ -410,26 +485,28 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     private boolean validateForm() {
         boolean valid = true;
 
-        String login = mLoginEditText.getText().toString();
-        String password = mPasswordEditText.getText().toString();
+        final String login = mLoginEditText.getText().toString();
+        final String password = mPasswordEditText.getText().toString();
 
         if (TextUtils.isEmpty(login)) {
             mLoginEditText.setError("Введите логин.");
             valid = false;
-        } else
+        } else {
             mLoginEditText.setError(null);
+        }
 
         if (TextUtils.isEmpty(password)) {
             mPasswordEditText.setError("Введите пароль.");
             valid = false;
-        } else
+        } else {
             mPasswordEditText.setError(null);
+        }
 
         return valid;
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SEND_QUIZZES) {
             if (mSharedPreferences.getString("Quizzes", "").equals("") && mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
@@ -437,7 +514,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                 deleteDirectory(new File(getFilesDir() + "/background/"));
                 deleteDirectory(new File(getFilesDir() + "/answerimages/"));
                 deleteDatabase(mSharedPreferences.getString("name_file", ""));
-                SharedPreferences.Editor editor = mSharedPreferences.edit()
+                final SharedPreferences.Editor editor = mSharedPreferences.edit()
                         .putString("Quizzes", "")
                         .putString("Quizzes_audio", "")
                         .putString("Statistics_photo", "");
@@ -453,23 +530,25 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void openQuitDialog() {
-        AlertDialog.Builder quitDialog = new AlertDialog.Builder(
-                AuthActivity.this);
+        final AlertDialog.Builder quitDialog = new AlertDialog.Builder(
+                this);
         quitDialog.setCancelable(true)
                 .setIcon(R.drawable.exit)
                 .setTitle("Выход из приложения")
                 .setMessage("Выйти из приложения?")
 
                 .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(final DialogInterface dialog, final int which) {
                         finish();
                     }
                 })
 
                 .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(final DialogInterface dialog, final int which) {
                     }
                 }).show();
     }
@@ -477,24 +556,25 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     //В getQuota
     private String checkPassportBlock() {
         String position = "";
-        SQLiteDatabase sqLiteDatabase = new DBHelper(AuthActivity.this,
+        final SQLiteDatabase sqLiteDatabase = new DBHelper(this,
                 mSharedPreferences.getString("name_file", ""),
-                new File(getFilesDir().toString() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+                new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
                 getString(R.string.sql_file_name),
                 getString(R.string.old_sql_file_name)).getWritableDatabase();
 
-        ArrayList<String[]> mConfig = DBReader.read(sqLiteDatabase,
+        final ArrayList<String[]> mConfig = DBReader.read(sqLiteDatabase,
                 "config",
                 new String[]{"title", "value"});
 
         sqLiteDatabase.close();
 
-        for (int i = 0; i < mConfig.size(); i++)
+        for (int i = 0; i < mConfig.size(); i++) {
             if (mConfig.get(i)[0].equals("passport_block_location")) {
                 position = mConfig.get(i)[1];
                 break;
             }
-        SharedPreferences.Editor editor = mSharedPreferences.edit()
+        }
+        final SharedPreferences.Editor editor = mSharedPreferences.edit()
                 .putString("passport_block_location", position);
         editor.apply();
 

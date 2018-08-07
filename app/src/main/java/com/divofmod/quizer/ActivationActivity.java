@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -15,6 +15,12 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.divofmod.quizer.Constants.Constants;
+import com.divofmod.quizer.model.Activation.ActivationRequestModel;
+import com.divofmod.quizer.model.Activation.ActivationResponseModel;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.util.Dictionary;
@@ -36,9 +42,8 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
     TextView mContactTextView;
     Button mStartContactButton;
 
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activation);
 
@@ -55,7 +60,7 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
                 Context.MODE_PRIVATE);
 
         //Если пользовтель проходил активацию, переходим к авторизации.
-        if (mSharedPreferences.contains("key") && mSharedPreferences.contains("url") && mSharedPreferences.contains("login_admin")) {
+        if (mSharedPreferences.contains("key") && mSharedPreferences.contains("url") && mSharedPreferences.contains(Constants.Shared.LOGIN_ADMIN)) {
             startActivity(new Intent(ActivationActivity.this, AuthActivity.class));
             finish();
         } else {
@@ -68,10 +73,10 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(final View v) {
         switch (v.getId()) {
             case R.id.send_button:
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mSendButton.getWindowToken(),
                         InputMethodManager.HIDE_NOT_ALWAYS);
                 send(mKeyEditText.getText().toString());
@@ -83,8 +88,9 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void send(final String key) {
-        if (!validateForm())
+        if (!validateForm()) {
             return;
+        }
 
         if (!Internet.hasConnection(this)) {
             Toast.makeText(ActivationActivity.this, "Подключение к интернету отсутствует. Попробуйте позже.",
@@ -98,18 +104,20 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
         mStartContactButton.setVisibility(View.INVISIBLE);
         mProgressBar.setVisibility(View.VISIBLE);
 
-        mDictionaryForRequest = new Hashtable();
-        mDictionaryForRequest.put("name_form", "key_client");
-        mDictionaryForRequest.put("key", key);
+        final ActivationRequestModel activationRequestModel = new ActivationRequestModel(Constants.NameForm.KEY_CLIENT, key);
 
-        OkHttpClient client = new OkHttpClient();
+        mDictionaryForRequest = new Hashtable();
+        mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(activationRequestModel));
+
+        final OkHttpClient client = new OkHttpClient();
         client.newCall(new DoRequest(this).Post(mDictionaryForRequest, getString(R.string.activation)))
                 .enqueue(new Callback() {
 
                     @Override
-                    public void onFailure(Call call, IOException e) {
+                    public void onFailure(final Call call, final IOException e) {
                         e.printStackTrace();
                         runOnUiThread(new Runnable() {
+
                             @Override
                             public void run() {
                                 mProgressBar.setVisibility(View.INVISIBLE);
@@ -124,34 +132,33 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
                     }
 
                     @Override
-                    public void onResponse(Call call, final Response response) throws IOException {
-                        String temp = response.body().string();
-                        String[] res = temp.substring(1, temp.length() - 1).split(";");
-                        for (String re : res) {
-                            if (re.equals("0")) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mProgressBar.setVisibility(View.INVISIBLE);
-                                        Toast.makeText(ActivationActivity.this, "Неверный ключ. Попробуй еще раз.",
-                                                Toast.LENGTH_SHORT).show();
-                                        mKeyEditText.setVisibility(View.VISIBLE);
-                                        mSendButton.setVisibility(View.VISIBLE);
-                                        mContactTextView.setVisibility(View.VISIBLE);
-                                        mStartContactButton.setVisibility(View.VISIBLE);
-                                        mKeyEditText.setText("");
-                                    }
-                                });
-                                return;
-                            }
+                    public void onResponse(final Call call, final Response response) throws IOException {
+                        final String responseJson = response.body().string();
+                        final ActivationResponseModel activationResponseModel = new GsonBuilder().create().fromJson(responseJson, ActivationResponseModel.class);
+
+                        if (activationResponseModel.getResult() == 0) {
+                            runOnUiThread(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    mProgressBar.setVisibility(View.INVISIBLE);
+                                    Toast.makeText(ActivationActivity.this, "Неверный ключ. Попробуй еще раз.",
+                                            Toast.LENGTH_SHORT).show();
+                                    mKeyEditText.setVisibility(View.VISIBLE);
+                                    mSendButton.setVisibility(View.VISIBLE);
+                                    mContactTextView.setVisibility(View.VISIBLE);
+                                    mStartContactButton.setVisibility(View.VISIBLE);
+                                    mKeyEditText.setText("");
+                                }
+                            });
+                            return;
                         }
 
-                        SharedPreferences.Editor editor = mSharedPreferences.edit()
+                        final SharedPreferences.Editor editor = mSharedPreferences.edit()
                                 .putString("key", key)
-                                .putString("url", res[0])
-                                .putString("login_admin", res[1]);
+                                .putString("url", activationResponseModel.getServer())
+                                .putString(Constants.Shared.LOGIN_ADMIN, activationResponseModel.getLoginAdmin());
                         editor.apply();
-                        System.out.println(res[1]);
                         startActivity(new Intent(ActivationActivity.this, AuthActivity.class));
                         finish();
                     }
@@ -161,12 +168,13 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
     private boolean validateForm() {
         boolean valid = true;
 
-        String key = mKeyEditText.getText().toString();
+        final String key = mKeyEditText.getText().toString();
         if (TextUtils.isEmpty(key)) {
             mKeyEditText.setError("Введите ключ!");
             valid = false;
-        } else
+        } else {
             mKeyEditText.setError(null);
+        }
 
         return valid;
     }
@@ -177,7 +185,7 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void openQuitDialog() {
-        AlertDialog.Builder quitDialog = new AlertDialog.Builder(
+        final AlertDialog.Builder quitDialog = new AlertDialog.Builder(
                 ActivationActivity.this);
         quitDialog.setCancelable(true)
                 .setIcon(R.drawable.exit)
@@ -185,15 +193,17 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
                 .setMessage("Выйти из приложения?")
 
                 .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(final DialogInterface dialog, final int which) {
                         finish();
                     }
                 })
 
                 .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(final DialogInterface dialog, final int which) {
                     }
                 })
 

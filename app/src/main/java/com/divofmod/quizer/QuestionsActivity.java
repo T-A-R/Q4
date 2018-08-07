@@ -37,6 +37,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.DataBase.DBReader;
 import com.divofmod.quizer.Interfaces.ScrollViewListener;
@@ -113,7 +114,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
     static boolean interceptScroll = true;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mDateInterview = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
@@ -171,20 +172,19 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
 
         String rsa;
-        System.out.println(mSharedPreferences.getString("login_admin", ""));
+        System.out.println(mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, ""));
         System.out.println(mSharedPreferences.getString("url", ""));
         try {
-            SharedPreferences.Editor editor = mSharedPreferences.edit();
+            final SharedPreferences.Editor editor = mSharedPreferences.edit();
             rsa = RSA.decrypt(mConfigMap.get("server"), QuestionsActivity.this);
-            editor.putString("login_admin", rsa.split("\\|")[0]);
+            editor.putString(Constants.Shared.LOGIN_ADMIN, rsa.split("\\|")[0]);
             editor.putString("url", rsa.split("\\|")[1]);
             editor.apply();
-            System.out.println(mSharedPreferences.getString("login_admin", ""));
+            System.out.println(mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, ""));
             System.out.println(mSharedPreferences.getString("url", ""));
-        } catch (Exception e) {
-            rsa = mSharedPreferences.getString("login_admin", "") + "|" + mSharedPreferences.getString("url", "");
+        } catch (final Exception e) {
+            rsa = mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, "") + "|" + mSharedPreferences.getString("url", "");
         }
-
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -252,7 +252,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
         if (mAudio != null)
             if (mAudio.getAudioRecordQuestions().containsKey(0))
-                AudioRecorder.Start(this, mSharedPreferences.getString("login_admin", "") + "_" +
+                AudioRecorder.Start(this, mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, "") + "_" +
                         mSharedPreferences.getString("login", "") + "_" +
                         mSharedPreferences.getString("user_project_id", "") + "_" +
                         0 + "_" +
@@ -263,7 +263,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
     private void setCurrentQuestion() {
 
-        for (String[] temp : mTableQuestion)
+        for (final String[] temp : mTableQuestion)
             if (temp[1].equals(Integer.toString(number))) {
                 currentQuestion = temp;
                 question_id = temp[0];
@@ -273,21 +273,21 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
     private void setCurrentAnswers() {
         currentAnswers = new ArrayList<>();
-        for (String[] temp : mTableAnswer)
+        for (final String[] temp : mTableAnswer)
             if (temp[3].equals(question_id)) {
                 currentAnswers.add(temp);
             }
     }
 
-    private String showQuestion(String number) {
-        ArrayList<String[]> infoForQuestion = new ArrayList<>();
+    private String showQuestion(final String number) {
+        final ArrayList<String[]> infoForQuestion = new ArrayList<>();
         String finalQ = "";
         String id = "";
-        for (String[] tempQ : mTableQuestion)
+        for (final String[] tempQ : mTableQuestion)
             if (tempQ[1].equals(number))
                 id = tempQ[0];
 
-        for (String[] temp : mTableAnswer)
+        for (final String[] temp : mTableAnswer)
             if (temp[3].equals(id))
                 infoForQuestion.add(temp);
 
@@ -302,15 +302,15 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         return finalQ.substring(1, finalQ.length() - 1);
     }
 
-    private String showAnswer(String number, String numbers) {
-        ArrayList<String[]> infoForAnswer = new ArrayList<>();
+    private String showAnswer(final String number, final String numbers) {
+        final ArrayList<String[]> infoForAnswer = new ArrayList<>();
         String finalAnswer = "";
         String id = "";
-        for (String[] tempQ : mTableQuestion)
+        for (final String[] tempQ : mTableQuestion)
             if (tempQ[1].equals(number))
                 id = tempQ[0];
 
-        for (String[] temp : mTableAnswer)
+        for (final String[] temp : mTableAnswer)
             if (temp[3].equals(id))
                 infoForAnswer.add(temp);
 
@@ -321,7 +321,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         return finalAnswer;
     }
 
-    public void searchItem(String textToSearch) {
+    public void searchItem(final String textToSearch) {
         for (int i = 0; i < selectiveAnswersList.size(); i++) {
             if (!selectiveAnswersList.get(i).getTitle().toLowerCase().contains(textToSearch.toLowerCase())) {
                 selectiveAnswersList.remove(selectiveAnswersList.get(i));
@@ -331,7 +331,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         selectiveAnswerAdapter.notifyDataSetChanged();
     }
 
-    public void initList(int position) {
+    public void initList(final int position) {
         selectiveAnswersList = new ArrayList<>();
         for (int i = 0; i < getModelSelectiveQuestion(position).getSelectiveAnswers().size(); i++)
             if (getModelSelectiveQuestion(position).getSelectiveAnswers().get(i).getVisibility())
@@ -346,10 +346,10 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         startAudio();
         createPhoto();
         setCurrentQuestion();
-        String sForRe;
+        final String sForRe;
         if (currentQuestion[2].contains("#")) {
             sForRe = currentQuestion[2].substring(currentQuestion[2].indexOf('#'), currentQuestion[2].lastIndexOf('#') + 1);
-            String question = currentQuestion[2].substring(currentQuestion[2].indexOf('#') + 1, currentQuestion[2].indexOf('|'));
+            final String question = currentQuestion[2].substring(currentQuestion[2].indexOf('#') + 1, currentQuestion[2].indexOf('|'));
             mQuestionTitle.setText(currentQuestion[1] + ". " + currentQuestion[2].replace(sForRe, showQuestion(question)));
         } else
             mQuestionTitle.setText(currentQuestion[1] + ". " + currentQuestion[2]);
@@ -383,7 +383,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 findViewById(R.id.question_linear_with_table).setVisibility(View.VISIBLE);
 
-                TableRow.LayoutParams wrapWrapTableRowParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+                final TableRow.LayoutParams wrapWrapTableRowParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
 
                 TableRow row = new TableRow(this);
 
@@ -397,9 +397,9 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                 header.setBackgroundColor(ContextCompat.getColor(this, R.color.secondaryTextMaterialLight));
                 row.setLayoutParams(wrapWrapTableRowParams);
                 for (int i = 0; i < tempTableQuestions.get(0).getTableAnswers().size(); i++) {
-                    FrameLayout frameLayout = new FrameLayout(this);
+                    final FrameLayout frameLayout = new FrameLayout(this);
                     frameLayout.setPadding(1, 0, 1, 1);
-                    TextView textView = TableHelper.makeTableRowWithText(tempTableQuestions.get(0).getTableAnswers().get(i).getTitle(), this);
+                    final TextView textView = TableHelper.makeTableRowWithText(tempTableQuestions.get(0).getTableAnswers().get(i).getTitle(), this);
                     textView.setId(i);
                     textView.setBackgroundColor(ContextCompat.getColor(this, R.color.backgroundMaterialLight));
                     tempTableQuestions.get(0).getTableAnswers().get(i).setTextViewId(textView.getId());
@@ -423,9 +423,9 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                 row.setLayoutParams(wrapWrapTableRowParams);
 
                 for (int i = 0; i < tempTableQuestions.size(); i++) {
-                    FrameLayout fixedFrameLayout = new FrameLayout(this);
+                    final FrameLayout fixedFrameLayout = new FrameLayout(this);
                     fixedFrameLayout.setPadding(0, 1, 1, 1);
-                    TextView fixedView = TableHelper.makeTableRowWithText(tempTableQuestions.get(i).getTitle().contains("*") ? tempTableQuestions.get(i).getTitle().split("\\*")[1] : tempTableQuestions.get(i).getTitle(), this);
+                    final TextView fixedView = TableHelper.makeTableRowWithText(tempTableQuestions.get(i).getTitle().contains("*") ? tempTableQuestions.get(i).getTitle().split("\\*")[1] : tempTableQuestions.get(i).getTitle(), this);
                     fixedView.setId(i);
                     fixedView.setBackgroundColor(ContextCompat.getColor(this, R.color.backgroundMaterialLight));
                     tempTableQuestions.get(i).setTextViewId(fixedView.getId());
@@ -437,23 +437,23 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                     row.setLayoutParams(wrapWrapTableRowParams);
 
                     for (int j = 0; j < tempTableQuestions.get(i).getTableAnswers().size(); j++) {
-                        FrameLayout frameLayout = new FrameLayout(this);
+                        final FrameLayout frameLayout = new FrameLayout(this);
                         frameLayout.setPadding(1, 1, 1, 1);
-                        RelativeLayout relativeLayout = new RelativeLayout(this);
+                        final RelativeLayout relativeLayout = new RelativeLayout(this);
                         relativeLayout.setId(tempTableQuestions.get(i).getTableAnswers().get(j).getId() * 100);
                         relativeLayout.setGravity(Gravity.CENTER);
                         relativeLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.backgroundMaterialLight));
-                        RadioButton radioButton = new RadioButton(this);
+                        final RadioButton radioButton = new RadioButton(this);
                         radioButton.setId(tempTableQuestions.get(i).getTableAnswers().get(j).getId());
                         radioButton.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void onClick(View v) {
+                            public void onClick(final View v) {
                                 if (answerSequenceInsideQuestions.size() > 0)
                                     for (int i = answerSequenceInsideQuestions.size() - 1; i >= num; i--) {
                                         answerSequenceInsideQuestions.remove(i);
                                         goneNumbers.remove(i);
                                     }
-                                RadioButton clickedRadioButton = (RadioButton) v;
+                                final RadioButton clickedRadioButton = (RadioButton) v;
                                 if (clickedRadioButton.isChecked())
                                     for (int i = 0; i < tempTableQuestions.size(); i++)
                                         for (int j = 0; j < tempTableQuestions.get(i).getTableAnswers().size(); j++)
@@ -462,7 +462,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                                                 for (int a = 0; a < tempTableQuestions.get(i).getTableAnswers().size(); a++)
                                                     if (clickedRadioButton.getId() != tempTableQuestions.get(i).getTableAnswers().get(a).getId()) {
                                                         tempTableQuestions.get(i).getTableAnswers().get(a).setChecked(false);
-                                                        RadioButton radioButton = (RadioButton) scrollablePart.findViewById(tempTableQuestions.get(i).getTableAnswers().get(a).getId());
+                                                        final RadioButton radioButton = (RadioButton) scrollablePart.findViewById(tempTableQuestions.get(i).getTableAnswers().get(a).getId());
                                                         radioButton.setChecked(false);
                                                     }
                                             }
@@ -480,7 +480,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                 final int[] columnWidth = new int[tempTableQuestions.size()];
                 try {
                     Thread.sleep(600);
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     e.printStackTrace();
                 }
                 new Thread(new Runnable() {
@@ -544,7 +544,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
             } else {
                 setCurrentAnswers();
-                ArrayList<Answer> answers = new ArrayList<>();
+                final ArrayList<Answer> answers = new ArrayList<>();
                 String answer = "";
                 String answerNum = "";
                 for (int i = 0; i < currentAnswers.size(); i++) {
@@ -565,7 +565,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                     ));
                 }
                 Collections.sort(answers, new Comparator<Answer>() {
-                    public int compare(Answer o1, Answer o2) {
+                    public int compare(final Answer o1, final Answer o2) {
                         return o1.getId().compareTo(o2.getId());
                     }
                 });
@@ -581,7 +581,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         } else {
             ArrayList<String[]> currentSelectiveAnswers;
 
-            ArrayList<SelectiveQuestion> selectiveQuestions = new ArrayList<>();
+            final ArrayList<SelectiveQuestion> selectiveQuestions = new ArrayList<>();
             for (int i = 0; i < mTableSelectiveQuestion.size(); i++) {
                 currentSelectiveAnswers = new ArrayList<>();
                 for (int j = 0; j < mTableSelectiveAnswer.size(); j++)
@@ -597,7 +597,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             }
 
             Collections.sort(selectiveQuestions, new Comparator<SelectiveQuestion>() {
-                public int compare(SelectiveQuestion o1, SelectiveQuestion o2) {
+                public int compare(final SelectiveQuestion o1, final SelectiveQuestion o2) {
                     return o1.getId().compareTo(o2.getId());
                 }
             });
@@ -612,27 +612,27 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             listView.setOnItemClickListener(
                     new AdapterView.OnItemClickListener() {
                         @Override
-                        public void onItemClick(AdapterView<?> parent, View itemClicked, final int position,
-                                                long id) {
+                        public void onItemClick(final AdapterView<?> parent, final View itemClicked, final int position,
+                                                final long id) {
                             final SelectiveQuestion selectiveQuestion = getModelSelectiveQuestion(position);
 
-                            AlertDialog.Builder builder = new AlertDialog.Builder(QuestionsActivity.this);
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(QuestionsActivity.this);
 
-                            View view = getLayoutInflater().inflate(R.layout.selective_answers_dialog, null);
+                            final View view = getLayoutInflater().inflate(R.layout.selective_answers_dialog, null);
 
                             selectiveAnswersListView = (ListView) view.findViewById(R.id.selective_answers);
                             initList(position);
 
-                            EditText selectiveAnswersSearch = (EditText) view.findViewById(R.id.selective_answers_search);
+                            final EditText selectiveAnswersSearch = (EditText) view.findViewById(R.id.selective_answers_search);
 
                             selectiveAnswersSearch.addTextChangedListener(new TextWatcher() {
 
                                 @Override
-                                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                                public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
                                 }
 
                                 @Override
-                                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
                                     if (s.toString().equals("")) {
                                         // reset listview
                                         initList(position);
@@ -644,7 +644,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                                 }
 
                                 @Override
-                                public void afterTextChanged(Editable s) {
+                                public void afterTextChanged(final Editable s) {
                                 }
 
                             });
@@ -655,7 +655,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                                     .setView(view)
                                     .setPositiveButton("Ок",
                                             new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int id) {
+                                                public void onClick(final DialogInterface dialog, final int id) {
                                                     for (int i = 0; i < listView.getAdapter().getCount() - 1; i++)
                                                         for (int j = 0; j < getModelSelectiveQuestion(i).getSelectiveAnswers().size(); j++)
                                                             for (int b = 0; b < getModelSelectiveQuestion(i + 1).getSelectiveAnswers().size(); b++)
@@ -669,7 +669,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                                                 }
                                             }
                                     );
-                            AlertDialog alert = builder.create();
+                            final AlertDialog alert = builder.create();
                             alert.show();
                         }
                     }
@@ -678,21 +678,21 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
     }
 
-    private Answer getModelAnswer(int position) {
+    private Answer getModelAnswer(final int position) {
         return ((adapter).getItem(position));
     }
 
-    private SelectiveQuestion getModelSelectiveQuestion(int position) {
+    private SelectiveQuestion getModelSelectiveQuestion(final int position) {
         return ((selectiveQuestionAdapter).getItem(position));
     }
 
-    private SelectiveAnswer getModelSelectiveAnswer(int position) {
+    private SelectiveAnswer getModelSelectiveAnswer(final int position) {
         return ((selectiveAnswerAdapter).getItem(position));
     }
 
     //Обрабатывваем нажатие НАЗАД/ДАЛЕЕ
     @Override
-    public void onClick(View v) {
+    public void onClick(final View v) {
         Answer answer;
         SelectiveQuestion selectiveQuestion;
         switch (v.getId()) {
@@ -717,7 +717,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                         //0 - answer_id
                         //1 - duration_time_question
                         //2 - text_open_answer
-                        Map<String, String[]> userAnswers = new HashMap<>();
+                        final Map<String, String[]> userAnswers = new HashMap<>();
 
                         for (int i = 0; i < mTableQuestions.size(); i++)
                             for (int j = 0; j < mTableQuestions.get(i).getTableAnswers().size(); j++)
@@ -784,12 +784,12 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                         //0 - answer_id
                         //1 - duration_time_question
                         //2 - text_open_answer
-                        Map<String, String[]> userAnswers = new HashMap<>();
+                        final Map<String, String[]> userAnswers = new HashMap<>();
 
                         for (int i = listView.getAdapter().getCount() - 1; i >= 0; i--) {
                             answer = getModelAnswer(i);
                             if (answer.getCheck()) {
-                                View viewAnswer = listView.getChildAt(i);
+                                final View viewAnswer = listView.getChildAt(i);
                                 EditText answerOpen = null;
                                 if (answer.getIsOpenAnswer())
                                     answerOpen = (EditText) viewAnswer.findViewById(R.id.answer_open);
@@ -855,7 +855,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                         return;
                     //0 - answer_id
                     //1 - duration_time_question
-                    Map<String, String[]> userAnswers = new HashMap<>();
+                    final Map<String, String[]> userAnswers = new HashMap<>();
                     for (int i = 0; i < listView.getAdapter().getCount(); i++) {
                         selectiveQuestion = getModelSelectiveQuestion(i);
                         for (int j = 0; j < selectiveQuestion.getSelectiveAnswers().size(); j++)
@@ -896,7 +896,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                                     if (answerSequenceInsideQuestions.get(a).containsKey(Integer.toString(mTableQuestions.get(i).getTableAnswers().get(j).getId()))
                                             && answerSequenceInsideQuestions.get(a).get(Integer.toString(mTableQuestions.get(i).getTableAnswers().get(j).getId())).length == 3) {
                                         mTableQuestions.get(i).getTableAnswers().get(j).setChecked(true);
-                                        RadioButton radioButton = (RadioButton) findViewById(mTableQuestions.get(i).getTableAnswers().get(j).getId());
+                                        final RadioButton radioButton = (RadioButton) findViewById(mTableQuestions.get(i).getTableAnswers().get(j).getId());
                                         radioButton.setChecked(true);
                                     }
                     } else
@@ -952,7 +952,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                                     if (answerSequenceInsideQuestions.get(a).containsKey(Integer.toString(mTableQuestions.get(i).getTableAnswers().get(j).getId()))
                                             && answerSequenceInsideQuestions.get(a).get(Integer.toString(mTableQuestions.get(i).getTableAnswers().get(j).getId())).length == 3) {
                                         mTableQuestions.get(i).getTableAnswers().get(j).setChecked(true);
-                                        RadioButton radioButton = (RadioButton) findViewById(mTableQuestions.get(i).getTableAnswers().get(j).getId());
+                                        final RadioButton radioButton = (RadioButton) findViewById(mTableQuestions.get(i).getTableAnswers().get(j).getId());
                                         radioButton.setChecked(true);
                                     }
                     } else
@@ -981,7 +981,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         findViewById(R.id.question_previous_button).setEnabled(false);
         try {
             Thread.sleep(50);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             e.printStackTrace();
         }
         findViewById(R.id.question_next_button).setEnabled(true);
@@ -989,7 +989,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
     }
 
-    private void addToDB(int model) {
+    private void addToDB(final int model) {
         if (model == 0) {
             mSQLiteDatabase = new DBHelper(QuestionsActivity.this,
                     mSharedPreferences.getString("name_file", ""),
@@ -997,18 +997,18 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                     getString(R.string.sql_file_name),
                     getString(R.string.old_sql_file_name)).getWritableDatabase();
 
-            String date = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.getDefault()).format(new Date());
-            String answerSQL = "answers_" + date; //Имя анкеты
-            String answerSQLSelective = "answers_selective_" + date; //Имя анкеты + selective
-            String commonSQL = "common_" + date; //Общие данные
-            String photoSQL = "photo_" + date; //Фото
-            String audioSQL = "audio_" + date; //Аудио
+            final String date = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.getDefault()).format(new Date());
+            final String answerSQL = "answers_" + date; //Имя анкеты
+            final String answerSQLSelective = "answers_selective_" + date; //Имя анкеты + selective
+            final String commonSQL = "common_" + date; //Общие данные
+            final String photoSQL = "photo_" + date; //Фото
+            final String audioSQL = "audio_" + date; //Аудио
 
-            ArrayList<String> AnswerdAnswers = new ArrayList();
-            ArrayList<String> AnswerdSelectiveAnswers = new ArrayList();
+            final ArrayList<String> AnswerdAnswers = new ArrayList();
+            final ArrayList<String> AnswerdSelectiveAnswers = new ArrayList();
 
             for (int i = 0; i < answerSequenceInsideQuestions.size(); i++)
-                for (String[] value : answerSequenceInsideQuestions.get(i).values()) {
+                for (final String[] value : answerSequenceInsideQuestions.get(i).values()) {
                     //Записываем в базу ответы
                     if (value.length == 3) {
                         for (int j = 0; j < mTableAnswer.size(); j++)
@@ -1023,11 +1023,11 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                     }
                 }
 
-            int countQuestions = AnswerdAnswers.size() + AnswerdSelectiveAnswers.size();
+            final int countQuestions = AnswerdAnswers.size() + AnswerdSelectiveAnswers.size();
 
             if (mAudio != null) {
                 if (mAudio.getAudioRecordQuestions().containsKey(0)) {
-                    String s = AudioRecorder.Stop();
+                    final String s = AudioRecorder.Stop();
                     mSQLiteDatabase.execSQL("create table if not exists " + audioSQL + "(names text);");
                     mSQLiteDatabase.execSQL("insert into " + audioSQL + "(names)" +
                             "values('" + s + "_" + countQuestions + "')");
@@ -1051,7 +1051,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
             //Запоминаем названия таблиц из БД
 
-            SharedPreferences.Editor editor = mSharedPreferences.edit()
+            final SharedPreferences.Editor editor = mSharedPreferences.edit()
                     .putString("Quizzes", mSharedPreferences.getString("Quizzes", "") + date + ";")
                     .putString("Quizzes_audio", mSharedPreferences.getString("Quizzes_audio", "") + date + ";")
                     .putString("last_date_interview", mDateInterview);
@@ -1064,7 +1064,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
             //Заполняем таблицы
             for (int i = 0; i < answerSequenceInsideQuestions.size(); i++)
-                for (String[] value : answerSequenceInsideQuestions.get(i).values()) {
+                for (final String[] value : answerSequenceInsideQuestions.get(i).values()) {
                     //Записываем в базу ответы
                     if (value.length == 3) {
                         mSQLiteDatabase.execSQL("insert into " + answerSQL + " (answer_id,duration_time_question,text_open_answer) " +
@@ -1100,14 +1100,14 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
         private LayoutInflater mInflater;
 
-        AnswerAdapter(Context context, ArrayList<Answer> list) {
+        AnswerAdapter(final Context context, final ArrayList<Answer> list) {
             super(context, R.layout.answer_item, list);
             mInflater = LayoutInflater.from(context);
         }
 
         @Override
-        public View getView(final int position, View convertView,
-                            ViewGroup parent) {
+        public View getView(final int position, final View convertView,
+                            final ViewGroup parent) {
             final ViewHolder holder;
             View row = convertView;
             if (row == null) {
@@ -1124,9 +1124,9 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
             final Answer answer = getModelAnswer(position);
 
-            View.OnClickListener onClickListener = new View.OnClickListener() {
+            final View.OnClickListener onClickListener = new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(final View v) {
                     if (answerSequenceInsideQuestions.size() > 0)
                         for (int i = answerSequenceInsideQuestions.size() - 1; i >= num; i--) {
                             answerSequenceInsideQuestions.remove(i);
@@ -1134,7 +1134,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                         }
                     switch (v.getId()) {
                         case R.id.answer_check:
-                            CheckBox selectedChB = (CheckBox) v;
+                            final CheckBox selectedChB = (CheckBox) v;
                             if (answer.getMaxAnswers() == 0) {
                                 answer.setCheck(selectedChB.isChecked());
                             } else {
@@ -1182,7 +1182,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                             notifyDataSetChanged();
                             break;
                         case R.id.answer_radio:
-                            RadioButton selectedRB = (RadioButton) v;
+                            final RadioButton selectedRB = (RadioButton) v;
                             if (selectedRB.isChecked()) {
                                 answer.setCheck(true);
                                 for (int i = 0; i < listView.getAdapter().getCount(); i++) {
@@ -1222,24 +1222,24 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                                     onClick(holder.answerRadio);
                                 }
 
-                                AlertDialog.Builder builder = new AlertDialog.Builder(QuestionsActivity.this);
+                                final AlertDialog.Builder builder = new AlertDialog.Builder(QuestionsActivity.this);
 
-                                View view = getLayoutInflater().inflate(R.layout.open_answer_dialog, null);
+                                final View view = getLayoutInflater().inflate(R.layout.open_answer_dialog, null);
 
-                                TextView answerTitle = (TextView) view.findViewById(R.id.answer_title);
+                                final TextView answerTitle = (TextView) view.findViewById(R.id.answer_title);
                                 answerTitle.setText(answer.getTitle());
 
                                 final EditText answerOpen = (EditText) view.findViewById(R.id.answer_open);
                                 answerOpen.setText(answer.getOpenAnswer());
 
-                                AlertDialog dialog = builder.setIcon(R.drawable.edit)
+                                final AlertDialog dialog = builder.setIcon(R.drawable.edit)
                                         .setTitle(mQuestionTitle.getText())
                                         .setCancelable(false)
                                         .setView(view)
 
                                         .setPositiveButton("Ок", new DialogInterface.OnClickListener() {
                                             @Override
-                                            public void onClick(DialogInterface dialog, int which) {
+                                            public void onClick(final DialogInterface dialog, final int which) {
                                                 answer.setOpenAnswer(answerOpen.getText().toString());
                                                 if (!answer.getOpenAnswer().isEmpty())
                                                     answer.setOpenAnswerError(null);
@@ -1249,7 +1249,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
                                         .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
                                             @Override
-                                            public void onClick(DialogInterface dialog, int which) {
+                                            public void onClick(final DialogInterface dialog, final int which) {
                                             }
                                         })
                                         .create();
@@ -1292,15 +1292,15 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                 holder.answerOpen.setError(answer.getOpenAnswerError());
             }
 
-            String quota = mSharedPreferences.getString("quota", "1");
-            String[] quotasTemp = quota.substring(1, quota.length() - 1).split(";");
-            for (String re : quotasTemp) {
+            final String quota = mSharedPreferences.getString("quota", "1");
+            final String[] quotasTemp = quota.substring(1, quota.length() - 1).split(";");
+            for (final String re : quotasTemp) {
                 if (re.equals("1"))
                     return row;
             }
 
-            ArrayList<String[]> quotas = new ArrayList<>();
-            for (String aQuotasTemp : quotasTemp)
+            final ArrayList<String[]> quotas = new ArrayList<>();
+            for (final String aQuotasTemp : quotasTemp)
                 if (aQuotasTemp.split("\\|")[2].equals("0") || Integer.parseInt(aQuotasTemp.split("\\|")[1]) >= Integer.parseInt(aQuotasTemp.split("\\|")[2]))
                     quotas.add(aQuotasTemp.split("\\|")[0].split(","));
 
@@ -1333,14 +1333,14 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
         private LayoutInflater mInflater;
 
-        SelectiveQuestionAdapter(Context context, ArrayList<SelectiveQuestion> list) {
+        SelectiveQuestionAdapter(final Context context, final ArrayList<SelectiveQuestion> list) {
             super(context, R.layout.selective_question_item, list);
             mInflater = LayoutInflater.from(context);
         }
 
         @Override
-        public View getView(final int position, View convertView,
-                            ViewGroup parent) {
+        public View getView(final int position, final View convertView,
+                            final ViewGroup parent) {
             final ViewHolder holder;
             View row = convertView;
             if (row == null) {
@@ -1356,7 +1356,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
             holder.selectiveQuestionTitle.setText(selectiveQuestion.getTitle());
 
-            ArrayList<String> state = new ArrayList<>();
+            final ArrayList<String> state = new ArrayList<>();
 
             for (int i = 0; i < selectiveQuestion.getSelectiveAnswers().size(); i++) {
                 if (selectiveQuestion.getSelectiveAnswers().get(i).getCheck()) {
@@ -1364,7 +1364,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                 }
             }
 
-            StringBuilder temp = new StringBuilder();
+            final StringBuilder temp = new StringBuilder();
             for (int i = 0; i < state.size(); i++) {
                 if (i != state.size() - 1)
                     temp.append(state.get(i) + "\n");
@@ -1394,14 +1394,14 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
         private LayoutInflater mInflater;
 
-        SelectiveAnswerAdapter(Context context, ArrayList<SelectiveAnswer> list) {
+        SelectiveAnswerAdapter(final Context context, final ArrayList<SelectiveAnswer> list) {
             super(context, R.layout.selective_answer_item, list);
             mInflater = LayoutInflater.from(context);
         }
 
         @Override
-        public View getView(final int position, View convertView,
-                            ViewGroup parent) {
+        public View getView(final int position, final View convertView,
+                            final ViewGroup parent) {
             final ViewHolder holder;
             View row = convertView;
             if (row == null) {
@@ -1418,7 +1418,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             holder.getSelectiveAnswerTitle.setText(selectiveAnswer.getTitle());
             holder.getSelectiveAnswerTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(final View v) {
                     if (answerSequenceInsideQuestions.size() > 0)
                         for (int i = answerSequenceInsideQuestions.size() - 1; i >= num; i--) {
                             answerSequenceInsideQuestions.remove(i);
@@ -1432,13 +1432,13 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             holder.selectiveAnswerCheck.setOnClickListener(new View.OnClickListener() {
 
                 @Override
-                public void onClick(View v) {
+                public void onClick(final View v) {
                     if (answerSequenceInsideQuestions.size() > 0)
                         for (int i = answerSequenceInsideQuestions.size() - 1; i >= num; i--) {
                             answerSequenceInsideQuestions.remove(i);
                             goneNumbers.remove(i);
                         }
-                    CheckBox selectedChB = (CheckBox) v;
+                    final CheckBox selectedChB = (CheckBox) v;
                     selectiveAnswer.setCheck(selectedChB.isChecked());
                     notifyDataSetChanged();
 
@@ -1460,7 +1460,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void openQuitDialog() {
-        AlertDialog.Builder quitDialog = new AlertDialog.Builder(
+        final AlertDialog.Builder quitDialog = new AlertDialog.Builder(
                 QuestionsActivity.this);
         quitDialog.setCancelable(true)
                 .setIcon(R.drawable.ico)
@@ -1469,7 +1469,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
                 .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(final DialogInterface dialog, final int which) {
                         startActivity(new Intent(QuestionsActivity.this, ProjectActivity.class));
                         finish();
                     }
@@ -1477,14 +1477,14 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
                 .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(final DialogInterface dialog, final int which) {
                     }
                 })
 
                 .show();
     }
 
-    public void onScrollChanged(ObservableScrollView scrollView, int x, int y, int oldx, int oldy) {
+    public void onScrollChanged(final ObservableScrollView scrollView, final int x, final int y, final int oldx, final int oldy) {
         if (interceptScroll) {
             interceptScroll = false;
             if (scrollView == scrollView1) {
@@ -1506,7 +1506,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         if (mAudio != null)
             if (mAudio.getAudioRecordQuestions().containsKey(number) && !mAudio.getAudioRecordQuestions().containsKey(0)) {
                 if (mAudio.getAudioRecordQuestions().get(number) == null)
-                    AudioRecorder.Start(this, mSharedPreferences.getString("login_admin", "") + "_" +
+                    AudioRecorder.Start(this, mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, "") + "_" +
                             mSharedPreferences.getString("login", "") + "_" +
                             mSharedPreferences.getString("user_project_id", "") + "_" +
                             currentQuestion[0] + "_" +
@@ -1530,16 +1530,16 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
     }
 
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(final Location location) {
         showLocation(location);
     }
 
     @Override
-    public void onProviderDisabled(String provider) {
+    public void onProviderDisabled(final String provider) {
     }
 
     @Override
-    public void onProviderEnabled(String provider) {
+    public void onProviderEnabled(final String provider) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -1547,14 +1547,14 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
     }
 
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
+    public void onStatusChanged(final String provider, final int status, final Bundle extras) {
     }
 
-    private void showLocation(Location location) {
+    private void showLocation(final Location location) {
         if (location == null)
             return;
 
-        SharedPreferences.Editor editor = mSharedPreferences.edit()
+        final SharedPreferences.Editor editor = mSharedPreferences.edit()
                 .putString("gps", location.getLatitude() + ":" + location.getLongitude());
         editor.apply();
     }

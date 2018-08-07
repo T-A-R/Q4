@@ -2,7 +2,7 @@
     <string name="app_name">Quizer</string>
     <string name="separator_path">/</string>
     <string name="archive_password">Jfh47_fhqJxGaP</string>
-    <string name="activation">http://quizer-head.prisp.ru/wheretoredirrect.php</string>
+    <string name="activation">http://head.quizer.pro/wheretoredirrect_json.php</string>
     <string name="sql_file_name">sql.1.18.sql</string>
     <string name="old_sql_file_name">sql.1.12.sql</string>
     <integer name="min_chars_before_shift">19</integer>

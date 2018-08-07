@@ -4,19 +4,19 @@ import java.io.File;
 
 class Answer {
 
-    private String mId;
-    private String mTitle;
-    private File mPicture;
+    private final String mId;
+    private final String mTitle;
+    private final File mPicture;
     private Boolean mCheck;
-    private Boolean mPolyAnswer;
-    private int mMaxAnswers;
-    private Boolean mIsOpenAnswer;
+    private final Boolean mPolyAnswer;
+    private final int mMaxAnswers;
+    private final Boolean mIsOpenAnswer;
     private String mOpenAnswerError;
     private String mOpenAnswer;
-    private int mNextQuestion;
-    private String mTableQuestionId;
+    private final int mNextQuestion;
+    private final String mTableQuestionId;
 
-    Answer(String id, String title, File picture, String polyAnswer, String maxAnswers, String isOpenAnswer, String nextQuestion, String tableQuestionId) {
+    Answer(final String id, final String title, final File picture, final String polyAnswer, final String maxAnswers, final String isOpenAnswer, final String nextQuestion, final String tableQuestionId) {
         mId = id;
         mTitle = title;
         mPicture = picture;
@@ -45,7 +45,7 @@ class Answer {
         return mCheck;
     }
 
-    void setCheck(Boolean check) {
+    void setCheck(final Boolean check) {
         mCheck = check;
         if (!check)
             mOpenAnswerError = null;
@@ -67,7 +67,7 @@ class Answer {
         return mOpenAnswerError;
     }
 
-    public void setOpenAnswerError(String openAnswerError) {
+    public void setOpenAnswerError(final String openAnswerError) {
         mOpenAnswerError = openAnswerError;
     }
 
@@ -75,7 +75,7 @@ class Answer {
         return mOpenAnswer;
     }
 
-    void setOpenAnswer(String openAnswer) {
+    void setOpenAnswer(final String openAnswer) {
         mOpenAnswer = openAnswer;
     }
 

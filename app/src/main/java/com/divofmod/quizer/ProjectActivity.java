@@ -49,11 +49,11 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
     final int GPS_SETTINGS = 4;
 
     ConfigResponseModel mConfigResponseModel;
-//    SQLiteDatabase mSQLiteDatabase;
+    SQLiteDatabase mSQLiteDatabase;
     SharedPreferences mSharedPreferences;
     Dictionary<String, String> mDictionaryForRequest;
 
-    ArrayList<QuestionsField> mQuestion;
+    ArrayList<String[]> mQuestion;
     ArrayList<String[]> mQuestionSelective;
     ArrayList<String[]> mCommon;
 
@@ -79,11 +79,11 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
         mConfigResponseModel = Utils.getConfig(this);
 
-//        mSQLiteDatabase = new DBHelper(this,
-//                mSharedPreferences.getString("name_file", ""),
-//                new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
-//                getString(R.string.sql_file_name),
-//                getString(R.string.old_sql_file_name)).getWritableDatabase();
+        mSQLiteDatabase = new DBHelper(this,
+                mSharedPreferences.getString("name_file", ""),
+                new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+                getString(R.string.sql_file_name),
+                getString(R.string.old_sql_file_name)).getWritableDatabase();
 
         final ProjectInfoField projectInfoField = mConfigResponseModel.getConfig().getProject_info();
 
@@ -280,9 +280,9 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        if (mSQLiteDatabase != null) {
-//            mSQLiteDatabase.close();
-//        }
+        if (mSQLiteDatabase != null) {
+            mSQLiteDatabase.close();
+        }
     }
 
     private void send() {

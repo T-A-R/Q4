@@ -38,13 +38,18 @@ public abstract class AudioRecorder {
 
     //Завершаем запись.
     public static String Stop() {
-        if (sMediaRecorder != null) {
-            System.out.println(sFileName + " Stop");
-            sMediaRecorder.stop();
-            sMediaRecorder.release();
-            return sFileName;
+        try {
+            if (sMediaRecorder != null) {
+                System.out.println(sFileName + " Stop");
+                sMediaRecorder.stop();
+                sMediaRecorder.release();
+                return sFileName;
+            }
+
+            return null;
+        } catch (Exception e) {
+            return null;
         }
-        return null;
     }
 
     //Освобождаем все ресурсы рекордера методом release.

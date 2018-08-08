@@ -61,7 +61,7 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
 
         //Если пользовтель проходил активацию, переходим к авторизации.
         if (mSharedPreferences.contains("key") && mSharedPreferences.contains("url") && mSharedPreferences.contains(Constants.Shared.LOGIN_ADMIN)) {
-            startActivity(new Intent(ActivationActivity.this, AuthActivity.class));
+            startActivity(new Intent(this, AuthActivity.class));
             finish();
         } else {
             mProgressBar.setVisibility(View.INVISIBLE);
@@ -82,7 +82,7 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
                 send(mKeyEditText.getText().toString());
                 break;
             case R.id.activation_start_contact:
-                startActivity(new Intent(ActivationActivity.this, ContactActivity.class));
+                startActivity(new Intent(this, ContactActivity.class));
                 break;
         }
     }
@@ -93,7 +93,7 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
         }
 
         if (!Internet.hasConnection(this)) {
-            Toast.makeText(ActivationActivity.this, "Подключение к интернету отсутствует. Попробуйте позже.",
+            Toast.makeText(this, "Подключение к интернету отсутствует. Попробуйте позже.",
                     Toast.LENGTH_SHORT).show();
             return;
         }
@@ -186,7 +186,7 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
 
     private void openQuitDialog() {
         final AlertDialog.Builder quitDialog = new AlertDialog.Builder(
-                ActivationActivity.this);
+                this);
         quitDialog.setCancelable(true)
                 .setIcon(R.drawable.exit)
                 .setTitle("Выход из приложения")

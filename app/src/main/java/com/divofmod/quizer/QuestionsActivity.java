@@ -39,12 +39,13 @@ import android.widget.TextView;
 
 import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.DataBase.DBHelper;
-import com.divofmod.quizer.DataBase.DBReader;
 import com.divofmod.quizer.Interfaces.ScrollViewListener;
 import com.divofmod.quizer.QuizHelper.Audio;
 import com.divofmod.quizer.QuizHelper.AudioRecorder;
 import com.divofmod.quizer.QuizHelper.PhotoCamera;
 import com.divofmod.quizer.QuizHelper.StopWatch;
+import com.divofmod.quizer.Utils.Utils;
+import com.divofmod.quizer.model.SmsDatabaseModel;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -75,6 +76,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
     String mUserId;
 
+    SmsDatabaseModel mSmsDatabaseModel;
     ArrayList<Map<String, String[]>> answerSequenceInsideQuestions;
     ArrayList<String> goneNumbers;
     int num = -1;
@@ -128,33 +130,23 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         mSharedPreferences = getSharedPreferences("data",
                 Context.MODE_PRIVATE);
 
-        mSQLiteDatabase = new DBHelper(QuestionsActivity.this,
+        mSQLiteDatabase = new DBHelper(this,
                 mSharedPreferences.getString("name_file", ""),
-                new File(getFilesDir().toString() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+                new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
                 getString(R.string.sql_file_name),
                 getString(R.string.old_sql_file_name)).getWritableDatabase();
 
-        mTableQuestion = DBReader.read(mSQLiteDatabase,
-                "question",
-                new String[]{"id", "number", "title", "polyanswer", "max_answers", "picture", "questionnaire_id", "next_question", "is_filter", "table_id", "next_after_selective_question"});
+        mTableQuestion = Utils.getQuestions(this);
 
-        mTableAnswer = DBReader.read(mSQLiteDatabase,
-                "answer",
-                new String[]{"id", "title", "picture", "question_id", "next_question", "is_open", "table_question_id"});
+        mTableAnswer = Utils.getAnswers(this);
 
-        mTableSelectiveQuestion = DBReader.read(mSQLiteDatabase,
-                "selective_question",
-                new String[]{"id", "num", "title", "question_id"});
+        mTableSelectiveQuestion = Utils.getSelectiveQuestions(this);
 
-        mTableSelectiveAnswer = DBReader.read(mSQLiteDatabase,
-                "selective_answer",
-                new String[]{"id", "num", "title", "title_search", "parent_num", "selective_question_id"});
+        mTableSelectiveAnswer = Utils.getSelectiveAnswers(this);
 
-        mConfig = DBReader.read(mSQLiteDatabase,
-                "config",
-                new String[]{"title", "value"});
+        mConfig = Utils.getConfigValues(this);
 
-        mUserId = DBReader.read(mSQLiteDatabase, "questionnaire", "id");
+        mUserId = Utils.getQuestionnaireId(this);
 
         mSQLiteDatabase.close();
 
@@ -176,7 +168,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         System.out.println(mSharedPreferences.getString("url", ""));
         try {
             final SharedPreferences.Editor editor = mSharedPreferences.edit();
-            rsa = RSA.decrypt(mConfigMap.get("server"), QuestionsActivity.this);
+            rsa = RSA.decrypt(mConfigMap.get("server"), this);
             editor.putString(Constants.Shared.LOGIN_ADMIN, rsa.split("\\|")[0]);
             editor.putString("url", rsa.split("\\|")[1]);
             editor.apply();
@@ -337,7 +329,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             if (getModelSelectiveQuestion(position).getSelectiveAnswers().get(i).getVisibility())
                 selectiveAnswersList.add(getModelSelectiveQuestion(position).getSelectiveAnswers().get(i));
 
-        selectiveAnswerAdapter = new SelectiveAnswerAdapter(QuestionsActivity.this, selectiveAnswersList);
+        selectiveAnswerAdapter = new SelectiveAnswerAdapter(this, selectiveAnswersList);
         selectiveAnswersListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         selectiveAnswersListView.setAdapter(selectiveAnswerAdapter);
     }
@@ -356,7 +348,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
         if (!currentQuestion[5].equals("")) {
             questionPicture.setVisibility(View.VISIBLE);
-            questionPicture.setImageURI(Uri.fromFile(new File(getFilesDir().toString() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4) + getString(R.string.separator_path) + "answerimages", currentQuestion[5])));
+            questionPicture.setImageURI(Uri.fromFile(new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4) + getString(R.string.separator_path) + "answerimages", currentQuestion[5])));
         } else
             questionPicture.setVisibility(View.GONE);
 
@@ -556,7 +548,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                             currentAnswers.get(i)[0],
                             currentAnswers.get(i)[1].contains("#") ? showAnswer(answer, answerNum) :
                                     currentAnswers.get(i)[1],
-                            currentAnswers.get(i)[2].equals("") ? null : new File(getFilesDir().toString() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4) + getString(R.string.separator_path) + "answerimages", currentAnswers.get(i)[2]),
+                            currentAnswers.get(i)[2].equals("") ? null : new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4) + getString(R.string.separator_path) + "answerimages", currentAnswers.get(i)[2]),
                             currentQuestion[3],
                             currentQuestion[4],
                             currentAnswers.get(i)[5],
@@ -569,7 +561,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                         return o1.getId().compareTo(o2.getId());
                     }
                 });
-                adapter = new AnswerAdapter(QuestionsActivity.this, answers);
+                adapter = new AnswerAdapter(this, answers);
                 findViewById(R.id.question_linear_with_table).setVisibility(View.GONE);
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 mQuestionTitle.setVisibility(View.VISIBLE);
@@ -601,7 +593,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                     return o1.getId().compareTo(o2.getId());
                 }
             });
-            selectiveQuestionAdapter = new SelectiveQuestionAdapter(QuestionsActivity.this, selectiveQuestions);
+            selectiveQuestionAdapter = new SelectiveQuestionAdapter(this, selectiveQuestions);
             findViewById(R.id.question_linear_with_table).setVisibility(View.GONE);
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             mQuestionTitle.setVisibility(View.VISIBLE);
@@ -750,6 +742,12 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
                         answerSequenceInsideQuestions.add(userAnswers);
                         goneNumbers.add(currentQuestion[1]);
+
+
+//                        smsAnswerSequenceInsideQuestions.add();
+
+
+
 
                         //Если вопрос последний, переходим в следующую активность.
                         addToDB(number);
@@ -991,9 +989,9 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
     private void addToDB(final int model) {
         if (model == 0) {
-            mSQLiteDatabase = new DBHelper(QuestionsActivity.this,
+            mSQLiteDatabase = new DBHelper(this,
                     mSharedPreferences.getString("name_file", ""),
-                    new File(getFilesDir().toString() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+                    new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
                     getString(R.string.sql_file_name),
                     getString(R.string.old_sql_file_name)).getWritableDatabase();
 
@@ -1062,7 +1060,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             mSQLiteDatabase.execSQL("create table if not exists " + answerSQLSelective + "(answer_id text,duration_time_question text);");
             mSQLiteDatabase.execSQL("create table if not exists " + commonSQL + "(project_id text, questionnaire_id text, user_project_id text, date_interview text, gps text, duration_time_questionnaire text, selected_questions text, login text);");
 
-            //Заполняем таблицы
+            //Заполняем таблицыд г
             for (int i = 0; i < answerSequenceInsideQuestions.size(); i++)
                 for (final String[] value : answerSequenceInsideQuestions.get(i).values()) {
                     //Записываем в базу ответы
@@ -1081,8 +1079,8 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
             mSQLiteDatabase.execSQL("insert into " + commonSQL + " (project_id,questionnaire_id,user_project_id,date_interview,gps,duration_time_questionnaire,selected_questions,login) " +
                     "values('" +
-                    DBReader.read(mSQLiteDatabase, "project", "id") + "','" +
-                    DBReader.read(mSQLiteDatabase, "questionnaire", "id") + "','" +
+                    Utils.getProjectId(this) + "','" +
+                    Utils.getQuestionnaireId(this) + "','" +
                     mSharedPreferences.getString("user_project_id", "") + "','" +
                     mDateInterview + "','" +
                     mSharedPreferences.getString("gps", "") + "','" +
@@ -1292,30 +1290,30 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                 holder.answerOpen.setError(answer.getOpenAnswerError());
             }
 
-            final String quota = mSharedPreferences.getString("quota", "1");
-            final String[] quotasTemp = quota.substring(1, quota.length() - 1).split(";");
-            for (final String re : quotasTemp) {
-                if (re.equals("1"))
-                    return row;
-            }
+//            final String quota = mSharedPreferences.getString("quota", "1");
+//            final String[] quotasTemp = quota.substring(1, quota.length() - 1).split(";");
+//            for (final String re : quotasTemp) {
+//                if (re.equals("1"))
+//                    return row;
+//            }
 
-            final ArrayList<String[]> quotas = new ArrayList<>();
-            for (final String aQuotasTemp : quotasTemp)
-                if (aQuotasTemp.split("\\|")[2].equals("0") || Integer.parseInt(aQuotasTemp.split("\\|")[1]) >= Integer.parseInt(aQuotasTemp.split("\\|")[2]))
-                    quotas.add(aQuotasTemp.split("\\|")[0].split(","));
-
-            for (int i = 0; i < quotas.size(); i++)
-                if (quotas.get(i)[quotas.get(i).length - 1].equals(answer.getId())) {
-                    for (int j = 0; j < quotas.get(i).length - 1; j++)
-                        for (int k = 0; k < answerSequenceInsideQuestions.size(); k++)
-                            if (!answerSequenceInsideQuestions.get(k).containsKey(quotas.get(i)[j])) {
-                                if (k == answerSequenceInsideQuestions.size() - 1)
-                                    break;
-                            } else {
-                                holder.answerCheck.setEnabled(false);
-                                holder.answerRadio.setEnabled(false);
-                            }
-                }
+//            final ArrayList<String[]> quotas = new ArrayList<>();
+//            for (final String aQuotasTemp : quotasTemp)
+//                if (aQuotasTemp.split("\\|")[2].equals("0") || Integer.parseInt(aQuotasTemp.split("\\|")[1]) >= Integer.parseInt(aQuotasTemp.split("\\|")[2]))
+//                    quotas.add(aQuotasTemp.split("\\|")[0].split(","));
+//
+//            for (int i = 0; i < quotas.size(); i++)
+//                if (quotas.get(i)[quotas.get(i).length - 1].equals(answer.getId())) {
+//                    for (int j = 0; j < quotas.get(i).length - 1; j++)
+//                        for (int k = 0; k < answerSequenceInsideQuestions.size(); k++)
+//                            if (!answerSequenceInsideQuestions.get(k).containsKey(quotas.get(i)[j])) {
+//                                if (k == answerSequenceInsideQuestions.size() - 1)
+//                                    break;
+//                            } else {
+//                                holder.answerCheck.setEnabled(false);
+//                                holder.answerRadio.setEnabled(false);
+//                            }
+//                }
 
             return row;
         }
@@ -1461,7 +1459,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
     private void openQuitDialog() {
         final AlertDialog.Builder quitDialog = new AlertDialog.Builder(
-                QuestionsActivity.this);
+                this);
         quitDialog.setCancelable(true)
                 .setIcon(R.drawable.ico)
                 .setTitle("Выход из опроса")

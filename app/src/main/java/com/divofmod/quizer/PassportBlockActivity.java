@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.DataBase.DBReader;
+import com.divofmod.quizer.Utils.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,9 +47,7 @@ public class PassportBlockActivity extends AppCompatActivity implements View.OnC
                 getString(R.string.sql_file_name),
                 getString(R.string.old_sql_file_name)).getWritableDatabase();
 
-        ArrayList<String[]> mConfig = DBReader.read(mSQLiteDatabase,
-                "config",
-                new String[]{"title", "value"});
+        ArrayList<String[]> mConfig = Utils.getConfigValues(this);
 
         for (int i = 0; i < mConfig.size(); i++)
             if (mConfig.get(i)[0].equals("passport_block_list_fields")) {

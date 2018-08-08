@@ -77,7 +77,7 @@ class DoRequest {
                 .post(formBody).build();
     }
 
-    Request Post(final Dictionary<String, String> dictionary, final String url, final List<String[]> question, final List<String[]> selectiveQuestion) {
+    Request Post(final Dictionary<String, String> dictionary, final String url, final ArrayList<String[]> question, final List<String[]> selectiveQuestion) {
         final MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
 

@@ -5,10 +5,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Environment;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,6 +16,7 @@ import android.widget.Toast;
 import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.DataBase.DBReader;
+import com.divofmod.quizer.Utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,44 +44,46 @@ public class QuestionnaireActivity extends AppCompatActivity implements View.OnC
     String[] mStatisticsPhoto; //Фото статистики
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_questionnaire);
-
 
         mSharedPreferences = getSharedPreferences("data",
                 Context.MODE_PRIVATE);
 
-        mSQLiteDatabase = new DBHelper(QuestionnaireActivity.this,
+        mSQLiteDatabase = new DBHelper(this,
                 mSharedPreferences.getString("name_file", ""),
-                new File(getFilesDir().toString() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+                new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
                 getString(R.string.sql_file_name),
                 getString(R.string.old_sql_file_name)).getWritableDatabase();
 
-        ArrayList<String[]> tableQuestionnaire = DBReader.read(mSQLiteDatabase,
-                "questionnaire",
-                new String[]{"name", "description", "music", "picture", "picture_thankyou", "thankyou_text"});
+        final ArrayList<String[]> tableQuestionnaire = Utils.getQuestionnaire(this);
+
+//                DBReader.read(mSQLiteDatabase,
+//                        "questionnaire",
+//                        new String[]{"name", "description", "music", "picture", "picture_thankyou", "thankyou_text"});
 
         findViewById(R.id.end_button).setOnClickListener(this);
         findViewById(R.id.statistics_button).setOnClickListener(this);
         findViewById(R.id.sync_button).setOnClickListener(this);
+//
+//        final TextView queNameTextView = (TextView) findViewById(R.id.questionnaire_name);
+//        final TextView queDescriptionTextView = (TextView) findViewById(R.id.questionnaire_description);
+//        final TextView queThankTextView = (TextView) findViewById(R.id.questionnaire_thankyoutext);
+//        final ImageView pictureImageView = (ImageView) findViewById(R.id.picture);
+//        final ImageView pictureThankYouImageView = (ImageView) findViewById(R.id.picture_thankyou);
+//
+//        queNameTextView.setText(tableQuestionnaire.get(0)[0]);
+//        queDescriptionTextView.setText(tableQuestionnaire.get(0)[1]);
+//        queThankTextView.setText(tableQuestionnaire.get(0)[5]);
 
-        TextView queNameTextView = (TextView) findViewById(R.id.questionnaire_name);
-        TextView queDescriptionTextView = (TextView) findViewById(R.id.questionnaire_description);
-        TextView queThankTextView = (TextView) findViewById(R.id.questionnaire_thankyoutext);
-        ImageView pictureImageView = (ImageView) findViewById(R.id.picture);
-        ImageView pictureThankYouImageView = (ImageView) findViewById(R.id.picture_thankyou);
-
-        queNameTextView.setText(tableQuestionnaire.get(0)[0]);
-        queDescriptionTextView.setText(tableQuestionnaire.get(0)[1]);
-        queThankTextView.setText(tableQuestionnaire.get(0)[5]);
-
-        if (Internet.hasConnection(this))
+        if (Internet.hasConnection(this)) {
             send();
+        }
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(final View v) {
         switch (v.getId()) {
             case R.id.statistics_button:
                 startActivity(new Intent(this, StatisticsActivity.class));
@@ -100,8 +102,9 @@ public class QuestionnaireActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mSQLiteDatabase != null)
+        if (mSQLiteDatabase != null) {
             mSQLiteDatabase.close();
+        }
     }
 
     @Override
@@ -110,28 +113,31 @@ public class QuestionnaireActivity extends AppCompatActivity implements View.OnC
     }
 
     private void openQuitDialog() {
-        AlertDialog.Builder quitDialog = new AlertDialog.Builder(this);
+        final AlertDialog.Builder quitDialog = new AlertDialog.Builder(this);
         quitDialog.setCancelable(true)
                 .setIcon(R.drawable.exit)
                 .setTitle("Выход из приложения")
                 .setMessage("Выйти из приложения?")
 
                 .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(final DialogInterface dialog, final int which) {
                         finish();
                     }
                 })
 
                 .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(final DialogInterface dialog, final int which) {
                     }
                 }).show();
     }
 
     private void send() {
         runOnUiThread(new Runnable() {
+
                           @Override
                           public void run() {
                               final AlertDialog syncDialog = new AlertDialog.Builder(QuestionnaireActivity.this)
@@ -174,14 +180,16 @@ public class QuestionnaireActivity extends AppCompatActivity implements View.OnC
                                   mDictionaryForRequest.put("photo", mPhoto + ".jpg");
                                   mDictionaryForRequest.put("selected_questions", mCommon.get(0)[6]);
 
-                                  OkHttpClient client = new OkHttpClient();
+                                  final OkHttpClient client = new OkHttpClient();
                                   client.newCall(new DoRequest(QuestionnaireActivity.this).Post(mDictionaryForRequest, mSharedPreferences.getString("url", ""), mQuestion, mQuestionSelective))
                                           .enqueue(new Callback() {
+
                                                        @Override
-                                                       public void onFailure(Call call, IOException e) {
+                                                       public void onFailure(final Call call, final IOException e) {
                                                            e.printStackTrace();
                                                            System.out.println("Ошибка");
                                                            runOnUiThread(new Runnable() {
+
                                                                @Override
                                                                public void run() {
                                                                    Toast.makeText(QuestionnaireActivity.this, "Ошибка отправки!", Toast.LENGTH_SHORT).show();
@@ -191,9 +199,9 @@ public class QuestionnaireActivity extends AppCompatActivity implements View.OnC
                                                        }
 
                                                        @Override
-                                                       public void onResponse(Call call, final Response response) throws IOException {
+                                                       public void onResponse(final Call call, final Response response) throws IOException {
 
-                                                           String responseCallback = response.body().string();
+                                                           final String responseCallback = response.body().string();
 
                                                            if (responseCallback.substring(1, responseCallback.length() - 1).equals("1")) {
                                                                mSQLiteDatabase.execSQL("DROP TABLE if exists " + "answers_" + mTables[0]);
@@ -201,7 +209,7 @@ public class QuestionnaireActivity extends AppCompatActivity implements View.OnC
                                                                mSQLiteDatabase.execSQL("DROP TABLE if exists " + "common_" + mTables[0]);
                                                                mSQLiteDatabase.execSQL("DROP TABLE if exists " + "photo_" + mTables[0]);
 
-                                                               SharedPreferences.Editor editor = mSharedPreferences.edit()
+                                                               final SharedPreferences.Editor editor = mSharedPreferences.edit()
                                                                        .putString("Quizzes", mSharedPreferences.getString("Quizzes", "").replace(mTables[0] + ";", "")); //temp-оставшиеся анкеты.
                                                                editor.apply();
 
@@ -227,14 +235,16 @@ public class QuestionnaireActivity extends AppCompatActivity implements View.OnC
                                   mDictionaryForRequest.put("login", mSharedPreferences.getString("login", ""));
                                   mDictionaryForRequest.put("passw", mSharedPreferences.getString("passw", ""));
 
-                                  OkHttpClient client = new OkHttpClient();
+                                  final OkHttpClient client = new OkHttpClient();
                                   client.newCall(new DoRequest(QuestionnaireActivity.this).Post(mDictionaryForRequest, mSharedPreferences.getString("url", ""), mPhoto))
                                           .enqueue(new Callback() {
+
                                                        @Override
-                                                       public void onFailure(Call call, IOException e) {
+                                                       public void onFailure(final Call call, final IOException e) {
                                                            e.printStackTrace();
                                                            System.out.println("Ошибка");
                                                            runOnUiThread(new Runnable() {
+
                                                                @Override
                                                                public void run() {
                                                                    Toast.makeText(QuestionnaireActivity.this, "Ошибка отправки!", Toast.LENGTH_SHORT).show();
@@ -244,15 +254,15 @@ public class QuestionnaireActivity extends AppCompatActivity implements View.OnC
                                                        }
 
                                                        @Override
-                                                       public void onResponse(Call call, final Response response) throws IOException {
+                                                       public void onResponse(final Call call, final Response response) throws IOException {
 
-                                                           String responseCallback = response.body().string();
+                                                           final String responseCallback = response.body().string();
 
                                                            if (responseCallback.substring(1, responseCallback.length() - 1).equals("1")) {
 
                                                                mSQLiteDatabase.execSQL("DROP TABLE if exists " + "photo_statistics_" + mStatisticsPhoto[0]);
 
-                                                               SharedPreferences.Editor editor = mSharedPreferences.edit()
+                                                               final SharedPreferences.Editor editor = mSharedPreferences.edit()
                                                                        .putString("Statistics_photo", mSharedPreferences.getString("Statistics_photo", "").replace(mStatisticsPhoto[0] + ";", "")); //temp-оставшиеся анкеты.
                                                                editor.apply();
                                                                new File(getFilesDir(), "files/" + mPhoto + ".jpg").delete();

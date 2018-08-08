@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.DataBase.DBHelper;
-import com.divofmod.quizer.DataBase.DBReader;
 import com.divofmod.quizer.Utils.Utils;
 import com.divofmod.quizer.model.Auth.AuthRequestModel;
 import com.divofmod.quizer.model.Auth.AuthResponseModel;
@@ -192,6 +191,9 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void downloadConfig(final String pConfigId) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit().putString("name_file", "name_file_name_file");
+        editor.apply();
+
         final Dictionary<String, String> mConfigDictionary = new Hashtable();
 
         final ConfigRequestModel configRequestModel = new ConfigRequestModel(
@@ -308,9 +310,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                         getString(R.string.sql_file_name),
                         getString(R.string.old_sql_file_name)).getWritableDatabase();
 
-                final ArrayList<String[]> mConfig = DBReader.read(sqLiteDatabase,
-                        "config",
-                        new String[]{"title", "value"});
+                final ArrayList<String[]> mConfig = Utils.getConfigValues(this);
 
                 sqLiteDatabase.close();
 
@@ -562,9 +562,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                 getString(R.string.sql_file_name),
                 getString(R.string.old_sql_file_name)).getWritableDatabase();
 
-        final ArrayList<String[]> mConfig = DBReader.read(sqLiteDatabase,
-                "config",
-                new String[]{"title", "value"});
+        final ArrayList<String[]> mConfig = Utils.getConfigValues(this);
 
         sqLiteDatabase.close();
 

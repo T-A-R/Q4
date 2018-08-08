@@ -20,6 +20,7 @@ import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.DataBase.DBReader;
 import com.divofmod.quizer.QuizHelper.PhotoCamera;
 import com.divofmod.quizer.QuizHelper.StopWatch;
+import com.divofmod.quizer.Utils.Utils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -44,28 +45,31 @@ public class StatisticsActivity extends AppCompatActivity implements View.OnClic
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mSharedPreferences = getSharedPreferences("data",
                 Context.MODE_PRIVATE);
 
-        mSQLiteDatabase = new DBHelper(StatisticsActivity.this,
+        mSQLiteDatabase = new DBHelper(this,
                 mSharedPreferences.getString("name_file", ""),
-                new File(getFilesDir().toString() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+                new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
                 getString(R.string.sql_file_name),
                 getString(R.string.old_sql_file_name)).getWritableDatabase();
 
-        statisticsQuestion = DBReader.read(mSQLiteDatabase,
-                "statistic_data",
-                new String[]{"questionnaire_id", "question_id", "answer_id", "percent_1", "percent_2", "percent_3"});
-        tableAnswer = DBReader.read(mSQLiteDatabase,
-                "answer",
-                new String[]{"id", "title", "picture", "question_id", "next_question"});
-        Statistics[] stats = new Statistics[statisticsQuestion.size()];
+        // TODO: 8/8/18 WTF??
+        statisticsQuestion = new ArrayList<>();
+
+//        statisticsQuestion = DBReader.read(mSQLiteDatabase,
+//                "statistic_data",
+//                new String[]{"questionnaire_id", "question_id", "answer_id", "percent_1", "percent_2", "percent_3"});
+
+        tableAnswer = Utils.getAnswers(this);
+
+        final Statistics[] stats = new Statistics[statisticsQuestion.size()];
 
         // Min + (int)(Math.random() * ((Max - Min) + 1)) Random number pattern
-        int randomNumber = 3 + (int) (Math.random() * ((5 - 3) + 1));
+        final int randomNumber = 3 + (int) (Math.random() * ((5 - 3) + 1));
         for (int i = 0; i < stats.length; i++)
             stats[i] = new Statistics(setStat(statisticsQuestion.get(i)[2]), statisticsQuestion.get(i)[randomNumber]);
 
@@ -87,8 +91,8 @@ public class StatisticsActivity extends AppCompatActivity implements View.OnClic
 
     }
 
-    private String setStat(String question_id) {
-        for (String[] temp : tableAnswer)
+    private String setStat(final String question_id) {
+        for (final String[] temp : tableAnswer)
             if (temp[0].equals(question_id))
                 return temp[1];
         return null;
@@ -102,19 +106,19 @@ public class StatisticsActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(final View view) {
         switch (view.getId()) {
             case R.id.statistics_btn: {
                 if (StopWatch.getStatisticsTime() >= 2500) {
 
-                    String photoDate = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.getDefault()).format(new Date());
+                    final String photoDate = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.getDefault()).format(new Date());
 
 
                     mSQLiteDatabase.execSQL("create table if not exists photo_statistics_" + photoDate + "(names text);");
                     mSQLiteDatabase.execSQL("insert into photo_statistics_" + photoDate + "(names)" +
                             "values('" + mPhotoName + "')");
 
-                    SharedPreferences.Editor editor = mSharedPreferences.edit()
+                    final SharedPreferences.Editor editor = mSharedPreferences.edit()
                             .putString("Statistics_photo", mSharedPreferences.getString("Statistics_photo", "") + photoDate + ";");
                     editor.apply();
 
@@ -130,7 +134,7 @@ public class StatisticsActivity extends AppCompatActivity implements View.OnClic
 
     }
 
-    private Statistics getModel(int position) {
+    private Statistics getModel(final int position) {
         return mStatisticsAdapter.getItem(position);
     }
 
@@ -138,14 +142,14 @@ public class StatisticsActivity extends AppCompatActivity implements View.OnClic
 
         private LayoutInflater mInflater;
 
-        StatisticsAdapter(Context context, Statistics[] list) {
+        StatisticsAdapter(final Context context, final Statistics[] list) {
             super(context, R.layout.statistics_item, list);
             mInflater = LayoutInflater.from(context);
         }
 
-        public View getView(int position, View convertView,
-                            ViewGroup parent) {
-            ViewHolder holder;
+        public View getView(final int position, final View convertView,
+                            final ViewGroup parent) {
+            final ViewHolder holder;
             View row = convertView;
             if (row == null) {
 
@@ -160,7 +164,7 @@ public class StatisticsActivity extends AppCompatActivity implements View.OnClic
 
                 holder = (ViewHolder) row.getTag();
             }
-            Statistics statistics = getModel(position);
+            final Statistics statistics = getModel(position);
 
             holder.statisticsTitle.setText(statistics.getTitle());
 

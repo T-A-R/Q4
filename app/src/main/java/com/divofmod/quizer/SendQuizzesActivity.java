@@ -183,12 +183,15 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
                                 mQuestion = DBReader.read(mSQLiteDatabase,
                                         "answers_" + mTables[0],
                                         new String[]{"answer_id", "duration_time_question", "text_open_answer"});
+
                                 mQuestionSelective = DBReader.read(mSQLiteDatabase,
                                         "answers_selective_" + mTables[0],
                                         new String[]{"answer_id", "duration_time_question"});
+
                                 mCommon = DBReader.read(mSQLiteDatabase,
                                         "common_" + mTables[0],
                                         new String[]{"project_id", "questionnaire_id", "user_project_id", "date_interview", "gps", "duration_time_questionnaire", "selected_questions", "login"});
+
                                 mPhoto = DBReader.read(mSQLiteDatabase,
                                         "photo_" + mTables[0],
                                         "names");

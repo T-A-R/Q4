@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.DataBase.DBReader;
+import com.divofmod.quizer.Utils.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -34,59 +35,60 @@ public class QuotaActivity extends AppCompatActivity implements View.OnClickList
     QuotaAdapter mQuotaAdapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mSharedPreferences = getSharedPreferences("data",
                 Context.MODE_PRIVATE);
 
-        mSQLiteDatabase = new DBHelper(QuotaActivity.this,
+        mSQLiteDatabase = new DBHelper(this,
                 mSharedPreferences.getString("name_file", ""),
                 new File(getFilesDir().toString() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
                 getString(R.string.sql_file_name),
                 getString(R.string.old_sql_file_name)).getWritableDatabase();
 
-        ArrayList<String[]> tableQuota = DBReader.read(mSQLiteDatabase,
-                "answer",
-                new String[]{"id", "title"});
+        final ArrayList<String[]> tableQuota = Utils.getAnswers(this);
 
         String quota = mSharedPreferences.getString("quota", "1");
         String[] quotasTemp = quota.substring(1, quota.length() - 1).split(";");
-        for (String re : quotasTemp) {
-            System.out.println(re);
-            if (re.equals("1")) {
-                startActivity(new Intent(QuotaActivity.this, QuestionsActivity.class));
+
+//         TODO: 8/8/18 SIMPLE VERSION WITHOUT QUOTA
+//        for (final String re : quotasTemp) {
+//            System.out.println(re);
+//            if (re.equals("1")) {
+                startActivity(new Intent(this, QuestionsActivity.class));
                 finish();
                 return;
-            }
-        }
+//            }
+//        }
 
-        quota = quota.substring(1, quota.length() - 1).replaceAll(",", " >> ");
-
-        for (String[] tQ : tableQuota)
-            quota = quota.replaceAll(tQ[0], tQ[1]);
-
-        quotasTemp = quota.split(";");
-        ArrayList<Quota> quotas = new ArrayList<>();
-        for (String aQuotasTemp : quotasTemp)
-            if (!aQuotasTemp.split("\\|")[2].equals("0"))
-                quotas.add(new Quota(aQuotasTemp.split("\\|")[0],
-                        aQuotasTemp.split("\\|")[1],
-                        aQuotasTemp.split("\\|")[2]));
-
-        setContentView(R.layout.activity_quota);
-
-        findViewById(R.id.start_button).setOnClickListener(this);
-
-        mListView = (ListView) findViewById(R.id.listView);
-        mQuotaAdapter = new QuotaAdapter(QuotaActivity.this, quotas);
-        mListView.setAdapter(mQuotaAdapter);
+//        quota = quota.substring(1, quota.length() - 1).replaceAll(",", " >> ");
+//
+//        for (final String[] tQ : tableQuota)
+//            quota = quota.replaceAll(tQ[0], tQ[1]);
+//
+//        quotasTemp = quota.split(";");
+//        final ArrayList<Quota> quotas = new ArrayList<>();
+//        for (final String aQuotasTemp : quotasTemp)
+//            // TODO: 8/8/18 WTF???
+//            if (!aQuotasTemp.split("\\|")[2].equals("0"))
+//                quotas.add(new Quota(aQuotasTemp.split("\\|")[0],
+//                        aQuotasTemp.split("\\|")[1],
+//                        aQuotasTemp.split("\\|")[2]));
+//
+//        setContentView(R.layout.activity_quota);
+//
+//        findViewById(R.id.start_button).setOnClickListener(this);
+//
+//        mListView = (ListView) findViewById(R.id.listView);
+//        mQuotaAdapter = new QuotaAdapter(this, quotas);
+//        mListView.setAdapter(mQuotaAdapter);
 
     }
 
     @Override
-    public void onClick(View v) {
-        startActivity(new Intent(QuotaActivity.this, QuestionsActivity.class));
+    public void onClick(final View v) {
+        startActivity(new Intent(this, QuestionsActivity.class));
         finish();
     }
 
@@ -96,7 +98,7 @@ public class QuotaActivity extends AppCompatActivity implements View.OnClickList
         mSQLiteDatabase.close();
     }
 
-    private Quota getModel(int position) {
+    private Quota getModel(final int position) {
         return mQuotaAdapter.getItem(position);
     }
 
@@ -104,14 +106,14 @@ public class QuotaActivity extends AppCompatActivity implements View.OnClickList
 
         private LayoutInflater mInflater;
 
-        QuotaAdapter(Context context, ArrayList<Quota> list) {
+        QuotaAdapter(final Context context, final ArrayList<Quota> list) {
             super(context, R.layout.quota_item, list);
             mInflater = LayoutInflater.from(context);
         }
 
-        public View getView(int position, View convertView,
-                            ViewGroup parent) {
-            QuotaAdapter.ViewHolder holder;
+        public View getView(final int position, final View convertView,
+                            final ViewGroup parent) {
+            final QuotaAdapter.ViewHolder holder;
             View row = convertView;
             if (row == null) {
 
@@ -126,7 +128,7 @@ public class QuotaActivity extends AppCompatActivity implements View.OnClickList
 
                 holder = (QuotaAdapter.ViewHolder) row.getTag();
 
-            Quota quota = getModel(position);
+            final Quota quota = getModel(position);
 
             holder.quotaSequence.setText(quota.getSequence());
 
@@ -158,8 +160,8 @@ public class QuotaActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void openQuitDialog() {
-        AlertDialog.Builder quitDialog = new AlertDialog.Builder(
-                QuotaActivity.this);
+        final AlertDialog.Builder quitDialog = new AlertDialog.Builder(
+                this);
         quitDialog.setCancelable(true)
                 .setIcon(R.drawable.ico)
                 .setTitle("Выход из опроса")
@@ -167,7 +169,7 @@ public class QuotaActivity extends AppCompatActivity implements View.OnClickList
 
                 .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(final DialogInterface dialog, final int which) {
                         startActivity(new Intent(QuotaActivity.this, ProjectActivity.class));
                         finish();
                     }
@@ -175,7 +177,7 @@ public class QuotaActivity extends AppCompatActivity implements View.OnClickList
 
                 .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(final DialogInterface dialog, final int which) {
                     }
                 })
 

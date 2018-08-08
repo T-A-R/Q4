@@ -60,11 +60,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(final SQLiteDatabase db) {
-        final ArrayList<String> queries = createQueries(path, name_file);
-        for (int i = 0; i < queries.size(); i++) {
-            db.execSQL("create table if not exists " + queries.get(i).split(" values ")[0].replaceFirst("insert into ", "").replaceAll(", ", " text, ").replaceFirst("\\)", " text\\)") + ";");
-            db.execSQL(queries.get(i));
-        }
+//        final ArrayList<String> queries = createQueries(path, name_file);
+//        for (int i = 0; i < queries.size(); i++) {
+//            db.execSQL("create table if not exists " + queries.get(i).split(" values ")[0].replaceFirst("insert into ", "").replaceAll(", ", " text, ").replaceFirst("\\)", " text\\)") + ";");
+//            db.execSQL(queries.get(i));
+//        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.divofmod.quizer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -47,7 +48,7 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
     TextView mAudioNotSend;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_send_quizzes);
@@ -79,12 +80,16 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
 
         findViewById(R.id.send_audio).setOnClickListener(this);
         findViewById(R.id.send_quiz).setOnClickListener(this);
+        findViewById(R.id.sms_button).setOnClickListener(this);
     }
 
     @Override
-    public void onClick(View view) {
-
+    public void onClick(final View view) {
         switch (view.getId()) {
+            case R.id.sms_button:
+                startActivity(new Intent(this, SMSStatusActivity.class));
+
+                break;
             case R.id.send_audio:
                 if (Internet.hasConnection(this)) {
                     runOnUiThread(new Runnable() {
@@ -110,11 +115,11 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
                                 mDictionaryForRequest.put("login", mSharedPreferences.getString("login", ""));
                                 mDictionaryForRequest.put("passw", mSharedPreferences.getString("passw", ""));
 
-                                OkHttpClient client = new OkHttpClient();
+                                final OkHttpClient client = new OkHttpClient();
                                 client.newCall(new DoRequest(SendQuizzesActivity.this).Post(mDictionaryForRequest, mSharedPreferences.getString("url", ""), mAudio))
                                         .enqueue(new Callback() {
                                                      @Override
-                                                     public void onFailure(Call call, IOException e) {
+                                                     public void onFailure(final Call call, final IOException e) {
                                                          e.printStackTrace();
                                                          System.out.println("Ошибка");
                                                          runOnUiThread(new Runnable() {
@@ -127,17 +132,17 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
                                                      }
 
                                                      @Override
-                                                     public void onResponse(Call call, final Response response) throws IOException {
+                                                     public void onResponse(final Call call, final Response response) throws IOException {
 
-                                                         String responseCallback = response.body().string();
+                                                         final String responseCallback = response.body().string();
 
                                                          if (responseCallback.substring(1, responseCallback.length() - 1).equals("1")) {
                                                              mSQLiteDatabase.execSQL("DROP TABLE if exists " + "audio_" + mAudioTables[0]);
 
-                                                             SharedPreferences.Editor editor = mSharedPreferences.edit()
+                                                             final SharedPreferences.Editor editor = mSharedPreferences.edit()
                                                                      .putString("Quizzes_audio", mSharedPreferences.getString("Quizzes_audio", "").replace(mAudioTables[0] + ";", "")); //temp-оставшиеся анкеты.
                                                              editor.apply();
-                                                             for (String[] audio : mAudio) {
+                                                             for (final String[] audio : mAudio) {
                                                                  if (new File(getFilesDir(), "files/" + audio[0] + ".amr").delete())
                                                                      System.out.println(audio[0] + ".amr true");
                                                                  else
@@ -211,11 +216,11 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
                                 mDictionaryForRequest.put("photo", mPhoto + ".jpg");
                                 mDictionaryForRequest.put("selected_questions", mCommon.get(0)[6]);
 
-                                OkHttpClient client = new OkHttpClient();
+                                final OkHttpClient client = new OkHttpClient();
                                 client.newCall(new DoRequest(SendQuizzesActivity.this).Post(mDictionaryForRequest, mSharedPreferences.getString("url", ""), mQuestion, mQuestionSelective))
                                         .enqueue(new Callback() {
                                                      @Override
-                                                     public void onFailure(Call call, IOException e) {
+                                                     public void onFailure(final Call call, final IOException e) {
                                                          e.printStackTrace();
                                                          System.out.println("Ошибка");
                                                          runOnUiThread(new Runnable() {
@@ -228,9 +233,9 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
                                                      }
 
                                                      @Override
-                                                     public void onResponse(Call call, final Response response) throws IOException {
+                                                     public void onResponse(final Call call, final Response response) throws IOException {
 
-                                                         String responseCallback = response.body().string();
+                                                         final String responseCallback = response.body().string();
 
                                                          if (responseCallback.substring(1, responseCallback.length() - 1).equals("1")) {
                                                              mSQLiteDatabase.execSQL("DROP TABLE if exists " + "answers_" + mTables[0]);
@@ -238,7 +243,7 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
                                                              mSQLiteDatabase.execSQL("DROP TABLE if exists " + "common_" + mTables[0]);
                                                              mSQLiteDatabase.execSQL("DROP TABLE if exists " + "photo_" + mTables[0]);
 
-                                                             SharedPreferences.Editor editor = mSharedPreferences.edit()
+                                                             final SharedPreferences.Editor editor = mSharedPreferences.edit()
                                                                      .putString("Quizzes", mSharedPreferences.getString("Quizzes", "").replace(mTables[0] + ";", "")); //temp-оставшиеся анкеты.
                                                              editor.apply();
 
@@ -270,11 +275,11 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
                                 mDictionaryForRequest.put("login", mSharedPreferences.getString("login", ""));
                                 mDictionaryForRequest.put("passw", mSharedPreferences.getString("passw", ""));
 
-                                OkHttpClient client = new OkHttpClient();
+                                final OkHttpClient client = new OkHttpClient();
                                 client.newCall(new DoRequest(SendQuizzesActivity.this).Post(mDictionaryForRequest, mSharedPreferences.getString("url", ""), mPhoto))
                                         .enqueue(new Callback() {
                                                      @Override
-                                                     public void onFailure(Call call, IOException e) {
+                                                     public void onFailure(final Call call, final IOException e) {
                                                          e.printStackTrace();
                                                          System.out.println("Ошибка");
                                                          runOnUiThread(new Runnable() {
@@ -287,15 +292,15 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
                                                      }
 
                                                      @Override
-                                                     public void onResponse(Call call, final Response response) throws IOException {
+                                                     public void onResponse(final Call call, final Response response) throws IOException {
 
-                                                         String responseCallback = response.body().string();
+                                                         final String responseCallback = response.body().string();
 
                                                          if (responseCallback.substring(1, responseCallback.length() - 1).equals("1")) {
 
                                                              mSQLiteDatabase.execSQL("DROP TABLE if exists " + "photo_statistics_" + mStatisticsPhoto[0]);
 
-                                                             SharedPreferences.Editor editor = mSharedPreferences.edit()
+                                                             final SharedPreferences.Editor editor = mSharedPreferences.edit()
                                                                      .putString("Statistics_photo", mSharedPreferences.getString("Statistics_photo", "").replace(mStatisticsPhoto[0] + ";", "")); //temp-оставшиеся анкеты.
                                                              editor.apply();
                                                              new File(getFilesDir(), "files/" + mPhoto + ".jpg").delete();

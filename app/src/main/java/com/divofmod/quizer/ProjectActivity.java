@@ -115,6 +115,12 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
                     permissionsArrayList.add(Manifest.permission.RECORD_AUDIO);
                 }
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+                    permissionsArrayList.add(Manifest.permission.SEND_SMS);
+                }
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                    permissionsArrayList.add(Manifest.permission.READ_PHONE_STATE);
+                }
                 final String[] permissionArray = new String[permissionsArrayList.size()];
                 for (int i = 0; i < permissionArray.length; i++) {
                     permissionArray[i] = permissionsArrayList.get(i);

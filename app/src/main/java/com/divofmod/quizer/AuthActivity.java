@@ -1,11 +1,16 @@
 package com.divofmod.quizer;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -41,6 +46,8 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
+
+import static com.divofmod.quizer.QuestionsActivity.PERMISSION_SEND_SMS;
 
 public class AuthActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -80,7 +87,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         mSignInButton.setOnClickListener(this);
 
         mLoginEditText.setText(mSharedPreferences.getString("login", ""));
-
     }
 
     @Override

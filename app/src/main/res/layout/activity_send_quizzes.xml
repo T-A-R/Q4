@@ -103,4 +103,12 @@
 
     </TableLayout>
 
+    <Button
+        android:id="@+id/sms_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:text="SMS"
+        android:theme="@style/ThemeOverlay.MyDarkButton"/>
+
 </LinearLayout>

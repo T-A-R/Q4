@@ -5,6 +5,7 @@ import java.io.File;
 class Answer {
 
     private final String mId;
+    private final String mNumber;
     private final String mTitle;
     private final File mPicture;
     private Boolean mCheck;
@@ -16,8 +17,9 @@ class Answer {
     private final int mNextQuestion;
     private final String mTableQuestionId;
 
-    Answer(final String id, final String title, final File picture, final String polyAnswer, final String maxAnswers, final String isOpenAnswer, final String nextQuestion, final String tableQuestionId) {
+    Answer(final String id, final String title, final File picture, final String polyAnswer, final String maxAnswers, final String isOpenAnswer, final String nextQuestion, final String tableQuestionId, final String pNumber) {
         mId = id;
+        mNumber = pNumber;
         mTitle = title;
         mPicture = picture;
         mCheck = false;
@@ -27,6 +29,10 @@ class Answer {
         mOpenAnswer = "";
         mNextQuestion = Integer.parseInt(nextQuestion);
         mTableQuestionId = tableQuestionId;
+    }
+
+    public String getNumber() {
+        return mNumber;
     }
 
     public String getId() {

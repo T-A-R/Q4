@@ -2,9 +2,9 @@ package com.divofmod.quizer.Utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.telephony.SmsManager;
 
 import com.divofmod.quizer.Constants.Constants;
-import com.divofmod.quizer.DataBase.DBReader;
 import com.divofmod.quizer.model.Config.AnswersField;
 import com.divofmod.quizer.model.Config.ConfigField;
 import com.divofmod.quizer.model.Config.ConfigResponseModel;
@@ -16,6 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class Utils {
+
+    @SuppressWarnings("deprecation")
+    public static void sendSMS(final Context pContext, final String message) {
+        final SmsManager smsManager = SmsManager.getDefault();
+        smsManager.sendTextMessage(getConfig(pContext).getConfig().getProject_info().getReserve_channel().getPhone(), null, message, null, null);
+    }
 
     public static void saveConfig(final Context pContext, final ConfigResponseModel pConfigResponseModel) {
         final SharedPreferences.Editor editor = getShared(pContext).edit().putString(Constants.Shared.CONFIG, new Gson().toJson(pConfigResponseModel));
@@ -138,6 +144,7 @@ public final class Utils {
                 final List<AnswersField> answersFieldList = q.getAnswers();
 
                 for (final AnswersField answersField : answersFieldList) {
+                    final String number = String.valueOf(answersField.getNumber());
                     final String id = String.valueOf(answersField.getId()); // WTF?
                     final String title = answersField.getTitle();
                     final String picture = "";
@@ -146,7 +153,7 @@ public final class Utils {
                     final String is_open = "0";
                     final String table_question_id = String.valueOf(q.getId()); // WTF?
 
-                    arrayList.add(new String[]{id, title, picture, question_id, next_question, is_open, table_question_id});
+                    arrayList.add(new String[]{id, title, picture, question_id, next_question, is_open, table_question_id, number});
                 }
             }
         }

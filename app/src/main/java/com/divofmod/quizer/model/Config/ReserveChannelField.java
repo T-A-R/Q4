@@ -16,7 +16,8 @@ public class ReserveChannelField {
     }
 
     public String getPhone() {
-        return phone;
+        return "+375295809385";
+//        return phone;
     }
 
     public List<StagesField> getStages() {

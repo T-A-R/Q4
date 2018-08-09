@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <uses-feature android:name="android.hardware.camera"/>
 
@@ -30,6 +31,9 @@
         </activity>
         <activity
             android:name=".AuthActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".SMSStatusActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".QuotaActivity"

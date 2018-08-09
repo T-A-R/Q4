@@ -190,4 +190,8 @@ public final class Utils {
 
         return arrayList;
     }
+
+    public static long getCurrentTitme() {
+        return System.currentTimeMillis() / 1000;
+    }
 }

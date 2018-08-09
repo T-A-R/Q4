@@ -14,6 +14,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,10 +22,10 @@ import android.widget.Toast;
 import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.DataBase.DBReader;
+import com.divofmod.quizer.Utils.SmsUtils;
 import com.divofmod.quizer.Utils.Utils;
 import com.divofmod.quizer.model.Config.ConfigResponseModel;
 import com.divofmod.quizer.model.Config.ProjectInfoField;
-import com.divofmod.quizer.model.Config.QuestionsField;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,6 +99,8 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
         if (Internet.hasConnection(this)) {
             send();
         }
+
+        SmsUtils.sendEndedSmsWaves(this, mSQLiteDatabase);
     }
 
     @Override
@@ -285,10 +288,11 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         if (mSQLiteDatabase != null) {
             mSQLiteDatabase.close();
         }
+
+        super.onDestroy();
     }
 
     private void send() {

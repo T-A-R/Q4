@@ -2,6 +2,11 @@ package com.divofmod.quizer.Constants;
 
 public class Constants {
 
+    public interface DatabaseValues {
+
+        String DATABASE_NAME = "quizer_database";
+    }
+
     public interface DefaultValues {
 
         String UNKNOWN = "unknown";
@@ -24,6 +29,11 @@ public class Constants {
         String LOGIN = "login";
         String PASSW = "passw";
         String CONFIG = "config_shared";
+    }
+
+    public interface SmsDatabase {
+
+        String TABLE_NAME = "sms_table";
     }
 
 }

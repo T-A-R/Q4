@@ -1,4 +1,4 @@
-package com.divofmod.quizer.model;
+package com.divofmod.quizer.model.Sms;
 
 public class SmsAnswerModel {
 

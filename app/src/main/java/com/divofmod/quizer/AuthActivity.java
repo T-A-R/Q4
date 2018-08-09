@@ -197,7 +197,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void downloadConfig(final String pConfigId) {
-        SharedPreferences.Editor editor = mSharedPreferences.edit().putString("name_file", "name_file_name_file");
+        SharedPreferences.Editor editor = mSharedPreferences.edit().putString("name_file", Constants.DatabaseValues.DATABASE_NAME);
         editor.apply();
 
         final Dictionary<String, String> mConfigDictionary = new Hashtable();

@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.DataBase.DBReader;
+import com.divofmod.quizer.Utils.SmsUtils;
 import com.divofmod.quizer.Utils.Utils;
 
 import java.io.File;
@@ -80,6 +81,8 @@ public class QuestionnaireActivity extends AppCompatActivity implements View.OnC
         if (Internet.hasConnection(this)) {
             send();
         }
+
+        SmsUtils.sendEndedSmsWaves(this, mSQLiteDatabase);
     }
 
     @Override

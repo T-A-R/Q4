@@ -46,11 +46,13 @@ import com.divofmod.quizer.QuizHelper.Audio;
 import com.divofmod.quizer.QuizHelper.AudioRecorder;
 import com.divofmod.quizer.QuizHelper.PhotoCamera;
 import com.divofmod.quizer.QuizHelper.StopWatch;
+import com.divofmod.quizer.Utils.SmsUtils;
 import com.divofmod.quizer.Utils.Utils;
 import com.divofmod.quizer.model.Config.QuestionsMatchesField;
 import com.divofmod.quizer.model.Config.StagesField;
-import com.divofmod.quizer.model.SmsAnswerModel;
-import com.divofmod.quizer.model.SmsFullAnswerModel;
+import com.divofmod.quizer.model.Sms.SmsAnswerModel;
+import com.divofmod.quizer.model.Sms.SmsDatabaseModel;
+import com.divofmod.quizer.model.Sms.SmsFullAnswerModel;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -158,8 +160,6 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         mConfig = Utils.getConfigValues(this);
 
         mUserId = Utils.getQuestionnaireId(this);
-
-        mSQLiteDatabase.close();
 
         mConfigMap = new HashMap<>();
         for (int i = 0; i < mConfig.size(); i++) {
@@ -1245,12 +1245,19 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                     countQuestions + "','" +
                     mSharedPreferences.getString("login", "") + "')");
 
-            mSQLiteDatabase.close();
-
             saveSmsAnswers();
             startActivity(new Intent(this, QuestionnaireActivity.class));
             finish();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mSQLiteDatabase != null) {
+            mSQLiteDatabase.close();
+        }
+
+        super.onDestroy();
     }
 
     private void saveSmsAnswers() {
@@ -1267,6 +1274,8 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
                 if (startTime >= currentTime && endTime <= currentTime) {
                     final String questionID = smsAnswerModel.getQestionID();
+                    mSmsFullAnswerModel.setStartTime(startTime);
+                    mSmsFullAnswerModel.setEndTime(endTime);
 
                     final List<QuestionsMatchesField> questionsMatchesFieldList = stagesField.getQuestions_matches();
 
@@ -1288,7 +1297,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         Log.d("thecriser", "END");
 
         // TODO: 8/9/18 !!!
-//        saveOrUpdateInDataBase(mSmsFullAnswerModel);
+        processSmsAnswers(mSmsFullAnswerModel);
 
 //        for (final SmsAnswerModel smsAnswerModel : mSmsFullAnswerModel.getAnswers()) {
 //            final StringBuilder message = new StringBuilder("#" + smsAnswerModel.getSmsNumber());
@@ -1299,9 +1308,87 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 //
 //            mCurrentMessage = message.toString();
 //
-//            saveOrUpdateInDataBase();
+//            processSmsAnswers();
 //            Utils.sendSMS(this, mCurrentMessage);
 //        }
+    }
+
+    private void processSmsAnswers(final SmsFullAnswerModel pSmsFullAnswerModel) {
+        final long startTime = pSmsFullAnswerModel.getStartTime();
+        final long endTime = pSmsFullAnswerModel.getEndTime();
+
+        mSQLiteDatabase.execSQL("create table if not exists " + Constants.SmsDatabase.TABLE_NAME + "(start_time text,end_time text,message text,question_id text,sms_num text, is_delivered bool);");
+
+        insertOrUpdateToDatabase(pSmsFullAnswerModel);
+        Log.d("thecriser", "after inserting");
+//        getSmsFromDatabase();
+    }
+
+    private void insertOrUpdateToDatabase(final SmsFullAnswerModel pSmsFullAnswerModel) {
+        for (final SmsAnswerModel smsAnswerModel : pSmsFullAnswerModel.getAnswers()) {
+            final StringBuilder message = new StringBuilder("#" + smsAnswerModel.getSmsNumber());
+
+            for (final String value : smsAnswerModel.getAnswers()) {
+                message.append(" ").append(value);
+            }
+
+            mCurrentMessage = message.toString();
+
+            boolean isExistField = false;
+            String answersInDatabase = null;
+            final List<SmsDatabaseModel> smsDatabaseModelList = SmsUtils.getAllSmses(mSQLiteDatabase);
+            final long startTime = pSmsFullAnswerModel.getStartTime();
+            final long endTime = pSmsFullAnswerModel.getEndTime();
+            final String questionId = smsAnswerModel.getQestionID();
+            final String smsNumber = smsAnswerModel.getSmsNumber();
+
+            for (final SmsDatabaseModel model : smsDatabaseModelList) {
+                if (startTime == Long.parseLong(model.getStartTime()) &&
+                        endTime == Long.parseLong(model.getEndTime()) &&
+                        questionId.equals(model.getQuestionID()) &&
+                        smsNumber.equals(model.getSmsNumber())) {
+                    isExistField = true;
+                    answersInDatabase = model.getMessage();
+                }
+            }
+
+            if (isExistField) {
+                final String[] answersAdditionalArray = mCurrentMessage.split(" ");
+                final String[] answersInDatabaseArray = answersInDatabase.split(" ");
+                final String[] resultArray = new String[answersInDatabaseArray.length];
+
+                for (int i = 0; i < answersInDatabaseArray.length; i++) {
+                    if (i == 0) {
+                        resultArray[i] = answersInDatabaseArray[i];
+                    } else {
+                        final int first = Integer.parseInt(answersInDatabaseArray[i]);
+                        final int second = Integer.parseInt(answersAdditionalArray[i]);
+                        final int sum = first + second;
+
+                        resultArray[i] = String.valueOf(sum);
+                    }
+                }
+
+                final StringBuilder updatedMessage = new StringBuilder();
+
+                for (int i = 0; i < resultArray.length; i++) {
+                    if (i == 0) {
+                        updatedMessage.append(resultArray[i]);
+                    } else {
+                        updatedMessage.append(" ").append(resultArray[i]);
+                    }
+                }
+
+                mSQLiteDatabase.execSQL("update " + Constants.SmsDatabase.TABLE_NAME + " set " + "message = '" + updatedMessage + "' where " +
+                        "start_time = '" + startTime + "' AND " +
+                        "end_time = '" + endTime + "' AND " +
+                        "question_id = '" + questionId + "' AND " +
+                        "sms_num = '" + smsNumber + "'");
+            } else {
+                mSQLiteDatabase.execSQL("insert into " + Constants.SmsDatabase.TABLE_NAME + " (start_time,end_time,message,question_id,sms_num,is_delivered) " +
+                        "values('" + startTime + "','" + endTime + "','" + mCurrentMessage + "','" + questionId + "','" + smsNumber + "','false')");
+            }
+        }
     }
 
     private class AnswerAdapter extends ArrayAdapter<Answer> {

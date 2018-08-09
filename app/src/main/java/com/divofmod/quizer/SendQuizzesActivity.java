@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.DataBase.DBReader;
+import com.divofmod.quizer.sms.SMSStatusActivity;
 
 import java.io.File;
 import java.io.IOException;

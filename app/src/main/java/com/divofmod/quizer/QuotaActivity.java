@@ -49,8 +49,8 @@ public class QuotaActivity extends AppCompatActivity implements View.OnClickList
 
         final ArrayList<String[]> tableQuota = Utils.getAnswers(this);
 
-        String quota = mSharedPreferences.getString("quota", "1");
-        String[] quotasTemp = quota.substring(1, quota.length() - 1).split(";");
+//        String quota = mSharedPreferences.getString("quota", "1");
+//        String[] quotasTemp = quota.substring(1, quota.length() - 1).split(";");
 
 //         TODO: 8/8/18 SIMPLE VERSION WITHOUT QUOTA
 //        for (final String re : quotasTemp) {

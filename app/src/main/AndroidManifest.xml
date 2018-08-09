@@ -33,7 +33,7 @@
             android:name=".AuthActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".SMSStatusActivity"
+            android:name=".sms.SMSStatusActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".QuotaActivity"

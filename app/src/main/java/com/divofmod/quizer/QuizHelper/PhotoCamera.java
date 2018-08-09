@@ -132,29 +132,36 @@ public class PhotoCamera {
                                 e.printStackTrace();
                             }
                             mCamera.startPreview();
-                            mCamera.takePicture(null, null, null, new Camera.PictureCallback() {
-                                @Override
-                                public void onPictureTaken(final byte[] data, Camera camera) {
-                                    new Thread(new Runnable() {
-                                        public void run() {
-                                            try {
-                                                FileOutputStream os = new FileOutputStream(new File(
-                                                        mContext.getFilesDir(), "files/" + mPhotoName + ".jpg"));
-                                                os.write(data);
-                                                os.close();
-                                            } catch (Exception ignored) {
-                                            }
-                                        }
-                                    }).start();
+                            try {
+                                mCamera.takePicture(null, null, null, new Camera.PictureCallback() {
 
-                                    if (mCamera != null) {
-                                        mCamera.setPreviewCallback(null);
-                                        mCamera.stopPreview();
-                                        mCamera.release();
-                                        mCamera = null;
+                                    @Override
+                                    public void onPictureTaken(final byte[] data, Camera camera) {
+                                        new Thread(new Runnable() {
+
+                                            public void run() {
+                                                try {
+                                                    FileOutputStream os = new FileOutputStream(new File(
+                                                            mContext.getFilesDir(), "files/" + mPhotoName + ".jpg"));
+                                                    os.write(data);
+                                                    os.close();
+                                                } catch (Exception ignored) {
+                                                }
+                                            }
+                                        }).start();
+
+                                        if (mCamera != null) {
+                                            mCamera.setPreviewCallback(null);
+                                            mCamera.stopPreview();
+                                            mCamera.release();
+                                            mCamera = null;
+                                        }
                                     }
-                                }
-                            });
+                                });
+                            } catch (Exception pE) {
+
+                            }
+
                             break;
                         }
                     }

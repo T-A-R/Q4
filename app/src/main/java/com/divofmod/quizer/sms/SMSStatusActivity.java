@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 
 import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.R;
@@ -27,6 +28,10 @@ public class SMSStatusActivity extends AppCompatActivity {
 
     public void onBackClick(final View view) {
         onBackPressed();
+    }
+
+    public void onSendNotEndedSmses(final View view) {
+        SmsUtils.sendNotEndedSmsWaves(this, mSQLiteDatabase);
     }
 
     @Override
@@ -64,9 +69,23 @@ public class SMSStatusActivity extends AppCompatActivity {
         recyclerView.setAdapter(mAdapter);
     }
 
+    private void updateCount(final List<SmsDatabaseModel> list) {
+        int notSendedCount = 0;
+
+        for (final SmsDatabaseModel smsDatabaseModel : list) {
+            if (!smsDatabaseModel.isDelivered()) {
+                notSendedCount++;
+            }
+        }
+
+        ((TextView) findViewById(R.id.not_sended_value)).setText(notSendedCount + "");
+    }
+
     private List<SmsStatusViewModel> getModel() {
         final List<SmsStatusViewModel> smsStatusViewModels = new ArrayList<>();
         final List<SmsDatabaseModel> list = SmsUtils.getAllSmses(mSQLiteDatabase);
+
+        updateCount(list);
         final List<StagesField> stages = Utils.getConfig(this).getConfig().getProject_info().getReserve_channel().getStages();
 
         for (final StagesField st : stages) {
@@ -75,7 +94,8 @@ public class SMSStatusActivity extends AppCompatActivity {
             final long endTime = Long.parseLong(st.getTime_to());
 
             for (final SmsDatabaseModel smsModel : list) {
-                if (startTime == Long.parseLong(smsModel.getStartTime()) && endTime == Long.parseLong(smsModel.getEndTime())) {
+                if ((startTime == Long.parseLong(smsModel.getStartTime()) && endTime == Long.parseLong(smsModel.getEndTime())) ||
+                        (Long.valueOf(smsModel.getStartTime()) == -1 && Long.valueOf(smsModel.getEndTime()) == -1)) {
                     addedList.add(smsModel);
                 }
             }

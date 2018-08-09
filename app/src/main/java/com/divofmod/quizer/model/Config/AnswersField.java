@@ -13,7 +13,7 @@ public class AnswersField {
     @SerializedName("next_question")
     private int next_question;
 
-    @SerializedName("mTitle")
+    @SerializedName("title")
     private String title;
 
     public AnswersField() {

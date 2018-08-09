@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.divofmod.quizer.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class SmsStatusAdapter extends RecyclerView.Adapter<SmsStatusAdapter.MyViewHolder> {
@@ -46,11 +48,18 @@ public class SmsStatusAdapter extends RecyclerView.Adapter<SmsStatusAdapter.MyVi
         return new MyViewHolder(itemView);
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "SimpleDateFormat"})
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         final SmsStatusViewModel model = mSmsStatusViewModels.get(position);
-        holder.mTitle.setText("Этап: " + model.getStartTime() + " - " + model.getEndTime());
+
+        final Date startDate = new Date(model.getStartTime() * 1000);
+        final Date endDate = new Date(model.getEndTime() * 1000);
+        final String format = "MM dd, yyyy hh:mma";
+
+        holder.mTitle.setText("Этап: " +
+                new SimpleDateFormat(format).format(startDate) + " - " +
+                new SimpleDateFormat(format).format(endDate));
 
         final SmsStatusAnswersAdapter mAdapter = new SmsStatusAnswersAdapter(mContext, model.getSmsDatabaseModels(), mSQLiteDatabase);
         final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);

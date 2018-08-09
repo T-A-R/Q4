@@ -14,7 +14,7 @@ public class SmsStatusViewModel {
     public SmsStatusViewModel(final long pStartTime, final long pEndTime, final List<SmsDatabaseModel> pSmsDatabaseModels) {
         mStartTime = pStartTime;
         mEndTime = pEndTime;
-        mSmsDatabaseModels = new ArrayList<>();
+        mSmsDatabaseModels = pSmsDatabaseModels;
     }
 
     public long getStartTime() {

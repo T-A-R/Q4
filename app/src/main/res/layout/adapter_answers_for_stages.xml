@@ -16,7 +16,6 @@
             android:id="@+id/message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="#1 2 4 5 12 0"
             android:textColor="@android:color/black"/>
 
         <LinearLayout
@@ -30,8 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:text="Отправлено"/>
+                android:layout_weight="1"/>
 
             <Button
                 android:id="@+id/btn_retry"

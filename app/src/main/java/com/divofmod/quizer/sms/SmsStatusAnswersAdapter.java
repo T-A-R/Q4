@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.divofmod.quizer.R;
 import com.divofmod.quizer.Utils.SmsUtils;
+import com.divofmod.quizer.callback.SendingCallback;
 import com.divofmod.quizer.model.Sms.SmsDatabaseModel;
 
 import java.util.List;
@@ -60,7 +61,20 @@ public class SmsStatusAnswersAdapter extends RecyclerView.Adapter<SmsStatusAnswe
 
             @Override
             public void onClick(final View v) {
-                SmsUtils.sendSMS(mContext, model, mSQLiteDatabase);
+                holder.mStatus.setText("Отправка...");
+
+                SmsUtils.sendSMS(true, mContext, model, mSQLiteDatabase, new SendingCallback() {
+
+                    @Override
+                    public void onError() {
+                        holder.mStatus.setText("Не отправлено");
+                    }
+
+                    @Override
+                    public void onDelivered() {
+                        holder.mStatus.setText("Отправлено");
+                    }
+                });
             }
         });
     }

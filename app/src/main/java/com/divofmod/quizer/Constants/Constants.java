@@ -2,6 +2,11 @@ package com.divofmod.quizer.Constants;
 
 public class Constants {
 
+    public interface DefaultValues {
+
+        String UNKNOWN = "unknown";
+    }
+
     public interface ServerFields {
 
         String JSON_DATA = "json_data";

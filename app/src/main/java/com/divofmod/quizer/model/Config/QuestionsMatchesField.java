@@ -4,20 +4,20 @@ import com.google.gson.annotations.SerializedName;
 
 public class QuestionsMatchesField {
 
-    @SerializedName("3")
-    private String s3;
+    @SerializedName("question_id")
+    private String question_id;
 
-    @SerializedName("4")
-    private String s4;
+    @SerializedName("sms_num")
+    private String sms_num;
 
     public QuestionsMatchesField() {
     }
 
-    public String getS3() {
-        return s3;
+    public String getQuestion_id() {
+        return question_id;
     }
 
-    public String getS4() {
-        return s4;
+    public String getSms_num() {
+        return sms_num;
     }
 }

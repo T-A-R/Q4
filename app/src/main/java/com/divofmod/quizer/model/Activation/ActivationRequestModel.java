@@ -1,12 +1,14 @@
 package com.divofmod.quizer.model.Activation;
 
+import com.divofmod.quizer.Constants.Constants;
+
 public class ActivationRequestModel {
 
     private final String name_form;
     private final String key;
 
-    public ActivationRequestModel(final String pName_form, final String pKey) {
-        name_form = pName_form;
+    public ActivationRequestModel(final String pKey) {
+        name_form = Constants.NameForm.KEY_CLIENT;
         key = pKey;
     }
 

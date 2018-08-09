@@ -20,6 +20,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +47,7 @@ import com.divofmod.quizer.QuizHelper.AudioRecorder;
 import com.divofmod.quizer.QuizHelper.PhotoCamera;
 import com.divofmod.quizer.QuizHelper.StopWatch;
 import com.divofmod.quizer.Utils.Utils;
+import com.divofmod.quizer.model.Config.QuestionsMatchesField;
 import com.divofmod.quizer.model.Config.StagesField;
 import com.divofmod.quizer.model.SmsAnswerModel;
 import com.divofmod.quizer.model.SmsFullAnswerModel;
@@ -1257,28 +1259,24 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         final List<SmsAnswerModel> smsAnswerModels = new ArrayList<>();
 
         for (final SmsAnswerModel smsAnswerModel : mSmsFullAnswerModel.getAnswers()) {
-            String smsNumber = "unknown";
+            String smsNumber = Constants.DefaultValues.UNKNOWN;
 
             for (final StagesField stagesField : stagesFieldList) {
                 final long startTime = Long.valueOf(stagesField.getTime_from());
                 final long endTime = Long.valueOf(stagesField.getTime_to());
 
                 if (startTime >= currentTime && endTime <= currentTime) {
-                    final String questionNumber = smsAnswerModel.getQestionID();
+                    final String questionID = smsAnswerModel.getQestionID();
 
-                    switch (questionNumber) {
-                        case "3":
-                            smsNumber = stagesField.getQuestions_matches().get(0).getS3();
-                            break;
-                        case "4":
-                            smsNumber = stagesField.getQuestions_matches().get(0).getS4();
-                            break;
-                        default:
-                            smsNumber = "unknown";
-                            break;
+                    final List<QuestionsMatchesField> questionsMatchesFieldList = stagesField.getQuestions_matches();
+
+                    for (final QuestionsMatchesField questionsMatchesField : questionsMatchesFieldList) {
+                        if (questionsMatchesField.getQuestion_id().equals(questionID)) {
+                            smsNumber = questionsMatchesField.getSms_num();
+                        }
                     }
                 } else {
-                    smsNumber = "unknown";
+                    smsNumber = Constants.DefaultValues.UNKNOWN;
                 }
             }
 
@@ -1287,18 +1285,23 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         }
 
         mSmsFullAnswerModel.updateAnswers(smsAnswerModels);
+        Log.d("thecriser", "END");
 
-        for (final SmsAnswerModel smsAnswerModel : mSmsFullAnswerModel.getAnswers()) {
-            final StringBuilder message = new StringBuilder("#" + smsAnswerModel.getSmsNumber());
+        // TODO: 8/9/18 !!!
+//        saveOrUpdateInDataBase(mSmsFullAnswerModel);
 
-            for (final String value : smsAnswerModel.getAnswers()) {
-                message.append(" ").append(value);
-            }
-
-            mCurrentMessage = message.toString();
-
-            Utils.sendSMS(this, mCurrentMessage);
-        }
+//        for (final SmsAnswerModel smsAnswerModel : mSmsFullAnswerModel.getAnswers()) {
+//            final StringBuilder message = new StringBuilder("#" + smsAnswerModel.getSmsNumber());
+//
+//            for (final String value : smsAnswerModel.getAnswers()) {
+//                message.append(" ").append(value);
+//            }
+//
+//            mCurrentMessage = message.toString();
+//
+//            saveOrUpdateInDataBase();
+//            Utils.sendSMS(this, mCurrentMessage);
+//        }
     }
 
     private class AnswerAdapter extends ArrayAdapter<Answer> {

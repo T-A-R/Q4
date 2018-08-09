@@ -3,6 +3,7 @@ package com.divofmod.quizer.Utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.telephony.SmsManager;
+import android.widget.Toast;
 
 import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.model.Config.AnswersField;
@@ -19,8 +20,10 @@ public final class Utils {
 
     @SuppressWarnings("deprecation")
     public static void sendSMS(final Context pContext, final String message) {
-        final SmsManager smsManager = SmsManager.getDefault();
-        smsManager.sendTextMessage(getConfig(pContext).getConfig().getProject_info().getReserve_channel().getPhone(), null, message, null, null);
+        Toast.makeText(pContext, message, Toast.LENGTH_LONG).show();
+
+//        final SmsManager smsManager = SmsManager.getDefault();
+//        smsManager.sendTextMessage(getConfig(pContext).getConfig().getProject_info().getReserve_channel().getPhone(), null, message, null, null);
     }
 
     public static void saveConfig(final Context pContext, final ConfigResponseModel pConfigResponseModel) {

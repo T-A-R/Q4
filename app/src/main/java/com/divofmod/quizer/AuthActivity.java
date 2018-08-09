@@ -30,6 +30,7 @@ import com.divofmod.quizer.model.Auth.AuthRequestModel;
 import com.divofmod.quizer.model.Auth.AuthResponseModel;
 import com.divofmod.quizer.model.Config.ConfigRequestModel;
 import com.divofmod.quizer.model.Config.ConfigResponseModel;
+import com.divofmod.quizer.model.Quota.QuotaRequestModel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -133,7 +134,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
             mDictionaryForRequest = new Hashtable();
             final AuthRequestModel authRequestModel = new AuthRequestModel(
-                    "user_login",
                     mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, ""),
                     DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))),
                     mLoginEditText.getText().toString());
@@ -204,7 +204,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
         final ConfigRequestModel configRequestModel = new ConfigRequestModel(
                 mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, ""),
-                Constants.NameForm.DOWNLOAD_UPDATE,
                 mSharedPreferences.getString(Constants.Shared.LOGIN, ""),
                 mSharedPreferences.getString(Constants.Shared.PASSW, ""),
                 pConfigId
@@ -427,11 +426,13 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getQuota() {
+        final QuotaRequestModel quotaRequestModel = new QuotaRequestModel(
+                mLoginAdmin,
+                DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))),
+                mLoginEditText.getText().toString());
+
         mDictionaryForRequest = new Hashtable();
-        mDictionaryForRequest.put("name_form", "quota_question_answer");
-        mDictionaryForRequest.put(Constants.Shared.LOGIN_ADMIN, mLoginAdmin);
-        mDictionaryForRequest.put("login", mLoginEditText.getText().toString());
-        mDictionaryForRequest.put("passw", DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))));
+        mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(quotaRequestModel));
 
         final Call.Factory client = new OkHttpClient();
         client.newCall(new DoRequest(this).Post(mDictionaryForRequest, mUrl))
@@ -439,7 +440,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
                     @Override
                     public void onFailure(final Call call, final IOException e) {
-                        e.printStackTrace();
                         runOnUiThread(new Runnable() {
 
                             @Override
@@ -456,28 +456,29 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
                     @Override
                     public void onResponse(final Call call, final Response response) throws IOException {
+                        // TODO: 8/9/18 VERSION WITHOUT QUOTA
+//                        final String temp = response.body().string();
+//                        final String[] res = temp.substring(1, temp.length() - 1).split(";");
+//                        for (final String re : res) {
+//                            if (re.equals("0")) {
+//                                runOnUiThread(new Runnable() {
+//
+//                                    @Override
+//                                    public void run() {
+//                                        Toast.makeText(AuthActivity.this, "Неверный логин или пароль.",
+//                                                Toast.LENGTH_SHORT).show();
+//                                        mProgressBar.setVisibility(View.INVISIBLE);
+//                                        mLoginPasswordFields.setVisibility(View.VISIBLE);
+//                                        mSignInButton.setVisibility(View.VISIBLE);
+//                                    }
+//                                });
+//                                return;
+//                            }
+//                        }
+//                        final SharedPreferences.Editor editor = mSharedPreferences.edit()
+//                                .putString("quota", temp);
+//                        editor.apply();
 
-                        final String temp = response.body().string();
-                        final String[] res = temp.substring(1, temp.length() - 1).split(";");
-                        for (final String re : res) {
-                            if (re.equals("0")) {
-                                runOnUiThread(new Runnable() {
-
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(AuthActivity.this, "Неверный логин или пароль.",
-                                                Toast.LENGTH_SHORT).show();
-                                        mProgressBar.setVisibility(View.INVISIBLE);
-                                        mLoginPasswordFields.setVisibility(View.VISIBLE);
-                                        mSignInButton.setVisibility(View.VISIBLE);
-                                    }
-                                });
-                                return;
-                            }
-                        }
-                        final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                                .putString("quota", temp);
-                        editor.apply();
                         if (checkPassportBlock().equals("0")) {
                             startActivity(new Intent(AuthActivity.this, PassportBlockActivity.class));
                         } else {

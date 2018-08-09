@@ -112,7 +112,7 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
         mStartContactButton.setVisibility(View.INVISIBLE);
         mProgressBar.setVisibility(View.VISIBLE);
 
-        final ActivationRequestModel activationRequestModel = new ActivationRequestModel(Constants.NameForm.KEY_CLIENT, key);
+        final ActivationRequestModel activationRequestModel = new ActivationRequestModel(key);
 
         mDictionaryForRequest = new Hashtable();
         mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(activationRequestModel));

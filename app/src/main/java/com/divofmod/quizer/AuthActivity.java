@@ -426,6 +426,9 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getQuota() {
+        startActivity(new Intent(this, ProjectActivity.class));
+        finish();
+        /*
         final QuotaRequestModel quotaRequestModel = new QuotaRequestModel(
                 mLoginAdmin,
                 DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))),
@@ -487,6 +490,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                         finish();
                     }
                 });
+                */
     }
 
     private boolean validateForm() {

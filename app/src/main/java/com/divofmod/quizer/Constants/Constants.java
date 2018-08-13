@@ -21,6 +21,7 @@ public class Constants {
 
         String KEY_CLIENT = "key_client";
         String DOWNLOAD_UPDATE = "download_update";
+        String QUESTIONNAIRE = "questionnaire";
     }
 
     public interface Shared {

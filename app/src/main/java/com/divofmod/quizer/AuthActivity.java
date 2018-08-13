@@ -258,7 +258,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         dictionary.put("name_file", name_file);
 
         if (!mSharedPreferences.getString("name_file", "").equals(name_file)) {
-            if (mSharedPreferences.getString("Quizzes", "").equals("") && mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
+            if (mSharedPreferences.getString("QuizzesRequest", "").equals("") && mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
 
                 deleteDirectory(new File(getFilesDir() + "/files/"));
                 deleteDirectory(new File(getFilesDir() + "/background/"));
@@ -338,8 +338,8 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                         final TextView audioNotSend = (TextView) view.findViewById(R.id.audio_not_send);
                         quizzesNotSend.setText("Неотправленные анкеты: 0");
                         audioNotSend.setText("Неотправленные аудио: 0");
-                        if (!mSharedPreferences.getString("Quizzes", "").equals("")) {
-                            quizzesNotSend.setText("Неотправленные анкеты: " + mSharedPreferences.getString("Quizzes", "").split(";").length);
+                        if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {
+                            quizzesNotSend.setText("Неотправленные анкеты: " + mSharedPreferences.getString("QuizzesRequest", "").split(";").length);
                         }
                         if (!mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
                             audioNotSend.setText("Неотправленные аудио: " + mSharedPreferences.getString("Quizzes_audio", "").split(";").length);
@@ -391,7 +391,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                                 deleteDirectory(new File(getFilesDir() + "/answerimages/"));
                                                 deleteDatabase(sharedPreferences.getString("name_file", ""));
                                                 final SharedPreferences.Editor editor = sharedPreferences.edit()
-                                                        .putString("Quizzes", "")
+                                                        .putString("QuizzesRequest", "")
                                                         .putString("Quizzes_audio", "")
                                                         .putString("Statistics_photo", "");
                                                 editor.apply();
@@ -520,13 +520,13 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SEND_QUIZZES) {
-            if (mSharedPreferences.getString("Quizzes", "").equals("") && mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
+            if (mSharedPreferences.getString("QuizzesRequest", "").equals("") && mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
                 deleteDirectory(new File(getFilesDir() + "/files/"));
                 deleteDirectory(new File(getFilesDir() + "/background/"));
                 deleteDirectory(new File(getFilesDir() + "/answerimages/"));
                 deleteDatabase(mSharedPreferences.getString("name_file", ""));
                 final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                        .putString("Quizzes", "")
+                        .putString("QuizzesRequest", "")
                         .putString("Quizzes_audio", "")
                         .putString("Statistics_photo", "");
                 editor.apply();

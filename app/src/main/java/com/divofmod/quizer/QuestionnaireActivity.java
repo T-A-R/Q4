@@ -18,6 +18,7 @@ import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.DataBase.DBReader;
 import com.divofmod.quizer.Utils.SmsUtils;
 import com.divofmod.quizer.Utils.Utils;
+import com.divofmod.quizer.model.API.QuizzesResponse;
 
 import java.io.File;
 import java.io.IOException;
@@ -149,9 +150,9 @@ public class QuestionnaireActivity extends AppCompatActivity implements View.OnC
                                       .setTitle("Сихронизация")
                                       .setView(R.layout.sync_dialog).create();
 
-                              if (!mSharedPreferences.getString("Quizzes", "").equals("")) {
+                              if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {
                                   syncDialog.show();
-                                  mTables = mSharedPreferences.getString("Quizzes", "").split(";");
+                                  mTables = mSharedPreferences.getString("QuizzesRequest", "").split(";");
 
                                   System.out.println(mTables[0]);
 
@@ -204,21 +205,23 @@ public class QuestionnaireActivity extends AppCompatActivity implements View.OnC
                                                        @Override
                                                        public void onResponse(final Call call, final Response response) throws IOException {
 
-                                                           final String responseCallback = response.body().string();
+                                                           final QuizzesResponse responseCallback = App.getGson().fromJson(response.body().string(), QuizzesResponse.class);
 
-                                                           if (responseCallback.substring(1, responseCallback.length() - 1).equals("1")) {
+                                                           if (responseCallback.isSeccessful()) {
                                                                mSQLiteDatabase.execSQL("DROP TABLE if exists " + "answers_" + mTables[0]);
                                                                mSQLiteDatabase.execSQL("DROP TABLE if exists " + "answers_selective_" + mTables[0]);
                                                                mSQLiteDatabase.execSQL("DROP TABLE if exists " + "common_" + mTables[0]);
                                                                mSQLiteDatabase.execSQL("DROP TABLE if exists " + "photo_" + mTables[0]);
 
                                                                final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                                                                       .putString("Quizzes", mSharedPreferences.getString("Quizzes", "").replace(mTables[0] + ";", "")); //temp-оставшиеся анкеты.
+                                                                       .putString("QuizzesRequest", mSharedPreferences.getString("QuizzesRequest", "").replace(mTables[0] + ";", "")); //temp-оставшиеся анкеты.
                                                                editor.apply();
 
                                                                new File(getFilesDir(), "files/" + mPhoto + ".jpg").delete();
                                                                syncDialog.dismiss();
                                                                send();
+                                                           } else {
+                                                               syncDialog.dismiss();
                                                            }
                                                        }
                                                    }

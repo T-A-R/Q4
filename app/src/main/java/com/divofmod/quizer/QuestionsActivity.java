@@ -370,7 +370,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
     private void nextQuestion() {
         startAudio();
-        createPhoto();
+//        createPhoto();
         setCurrentQuestion();
         final String sForRe;
         if (currentQuestion[2].contains("#")) {
@@ -1206,7 +1206,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             //Запоминаем названия таблиц из БД
 
             final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                    .putString("Quizzes", mSharedPreferences.getString("Quizzes", "") + date + ";")
+                    .putString("QuizzesRequest", mSharedPreferences.getString("QuizzesRequest", "") + date + ";")
                     .putString("Quizzes_audio", mSharedPreferences.getString("Quizzes_audio", "") + date + ";")
                     .putString("last_date_interview", mDateInterview);
             editor.apply();

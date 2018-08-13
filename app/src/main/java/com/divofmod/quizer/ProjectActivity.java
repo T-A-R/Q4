@@ -24,6 +24,7 @@ import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.DataBase.DBReader;
 import com.divofmod.quizer.Utils.SmsUtils;
 import com.divofmod.quizer.Utils.Utils;
+import com.divofmod.quizer.model.API.QuizzesResponse;
 import com.divofmod.quizer.model.Config.ConfigResponseModel;
 import com.divofmod.quizer.model.Config.ProjectInfoField;
 
@@ -306,9 +307,9 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                         .setTitle("Сихронизация")
                         .setView(R.layout.sync_dialog).create();
 
-                if (!mSharedPreferences.getString("Quizzes", "").equals("")) {
+                if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {
                     syncDialog.show();
-                    mTables = mSharedPreferences.getString("Quizzes", "").split(";");
+                    mTables = mSharedPreferences.getString("QuizzesRequest", "").split(";");
                     System.out.println(mTables[0]);
 
                     mQuestion = DBReader.read(mSQLiteDatabase,
@@ -363,75 +364,23 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                                          @Override
                                          public void onResponse(final Call call, final Response response) throws IOException {
 
-                                             final String responseCallback = response.body().string();
+                                             final QuizzesResponse responseCallback = App.getGson().fromJson(response.body().string(), QuizzesResponse.class);
 
-                                             if (responseCallback.substring(1, responseCallback.length() - 1).equals("1")) {
+                                             if (responseCallback.isSeccessful()) {
                                                  mSQLiteDatabase.execSQL("DROP TABLE if exists " + "answers_" + mTables[0]);
                                                  mSQLiteDatabase.execSQL("DROP TABLE if exists " + "answers_selective_" + mTables[0]);
                                                  mSQLiteDatabase.execSQL("DROP TABLE if exists " + "common_" + mTables[0]);
                                                  mSQLiteDatabase.execSQL("DROP TABLE if exists " + "photo_" + mTables[0]);
 
                                                  final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                                                         .putString("Quizzes", mSharedPreferences.getString("Quizzes", "").replace(mTables[0] + ";", "")); //temp-оставшиеся анкеты.
+                                                         .putString("QuizzesRequest", mSharedPreferences.getString("QuizzesRequest", "").replace(mTables[0] + ";", "")); //temp-оставшиеся анкеты.
                                                  editor.apply();
 
                                                  new File(getFilesDir(), "files/" + mPhoto + ".jpg").delete();
                                                  syncDialog.dismiss();
                                                  send();
-                                             }
-                                         }
-                                     }
-                            );
-                }
-
-                if (!mSharedPreferences.getString("Statistics_photo", "").equals("")) {
-                    syncDialog.show();
-                    mStatisticsPhoto = mSharedPreferences.getString("Statistics_photo", "").split(";");
-                    System.out.println(mStatisticsPhoto[0]);
-                    mPhoto = DBReader.read(mSQLiteDatabase,
-                            "photo_statistics_" + mStatisticsPhoto[0],
-                            "names");
-
-                    mDictionaryForRequest = new Hashtable();
-                    mDictionaryForRequest.put(Constants.Shared.LOGIN_ADMIN, mSharedPreferences.getString("login_admin", ""));
-                    mDictionaryForRequest.put("login", mSharedPreferences.getString("login", ""));
-                    mDictionaryForRequest.put("passw", mSharedPreferences.getString("passw", ""));
-
-                    final Call.Factory client = new OkHttpClient();
-                    client.newCall(new DoRequest(ProjectActivity.this).Post(mDictionaryForRequest, mSharedPreferences.getString("url", ""), mPhoto))
-                            .enqueue(new Callback() {
-
-                                         @Override
-                                         public void onFailure(final Call call, final IOException e) {
-                                             e.printStackTrace();
-                                             System.out.println("Ошибка");
-                                             runOnUiThread(new Runnable() {
-
-                                                 @Override
-                                                 public void run() {
-                                                     Toast.makeText(ProjectActivity.this, "Ошибка отправки!", Toast.LENGTH_SHORT).show();
-                                                 }
-                                             });
-                                             syncDialog.dismiss();
-                                         }
-
-                                         @Override
-                                         public void onResponse(final Call call, final Response response) throws IOException {
-
-                                             final String responseCallback = response.body().string();
-
-                                             if (responseCallback.substring(1, responseCallback.length() - 1).equals("1")) {
-
-                                                 mSQLiteDatabase.execSQL("DROP TABLE if exists " + "photo_statistics_" + mStatisticsPhoto[0]);
-
-                                                 final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                                                         .putString("Statistics_photo", mSharedPreferences.getString("Statistics_photo", "").replace(mStatisticsPhoto[0] + ";", "")); //temp-оставшиеся анкеты.
-                                                 editor.apply();
-                                                 new File(getFilesDir(), "files/" + mPhoto + ".jpg").delete();
-
-                                                 System.out.println("Deleted");
+                                             } else {
                                                  syncDialog.dismiss();
-                                                 send();
                                              }
                                          }
                                      }

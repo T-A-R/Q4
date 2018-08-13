@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.DataBase.DBReader;
+import com.divofmod.quizer.model.API.QuizzesResponse;
 import com.divofmod.quizer.sms.SMSStatusActivity;
 
 import java.io.File;
@@ -61,7 +62,7 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
                 getString(R.string.sql_file_name),
                 getString(R.string.old_sql_file_name)).getWritableDatabase();
 
-        mTables = mSharedPreferences.getString("Quizzes", "").split(";");
+        mTables = mSharedPreferences.getString("QuizzesRequest", "").split(";");
         mAudioTables = mSharedPreferences.getString("Quizzes_audio", "").split(";");
         mStatisticsPhoto = mSharedPreferences.getString("Statistics_photo", "").split(";");
 
@@ -70,7 +71,7 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
         mQuizzesNotSend = (TextView) findViewById(R.id.quizzes_not_send);
 
         mQuizzesNotSend.setText("0");
-        if (!mSharedPreferences.getString("Quizzes", "").equals("")) {
+        if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {
             mQuizzesNotSend.setText(String.valueOf(mTables.length));
         }
 
@@ -115,9 +116,9 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
                             .setTitle("Сихронизация")
                             .setView(R.layout.sync_dialog).create();
 
-                    if (!mSharedPreferences.getString("Quizzes", "").equals("")) {
+                    if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {
                         syncDialog.show();
-                        mTables = mSharedPreferences.getString("Quizzes", "").split(";");
+                        mTables = mSharedPreferences.getString("QuizzesRequest", "").split(";");
 
                         System.out.println(mTables[0]);
 
@@ -173,16 +174,16 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
                                              @Override
                                              public void onResponse(final Call call, final Response response) throws IOException {
 
-                                                 final String responseCallback = response.body().string();
+                                                 final QuizzesResponse responseCallback = App.getGson().fromJson(response.body().string(), QuizzesResponse.class);
 
-                                                 if (responseCallback.substring(1, responseCallback.length() - 1).equals("1")) {
+                                                 if (responseCallback.isSeccessful()) {
                                                      mSQLiteDatabase.execSQL("DROP TABLE if exists " + "answers_" + mTables[0]);
                                                      mSQLiteDatabase.execSQL("DROP TABLE if exists " + "answers_selective_" + mTables[0]);
                                                      mSQLiteDatabase.execSQL("DROP TABLE if exists " + "common_" + mTables[0]);
                                                      mSQLiteDatabase.execSQL("DROP TABLE if exists " + "photo_" + mTables[0]);
 
                                                      final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                                                             .putString("Quizzes", mSharedPreferences.getString("Quizzes", "").replace(mTables[0] + ";", "")); //temp-оставшиеся анкеты.
+                                                             .putString("QuizzesRequest", mSharedPreferences.getString("QuizzesRequest", "").replace(mTables[0] + ";", "")); //temp-оставшиеся анкеты.
                                                      editor.apply();
 
                                                      new File(getFilesDir(), "files/" + mPhoto + ".jpg").delete();
@@ -195,6 +196,8 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
                                                      });
                                                      syncDialog.dismiss();
                                                      onClick(findViewById(R.id.send_quiz));
+                                                 } else {
+                                                     syncDialog.dismiss();
                                                  }
                                              }
                                          }

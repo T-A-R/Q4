@@ -3,6 +3,8 @@ package com.divofmod.quizer;
 import android.content.Context;
 
 import com.divofmod.quizer.Constants.Constants;
+import com.divofmod.quizer.model.API.Answers;
+import com.divofmod.quizer.model.API.QuizzesRequest;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -77,36 +79,36 @@ class DoRequest {
                 .post(formBody).build();
     }
 
-    Request Post(final Dictionary<String, String> dictionary, final String url, final ArrayList<String[]> question, final List<String[]> selectiveQuestion) {
+    Request Post(final Dictionary<String, String> dictionary, final String url, final ArrayList<String[]> pQuestions, final List<String[]> selectiveQuestion) {
+
+        Answers[] answers = new Answers[pQuestions.size()];
+
+        for (int i = 0; i < pQuestions.size(); i++) {
+            answers[i] = new Answers(pQuestions.get(i)[0], pQuestions.get(i)[1], pQuestions.get(i)[2]);
+        }
+
+        final QuizzesRequest quizzesRequest = new QuizzesRequest(dictionary.get("login"),
+                dictionary.get("sess_login"),
+                dictionary.get("user_project_id"),
+                dictionary.get("login_admin"),
+                dictionary.get("sess_passw"),
+                dictionary.get("duration_time_questionnaire"),
+                dictionary.get("project_id"),
+                dictionary.get("gps"),
+                dictionary.get("selected_questions"),
+                dictionary.get("questionnaire_id"),
+                dictionary.get("date_interview"),
+                answers
+        );
+
+//        if (dictionary.get("photo") != null) {
+//            multipartBodyBuilder.addFormDataPart("photo", dictionary.get("photo"),
+//                    RequestBody.create(MediaType.parse("image/*"), new File(mContext.getFilesDir(), "files/" + dictionary.get("photo"))));
+//        }
+
         final MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-
-                .addFormDataPart("name_form", "questionnaire")
-                .addFormDataPart(Constants.Shared.LOGIN_ADMIN, dictionary.get("login_admin"))
-                .addFormDataPart("login", dictionary.get("login"))
-                .addFormDataPart("sess_login", dictionary.get("sess_login"))
-                .addFormDataPart("sess_passw", dictionary.get("sess_passw"))
-                .addFormDataPart("project_id", dictionary.get("project_id"))
-                .addFormDataPart("questionnaire_id", dictionary.get("questionnaire_id"))
-                .addFormDataPart("user_project_id", dictionary.get("user_project_id"))
-                .addFormDataPart("date_interview", dictionary.get("date_interview"))
-                .addFormDataPart("gps", dictionary.get("gps"))
-                .addFormDataPart("duration_time_questionnaire", dictionary.get("duration_time_questionnaire"))
-                .addFormDataPart("selected_questions", dictionary.get("selected_questions"));
-
-        for (int i = 0; i < question.size(); i++) {
-            multipartBodyBuilder.addFormDataPart("answers[" + i + "][answer_id]", question.get(i)[0])
-                    .addFormDataPart("answers[" + i + "][duration_time_question]", question.get(i)[1])
-                    .addFormDataPart("answers[" + i + "][text_open_answer]", question.get(i)[2]);
-        }
-        for (int i = 0; i < selectiveQuestion.size(); i++) {
-            multipartBodyBuilder.addFormDataPart("answers_selective[" + i + "][selective_answer_id]", selectiveQuestion.get(i)[0])
-                    .addFormDataPart("answers_selective[" + i + "][duration_time_question]", selectiveQuestion.get(i)[1]);
-        }
-        if (dictionary.get("photo") != null) {
-            multipartBodyBuilder.addFormDataPart("photo", dictionary.get("photo"),
-                    RequestBody.create(MediaType.parse("image/*"), new File(mContext.getFilesDir(), "files/" + dictionary.get("photo"))));
-        }
+                .addFormDataPart("json_data", App.getGson().toJson(quizzesRequest));
 
         return new Request.Builder()
                 .url(url)

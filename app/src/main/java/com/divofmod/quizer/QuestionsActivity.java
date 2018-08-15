@@ -1272,7 +1272,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                 final long startTime = Long.valueOf(stagesField.getTime_from());
                 final long endTime = Long.valueOf(stagesField.getTime_to());
 
-                if (startTime >= currentTime && endTime <= currentTime) {
+                if (startTime <= currentTime && endTime >= currentTime) {
                     final String questionID = smsAnswerModel.getQestionID();
                     mSmsFullAnswerModel.setStartTime(startTime);
                     mSmsFullAnswerModel.setEndTime(endTime);
@@ -1282,10 +1282,10 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                     for (final QuestionsMatchesField questionsMatchesField : questionsMatchesFieldList) {
                         if (questionsMatchesField.getQuestion_id().equals(questionID)) {
                             smsNumber = questionsMatchesField.getSms_num();
+                            break;
                         }
                     }
-                } else {
-                    smsNumber = Constants.DefaultValues.UNKNOWN;
+                    break;
                 }
             }
 

@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.DataBase.DBReader;
 import com.divofmod.quizer.callback.SendingCallback;
+import com.divofmod.quizer.model.Config.StagesField;
 import com.divofmod.quizer.model.Sms.SmsDatabaseModel;
 
 import java.util.ArrayList;
@@ -27,6 +28,28 @@ public final class SmsUtils {
         final long mCurrentTime = Utils.getCurrentTitme();
 
         final List<SmsDatabaseModel> smses = getAllSmses(pSQLiteDatabase);
+
+
+        /*
+        final List<StagesField> stagesFieldList = Utils.getConfig(pContext).getConfig().getProject_info().getReserve_channel().getStages();
+
+        for (int i = 0; i < stagesFieldList.size(); i++) {
+            final StagesField stagesField = stagesFieldList.get(i);
+
+            if (Long.parseLong(stagesField.getTime_from()) > Utils.getCurrentTitme()) {
+                stagesFieldList.remove(i);
+            }
+        }
+
+        for (final SmsDatabaseModel smsDatabaseModel : smses) {
+            for (int j = 0; j < stagesFieldList.size(); j++) {
+                if (!stagesFieldList.get(j).getTime_to().equals(smsDatabaseModel.getEndTime()) ||
+                        !stagesFieldList.get(j).getTime_from().equals(smsDatabaseModel.getStartTime())) {
+                    smses.add(new SmsDatabaseModel())
+                }
+            }
+        }
+        */
 
         for (final SmsDatabaseModel smsDatabaseModel : smses) {
             if (!smsDatabaseModel.isDelivered() && mCurrentTime >= Long.parseLong(smsDatabaseModel.getEndTime())) {
@@ -61,9 +84,10 @@ public final class SmsUtils {
     }
 
     public static void sendSMS(final boolean isChangeStatus, final Context pContext, final SmsDatabaseModel pSmsDatabaseModel, final SQLiteDatabase pSQLiteDatabase, final SendingCallback pSendingCallback) {
-        Toast.makeText(pContext, "sending " + pSmsDatabaseModel.getMessage(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(pContext, "sending " + pSmsDatabaseModel.getMessage(), Toast.LENGTH_SHORT).show();
 
         Log.d("thecriserSMSSTATUS", "START_SENDING");
+
 
         final String phoneNumber = getConfig(pContext).getConfig().getProject_info().getReserve_channel().getPhone();
         final String SENT = "SMS_SENT";
@@ -158,6 +182,5 @@ public final class SmsUtils {
 
         final SmsManager sms = SmsManager.getDefault();
         sms.sendTextMessage(phoneNumber, null, pSmsDatabaseModel.getMessage(), sentPI, deliveredPI);
-
     }
 }

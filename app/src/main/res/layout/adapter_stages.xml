@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
@@ -18,6 +19,16 @@
         android:textColor="@android:color/white"
         android:textSize="12sp"/>
 
+    <TextView
+        android:id="@+id/empty_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="6dp"
+        android:background="@android:color/black"
+        android:gravity="center_horizontal"
+        android:textColor="@android:color/white"
+        tools:text="Волна еще не закончилась"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_smses"

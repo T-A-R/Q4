@@ -132,7 +132,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
 
         mSmsFullAnswerModel = new SmsFullAnswerModel();
-        mDateInterview = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+        mDateInterview = Utils.getCurrentTitme() + "";
 
         tableSequence = new ArrayList<>();
         answerSequenceInsideQuestions = new ArrayList<>();
@@ -1246,7 +1246,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                     mSharedPreferences.getString("login", "") + "')");
 
             saveSmsAnswers();
-            startActivity(new Intent(this, QuestionnaireActivity.class));
+            startActivity(new Intent(this, ProjectActivity.class));
             finish();
         }
     }

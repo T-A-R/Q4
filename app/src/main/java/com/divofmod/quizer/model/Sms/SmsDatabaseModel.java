@@ -12,7 +12,13 @@ public class SmsDatabaseModel {
     public SmsDatabaseModel(final String pStartTime, final String pEndTime, final String pMessage, final String pQuestionID, final String pSmsNumber, final String pIsDelivered) {
         mStartTime = pStartTime;
         mEndTime = pEndTime;
-        mMessage = pMessage;
+
+        if (pMessage != null) {
+            mMessage = pMessage.replace("##", "#");
+        } else {
+            mMessage = "";
+        }
+
         mQuestionID = pQuestionID;
         mSmsNumber = pSmsNumber;
         mIsDelivered = pIsDelivered;

@@ -85,10 +85,6 @@ public class SMSStatusActivity extends AppCompatActivity {
         final List<SmsStatusViewModel> smsStatusViewModels = new ArrayList<>();
         final List<SmsDatabaseModel> list = SmsUtils.getAllSmses(mSQLiteDatabase);
 
-        if (list == null || list.isEmpty()) {
-            return new ArrayList<>();
-        }
-
         updateCount(list);
         final List<StagesField> stages = Utils.getConfig(this).getConfig().getProject_info().getReserve_channel().getStages();
 

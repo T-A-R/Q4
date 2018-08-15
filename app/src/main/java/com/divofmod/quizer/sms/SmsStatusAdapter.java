@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.divofmod.quizer.R;
+import com.divofmod.quizer.Utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,11 +27,13 @@ public class SmsStatusAdapter extends RecyclerView.Adapter<SmsStatusAdapter.MyVi
 
         public TextView mTitle;
         public RecyclerView mRecyclerView;
+        public TextView mEmptyTv;
 
         public MyViewHolder(final View view) {
             super(view);
             mTitle = (TextView) view.findViewById(R.id.title);
             mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview_smses);
+            mEmptyTv = (TextView) view.findViewById(R.id.empty_tv);
         }
     }
 
@@ -61,11 +64,23 @@ public class SmsStatusAdapter extends RecyclerView.Adapter<SmsStatusAdapter.MyVi
                 new SimpleDateFormat(format).format(startDate) + " - " +
                 new SimpleDateFormat(format).format(endDate));
 
-        final SmsStatusAnswersAdapter mAdapter = new SmsStatusAnswersAdapter(mContext, model.getSmsDatabaseModels(), mSQLiteDatabase);
-        final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
-        holder.mRecyclerView.setLayoutManager(mLayoutManager);
-        holder.mRecyclerView.setAdapter(mAdapter);
-
+        if ((model.getSmsDatabaseModels() == null || model.getSmsDatabaseModels().isEmpty()) && model.getEndTime() < Utils.getCurrentTitme()) {
+            holder.mRecyclerView.setVisibility(View.GONE);
+            holder.mEmptyTv.setVisibility(View.VISIBLE);
+            holder.mEmptyTv.setText("Нет данных для отправки");
+        } else if (model.getStartTime() > Utils.getCurrentTitme()) {
+            holder.mRecyclerView.setVisibility(View.GONE);
+            holder.mEmptyTv.setVisibility(View.VISIBLE);
+            holder.mEmptyTv.setText("Волна еще не началась");
+        } else {
+            holder.mRecyclerView.setVisibility(View.VISIBLE);
+            holder.mEmptyTv.setVisibility(View.VISIBLE);
+            holder.mEmptyTv.setText("Волна еще не закончилась");
+            final SmsStatusAnswersAdapter mAdapter = new SmsStatusAnswersAdapter(mContext, model.getSmsDatabaseModels(), mSQLiteDatabase);
+            final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
+            holder.mRecyclerView.setLayoutManager(mLayoutManager);
+            holder.mRecyclerView.setAdapter(mAdapter);
+        }
     }
 
     @Override

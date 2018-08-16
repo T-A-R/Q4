@@ -63,6 +63,12 @@
         </activity>
         <activity android:name=".PassportBlockActivity">
         </activity>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="50ad9a580199fa1709ff92b06b9d6f23625107c9"
+            />
+
     </application>
 
 </manifest>

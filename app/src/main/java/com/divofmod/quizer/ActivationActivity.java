@@ -20,7 +20,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.Utils.Utils;
 import com.divofmod.quizer.model.Activation.ActivationRequestModel;
@@ -53,6 +54,7 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_activation);
 
         mKeyEditText = (EditText) findViewById(R.id.field_key);

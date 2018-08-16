@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.divofmod.quizer.R;
 import com.divofmod.quizer.Utils.SmsUtils;
+import com.divofmod.quizer.Utils.Utils;
 import com.divofmod.quizer.callback.SendingCallback;
 import com.divofmod.quizer.model.Sms.SmsDatabaseModel;
 
@@ -57,6 +58,8 @@ public class SmsStatusAnswersAdapter extends RecyclerView.Adapter<SmsStatusAnswe
 
         holder.mMessage.setText(model.getMessage());
         holder.mStatus.setText(model.isDelivered() ? "Отправлено" : "Не отправлено");
+//        holder.mRetryButton.setText(Long.getLong(model.getEndTime()) > Utils.getCurrentTitme() &&
+//                Long.getLong(model.getStartTime()) < Utils.getCurrentTitme() ? "Внеочередная отправка" : "Повторить отправку");
         holder.mRetryButton.setOnClickListener(new View.OnClickListener() {
 
             @Override

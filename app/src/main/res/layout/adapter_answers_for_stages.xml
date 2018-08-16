@@ -39,7 +39,7 @@
                 android:layout_weight="1"
                 android:background="@color/colorAccent"
                 android:gravity="center"
-                android:text="Повторить отправку"
+                android:text="Внеочередная отправка"
                 android:textColor="@android:color/white"/>
 
         </LinearLayout>

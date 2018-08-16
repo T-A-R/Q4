@@ -99,9 +99,9 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
         if (Internet.hasConnection(this)) {
             send();
+        } else {
+            SmsUtils.sendEndedSmsWaves(this, mSQLiteDatabase);
         }
-
-        SmsUtils.sendEndedSmsWaves(this, mSQLiteDatabase);
     }
 
     @Override
@@ -274,14 +274,13 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void gpsSettings() {
-        final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        if (!Internet.hasConnection(this)) {
-            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                createDialog("Подключение к интернет отсутствует!", "Для продолжения работы в автономном режиме необходимо включить GPS.", false, GPS_DIALOG);
-                return;
-            }
-        }
+//        final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        if (!Internet.hasConnection(this)) {
+//            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+//                createDialog("Подключение к интернет отсутствует!", "Для продолжения работы в автономном режиме необходимо включить GPS.", false, GPS_DIALOG);
+//                return;
+//            }
+//        }
 
         startActivity(new Intent(this, QuotaActivity.class));
         finish();

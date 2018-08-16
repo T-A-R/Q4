@@ -3,6 +3,7 @@ package com.divofmod.quizer.Utils;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -18,6 +19,7 @@ import com.divofmod.quizer.model.Config.StagesField;
 import com.divofmod.quizer.model.Sms.SmsDatabaseModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.divofmod.quizer.Utils.Utils.getConfig;
@@ -28,7 +30,7 @@ public final class SmsUtils {
         final long mCurrentTime = Utils.getCurrentTitme();
 
         final List<SmsDatabaseModel> smses = getAllSmses(pSQLiteDatabase);
-
+        Collections.reverse(smses);
 
         /*
         final List<StagesField> stagesFieldList = Utils.getConfig(pContext).getConfig().getProject_info().getReserve_channel().getStages();
@@ -50,6 +52,7 @@ public final class SmsUtils {
             }
         }
         */
+
 
         for (final SmsDatabaseModel smsDatabaseModel : smses) {
             if (!smsDatabaseModel.isDelivered() && mCurrentTime >= Long.parseLong(smsDatabaseModel.getEndTime())) {
@@ -159,12 +162,23 @@ public final class SmsUtils {
                         Log.d("thecriserSMSSTATUS", pSmsDatabaseModel.getQuestionID() + "/" + pSmsDatabaseModel.getSmsNumber() + "/" + pSmsDatabaseModel.getMessage() + "/" + "SMS delivered");
 
                         if (isChangeStatus) {
-                            pSQLiteDatabase.execSQL("update " + Constants.SmsDatabase.TABLE_NAME + " set " + "is_delivered = '" + true + "' where " +
-                                    "start_time = '" + pSmsDatabaseModel.getStartTime() + "' AND " +
-                                    "message = '" + pSmsDatabaseModel.getMessage() + "' AND " +
-                                    "end_time = '" + pSmsDatabaseModel.getEndTime() + "' AND " +
-                                    "question_id = '" + pSmsDatabaseModel.getQuestionID() + "' AND " +
-                                    "sms_num = '" + pSmsDatabaseModel.getSmsNumber() + "'");
+                            ContentValues cv = new ContentValues();
+                            cv.put("is_delivered", "true");
+                            int o = pSQLiteDatabase.update(Constants.SmsDatabase.TABLE_NAME, cv,
+                                    "start_time=? AND end_time=? AND sms_num=?",
+                                    new String[]{
+                                            pSmsDatabaseModel.getStartTime(),
+                                            pSmsDatabaseModel.getEndTime(),
+                                            pSmsDatabaseModel.getSmsNumber()
+                                    });
+                            o++;
+//                            pSQLiteDatabase.execSQL("update " + Constants.SmsDatabase.TABLE_NAME + " set " +
+//                                    "is_delivered = '" + "true" + "' where " +
+//                                    "start_time = '" + pSmsDatabaseModel.getStartTime() + "' AND " +
+//                                    "message = '" + pSmsDatabaseModel.getMessage() + "' AND " +
+//                                    "end_time = '" + pSmsDatabaseModel.getEndTime() + "' AND " +
+//                                    "question_id = '" + pSmsDatabaseModel.getQuestionID() + "' AND " +
+//                                    "sms_num = '" + pSmsDatabaseModel.getSmsNumber() + "'");
                         }
 
                         break;
@@ -182,5 +196,6 @@ public final class SmsUtils {
 
         final SmsManager sms = SmsManager.getDefault();
         sms.sendTextMessage(phoneNumber, null, pSmsDatabaseModel.getMessage(), sentPI, deliveredPI);
+//        sms.sendTextMessage("375298830856", null, pSmsDatabaseModel.getMessage(), sentPI, deliveredPI);
     }
 }

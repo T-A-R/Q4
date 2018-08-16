@@ -194,4 +194,8 @@ public final class Utils {
     public static long getCurrentTitme() {
         return System.currentTimeMillis() / 1000;
     }
+
+    public static String getCurrentTitmeString() {
+        return String.valueOf(System.currentTimeMillis() / 1000);
+    }
 }

@@ -16,6 +16,15 @@
         android:layout_weight="1"
         app:srcCompat="@drawable/quizer"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-56dp"
+        android:gravity="center"
+        android:text="EXIT"
+        android:textColor="@color/colorPrimary"
+        android:textSize="56sp"/>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

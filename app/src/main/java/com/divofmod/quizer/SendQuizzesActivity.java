@@ -14,6 +14,8 @@ import android.widget.Toast;
 import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.DataBase.DBReader;
+import com.divofmod.quizer.Utils.SmsUtils;
+import com.divofmod.quizer.Utils.Utils;
 import com.divofmod.quizer.model.API.QuizzesResponse;
 import com.divofmod.quizer.sms.SMSStatusActivity;
 
@@ -52,6 +54,13 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_send_quizzes);
+
+        final String audioValue = Utils.getConfig(this).getConfig().getAudio();
+
+        if (audioValue == null || audioValue.equals("0")) {
+            findViewById(R.id.audio_title).setVisibility(View.GONE);
+            findViewById(R.id.audio_table).setVisibility(View.GONE);
+        }
 
         mSharedPreferences = getSharedPreferences("data",
                 Context.MODE_PRIVATE);
@@ -94,7 +103,11 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
 
                 break;
             case R.id.send_audio:
-                sendAudio();
+                final String audioValue = Utils.getConfig(this).getConfig().getAudio();
+
+                if (audioValue != null && audioValue.equals("1")) {
+                    sendAudio();
+                }
 
                 break;
             case R.id.send_quiz:
@@ -159,6 +172,8 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
 
                                              @Override
                                              public void onFailure(final Call call, final IOException e) {
+                                                 SmsUtils.sendEndedSmsWaves(SendQuizzesActivity.this, mSQLiteDatabase);
+
                                                  e.printStackTrace();
                                                  System.out.println("Ошибка");
                                                  runOnUiThread(new Runnable() {
@@ -197,6 +212,7 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
                                                      syncDialog.dismiss();
                                                      onClick(findViewById(R.id.send_quiz));
                                                  } else {
+                                                     SmsUtils.sendEndedSmsWaves(SendQuizzesActivity.this, mSQLiteDatabase);
                                                      syncDialog.dismiss();
                                                  }
                                              }

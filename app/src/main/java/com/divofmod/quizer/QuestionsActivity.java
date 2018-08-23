@@ -1317,7 +1317,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         final long startTime = pSmsFullAnswerModel.getStartTime();
         final long endTime = pSmsFullAnswerModel.getEndTime();
 
-        mSQLiteDatabase.execSQL("create table if not exists " + Constants.SmsDatabase.TABLE_NAME + "(start_time text,end_time text,message text,question_id text,sms_num text, is_delivered bool);");
+        mSQLiteDatabase.execSQL("create table if not exists " + Constants.SmsDatabase.TABLE_NAME + "(start_time text,end_time text,message text,question_id text,sms_num text, status text,sending_count text);");
 
         insertOrUpdateToDatabase(pSmsFullAnswerModel);
         Log.d("thecriser", "after inserting");
@@ -1385,8 +1385,10 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                         "question_id = '" + questionId + "' AND " +
                         "sms_num = '" + smsNumber + "'");
             } else {
-                mSQLiteDatabase.execSQL("insert into " + Constants.SmsDatabase.TABLE_NAME + " (start_time,end_time,message,question_id,sms_num,is_delivered) " +
-                        "values('" + startTime + "','" + endTime + "','" + mCurrentMessage + "','" + questionId + "','" + smsNumber + "','false')");
+                final String statusNotSent = Constants.SmsStatuses.NOT_SENT;
+
+                mSQLiteDatabase.execSQL("insert into " + Constants.SmsDatabase.TABLE_NAME + " (start_time,end_time,message,question_id,sms_num,status,sending_count) " +
+                        "values('" + startTime + "','" + endTime + "','" + mCurrentMessage + "','" + questionId + "','" + smsNumber + "','" + statusNotSent + "','0')");
             }
         }
     }

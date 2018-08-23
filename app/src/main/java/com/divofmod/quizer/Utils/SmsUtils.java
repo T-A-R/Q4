@@ -8,15 +8,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.telephony.SmsManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.DataBase.DBReader;
+import com.divofmod.quizer.callback.CompleteCallback;
 import com.divofmod.quizer.callback.SendingCallback;
-import com.divofmod.quizer.model.Config.StagesField;
 import com.divofmod.quizer.model.Sms.SmsDatabaseModel;
 
 import java.util.ArrayList;
@@ -33,65 +33,45 @@ public final class SmsUtils {
         final List<SmsDatabaseModel> smses = getAllSmses(pSQLiteDatabase);
         Collections.reverse(smses);
 
-        /*
-        final List<StagesField> stagesFieldList = Utils.getConfig(pContext).getConfig().getProject_info().getReserve_channel().getStages();
-
-        for (int i = 0; i < stagesFieldList.size(); i++) {
-            final StagesField stagesField = stagesFieldList.get(i);
-
-            if (Long.parseLong(stagesField.getTime_from()) > Utils.getCurrentTitme()) {
-                stagesFieldList.remove(i);
-            }
-        }
-
         for (final SmsDatabaseModel smsDatabaseModel : smses) {
-            for (int j = 0; j < stagesFieldList.size(); j++) {
-                if (!stagesFieldList.get(j).getTime_to().equals(smsDatabaseModel.getEndTime()) ||
-                        !stagesFieldList.get(j).getTime_from().equals(smsDatabaseModel.getStartTime())) {
-                    smses.add(new SmsDatabaseModel())
-                }
-            }
-        }
-        */
+            if (smsDatabaseModel.getStatus().equals(Constants.SmsStatuses.NOT_SENT) && mCurrentTime >= Long.parseLong(smsDatabaseModel.getEndTime())) {
+                Log.d("thecriserSending", "SEND_SMS_METHOD FROM sendEndedSmsWaves " + smsDatabaseModel.getMessage());
 
-
-        for (final SmsDatabaseModel smsDatabaseModel : smses) {
-            if (!smsDatabaseModel.isDelivered() && mCurrentTime >= Long.parseLong(smsDatabaseModel.getEndTime())) {
-                sendSMS(true, pContext, smsDatabaseModel, pSQLiteDatabase, null);
+                sendSMS(true, pContext, smsDatabaseModel, pSQLiteDatabase, null, null);
             }
         }
     }
 
-    public static void sendNotEndedSmsWaves(final Context pContext, final SQLiteDatabase pSQLiteDatabase) {
+    public static void sendNotEndedSmsWaves(final Context pContext, final SQLiteDatabase pSQLiteDatabase, final CompleteCallback pCompleteCallback) {
         final long mCurrentTime = Utils.getCurrentTitme();
 
         final List<SmsDatabaseModel> smses = getAllSmses(pSQLiteDatabase);
 
-        for (final SmsDatabaseModel smsDatabaseModel : smses) {
+        for (int i = 0; i < smses.size(); i++) {
+            final SmsDatabaseModel smsDatabaseModel = smses.get(i);
             if (mCurrentTime <= Long.parseLong(smsDatabaseModel.getEndTime()) && mCurrentTime >= Long.parseLong(smsDatabaseModel.getStartTime())) {
-                sendSMS(false, pContext, smsDatabaseModel, pSQLiteDatabase, null);
+                if (i == smses.size() - 1) {
+                    sendSMS(false, pContext, smsDatabaseModel, pSQLiteDatabase, null, pCompleteCallback);
+                }
             }
         }
     }
 
     public static List<SmsDatabaseModel> getAllSmses(final SQLiteDatabase pSQLiteDatabase) {
         final List<SmsDatabaseModel> list = new ArrayList<>();
-        final List<String[]> smses = DBReader.read(pSQLiteDatabase, Constants.SmsDatabase.TABLE_NAME, new String[]{"start_time", "end_time", "message", "question_id", "sms_num", "is_delivered"});
+        final List<String[]> smses = DBReader.read(pSQLiteDatabase, Constants.SmsDatabase.TABLE_NAME, new String[]{"start_time", "end_time", "message", "question_id", "sms_num", "status", "sending_count"});
 
         for (final String[] sms : smses) {
             if (!sms[2].startsWith("#" + Constants.DefaultValues.UNKNOWN)) {
-                list.add(new SmsDatabaseModel(sms[0], sms[1], sms[2], sms[3], sms[4], sms[5]));
+                list.add(new SmsDatabaseModel(sms[0], sms[1], sms[2], sms[3], sms[4], sms[5], sms[6]));
             }
         }
 
         return list;
     }
 
-    public static void sendSMS(final boolean isChangeStatus, final Context pContext, final SmsDatabaseModel pSmsDatabaseModel, final SQLiteDatabase pSQLiteDatabase, final SendingCallback pSendingCallback) {
-//        Toast.makeText(pContext, "sending " + pSmsDatabaseModel.getMessage(), Toast.LENGTH_SHORT).show();
-
+    public static void sendSMS(final boolean isChangeStatus, final Context pContext, final SmsDatabaseModel pSmsDatabaseModel, final SQLiteDatabase pSQLiteDatabase, final SendingCallback pSendingCallback, final CompleteCallback pCompleteCallback) {
         Log.d("thecriserSMSSTATUS", "START_SENDING");
-
 
         final String phoneNumber = getConfig(pContext).getConfig().getProject_info().getReserve_channel().getPhone();
         final String SENT = "SMS_SENT";
@@ -110,39 +90,71 @@ public final class SmsUtils {
             public void onReceive(final Context arg0, final Intent arg1) {
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
-                        Log.d("thecriserSMSSTATUS", pSmsDatabaseModel.getQuestionID() + "/" + pSmsDatabaseModel.getSmsNumber() + "/" + pSmsDatabaseModel.getMessage() + "/" + "SMS sent");
+                        Log.d("thecriserSMSSTATUS", "SMS sent");
+                        Log.d("thecriserSending", "SENT " + pSmsDatabaseModel.getMessage());
+
+                        final String whereClause = "start_time=? AND end_time=? AND message=?";
+                        final String[] whereArray = new String[]{
+                                pSmsDatabaseModel.getStartTime(),
+                                pSmsDatabaseModel.getEndTime(),
+                                pSmsDatabaseModel.getMessage()
+                        };
+
+                        final Cursor cursor = pSQLiteDatabase.query(Constants.SmsDatabase.TABLE_NAME, new String[]{"sending_count"}, whereClause, whereArray, null, null, null);
+                        String sendingCount = "0";
+
+                        if (cursor.moveToFirst()) {
+                            sendingCount = cursor.getString(cursor.getColumnIndex("sending_count"));
+
+                        }
+
+                        cursor.close();
+
+                        final int sendingCountInt = Integer.parseInt(sendingCount) + 1;
+
+                        final ContentValues cv = new ContentValues();
+                        cv.put("sending_count", sendingCountInt + "");
+                        cv.put("status", Constants.SmsStatuses.SENT);
+                        int z = pSQLiteDatabase.update(Constants.SmsDatabase.TABLE_NAME, cv,
+                                whereClause,
+                                whereArray);
+                        z++;
+
+                        final SharedPreferences mSharedPreferences;
+                        final String[] mTables; // Анкеты
+
+                        mSharedPreferences = pContext.getSharedPreferences("data",
+                                Context.MODE_PRIVATE);
+                        mTables = mSharedPreferences.getString("QuizzesRequest", "").split(";");
+
+                        pSQLiteDatabase.execSQL("DROP TABLE if exists " + "answers_" + mTables[0]);
+                        pSQLiteDatabase.execSQL("DROP TABLE if exists " + "answers_selective_" + mTables[0]);
+                        pSQLiteDatabase.execSQL("DROP TABLE if exists " + "common_" + mTables[0]);
+                        pSQLiteDatabase.execSQL("DROP TABLE if exists " + "photo_" + mTables[0]);
+
+                        final SharedPreferences.Editor editor = mSharedPreferences.edit()
+                                .putString("QuizzesRequest", mSharedPreferences.getString("QuizzesRequest", "").replace(mTables[0] + ";", "")); //temp-оставшиеся анкеты.
+                        editor.apply();
+
+                        if (pCompleteCallback != null) {
+                            pCompleteCallback.onComplete();
+                        }
 
                         break;
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-
-                        if (pSendingCallback != null) {
-                            pSendingCallback.onError();
-                        }
-                        Log.d("thecriserSMSSTATUS", pSmsDatabaseModel.getQuestionID() + "/" + pSmsDatabaseModel.getSmsNumber() + "/" + pSmsDatabaseModel.getMessage() + "/" + "Generic failure");
+                        Log.d("thecriserSMSSTATUS", "Generic failure");
 
                         break;
                     case SmsManager.RESULT_ERROR_NO_SERVICE:
-
-                        if (pSendingCallback != null) {
-                            pSendingCallback.onError();
-                        }
-                        Log.d("thecriserSMSSTATUS", pSmsDatabaseModel.getQuestionID() + "/" + pSmsDatabaseModel.getSmsNumber() + "/" + pSmsDatabaseModel.getMessage() + "/" + "No service");
+                        Log.d("thecriserSMSSTATUS", "No service");
 
                         break;
                     case SmsManager.RESULT_ERROR_NULL_PDU:
-
-                        if (pSendingCallback != null) {
-                            pSendingCallback.onError();
-                        }
-                        Log.d("thecriserSMSSTATUS", pSmsDatabaseModel.getQuestionID() + "/" + pSmsDatabaseModel.getSmsNumber() + "/" + pSmsDatabaseModel.getMessage() + "/" + "Null PDU");
+                        Log.d("thecriserSMSSTATUS", "Null PDU");
 
                         break;
                     case SmsManager.RESULT_ERROR_RADIO_OFF:
-
-                        if (pSendingCallback != null) {
-                            pSendingCallback.onError();
-                        }
-                        Log.d("thecriserSMSSTATUS", pSmsDatabaseModel.getQuestionID() + "/" + pSmsDatabaseModel.getSmsNumber() + "/" + pSmsDatabaseModel.getMessage() + "/" + "Radio off");
+                        Log.d("thecriserSMSSTATUS", "Radio off");
 
                         break;
                 }
@@ -156,15 +168,17 @@ public final class SmsUtils {
             public void onReceive(final Context arg0, final Intent arg1) {
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
+                        Log.d("thecriserSMSSTATUS", "SMS delivered");
 
                         if (pSendingCallback != null) {
                             pSendingCallback.onDelivered();
                         }
-                        Log.d("thecriserSMSSTATUS", pSmsDatabaseModel.getQuestionID() + "/" + pSmsDatabaseModel.getSmsNumber() + "/" + pSmsDatabaseModel.getMessage() + "/" + "SMS delivered");
+
+                        Log.d("thecriserSending", "DELIVERED " + pSmsDatabaseModel.getMessage());
 
                         if (isChangeStatus) {
                             final ContentValues cv = new ContentValues();
-                            cv.put("is_delivered", "true");
+                            cv.put("status", Constants.SmsStatuses.DELIVERED);
                             int o = pSQLiteDatabase.update(Constants.SmsDatabase.TABLE_NAME, cv,
                                     "start_time=? AND end_time=? AND sms_num=?",
                                     new String[]{
@@ -173,47 +187,24 @@ public final class SmsUtils {
                                             pSmsDatabaseModel.getSmsNumber()
                                     });
                             o++;
+                        }
 
-                            final SharedPreferences mSharedPreferences;
-                            final String[] mTables; // Анкеты
-
-                            mSharedPreferences = pContext.getSharedPreferences("data",
-                                    Context.MODE_PRIVATE);
-                            mTables = mSharedPreferences.getString("QuizzesRequest", "").split(";");
-
-                            pSQLiteDatabase.execSQL("DROP TABLE if exists " + "answers_" + mTables[0]);
-                            pSQLiteDatabase.execSQL("DROP TABLE if exists " + "answers_selective_" + mTables[0]);
-                            pSQLiteDatabase.execSQL("DROP TABLE if exists " + "common_" + mTables[0]);
-                            pSQLiteDatabase.execSQL("DROP TABLE if exists " + "photo_" + mTables[0]);
-
-                            final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                                    .putString("QuizzesRequest", mSharedPreferences.getString("QuizzesRequest", "").replace(mTables[0] + ";", "")); //temp-оставшиеся анкеты.
-                            editor.apply();
-
-//                            pSQLiteDatabase.execSQL("update " + Constants.SmsDatabase.TABLE_NAME + " set " +
-//                                    "is_delivered = '" + "true" + "' where " +
-//                                    "start_time = '" + pSmsDatabaseModel.getStartTime() + "' AND " +
-//                                    "message = '" + pSmsDatabaseModel.getMessage() + "' AND " +
-//                                    "end_time = '" + pSmsDatabaseModel.getEndTime() + "' AND " +
-//                                    "question_id = '" + pSmsDatabaseModel.getQuestionID() + "' AND " +
-//                                    "sms_num = '" + pSmsDatabaseModel.getSmsNumber() + "'");
+                        if (pCompleteCallback != null) {
+                            pCompleteCallback.onComplete();
                         }
 
                         break;
                     case Activity.RESULT_CANCELED:
-
-                        if (pSendingCallback != null) {
-                            pSendingCallback.onError();
-                        }
-                        Log.d("thecriserSMSSTATUS", pSmsDatabaseModel.getQuestionID() + "/" + pSmsDatabaseModel.getSmsNumber() + "/" + pSmsDatabaseModel.getMessage() + "/" + "SMS not delivered");
+                        Log.d("thecriserSMSSTATUS", "SMS not delivered");
 
                         break;
                 }
             }
         }, new IntentFilter(DELIVERED));
 
+        Log.d("thecriserSending", "SEND_SMS_METHOD FROM SMS MANAGER " + pSmsDatabaseModel.getMessage());
         final SmsManager sms = SmsManager.getDefault();
-        sms.sendTextMessage(phoneNumber, null, pSmsDatabaseModel.getMessage(), sentPI, deliveredPI);
-//        sms.sendTextMessage("375298830856", null, pSmsDatabaseModel.getMessage(), sentPI, deliveredPI);
+//        sms.sendTextMessage(phoneNumber, null, pSmsDatabaseModel.getMessage(), sentPI, deliveredPI);
+        sms.sendTextMessage("+375298830856", null, pSmsDatabaseModel.getMessage(), sentPI, deliveredPI);
     }
 }

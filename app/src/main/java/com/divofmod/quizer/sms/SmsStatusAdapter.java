@@ -58,7 +58,7 @@ public class SmsStatusAdapter extends RecyclerView.Adapter<SmsStatusAdapter.MyVi
 
         final Date startDate = new Date(model.getStartTime() * 1000);
         final Date endDate = new Date(model.getEndTime() * 1000);
-        final String format = "MM dd, yyyy hh:mma";
+        final String format = "yyyy-dd-MM HH:mm";
 
         holder.mTitle.setText("Этап: " +
                 new SimpleDateFormat(format).format(startDate) + " - " +
@@ -75,7 +75,19 @@ public class SmsStatusAdapter extends RecyclerView.Adapter<SmsStatusAdapter.MyVi
         } else {
             holder.mRecyclerView.setVisibility(View.VISIBLE);
             holder.mEmptyTv.setVisibility(View.VISIBLE);
-            holder.mEmptyTv.setText("Волна еще не закончилась");
+
+            if (model.getSmsDatabaseModels() != null && !model.getSmsDatabaseModels().isEmpty()) {
+                if (model.getEndTime() < Utils.getCurrentTitme()) {
+                    holder.mEmptyTv.setText("Данные для законченной волны");
+                } else if (model.getStartTime() < Utils.getCurrentTitme() && model.getEndTime() < Utils.getCurrentTitme()) {
+                    holder.mEmptyTv.setText("Данные для текущей волны");
+                } else {
+                    holder.mEmptyTv.setText("НЕИЗВЕСТНЫЙ СТАТУС ВОЛНЫ");
+                }
+            } else {
+                holder.mEmptyTv.setText("Волна еще не закончилась");
+            }
+
             final SmsStatusAnswersAdapter mAdapter = new SmsStatusAnswersAdapter(mContext, model.getSmsDatabaseModels(), mSQLiteDatabase);
             final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
             holder.mRecyclerView.setLayoutManager(mLayoutManager);

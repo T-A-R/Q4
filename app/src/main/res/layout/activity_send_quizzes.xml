@@ -64,8 +64,8 @@
                 android:theme="@style/ThemeOverlay.MyDarkButton"/>
         </TableRow>
 
-
         <TextView
+            android:id="@+id/audio_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -73,6 +73,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"/>
 
         <TableRow
+            android:id="@+id/audio_table"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

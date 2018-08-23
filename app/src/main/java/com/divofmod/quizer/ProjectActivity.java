@@ -116,7 +116,10 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     permissionsArrayList.add(Manifest.permission.CAMERA);
                 }
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+
+                final String audioValue = Utils.getConfig(ProjectActivity.this).getConfig().getAudio();
+
+                if (audioValue != null && audioValue.equals("1") && ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
                     permissionsArrayList.add(Manifest.permission.RECORD_AUDIO);
                 }
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
@@ -156,7 +159,10 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 permissionsArrayList.add(Manifest.permission.CAMERA);
             }
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+
+            final String audioValue = Utils.getConfig(ProjectActivity.this).getConfig().getAudio();
+
+            if (audioValue != null && audioValue.equals("1") && ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
                 permissionsArrayList.add(Manifest.permission.RECORD_AUDIO);
             }
 
@@ -242,7 +248,10 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                                 if (ContextCompat.checkSelfPermission(ProjectActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                                     permissionsArrayList.add(Manifest.permission.CAMERA);
                                 }
-                                if (ContextCompat.checkSelfPermission(ProjectActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+
+                                final String audioValue = Utils.getConfig(ProjectActivity.this).getConfig().getAudio();
+
+                                if (audioValue != null && audioValue.equals("1") && ContextCompat.checkSelfPermission(ProjectActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
                                     permissionsArrayList.add(Manifest.permission.RECORD_AUDIO);
                                 }
                                 final String[] permissionArray = new String[permissionsArrayList.size()];
@@ -348,6 +357,8 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
                                          @Override
                                          public void onFailure(final Call call, final IOException e) {
+                                             SmsUtils.sendEndedSmsWaves(ProjectActivity.this, mSQLiteDatabase);
+
                                              e.printStackTrace();
                                              System.out.println("Ошибка");
                                              runOnUiThread(new Runnable() {
@@ -366,6 +377,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                                              final QuizzesResponse responseCallback = App.getGson().fromJson(response.body().string(), QuizzesResponse.class);
 
                                              if (responseCallback.isSeccessful()) {
+                                                 mSQLiteDatabase.delete(Constants.SmsDatabase.TABLE_NAME, null, null);
                                                  mSQLiteDatabase.execSQL("DROP TABLE if exists " + "answers_" + mTables[0]);
                                                  mSQLiteDatabase.execSQL("DROP TABLE if exists " + "answers_selective_" + mTables[0]);
                                                  mSQLiteDatabase.execSQL("DROP TABLE if exists " + "common_" + mTables[0]);
@@ -379,6 +391,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                                                  syncDialog.dismiss();
                                                  send();
                                              } else {
+                                                 SmsUtils.sendEndedSmsWaves(ProjectActivity.this, mSQLiteDatabase);
                                                  syncDialog.dismiss();
                                              }
                                          }

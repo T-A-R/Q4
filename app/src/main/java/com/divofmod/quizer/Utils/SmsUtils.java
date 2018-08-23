@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.telephony.SmsManager;
 import android.util.Log;
@@ -162,7 +163,7 @@ public final class SmsUtils {
                         Log.d("thecriserSMSSTATUS", pSmsDatabaseModel.getQuestionID() + "/" + pSmsDatabaseModel.getSmsNumber() + "/" + pSmsDatabaseModel.getMessage() + "/" + "SMS delivered");
 
                         if (isChangeStatus) {
-                            ContentValues cv = new ContentValues();
+                            final ContentValues cv = new ContentValues();
                             cv.put("is_delivered", "true");
                             int o = pSQLiteDatabase.update(Constants.SmsDatabase.TABLE_NAME, cv,
                                     "start_time=? AND end_time=? AND sms_num=?",
@@ -172,6 +173,23 @@ public final class SmsUtils {
                                             pSmsDatabaseModel.getSmsNumber()
                                     });
                             o++;
+
+                            final SharedPreferences mSharedPreferences;
+                            final String[] mTables; // Анкеты
+
+                            mSharedPreferences = pContext.getSharedPreferences("data",
+                                    Context.MODE_PRIVATE);
+                            mTables = mSharedPreferences.getString("QuizzesRequest", "").split(";");
+
+                            pSQLiteDatabase.execSQL("DROP TABLE if exists " + "answers_" + mTables[0]);
+                            pSQLiteDatabase.execSQL("DROP TABLE if exists " + "answers_selective_" + mTables[0]);
+                            pSQLiteDatabase.execSQL("DROP TABLE if exists " + "common_" + mTables[0]);
+                            pSQLiteDatabase.execSQL("DROP TABLE if exists " + "photo_" + mTables[0]);
+
+                            final SharedPreferences.Editor editor = mSharedPreferences.edit()
+                                    .putString("QuizzesRequest", mSharedPreferences.getString("QuizzesRequest", "").replace(mTables[0] + ";", "")); //temp-оставшиеся анкеты.
+                            editor.apply();
+
 //                            pSQLiteDatabase.execSQL("update " + Constants.SmsDatabase.TABLE_NAME + " set " +
 //                                    "is_delivered = '" + "true" + "' where " +
 //                                    "start_time = '" + pSmsDatabaseModel.getStartTime() + "' AND " +

@@ -1294,34 +1294,14 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         }
 
         mSmsFullAnswerModel.updateAnswers(smsAnswerModels);
-        Log.d("thecriser", "END");
 
-        // TODO: 8/9/18 !!!
         processSmsAnswers(mSmsFullAnswerModel);
-
-//        for (final SmsAnswerModel smsAnswerModel : mSmsFullAnswerModel.getAnswers()) {
-//            final StringBuilder message = new StringBuilder("#" + smsAnswerModel.getSmsNumber());
-//
-//            for (final String value : smsAnswerModel.getAnswers()) {
-//                message.append(" ").append(value);
-//            }
-//
-//            mCurrentMessage = message.toString();
-//
-//            processSmsAnswers();
-//            Utils.sendSMS(this, mCurrentMessage);
-//        }
     }
 
     private void processSmsAnswers(final SmsFullAnswerModel pSmsFullAnswerModel) {
-        final long startTime = pSmsFullAnswerModel.getStartTime();
-        final long endTime = pSmsFullAnswerModel.getEndTime();
-
         mSQLiteDatabase.execSQL("create table if not exists " + Constants.SmsDatabase.TABLE_NAME + "(start_time text,end_time text,message text,question_id text,sms_num text, status text,sending_count text);");
 
         insertOrUpdateToDatabase(pSmsFullAnswerModel);
-        Log.d("thecriser", "after inserting");
-//        getSmsFromDatabase();
     }
 
     private void insertOrUpdateToDatabase(final SmsFullAnswerModel pSmsFullAnswerModel) {

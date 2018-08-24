@@ -1,16 +1,11 @@
 package com.divofmod.quizer;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -30,7 +25,6 @@ import com.divofmod.quizer.model.Auth.AuthRequestModel;
 import com.divofmod.quizer.model.Auth.AuthResponseModel;
 import com.divofmod.quizer.model.Config.ConfigRequestModel;
 import com.divofmod.quizer.model.Config.ConfigResponseModel;
-import com.divofmod.quizer.model.Quota.QuotaRequestModel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -48,8 +42,6 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 
-import static com.divofmod.quizer.QuestionsActivity.PERMISSION_SEND_SMS;
-
 public class AuthActivity extends AppCompatActivity implements View.OnClickListener {
 
     static final private int SEND_QUIZZES = 0;
@@ -64,6 +56,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     private EditText mPasswordEditText;
     private ProgressBar mProgressBar;
     private LinearLayout mLoginPasswordFields;
+    private TextView mVer;
     private Button mSignInButton;
 
     private String mNameFile;
@@ -78,16 +71,17 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         mUrl = mSharedPreferences.getString("url", "");
         mLoginAdmin = mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, "");
 
-        mLoginEditText = (EditText) findViewById(R.id.field_login);
-        mPasswordEditText = (EditText) findViewById(R.id.field_password);
-
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-        mLoginPasswordFields = (LinearLayout) findViewById(R.id.login_password_fields);
-        mSignInButton = (Button) findViewById(R.id.sign_in_button);
+        mLoginEditText = findViewById(R.id.field_login);
+        mPasswordEditText = findViewById(R.id.field_password);
+        mProgressBar = findViewById(R.id.progressBar);
+        mVer = findViewById(R.id.ver);
+        mLoginPasswordFields = findViewById(R.id.login_password_fields);
+        mSignInButton = findViewById(R.id.sign_in_button);
 
         mSignInButton.setOnClickListener(this);
-
         mLoginEditText.setText(mSharedPreferences.getString("login", ""));
+
+        mVer.setText(BuildConfig.VERSION_NAME);
     }
 
     @Override
@@ -180,8 +174,27 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                          return;
                                      }
 
+                                     final String oldLogin = mSharedPreferences.getString("login", "");
+                                     final String newLogin = mLoginEditText.getText().toString();
+
+                                     if (!oldLogin.equals(newLogin)) {
+                                         try {
+                                             final File file = new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4));
+                                             final SQLiteDatabase mSQLiteDatabase = new DBHelper(AuthActivity.this,
+                                                     mSharedPreferences.getString("name_file", ""),
+                                                     file,
+                                                     getString(R.string.sql_file_name),
+                                                     getString(R.string.old_sql_file_name)).getWritableDatabase();
+
+                                             mSQLiteDatabase.execSQL("DROP TABLE if exists " + Constants.SmsDatabase.TABLE_NAME);
+                                             mSQLiteDatabase.close();
+                                         } catch (final Exception pE) {
+
+                                         }
+                                     }
+
                                      final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                                             .putString("login", mLoginEditText.getText().toString())
+                                             .putString("login", newLogin)
                                              .putString("passw", DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))))
                                              .putString("user_project_id", authResponseModel.getUser_project_id());
                                      editor.apply();
@@ -334,8 +347,8 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                     public void run() {
                         final View view = getLayoutInflater().inflate(R.layout.change_config_dialog, null);
 
-                        final TextView quizzesNotSend = (TextView) view.findViewById(R.id.quizzes_not_send);
-                        final TextView audioNotSend = (TextView) view.findViewById(R.id.audio_not_send);
+                        final TextView quizzesNotSend = view.findViewById(R.id.quizzes_not_send);
+                        final TextView audioNotSend = view.findViewById(R.id.audio_not_send);
                         quizzesNotSend.setText("Неотправленные анкеты: 0");
                         audioNotSend.setText("Неотправленные аудио: 0");
                         if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {
@@ -345,7 +358,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                             audioNotSend.setText("Неотправленные аудио: " + mSharedPreferences.getString("Quizzes_audio", "").split(";").length);
                         }
 
-                        final EditText deleteDataPassword = (EditText) view.findViewById(R.id.delete_data_password);
+                        final EditText deleteDataPassword = view.findViewById(R.id.delete_data_password);
 
                         final AlertDialog dialog = new AlertDialog.Builder(AuthActivity.this)
                                 .setIcon(R.drawable.ico)

@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.telephony.SmsManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.DataBase.DBReader;
@@ -19,9 +20,12 @@ import com.divofmod.quizer.callback.CompleteCallback;
 import com.divofmod.quizer.callback.SendingCallback;
 import com.divofmod.quizer.model.Sms.SmsDatabaseModel;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static com.divofmod.quizer.Utils.Utils.getConfig;
 
@@ -52,6 +56,8 @@ public final class SmsUtils {
             if (mCurrentTime <= Long.parseLong(smsDatabaseModel.getEndTime()) && mCurrentTime >= Long.parseLong(smsDatabaseModel.getStartTime())) {
                 if (i == smses.size() - 1) {
                     sendSMS(false, pContext, smsDatabaseModel, pSQLiteDatabase, null, pCompleteCallback);
+                } else {
+                    sendSMS(false, pContext, smsDatabaseModel, pSQLiteDatabase, null, null);
                 }
             }
         }
@@ -93,11 +99,14 @@ public final class SmsUtils {
                         Log.d("thecriserSMSSTATUS", "SMS sent");
                         Log.d("thecriserSending", "SENT " + pSmsDatabaseModel.getMessage());
 
-                        final String whereClause = "start_time=? AND end_time=? AND message=?";
+                        final String whereClause = "start_time=? AND end_time=? AND message=? AND sms_num=? AND question_id=? AND sending_count=?";
                         final String[] whereArray = new String[]{
                                 pSmsDatabaseModel.getStartTime(),
                                 pSmsDatabaseModel.getEndTime(),
-                                pSmsDatabaseModel.getMessage()
+                                pSmsDatabaseModel.getMessage(),
+                                pSmsDatabaseModel.getSmsNumber(),
+                                pSmsDatabaseModel.getQuestionID(),
+                                pSmsDatabaseModel.getSendingCount()
                         };
 
                         final Cursor cursor = pSQLiteDatabase.query(Constants.SmsDatabase.TABLE_NAME, new String[]{"sending_count"}, whereClause, whereArray, null, null, null);
@@ -203,8 +212,9 @@ public final class SmsUtils {
         }, new IntentFilter(DELIVERED));
 
         Log.d("thecriserSending", "SEND_SMS_METHOD FROM SMS MANAGER " + pSmsDatabaseModel.getMessage());
+        Toast.makeText(pContext, pSmsDatabaseModel.getMessage() + " | TIME = " + new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.getDefault()).format(new Date()), Toast.LENGTH_LONG).show();
         final SmsManager sms = SmsManager.getDefault();
-//        sms.sendTextMessage(phoneNumber, null, pSmsDatabaseModel.getMessage(), sentPI, deliveredPI);
-        sms.sendTextMessage("+375298830856", null, pSmsDatabaseModel.getMessage(), sentPI, deliveredPI);
+        sms.sendTextMessage(phoneNumber, null, pSmsDatabaseModel.getMessage(), sentPI, deliveredPI);
+//        sms.sendTextMessage("+375298830856", null, pSmsDatabaseModel.getMessage(), sentPI, deliveredPI);
     }
 }

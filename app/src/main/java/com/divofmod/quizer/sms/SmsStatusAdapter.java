@@ -82,7 +82,7 @@ public class SmsStatusAdapter extends RecyclerView.Adapter<SmsStatusAdapter.MyVi
                 } else if (model.getStartTime() < Utils.getCurrentTitme() && model.getEndTime() < Utils.getCurrentTitme()) {
                     holder.mEmptyTv.setText("Данные для текущей волны");
                 } else {
-                    holder.mEmptyTv.setText("НЕИЗВЕСТНЫЙ СТАТУС ВОЛНЫ");
+                    holder.mEmptyTv.setText("");
                 }
             } else {
                 holder.mEmptyTv.setText("Волна еще не закончилась");

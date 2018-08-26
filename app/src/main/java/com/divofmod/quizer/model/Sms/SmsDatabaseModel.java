@@ -7,9 +7,11 @@ public class SmsDatabaseModel {
     private final String mMessage;
     private final String mQuestionID;
     private final String mSmsNumber;
-    private final String mIsDelivered;
+    private final String mStatus;
+    private final String mSendingCount;
 
-    public SmsDatabaseModel(final String pStartTime, final String pEndTime, final String pMessage, final String pQuestionID, final String pSmsNumber, final String pIsDelivered) {
+    public SmsDatabaseModel(final String pStartTime, final String pEndTime, final String pMessage, final String pQuestionID, final String pSmsNumber, final String pStatus, final String pSendingCount) {
+        mSendingCount = pSendingCount;
         mStartTime = pStartTime;
         mEndTime = pEndTime;
 
@@ -21,7 +23,11 @@ public class SmsDatabaseModel {
 
         mQuestionID = pQuestionID;
         mSmsNumber = pSmsNumber;
-        mIsDelivered = pIsDelivered;
+        mStatus = pStatus;
+    }
+
+    public String getSendingCount() {
+        return mSendingCount;
     }
 
     public String getStartTime() {
@@ -44,7 +50,7 @@ public class SmsDatabaseModel {
         return mSmsNumber;
     }
 
-    public boolean isDelivered() {
-        return mIsDelivered != null && !mIsDelivered.isEmpty() && mIsDelivered.equals("true");
+    public String getStatus() {
+        return mStatus;
     }
 }

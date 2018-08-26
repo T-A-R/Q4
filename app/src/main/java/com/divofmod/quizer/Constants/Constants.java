@@ -2,6 +2,14 @@ package com.divofmod.quizer.Constants;
 
 public class Constants {
 
+    public interface SmsStatuses {
+
+        String NOT_SENT = "не отправлено";
+        String SENT = "отправлено";
+        String DELIVERED = "доставлено";
+
+    }
+
     public interface DatabaseValues {
 
         String DATABASE_NAME = "quizer_database";

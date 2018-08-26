@@ -96,7 +96,16 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
         } catch (final Exception ex) {
             Toast.makeText(this, "Соглашение отсутствует", Toast.LENGTH_SHORT).show();
         }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        tryToSend();
+    }
+
+    private void tryToSend() {
         if (Internet.hasConnection(this)) {
             send();
         } else {

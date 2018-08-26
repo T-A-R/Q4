@@ -10,10 +10,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.R;
 import com.divofmod.quizer.Utils.SmsUtils;
 import com.divofmod.quizer.Utils.Utils;
+import com.divofmod.quizer.callback.CompleteCallback;
 import com.divofmod.quizer.model.Config.StagesField;
 import com.divofmod.quizer.model.Sms.SmsDatabaseModel;
 
@@ -31,7 +33,13 @@ public class SMSStatusActivity extends AppCompatActivity {
     }
 
     public void onSendNotEndedSmses(final View view) {
-        SmsUtils.sendNotEndedSmsWaves(this, mSQLiteDatabase);
+        SmsUtils.sendNotEndedSmsWaves(this, mSQLiteDatabase, new CompleteCallback() {
+
+            @Override
+            public void onComplete() {
+                initRecyclerView();
+            }
+        });
     }
 
     @Override
@@ -73,7 +81,7 @@ public class SMSStatusActivity extends AppCompatActivity {
         int notSendedCount = 0;
 
         for (final SmsDatabaseModel smsDatabaseModel : list) {
-            if (!smsDatabaseModel.isDelivered()) {
+            if (smsDatabaseModel.getStatus().equals(Constants.SmsStatuses.NOT_SENT)) {
                 notSendedCount++;
             }
         }

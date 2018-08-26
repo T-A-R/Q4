@@ -1,17 +1,20 @@
 package com.divofmod.quizer.sms;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.R;
 import com.divofmod.quizer.Utils.SmsUtils;
-import com.divofmod.quizer.Utils.Utils;
 import com.divofmod.quizer.callback.SendingCallback;
 import com.divofmod.quizer.model.Sms.SmsDatabaseModel;
 
@@ -26,12 +29,14 @@ public class SmsStatusAnswersAdapter extends RecyclerView.Adapter<SmsStatusAnswe
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         public TextView mMessage;
+        public TextView mSendingCount;
         public TextView mStatus;
         public TextView mRetryButton;
 
         public MyViewHolder(final View view) {
             super(view);
             mMessage = (TextView) view.findViewById(R.id.message);
+            mSendingCount = (TextView) view.findViewById(R.id.sending_count);
             mStatus = (TextView) view.findViewById(R.id.status);
             mRetryButton = (TextView) view.findViewById(R.id.btn_retry);
         }
@@ -57,27 +62,25 @@ public class SmsStatusAnswersAdapter extends RecyclerView.Adapter<SmsStatusAnswe
         final SmsDatabaseModel model = mSmsStatusAnswers.get(position);
 
         holder.mMessage.setText(model.getMessage());
-        holder.mStatus.setText(model.isDelivered() ? "Отправлено" : "Не отправлено");
-//        holder.mRetryButton.setText(Long.getLong(model.getEndTime()) > Utils.getCurrentTitme() &&
-//                Long.getLong(model.getStartTime()) < Utils.getCurrentTitme() ? "Внеочередная отправка" : "Повторить отправку");
+        holder.mSendingCount.setText(model.getSendingCount());
+        holder.mStatus.setText(model.getStatus());
         holder.mRetryButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(final View v) {
                 holder.mStatus.setText("Отправка...");
+                holder.mStatus.setText(Constants.SmsStatuses.SENT);
+                holder.mSendingCount.setText((Integer.parseInt(holder.mSendingCount.getText().toString()) + 1) + "");
+
+                Log.d("thecriserSending", "SEND_SMS_METHOD FROM CLICK " + model.getMessage());
 
                 SmsUtils.sendSMS(true, mContext, model, mSQLiteDatabase, new SendingCallback() {
 
                     @Override
-                    public void onError() {
-                        holder.mStatus.setText("Не отправлено");
-                    }
-
-                    @Override
                     public void onDelivered() {
-                        holder.mStatus.setText("Отправлено");
+                        holder.mStatus.setText(Constants.SmsStatuses.DELIVERED);
                     }
-                });
+                }, null);
             }
         });
     }

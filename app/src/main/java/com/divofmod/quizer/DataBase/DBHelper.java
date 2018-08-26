@@ -11,12 +11,13 @@ import java.util.ArrayList;
 
 public class DBHelper extends SQLiteOpenHelper {
 
+    public static final int DB_VERSION = 1;
     private File path;
     private String name_file;
     private String old_name_file;
 
    public DBHelper(final Context context, final String dbName, final File path, final String name_file, final String old_name_file) {
-        super(context, dbName, null, 1);
+        super(context, dbName, null, DB_VERSION);
         this.path = path;
         this.name_file = name_file;
         this.old_name_file = old_name_file;

@@ -159,19 +159,25 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
                                      final AuthResponseModel authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
 
-                                     if (authResponseModel.getResult() == 0) {
-                                         runOnUiThread(new Runnable() {
+                                     try {
 
-                                             @Override
-                                             public void run() {
-                                                 Toast.makeText(AuthActivity.this, "Неверный логин или пароль.",
-                                                         Toast.LENGTH_SHORT).show();
-                                                 mProgressBar.setVisibility(View.INVISIBLE);
-                                                 mLoginPasswordFields.setVisibility(View.VISIBLE);
-                                                 mSignInButton.setVisibility(View.VISIBLE);
-                                             }
-                                         });
-                                         return;
+                                         if (authResponseModel.getResult() == 0) {
+                                             runOnUiThread(new Runnable() {
+
+                                                 @Override
+                                                 public void run() {
+                                                     Toast.makeText(AuthActivity.this, "Неверный логин или пароль.",
+                                                             Toast.LENGTH_SHORT).show();
+                                                     mProgressBar.setVisibility(View.INVISIBLE);
+                                                     mLoginPasswordFields.setVisibility(View.VISIBLE);
+                                                     mSignInButton.setVisibility(View.VISIBLE);
+                                                 }
+                                             });
+                                             return;
+                                         }
+                                     }catch (NullPointerException e)
+                                     {
+                                         Toast.makeText(getBaseContext(),"Неполадки на сервере, попробуйте позже",Toast.LENGTH_SHORT).show();
                                      }
 
                                      final String oldLogin = mSharedPreferences.getString("login", "");

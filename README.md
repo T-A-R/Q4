@@ -1,1 +1,0 @@
-QUIZER Android

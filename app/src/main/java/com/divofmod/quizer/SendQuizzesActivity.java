@@ -1,12 +1,15 @@
 package com.divofmod.quizer;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +20,7 @@ import com.divofmod.quizer.DataBase.DBReader;
 import com.divofmod.quizer.Utils.SmsUtils;
 import com.divofmod.quizer.Utils.Utils;
 import com.divofmod.quizer.model.API.QuizzesResponse;
+import com.divofmod.quizer.model.Sms.SmsDatabaseModel;
 import com.divofmod.quizer.sms.SMSStatusActivity;
 
 import java.io.File;
@@ -31,7 +35,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Response;
 
 public class SendQuizzesActivity extends AppCompatActivity implements View.OnClickListener {
-
+public static final String TAG = "SendQuizzesActivity";
     Dictionary<String, String> mDictionaryForRequest;
     SharedPreferences mSharedPreferences;
     SQLiteDatabase mSQLiteDatabase;
@@ -99,6 +103,26 @@ public class SendQuizzesActivity extends AppCompatActivity implements View.OnCli
     public void onClick(final View view) {
         switch (view.getId()) {
             case R.id.sms_button:
+
+                //получение данных , в попытках получить правильный результат в счетчиках отправленных сообщениях
+//            {
+//                SQLiteDatabase pSQLiteDatabase = new DBHelper(this,
+//                        mSharedPreferences.getString("name_file", ""),
+//                        new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+//                        getString(R.string.sql_file_name),
+//                        getString(R.string.old_sql_file_name)).getWritableDatabase();
+//
+//
+//                final Cursor cursor = pSQLiteDatabase.query(Constants.SmsDatabase.TABLE_NAME, new String[]{"sending_count"}, null, null, null, null, null);
+//                String sendingCount = "0";
+//
+//                    while (cursor.moveToNext()) {
+//                        sendingCount = cursor.getString(cursor.getColumnIndex("sending_count"));
+//                        Log.i(TAG, "test " + sendingCount);
+//                    }
+//
+//            }
+
                 startActivity(new Intent(this, SMSStatusActivity.class));
 
                 break;

@@ -1,0 +1,14 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_horizontal_margin_expandable_list_view">32dp</dimen>
+    <dimen name="activity_horizontal_margin_for_center">8dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="progress_diametr_tvdpi">130dp</dimen>
+    <dimen name="textsize_tvdpi">26sp</dimen>
+    <dimen name="textsize_low_tvdpi">24sp</dimen>
+    <dimen name="checksize_tvdpi">18dp</dimen>
+    <dimen name="start_contact_width_tvdpi">42dp</dimen>
+    <dimen name="start_contact_height_tvdpi">30dp</dimen>
+
+</resources>

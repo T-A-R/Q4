@@ -24,12 +24,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import static com.divofmod.quizer.Utils.Utils.getConfig;
 
 public final class SmsUtils {
+
+    public static final String TAG = "SmsUtils";
 
     public static void sendEndedSmsWaves(final Context pContext, final SQLiteDatabase pSQLiteDatabase) {
         final long mCurrentTime = Utils.getCurrentTitme();
@@ -63,12 +66,13 @@ public final class SmsUtils {
         }
     }
 
-    public static List<SmsDatabaseModel> getAllSmses(final SQLiteDatabase pSQLiteDatabase) {
+    public static List<SmsDatabaseModel> getAllSmses(final SQLiteDatabase pSQLiteDatabase) {  //получение листа смс
         final List<SmsDatabaseModel> list = new ArrayList<>();
         final List<String[]> smses = DBReader.read(pSQLiteDatabase, Constants.SmsDatabase.TABLE_NAME, new String[]{"start_time", "end_time", "message", "question_id", "sms_num", "status", "sending_count"});
 
         for (final String[] sms : smses) {
             if (!sms[2].startsWith("#" + Constants.DefaultValues.UNKNOWN)) {
+                Log.i(TAG, "getAllSmses: " + sms[0] + " -- " + sms[1] + " -- " + sms[2] + " -- " + sms[3] + " -- " +sms[4] + " -- "  + sms[5] + " -- " + sms[6] + " -- " );
                 list.add(new SmsDatabaseModel(sms[0], sms[1], sms[2], sms[3], sms[4], sms[5], sms[6]));
             }
         }
@@ -114,13 +118,11 @@ public final class SmsUtils {
 
                         if (cursor.moveToFirst()) {
                             sendingCount = cursor.getString(cursor.getColumnIndex("sending_count"));
-
                         }
 
                         cursor.close();
 
                         final int sendingCountInt = Integer.parseInt(sendingCount) + 1;
-
                         final ContentValues cv = new ContentValues();
                         cv.put("sending_count", sendingCountInt + "");
                         cv.put("status", Constants.SmsStatuses.SENT);

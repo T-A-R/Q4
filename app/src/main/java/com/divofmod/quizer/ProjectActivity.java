@@ -1,11 +1,13 @@
 package com.divofmod.quizer;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -27,6 +29,7 @@ import com.divofmod.quizer.Utils.Utils;
 import com.divofmod.quizer.model.API.QuizzesResponse;
 import com.divofmod.quizer.model.Config.ConfigResponseModel;
 import com.divofmod.quizer.model.Config.ProjectInfoField;
+import com.divofmod.quizer.model.Sms.SmsDatabaseModel;
 
 import java.io.File;
 import java.io.IOException;

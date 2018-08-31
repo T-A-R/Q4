@@ -22,6 +22,7 @@ import java.util.List;
 
 public class SmsStatusAnswersAdapter extends RecyclerView.Adapter<SmsStatusAnswersAdapter.MyViewHolder> {
 
+    public static final String TAG = "SmsStatusAnswersAdapter";
     private List<SmsDatabaseModel> mSmsStatusAnswers;
     private final Context mContext;
     private final SQLiteDatabase mSQLiteDatabase;
@@ -63,6 +64,7 @@ public class SmsStatusAnswersAdapter extends RecyclerView.Adapter<SmsStatusAnswe
 
         holder.mMessage.setText(model.getMessage());
         holder.mSendingCount.setText(model.getSendingCount());
+        Log.i(TAG, "onBindViewHolder: " + model.getSendingCount());
         holder.mStatus.setText(model.getStatus());
         holder.mRetryButton.setOnClickListener(new View.OnClickListener() {
 

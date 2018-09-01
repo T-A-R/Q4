@@ -24,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Количество отправок: "
-                android:textSize="@dimen/textsize_low_xhdpi"
+                android:textSize="@dimen/textsize_low_600dp"
                 android:textColor="@android:color/black"/>
 
             <TextView
@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
                 tools:text="15"
-                android:textSize="@dimen/textsize_low_xhdpi"/>
+                android:textSize="@dimen/textsize_low_600dp"/>
 
         </LinearLayout>
 
@@ -43,11 +43,11 @@
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
             tools:text="#4 4 5 1 4 6 0"
-            android:textSize="@dimen/textsize_low_xhdpi"/>
+            android:textSize="@dimen/textsize_low_600dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="28dp"
+            android:layout_height="100dp"
             android:layout_marginTop="4dp"
             android:orientation="horizontal">
 
@@ -58,7 +58,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 tools:text="не Отправлено"
-                android:textSize="@dimen/textsize_low_xhdpi"/>
+                android:textSize="30dp"/>
 
             <Button
                 android:id="@+id/btn_retry"
@@ -69,6 +69,7 @@
                 android:background="@color/colorAccent"
                 android:gravity="center"
                 android:text="Внеочередная отправка"
+                android:textSize="28dp"
                 android:textColor="@android:color/white"/>
 
         </LinearLayout>

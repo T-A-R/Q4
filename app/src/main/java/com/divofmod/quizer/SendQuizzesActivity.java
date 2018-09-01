@@ -105,23 +105,23 @@ public static final String TAG = "SendQuizzesActivity";
             case R.id.sms_button:
 
                 //получение данных , в попытках получить правильный результат в счетчиках отправленных сообщениях
-//            {
-//                SQLiteDatabase pSQLiteDatabase = new DBHelper(this,
-//                        mSharedPreferences.getString("name_file", ""),
-//                        new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
-//                        getString(R.string.sql_file_name),
-//                        getString(R.string.old_sql_file_name)).getWritableDatabase();
-//
-//
-//                final Cursor cursor = pSQLiteDatabase.query(Constants.SmsDatabase.TABLE_NAME, new String[]{"sending_count"}, null, null, null, null, null);
-//                String sendingCount = "0";
-//
-//                    while (cursor.moveToNext()) {
-//                        sendingCount = cursor.getString(cursor.getColumnIndex("sending_count"));
-//                        Log.i(TAG, "test " + sendingCount);
-//                    }
-//
-//            }
+            {
+                SQLiteDatabase pSQLiteDatabase = new DBHelper(this,
+                        mSharedPreferences.getString("name_file", ""),
+                        new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+                        getString(R.string.sql_file_name),
+                        getString(R.string.old_sql_file_name)).getWritableDatabase();
+
+
+                final Cursor cursor = pSQLiteDatabase.query(Constants.SmsDatabase.TABLE_NAME, null, null, null, null, null, null);
+                String sendingCount = "0";
+
+                cursor.moveToFirst();
+                String [] name = new String[]{"start_time", "end_time", "message", "question_id", "sms_num", "status", "sending_count"};
+
+
+
+            }
 
                 startActivity(new Intent(this, SMSStatusActivity.class));
 

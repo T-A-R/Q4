@@ -2,10 +2,13 @@ package com.divofmod.quizer.DataBase;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 
 public abstract class DBReader {
+
+    public static final String TAG = "DBReader";
 
     public static ArrayList<String[]> read(SQLiteDatabase db, String tableName, String[] columnNames) {
 
@@ -36,6 +39,7 @@ public abstract class DBReader {
 
                         for (int i = 0; i < idCols.length; i++) {
                             values[i] = cursor.getString(idCols[i]);
+                            Log.i(TAG, "name column: \"" + cursor.getColumnName(idCols[i]) + "\" value: \"" + values[i] + "\"");
                         }
                         listOfValues.add(values.clone());
 
@@ -63,6 +67,8 @@ public abstract class DBReader {
                 // если в выборке нет строк, вернется false
                 if (cursor.moveToFirst()) {
                     temp = cursor.getString(cursor.getColumnIndex(columnName));
+
+                    Log.i(TAG, "name column temp: " + cursor.getColumnName(cursor.getColumnIndex(columnName)) + " value temp: " + temp );
 
                 }
             }

@@ -196,7 +196,7 @@ public static final String TAG = "SendQuizzesActivity";
 
                                              @Override
                                              public void onFailure(final Call call, final IOException e) {
-                                                 SmsUtils.sendEndedSmsWaves(SendQuizzesActivity.this, mSQLiteDatabase);
+                                                 SmsUtils.sendEndedSmsWaves(SendQuizzesActivity.this, mSQLiteDatabase, "5");
 
                                                  e.printStackTrace();
                                                  System.out.println("Ошибка");
@@ -236,7 +236,7 @@ public static final String TAG = "SendQuizzesActivity";
                                                      syncDialog.dismiss();
                                                      onClick(findViewById(R.id.send_quiz));
                                                  } else {
-                                                     SmsUtils.sendEndedSmsWaves(SendQuizzesActivity.this, mSQLiteDatabase);
+                                                     SmsUtils.sendEndedSmsWaves(SendQuizzesActivity.this, mSQLiteDatabase, "6");
                                                      syncDialog.dismiss();
                                                  }
                                              }

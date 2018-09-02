@@ -1,6 +1,7 @@
 package com.divofmod.quizer;
 
 import android.Manifest;
+import android.app.FragmentManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,6 +14,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +28,7 @@ import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.DataBase.DBReader;
 import com.divofmod.quizer.Utils.SmsUtils;
 import com.divofmod.quizer.Utils.Utils;
+import com.divofmod.quizer.fragment.SmsFragment;
 import com.divofmod.quizer.model.API.QuizzesResponse;
 import com.divofmod.quizer.model.Config.ConfigResponseModel;
 import com.divofmod.quizer.model.Config.ProjectInfoField;
@@ -78,6 +81,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
         findViewById(R.id.start_button).setOnClickListener(this);
         findViewById(R.id.sync_button).setOnClickListener(this);
+        findViewById(R.id.settings).setOnClickListener(this);
 
         mSharedPreferences = getSharedPreferences("data",
                 Context.MODE_PRIVATE);
@@ -105,14 +109,25 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
     protected void onResume() {
         super.onResume();
 
-        tryToSend();
+        showTryToSend();
+//        tryToSend();
+    }
+
+    private void showTryToSend() {
+        for (int i = 0; i < 10; i++) {
+            final SmsDatabaseModel smsDatabaseModel = new SmsDatabaseModel("1", "2", "message = " + i, "3", "4", "5", "6");
+
+            final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(android.R.id.content, SmsFragment.newInstance(smsDatabaseModel, mSQLiteDatabase));
+            ft.commit();
+        }
     }
 
     private void tryToSend() {
         if (Internet.hasConnection(this)) {
             send();
         } else {
-            SmsUtils.sendEndedSmsWaves(this, mSQLiteDatabase);
+            SmsUtils.sendEndedSmsWaves(this, mSQLiteDatabase, "3");
         }
     }
 
@@ -156,6 +171,9 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
             case R.id.sync_button:
                 startActivity(new Intent(this, SendQuizzesActivity.class));
+                break;
+            case R.id.settings:
+                startActivity(new Intent(this, SettingsActivity.class));
                 break;
         }
     }
@@ -369,7 +387,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
                                          @Override
                                          public void onFailure(final Call call, final IOException e) {
-                                             SmsUtils.sendEndedSmsWaves(ProjectActivity.this, mSQLiteDatabase);
+                                             SmsUtils.sendEndedSmsWaves(ProjectActivity.this, mSQLiteDatabase, "1");
 
                                              e.printStackTrace();
                                              System.out.println("Ошибка");
@@ -403,7 +421,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                                                  syncDialog.dismiss();
                                                  send();
                                              } else {
-                                                 SmsUtils.sendEndedSmsWaves(ProjectActivity.this, mSQLiteDatabase);
+                                                 SmsUtils.sendEndedSmsWaves(ProjectActivity.this, mSQLiteDatabase, "2");
                                                  syncDialog.dismiss();
                                              }
                                          }

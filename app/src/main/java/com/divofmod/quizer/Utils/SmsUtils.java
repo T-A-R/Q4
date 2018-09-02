@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Handler;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -18,15 +19,16 @@ import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.DataBase.DBReader;
 import com.divofmod.quizer.callback.CompleteCallback;
 import com.divofmod.quizer.callback.SendingCallback;
+import com.divofmod.quizer.model.Config.Phone;
 import com.divofmod.quizer.model.Sms.SmsDatabaseModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import static com.divofmod.quizer.Utils.Utils.getConfig;
 
@@ -34,34 +36,68 @@ public final class SmsUtils {
 
     public static final String TAG = "SmsUtils";
 
-    public static void sendEndedSmsWaves(final Context pContext, final SQLiteDatabase pSQLiteDatabase) {
+    public static int getRandomInt() {
+        final int max = 100;
+        final int min = 10;
+        final int diff = max - min;
+        final Random rn = new Random();
+        return rn.nextInt(diff + 1);
+    }
+
+    public static void sendEndedSmsWaves(final Context pContext, final SQLiteDatabase pSQLiteDatabase, final String from) {
+        Toast.makeText(pContext, from + " | " + getRandomInt(), Toast.LENGTH_LONG).show();
+
         final long mCurrentTime = Utils.getCurrentTitme();
 
         final List<SmsDatabaseModel> smses = getAllSmses(pSQLiteDatabase);
         Collections.reverse(smses);
+        int sec = 0;
 
         for (final SmsDatabaseModel smsDatabaseModel : smses) {
             if (smsDatabaseModel.getStatus().equals(Constants.SmsStatuses.NOT_SENT) && mCurrentTime >= Long.parseLong(smsDatabaseModel.getEndTime())) {
                 Log.d("thecriserSending", "SEND_SMS_METHOD FROM sendEndedSmsWaves " + smsDatabaseModel.getMessage());
 
-                sendSMS(true, pContext, smsDatabaseModel, pSQLiteDatabase, null, null);
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        sendSMS(true, pContext, smsDatabaseModel, pSQLiteDatabase, null, null);
+                    }
+                }, sec * 1000);
+
+                sec = sec + 1;
             }
         }
     }
 
-    public static void sendNotEndedSmsWaves(final Context pContext, final SQLiteDatabase pSQLiteDatabase, final CompleteCallback pCompleteCallback) {
+    public static void sendNotEndedSmsWaves(final Context pContext, final SQLiteDatabase pSQLiteDatabase, final CompleteCallback pCompleteCallback, final String from) {
+        Toast.makeText(pContext, from + " | " + getRandomInt(), Toast.LENGTH_LONG).show();
+
         final long mCurrentTime = Utils.getCurrentTitme();
 
         final List<SmsDatabaseModel> smses = getAllSmses(pSQLiteDatabase);
+        int sec = 0;
 
         for (int i = 0; i < smses.size(); i++) {
             final SmsDatabaseModel smsDatabaseModel = smses.get(i);
             if (mCurrentTime <= Long.parseLong(smsDatabaseModel.getEndTime()) && mCurrentTime >= Long.parseLong(smsDatabaseModel.getStartTime())) {
-                if (i == smses.size() - 1) {
-                    sendSMS(false, pContext, smsDatabaseModel, pSQLiteDatabase, null, pCompleteCallback);
-                } else {
-                    sendSMS(false, pContext, smsDatabaseModel, pSQLiteDatabase, null, null);
-                }
+
+                final Handler handler = new Handler();
+                final int finalI = i;
+                handler.postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (finalI == smses.size() - 1) {
+                            sendSMS(false, pContext, smsDatabaseModel, pSQLiteDatabase, null, pCompleteCallback);
+                        } else {
+                            sendSMS(false, pContext, smsDatabaseModel, pSQLiteDatabase, null, null);
+                        }
+                    }
+                }, sec * 2000);
+
+                sec = sec + 1;
             }
         }
     }
@@ -72,7 +108,7 @@ public final class SmsUtils {
 
         for (final String[] sms : smses) {
             if (!sms[2].startsWith("#" + Constants.DefaultValues.UNKNOWN)) {
-                Log.i(TAG, "getAllSmses: " + sms[0] + " -- " + sms[1] + " -- " + sms[2] + " -- " + sms[3] + " -- " +sms[4] + " -- "  + sms[5] + " -- " + sms[6] + " -- " );
+                Log.i(TAG, "getAllSmses: " + sms[0] + " -- " + sms[1] + " -- " + sms[2] + " -- " + sms[3] + " -- " + sms[4] + " -- " + sms[5] + " -- " + sms[6] + " -- ");
                 list.add(new SmsDatabaseModel(sms[0], sms[1], sms[2], sms[3], sms[4], sms[5], sms[6]));
             }
         }
@@ -83,7 +119,11 @@ public final class SmsUtils {
     public static void sendSMS(final boolean isChangeStatus, final Context pContext, final SmsDatabaseModel pSmsDatabaseModel, final SQLiteDatabase pSQLiteDatabase, final SendingCallback pSendingCallback, final CompleteCallback pCompleteCallback) {
         Log.d("thecriserSMSSTATUS", "START_SENDING");
 
-        final String phoneNumber = getConfig(pContext).getConfig().getProject_info().getReserve_channel().getPhone();
+        final SharedPreferences sharedPreferences = pContext.getSharedPreferences("data", Context.MODE_PRIVATE);
+        final int numberPosition = sharedPreferences.getInt(Constants.Shared.NUMBER_POSITION, 0);
+        final List<Phone> phone = getConfig(pContext).getConfig().getProject_info().getReserve_channel().getPhone();
+        final Phone resultPhone = phone.get(numberPosition);
+
         final String SENT = "SMS_SENT";
         final String DELIVERED = "SMS_DELIVERED";
 
@@ -214,9 +254,12 @@ public final class SmsUtils {
         }, new IntentFilter(DELIVERED));
 
         Log.d("thecriserSending", "SEND_SMS_METHOD FROM SMS MANAGER " + pSmsDatabaseModel.getMessage());
-        Toast.makeText(pContext, pSmsDatabaseModel.getMessage() + " | TIME = " + new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.getDefault()).format(new Date()), Toast.LENGTH_LONG).show();
+        Toast.makeText(pContext, pSmsDatabaseModel.getMessage() + " | Отправка | " + new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.getDefault()).format(new Date()), Toast.LENGTH_LONG).show();
         final SmsManager sms = SmsManager.getDefault();
-        sms.sendTextMessage(phoneNumber, null, pSmsDatabaseModel.getMessage(), sentPI, deliveredPI);
+        final String prefix = resultPhone.getPrefix();
+        final String message = prefix == null || prefix.equals("") ? pSmsDatabaseModel.getMessage() : prefix + " " + pSmsDatabaseModel.getMessage();
+
+        sms.sendTextMessage(resultPhone.getNumber(), null, message, sentPI, deliveredPI);
 //        sms.sendTextMessage("+375298830856", null, pSmsDatabaseModel.getMessage(), sentPI, deliveredPI);
     }
 }

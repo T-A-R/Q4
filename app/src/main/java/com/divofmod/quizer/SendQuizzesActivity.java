@@ -112,12 +112,37 @@ public static final String TAG = "SendQuizzesActivity";
 //                        getString(R.string.sql_file_name),
 //                        getString(R.string.old_sql_file_name)).getWritableDatabase();
 //
+//                SmsDatabaseModel smsDatabaseModel = new SmsDatabaseModel("1535893200","1535895000","##63 0 1 0 0 0","2372","#63","доставлено","1");
 //
-//                final Cursor cursor = pSQLiteDatabase.query(Constants.SmsDatabase.TABLE_NAME, null, null, null, null, null, null);
+//                final String whereClause = "start_time=? AND end_time=? AND message=? AND sms_num=? AND question_id=? AND sending_count=?";
+//
+//                String h ="#" + smsDatabaseModel.getMessage();
+//                final String[] whereArray = new String[]{smsDatabaseModel.getStartTime(),smsDatabaseModel.getEndTime(), h,smsDatabaseModel.getSmsNumber(),
+//                smsDatabaseModel.getQuestionID(),smsDatabaseModel.getSendingCount()};
+////new String[]{"1535893200","1535895000","##63 0 1 0 0 0","#63","2372","0"}
+//
+//                final Cursor cursor = pSQLiteDatabase.query(Constants.SmsDatabase.TABLE_NAME, new String[] {"start_time", "end_time", "message", "sms_num", "question_id","sending_count"},whereClause,whereArray,null, null, null, null);
+//                Log.i(TAG, "onClick:" + cursor.getCount());
 //                String sendingCount = "0";
+//                if (cursor.moveToFirst()) {
+//                    sendingCount = cursor.getString(cursor.getColumnIndex("sending_count"));
+//                    Log.i(TAG, "count123: " + sendingCount);
+//                }
 //
-//                cursor.moveToFirst();
-//                String [] name = new String[]{"start_time", "end_time", "message", "question_id", "sms_num", "status", "sending_count"};
+//                final int sendingCountInt = Integer.parseInt(sendingCount )+ 1;
+//                while (!cursor.isAfterLast()) {
+//                    Log.i(TAG, "start_time " +  cursor.getString(cursor.getColumnIndex("start_time")));
+//                    Log.i(TAG, "end_time " +  cursor.getString(cursor.getColumnIndex("end_time")));
+//                    Log.i(TAG, "message " +  cursor.getString(cursor.getColumnIndex("message")));
+//                    Log.i(TAG, "question_id: " +  cursor.getString(cursor.getColumnIndex("question_id")));
+//                    Log.i(TAG, "sms_num: " +  cursor.getString(cursor.getColumnIndex("sms_num")));
+//                    Log.i(TAG, "sending_count: " +  cursor.getString(cursor.getColumnIndex("sending_count")));
+//                    final ContentValues cv = new ContentValues();
+//                    cv.put("sending_count",sendingCountInt);
+//                    pSQLiteDatabase.update(Constants.SmsDatabase.TABLE_NAME, cv,whereClause,whereArray);
+//                    cursor.moveToNext();
+//                }
+//                cursor.close();
 //
 //
 //

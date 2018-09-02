@@ -104,20 +104,29 @@ public final class SmsUtils {
                         Log.d("thecriserSending", "SENT " + pSmsDatabaseModel.getMessage());
 
                         final String whereClause = "start_time=? AND end_time=? AND message=? AND sms_num=? AND question_id=? AND sending_count=?";
+                       String k = "#" + pSmsDatabaseModel.getMessage();
                         final String[] whereArray = new String[]{
                                 pSmsDatabaseModel.getStartTime(),
                                 pSmsDatabaseModel.getEndTime(),
-                                pSmsDatabaseModel.getMessage(),
+                                k,
                                 pSmsDatabaseModel.getSmsNumber(),
                                 pSmsDatabaseModel.getQuestionID(),
-                                pSmsDatabaseModel.getSendingCount()
-                        };
+                                pSmsDatabaseModel.getSendingCount()};
 
-                        final Cursor cursor = pSQLiteDatabase.query(Constants.SmsDatabase.TABLE_NAME, new String[]{"sending_count"}, whereClause, whereArray, null, null, null);
+                        Log.i(TAG, "start_time: " + pSmsDatabaseModel.getStartTime() + " end_time: " + pSmsDatabaseModel.getEndTime() + " message: " + pSmsDatabaseModel.getMessage() +
+                                "sms_num: " + pSmsDatabaseModel.getSmsNumber() + " question_id: " +  pSmsDatabaseModel.getQuestionID() + " sending_count: "  + pSmsDatabaseModel.getSendingCount());
+
+
+                        final Cursor cursor = pSQLiteDatabase.query(Constants.SmsDatabase.TABLE_NAME, new String[]{"start_time", "end_time", "message", "sms_num", "question_id","sending_count"}, whereClause, whereArray, null, null, null);
                         String sendingCount = "0";
 
                         if (cursor.moveToFirst()) {
                             sendingCount = cursor.getString(cursor.getColumnIndex("sending_count"));
+                        }
+
+                        while (!cursor.isAfterLast())
+                        {
+                            cursor.moveToNext();
                         }
 
                         cursor.close();
@@ -130,6 +139,8 @@ public final class SmsUtils {
                                 whereClause,
                                 whereArray);
                         z++;
+
+
 
                         final SharedPreferences mSharedPreferences;
                         final String[] mTables; // Анкеты

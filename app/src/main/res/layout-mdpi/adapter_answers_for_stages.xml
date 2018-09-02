@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                tools:text="Отправлено"
+                tools:text="Не отправлено"
                 android:textSize="@dimen/textsize_low_mdpi"/>
 
             <Button

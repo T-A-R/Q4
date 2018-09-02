@@ -119,7 +119,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:text="SMS"
-        android:textSize="@dimen/textsize_low_xhdpi"
+        android:textSize="@dimen/textsize_low_600dp"
         android:theme="@style/ThemeOverlay.MyDarkButton"/>
 
 </LinearLayout>

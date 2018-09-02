@@ -65,11 +65,11 @@ public class SmsStatusAdapter extends RecyclerView.Adapter<SmsStatusAdapter.MyVi
                 new SimpleDateFormat(format).format(endDate));
 
         if ((model.getSmsDatabaseModels() == null || model.getSmsDatabaseModels().isEmpty()) && model.getEndTime() < Utils.getCurrentTitme()) {
-            holder.mRecyclerView.setVisibility(View.VISIBLE);//GONE
+            holder.mRecyclerView.setVisibility(View.GONE);
             holder.mEmptyTv.setVisibility(View.VISIBLE);
             holder.mEmptyTv.setText("Нет данных для отправки");
         } else if (model.getStartTime() > Utils.getCurrentTitme()) {
-            holder.mRecyclerView.setVisibility(View.VISIBLE); //GONE
+            holder.mRecyclerView.setVisibility(View.GONE);
             holder.mEmptyTv.setVisibility(View.VISIBLE);
             holder.mEmptyTv.setText("Волна еще не началась");
         } else {

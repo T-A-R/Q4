@@ -11,6 +11,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -19,6 +21,7 @@ import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.DataBase.DBReader;
 import com.divofmod.quizer.callback.CompleteCallback;
 import com.divofmod.quizer.callback.SendingCallback;
+import com.divofmod.quizer.fragment.SmsFragment;
 import com.divofmod.quizer.model.Config.Phone;
 import com.divofmod.quizer.model.Sms.SmsDatabaseModel;
 
@@ -44,35 +47,45 @@ public final class SmsUtils {
         return rn.nextInt(diff + 1);
     }
 
-    public static void sendEndedSmsWaves(final Context pContext, final SQLiteDatabase pSQLiteDatabase, final String from) {
-        Toast.makeText(pContext, from + " | " + getRandomInt(), Toast.LENGTH_LONG).show();
+    public static void sendEndedSmsWaves(final Context pContext, final SQLiteDatabase pSQLiteDatabase, final String from, final FragmentManager pFragmentManager, final CompleteCallback pCompleteCallback) {
+//        Toast.makeText(pContext, from + " | " + getRandomInt(), Toast.LENGTH_LONG).show();
 
         final long mCurrentTime = Utils.getCurrentTitme();
 
         final List<SmsDatabaseModel> smses = getAllSmses(pSQLiteDatabase);
         Collections.reverse(smses);
-        int sec = 0;
+//        int sec = 0;
+        final List<SmsDatabaseModel> finalList = new ArrayList<>();
 
         for (final SmsDatabaseModel smsDatabaseModel : smses) {
             if (smsDatabaseModel.getStatus().equals(Constants.SmsStatuses.NOT_SENT) && mCurrentTime >= Long.parseLong(smsDatabaseModel.getEndTime())) {
+                finalList.add(smsDatabaseModel);
+
                 Log.d("thecriserSending", "SEND_SMS_METHOD FROM sendEndedSmsWaves " + smsDatabaseModel.getMessage());
 
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        sendSMS(true, pContext, smsDatabaseModel, pSQLiteDatabase, null, null);
-                    }
-                }, sec * 1000);
-
-                sec = sec + 1;
+//                final Handler handler = new Handler();
+//                handler.postDelayed(new Runnable() {
+//
+//                    @Override
+//                    public void run() {
+//                        sendSMS(true, pContext, smsDatabaseModel, pSQLiteDatabase, null, null);
+//                    }
+//                }, sec * 1000);
+//
+//                sec = sec + 1;
             }
+        }
+
+        for (int i = 0; i < finalList.size(); i++) {
+            final FragmentTransaction ft = pFragmentManager.beginTransaction();
+            final int count = i + 1;
+            ft.add(android.R.id.content, SmsFragment.newInstance(finalList.get(i), pSQLiteDatabase, count, i == 0 ? pCompleteCallback : null));
+            ft.commit();
         }
     }
 
     public static void sendNotEndedSmsWaves(final Context pContext, final SQLiteDatabase pSQLiteDatabase, final CompleteCallback pCompleteCallback, final String from) {
-        Toast.makeText(pContext, from + " | " + getRandomInt(), Toast.LENGTH_LONG).show();
+//        Toast.makeText(pContext, from + " | " + getRandomInt(), Toast.LENGTH_LONG).show();
 
         final long mCurrentTime = Utils.getCurrentTitme();
 
@@ -254,7 +267,7 @@ public final class SmsUtils {
         }, new IntentFilter(DELIVERED));
 
         Log.d("thecriserSending", "SEND_SMS_METHOD FROM SMS MANAGER " + pSmsDatabaseModel.getMessage());
-        Toast.makeText(pContext, pSmsDatabaseModel.getMessage() + " | Отправка | " + new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.getDefault()).format(new Date()), Toast.LENGTH_LONG).show();
+//        Toast.makeText(pContext, pSmsDatabaseModel.getMessage() + " | Отправка | " + new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.getDefault()).format(new Date()), Toast.LENGTH_LONG).show();
         final SmsManager sms = SmsManager.getDefault();
         final String prefix = resultPhone.getPrefix();
         final String message = prefix == null || prefix.equals("") ? pSmsDatabaseModel.getMessage() : prefix + " " + pSmsDatabaseModel.getMessage();

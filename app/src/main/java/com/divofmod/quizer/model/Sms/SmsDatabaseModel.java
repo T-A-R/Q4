@@ -1,6 +1,8 @@
 package com.divofmod.quizer.model.Sms;
 
-public class SmsDatabaseModel {
+import java.io.Serializable;
+
+public class SmsDatabaseModel implements Serializable {
 
     private final String mStartTime;
     private final String mEndTime;

@@ -82,7 +82,7 @@ public class QuestionnaireActivity extends AppCompatActivity implements View.OnC
         if (Internet.hasConnection(this)) {
             send();
         } else {
-            SmsUtils.sendEndedSmsWaves(this, mSQLiteDatabase, "4");
+            SmsUtils.sendEndedSmsWaves(this, mSQLiteDatabase, "4", getSupportFragmentManager(), null);
         }
     }
 

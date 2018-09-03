@@ -109,8 +109,8 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
     protected void onResume() {
         super.onResume();
 
-        showTryToSend();
-//        tryToSend();
+//        showTryToSend();
+        tryToSend();
     }
 
     private void showTryToSend() {
@@ -118,7 +118,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
             final SmsDatabaseModel smsDatabaseModel = new SmsDatabaseModel("1", "2", "message = " + i, "3", "4", "5", "6");
 
             final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(android.R.id.content, SmsFragment.newInstance(smsDatabaseModel, mSQLiteDatabase));
+            ft.add(android.R.id.content, SmsFragment.newInstance(smsDatabaseModel, mSQLiteDatabase, i + 1, null));
             ft.commit();
         }
     }
@@ -127,7 +127,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
         if (Internet.hasConnection(this)) {
             send();
         } else {
-            SmsUtils.sendEndedSmsWaves(this, mSQLiteDatabase, "3");
+            SmsUtils.sendEndedSmsWaves(this, mSQLiteDatabase, "3", getSupportFragmentManager(), null);
         }
     }
 
@@ -170,6 +170,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.sync_button:
+                tryToSend();
                 startActivity(new Intent(this, SendQuizzesActivity.class));
                 break;
             case R.id.settings:
@@ -387,7 +388,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
                                          @Override
                                          public void onFailure(final Call call, final IOException e) {
-                                             SmsUtils.sendEndedSmsWaves(ProjectActivity.this, mSQLiteDatabase, "1");
+                                             SmsUtils.sendEndedSmsWaves(ProjectActivity.this, mSQLiteDatabase, "1", getSupportFragmentManager(), null);
 
                                              e.printStackTrace();
                                              System.out.println("Ошибка");
@@ -421,7 +422,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                                                  syncDialog.dismiss();
                                                  send();
                                              } else {
-                                                 SmsUtils.sendEndedSmsWaves(ProjectActivity.this, mSQLiteDatabase, "2");
+                                                 SmsUtils.sendEndedSmsWaves(ProjectActivity.this, mSQLiteDatabase, "2", getSupportFragmentManager(), null);
                                                  syncDialog.dismiss();
                                              }
                                          }

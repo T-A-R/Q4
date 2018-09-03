@@ -74,6 +74,7 @@
         android:onClick="onSendNotEndedSmses"
         android:text="Внеочередная отправка"
         android:textSize="@dimen/textsize_low_mdpi"
+        android:visibility="gone"
         android:theme="@style/ThemeOverlay.MyDarkButton"/>
 
     <android.support.v7.widget.RecyclerView

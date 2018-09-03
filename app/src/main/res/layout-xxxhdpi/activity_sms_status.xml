@@ -71,6 +71,7 @@
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/activity_horizontal_margin"
         android:layout_weight="0"
+        android:visibility="gone"
         android:onClick="onSendNotEndedSmses"
         android:text="Внеочередная отправка"
         android:textSize="@dimen/textsize_low_xxxhdpi"

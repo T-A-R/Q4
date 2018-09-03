@@ -19,6 +19,7 @@ import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.DataBase.DBReader;
 import com.divofmod.quizer.Utils.SmsUtils;
 import com.divofmod.quizer.Utils.Utils;
+import com.divofmod.quizer.callback.CompleteCallback;
 import com.divofmod.quizer.model.API.QuizzesResponse;
 import com.divofmod.quizer.model.Sms.SmsDatabaseModel;
 import com.divofmod.quizer.sms.SMSStatusActivity;
@@ -53,6 +54,16 @@ public static final String TAG = "SendQuizzesActivity";
     TextView mQuizzesNotSend;
     TextView mAudioNotSend;
 
+    final CompleteCallback mCompleteCallback = new CompleteCallback() {
+
+        @Override
+        public void onComplete() {
+            final Intent intent = getIntent();
+            finish();
+            startActivity(intent);
+        }
+    };
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +80,7 @@ public static final String TAG = "SendQuizzesActivity";
         mSharedPreferences = getSharedPreferences("data",
                 Context.MODE_PRIVATE);
 
-        mSQLiteDatabase = new DBHelper(SendQuizzesActivity.this,
+        mSQLiteDatabase = new DBHelper(this,
                 mSharedPreferences.getString("name_file", ""),
                 new File(getFilesDir().toString() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
                 getString(R.string.sql_file_name),
@@ -97,6 +108,19 @@ public static final String TAG = "SendQuizzesActivity";
         findViewById(R.id.send_audio).setOnClickListener(this);
         findViewById(R.id.send_quiz).setOnClickListener(this);
         findViewById(R.id.sms_button).setOnClickListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        tryToSend();
+    }
+
+    private void tryToSend() {
+        if (!Internet.hasConnection(this)) {
+            SmsUtils.sendEndedSmsWaves(this, mSQLiteDatabase, "3", getSupportFragmentManager(), mCompleteCallback);
+        }
     }
 
     @Override
@@ -196,7 +220,7 @@ public static final String TAG = "SendQuizzesActivity";
 
                                              @Override
                                              public void onFailure(final Call call, final IOException e) {
-                                                 SmsUtils.sendEndedSmsWaves(SendQuizzesActivity.this, mSQLiteDatabase, "5");
+                                                 SmsUtils.sendEndedSmsWaves(SendQuizzesActivity.this, mSQLiteDatabase, "5", getSupportFragmentManager(), mCompleteCallback);
 
                                                  e.printStackTrace();
                                                  System.out.println("Ошибка");
@@ -236,7 +260,7 @@ public static final String TAG = "SendQuizzesActivity";
                                                      syncDialog.dismiss();
                                                      onClick(findViewById(R.id.send_quiz));
                                                  } else {
-                                                     SmsUtils.sendEndedSmsWaves(SendQuizzesActivity.this, mSQLiteDatabase, "6");
+                                                     SmsUtils.sendEndedSmsWaves(SendQuizzesActivity.this, mSQLiteDatabase, "6", getSupportFragmentManager(), mCompleteCallback);
                                                      syncDialog.dismiss();
                                                  }
                                              }

@@ -7,6 +7,7 @@
     <dimen name="progress_diametr_xxhdpi">110dp</dimen>
     <dimen name="textsize_xxhdpi">26sp</dimen>
     <dimen name="textsize_low_xxhdpi">18sp</dimen>
+    <dimen name="textsize_low_cardview_xxhdpi">16sp</dimen>
     <dimen name="checksize_xxhdpi">18dp</dimen>
     <dimen name="start_contact_width_xxhdpi">42dp</dimen>
     <dimen name="start_contact_height_xxhdpi">30dp</dimen>

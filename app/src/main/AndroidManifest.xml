@@ -38,6 +38,9 @@
             android:name=".sms.SMSStatusActivity"
             android:screenOrientation="portrait"/>
         <activity
+            android:name=".SettingsActivity"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".QuotaActivity"
             android:screenOrientation="portrait"/>
         <activity

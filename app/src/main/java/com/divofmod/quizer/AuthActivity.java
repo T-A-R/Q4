@@ -184,6 +184,10 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                      final String newLogin = mLoginEditText.getText().toString();
 
                                      if (!oldLogin.equals(newLogin)) {
+                                         final SharedPreferences.Editor editor = mSharedPreferences.edit()
+                                                 .putInt(Constants.Shared.NUMBER_POSITION, 0);
+                                         editor.apply();
+
                                          try {
                                              final File file = new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4));
                                              final SQLiteDatabase mSQLiteDatabase = new DBHelper(AuthActivity.this,

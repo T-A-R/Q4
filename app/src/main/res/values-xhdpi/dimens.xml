@@ -4,7 +4,7 @@
     <dimen name="activity_horizontal_margin_expandable_list_view">32dp</dimen>
     <dimen name="activity_horizontal_margin_for_center">8dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="progress_diametr_xhdpi">130dp</dimen>
+    <dimen name="progress_diametr_xhdpi">90dp</dimen>
     <dimen name="textsize_xhdpi">24sp</dimen>
     <dimen name="textsize_low_xhdpi">18sp</dimen>
     <dimen name="textsize_low_cardview_xhdpi">16sp</dimen>

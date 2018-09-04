@@ -199,7 +199,7 @@ public static final String TAG = "SendQuizzesActivity";
                     final AlertDialog syncDialog = new AlertDialog.Builder(SendQuizzesActivity.this)
                             .setCancelable(false)
                             .setIcon(R.drawable.sync)
-                            .setTitle("Сихронизация")
+                            .setTitle("Синхронизация")
                             .setView(R.layout.sync_dialog).create();
 
                     if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {
@@ -349,7 +349,7 @@ public static final String TAG = "SendQuizzesActivity";
                 }
             });
         } else {
-            Toast.makeText(this, "Пдключение к интернету осутствует!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Подключение к интернету отсутствует!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -362,7 +362,7 @@ public static final String TAG = "SendQuizzesActivity";
                     final AlertDialog syncDialog = new AlertDialog.Builder(SendQuizzesActivity.this)
                             .setCancelable(false)
                             .setIcon(R.drawable.sync)
-                            .setTitle("Сихронизация")
+                            .setTitle("Синхронизация")
                             .setView(R.layout.sync_dialog).create();
 
                     if (!mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
@@ -433,7 +433,7 @@ public static final String TAG = "SendQuizzesActivity";
                 }
             });
         } else {
-            Toast.makeText(this, "Подключение к интернету осутствует!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Подключение к интернету отсутствует!", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -147,7 +147,7 @@ public class QuestionnaireActivity extends AppCompatActivity implements View.OnC
                               final AlertDialog syncDialog = new AlertDialog.Builder(QuestionnaireActivity.this)
                                       .setCancelable(false)
                                       .setIcon(R.drawable.sync)
-                                      .setTitle("Сихронизация")
+                                      .setTitle("Синхронизация")
                                       .setView(R.layout.sync_dialog).create();
 
                               if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {

@@ -343,7 +343,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                 final AlertDialog syncDialog = new AlertDialog.Builder(ProjectActivity.this)
                         .setCancelable(false)
                         .setIcon(R.drawable.sync)
-                        .setTitle("Сихронизация")
+                        .setTitle("Синхронизация")
                         .setView(R.layout.sync_dialog).create();
 
                 if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {

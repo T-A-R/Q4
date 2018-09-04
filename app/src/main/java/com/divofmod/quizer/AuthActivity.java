@@ -403,7 +403,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                     @Override
                                     public void onClick(final View view) {
                                         if (deleteDataPassword.getText().toString().isEmpty()) {
-                                            deleteDataPassword.setError("Введте пароль!");
+                                            deleteDataPassword.setError("Введите пароль!");
                                         } else {
                                             deleteDataPassword.setError(null);
                                             if (!passwordToDelete.equals(deleteDataPassword.getText().toString())) {

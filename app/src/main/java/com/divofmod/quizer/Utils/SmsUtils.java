@@ -157,11 +157,11 @@ public final class SmsUtils {
                         Log.d("thecriserSending", "SENT " + pSmsDatabaseModel.getMessage());
 
                         final String whereClause = "start_time=? AND end_time=? AND message=? AND sms_num=? AND question_id=? AND sending_count=?";
-                       String k = "#" + pSmsDatabaseModel.getMessage();
+                       String message = "#" + pSmsDatabaseModel.getMessage();
                         final String[] whereArray = new String[]{
                                 pSmsDatabaseModel.getStartTime(),
                                 pSmsDatabaseModel.getEndTime(),
-                                k,
+                                message,
                                 pSmsDatabaseModel.getSmsNumber(),
                                 pSmsDatabaseModel.getQuestionID(),
                                 pSmsDatabaseModel.getSendingCount()};

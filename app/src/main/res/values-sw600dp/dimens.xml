@@ -5,8 +5,9 @@
     <dimen name="activity_horizontal_margin_for_center">8dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="progress_diametr_600dp">160dp</dimen>
-    <dimen name="textsize_600dp">50sp</dimen>
-    <dimen name="textsize_low_600dp">30sp</dimen>
+    <dimen name="textsize_600dp">30sp</dimen>
+    <dimen name="textsize_low_600dp">26sp</dimen>
+    <dimen name="textsize_low_cardview_600dp">26sp</dimen>
     <dimen name="checksize_600dp">18dp</dimen>
     <dimen name="start_contact_width_600dp">42dp</dimen>
     <dimen name="start_contact_height_600dp">60dp</dimen>

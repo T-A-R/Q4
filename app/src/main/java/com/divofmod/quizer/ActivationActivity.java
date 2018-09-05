@@ -152,7 +152,7 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
                                 @Override
                                 public void run() {
                                     mProgressBar.setVisibility(View.INVISIBLE);
-                                    Toast.makeText(ActivationActivity.this, "Неверный ключ. Попробуй еще раз.",
+                                    Toast.makeText(ActivationActivity.this, "Неверный ключ. Попробуйте еще раз.",
                                             Toast.LENGTH_SHORT).show();
                                     mKeyEditText.setVisibility(View.VISIBLE);
                                     mSendButton.setVisibility(View.VISIBLE);

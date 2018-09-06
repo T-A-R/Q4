@@ -50,11 +50,12 @@ public final class SmsUtils {
     public static void sendEndedSmsWaves(final Context pContext, final SQLiteDatabase pSQLiteDatabase, final String from, final FragmentManager pFragmentManager, final CompleteCallback pCompleteCallback) {
 //        Toast.makeText(pContext, from + " | " + getRandomInt(), Toast.LENGTH_LONG).show();
 
+        pCompleteCallback.onStart();
+
         final long mCurrentTime = Utils.getCurrentTitme();
 
         final List<SmsDatabaseModel> smses = getAllSmses(pSQLiteDatabase);
         Collections.reverse(smses);
-//        int sec = 0;
         final List<SmsDatabaseModel> finalList = new ArrayList<>();
 
         for (final SmsDatabaseModel smsDatabaseModel : smses) {
@@ -62,17 +63,6 @@ public final class SmsUtils {
                 finalList.add(smsDatabaseModel);
 
                 Log.d("thecriserSending", "SEND_SMS_METHOD FROM sendEndedSmsWaves " + smsDatabaseModel.getMessage());
-
-//                final Handler handler = new Handler();
-//                handler.postDelayed(new Runnable() {
-//
-//                    @Override
-//                    public void run() {
-//                        sendSMS(true, pContext, smsDatabaseModel, pSQLiteDatabase, null, null);
-//                    }
-//                }, sec * 1000);
-//
-//                sec = sec + 1;
             }
         }
 
@@ -81,6 +71,10 @@ public final class SmsUtils {
             final int count = i + 1;
             ft.add(android.R.id.content, SmsFragment.newInstance(finalList.get(i), pSQLiteDatabase, count, i == 0 ? pCompleteCallback : null));
             ft.commit();
+        }
+
+        if (finalList.isEmpty()) {
+            pCompleteCallback.onComplete();
         }
     }
 
@@ -157,29 +151,20 @@ public final class SmsUtils {
                         Log.d("thecriserSending", "SENT " + pSmsDatabaseModel.getMessage());
 
                         final String whereClause = "start_time=? AND end_time=? AND message=? AND sms_num=? AND question_id=? AND sending_count=?";
-                       String message = "#" + pSmsDatabaseModel.getMessage();
                         final String[] whereArray = new String[]{
                                 pSmsDatabaseModel.getStartTime(),
                                 pSmsDatabaseModel.getEndTime(),
-                                message,
+                                pSmsDatabaseModel.getMessage(),
                                 pSmsDatabaseModel.getSmsNumber(),
                                 pSmsDatabaseModel.getQuestionID(),
-                                pSmsDatabaseModel.getSendingCount()};
+                                pSmsDatabaseModel.getSendingCount()
+                        };
 
-                        Log.i(TAG, "start_time: " + pSmsDatabaseModel.getStartTime() + " end_time: " + pSmsDatabaseModel.getEndTime() + " message: " + pSmsDatabaseModel.getMessage() +
-                                "sms_num: " + pSmsDatabaseModel.getSmsNumber() + " question_id: " +  pSmsDatabaseModel.getQuestionID() + " sending_count: "  + pSmsDatabaseModel.getSendingCount());
-
-
-                        final Cursor cursor = pSQLiteDatabase.query(Constants.SmsDatabase.TABLE_NAME, new String[]{"start_time", "end_time", "message", "sms_num", "question_id","sending_count"}, whereClause, whereArray, null, null, null);
+                        final Cursor cursor = pSQLiteDatabase.query(Constants.SmsDatabase.TABLE_NAME, new String[]{"sending_count"}, whereClause, whereArray, null, null, null);
                         String sendingCount = "0";
 
                         if (cursor.moveToFirst()) {
                             sendingCount = cursor.getString(cursor.getColumnIndex("sending_count"));
-                        }
-
-                        while (!cursor.isAfterLast())
-                        {
-                            cursor.moveToNext();
                         }
 
                         cursor.close();
@@ -192,8 +177,6 @@ public final class SmsUtils {
                                 whereClause,
                                 whereArray);
                         z++;
-
-
 
                         final SharedPreferences mSharedPreferences;
                         final String[] mTables; // Анкеты

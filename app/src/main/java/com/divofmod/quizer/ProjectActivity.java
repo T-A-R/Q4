@@ -1,17 +1,14 @@
 package com.divofmod.quizer;
 
 import android.Manifest;
-import android.app.FragmentManager;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
@@ -28,6 +25,7 @@ import com.divofmod.quizer.DataBase.DBHelper;
 import com.divofmod.quizer.DataBase.DBReader;
 import com.divofmod.quizer.Utils.SmsUtils;
 import com.divofmod.quizer.Utils.Utils;
+import com.divofmod.quizer.callback.CompleteCallback;
 import com.divofmod.quizer.fragment.SmsFragment;
 import com.divofmod.quizer.model.API.QuizzesResponse;
 import com.divofmod.quizer.model.Config.ConfigResponseModel;
@@ -40,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -69,6 +69,9 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
     String[] mTables; //Анкеты
     String[] mStatisticsPhoto; //Фото статистики
+
+    Timer mTimer;
+    TimerTask mTimerTask;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -108,9 +111,51 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onResume() {
         super.onResume();
+        startTimer();
+    }
 
-//        showTryToSend();
-        tryToSend();
+    private void stopTimer() {
+        mTimer.cancel();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopTimer();
+    }
+
+    private void startTimer() {
+        mTimer = new Timer();
+        mTimerTask = new TimerTask() {
+
+            @Override
+            public void run() {
+                if (Internet.hasConnection(ProjectActivity.this)) {
+                    send();
+                } else {
+                    Log.d("SMS", "try to send");
+
+                    SmsUtils.sendEndedSmsWaves(ProjectActivity.this, mSQLiteDatabase, "3", getSupportFragmentManager(), new CompleteCallback() {
+
+                        @Override
+                        public void onComplete() {
+                            Log.d("SMS", "sending complete");
+
+                            startTimer();
+                        }
+
+                        @Override
+                        public void onStart() {
+                            Log.d("SMS", "start sending");
+
+                            stopTimer();
+                        }
+                    });
+                }
+            }
+        };
+
+        mTimer.scheduleAtFixedRate(mTimerTask,1000,1000);
     }
 
     private void showTryToSend() {
@@ -120,14 +165,6 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
             final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.add(android.R.id.content, SmsFragment.newInstance(smsDatabaseModel, mSQLiteDatabase, i + 1, null));
             ft.commit();
-        }
-    }
-
-    private void tryToSend() {
-        if (Internet.hasConnection(this)) {
-            send();
-        } else {
-            SmsUtils.sendEndedSmsWaves(this, mSQLiteDatabase, "3", getSupportFragmentManager(), null);
         }
     }
 
@@ -170,7 +207,6 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.sync_button:
-                tryToSend();
                 startActivity(new Intent(this, SendQuizzesActivity.class));
                 break;
             case R.id.settings:

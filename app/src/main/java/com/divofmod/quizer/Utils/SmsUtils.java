@@ -50,7 +50,9 @@ public final class SmsUtils {
     public static void sendEndedSmsWaves(final Context pContext, final SQLiteDatabase pSQLiteDatabase, final String from, final FragmentManager pFragmentManager, final CompleteCallback pCompleteCallback) {
 //        Toast.makeText(pContext, from + " | " + getRandomInt(), Toast.LENGTH_LONG).show();
 
-        pCompleteCallback.onStart();
+        if (pCompleteCallback != null) {
+            pCompleteCallback.onStart();
+        }
 
         final long mCurrentTime = Utils.getCurrentTitme();
 
@@ -74,7 +76,9 @@ public final class SmsUtils {
         }
 
         if (finalList.isEmpty()) {
-            pCompleteCallback.onComplete();
+            if (pCompleteCallback != null) {
+                pCompleteCallback.onComplete();
+            }
         }
     }
 
@@ -97,9 +101,9 @@ public final class SmsUtils {
                     @Override
                     public void run() {
                         if (finalI == smses.size() - 1) {
-                            sendSMS(false, pContext, smsDatabaseModel, pSQLiteDatabase, null, pCompleteCallback);
+                            sendSMS(false, pContext, smsDatabaseModel, pSQLiteDatabase, null, pCompleteCallback, null);
                         } else {
-                            sendSMS(false, pContext, smsDatabaseModel, pSQLiteDatabase, null, null);
+                            sendSMS(false, pContext, smsDatabaseModel, pSQLiteDatabase, null, null, null);
                         }
                     }
                 }, sec * 2000);
@@ -123,8 +127,12 @@ public final class SmsUtils {
         return list;
     }
 
-    public static void sendSMS(final boolean isChangeStatus, final Context pContext, final SmsDatabaseModel pSmsDatabaseModel, final SQLiteDatabase pSQLiteDatabase, final SendingCallback pSendingCallback, final CompleteCallback pCompleteCallback) {
+    public static void sendSMS(final boolean isChangeStatus, final Context pContext, final SmsDatabaseModel pSmsDatabaseModel, final SQLiteDatabase pSQLiteDatabase, final SendingCallback pSendingCallback, final CompleteCallback pCompleteCallback, final CompleteCallback pOneCompleteCallback) {
         Log.d("thecriserSMSSTATUS", "START_SENDING");
+
+        if (pOneCompleteCallback != null) {
+            pOneCompleteCallback.onStart();
+        }
 
         final SharedPreferences sharedPreferences = pContext.getSharedPreferences("data", Context.MODE_PRIVATE);
         final int numberPosition = sharedPreferences.getInt(Constants.Shared.NUMBER_POSITION, 0);
@@ -147,6 +155,10 @@ public final class SmsUtils {
             public void onReceive(final Context arg0, final Intent arg1) {
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
+                        if (pOneCompleteCallback != null) {
+                            pOneCompleteCallback.onComplete();
+                        }
+
                         Log.d("thecriserSMSSTATUS", "SMS sent");
                         Log.d("thecriserSending", "SENT " + pSmsDatabaseModel.getMessage());
 
@@ -200,18 +212,30 @@ public final class SmsUtils {
 
                         break;
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+                        if (pOneCompleteCallback != null) {
+                            pOneCompleteCallback.onComplete();
+                        }
                         Log.d("thecriserSMSSTATUS", "Generic failure");
 
                         break;
                     case SmsManager.RESULT_ERROR_NO_SERVICE:
+                        if (pOneCompleteCallback != null) {
+                            pOneCompleteCallback.onComplete();
+                        }
                         Log.d("thecriserSMSSTATUS", "No service");
 
                         break;
                     case SmsManager.RESULT_ERROR_NULL_PDU:
+                        if (pOneCompleteCallback != null) {
+                            pOneCompleteCallback.onComplete();
+                        }
                         Log.d("thecriserSMSSTATUS", "Null PDU");
 
                         break;
                     case SmsManager.RESULT_ERROR_RADIO_OFF:
+                        if (pOneCompleteCallback != null) {
+                            pOneCompleteCallback.onComplete();
+                        }
                         Log.d("thecriserSMSSTATUS", "Radio off");
 
                         break;

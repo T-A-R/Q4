@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.R;
 import com.divofmod.quizer.Utils.SmsUtils;
+import com.divofmod.quizer.callback.CompleteCallback;
 import com.divofmod.quizer.callback.SendingCallback;
 import com.divofmod.quizer.model.Sms.SmsDatabaseModel;
 
@@ -82,7 +83,18 @@ public class SmsStatusAnswersAdapter extends RecyclerView.Adapter<SmsStatusAnswe
                     public void onDelivered() {
                         holder.mStatus.setText(Constants.SmsStatuses.DELIVERED);
                     }
-                }, null);
+                }, null, new CompleteCallback() {
+
+                    @Override
+                    public void onComplete() {
+                        holder.mRetryButton.setEnabled(true);
+                    }
+
+                    @Override
+                    public void onStart() {
+                        holder.mRetryButton.setEnabled(false);
+                    }
+                });
             }
         });
     }

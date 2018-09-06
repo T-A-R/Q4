@@ -444,7 +444,12 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                                              final QuizzesResponse responseCallback = App.getGson().fromJson(response.body().string(), QuizzesResponse.class);
 
                                              if (responseCallback.isSeccessful()) {
-                                                 mSQLiteDatabase.delete(Constants.SmsDatabase.TABLE_NAME, null, null);
+                                                 try {
+                                                     mSQLiteDatabase.delete(Constants.SmsDatabase.TABLE_NAME, null, null);
+                                                 } catch (final Exception ignored) {
+
+                                                 }
+
                                                  mSQLiteDatabase.execSQL("DROP TABLE if exists " + "answers_" + mTables[0]);
                                                  mSQLiteDatabase.execSQL("DROP TABLE if exists " + "answers_selective_" + mTables[0]);
                                                  mSQLiteDatabase.execSQL("DROP TABLE if exists " + "common_" + mTables[0]);

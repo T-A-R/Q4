@@ -82,7 +82,7 @@ public class SmsFragment extends Fragment {
                 mSendButton.setVisibility(View.INVISIBLE);
                 mProgressFrame.setVisibility(View.VISIBLE);
 
-                SmsUtils.sendSMS(true, getActivity(), mSmsDatabaseModel, mSQLiteDatabase, null, null);
+                SmsUtils.sendSMS(true, getActivity(), mSmsDatabaseModel, mSQLiteDatabase, null, null, null);
 
                 final Handler handler = new Handler();
 

@@ -162,14 +162,13 @@ public final class SmsUtils {
                         Log.d("thecriserSMSSTATUS", "SMS sent");
                         Log.d("thecriserSending", "SENT " + pSmsDatabaseModel.getMessage());
 
-                        final String whereClause = "start_time=? AND end_time=? AND message=? AND sms_num=? AND question_id=? AND sending_count=?";
+                        final String whereClause = "start_time=? AND end_time=? AND message=? AND sms_num=? AND question_id=?";
                         final String[] whereArray = new String[]{
                                 pSmsDatabaseModel.getStartTime(),
                                 pSmsDatabaseModel.getEndTime(),
                                 pSmsDatabaseModel.getMessage(),
                                 pSmsDatabaseModel.getSmsNumber(),
-                                pSmsDatabaseModel.getQuestionID(),
-                                pSmsDatabaseModel.getSendingCount()
+                                pSmsDatabaseModel.getQuestionID()
                         };
 
                         final Cursor cursor = pSQLiteDatabase.query(Constants.SmsDatabase.TABLE_NAME, new String[]{"sending_count"}, whereClause, whereArray, null, null, null);
@@ -287,7 +286,7 @@ public final class SmsUtils {
         Log.d("thecriserSending", "SEND_SMS_METHOD FROM SMS MANAGER " + pSmsDatabaseModel.getMessage());
 //        Toast.makeText(pContext, pSmsDatabaseModel.getMessage() + " | Отправка | " + new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.getDefault()).format(new Date()), Toast.LENGTH_LONG).show();
         final SmsManager sms = SmsManager.getDefault();
-        final String prefix = resultPhone.getPrefix();
+        final String prefix = resultPhone.getPreffix();
         final String message = prefix == null || prefix.equals("") ? pSmsDatabaseModel.getMessage() : prefix + " " + pSmsDatabaseModel.getMessage();
 
         sms.sendTextMessage(resultPhone.getNumber(), null, message, sentPI, deliveredPI);

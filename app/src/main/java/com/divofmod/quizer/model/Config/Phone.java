@@ -7,8 +7,8 @@ public class Phone {
     @SerializedName("number")
     private String number;
 
-    @SerializedName("prefix")
-    private String prefix;
+    @SerializedName("preffix")
+    private String preffix;
 
     public Phone() {
     }
@@ -17,7 +17,7 @@ public class Phone {
         return number;
     }
 
-    public String getPrefix() {
-        return prefix;
+    public String getPreffix() {
+        return preffix;
     }
 }

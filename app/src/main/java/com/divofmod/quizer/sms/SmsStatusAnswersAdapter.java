@@ -63,8 +63,13 @@ public class SmsStatusAnswersAdapter extends RecyclerView.Adapter<SmsStatusAnswe
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         final SmsDatabaseModel model = mSmsStatusAnswers.get(position);
 
+        final int sendingCount = Integer.valueOf(model.getSendingCount());
+
         holder.mMessage.setText(model.getMessage());
         holder.mSendingCount.setText(model.getSendingCount());
+
+        holder.mRetryButton.setText(sendingCount == 0 ? "Внеочередная отправка" : "Повторная отправка");
+
         Log.i(TAG, "onBindViewHolder: " + model.getSendingCount());
         holder.mStatus.setText(model.getStatus());
         holder.mRetryButton.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +79,7 @@ public class SmsStatusAnswersAdapter extends RecyclerView.Adapter<SmsStatusAnswe
                 holder.mStatus.setText("Отправка...");
                 holder.mStatus.setText(Constants.SmsStatuses.SENT);
                 holder.mSendingCount.setText((Integer.parseInt(holder.mSendingCount.getText().toString()) + 1) + "");
+                holder.mRetryButton.setText("Повторная отправка");
 
                 Log.d("thecriserSending", "SEND_SMS_METHOD FROM CLICK " + model.getMessage());
 

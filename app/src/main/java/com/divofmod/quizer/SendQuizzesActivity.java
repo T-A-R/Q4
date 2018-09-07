@@ -97,17 +97,21 @@ public static final String TAG = "SendQuizzesActivity";
 
         System.out.println(mSharedPreferences.getString("Quizzes_audio", ""));
 
-        mQuizzesNotSend = (TextView) findViewById(R.id.quizzes_not_send);
+        try {
+            mQuizzesNotSend = (TextView) findViewById(R.id.quizzes_not_send);
 
-        mQuizzesNotSend.setText("0");
-        if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {
-            mQuizzesNotSend.setText(String.valueOf(mTables.length));
-        }
+            mQuizzesNotSend.setText("0");
+            if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {
+                mQuizzesNotSend.setText(String.valueOf(mTables.length));
+            }
 
-        mAudioNotSend = (TextView) findViewById(R.id.audio_not_send);
-        mAudioNotSend.setText("0");
-        if (!mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
-            mAudioNotSend.setText(String.valueOf(mAudioTables.length));
+            mAudioNotSend = (TextView) findViewById(R.id.audio_not_send);
+            mAudioNotSend.setText("0");
+            if (!mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
+                mAudioNotSend.setText(String.valueOf(mAudioTables.length));
+            }
+        } catch (final Exception ignore) {
+
         }
 
         findViewById(R.id.send_audio).setOnClickListener(this);
@@ -119,6 +123,22 @@ public static final String TAG = "SendQuizzesActivity";
     protected void onResume() {
         super.onResume();
 
+        try {
+            mQuizzesNotSend = (TextView) findViewById(R.id.quizzes_not_send);
+
+            mQuizzesNotSend.setText("0");
+            if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {
+                mQuizzesNotSend.setText(String.valueOf(mTables.length));
+            }
+
+            mAudioNotSend = (TextView) findViewById(R.id.audio_not_send);
+            mAudioNotSend.setText("0");
+            if (!mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
+                mAudioNotSend.setText(String.valueOf(mAudioTables.length));
+            }
+        } catch (final Exception ignore) {
+
+        }
 //        tryToSend();
     }
 

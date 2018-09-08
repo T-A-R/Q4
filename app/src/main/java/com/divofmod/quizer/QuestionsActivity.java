@@ -1306,7 +1306,8 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
     private void insertOrUpdateToDatabase(final SmsFullAnswerModel pSmsFullAnswerModel) {
         for (final SmsAnswerModel smsAnswerModel : pSmsFullAnswerModel.getAnswers()) {
-            final StringBuilder message = new StringBuilder("#" + smsAnswerModel.getSmsNumber());
+            final String smsNumber2 = smsAnswerModel.getSmsNumber();
+            final StringBuilder message = new StringBuilder(smsNumber2.startsWith("#") ? smsNumber2 : "#" + smsNumber2);
 
             for (final String value : smsAnswerModel.getAnswers()) {
                 message.append(" ").append(value);

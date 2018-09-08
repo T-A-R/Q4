@@ -27,8 +27,8 @@ android {
         applicationId "com.quizer.quizerexit"
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 11
-        versionName "2.1.11"
+        versionCode 13
+        versionName "2.1.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

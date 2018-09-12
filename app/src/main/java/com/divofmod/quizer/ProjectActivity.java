@@ -105,11 +105,13 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void openSQLiteDatabase() {
-        mSQLiteDatabase = new DBHelper(this,
-                mSharedPreferences.getString("name_file", ""),
-                new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
-                getString(R.string.sql_file_name),
-                getString(R.string.old_sql_file_name)).getWritableDatabase();
+        if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
+            mSQLiteDatabase = new DBHelper(this,
+                    mSharedPreferences.getString("name_file", ""),
+                    new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+                    getString(R.string.sql_file_name),
+                    getString(R.string.old_sql_file_name)).getWritableDatabase();
+        }
     }
 
     @Override
@@ -142,6 +144,8 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 } else {
                     Log.d("SMS", "try to send");
+
+                    openSQLiteDatabase();
 
                     SmsUtils.sendEndedSmsWaves(ProjectActivity.this, mSQLiteDatabase, "3", getSupportFragmentManager(), new CompleteCallback() {
 
@@ -432,6 +436,8 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
                                          @Override
                                          public void onFailure(final Call call, final IOException e) {
+                                             openSQLiteDatabase();
+
                                              SmsUtils.sendEndedSmsWaves(ProjectActivity.this, mSQLiteDatabase, "1", getSupportFragmentManager(), null);
 
                                              e.printStackTrace();
@@ -448,9 +454,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
                                          @Override
                                          public void onResponse(final Call call, final Response response) throws IOException {
-                                             if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
-                                                 openSQLiteDatabase();
-                                             }
+                                             openSQLiteDatabase();
 
                                              final QuizzesResponse responseCallback = App.getGson().fromJson(response.body().string(), QuizzesResponse.class);
 
@@ -479,6 +483,8 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
                                                  }
                                              } else {
+                                                 openSQLiteDatabase();
+
                                                  SmsUtils.sendEndedSmsWaves(ProjectActivity.this, mSQLiteDatabase, "2", getSupportFragmentManager(), null);
                                                  syncDialog.dismiss();
                                              }

@@ -209,13 +209,17 @@ public static final String TAG = "SendQuizzesActivity";
 
                 break;
             case R.id.send_quiz:
-                sendQuiz();
+                try {
+                    sendQuiz();
+                } catch (Exception pE) {
+                    
+                }
 
                 break;
         }
     }
 
-    private void sendQuiz() {
+    private void sendQuiz() throws Exception {
         if (Internet.hasConnection(this)) {
             runOnUiThread(new Runnable() {
 

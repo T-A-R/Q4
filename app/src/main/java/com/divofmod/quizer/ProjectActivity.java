@@ -117,7 +117,10 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onResume() {
         super.onResume();
-        startTimer();
+        try {
+            startTimer();
+        } catch (Exception pE) {
+        }
     }
 
     private void stopTimer() {
@@ -130,7 +133,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
         stopTimer();
     }
 
-    private void startTimer() {
+    private void startTimer() throws Exception {
         mTimer = new Timer();
         mTimerTask = new TimerTask() {
 
@@ -153,7 +156,11 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                         public void onComplete() {
                             Log.d("SMS", "sending complete");
 
-                            startTimer();
+                            try {
+                                startTimer();
+                            } catch (Exception pE) {
+                                
+                            }
                         }
 
                         @Override

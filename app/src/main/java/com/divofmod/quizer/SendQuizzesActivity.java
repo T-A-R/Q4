@@ -212,7 +212,7 @@ public static final String TAG = "SendQuizzesActivity";
                 try {
                     sendQuiz();
                 } catch (Exception pE) {
-                    
+
                 }
 
                 break;

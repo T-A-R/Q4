@@ -65,7 +65,11 @@ public abstract class DBReader {
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 // делаем запрос всех данных из таблицы, получаем Cursor
-                cursor = db.query(tableName, null, null, null, null, null, null);
+                try {
+                    cursor = db.query(tableName, null, null, null, null, null, null);
+                } catch (final Exception pe) {
+                    return temp;
+                }
 
                 // ставим позицию курсора на первую строку выборки
                 // если в выборке нет строк, вернется false

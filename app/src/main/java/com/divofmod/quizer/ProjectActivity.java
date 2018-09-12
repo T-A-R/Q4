@@ -131,7 +131,11 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void run() {
                 if (Internet.hasConnection(ProjectActivity.this)) {
-                    send();
+                    try {
+                        send();
+                    } catch (final Exception pE) {
+
+                    }
                 } else {
                     Log.d("SMS", "try to send");
 
@@ -155,7 +159,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
             }
         };
 
-        mTimer.scheduleAtFixedRate(mTimerTask,1000,1000);
+        mTimer.scheduleAtFixedRate(mTimerTask, 1000, 1000);
     }
 
     private void showTryToSend() {
@@ -371,7 +375,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
         super.onDestroy();
     }
 
-    private void send() {
+    private void send() throws Exception {
         runOnUiThread(new Runnable() {
 
             @Override
@@ -461,7 +465,12 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
                                                  new File(getFilesDir(), "files/" + mPhoto + ".jpg").delete();
                                                  syncDialog.dismiss();
-                                                 send();
+
+                                                 try {
+                                                     send();
+                                                 } catch (Exception pE) {
+
+                                                 }
                                              } else {
                                                  SmsUtils.sendEndedSmsWaves(ProjectActivity.this, mSQLiteDatabase, "2", getSupportFragmentManager(), null);
                                                  syncDialog.dismiss();

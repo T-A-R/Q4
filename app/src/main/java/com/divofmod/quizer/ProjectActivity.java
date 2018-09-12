@@ -91,11 +91,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
         mConfigResponseModel = Utils.getConfig(this);
 
-        mSQLiteDatabase = new DBHelper(this,
-                mSharedPreferences.getString("name_file", ""),
-                new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
-                getString(R.string.sql_file_name),
-                getString(R.string.old_sql_file_name)).getWritableDatabase();
+        openSQLiteDatabase();
 
         final ProjectInfoField projectInfoField = mConfigResponseModel.getConfig().getProject_info();
 
@@ -106,6 +102,14 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
         } catch (final Exception ex) {
             Toast.makeText(this, "Соглашение отсутствует", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void openSQLiteDatabase() {
+        mSQLiteDatabase = new DBHelper(this,
+                mSharedPreferences.getString("name_file", ""),
+                new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+                getString(R.string.sql_file_name),
+                getString(R.string.old_sql_file_name)).getWritableDatabase();
     }
 
     @Override
@@ -444,6 +448,9 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
                                          @Override
                                          public void onResponse(final Call call, final Response response) throws IOException {
+                                             if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
+                                                 openSQLiteDatabase();
+                                             }
 
                                              final QuizzesResponse responseCallback = App.getGson().fromJson(response.body().string(), QuizzesResponse.class);
 

@@ -10,54 +10,64 @@ public abstract class DBReader {
 
     public static final String TAG = "DBReader";
 
-    public static ArrayList<String[]> read(SQLiteDatabase db, String tableName, String[] columnNames) {
+    public static ArrayList<String[]> read(final SQLiteDatabase db, final String tableName, final String[] columnNames) {
 
-        ArrayList<String[]> listOfValues = new ArrayList<>();
+        final ArrayList<String[]> listOfValues = new ArrayList<>();
 
-        Cursor cursor = db.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '" + tableName + "'", null);
-        if (cursor != null) {
-            if (cursor.getCount() > 0) {
-                // делаем запрос всех данных из таблицы, получаем Cursor
-                try {
-                    cursor = db.query(tableName, null, null, null, null, null, null);
-                } catch (final Exception pE) {
-                    return listOfValues;
-                }
+        try {
+            Cursor cursor = db.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '" + tableName + "'", null);
+            if (cursor != null) {
+                if (cursor.getCount() > 0) {
+                    // делаем запрос всех данных из таблицы, получаем Cursor
+                    try {
+                        cursor = db.query(tableName, null, null, null, null, null, null);
+                    } catch (final Exception pE) {
+                        return listOfValues;
+                    }
 
-                // ставим позицию курсора на первую строку выборки
-                // если в выборке нет строк, вернется false
-                if (cursor.moveToFirst())
+                    // ставим позицию курсора на первую строку выборки
+                    // если в выборке нет строк, вернется false
 
-                {
+                    if (cursor == null) {
+                        return listOfValues;
+                    }
 
-                    // определяем номера столбцов по имени в выборке
-                    int[] idCols = new int[columnNames.length];
+                    if (cursor.moveToFirst()) {
 
-                    for (int i = 0; i < columnNames.length; i++)
-                        idCols[i] = cursor.getColumnIndex(columnNames[i]);
+                        // определяем номера столбцов по имени в выборке
+                        final int[] idCols = new int[columnNames.length];
 
-                    String[] values = new String[idCols.length];
-
-                    do {
-                        // получаем значения по номерам столбцов
-
-                        for (int i = 0; i < idCols.length; i++) {
-                            values[i] = cursor.getString(idCols[i]);
-                            Log.i(TAG, "name column: \"" + cursor.getColumnName(idCols[i]) + "\" value: \"" + values[i] + "\"");
+                        for (int i = 0; i < columnNames.length; i++) {
+                            idCols[i] = cursor.getColumnIndex(columnNames[i]);
                         }
-                        listOfValues.add(values.clone());
 
-                        // переход на следующую строку
-                        // а если следующей нет (текущая - последняя), то false - выходим из цикла
-                    } while (cursor.moveToNext());
+                        final String[] values = new String[idCols.length];
+
+                        do {
+                            // получаем значения по номерам столбцов
+
+                            for (int i = 0; i < idCols.length; i++) {
+                                values[i] = cursor.getString(idCols[i]);
+                                Log.i(TAG, "name column: \"" + cursor.getColumnName(idCols[i]) + "\" value: \"" + values[i] + "\"");
+                            }
+                            listOfValues.add(values.clone());
+
+                            // переход на следующую строку
+                            // а если следующей нет (текущая - последняя), то false - выходим из цикла
+                        } while (cursor.moveToNext());
+                    }
                 }
+                cursor.close();
             }
-            cursor.close();
+
+        } catch (final Exception pE) {
+            return listOfValues;
         }
+
         return listOfValues;
     }
 
-    public static String read(SQLiteDatabase db, String tableName, String columnName) {
+    public static String read(final SQLiteDatabase db, final String tableName, final String columnName) {
 
         String temp = null;
 
@@ -76,7 +86,7 @@ public abstract class DBReader {
                 if (cursor.moveToFirst()) {
                     temp = cursor.getString(cursor.getColumnIndex(columnName));
 
-                    Log.i(TAG, "name column temp: " + cursor.getColumnName(cursor.getColumnIndex(columnName)) + " value temp: " + temp );
+                    Log.i(TAG, "name column temp: " + cursor.getColumnName(cursor.getColumnIndex(columnName)) + " value temp: " + temp);
 
                 }
             }

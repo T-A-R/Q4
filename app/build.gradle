@@ -25,10 +25,10 @@ android {
     buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.quizer.quizerexit"
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 26
-        versionCode 13
-        versionName "2.1.3"
+        versionCode 14
+        versionName "2.1.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

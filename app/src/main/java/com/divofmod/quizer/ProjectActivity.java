@@ -1,6 +1,7 @@
 package com.divofmod.quizer;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,7 +9,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
@@ -159,7 +159,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                             try {
                                 startTimer();
                             } catch (Exception pE) {
-                                
+
                             }
                         }
 
@@ -402,6 +402,9 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                         .setView(R.layout.sync_dialog).create();
 
                 if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {
+                    if (!((Activity) ProjectActivity.this).isFinishing()) {
+                        syncDialog.show();
+                    }
                     syncDialog.show();
                     mTables = mSharedPreferences.getString("QuizzesRequest", "").split(";");
                     System.out.println(mTables[0]);
@@ -417,6 +420,14 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                     mCommon = DBReader.read(mSQLiteDatabase,
                             "common_" + mTables[0],
                             new String[]{"project_id", "questionnaire_id", "user_project_id", "date_interview", "gps", "duration_time_questionnaire", "selected_questions", "login"});
+
+                    if (mCommon == null || mCommon.isEmpty()) {
+                        if (syncDialog.isShowing()) {
+                            syncDialog.dismiss();
+                        }
+
+                        return;
+                    }
 
                     mPhoto = DBReader.read(mSQLiteDatabase,
                             "photo_" + mTables[0],

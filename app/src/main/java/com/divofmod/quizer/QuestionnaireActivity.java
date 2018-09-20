@@ -165,6 +165,12 @@ public class QuestionnaireActivity extends AppCompatActivity implements View.OnC
                                   mCommon = DBReader.read(mSQLiteDatabase,
                                           "common_" + mTables[0],
                                           new String[]{"project_id", "questionnaire_id", "user_project_id", "date_interview", "gps", "duration_time_questionnaire", "selected_questions", "login"});
+
+                                  if (mCommon == null || mCommon.isEmpty()) {
+                                      syncDialog.dismiss();
+                                      return;
+                                  }
+
                                   mPhoto = DBReader.read(mSQLiteDatabase,
                                           "photo_" + mTables[0],
                                           "names");

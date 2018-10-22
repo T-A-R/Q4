@@ -1,4 +1,4 @@
-package com.divofmod.quizer.model.Activation;
+package pro.quizer.quizerexit.model.response;
 
 import com.google.gson.annotations.SerializedName;
 

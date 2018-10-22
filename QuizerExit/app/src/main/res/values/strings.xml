@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">QuizerExit</string>
+    <string name="app_name_exit">EXIT</string>
+    <string name="input_activation_key">Введите ключ активации</string>
+    <string name="send">Отправить</string>
+    <string name="internet_error_please_try_again">Ошибка сети. Проверьте подключение к интернету и попытайтесь снова.</string>
+    <string name="server_error">Ошибка сервера.</string>
+    <string name="incorrect_server_response">Некорретный ответ сервера.</string>
+    <string name="input_login">Введите логин</string>
+    <string name="input_password">Введите пароль</string>
+    <string name="incorrect_login_or_password">Неверный логин или пароль.</string>
+</resources>

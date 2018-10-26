@@ -97,7 +97,12 @@ public class AuthActivity extends BaseActivity {
                                             // TODO: 27.10.2018 clear all databases
                                         }
 
-                                        downloadConfig();
+                                        // TODO: 27.10.2018 if (geConfig() == null || getConfig.getconfigId == null || getConfig.getConfigId != authResponseModel.getConfigId()) than download config, else use old config
+                                        if (true) {
+                                            downloadConfig();
+                                        } else {
+                                            startMainActivity();
+                                        }
                                     } else {
                                         showToastMessage(authResponseModel.getError());
                                     }
@@ -112,6 +117,8 @@ public class AuthActivity extends BaseActivity {
     }
 
     public void downloadConfig() {
+        showProgressBar();
+
         final Dictionary<String, String> mConfigDictionary = new Hashtable();
 
         final ConfigRequestModel configRequestModel = new ConfigRequestModel(
@@ -129,20 +136,29 @@ public class AuthActivity extends BaseActivity {
 
                              @Override
                              public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
-
+                                 hideProgressBar();
+                                 showToastMessage(getString(R.string.internet_error_please_try_again));
                              }
 
                              @Override
                              public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
-                                 final String responseJson = response.body().string();
+                                 hideProgressBar();
+
+                                 final ResponseBody responseBody = response.body();
+
+                                 if (responseBody == null) {
+                                     showToastMessage(getString(R.string.incorrect_server_response));
+
+                                     return;
+                                 }
+
+                                 final String responseJson = responseBody.string();
                                  final GsonBuilder gsonBuilder = new GsonBuilder();
 
                                  final ConfigResponseModel configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
                                  Utils.saveConfig(AuthActivity.this, configResponseModel);
 
-                                 // TODO: 8/7/18 check if result == 0, than show error
-
-                                 getQuota();
+//                                 getQuota();
                              }
                          }
 

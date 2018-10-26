@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.utils.SPUtils;
 
 @SuppressLint("Registered")
@@ -36,6 +37,14 @@ public class BaseActivity extends AppCompatActivity {
         return SPUtils.getLogin(this);
     }
 
+    public String getSPPassword() {
+        return SPUtils.getPassword(this);
+    }
+
+    public String getSPConfigId() {
+        return SPUtils.getConfigId(this);
+    }
+
     public String getSPServer() {
         return SPUtils.getServer(this);
     }
@@ -45,7 +54,20 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void saveActivationBundle(final String pServer, final String pLoginAdmin) {
-        SPUtils.saveActivationBundle(this, pServer, pLoginAdmin);
+        SPUtils.saveActivationBundle(this,
+                pServer,
+                pLoginAdmin);
+    }
+
+    public void saveAuthBundle(final String pLogin, final String pPassword, final AuthResponseModel pModel) {
+        SPUtils.saveAuthBundle(this,
+                pLogin,
+                pPassword,
+                pModel.getLoginAdmin(),
+                pModel.getConfigId(),
+                pModel.getUserId(),
+                pModel.getRoleId(),
+                pModel.getUserProjectId());
     }
 
     public void startAuthActivity() {

@@ -19,6 +19,20 @@ public class SPUtils {
         editor.apply();
     }
 
+    public static void saveAuthBundle(final Context pContext, final String pLogin, final String pPassword, final String pLoginAdmin, final String pConfigId, final String pUserId, final String pRoleId, final String pUserProjectId) {
+        final SharedPreferences.Editor editor = getSharedPreferences(pContext).edit();
+
+        editor.putString(Constants.SP.LOGIN, pLogin);
+        editor.putString(Constants.SP.PASSWORD, pPassword);
+        editor.putString(Constants.SP.LOGIN_ADMIN, pLoginAdmin);
+        editor.putString(Constants.SP.CONFIG_ID, pConfigId);
+        editor.putString(Constants.SP.USER_ID, pUserId);
+        editor.putString(Constants.SP.ROLE_ID, pRoleId);
+        editor.putString(Constants.SP.USER_PROJECT_ID, pUserProjectId);
+
+        editor.apply();
+    }
+
     public static boolean isActivated(final Context pContext) {
         final SharedPreferences sharedPreferences = getSharedPreferences(pContext);
 
@@ -30,6 +44,14 @@ public class SPUtils {
 
     public static String getLogin(final Context pContext) {
         return getLogin(getSharedPreferences(pContext));
+    }
+
+    public static String getPassword(final Context pContext) {
+        return getPassword(getSharedPreferences(pContext));
+    }
+
+    public static String getConfigId(final Context pContext) {
+        return getConfigId(getSharedPreferences(pContext));
     }
 
     public static String getServer(final Context pContext) {
@@ -48,8 +70,12 @@ public class SPUtils {
         return getString(pSharedPreferences, Constants.SP.LOGIN);
     }
 
-    public String getPassword(final SharedPreferences pSharedPreferences) {
+    private static String getPassword(final SharedPreferences pSharedPreferences) {
         return getString(pSharedPreferences, Constants.SP.PASSWORD);
+    }
+
+    private static String getConfigId(final SharedPreferences pSharedPreferences) {
+        return getString(pSharedPreferences, Constants.SP.CONFIG_ID);
     }
 
     private static String getServer(final SharedPreferences pSharedPreferences) {

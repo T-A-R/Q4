@@ -32,23 +32,23 @@ public class AuthResponseModel {
         return result;
     }
 
-    public String getLogin_admin() {
+    public String getLoginAdmin() {
         return login_admin;
     }
 
-    public String getConfig_id() {
+    public String getConfigId() {
         return config_id;
     }
 
-    public String getUser_id() {
+    public String getUserId() {
         return user_id;
     }
 
-    public String getRole_id() {
+    public String getRoleId() {
         return role_id;
     }
 
-    public String getUser_project_id() {
+    public String getUserProjectId() {
         return user_project_id;
     }
 

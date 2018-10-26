@@ -22,7 +22,9 @@ import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.DoRequest;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.model.request.AuthRequestModel;
+import pro.quizer.quizerexit.model.request.ConfigRequestModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
+import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.utils.StringUtils;
 
 public class AuthActivity extends BaseActivity {
@@ -88,12 +90,15 @@ public class AuthActivity extends BaseActivity {
 
                                 if (authResponseModel != null) {
                                     if (authResponseModel.getResult() != 0) {
-                                        // TODO: 10/22/18 remove
-                                        showToastMessage("Авторизация успешно пройдена и нужно сохранять конфиг и так далее...");
-                                        startMainActivity();
+                                        saveAuthBundle(login, password, authResponseModel);
+                                        final String oldLogin = getSPLogin();
+
+                                        if (!oldLogin.equals(login)) {
+                                            // TODO: 27.10.2018 clear all databases
+                                        }
+
+                                        downloadConfig();
                                     } else {
-                                        // TODO: 10/22/18 remove
-                                        startMainActivity();
                                         showToastMessage(authResponseModel.getError());
                                     }
                                 } else {
@@ -104,6 +109,44 @@ public class AuthActivity extends BaseActivity {
 
             }
         });
+    }
+
+    public void downloadConfig() {
+        final Dictionary<String, String> mConfigDictionary = new Hashtable();
+
+        final ConfigRequestModel configRequestModel = new ConfigRequestModel(
+                getSPLoginAdmin(),
+                getSPLogin(),
+                getSPPassword(),
+                getSPConfigId()
+        );
+
+        mConfigDictionary.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(configRequestModel));
+
+        final Call.Factory client = new OkHttpClient();
+        client.newCall(new DoRequest().post(mConfigDictionary, getSPServer()))
+                .enqueue(new Callback() {
+
+                             @Override
+                             public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
+
+                             }
+
+                             @Override
+                             public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
+                                 final String responseJson = response.body().string();
+                                 final GsonBuilder gsonBuilder = new GsonBuilder();
+
+                                 final ConfigResponseModel configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
+                                 Utils.saveConfig(AuthActivity.this, configResponseModel);
+
+                                 // TODO: 8/7/18 check if result == 0, than show error
+
+                                 getQuota();
+                             }
+                         }
+
+                );
     }
 
     public void autoFillLogin() {

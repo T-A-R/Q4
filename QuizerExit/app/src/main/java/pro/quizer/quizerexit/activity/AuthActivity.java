@@ -19,6 +19,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import pro.quizer.quizerexit.Constants;
+import pro.quizer.quizerexit.DoRequest;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.model.request.AuthRequestModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
@@ -28,7 +29,6 @@ public class AuthActivity extends BaseActivity {
 
     private EditText mLoginEditText;
     private EditText mPasswordEditText;
-    private Button mSendAuthButton;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -37,11 +37,11 @@ public class AuthActivity extends BaseActivity {
 
         mLoginEditText = findViewById(R.id.auth_login_edit_text);
         mPasswordEditText = findViewById(R.id.auth_password_edit_text);
-        mSendAuthButton = findViewById(R.id.send_auth_button);
+        final Button sendAuthButton = findViewById(R.id.send_auth_button);
 
         autoFillLogin();
 
-        mSendAuthButton.setOnClickListener(new View.OnClickListener() {
+        sendAuthButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(final View v) {
@@ -62,7 +62,7 @@ public class AuthActivity extends BaseActivity {
                 mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(new AuthRequestModel(getSPLoginAdmin(), password, login)));
 
                 final Call.Factory client = new OkHttpClient();
-                client.newCall(new DoRequest().Post(mDictionaryForRequest, getSPServer()))
+                client.newCall(new DoRequest().post(mDictionaryForRequest, getSPServer()))
                         .enqueue(new Callback() {
 
                             @Override

@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -13,26 +12,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pro.quizer.quizerexit.R;
-import pro.quizer.quizerexit.adapter.MultiMaxSelectionAdapter;
-import pro.quizer.quizerexit.adapter.MultiSelectionAdapter;
-import pro.quizer.quizerexit.adapter.SingleSelectionAdapter;
+import pro.quizer.quizerexit.adapter.SelectionAdapter;
 import pro.quizer.quizerexit.model.ItemModel;
 
 public class RecyclerViewActivity extends AppCompatActivity {
 
-    private static final String BUNDLE_MAX_ANSWERS = "bundle_max_count";
-    private static final String BUNDLE_MIN_ANSWERS = "bundle_min_count";
+    public static final String BUNDLE_MAX_ANSWERS = "bundle_max_count";
+    public static final String BUNDLE_MIN_ANSWERS = "bundle_min_count";
+    public static final int EMPTY_COUNT_ANSWER = -1;
+    public static final int DEFAULT_MIN_ANSWERS = 1;
 
-    private static final int DEFAULT_MIN_ANSWERS = 1;
-
-    private int mMaxAnswers;
-    private int mMinAnswers;
+    private int mMaxAnswers = EMPTY_COUNT_ANSWER;
+    private int mMinAnswers = DEFAULT_MIN_ANSWERS;
 
     RecyclerView mRecyclerView;
     Button mSelected;
-    SingleSelectionAdapter mAdapterSingle;
-    MultiMaxSelectionAdapter mAdapterMultiMax;
-    MultiSelectionAdapter mAdapterMulti;
+    SelectionAdapter mSelectionAdapter;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -43,8 +38,22 @@ public class RecyclerViewActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        mRecyclerView = findViewById(R.id.recyclerView);
+        mRecyclerView = findViewById(R.id.recycler_view);
         mSelected = findViewById(R.id.selected);
+
+        final Bundle bundle = getIntent().getExtras();
+
+        if (bundle != null) {
+            mMaxAnswers = bundle.getInt(BUNDLE_MAX_ANSWERS, EMPTY_COUNT_ANSWER);
+            mMinAnswers = bundle.getInt(BUNDLE_MIN_ANSWERS, DEFAULT_MIN_ANSWERS);
+        }
+
+        final List<ItemModel> list = getList();
+
+        mSelectionAdapter = new SelectionAdapter(this, list, mMinAnswers, mMaxAnswers);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(mSelectionAdapter);
+
         mSelected.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -52,31 +61,10 @@ public class RecyclerViewActivity extends AppCompatActivity {
                 selectedClick();
             }
         });
-
-        final Bundle bundle = getIntent().getExtras();
-
-        if (bundle != null) {
-            mMaxAnswers = bundle.getInt(BUNDLE_MAX_ANSWERS);
-            mMinAnswers = bundle.getInt(BUNDLE_MIN_ANSWERS);
-        }
-
-        final List<ItemModel> list = getList();
-
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        if (tag.equalsIgnoreCase("Single")) {
-            mAdapterSingle = new SingleSelectionAdapter(list);
-            mRecyclerView.setAdapter(mAdapterSingle);
-        } else if (tag.equalsIgnoreCase("max")) {
-            mAdapterMultiMax = new MultiMaxSelectionAdapter(this, list);
-            mRecyclerView.setAdapter(mAdapterMultiMax);
-        } else if (tag.equalsIgnoreCase("multiple")) {
-            mAdapterMulti = new MultiSelectionAdapter(list);
-            mRecyclerView.setAdapter(mAdapterMulti);
-        }
     }
 
     private List<ItemModel> getList() {
-        final List list = new ArrayList<>();
+        final List<ItemModel> list = new ArrayList<>();
 
         for (int i = 0; i < 10; i++) {
             final ItemModel model = new ItemModel();
@@ -90,53 +78,24 @@ public class RecyclerViewActivity extends AppCompatActivity {
     }
 
     public void selectedClick() {
-        if (tag.equalsIgnoreCase("Single")) {
-            if (mAdapterSingle.selectedPosition() != -1) {
-                final ItemModel itemModel = mAdapterSingle.getSelectedItem();
-                final String cityName = itemModel.getName();
-                showToast("Selected City is: " + cityName);
-            } else {
-                showToast("Please select any city");
+        try {
+            final List<ItemModel> list = mSelectionAdapter.getSelectedItem();
+
+            final StringBuilder sb = new StringBuilder();
+
+            for (int index = 0; index < list.size(); index++) {
+                final ItemModel model = list.get(index);
+
+                sb.append(model.getName()).append("\n");
             }
-        } else if (tag.equalsIgnoreCase("max")) {
-            final List<ItemModel> list = mAdapterMultiMax.getSelectedItem();
-            if (list.size() > 0) {
-                final StringBuilder sb = new StringBuilder();
-                for (int index = 0; index < list.size(); index++) {
-                    final ItemModel model = list.get(index);
-                    sb.append(model.getName() + "\n");
-                }
-                showToast(sb.toString());
-            } else {
-                showToast("Please select any city");
-            }
-        } else if (tag.equalsIgnoreCase("multiple")) {
-            final List<ItemModel> list = mAdapterMulti.getSelectedItem();
-            if (!list.isEmpty()) {
-                final StringBuilder sb = new StringBuilder();
-                for (int index = 0; index < list.size(); index++) {
-                    final ItemModel model = list.get(index);
-                    sb.append(model.getName() + "\n");
-                }
-                showToast(sb.toString());
-            } else {
-                showToast("Please select any city");
-            }
+
+            showToast(sb.toString());
+        } catch (final Exception pE) {
+            showToast(pE.getMessage());
         }
     }
 
     private void showToast(final CharSequence message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 }

@@ -19,6 +19,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import pro.quizer.quizerexit.Constants;
+import pro.quizer.quizerexit.DoRequest;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.model.request.ActivationRequestModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
@@ -26,7 +27,6 @@ import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 public class ActivationActivity extends BaseActivity {
 
     private EditText mActivationEditText;
-    private Button mSendButton;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -34,9 +34,9 @@ public class ActivationActivity extends BaseActivity {
         setContentView(R.layout.activity_activation);
 
         mActivationEditText = findViewById(R.id.activation_edit_text);
-        mSendButton = findViewById(R.id.send_activation_button);
+        final Button sendButton = findViewById(R.id.send_activation_button);
 
-        mSendButton.setOnClickListener(new View.OnClickListener() {
+        sendButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(final View v) {
@@ -47,7 +47,7 @@ public class ActivationActivity extends BaseActivity {
                 mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(new ActivationRequestModel(key)));
 
                 final Call.Factory client = new OkHttpClient();
-                client.newCall(new DoRequest().Post(mDictionaryForRequest, Constants.Default.ACTIVATION_URL))
+                client.newCall(new DoRequest().post(mDictionaryForRequest, Constants.Default.ACTIVATION_URL))
                         .enqueue(new Callback() {
 
                             @Override

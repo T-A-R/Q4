@@ -9,4 +9,8 @@
     <string name="input_login">Введите логин</string>
     <string name="input_password">Введите пароль</string>
     <string name="incorrect_login_or_password">Неверный логин или пароль.</string>
+    <string name="incorrect_select_min_answers">Выберите минимум %1$s ответа.</string>
+    <string name="incorrect_max_selected_answers">Вы можете выбрать максимум %1$s ответа.</string>
+    <string name="back">Назад</string>
+    <string name="apply">Принять</string>
 </resources>

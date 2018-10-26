@@ -10,31 +10,32 @@ public class MainActivity extends BaseActivity {
 
     public void onSingleSelectionClick(final View view) {
         final Intent intent = new Intent(this, RecyclerViewActivity.class);
-        intent.putExtra("TAG", "single");
+        intent.putExtra(RecyclerViewActivity.BUNDLE_MAX_ANSWERS, 1);
+        intent.putExtra(RecyclerViewActivity.BUNDLE_MIN_ANSWERS, 1);
         startActivity(intent);
     }
 
     public void onMaxSelectionClick(final View view) {
         final Intent intent = new Intent(this, RecyclerViewActivity.class);
-        intent.putExtra("TAG", "single");
+        intent.putExtra(RecyclerViewActivity.BUNDLE_MAX_ANSWERS, 3);
         startActivity(intent);
     }
 
     public void onMinSelectionClick(final View view) {
         final Intent intent = new Intent(this, RecyclerViewActivity.class);
-        intent.putExtra("TAG", "single");
+        intent.putExtra(RecyclerViewActivity.BUNDLE_MIN_ANSWERS, 3);
         startActivity(intent);
     }
 
     public void onMinAndMaxSelectionClick(final View view) {
         final Intent intent = new Intent(this, RecyclerViewActivity.class);
-        intent.putExtra("TAG", "single");
+        intent.putExtra(RecyclerViewActivity.BUNDLE_MAX_ANSWERS, 4);
+        intent.putExtra(RecyclerViewActivity.BUNDLE_MIN_ANSWERS, 2);
         startActivity(intent);
     }
 
     public void onMultiSelectionClick(final View view) {
         final Intent intent = new Intent(this, RecyclerViewActivity.class);
-        intent.putExtra("TAG", "single");
         startActivity(intent);
     }
 

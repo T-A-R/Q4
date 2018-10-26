@@ -3,20 +3,57 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_marginBottom="50dp"
+    <TextView
+        android:id="@+id/question_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:padding="8dp"
+        android:text="1. Отображение основного вопроса?"
+        android:textSize="20sp"/>
 
-    <Button
-        android:id="@+id/selected"
-        android:text="Selected Items"
-        android:textColor="#fff"
-        android:background="@color/colorPrimary"
-        android:layout_alignParentBottom="true"
+    <TextView
+        android:id="@+id/question_text_divider"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="0.5dp"
+        android:layout_below="@+id/question_text"
+        android:background="@android:color/darker_gray"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button_panel"
+        android:layout_below="@+id/question_text_divider"/>
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:id="@+id/button_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/back"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:text="@string/back"
+            android:textColor="#fff"/>
+
+        <Button
+            android:id="@+id/selected"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:text="@string/apply"
+            android:textColor="#fff"/>
+
+    </android.support.v7.widget.LinearLayoutCompat>
 
 </RelativeLayout>

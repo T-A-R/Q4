@@ -1,35 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_margin="5dp"
+              android:padding="16dp"
               android:orientation="vertical">
 
     <FrameLayout
-        android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="15dp">
+            android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/name"
+                android:id="@+id/answer_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:text="Name"
-                android:textSize="16sp"/>
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_toLeftOf="@+id/answer_checkbox"
+                android:layout_toStartOf="@+id/answer_checkbox"
+                android:textSize="16sp"
+                tools:text="Name"/>
 
             <CheckBox
-                android:id="@+id/checkbox"
+                android:id="@+id/answer_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/name"
-                android:layout_alignParentRight="true"
-                android:padding="5dp"/>
+                android:layout_alignBaseline="@+id/answer_text"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"/>
 
         </RelativeLayout>
 

@@ -1,4 +1,4 @@
-package pro.quizer.quizerexit.activity;
+package pro.quizer.quizerexit;
 
 import java.util.Dictionary;
 
@@ -7,9 +7,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import pro.quizer.quizerexit.Constants;
 
-class DoRequest {
+public class DoRequest {
 
-    Request Post(final Dictionary<String, String> dictionary, final String url) {
+    public Request post(final Dictionary<String, String> dictionary, final String url) {
         final RequestBody formBody = new FormBody.Builder()
                 .add(Constants.ServerFields.JSON_DATA, dictionary.get(Constants.ServerFields.JSON_DATA))
                 .build();

@@ -90,7 +90,10 @@ public class AuthActivity extends BaseActivity {
                                     if (authResponseModel.getResult() != 0) {
                                         // TODO: 10/22/18 remove
                                         showToastMessage("Авторизация успешно пройдена и нужно сохранять конфиг и так далее...");
+                                        startMainActivity();
                                     } else {
+                                        // TODO: 10/22/18 remove
+                                        startMainActivity();
                                         showToastMessage(authResponseModel.getError());
                                     }
                                 } else {

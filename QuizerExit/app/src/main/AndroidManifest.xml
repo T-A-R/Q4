@@ -36,6 +36,10 @@
             android:name=".activity.AuthActivity"
             android:noHistory="true"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.RecyclerViewActivity"
+            android:noHistory="true"
+            android:screenOrientation="portrait"/>
 
     </application>
 

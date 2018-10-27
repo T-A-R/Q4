@@ -17,4 +17,5 @@
     <string name="sync">Синхронизация</string>
     <string name="start">Старт</string>
     <string name="dot">.</string>
+    <string name="internal_app_error">Внутренняя ошибка приложения. Error code: </string>
 </resources>

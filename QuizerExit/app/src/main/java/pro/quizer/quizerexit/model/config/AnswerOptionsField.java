@@ -2,7 +2,9 @@ package pro.quizer.quizerexit.model.config;
 
 import com.google.gson.annotations.SerializedName;
 
-public class AnswerOptionsField {
+import java.io.Serializable;
+
+public class AnswerOptionsField implements Serializable {
 
     @SerializedName("is_open")
     private int is_open;

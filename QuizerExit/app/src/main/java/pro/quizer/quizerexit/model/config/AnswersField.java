@@ -2,7 +2,9 @@ package pro.quizer.quizerexit.model.config;
 
 import com.google.gson.annotations.SerializedName;
 
-public class AnswersField {
+import java.io.Serializable;
+
+public class AnswersField implements Serializable {
 
     @SerializedName("id")
     private int id;
@@ -19,17 +21,26 @@ public class AnswersField {
     @SerializedName("title")
     private String title;
 
-    private boolean isSelected;
+    private boolean mIsSelected;
+    private boolean mIsEnabled = true;
 
     public AnswersField() {
     }
 
     public boolean isSelected() {
-        return isSelected;
+        return mIsSelected;
+    }
+
+    public boolean isEnabled() {
+        return mIsEnabled;
+    }
+
+    public void setEnabled(final boolean pIsEnabled) {
+        mIsEnabled = pIsEnabled;
     }
 
     public void setSelected(final boolean selected) {
-        isSelected = selected;
+        mIsSelected = selected;
     }
 
     public int getId() {

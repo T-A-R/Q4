@@ -2,9 +2,10 @@ package pro.quizer.quizerexit.model.config;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ReserveChannelField {
+public class ReserveChannelField implements Serializable {
 
     @SerializedName("phone")
     private List<Phone> phone;

@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Collections;
 import java.util.List;
 
 import pro.quizer.quizerexit.OnNextQuestionCallback;
@@ -25,11 +26,11 @@ import pro.quizer.quizerexit.model.config.QuestionOptionsField;
 
 public class QuestionFragment extends BaseFragment {
 
+    public static final String BUNDLE_CURRENT_QUESTION = "BUNDLE_CURRENT_QUESTION";
+    public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
+
     public static final int EMPTY_COUNT_ANSWER = -1;
     public static final int DEFAULT_MIN_ANSWERS = 1;
-
-    private int mMaxAnswers = EMPTY_COUNT_ANSWER;
-    private int mMinAnswers = DEFAULT_MIN_ANSWERS;
 
     RecyclerView mRecyclerView;
     TextView mQuestionText;
@@ -42,12 +43,14 @@ public class QuestionFragment extends BaseFragment {
     private OnNextQuestionCallback mCallback;
 
     public static Fragment newInstance(@NonNull final QuestionField pQuestionField, final OnNextQuestionCallback pCallback) {
-        final QuestionFragment baseFragment = new QuestionFragment();
+        final QuestionFragment fragment = new QuestionFragment();
 
-        baseFragment.mCurrentQuestion = pQuestionField;
-        baseFragment.mCallback = pCallback;
+        final Bundle bundle = new Bundle();
+        bundle.putSerializable(BUNDLE_CURRENT_QUESTION, pQuestionField);
+        bundle.putSerializable(BUNDLE_CALLBACK, pCallback);
+        fragment.setArguments(bundle);
 
-        return baseFragment;
+        return fragment;
     }
 
     @Override
@@ -59,7 +62,16 @@ public class QuestionFragment extends BaseFragment {
     public void onViewCreated(@NonNull final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        initView(view);
+        final Bundle bundle = getArguments();
+
+        if (bundle != null) {
+            mCurrentQuestion = (QuestionField) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
+            mCallback = (OnNextQuestionCallback) bundle.getSerializable(BUNDLE_CALLBACK);
+
+            initView(view);
+        } else {
+            showToast(getString(R.string.internal_app_error) + "1001");
+        }
     }
 
     private void initView(final View pView) {
@@ -74,16 +86,24 @@ public class QuestionFragment extends BaseFragment {
         mBackButton = pView.findViewById(R.id.back);
 
         final QuestionOptionsField questionOptionsField = mCurrentQuestion.getOptions();
+        final List<AnswersField> answers = mCurrentQuestion.getAnswers();
+
+        final int minAnswers;
+        final int maxAnswers;
 
         if (questionOptionsField.getPolyanswer() == 0) {
-            mMaxAnswers = 1;
-            mMinAnswers = 1;
+            maxAnswers = 1;
+            minAnswers = 1;
         } else {
-            mMaxAnswers = questionOptionsField.getMaxAnswers();
-            mMinAnswers = questionOptionsField.getMinAnswers();
+            maxAnswers = questionOptionsField.getMaxAnswers();
+            minAnswers = questionOptionsField.getMinAnswers();
         }
 
-        mSelectionAdapter = new SelectionAdapter(getContext(), mCurrentQuestion.getAnswers(), mMinAnswers, mMaxAnswers);
+        if (questionOptionsField.isRandomOrder()) {
+            Collections.shuffle(answers);
+        }
+
+        mSelectionAdapter = new SelectionAdapter(getContext(), answers, minAnswers, maxAnswers);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mSelectionAdapter);
 

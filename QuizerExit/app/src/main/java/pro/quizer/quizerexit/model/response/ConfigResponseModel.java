@@ -2,9 +2,11 @@ package pro.quizer.quizerexit.model.response;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 import pro.quizer.quizerexit.model.config.ConfigField;
 
-public class ConfigResponseModel {
+public class ConfigResponseModel implements Serializable {
 
     @SerializedName("result")
     private int result;

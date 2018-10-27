@@ -2,7 +2,9 @@ package pro.quizer.quizerexit.model.response;
 
 import com.google.gson.annotations.SerializedName;
 
-public class AuthResponseModel {
+import java.io.Serializable;
+
+public class AuthResponseModel implements Serializable {
 
     @SerializedName("result")
     private int result;

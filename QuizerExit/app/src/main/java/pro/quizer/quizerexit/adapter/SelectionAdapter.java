@@ -17,7 +17,7 @@ import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.RecyclerViewActivity;
 import pro.quizer.quizerexit.model.config.AnswersField;
 
-public class SelectionAdapter extends RecyclerView.Adapter {
+public class SelectionAdapter extends RecyclerView.Adapter<SelectionAdapter.AnswerViewHolder> {
 
     private final List<AnswersField> mAnswerModels;
     private final Context mContext;
@@ -40,22 +40,23 @@ public class SelectionAdapter extends RecyclerView.Adapter {
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull final ViewGroup viewGroup, final int i) {
+    public AnswerViewHolder onCreateViewHolder(@NonNull final ViewGroup viewGroup, final int i) {
         final View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_multi, viewGroup, false);
-        return new ItemViewHolder(itemView);
+        return new AnswerViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final AnswerViewHolder holder, final int position) {
         final AnswersField model = mAnswerModels.get(position);
         initializeViews(model, holder, position);
     }
 
-    private void initializeViews(final AnswersField model, final RecyclerView.ViewHolder holder, final int position) {
-        ((ItemViewHolder) holder).mAnswer.setText(model.getTitle());
-        ((ItemViewHolder) holder).mCheckBox.setChecked(model.isSelected());
-        ((ItemViewHolder) holder).mCheckBox.setTag(position);
-        ((ItemViewHolder) holder).mCheckBox.setOnClickListener(new View.OnClickListener() {
+    private void initializeViews(final AnswersField model, final AnswerViewHolder holder, final int position) {
+        holder.mAnswer.setText(model.getTitle());
+        holder.mCheckBox.setChecked(model.isSelected());
+        holder.mCheckBox.setTag(position);
+        holder.mCheckBox.setEnabled(model.isEnabled());
+        holder.mCheckBox.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(final View view) {
@@ -72,10 +73,17 @@ public class SelectionAdapter extends RecyclerView.Adapter {
                     Toast.makeText(mContext,
                             String.format(mContext.getString(R.string.incorrect_max_selected_answers), String.valueOf(mMaxAnswer)),
                             Toast.LENGTH_LONG).show();
-                } else if (isChecked && answersField.getOptions().isUnchecker()) {
-                    mNumberOfCheckboxesChecked = 1;
-                    unselectAll();
-                    answersField.setSelected(true);
+                } else if (answersField.getOptions().isUnchecker()) {
+                    if (isChecked) {
+                        mNumberOfCheckboxesChecked = 1;
+                        unselectAll();
+                        disableOther(answersField.getId());
+                    } else {
+                        mNumberOfCheckboxesChecked = 0;
+                        enableAll();
+                    }
+
+                    answersField.setSelected(isChecked);
                     notifyDataSetChanged();
                 } else {
                     if (isChecked) {
@@ -90,11 +98,13 @@ public class SelectionAdapter extends RecyclerView.Adapter {
             }
         });
 
-        ((ItemViewHolder) holder).itemView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(final View pView) {
-                ((ItemViewHolder) holder).mCheckBox.performClick();
+                if (holder.mCheckBox.isEnabled()) {
+                    holder.mCheckBox.performClick();
+                }
             }
         });
     }
@@ -102,6 +112,20 @@ public class SelectionAdapter extends RecyclerView.Adapter {
     private void unselectAll() {
         for (final AnswersField item : mAnswerModels) {
             item.setSelected(false);
+        }
+    }
+
+    private void disableOther(final int pId) {
+        for (final AnswersField item : mAnswerModels) {
+            if (pId != item.getId()) {
+                item.setEnabled(false);
+            }
+        }
+    }
+
+    private void enableAll() {
+        for (final AnswersField item : mAnswerModels) {
+            item.setEnabled(true);
         }
     }
 
@@ -123,18 +147,22 @@ public class SelectionAdapter extends RecyclerView.Adapter {
         final int size = selectedList.size();
 
         if (size < mMinAnswer) {
-            throw new Exception(String.format(mContext.getString(R.string.incorrect_select_min_answers), String.valueOf(mMinAnswer)));
+            if (size == 1 && selectedList.get(0).getOptions().isUnchecker()) {
+                return selectedList;
+            } else {
+                throw new Exception(String.format(mContext.getString(R.string.incorrect_select_min_answers), String.valueOf(mMinAnswer)));
+            }
         }
 
         return selectedList;
     }
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder {
+    static class AnswerViewHolder extends RecyclerView.ViewHolder {
 
         TextView mAnswer;
         CheckBox mCheckBox;
 
-        ItemViewHolder(final View itemView) {
+        AnswerViewHolder(final View itemView) {
             super(itemView);
             mAnswer = itemView.findViewById(R.id.answer_text);
             mCheckBox = itemView.findViewById(R.id.answer_checkbox);

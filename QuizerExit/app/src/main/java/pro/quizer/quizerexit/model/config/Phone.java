@@ -2,7 +2,9 @@ package pro.quizer.quizerexit.model.config;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Phone {
+import java.io.Serializable;
+
+public class Phone implements Serializable {
 
     @SerializedName("number")
     private String number;

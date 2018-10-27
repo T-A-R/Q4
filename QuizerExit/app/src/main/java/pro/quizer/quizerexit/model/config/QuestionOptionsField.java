@@ -2,7 +2,9 @@ package pro.quizer.quizerexit.model.config;
 
 import com.google.gson.annotations.SerializedName;
 
-public class QuestionOptionsField {
+import java.io.Serializable;
+
+public class QuestionOptionsField implements Serializable {
 
     @SerializedName("polyanswer")
     private int polyanswer;
@@ -60,8 +62,8 @@ public class QuestionOptionsField {
         return rank_answers;
     }
 
-    public int getRandomOrder() {
-        return random_order;
+    public boolean isRandomOrder() {
+        return random_order != 0;
     }
 
     public int getMaxAnswers() {
@@ -74,6 +76,10 @@ public class QuestionOptionsField {
 
     public int getTableId() {
         return table_id;
+    }
+
+    public boolean isTableQuestion() {
+        return table_id != 0;
     }
 
     public String getNotShowIf() {

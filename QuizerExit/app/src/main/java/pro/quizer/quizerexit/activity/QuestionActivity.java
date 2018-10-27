@@ -9,12 +9,14 @@ import pro.quizer.quizerexit.OnNextQuestionCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.fragment.QuestionFragment;
 import pro.quizer.quizerexit.model.config.AnswersField;
+import pro.quizer.quizerexit.model.config.ConfigField;
 import pro.quizer.quizerexit.model.config.QuestionField;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 
 public class QuestionActivity extends BaseActivity implements OnNextQuestionCallback {
 
     ConfigResponseModel mConfigResponseModel;
+    ConfigField mConfig;
     List<QuestionField> mQuestions;
 
     @Override
@@ -42,7 +44,8 @@ public class QuestionActivity extends BaseActivity implements OnNextQuestionCall
 
     private void initView() {
         mConfigResponseModel = getSPConfigModel();
-        mQuestions = getSPConfigModel().getConfig().getProjectInfo().getQuestions();
+        mConfig = mConfigResponseModel.getConfig();
+        mQuestions = mConfig.getProjectInfo().getQuestions();
         final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
         fragmentTransaction.add(android.R.id.content, QuestionFragment.newInstance(mQuestions.get(0), this));

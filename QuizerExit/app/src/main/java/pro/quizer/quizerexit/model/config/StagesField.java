@@ -2,9 +2,10 @@ package pro.quizer.quizerexit.model.config;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class StagesField {
+public class StagesField implements Serializable {
 
     @SerializedName("time_from")
     private String time_from;

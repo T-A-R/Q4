@@ -2,7 +2,9 @@ package pro.quizer.quizerexit.model.config;
 
 import com.google.gson.annotations.SerializedName;
 
-public class QuestionsMatchesField {
+import java.io.Serializable;
+
+public class QuestionsMatchesField implements Serializable {
 
     @SerializedName("question_id")
     private String question_id;

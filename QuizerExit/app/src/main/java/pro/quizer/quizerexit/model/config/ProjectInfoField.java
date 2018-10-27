@@ -2,9 +2,10 @@ package pro.quizer.quizerexit.model.config;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ProjectInfoField {
+public class ProjectInfoField implements Serializable {
 
     @SerializedName("project_id")
     private int project_id;

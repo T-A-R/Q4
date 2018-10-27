@@ -2,7 +2,9 @@ package pro.quizer.quizerexit.model.config;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ConfigField {
+import java.io.Serializable;
+
+public class ConfigField implements Serializable {
 
     @SerializedName("server")
     private String server;

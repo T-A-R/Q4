@@ -28,16 +28,16 @@ public class AnswerOptionsField {
     public AnswerOptionsField() {
     }
 
-    public int getIsOpen() {
-        return is_open;
+    public boolean isOpen() {
+        return is_open == 1;
     }
 
     public int getPersistentOrder() {
         return persistent_order;
     }
 
-    public int getUnchecker() {
-        return unchecker;
+    public boolean isUnchecker() {
+        return unchecker == 1;
     }
 
     public String getPicture() {

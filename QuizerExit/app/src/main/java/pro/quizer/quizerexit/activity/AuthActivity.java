@@ -162,6 +162,8 @@ public class AuthActivity extends BaseActivity {
                                  if (configResponseModel != null) {
                                      if (configResponseModel.getResult() != 0) {
                                          saveConfigModel(configResponseModel);
+
+                                         startMainActivity();
                                      } else {
                                          showToastMessage(configResponseModel.getError());
                                      }

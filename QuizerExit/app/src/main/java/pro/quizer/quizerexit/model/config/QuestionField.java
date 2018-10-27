@@ -19,7 +19,7 @@ public class QuestionField {
     private int type;
 
     @SerializedName("options")
-    private OptionsField options;
+    private QuestionOptionsField options;
 
     @SerializedName("answers")
     private List<AnswersField> answers;
@@ -43,7 +43,7 @@ public class QuestionField {
         return type;
     }
 
-    public OptionsField getOptions() {
+    public QuestionOptionsField getOptions() {
         return options;
     }
 

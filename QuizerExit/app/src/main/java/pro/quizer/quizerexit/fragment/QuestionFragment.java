@@ -1,5 +1,6 @@
 package pro.quizer.quizerexit.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,10 +16,12 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import pro.quizer.quizerexit.OnNextQuestionCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.adapter.SelectionAdapter;
 import pro.quizer.quizerexit.model.config.AnswersField;
 import pro.quizer.quizerexit.model.config.QuestionField;
+import pro.quizer.quizerexit.model.config.QuestionOptionsField;
 
 public class QuestionFragment extends BaseFragment {
 
@@ -31,15 +34,18 @@ public class QuestionFragment extends BaseFragment {
     RecyclerView mRecyclerView;
     TextView mQuestionText;
     TextView mQuestionNumber;
-    Button mSelected;
+    Button mNextBtn;
+    Button mBackButton;
     SelectionAdapter mSelectionAdapter;
 
     private QuestionField mCurrentQuestion;
+    private OnNextQuestionCallback mCallback;
 
-    public static Fragment newInstance(@NonNull final QuestionField pQuestionField) {
+    public static Fragment newInstance(@NonNull final QuestionField pQuestionField, final OnNextQuestionCallback pCallback) {
         final QuestionFragment baseFragment = new QuestionFragment();
 
         baseFragment.mCurrentQuestion = pQuestionField;
+        baseFragment.mCallback = pCallback;
 
         return baseFragment;
     }
@@ -64,44 +70,45 @@ public class QuestionFragment extends BaseFragment {
         mQuestionText.setText(mCurrentQuestion.getTitle());
 
         mRecyclerView = pView.findViewById(R.id.recycler_view);
-        mSelected = pView.findViewById(R.id.selected);
+        mNextBtn = pView.findViewById(R.id.selected);
+        mBackButton = pView.findViewById(R.id.back);
 
-        // TODO: 27.10.2018 really polyanswer field == single select adapter? OR getType
-        if (mCurrentQuestion.getOptions().getPolyanswer() == 0) {
+        final QuestionOptionsField questionOptionsField = mCurrentQuestion.getOptions();
+
+        if (questionOptionsField.getPolyanswer() == 0) {
             mMaxAnswers = 1;
             mMinAnswers = 1;
         } else {
-            // TODO: 27.10.2018 implement logic
-//            mMaxAnswers = mCurrentQuestion.getMaxAnswers();
-//            mMinAnswers = mCurrentQuestion.getMinAnswers();
+            mMaxAnswers = questionOptionsField.getMaxAnswers();
+            mMinAnswers = questionOptionsField.getMinAnswers();
         }
 
         mSelectionAdapter = new SelectionAdapter(getContext(), mCurrentQuestion.getAnswers(), mMinAnswers, mMaxAnswers);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mSelectionAdapter);
 
-        mSelected.setOnClickListener(new View.OnClickListener() {
+        mNextBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(final View v) {
-                selectedClick();
+                onNextClick();
+            }
+        });
+
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(final View v) {
+                ((Activity) v.getContext()).onBackPressed();
             }
         });
     }
 
-    public void selectedClick() {
+    public void onNextClick() {
         try {
-            final List<AnswersField> list = mSelectionAdapter.getSelectedItem();
+            final List<AnswersField> list = mSelectionAdapter.processNext();
 
-            final StringBuilder sb = new StringBuilder();
-
-            for (int index = 0; index < list.size(); index++) {
-                final AnswersField model = list.get(index);
-
-                sb.append(model.getTitle()).append("\n");
-            }
-
-            showToast(sb.toString());
+            mCallback.onNextQuestion(list, list.get(0).getNextQuestion());
         } catch (final Exception pE) {
             showToast(pE.getMessage());
         }

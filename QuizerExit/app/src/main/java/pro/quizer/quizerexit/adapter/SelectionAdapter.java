@@ -30,6 +30,7 @@ public class SelectionAdapter extends RecyclerView.Adapter {
         this.mContext = pContext;
         this.mMaxAnswer = pMaxAnswer;
         this.mMinAnswer = pMinAnswer;
+        this.mNumberOfCheckboxesChecked = getSelectedItems().size();
     }
 
     @Override
@@ -99,7 +100,7 @@ public class SelectionAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public List<AnswersField> getSelectedItem() throws Exception {
+    private List<AnswersField> getSelectedItems() {
         final List<AnswersField> selectedList = new ArrayList<>();
 
         for (int i = 0; i < mItemModels.size(); i++) {
@@ -109,6 +110,11 @@ public class SelectionAdapter extends RecyclerView.Adapter {
             }
         }
 
+        return selectedList;
+    }
+
+    public List<AnswersField> processNext() throws Exception {
+        final List<AnswersField> selectedList = getSelectedItems();
         final int size = selectedList.size();
 
         if (size < mMinAnswer) {

@@ -25,12 +25,6 @@ public class ConfigField {
     @SerializedName("audio_record_limit_time")
     private int audio_record_limit_time;
 
-    @SerializedName("autonomous_limit_count_questionnare")
-    private int autonomous_limit_count_questionnare;
-
-    @SerializedName("autonomous_limit_time_questionnare")
-    private int autonomous_limit_time_questionnare;
-
     @SerializedName("delete_data_password")
     private String delete_data_password;
 
@@ -66,14 +60,6 @@ public class ConfigField {
 
     public int getAudioRecordLimitTime() {
         return audio_record_limit_time;
-    }
-
-    public int getAutonomousLimitCountQuestionnare() {
-        return autonomous_limit_count_questionnare;
-    }
-
-    public int getAutonomousLimitTimeQuestionnare() {
-        return autonomous_limit_time_questionnare;
     }
 
     public String getDeleteDataPassword() {

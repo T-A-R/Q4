@@ -79,7 +79,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
 
         public void selectedClick() {
             try {
-                final List<AnswersField> list = mSelectionAdapter.getSelectedItem();
+                final List<AnswersField> list = mSelectionAdapter.processNext();
 
                 final StringBuilder sb = new StringBuilder();
 

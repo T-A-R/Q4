@@ -42,7 +42,7 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.QuestionActivity"
-            android:noHistory="true"
+            android:noHistory="false"
             android:screenOrientation="portrait"/>
 
     </application>

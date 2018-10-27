@@ -13,7 +13,7 @@ import java.util.List;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.adapter.SelectionAdapter;
-import pro.quizer.quizerexit.model.ItemModel;
+import pro.quizer.quizerexit.model.config.AnswersField;
 
 public class RecyclerViewActivity extends AppCompatActivity {
 
@@ -32,7 +32,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recyclerview);
+        setContentView(R.layout.fragment_question);
 
         initView();
     }
@@ -48,7 +48,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
                 mMinAnswers = bundle.getInt(BUNDLE_MIN_ANSWERS, DEFAULT_MIN_ANSWERS);
             }
 
-            final List<ItemModel> list = getList();
+            final List<AnswersField> list = getList();
 
             mSelectionAdapter = new SelectionAdapter(this, list, mMinAnswers, mMaxAnswers);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -63,12 +63,12 @@ public class RecyclerViewActivity extends AppCompatActivity {
             });
         }
 
-        private List<ItemModel> getList() {
-            final List<ItemModel> list = new ArrayList<>();
+        private List<AnswersField> getList() {
+            final List<AnswersField> list = new ArrayList<>();
 
             for (int i = 0; i < 10; i++) {
-                final ItemModel model = new ItemModel();
-                model.setName("Case " + i);
+                final AnswersField model = new AnswersField();
+                model.setTitle("Case " + i);
                 model.setId(i);
 
                 list.add(model);
@@ -79,14 +79,14 @@ public class RecyclerViewActivity extends AppCompatActivity {
 
         public void selectedClick() {
             try {
-                final List<ItemModel> list = mSelectionAdapter.getSelectedItem();
+                final List<AnswersField> list = mSelectionAdapter.getSelectedItem();
 
                 final StringBuilder sb = new StringBuilder();
 
                 for (int index = 0; index < list.size(); index++) {
-                    final ItemModel model = list.get(index);
+                    final AnswersField model = list.get(index);
 
-                    sb.append(model.getName()).append("\n");
+                    sb.append(model.getTitle()).append("\n");
                 }
 
                 showToast(sb.toString());

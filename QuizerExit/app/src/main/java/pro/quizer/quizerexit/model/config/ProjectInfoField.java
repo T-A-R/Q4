@@ -19,7 +19,7 @@ public class ProjectInfoField {
     private String agreement;
 
     @SerializedName("questions")
-    private List<QuestionsField> questions;
+    private List<QuestionField> questions;
 
     @SerializedName("reserve_channel")
     private ReserveChannelField reserve_channel;
@@ -43,7 +43,7 @@ public class ProjectInfoField {
         return agreement;
     }
 
-    public List<QuestionsField> getQuestions() {
+    public List<QuestionField> getQuestions() {
         return questions;
     }
 

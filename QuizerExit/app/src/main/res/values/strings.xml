@@ -16,4 +16,5 @@
     <string name="settings">Настройки</string>
     <string name="sync">Синхронизация</string>
     <string name="start">Старт</string>
+    <string name="dot">.</string>
 </resources>

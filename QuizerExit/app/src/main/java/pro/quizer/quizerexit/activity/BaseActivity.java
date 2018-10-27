@@ -86,6 +86,10 @@ public class BaseActivity extends AppCompatActivity {
         startActivity(new Intent(this, ActivationActivity.class));
     }
 
+    public void startQuestionActivity() {
+        startActivity(new Intent(this, QuestionActivity.class));
+    }
+
     public void startMainActivity() {
         startActivity(new Intent(this, MainActivity.class));
     }

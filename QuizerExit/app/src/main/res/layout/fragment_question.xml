@@ -1,22 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@android:color/white">
 
-    <TextView
-        android:id="@+id/question_text"
+    <LinearLayout
+        android:id="@+id/question_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:padding="8dp"
-        android:text="1. Отображение основного вопроса?"
-        android:textSize="20sp"/>
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/question_number_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:paddingLeft="8dp"
+            android:paddingStart="8dp"
+            android:paddingTop="8dp"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            tools:ignore="RtlSymmetry"
+            tools:text="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:text="@string/dot"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/question_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            tools:text="Отображение основного вопроса?"/>
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/question_text_divider"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_below="@+id/question_text"
+        android:layout_below="@+id/question_panel"
         android:background="@android:color/darker_gray"/>
 
     <android.support.v7.widget.RecyclerView

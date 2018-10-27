@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class QuestionsField {
+public class QuestionField {
 
     @SerializedName("id")
     private int id;
@@ -24,7 +24,7 @@ public class QuestionsField {
     @SerializedName("answers")
     private List<AnswersField> answers;
 
-    public QuestionsField() {
+    public QuestionField() {
     }
 
     public int getId() {

@@ -44,4 +44,12 @@ public class AnswersField {
     public String getTitle() {
         return title;
     }
+
+    public void setId(final int pId) {
+        id = pId;
+    }
+
+    public void setTitle(final String pTitle) {
+        title = pTitle;
+    }
 }

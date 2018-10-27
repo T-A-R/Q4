@@ -1,6 +1,7 @@
 package pro.quizer.quizerexit.activity;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -60,5 +61,13 @@ public class MainActivity extends BaseActivity {
         final Button settingsBtn = findViewById(R.id.settings);
         final Button syncBtn = findViewById(R.id.sync);
         final Button startBtn = findViewById(R.id.start);
+
+        startBtn.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(final View pView) {
+                startQuestionActivity();
+            }
+        });
     }
 }

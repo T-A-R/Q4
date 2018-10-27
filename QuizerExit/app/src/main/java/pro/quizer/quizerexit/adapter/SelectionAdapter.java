@@ -22,8 +22,8 @@ public class SelectionAdapter extends RecyclerView.Adapter {
     private final List<AnswersField> mItemModels;
     private final Context mContext;
     private int mNumberOfCheckboxesChecked;
-    private int mMaxAnswer;
-    private int mMinAnswer;
+    private final int mMaxAnswer;
+    private final int mMinAnswer;
 
     public SelectionAdapter(final Context pContext, final List<AnswersField> pItemModels, final int pMinAnswer, final int pMaxAnswer) {
         this.mItemModels = pItemModels;
@@ -93,7 +93,7 @@ public class SelectionAdapter extends RecyclerView.Adapter {
         });
     }
 
-    public void unselectAll() {
+    private void unselectAll() {
         for (final AnswersField item : mItemModels) {
             item.setSelected(false);
         }

@@ -7,9 +7,6 @@ public class AuthResponseModel {
     @SerializedName("result")
     private int result;
 
-    @SerializedName("login_admin")
-    private String login_admin;
-
     @SerializedName("config_id")
     private String config_id;
 
@@ -30,10 +27,6 @@ public class AuthResponseModel {
 
     public int getResult() {
         return result;
-    }
-
-    public String getLoginAdmin() {
-        return login_admin;
     }
 
     public String getConfigId() {

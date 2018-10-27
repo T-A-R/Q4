@@ -13,4 +13,7 @@
     <string name="incorrect_max_selected_answers">Вы можете выбрать максимум %1$s ответа.</string>
     <string name="back">Назад</string>
     <string name="apply">Принять</string>
+    <string name="settings">Настройки</string>
+    <string name="sync">Синхронизация</string>
+    <string name="start">Старт</string>
 </resources>

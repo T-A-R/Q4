@@ -20,6 +20,7 @@ public final class Constants {
         String USER_PROJECT_ID = "USER_PROJECT_ID";
         String PASSWORD = "PASSWORD";
         String SERVER = "SERVER";
+        String CONFIG_MODEl = "CONFIG_MODEl";
 
     }
 

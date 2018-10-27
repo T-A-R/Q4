@@ -90,17 +90,19 @@ public class AuthActivity extends BaseActivity {
 
                                 if (authResponseModel != null) {
                                     if (authResponseModel.getResult() != 0) {
-                                        saveAuthBundle(login, password, authResponseModel);
                                         final String oldLogin = getSPLogin();
 
                                         if (!oldLogin.equals(login)) {
                                             // TODO: 27.10.2018 clear all databases
                                         }
 
-                                        // TODO: 27.10.2018 if (geConfig() == null || getConfig.getconfigId == null || getConfig.getConfigId != authResponseModel.getConfigId()) than download config, else use old config
-                                        if (true) {
+                                        if (!getSPConfigId().equals(authResponseModel.getConfigId()) || getSPConfigModel() == null) {
+                                            saveAuthBundle(login, password, authResponseModel);
+
                                             downloadConfig();
                                         } else {
+                                            saveAuthBundle(login, password, authResponseModel);
+
                                             startMainActivity();
                                         }
                                     } else {
@@ -156,9 +158,16 @@ public class AuthActivity extends BaseActivity {
                                  final GsonBuilder gsonBuilder = new GsonBuilder();
 
                                  final ConfigResponseModel configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
-                                 Utils.saveConfig(AuthActivity.this, configResponseModel);
 
-//                                 getQuota();
+                                 if (configResponseModel != null) {
+                                     if (configResponseModel.getResult() != 0) {
+                                         saveConfigModel(configResponseModel);
+                                     } else {
+                                         showToastMessage(configResponseModel.getError());
+                                     }
+                                 } else {
+                                     showToastMessage(getString(R.string.server_error));
+                                 }
                              }
                          }
 

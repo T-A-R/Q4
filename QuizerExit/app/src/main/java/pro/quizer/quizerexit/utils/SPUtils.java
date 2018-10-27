@@ -3,12 +3,23 @@ package pro.quizer.quizerexit.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import pro.quizer.quizerexit.Constants;
+import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 
 import static android.content.Context.MODE_PRIVATE;
 import static pro.quizer.quizerexit.Constants.SP.SHARED_PREFERENCES_INSTANCE;
 
 public class SPUtils {
+
+    public static void saveConfig(final Context pContext, final ConfigResponseModel pConfigResponseModel) {
+        final SharedPreferences.Editor editor = getSharedPreferences(pContext).edit();
+
+        editor.putString(Constants.SP.CONFIG_MODEl, new Gson().toJson(pConfigResponseModel));
+        editor.apply();
+    }
 
     public static void saveActivationBundle(final Context pContext, final String pServer, final String pLoginAdmin) {
         final SharedPreferences.Editor editor = getSharedPreferences(pContext).edit();
@@ -19,12 +30,11 @@ public class SPUtils {
         editor.apply();
     }
 
-    public static void saveAuthBundle(final Context pContext, final String pLogin, final String pPassword, final String pLoginAdmin, final String pConfigId, final String pUserId, final String pRoleId, final String pUserProjectId) {
+    public static void saveAuthBundle(final Context pContext, final String pLogin, final String pPassword, final String pConfigId, final String pUserId, final String pRoleId, final String pUserProjectId) {
         final SharedPreferences.Editor editor = getSharedPreferences(pContext).edit();
 
         editor.putString(Constants.SP.LOGIN, pLogin);
         editor.putString(Constants.SP.PASSWORD, pPassword);
-        editor.putString(Constants.SP.LOGIN_ADMIN, pLoginAdmin);
         editor.putString(Constants.SP.CONFIG_ID, pConfigId);
         editor.putString(Constants.SP.USER_ID, pUserId);
         editor.putString(Constants.SP.ROLE_ID, pRoleId);
@@ -44,6 +54,12 @@ public class SPUtils {
 
     public static String getLogin(final Context pContext) {
         return getLogin(getSharedPreferences(pContext));
+    }
+
+    public static ConfigResponseModel getConfigModel(final Context pContext) {
+        final String json = getConfigModel(getSharedPreferences(pContext));
+
+        return new GsonBuilder().create().fromJson(json, ConfigResponseModel.class);
     }
 
     public static String getPassword(final Context pContext) {
@@ -68,6 +84,10 @@ public class SPUtils {
 
     private static String getLogin(final SharedPreferences pSharedPreferences) {
         return getString(pSharedPreferences, Constants.SP.LOGIN);
+    }
+
+    private static String getConfigModel(final SharedPreferences pSharedPreferences) {
+        return getString(pSharedPreferences, Constants.SP.CONFIG_MODEl);
     }
 
     private static String getPassword(final SharedPreferences pSharedPreferences) {

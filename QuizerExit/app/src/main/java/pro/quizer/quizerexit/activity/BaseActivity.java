@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
+import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.utils.SPUtils;
 
 @SuppressLint("Registered")
@@ -45,6 +46,10 @@ public class BaseActivity extends AppCompatActivity {
         return SPUtils.getConfigId(this);
     }
 
+    public ConfigResponseModel getSPConfigModel() {
+        return SPUtils.getConfigModel(this);
+    }
+
     public String getSPServer() {
         return SPUtils.getServer(this);
     }
@@ -59,11 +64,14 @@ public class BaseActivity extends AppCompatActivity {
                 pLoginAdmin);
     }
 
+    public void saveConfigModel(final ConfigResponseModel pConfigResponseModel) {
+        SPUtils.saveConfig(this, pConfigResponseModel);
+    }
+
     public void saveAuthBundle(final String pLogin, final String pPassword, final AuthResponseModel pModel) {
         SPUtils.saveAuthBundle(this,
                 pLogin,
                 pPassword,
-                pModel.getLoginAdmin(),
                 pModel.getConfigId(),
                 pModel.getUserId(),
                 pModel.getRoleId(),

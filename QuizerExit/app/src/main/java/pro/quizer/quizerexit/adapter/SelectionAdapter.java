@@ -15,17 +15,17 @@ import java.util.List;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.RecyclerViewActivity;
-import pro.quizer.quizerexit.model.ItemModel;
+import pro.quizer.quizerexit.model.config.AnswersField;
 
 public class SelectionAdapter extends RecyclerView.Adapter {
 
-    private final List<ItemModel> mItemModels;
+    private final List<AnswersField> mItemModels;
     private final Context mContext;
     private int mNumberOfCheckboxesChecked;
     private int mMaxAnswer;
     private int mMinAnswer;
 
-    public SelectionAdapter(final Context pContext, final List<ItemModel> pItemModels, final int pMinAnswer, final int pMaxAnswer) {
+    public SelectionAdapter(final Context pContext, final List<AnswersField> pItemModels, final int pMinAnswer, final int pMaxAnswer) {
         this.mItemModels = pItemModels;
         this.mContext = pContext;
         this.mMaxAnswer = pMaxAnswer;
@@ -46,12 +46,12 @@ public class SelectionAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
-        final ItemModel model = mItemModels.get(position);
+        final AnswersField model = mItemModels.get(position);
         initializeViews(model, holder, position);
     }
 
-    private void initializeViews(final ItemModel model, final RecyclerView.ViewHolder holder, final int position) {
-        ((ItemViewHolder) holder).mName.setText(model.getName());
+    private void initializeViews(final AnswersField model, final RecyclerView.ViewHolder holder, final int position) {
+        ((ItemViewHolder) holder).mAnswer.setText(model.getTitle());
         ((ItemViewHolder) holder).mCheckBox.setChecked(model.isSelected());
         ((ItemViewHolder) holder).mCheckBox.setTag(position);
         ((ItemViewHolder) holder).mCheckBox.setOnClickListener(new View.OnClickListener() {
@@ -94,16 +94,16 @@ public class SelectionAdapter extends RecyclerView.Adapter {
     }
 
     public void unselectAll() {
-        for (final ItemModel item : mItemModels) {
+        for (final AnswersField item : mItemModels) {
             item.setSelected(false);
         }
     }
 
-    public List<ItemModel> getSelectedItem() throws Exception {
-        final List<ItemModel> selectedList = new ArrayList<>();
+    public List<AnswersField> getSelectedItem() throws Exception {
+        final List<AnswersField> selectedList = new ArrayList<>();
 
         for (int i = 0; i < mItemModels.size(); i++) {
-            final ItemModel itemModel = mItemModels.get(i);
+            final AnswersField itemModel = mItemModels.get(i);
             if (itemModel.isSelected()) {
                 selectedList.add(itemModel);
             }
@@ -120,12 +120,12 @@ public class SelectionAdapter extends RecyclerView.Adapter {
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        TextView mName;
+        TextView mAnswer;
         CheckBox mCheckBox;
 
         ItemViewHolder(final View itemView) {
             super(itemView);
-            mName = itemView.findViewById(R.id.answer_text);
+            mAnswer = itemView.findViewById(R.id.answer_text);
             mCheckBox = itemView.findViewById(R.id.answer_checkbox);
         }
     }

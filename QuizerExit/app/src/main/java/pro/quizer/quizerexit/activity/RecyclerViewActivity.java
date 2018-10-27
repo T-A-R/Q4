@@ -37,65 +37,65 @@ public class RecyclerViewActivity extends AppCompatActivity {
         initView();
     }
 
-    private void initView() {
-        mRecyclerView = findViewById(R.id.recycler_view);
-        mSelected = findViewById(R.id.selected);
+        private void initView() {
+            mRecyclerView = findViewById(R.id.recycler_view);
+            mSelected = findViewById(R.id.selected);
 
-        final Bundle bundle = getIntent().getExtras();
+            final Bundle bundle = getIntent().getExtras();
 
-        if (bundle != null) {
-            mMaxAnswers = bundle.getInt(BUNDLE_MAX_ANSWERS, EMPTY_COUNT_ANSWER);
-            mMinAnswers = bundle.getInt(BUNDLE_MIN_ANSWERS, DEFAULT_MIN_ANSWERS);
-        }
-
-        final List<ItemModel> list = getList();
-
-        mSelectionAdapter = new SelectionAdapter(this, list, mMinAnswers, mMaxAnswers);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setAdapter(mSelectionAdapter);
-
-        mSelected.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(final View v) {
-                selectedClick();
-            }
-        });
-    }
-
-    private List<ItemModel> getList() {
-        final List<ItemModel> list = new ArrayList<>();
-
-        for (int i = 0; i < 10; i++) {
-            final ItemModel model = new ItemModel();
-            model.setName("Case " + i);
-            model.setId(i);
-
-            list.add(model);
-        }
-
-        return list;
-    }
-
-    public void selectedClick() {
-        try {
-            final List<ItemModel> list = mSelectionAdapter.getSelectedItem();
-
-            final StringBuilder sb = new StringBuilder();
-
-            for (int index = 0; index < list.size(); index++) {
-                final ItemModel model = list.get(index);
-
-                sb.append(model.getName()).append("\n");
+            if (bundle != null) {
+                mMaxAnswers = bundle.getInt(BUNDLE_MAX_ANSWERS, EMPTY_COUNT_ANSWER);
+                mMinAnswers = bundle.getInt(BUNDLE_MIN_ANSWERS, DEFAULT_MIN_ANSWERS);
             }
 
-            showToast(sb.toString());
-        } catch (final Exception pE) {
-            showToast(pE.getMessage());
-        }
-    }
+            final List<ItemModel> list = getList();
 
-    private void showToast(final CharSequence message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
+            mSelectionAdapter = new SelectionAdapter(this, list, mMinAnswers, mMaxAnswers);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mRecyclerView.setAdapter(mSelectionAdapter);
+
+            mSelected.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(final View v) {
+                    selectedClick();
+                }
+            });
+        }
+
+        private List<ItemModel> getList() {
+            final List<ItemModel> list = new ArrayList<>();
+
+            for (int i = 0; i < 10; i++) {
+                final ItemModel model = new ItemModel();
+                model.setName("Case " + i);
+                model.setId(i);
+
+                list.add(model);
+            }
+
+            return list;
+        }
+
+        public void selectedClick() {
+            try {
+                final List<ItemModel> list = mSelectionAdapter.getSelectedItem();
+
+                final StringBuilder sb = new StringBuilder();
+
+                for (int index = 0; index < list.size(); index++) {
+                    final ItemModel model = list.get(index);
+
+                    sb.append(model.getName()).append("\n");
+                }
+
+                showToast(sb.toString());
+            } catch (final Exception pE) {
+                showToast(pE.getMessage());
+            }
+        }
+
+        private void showToast(final CharSequence message) {
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        }
 }

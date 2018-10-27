@@ -16,7 +16,17 @@ public class AnswersField {
     @SerializedName("title")
     private String title;
 
+    private boolean isSelected;
+
     public AnswersField() {
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(final boolean selected) {
+        isSelected = selected;
     }
 
     public int getId() {

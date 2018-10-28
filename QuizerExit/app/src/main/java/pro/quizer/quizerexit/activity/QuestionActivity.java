@@ -7,7 +7,7 @@ import java.util.List;
 
 import pro.quizer.quizerexit.OnNextQuestionCallback;
 import pro.quizer.quizerexit.R;
-import pro.quizer.quizerexit.fragment.QuestionFragment;
+import pro.quizer.quizerexit.fragment.SelectionQuestionFragment;
 import pro.quizer.quizerexit.model.config.AnswersField;
 import pro.quizer.quizerexit.model.config.ConfigField;
 import pro.quizer.quizerexit.model.config.QuestionField;
@@ -48,7 +48,7 @@ public class QuestionActivity extends BaseActivity implements OnNextQuestionCall
         mQuestions = mConfig.getProjectInfo().getQuestions();
         final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
-        fragmentTransaction.add(android.R.id.content, QuestionFragment.newInstance(mQuestions.get(0), this));
+        fragmentTransaction.add(android.R.id.content, SelectionQuestionFragment.newInstance(mQuestions.get(0), this));
         fragmentTransaction.commit();
     }
 
@@ -66,7 +66,7 @@ public class QuestionActivity extends BaseActivity implements OnNextQuestionCall
         final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
         fragmentTransaction
-                .replace(android.R.id.content, QuestionFragment.newInstance(nextQuestion, this))
+                .replace(android.R.id.content, SelectionQuestionFragment.newInstance(nextQuestion, this))
                 .addToBackStack(nextQuestion.getTitle())
                 .commit();
     }

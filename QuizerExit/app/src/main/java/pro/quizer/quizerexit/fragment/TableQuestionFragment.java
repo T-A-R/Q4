@@ -24,17 +24,12 @@ import pro.quizer.quizerexit.model.config.AnswersField;
 import pro.quizer.quizerexit.model.config.QuestionField;
 import pro.quizer.quizerexit.model.config.QuestionOptionsField;
 
-public class QuestionFragment extends BaseFragment {
+public class TableQuestionFragment extends BaseFragment {
 
     public static final String BUNDLE_CURRENT_QUESTION = "BUNDLE_CURRENT_QUESTION";
     public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
 
-    public static final int EMPTY_COUNT_ANSWER = -1;
-    public static final int DEFAULT_MIN_ANSWERS = 1;
-
     RecyclerView mRecyclerView;
-    TextView mQuestionText;
-    TextView mQuestionNumber;
     Button mNextBtn;
     Button mBackButton;
     SelectionAdapter mSelectionAdapter;
@@ -43,7 +38,7 @@ public class QuestionFragment extends BaseFragment {
     private OnNextQuestionCallback mCallback;
 
     public static Fragment newInstance(@NonNull final QuestionField pQuestionField, final OnNextQuestionCallback pCallback) {
-        final QuestionFragment fragment = new QuestionFragment();
+        final TableQuestionFragment fragment = new TableQuestionFragment();
 
         final Bundle bundle = new Bundle();
         bundle.putSerializable(BUNDLE_CURRENT_QUESTION, pQuestionField);
@@ -55,7 +50,7 @@ public class QuestionFragment extends BaseFragment {
 
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_question, container, false);
+        return inflater.inflate(R.layout.fragment_selection_question, container, false);
     }
 
     @Override

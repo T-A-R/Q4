@@ -32,7 +32,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_question);
+        setContentView(R.layout.fragment_selection_question);
 
         initView();
     }

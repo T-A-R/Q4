@@ -57,36 +57,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/button_panel"
-        android:layout_below="@+id/question_text_divider"/>
+        android:layout_below="@+id/question_text_divider"
+        tools:ignore="UnknownIdInLayout"/>
 
-    <android.support.v7.widget.LinearLayoutCompat
-        android:id="@+id/button_panel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/back"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:layout_weight="1"
-            android:background="@color/colorPrimary"
-            android:text="@string/back"
-            android:textColor="#fff"/>
-
-        <Button
-            android:id="@+id/selected"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_margin="4dp"
-            android:layout_weight="1"
-            android:background="@color/colorPrimary"
-            android:text="@string/apply"
-            android:textColor="#fff"/>
-
-    </android.support.v7.widget.LinearLayoutCompat>
+    <include layout="@layout/view_question_buttons_panel"/>
 
 </RelativeLayout>

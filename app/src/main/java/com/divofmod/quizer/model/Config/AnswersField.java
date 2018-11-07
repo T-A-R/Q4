@@ -16,6 +16,9 @@ public class AnswersField {
     @SerializedName("title")
     private String title;
 
+    @SerializedName("options")
+    private AnswerFieldOptions options;
+
     public AnswersField() {
     }
 
@@ -33,5 +36,9 @@ public class AnswersField {
 
     public String getTitle() {
         return title;
+    }
+
+    public AnswerFieldOptions getOptions() {
+        return options;
     }
 }

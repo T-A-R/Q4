@@ -22,7 +22,7 @@ repositories {
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.quizer.quizerexit"
         minSdkVersion 15

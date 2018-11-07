@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "/home/Funny/work/QUIZER_Android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-land/values-land.xml",
+            "map": [
+                {
+                    "source": "/home/Funny/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/f837df24f100cf748e1061b52d6b1b9b/res/values-land/values-land.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,125,189,260",
+                        "endColumns": "69,63,70,67",
+                        "endOffsets": "120,184,255,323"
+                    }
+                }
+            ]
+        }
+    ]
+}

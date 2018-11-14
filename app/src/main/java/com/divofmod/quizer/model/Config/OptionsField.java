@@ -17,7 +17,7 @@ public class OptionsField {
     private int table_id;
 
     @SerializedName("table_header")
-    private int table_header;
+    private String table_header;
 
     @SerializedName("polyanswer")
     private int polyanswer;
@@ -63,7 +63,7 @@ public class OptionsField {
         return table_id;
     }
 
-    public int getTable_header() {
+    public String getTable_header() {
         return table_header;
     }
 

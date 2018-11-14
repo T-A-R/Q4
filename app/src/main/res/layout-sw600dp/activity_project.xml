@@ -7,6 +7,58 @@
               android:paddingRight="@dimen/activity_horizontal_margin"
               android:paddingTop="@dimen/activity_vertical_margin">
 
+
+<ImageView
+    android:id="@+id/image_uqiz"
+    android:src="@drawable/quizer"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:layout_marginHorizontal="32dp"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/start_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+            android:text="Начать"
+            android:textSize="@dimen/textsize_low_600dp"
+            android:theme="@style/ThemeOverlay.MyDarkButton"/>
+
+        <Button
+            android:id="@+id/sync_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+            android:text="Синхронизация"
+            android:textSize="@dimen/textsize_low_600dp"
+            android:theme="@style/ThemeOverlay.MyDarkButton"/>
+
+        <Button
+            android:id="@+id/settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+            android:text="Настройки"
+            android:textSize="@dimen/textsize_low_600dp"
+            android:theme="@style/ThemeOverlay.MyDarkButton"/>
+        <Button
+            android:id="@+id/change_users"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+            android:text="Сменить пользователя"
+            android:textSize="@dimen/textsize_low_600dp"
+            android:theme="@style/ThemeOverlay.MyDarkButton"/>
+
+    </LinearLayout>
+
+
     <TextView
         android:id="@+id/project_name"
         android:layout_width="match_parent"
@@ -22,7 +74,6 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/textsize_low_600dp"
         android:textAppearance="?android:attr/textAppearanceMedium"/>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -44,46 +95,4 @@
         </LinearLayout>
 
     </ScrollView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/settings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Настройки"
-            android:textSize="@dimen/textsize_low_600dp"
-            android:theme="@style/ThemeOverlay.MyDarkButton"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/sync_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/activity_horizontal_margin_for_center"
-                android:layout_weight=".4"
-                android:text="Синхронизация"
-                android:textSize="@dimen/textsize_low_600dp"
-                android:theme="@style/ThemeOverlay.MyDarkButton"/>
-
-            <Button
-                android:id="@+id/start_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin_for_center"
-                android:layout_weight=".6"
-                android:text="Старт"
-                android:textSize="@dimen/textsize_low_600dp"
-                android:theme="@style/ThemeOverlay.MyDarkButton"/>
-
-        </LinearLayout>
-    </LinearLayout>
-
 </LinearLayout>

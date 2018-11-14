@@ -48,6 +48,7 @@ import com.divofmod.quizer.QuizHelper.PhotoCamera;
 import com.divofmod.quizer.QuizHelper.StopWatch;
 import com.divofmod.quizer.Utils.SmsUtils;
 import com.divofmod.quizer.Utils.Utils;
+import com.divofmod.quizer.model.API.QuizzesRequest;
 import com.divofmod.quizer.model.Config.QuestionsMatchesField;
 import com.divofmod.quizer.model.Config.StagesField;
 import com.divofmod.quizer.model.Sms.SmsAnswerModel;
@@ -68,6 +69,8 @@ import java.util.Map;
 import java.util.Random;
 
 public class QuestionsActivity extends AppCompatActivity implements View.OnClickListener, ScrollViewListener, LocationListener {
+
+    public static final String TAG = "QuestionsActivity";
 
     String mCurrentMessage;
     String mCurrentPhoneNumber;
@@ -338,7 +341,9 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         }
 
         for (int i = 0; i < infoForAnswer.size(); i++) {
-            if (Integer.parseInt(numbers) == i + 1) {
+
+
+            if (Integer.parseInt(numbers.substring(0,1)) == i + 1) {
                 finalAnswer = infoForAnswer.get(i)[1];
             }
         }
@@ -601,7 +606,8 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                 for (int i = 0; i < currentAnswers.size(); i++) {
                     if (currentAnswers.get(i)[1].contains("#")) {
                         answer = currentAnswers.get(i)[1].substring(currentAnswers.get(i)[1].indexOf('#') + 1, currentAnswers.get(i)[1].indexOf('|'));
-                        answerNum = currentAnswers.get(i)[1].substring(currentAnswers.get(i)[1].indexOf('|') + 1, currentAnswers.get(i)[1].lastIndexOf('#'));
+                        Log.i(TAG, "currentAnswers: "  + currentAnswers.get(i)[1]);
+                        answerNum = currentAnswers.get(i)[1].substring(currentAnswers.get(i)[1].indexOf('|') + 1, currentAnswers.get(i)[1].lastIndexOf('$'));
                     }
                     answers.add(new Answer(
                             currentAnswers.get(i)[0],
@@ -1214,7 +1220,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             //Создаем таблицы в БД
             mSQLiteDatabase.execSQL("create table if not exists " + answerSQL + "(answer_id text,duration_time_question text,text_open_answer text);");
             mSQLiteDatabase.execSQL("create table if not exists " + answerSQLSelective + "(answer_id text,duration_time_question text);");
-            mSQLiteDatabase.execSQL("create table if not exists " + commonSQL + "(project_id text, questionnaire_id text, user_project_id text, date_interview text, gps text, duration_time_questionnaire text, selected_questions text, login text);");
+            mSQLiteDatabase.execSQL("create table if not exists " + commonSQL + "(project_id text, questionnaire_id text, user_project_id text,token text, date_interview text, gps text, duration_time_questionnaire text, selected_questions text, login text);");
 
             //Заполняем таблицыд г
             for (int i = 0; i < answerSequenceInsideQuestions.size(); i++) {
@@ -1234,11 +1240,12 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                 }
             }
 
-            mSQLiteDatabase.execSQL("insert into " + commonSQL + " (project_id,questionnaire_id,user_project_id,date_interview,gps,duration_time_questionnaire,selected_questions,login) " +
+            mSQLiteDatabase.execSQL("insert into " + commonSQL + " (project_id,questionnaire_id,user_project_id,token,date_interview,gps,duration_time_questionnaire,selected_questions,login) " +
                     "values('" +
                     Utils.getProjectId(this) + "','" +
                     Utils.getQuestionnaireId(this) + "','" +
                     mSharedPreferences.getString("user_project_id", "") + "','" +
+                    TokenQuiz.TokenQuiz(mSharedPreferences.getString("user_project_id", ""))+"','" +
                     mDateInterview + "','" +
                     mSharedPreferences.getString("gps", "") + "','" +
                     StopWatch.getGlobalTime() + "','" +

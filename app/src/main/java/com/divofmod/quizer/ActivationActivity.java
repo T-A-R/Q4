@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -34,6 +35,7 @@ import okhttp3.Response;
 
 public class ActivationActivity extends AppCompatActivity implements View.OnClickListener {
 
+    public static final String TAG = "ActivationActivity";
     Dictionary<String, String> mDictionaryForRequest;
     SharedPreferences mSharedPreferences;
 
@@ -136,6 +138,7 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
                     @Override
                     public void onResponse(final Call call, final Response response) throws IOException {
                         final String responseJson = response.body().string();
+
                         final ActivationResponseModel activationResponseModel = new GsonBuilder().create().fromJson(responseJson, ActivationResponseModel.class);
 
                         if (activationResponseModel.getResult() == 0) {

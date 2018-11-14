@@ -728,12 +728,14 @@ id btn_retry
 id buttonPanel
 id cancel_action
 id chains
+id change_users
 id checkbox
 id chronometer
 id collapseActionView
 id contact_title
 id contentPanel
 id count
+id countUser
 id custom
 id customPanel
 id decor_content_parent
@@ -761,6 +763,7 @@ id icon
 id icon_group
 id ifRoom
 id image
+id image_uqiz
 id info
 id invisible
 id italic
@@ -802,6 +805,7 @@ id progress_horizontal
 id project_agreement
 id project_description
 id project_name
+id question_exit_button
 id question_linear_with_table
 id question_next_button
 id question_picture
@@ -886,6 +890,7 @@ id text
 id text2
 id textSpacerNoButtons
 id textSpacerNoTitle
+id textUsers
 id time
 id title
 id titleDividerNoCustom
@@ -949,6 +954,7 @@ layout adapter_stages
 layout answer_item
 layout change_config_dialog
 layout fragment_sms
+layout layuserscount
 layout notification_action
 layout notification_action_tombstone
 layout notification_media_action
@@ -1021,6 +1027,7 @@ string search_menu_title
 string separator_path
 string sql_file_name
 string status_bar_notification_info_overflow
+string textUser
 style AlertDialog_AppCompat
 style AlertDialog_AppCompat_Light
 style Animation_AppCompat_Dialog

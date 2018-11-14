@@ -90,6 +90,7 @@ class DoRequest {
         final QuizzesRequest quizzesRequest = new QuizzesRequest(dictionary.get("login"),
                 dictionary.get("sess_login"),
                 dictionary.get("user_project_id"),
+                dictionary.get("token"),
                 dictionary.get("login_admin"),
                 dictionary.get("sess_passw"),
                 dictionary.get("duration_time_questionnaire"),
@@ -109,6 +110,7 @@ class DoRequest {
         final MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("json_data", App.getGson().toJson(quizzesRequest));
+
 
         return new Request.Builder()
                 .url(url)

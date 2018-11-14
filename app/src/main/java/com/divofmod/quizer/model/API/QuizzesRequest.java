@@ -14,17 +14,19 @@ public class QuizzesRequest extends BaseRequest {
     private Integer selected_questions;
     private Integer questionnaire_id;
     private String date_interview;
+    private String token;
     private Answers[] answers;
 
     public QuizzesRequest() {
     }
 
-    public QuizzesRequest(final String pLogin, final String pSessLogin, final String pUserProjectId, final String pLoginAdmin, final String pSessPassw, final String pDurationTimeQuestionnaire, final String pProjectId, final String pGps, final String pSelectedQuestions, final String pQuestionnaireId, final String pDateInterview, final Answers[] pAnswers) {
+    public QuizzesRequest(final String pLogin, final String pSessLogin, final String pUserProjectId, final String token, final String pLoginAdmin, final String pSessPassw, final String pDurationTimeQuestionnaire, final String pProjectId, final String pGps, final String pSelectedQuestions, final String pQuestionnaireId, final String pDateInterview, final Answers[] pAnswers) {
         super(pLoginAdmin, Constants.NameForm.QUESTIONNAIRE);
         login = pLogin;
         sess_login = pSessLogin;
         sess_passw = pSessPassw;
         user_project_id = pUserProjectId;
+        this.token = token;
         duration_time_questionnaire = Integer.valueOf(pDurationTimeQuestionnaire);
         sess_passw = pSessPassw;
         project_id = Integer.valueOf(pProjectId);
@@ -33,6 +35,11 @@ public class QuizzesRequest extends BaseRequest {
         questionnaire_id = Integer.valueOf(pQuestionnaireId);
         date_interview = pDateInterview;
         answers = pAnswers.clone();
+    }
+
+
+    public String getToken() {
+        return token;
     }
 
     public String getLogin() {

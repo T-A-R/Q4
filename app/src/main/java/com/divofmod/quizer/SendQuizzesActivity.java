@@ -20,6 +20,7 @@ import com.divofmod.quizer.DataBase.DBReader;
 import com.divofmod.quizer.Utils.SmsUtils;
 import com.divofmod.quizer.Utils.Utils;
 import com.divofmod.quizer.callback.CompleteCallback;
+import com.divofmod.quizer.model.API.QuizzesRequest;
 import com.divofmod.quizer.model.API.QuizzesResponse;
 import com.divofmod.quizer.model.Sms.SmsDatabaseModel;
 import com.divofmod.quizer.sms.SMSStatusActivity;
@@ -247,7 +248,7 @@ public static final String TAG = "SendQuizzesActivity";
 
                         mCommon = DBReader.read(mSQLiteDatabase,
                                 "common_" + mTables[0],
-                                new String[]{"project_id", "questionnaire_id", "user_project_id", "date_interview", "gps", "duration_time_questionnaire", "selected_questions", "login"});
+                                new String[]{"project_id", "questionnaire_id", "user_project_id","token", "date_interview", "gps", "duration_time_questionnaire", "selected_questions", "login"});
 
                         if (mCommon == null || mCommon.isEmpty()) {
                             syncDialog.dismiss();
@@ -261,17 +262,18 @@ public static final String TAG = "SendQuizzesActivity";
                         System.out.println("Отправка");
                         mDictionaryForRequest = new Hashtable();
                         mDictionaryForRequest.put(Constants.Shared.LOGIN_ADMIN, mSharedPreferences.getString("login_admin", ""));
-                        mDictionaryForRequest.put("login", mCommon.get(0)[7]);
+                        mDictionaryForRequest.put("login", mCommon.get(0)[8]);
                         mDictionaryForRequest.put("sess_login", mSharedPreferences.getString("login", ""));
                         mDictionaryForRequest.put("sess_passw", mSharedPreferences.getString("passw", ""));
                         mDictionaryForRequest.put("project_id", mCommon.get(0)[0]);
                         mDictionaryForRequest.put("questionnaire_id", mCommon.get(0)[1]);
                         mDictionaryForRequest.put("user_project_id", mCommon.get(0)[2]);
-                        mDictionaryForRequest.put("date_interview", mCommon.get(0)[3]);
-                        mDictionaryForRequest.put("gps", mCommon.get(0)[4]);
-                        mDictionaryForRequest.put("duration_time_questionnaire", mCommon.get(0)[5]);
+                        mDictionaryForRequest.put("token",mCommon.get(0)[3]);
+                        mDictionaryForRequest.put("date_interview", mCommon.get(0)[4]);
+                        mDictionaryForRequest.put("gps", mCommon.get(0)[5]);
+                        mDictionaryForRequest.put("duration_time_questionnaire", mCommon.get(0)[6]);
                         mDictionaryForRequest.put("photo", mPhoto + ".jpg");
-                        mDictionaryForRequest.put("selected_questions", mCommon.get(0)[6]);
+                        mDictionaryForRequest.put("selected_questions", mCommon.get(0)[7]);
 
                         final OkHttpClient client = new OkHttpClient();
                         client.newCall(new DoRequest(SendQuizzesActivity.this).Post(mDictionaryForRequest, mSharedPreferences.getString("url", ""), mQuestion, mQuestionSelective))

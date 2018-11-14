@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -43,6 +44,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Response;
 
 public class AuthActivity extends AppCompatActivity implements View.OnClickListener {
+    public static final String TAG = "AuthActivity";
 
     static final private int SEND_QUIZZES = 0;
 
@@ -56,7 +58,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     private EditText mPasswordEditText;
     private ProgressBar mProgressBar;
     private LinearLayout mLoginPasswordFields;
-    private TextView mVer;
+    private TextView mVer,countUser;
     private Button mSignInButton;
 
     private String mNameFile;
@@ -64,7 +66,8 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_auth);
+        setContentView(R.layout.layuserscount);
+        //activity_auth
 
         mSharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
 
@@ -75,6 +78,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         mPasswordEditText = findViewById(R.id.field_password);
         mProgressBar = findViewById(R.id.progressBar);
         mVer = findViewById(R.id.ver);
+        countUser = findViewById(R.id.countUser);
         mLoginPasswordFields = findViewById(R.id.login_password_fields);
         mSignInButton = findViewById(R.id.sign_in_button);
 
@@ -175,9 +179,8 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                              });
                                              return;
                                          }
-                                     }catch (NullPointerException e)
-                                     {
-                                         Toast.makeText(getBaseContext(),"Неполадки на сервере, попробуйте позже",Toast.LENGTH_SHORT).show();
+                                     } catch (NullPointerException e) {
+                                         Toast.makeText(getBaseContext(), "Неполадки на сервере, попробуйте позже", Toast.LENGTH_SHORT).show();
                                      }
 
                                      final String oldLogin = mSharedPreferences.getString("login", "");
@@ -206,6 +209,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                      final SharedPreferences.Editor editor = mSharedPreferences.edit()
                                              .putString("login", newLogin)
                                              .putString("passw", DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))))
+
                                              .putString("user_project_id", authResponseModel.getUser_project_id());
                                      editor.apply();
 
@@ -257,7 +261,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                              public void onResponse(final Call call, final Response response) throws IOException {
                                  final String responseJson = response.body().string();
                                  final GsonBuilder gsonBuilder = new GsonBuilder();
-
                                  final ConfigResponseModel configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
                                  Utils.saveConfig(AuthActivity.this, configResponseModel);
 

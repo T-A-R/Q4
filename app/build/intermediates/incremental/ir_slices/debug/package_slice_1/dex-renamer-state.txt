@@ -1,4 +1,4 @@
-#Tue Nov 13 16:31:38 MSK 2018
+#Wed Nov 14 16:29:58 MSK 2018
 base.0=/home/Funny/work/QUIZER_Android/app/build/intermediates/transforms/dexMerger/debug/1
 path.0=classes.dex
 renamed.0=classes.dex

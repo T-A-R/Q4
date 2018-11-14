@@ -54,6 +54,7 @@ public static final String TAG = "SendQuizzesActivity";
 
     TextView mQuizzesNotSend;
     TextView mAudioNotSend;
+    TextView nameUser;
 
     final CompleteCallback mCompleteCallback = new CompleteCallback() {
 
@@ -78,10 +79,10 @@ public static final String TAG = "SendQuizzesActivity";
 
         final String audioValue = Utils.getConfig(this).getConfig().getAudio();
 
-        if (audioValue == null || audioValue.equals("0")) {
-            findViewById(R.id.audio_title).setVisibility(View.GONE);
-            findViewById(R.id.audio_table).setVisibility(View.GONE);
-        }
+//        if (audioValue == null || audioValue.equals("0")) {
+//            findViewById(R.id.audio_title).setVisibility(View.GONE);
+//            findViewById(R.id.audio_table).setVisibility(View.GONE);
+//        }
 
         mSharedPreferences = getSharedPreferences("data",
                 Context.MODE_PRIVATE);
@@ -114,7 +115,8 @@ public static final String TAG = "SendQuizzesActivity";
         } catch (final Exception ignore) {
 
         }
-
+        nameUser = findViewById(R.id.nameUser);
+        nameUser.setText(mSharedPreferences.getString("login", ""));
         findViewById(R.id.send_audio).setOnClickListener(this);
         findViewById(R.id.send_quiz).setOnClickListener(this);
         findViewById(R.id.sms_button).setOnClickListener(this);
@@ -127,15 +129,15 @@ public static final String TAG = "SendQuizzesActivity";
         try {
             mQuizzesNotSend = (TextView) findViewById(R.id.quizzes_not_send);
 
-            mQuizzesNotSend.setText("0");
+            mQuizzesNotSend.setText(getResources().getString(R.string.textCountNotSend) + "0");
             if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {
-                mQuizzesNotSend.setText(String.valueOf(mTables.length));
+                mQuizzesNotSend.setText(getResources().getString(R.string.textCountNotSend )+ String.valueOf(mTables.length));
             }
 
             mAudioNotSend = (TextView) findViewById(R.id.audio_not_send);
-            mAudioNotSend.setText("0");
+            mAudioNotSend.setText(getResources().getString(R.string.textAudioAnSyncQuestionnari)+ "0");
             if (!mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
-                mAudioNotSend.setText(String.valueOf(mAudioTables.length));
+                mAudioNotSend.setText(getResources().getString(R.string.textAudioAnSyncQuestionnari) + String.valueOf(mAudioTables.length));
             }
         } catch (final Exception ignore) {
 

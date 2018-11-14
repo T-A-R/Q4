@@ -392,6 +392,7 @@ color cardview_light_background
 color cardview_shadow_end_color
 color cardview_shadow_start_color
 color colorAccent
+color colorBreak
 color colorPrimary
 color colorPrimaryDark
 color colorRed
@@ -718,6 +719,7 @@ id answer_radio
 id answer_title
 id async
 id audio_not_send
+id audio_sended_in_current_session
 id audio_table
 id audio_title
 id barrier
@@ -735,11 +737,14 @@ id collapseActionView
 id contact_title
 id contentPanel
 id count
-id countUser
+id countUsers
+id count_audio_in_device
+id count_form_in_device
 id custom
 id customPanel
 id decor_content_parent
 id default_activity_button
+id deleteUser
 id delete_data_password
 id dimensions
 id direct
@@ -756,6 +761,7 @@ id field_login
 id field_password
 id fixed_column
 id forever
+id form_sended_in_current_session
 id gone
 id home
 id homeAsUp
@@ -779,10 +785,14 @@ id matchable_area
 id media_actions
 id message
 id middle
+id moreUsers
 id multiply
+id nameUser
 id never
 id none
 id normal
+id notSendAudio
+id notSendForm
 id not_sended
 id not_sended_value
 id notification_background
@@ -826,6 +836,7 @@ id recyclerview_stages
 id right
 id right_icon
 id right_side
+id saveData
 id screen
 id scrollIndicatorDown
 id scrollIndicatorUp
@@ -851,6 +862,7 @@ id selective_answers
 id selective_answers_search
 id selective_question_title
 id send
+id sendData
 id send_audio
 id send_button
 id send_quiz
@@ -894,6 +906,7 @@ id textUsers
 id time
 id title
 id titleDividerNoCustom
+id title_service
 id title_template
 id top
 id topPanel
@@ -954,7 +967,7 @@ layout adapter_stages
 layout answer_item
 layout change_config_dialog
 layout fragment_sms
-layout layuserscount
+layout maintetannce
 layout notification_action
 layout notification_action_tombstone
 layout notification_media_action
@@ -1027,6 +1040,10 @@ string search_menu_title
 string separator_path
 string sql_file_name
 string status_bar_notification_info_overflow
+string synhronization
+string textAnSyncQuestionnari
+string textAudioAnSyncQuestionnari
+string textCountNotSend
 string textUser
 style AlertDialog_AppCompat
 style AlertDialog_AppCompat_Light
@@ -1324,6 +1341,7 @@ style ThemeOverlay_AppCompat_Dark_ActionBar
 style ThemeOverlay_AppCompat_Dialog
 style ThemeOverlay_AppCompat_Dialog_Alert
 style ThemeOverlay_AppCompat_Light
+style ThemeOverlay_MyBreakButton
 style ThemeOverlay_MyDarkButton
 style ThemeOverlay_MyRedButton
 style Widget_AppCompat_ActionBar

@@ -664,6 +664,10 @@
         "source": "/home/Funny/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/f837df24f100cf748e1061b52d6b1b9b/res/drawable-mdpi-v4/abc_ic_menu_selectall_mtrl_alpha.png"
     },
     {
+        "merged": "/home/Funny/work/QUIZER_Android/app/build/intermediates/res/merged/debug/layout-sw600dp_maintetannce.xml.flat",
+        "source": "/home/Funny/work/QUIZER_Android/app/src/main/res/layout-sw600dp/maintetannce.xml"
+    },
+    {
         "merged": "/home/Funny/work/QUIZER_Android/app/build/intermediates/res/merged/debug/color_abc_secondary_text_material_light.xml.flat",
         "source": "/home/Funny/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/f837df24f100cf748e1061b52d6b1b9b/res/color/abc_secondary_text_material_light.xml"
     },
@@ -1260,6 +1264,10 @@
         "source": "/home/Funny/.gradle/caches/transforms-1/files-1.1/support-compat-26.1.0.aar/ba664af96db25aa7f5f77a3024d4719c/res/drawable-hdpi-v4/notification_bg_normal.9.png"
     },
     {
+        "merged": "/home/Funny/work/QUIZER_Android/app/build/intermediates/res/merged/debug/layout_maintetannce.xml.flat",
+        "source": "/home/Funny/work/QUIZER_Android/app/src/main/res/layout/maintetannce.xml"
+    },
+    {
         "merged": "/home/Funny/work/QUIZER_Android/app/build/intermediates/res/merged/debug/layout-sw600dp_open_answer_dialog.xml.flat",
         "source": "/home/Funny/work/QUIZER_Android/app/src/main/res/layout-sw600dp/open_answer_dialog.xml"
     },
@@ -1802,10 +1810,6 @@
     {
         "merged": "/home/Funny/work/QUIZER_Android/app/build/intermediates/res/merged/debug/drawable-ldrtl-mdpi-v17_abc_spinner_mtrl_am_alpha.9.png.flat",
         "source": "/home/Funny/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/f837df24f100cf748e1061b52d6b1b9b/res/drawable-ldrtl-mdpi-v17/abc_spinner_mtrl_am_alpha.9.png"
-    },
-    {
-        "merged": "/home/Funny/work/QUIZER_Android/app/build/intermediates/res/merged/debug/layout_layuserscount.xml.flat",
-        "source": "/home/Funny/work/QUIZER_Android/app/src/main/res/layout/layuserscount.xml"
     },
     {
         "merged": "/home/Funny/work/QUIZER_Android/app/build/intermediates/res/merged/debug/drawable-hdpi-v4_abc_list_longpressed_holo.9.png.flat",

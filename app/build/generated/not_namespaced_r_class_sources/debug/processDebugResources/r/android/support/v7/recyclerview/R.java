@@ -39,10 +39,10 @@ public final class R {
     public static final class color {
         private color() {}
 
-        public static final int notification_action_color_filter = 0x7f040045;
-        public static final int notification_icon_bg_color = 0x7f040046;
-        public static final int ripple_material_light = 0x7f040051;
-        public static final int secondary_text_default_material_light = 0x7f040054;
+        public static final int notification_action_color_filter = 0x7f040046;
+        public static final int notification_icon_bg_color = 0x7f040047;
+        public static final int ripple_material_light = 0x7f040052;
+        public static final int secondary_text_default_material_light = 0x7f040055;
     }
     public static final class dimen {
         private dimen() {}
@@ -99,26 +99,26 @@ public final class R {
         public static final int action_text = 0x7f070017;
         public static final int actions = 0x7f070018;
         public static final int async = 0x7f070025;
-        public static final int blocking = 0x7f07002b;
-        public static final int chronometer = 0x7f070033;
-        public static final int forever = 0x7f07004c;
-        public static final int icon = 0x7f070050;
-        public static final int icon_group = 0x7f070051;
-        public static final int info = 0x7f070055;
-        public static final int italic = 0x7f070057;
-        public static final int item_touch_helper_previous_elevation = 0x7f070058;
-        public static final int line1 = 0x7f07005a;
-        public static final int line3 = 0x7f07005b;
-        public static final int normal = 0x7f070067;
-        public static final int notification_background = 0x7f07006a;
-        public static final int notification_main_column = 0x7f07006b;
-        public static final int notification_main_column_container = 0x7f07006c;
-        public static final int right_icon = 0x7f070091;
-        public static final int right_side = 0x7f070092;
-        public static final int text = 0x7f0700cf;
-        public static final int text2 = 0x7f0700d0;
-        public static final int time = 0x7f0700d4;
-        public static final int title = 0x7f0700d5;
+        public static final int blocking = 0x7f07002c;
+        public static final int chronometer = 0x7f070034;
+        public static final int forever = 0x7f070050;
+        public static final int icon = 0x7f070055;
+        public static final int icon_group = 0x7f070056;
+        public static final int info = 0x7f07005a;
+        public static final int italic = 0x7f07005c;
+        public static final int item_touch_helper_previous_elevation = 0x7f07005d;
+        public static final int line1 = 0x7f07005f;
+        public static final int line3 = 0x7f070060;
+        public static final int normal = 0x7f07006e;
+        public static final int notification_background = 0x7f070073;
+        public static final int notification_main_column = 0x7f070074;
+        public static final int notification_main_column_container = 0x7f070075;
+        public static final int right_icon = 0x7f07009a;
+        public static final int right_side = 0x7f07009b;
+        public static final int text = 0x7f0700da;
+        public static final int text2 = 0x7f0700db;
+        public static final int time = 0x7f0700df;
+        public static final int title = 0x7f0700e0;
     }
     public static final class integer {
         private integer() {}
@@ -148,8 +148,8 @@ public final class R {
         public static final int TextAppearance_Compat_Notification_Line2 = 0x7f0c0101;
         public static final int TextAppearance_Compat_Notification_Time = 0x7f0c0104;
         public static final int TextAppearance_Compat_Notification_Title = 0x7f0c0106;
-        public static final int Widget_Compat_NotificationActionContainer = 0x7f0c0172;
-        public static final int Widget_Compat_NotificationActionText = 0x7f0c0173;
+        public static final int Widget_Compat_NotificationActionContainer = 0x7f0c0173;
+        public static final int Widget_Compat_NotificationActionText = 0x7f0c0174;
     }
     public static final class styleable {
         private styleable() {}

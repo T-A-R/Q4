@@ -86,6 +86,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.start_button).setOnClickListener(this);
         findViewById(R.id.sync_button).setOnClickListener(this);
         findViewById(R.id.settings).setOnClickListener(this);
+        findViewById(R.id.change_users).setOnClickListener(this);
 
         mSharedPreferences = getSharedPreferences("data",
                 Context.MODE_PRIVATE);
@@ -232,6 +233,10 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
+            case R.id.change_users:
+                createDialog("Выход из приложения", "Выйти из приложения?", true, QUITE_DIALOG);
+                break;
+
         }
     }
 

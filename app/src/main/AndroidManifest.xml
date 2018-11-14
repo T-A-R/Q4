@@ -64,7 +64,13 @@
             android:name=".ContactActivity"
             android:screenOrientation="portrait">
         </activity>
+
         <activity android:name=".PassportBlockActivity">
+        </activity>
+
+        <activity android:name=".MaintetannceActivity"
+            android:screenOrientation="portrait">
+
         </activity>
 
         <meta-data

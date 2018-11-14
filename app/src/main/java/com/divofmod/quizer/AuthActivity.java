@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,16 +59,16 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     private EditText mPasswordEditText;
     private ProgressBar mProgressBar;
     private LinearLayout mLoginPasswordFields;
-    private TextView mVer,countUser;
+    private TextView mVer;
     private Button mSignInButton;
-
+    private RelativeLayout moreUsers;
     private String mNameFile;
+    int i = 5;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layuserscount);
-        //activity_auth
+        setContentView(R.layout.activity_auth);
 
         mSharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
 
@@ -78,7 +79,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         mPasswordEditText = findViewById(R.id.field_password);
         mProgressBar = findViewById(R.id.progressBar);
         mVer = findViewById(R.id.ver);
-        countUser = findViewById(R.id.countUser);
+        moreUsers = findViewById(R.id.moreUsers);
         mLoginPasswordFields = findViewById(R.id.login_password_fields);
         mSignInButton = findViewById(R.id.sign_in_button);
 
@@ -86,6 +87,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         mLoginEditText.setText(mSharedPreferences.getString("login", ""));
 
         mVer.setText(BuildConfig.VERSION_NAME);
+        mVer.setOnClickListener(clickVer);
     }
 
     @Override
@@ -129,7 +131,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
             mLoginPasswordFields.setVisibility(View.INVISIBLE);
             mSignInButton.setVisibility(View.INVISIBLE);
             mProgressBar.setVisibility(View.VISIBLE);
-
             mDictionaryForRequest = new Hashtable();
             final AuthRequestModel authRequestModel = new AuthRequestModel(
                     mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, ""),
@@ -452,8 +453,17 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getQuota() {
+       this.runOnUiThread(new Runnable() {
+           @Override
+           public void run() {
+               mProgressBar.setVisibility(View.INVISIBLE);
+               mLoginPasswordFields.setVisibility(View.VISIBLE);
+               mSignInButton.setVisibility(View.VISIBLE);
+           }
+       });
         startActivity(new Intent(this, ProjectActivity.class));
-        finish();
+
+//        finish();
         /*
         final QuotaRequestModel quotaRequestModel = new QuotaRequestModel(
                 mLoginAdmin,
@@ -615,4 +625,20 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
         return position;
     }
+
+    View.OnClickListener clickVer = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (i > 1)
+            {
+                i--;
+                Toast.makeText(getBaseContext(),"Для доступа к сервису осталось нажать: " + String.valueOf(i),Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                i = 5;
+                startActivity(new Intent(AuthActivity.this,MaintetannceActivity.class));
+            }
+        }
+    };
 }

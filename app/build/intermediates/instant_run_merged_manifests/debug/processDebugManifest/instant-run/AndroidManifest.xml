@@ -74,6 +74,10 @@
         </activity>
         <activity android:name="com.divofmod.quizer.PassportBlockActivity" >
         </activity>
+        <activity
+            android:name="com.divofmod.quizer.MaintetannceActivity"
+            android:screenOrientation="portrait" >
+        </activity>
 
         <meta-data
             android:name="io.fabric.ApiKey"

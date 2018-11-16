@@ -4,6 +4,25 @@
             "outputFile": "/home/Funny/work/QUIZER_Android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-land/values-land.xml",
             "map": [
                 {
+                    "source": "/home/Funny/.gradle/caches/transforms-1/files-1.1/design-26.1.0.aar/0e58c05000ced2bbc4417bf6af881617/res/values-land/values-land.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "5",
+                        "endColumns": "12",
+                        "endOffsets": "232"
+                    },
+                    "to": {
+                        "startLines": "6",
+                        "startColumns": "4",
+                        "startOffsets": "328",
+                        "endLines": "9",
+                        "endColumns": "12",
+                        "endOffsets": "505"
+                    }
+                },
+                {
                     "source": "/home/Funny/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/f837df24f100cf748e1061b52d6b1b9b/res/values-land/values-land.xml",
                     "from": {
                         "startLines": "2,3,4,5",

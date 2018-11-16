@@ -127,6 +127,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
     ObservableScrollView scrollView1;
     ObservableScrollView scrollView2;
     static boolean interceptScroll = true;
+    int currentUser;
 
     public static int PERMISSION_SEND_SMS = 1001;
 
@@ -145,10 +146,11 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
         mSharedPreferences = getSharedPreferences("data",
                 Context.MODE_PRIVATE);
+        currentUser = currentUser = mSharedPreferences.getInt("CurrentUserId",0);
 
         mSQLiteDatabase = new DBHelper(this,
-                mSharedPreferences.getString("name_file", ""),
-                new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+                mSharedPreferences.getString("name_file_" + currentUser, ""),
+                new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file_" + currentUser, "").substring(0, mSharedPreferences.getString("name_file_" + currentUser, "").length() - 4)),
                 getString(R.string.sql_file_name),
                 getString(R.string.old_sql_file_name)).getWritableDatabase();
 
@@ -238,6 +240,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         });
         findViewById(R.id.question_next_button).setOnClickListener(this);
         findViewById(R.id.question_previous_button).setOnClickListener(this);
+        findViewById(R.id.question_exit_button).setOnClickListener(this);
 
         frameLayout = (FrameLayout) findViewById(R.id.surfaceHolder);
 
@@ -255,6 +258,8 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
         });
 
+
+
         mQuestionTitle = (TextView) findViewById(R.id.question_title);
         questionPicture = (ImageView) findViewById(R.id.question_picture);
 
@@ -264,8 +269,8 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         if (mAudio != null) {
             if (mAudio.getAudioRecordQuestions().containsKey(0)) {
                 AudioRecorder.Start(this, mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, "") + "_" +
-                        mSharedPreferences.getString("login", "") + "_" +
-                        mSharedPreferences.getString("user_project_id", "") + "_" +
+                        mSharedPreferences.getString("login" + currentUser, "") + "_" +
+                        mSharedPreferences.getString("user_project_id" + currentUser, "") + "_" +
                         0 + "_" +
                         mDateInterview.replace(':', '-').replace(' ', '-'), mAudio.getAudioRecordLimitTime(), mAudio.getAudioSampleRate());
             }
@@ -388,7 +393,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
         if (!currentQuestion[5].equals("")) {
             questionPicture.setVisibility(View.VISIBLE);
-            questionPicture.setImageURI(Uri.fromFile(new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4) + getString(R.string.separator_path) + "answerimages", currentQuestion[5])));
+            questionPicture.setImageURI(Uri.fromFile(new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file_" + currentUser, "").substring(0, mSharedPreferences.getString("name_file_" + currentUser, "").length() - 4) + getString(R.string.separator_path) + "answerimages", currentQuestion[5])));
         } else {
             questionPicture.setVisibility(View.GONE);
         }
@@ -613,7 +618,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                             currentAnswers.get(i)[0],
                             currentAnswers.get(i)[1].contains("#") ? showAnswer(answer, answerNum) :
                                     currentAnswers.get(i)[1],
-                            currentAnswers.get(i)[2].equals("") ? null : new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4) + getString(R.string.separator_path) + "answerimages", currentAnswers.get(i)[2]),
+                            currentAnswers.get(i)[2].equals("") ? null : new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file_" + currentUser, "").substring(0, mSharedPreferences.getString("name_file_" + currentUser, "").length() - 4) + getString(R.string.separator_path) + "answerimages", currentAnswers.get(i)[2]),
                             currentQuestion[3],
                             currentQuestion[4],
                             currentAnswers.get(i)[5],
@@ -1127,6 +1132,10 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                     }
                 }
                 break;
+
+                case R.id.question_exit_button:
+                    openQuitDialog();
+                    break;
         }
 
         findViewById(R.id.question_next_button).setEnabled(false);
@@ -1144,8 +1153,8 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
     private void addToDB(final int model) {
         if (model == 0) {
             mSQLiteDatabase = new DBHelper(this,
-                    mSharedPreferences.getString("name_file", ""),
-                    new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+                    mSharedPreferences.getString("name_file_" + currentUser, ""),
+                    new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file_" + currentUser, "").substring(0, mSharedPreferences.getString("name_file_" + currentUser, "").length() - 4)),
                     getString(R.string.sql_file_name),
                     getString(R.string.old_sql_file_name)).getWritableDatabase();
 
@@ -1244,13 +1253,13 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                     "values('" +
                     Utils.getProjectId(this) + "','" +
                     Utils.getQuestionnaireId(this) + "','" +
-                    mSharedPreferences.getString("user_project_id", "") + "','" +
-                    TokenQuiz.TokenQuiz(mSharedPreferences.getString("user_project_id", ""))+"','" +
+                    mSharedPreferences.getString("user_project_id" + currentUser, "") + "','" +
+                    TokenQuiz.TokenQuiz(mSharedPreferences.getString("user_project_id" + currentUser, ""))+"','" +
                     mDateInterview + "','" +
                     mSharedPreferences.getString("gps", "") + "','" +
                     StopWatch.getGlobalTime() + "','" +
                     countQuestions + "','" +
-                    mSharedPreferences.getString("login", "") + "')");
+                    mSharedPreferences.getString("login" + currentUser, "") + "')");
 
             saveSmsAnswers();
             startActivity(new Intent(this, ProjectActivity.class));
@@ -1822,8 +1831,8 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             if (mAudio.getAudioRecordQuestions().containsKey(number) && !mAudio.getAudioRecordQuestions().containsKey(0)) {
                 if (mAudio.getAudioRecordQuestions().get(number) == null) {
                     AudioRecorder.Start(this, mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, "") + "_" +
-                            mSharedPreferences.getString("login", "") + "_" +
-                            mSharedPreferences.getString("user_project_id", "") + "_" +
+                            mSharedPreferences.getString("login" + currentUser, "") + "_" +
+                            mSharedPreferences.getString("user_project_id" + currentUser, "") + "_" +
                             currentQuestion[0] + "_" +
                             mDateInterview.replace(':', '-').replace(' ', '-') + "_" +
                             1, mAudio.getAudioRecordLimitTime(), mAudio.getAudioSampleRate());
@@ -1839,7 +1848,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             if (photoNumber == number) {
                 if (photoName == null) {
                     photoName = "photo-" +
-                            mSharedPreferences.getString("login", "") + "-" +
+                            mSharedPreferences.getString("login" + currentUser, "") + "-" +
                             mDateInterview.replace(':', '-').replace(' ', '-');
                     System.out.println(photoName);
                     new PhotoCamera(this, frameLayout, photoName).createPhoto();

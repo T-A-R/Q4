@@ -25,13 +25,6 @@
         android:textSize="22sp"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-    <!--<View-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="1dp"-->
-        <!--android:layout_marginBottom="@dimen/activity_vertical_margin"-->
-        <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
-        <!--android:background="@color/secondaryTextMaterialLight"/>-->
-
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -44,8 +37,7 @@
                 android:id="@+id/count_form_in_device"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/textAnSyncQuestionnari"
+                android:text="@string/textSendFormWithCurrentDevice"
                 android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 
@@ -53,15 +45,14 @@
                 android:id="@+id/form_sended_in_current_session"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Отправлено анкет в данном сеансе"
+                android:text="@string/textSendForm"
                 android:textAppearance="?android:attr/textAppearanceMedium"/>
 
             <TextView
                 android:id="@+id/quizzes_not_send"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/textCountNotSend"
+                android:text="@string/textNotSendForm"
                 android:textAppearance="?android:attr/textAppearanceMedium"/>
 
         <Button
@@ -78,16 +69,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:text="Отправлено аудио в рамках проекта с данного устройства: "
+                android:text="@string/textSendAudioWithCurrentDevice"
                 android:textAppearance="?android:attr/textAppearanceMedium"/>
 
         <TextView
             android:id="@+id/audio_sended_in_current_session"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Отправлено аудио в данном сеансе: "
+            android:text="@string/textSendAudio"
             android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 
@@ -95,8 +84,7 @@
             android:id="@+id/audio_not_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/textAudioAnSyncQuestionnari"
+            android:text="@string/textNotSendAudio"
             android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 

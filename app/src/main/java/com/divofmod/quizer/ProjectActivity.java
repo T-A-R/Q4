@@ -57,6 +57,8 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
     final int GPS_SETTINGS = 4;
 
+    int currentUser;
+
     ConfigResponseModel mConfigResponseModel;
     SQLiteDatabase mSQLiteDatabase;
     SharedPreferences mSharedPreferences;
@@ -90,6 +92,8 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
         mSharedPreferences = getSharedPreferences("data",
                 Context.MODE_PRIVATE);
+        currentUser = mSharedPreferences.getInt("CurrentUserId",0);
+
 
         mConfigResponseModel = Utils.getConfig(this);
 
@@ -109,8 +113,8 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
     private void openSQLiteDatabase() {
         if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
             mSQLiteDatabase = new DBHelper(this,
-                    mSharedPreferences.getString("name_file", ""),
-                    new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+                    mSharedPreferences.getString("name_file_" + currentUser, ""),
+                    new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file_" + currentUser , "").substring(0, mSharedPreferences.getString("name_file_" + currentUser, "").length() - 4)),
                     getString(R.string.sql_file_name),
                     getString(R.string.old_sql_file_name)).getWritableDatabase();
         }
@@ -295,6 +299,8 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
                             @Override
                             public void onClick(final DialogInterface dialog, final int which) {
+
+                                startActivity(new Intent(ProjectActivity.this,AuthActivity.class));
                                 finish();
                             }
                         })

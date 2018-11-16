@@ -32,6 +32,7 @@ public class QuotaActivity extends AppCompatActivity implements View.OnClickList
     SQLiteDatabase mSQLiteDatabase;
 
     ListView mListView;
+    int currentUser;
     QuotaAdapter mQuotaAdapter;
 
     @Override
@@ -40,10 +41,12 @@ public class QuotaActivity extends AppCompatActivity implements View.OnClickList
 
         mSharedPreferences = getSharedPreferences("data",
                 Context.MODE_PRIVATE);
+        currentUser = mSharedPreferences.getInt("CurrentUserId",0);
+
 
         mSQLiteDatabase = new DBHelper(this,
-                mSharedPreferences.getString("name_file", ""),
-                new File(getFilesDir().toString() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+                mSharedPreferences.getString("name_file_" + currentUser , ""),
+                new File(getFilesDir().toString() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file_" + currentUser, "").substring(0, mSharedPreferences.getString("name_file_" + currentUser, "").length() - 4)),
                 getString(R.string.sql_file_name),
                 getString(R.string.old_sql_file_name)).getWritableDatabase();
 

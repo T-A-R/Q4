@@ -49,7 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-            android:text="Сменить пользователя"
+            android:text="Выход"
             android:theme="@style/ThemeOverlay.MyDarkButton"/>
 
     </LinearLayout>

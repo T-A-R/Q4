@@ -55,6 +55,7 @@ public static final String TAG = "SendQuizzesActivity";
     TextView mQuizzesNotSend;
     TextView mAudioNotSend;
     TextView nameUser;
+    int currentUser;
 
     final CompleteCallback mCompleteCallback = new CompleteCallback() {
 
@@ -86,10 +87,11 @@ public static final String TAG = "SendQuizzesActivity";
 
         mSharedPreferences = getSharedPreferences("data",
                 Context.MODE_PRIVATE);
+        currentUser = currentUser = mSharedPreferences.getInt("CurrentUserId",0);
 
         mSQLiteDatabase = new DBHelper(this,
-                mSharedPreferences.getString("name_file", ""),
-                new File(getFilesDir().toString() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+                mSharedPreferences.getString("name_file_" + currentUser, ""),
+                new File(getFilesDir().toString() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file_" + currentUser, "").substring(0, mSharedPreferences.getString("name_file_" + currentUser, "").length() - 4)),
                 getString(R.string.sql_file_name),
                 getString(R.string.old_sql_file_name)).getWritableDatabase();
 
@@ -116,7 +118,7 @@ public static final String TAG = "SendQuizzesActivity";
 
         }
         nameUser = findViewById(R.id.nameUser);
-        nameUser.setText(mSharedPreferences.getString("login", ""));
+        nameUser.setText(mSharedPreferences.getString("login" + currentUser, ""));
         findViewById(R.id.send_audio).setOnClickListener(this);
         findViewById(R.id.send_quiz).setOnClickListener(this);
         findViewById(R.id.sms_button).setOnClickListener(this);
@@ -129,15 +131,15 @@ public static final String TAG = "SendQuizzesActivity";
         try {
             mQuizzesNotSend = (TextView) findViewById(R.id.quizzes_not_send);
 
-            mQuizzesNotSend.setText(getResources().getString(R.string.textCountNotSend) + "0");
+            mQuizzesNotSend.setText(getResources().getString(R.string.textNotSendForm) + "0");
             if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {
-                mQuizzesNotSend.setText(getResources().getString(R.string.textCountNotSend )+ String.valueOf(mTables.length));
+                mQuizzesNotSend.setText(getResources().getString(R.string.textNotSendForm )+ String.valueOf(mTables.length));
             }
 
             mAudioNotSend = (TextView) findViewById(R.id.audio_not_send);
-            mAudioNotSend.setText(getResources().getString(R.string.textAudioAnSyncQuestionnari)+ "0");
+            mAudioNotSend.setText(getResources().getString(R.string.textNotSendAudio)+ "0");
             if (!mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
-                mAudioNotSend.setText(getResources().getString(R.string.textAudioAnSyncQuestionnari) + String.valueOf(mAudioTables.length));
+                mAudioNotSend.setText(getResources().getString(R.string.textNotSendAudio) + String.valueOf(mAudioTables.length));
             }
         } catch (final Exception ignore) {
 
@@ -341,8 +343,8 @@ public static final String TAG = "SendQuizzesActivity";
 
                         mDictionaryForRequest = new Hashtable();
                         mDictionaryForRequest.put(Constants.Shared.LOGIN_ADMIN, mSharedPreferences.getString("login_admin", ""));
-                        mDictionaryForRequest.put("login", mSharedPreferences.getString("login", ""));
-                        mDictionaryForRequest.put("passw", mSharedPreferences.getString("passw", ""));
+                        mDictionaryForRequest.put("login", mSharedPreferences.getString("login" + currentUser, ""));
+                        mDictionaryForRequest.put("passw", mSharedPreferences.getString("passw" + currentUser, ""));
 
                         final OkHttpClient client = new OkHttpClient();
                         client.newCall(new DoRequest(SendQuizzesActivity.this).Post(mDictionaryForRequest, mSharedPreferences.getString("url", ""), mPhoto))
@@ -414,8 +416,8 @@ public static final String TAG = "SendQuizzesActivity";
 
                         mDictionaryForRequest = new Hashtable();
                         mDictionaryForRequest.put(Constants.Shared.LOGIN_ADMIN, mSharedPreferences.getString("login_admin", ""));
-                        mDictionaryForRequest.put("login", mSharedPreferences.getString("login", ""));
-                        mDictionaryForRequest.put("passw", mSharedPreferences.getString("passw", ""));
+                        mDictionaryForRequest.put("login", mSharedPreferences.getString("login" + currentUser, ""));
+                        mDictionaryForRequest.put("passw", mSharedPreferences.getString("passw" + currentUser, ""));
 
                         final OkHttpClient client = new OkHttpClient();
                         client.newCall(new DoRequest(SendQuizzesActivity.this).Post(mDictionaryForRequest, mSharedPreferences.getString("url", ""), mAudio))

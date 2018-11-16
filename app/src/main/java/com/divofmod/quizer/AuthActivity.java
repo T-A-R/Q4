@@ -5,18 +5,23 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.icu.util.Calendar;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,9 +40,15 @@ import org.apache.commons.codec.digest.DigestUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -63,6 +74,10 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     private Button mSignInButton;
     private RelativeLayout moreUsers;
     private String mNameFile;
+    private Spinner switchUser;
+    private ArrayAdapter<String> adap;
+    int userQuota = 0;
+    private String [] arr;
     int i = 5;
 
     @Override
@@ -71,6 +86,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_auth);
 
         mSharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+        userQuota = mSharedPreferences.getInt("lastUserId",0);
 
         mUrl = mSharedPreferences.getString("url", "");
         mLoginAdmin = mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, "");
@@ -83,11 +99,31 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         mLoginPasswordFields = findViewById(R.id.login_password_fields);
         mSignInButton = findViewById(R.id.sign_in_button);
 
+        userLogins();
+        switchUser = findViewById(R.id.switchUser);
+
+        adap = new ArrayAdapter<>(this,R.layout.spinner_maket,R.id.Tspiner_maket,arr);
+        switchUser.setAdapter(adap);
+        switchUser.setOnItemSelectedListener(spinnerClick);
+
         mSignInButton.setOnClickListener(this);
-        mLoginEditText.setText(mSharedPreferences.getString("login", ""));
+        mLoginEditText.setText(mSharedPreferences.getString("login" + userQuota, ""));
+
 
         mVer.setText(BuildConfig.VERSION_NAME);
         mVer.setOnClickListener(clickVer);
+
+
+       
+    }
+
+    private String[] userLogins() {
+            arr = new String[userQuota];
+        for (int i = 0;i< arr.length; i++ ){
+            arr[i] = (mSharedPreferences.getString("login" + (i+1),""));
+        }
+
+        return arr;
     }
 
     @Override
@@ -109,11 +145,11 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
         if (!Internet.hasConnection(this)) {
-            if (!mSharedPreferences.contains("name_file")) {
+            if (!mSharedPreferences.contains("name_file_" + userQuota)) {
                 Toast.makeText(this, "Автономный режим недоступен.",
                         Toast.LENGTH_SHORT).show();
             } else {
-                if (mLoginEditText.getText().toString().equals(mSharedPreferences.getString("login", "")) &&
+                if (mLoginEditText.getText().toString().equals(mSharedPreferences.getString("login" + userQuota, "")) &&
                         DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))).equals(mSharedPreferences.getString("passw", ""))) {
                     if (checkPassportBlock().equals("0")) {
                         startActivity(new Intent(this, PassportBlockActivity.class));
@@ -184,37 +220,56 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                          Toast.makeText(getBaseContext(), "Неполадки на сервере, попробуйте позже", Toast.LENGTH_SHORT).show();
                                      }
 
-                                     final String oldLogin = mSharedPreferences.getString("login", "");
+//                                     final String oldLogin = mSharedPreferences.getString("login" + userQuota, "");
                                      final String newLogin = mLoginEditText.getText().toString();
+                                     if (userQuota < 5) {
+                                         if (!UserExist(newLogin)) {
+                                             Log.i(TAG, "onResponse: quota");
+                                             userQuota++;
 
-                                     if (!oldLogin.equals(newLogin)) {
+
+                                             final SharedPreferences.Editor editor = mSharedPreferences.edit()
+                                                     .putInt(Constants.Shared.NUMBER_POSITION, 0);
+                                             editor.apply();
+
+                                             try {
+                                                 final File file = new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file_" + userQuota, "").substring(0, mSharedPreferences.getString("name_file_" + userQuota, "").length() - 4));
+                                                 final SQLiteDatabase mSQLiteDatabase = new DBHelper(AuthActivity.this,
+                                                         mSharedPreferences.getString("name_file_" + userQuota, ""),
+                                                         file,
+                                                         getString(R.string.sql_file_name),
+                                                         getString(R.string.old_sql_file_name)).getWritableDatabase();
+
+//                                             mSQLiteDatabase.execSQL("DROP TABLE if exists " + Constants.SmsDatabase.TABLE_NAME);
+                                                 mSQLiteDatabase.close();
+                                             } catch (final Exception pE) {
+
+                                             }
+                                         }
+
+
                                          final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                                                 .putInt(Constants.Shared.NUMBER_POSITION, 0);
+                                                 .putString("login" + userQuota, newLogin)
+                                                 .putString("passw" + userQuota, DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))))
+                                                 .putInt("lastUserId",userQuota)
+                                                 .putString("user_project_id" + userQuota, authResponseModel.getUser_project_id());
                                          editor.apply();
 
-                                         try {
-                                             final File file = new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4));
-                                             final SQLiteDatabase mSQLiteDatabase = new DBHelper(AuthActivity.this,
-                                                     mSharedPreferences.getString("name_file", ""),
-                                                     file,
-                                                     getString(R.string.sql_file_name),
-                                                     getString(R.string.old_sql_file_name)).getWritableDatabase();
 
-                                             mSQLiteDatabase.execSQL("DROP TABLE if exists " + Constants.SmsDatabase.TABLE_NAME);
-                                             mSQLiteDatabase.close();
-                                         } catch (final Exception pE) {
-
-                                         }
+                                         downloadConfig(authResponseModel.getConfig_id());
                                      }
-
-                                     final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                                             .putString("login", newLogin)
-                                             .putString("passw", DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))))
-
-                                             .putString("user_project_id", authResponseModel.getUser_project_id());
-                                     editor.apply();
-
-                                     downloadConfig(authResponseModel.getConfig_id());
+                                     else
+                                     {
+                                         Snackbar.make(AuthActivity.this.mLoginPasswordFields,"Квота пользователей превышена",Snackbar.LENGTH_SHORT).show();
+                                         AuthActivity.this.runOnUiThread(new Runnable() {
+                                             @Override
+                                             public void run() {
+                                                 mProgressBar.setVisibility(View.INVISIBLE);
+                                                 mLoginPasswordFields.setVisibility(View.VISIBLE);
+                                                 mSignInButton.setVisibility(View.VISIBLE);
+                                             }
+                                         });
+                                     }
                                      // TODO: 8/7/18 WTF authArray[0]?
 //                                     download(authArray[0]);
                                  }
@@ -222,18 +277,33 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
                     );
         }
+
+
     }
 
+    private boolean UserExist(String user)
+    {
+        int i = 0;
+        while ( i < arr.length)
+        {
+            if (arr[i].equals(user))
+            return true;
+            else
+            i++;
+        }
+
+        return false;
+    }
     private void downloadConfig(final String pConfigId) {
-        SharedPreferences.Editor editor = mSharedPreferences.edit().putString("name_file", Constants.DatabaseValues.DATABASE_NAME);
+        SharedPreferences.Editor editor = mSharedPreferences.edit().putString("name_file_" + userQuota, Constants.DatabaseValues.DATABASE_NAME);
         editor.apply();
 
         final Dictionary<String, String> mConfigDictionary = new Hashtable();
-
+        Log.i(TAG, "downloadConfig: " + mSharedPreferences.getString(Constants.Shared.LOGIN + userQuota, ""));
         final ConfigRequestModel configRequestModel = new ConfigRequestModel(
                 mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, ""),
-                mSharedPreferences.getString(Constants.Shared.LOGIN, ""),
-                mSharedPreferences.getString(Constants.Shared.PASSW, ""),
+                mSharedPreferences.getString(Constants.Shared.LOGIN + userQuota, ""),
+                mSharedPreferences.getString(Constants.Shared.PASSW + userQuota, ""),
                 pConfigId
         );
 
@@ -266,7 +336,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                  Utils.saveConfig(AuthActivity.this, configResponseModel);
 
                                  // TODO: 8/7/18 check if result == 0, than show error
-
                                  getQuota();
 //                                 startActivity(new Intent(AuthActivity.this, ProjectActivity.class));
                              }
@@ -280,18 +349,18 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         dictionary = new Hashtable();
         dictionary.put("name_form", "download_update");
         dictionary.put(Constants.Shared.LOGIN_ADMIN, mLoginAdmin);
-        dictionary.put("login", mLoginEditText.getText().toString());
-        dictionary.put("passw", DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))));
-        dictionary.put("name_file", name_file);
+        dictionary.put("login" + userQuota, mLoginEditText.getText().toString());
+        dictionary.put("passw" + userQuota, DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))));
+        dictionary.put("name_file_" + userQuota, name_file);
 
-        if (!mSharedPreferences.getString("name_file", "").equals(name_file)) {
+        if (!mSharedPreferences.getString("name_file_" + userQuota, "").equals(name_file)) {
             if (mSharedPreferences.getString("QuizzesRequest", "").equals("") && mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
 
                 deleteDirectory(new File(getFilesDir() + "/files/"));
                 deleteDirectory(new File(getFilesDir() + "/background/"));
                 deleteDirectory(new File(getFilesDir() + "/answerimages/"));
                 deleteDatabase(getSharedPreferences("data",
-                        Context.MODE_PRIVATE).getString("name_file", ""));
+                        Context.MODE_PRIVATE).getString("name_file_" + userQuota, ""));
                 new File(getFilesDir() + "/files/").mkdirs();
 
                 final Call.Factory client = new OkHttpClient();
@@ -325,7 +394,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                         getFilesDir() + "/" + name_file.substring(0, name_file.length() - 4),
                                         getString(R.string.archive_password));
 
-                                final SharedPreferences.Editor editor = mSharedPreferences.edit().putString("name_file", name_file);
+                                final SharedPreferences.Editor editor = mSharedPreferences.edit().putString("name_file_" + userQuota, name_file);
                                 editor.apply();
 
                                 getQuota();
@@ -337,8 +406,8 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                         Context.MODE_PRIVATE);
 
                 final SQLiteDatabase sqLiteDatabase = new DBHelper(this,
-                        sharedPreferences.getString("name_file", ""),
-                        new File(getFilesDir() + getString(R.string.separator_path) + sharedPreferences.getString("name_file", "").substring(0, sharedPreferences.getString("name_file", "").length() - 4)),
+                        sharedPreferences.getString("name_file_" + userQuota, ""),
+                        new File(getFilesDir() + getString(R.string.separator_path) + sharedPreferences.getString("name_file_" + userQuota, "").substring(0, sharedPreferences.getString("name_file_" + userQuota, "").length() - 4)),
                         getString(R.string.sql_file_name),
                         getString(R.string.old_sql_file_name)).getWritableDatabase();
 
@@ -416,7 +485,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                                 deleteDirectory(new File(getFilesDir() + "/files/"));
                                                 deleteDirectory(new File(getFilesDir() + "/background/"));
                                                 deleteDirectory(new File(getFilesDir() + "/answerimages/"));
-                                                deleteDatabase(sharedPreferences.getString("name_file", ""));
+                                                deleteDatabase(sharedPreferences.getString("name_file_" + userQuota, ""));
                                                 final SharedPreferences.Editor editor = sharedPreferences.edit()
                                                         .putString("QuizzesRequest", "")
                                                         .putString("Quizzes_audio", "")
@@ -452,7 +521,32 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private int SearchCurrentUser()
+    {
+//        mSharedPreferences.getString("login"+id,"").equals(mLoginEditText.getText().toString())
+        int id=0;
+
+        while (id <= userQuota)
+        {
+            if(mSharedPreferences.getString("login"+id,"").equals(mLoginEditText.getText().toString()))
+            {
+                Log.i(TAG, "SearchCurrentUser: " + String.valueOf(id));
+                return id;
+            }
+            id++;
+        }
+
+        return id;
+    }
+
     private void getQuota() {
+
+        int currentId = SearchCurrentUser();
+        Log.i(TAG, "SearchCurrentUser: " + String .valueOf(currentId));
+
+        final SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putInt("CurrentUserId", currentId);
+        editor.apply();
        this.runOnUiThread(new Runnable() {
            @Override
            public void run() {
@@ -462,8 +556,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
            }
        });
         startActivity(new Intent(this, ProjectActivity.class));
-
-//        finish();
+        finish();
         /*
         final QuotaRequestModel quotaRequestModel = new QuotaRequestModel(
                 mLoginAdmin,
@@ -604,8 +697,8 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     private String checkPassportBlock() {
         String position = "";
         final SQLiteDatabase sqLiteDatabase = new DBHelper(this,
-                mSharedPreferences.getString("name_file", ""),
-                new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+                mSharedPreferences.getString("name_file_" + userQuota, ""),
+                new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file_" + userQuota, "").substring(0, mSharedPreferences.getString("name_file_" + userQuota, "").length() - 4)),
                 getString(R.string.sql_file_name),
                 getString(R.string.old_sql_file_name)).getWritableDatabase();
 
@@ -629,16 +722,41 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     View.OnClickListener clickVer = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+
+            TimerTask t = new TimerTask() {
+                @Override
+                public void run() {
+                    i = 5;
+                }};
+            
             if (i > 1)
             {
+               
                 i--;
-                Toast.makeText(getBaseContext(),"Для доступа к сервису осталось нажать: " + String.valueOf(i),Toast.LENGTH_SHORT).show();
+                Timer timer = new Timer();
+                timer.schedule(t,3000);
             }
             else
             {
                 i = 5;
                 startActivity(new Intent(AuthActivity.this,MaintetannceActivity.class));
             }
+        }
+    };
+
+
+
+    AdapterView.OnItemSelectedListener spinnerClick = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//            String s = adapterView.getItemAtPosition(i).toString();
+//            mLoginEditText.setText(s);
+
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
         }
     };
 }

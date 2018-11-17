@@ -16,6 +16,7 @@ anim design_snackbar_out
 anim tooltip_enter
 anim tooltip_exit
 animator design_appbar_state_list_animator
+array text_size
 attr actionBarDivider
 attr actionBarItemBackground
 attr actionBarPopupTheme
@@ -823,6 +824,7 @@ drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
 drawable quizer
 drawable sync
+drawable text_size_maket
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
 drawable warning
@@ -938,6 +940,8 @@ id ifRoom
 id image
 id image_uqiz
 id info
+id interval_between_answers
+id interval_example
 id invisible
 id italic
 id item_touch_helper_previous_elevation
@@ -945,6 +949,7 @@ id largeLabel
 id left
 id line1
 id line3
+id linpadding
 id listMode
 id listView
 id list_item
@@ -1033,6 +1038,7 @@ id search_mag_icon
 id search_plate
 id search_src_text
 id search_voice_btn
+id seekBar
 id select_dialog_listview
 id selective_answer_item_check
 id selective_answer_item_title
@@ -1046,12 +1052,15 @@ id send_audio
 id send_button
 id send_quiz
 id sending_count
+id setting_delete_user
 id settings
 id shortcut
 id showCustom
 id showHome
 id showTitle
 id sign_in_button
+id size_example
+id size_questions
 id smallLabel
 id sms_button
 id snackbar_action
@@ -1079,6 +1088,7 @@ id submenuarrow
 id submit_area
 id surfaceHolder
 id switchUser
+id switch_size
 id sync_button
 id tabMode
 id table_header
@@ -1088,6 +1098,7 @@ id textSpacerNoButtons
 id textSpacerNoTitle
 id textUsers
 id text_input_password_toggle
+id text_size
 id textinput_counter
 id textinput_error
 id time
@@ -1211,6 +1222,7 @@ layout spinner_maket
 layout statistics_item
 layout support_simple_spinner_dropdown_item
 layout sync_dialog
+layout text_size_maket
 layout tooltip
 mipmap ic_launcher
 string DD
@@ -1271,6 +1283,8 @@ string textSendAudioWithCurrentDevice
 string textSendForm
 string textSendFormWithCurrentDevice
 string textUser
+string text_interval_between_answers
+string text_text_size_in_questions
 style AlertDialog_AppCompat
 style AlertDialog_AppCompat_Light
 style Animation_AppCompat_Dialog

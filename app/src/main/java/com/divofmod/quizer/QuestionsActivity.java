@@ -32,6 +32,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
@@ -76,7 +77,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
     String mCurrentPhoneNumber;
     String mDateInterview;
 
-    SharedPreferences mSharedPreferences;
+    SharedPreferences mSharedPreferences,setting;
     SQLiteDatabase mSQLiteDatabase;
 
     ArrayList<String[]> mTableQuestion;
@@ -146,7 +147,8 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
         mSharedPreferences = getSharedPreferences("data",
                 Context.MODE_PRIVATE);
-        currentUser = currentUser = mSharedPreferences.getInt("CurrentUserId",0);
+        currentUser = mSharedPreferences.getInt("CurrentUserId",0);
+        setting = getSharedPreferences("setting_" + currentUser,MODE_PRIVATE);
 
         mSQLiteDatabase = new DBHelper(this,
                 mSharedPreferences.getString("name_file_" + currentUser, ""),
@@ -277,6 +279,9 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         }
 
         StopWatch.setGlobalStart();
+
+
+        mQuestionTitle.setTextSize(setting.getInt("text_size",16) + 2);
     }
 
     private void setCurrentQuestion() {
@@ -469,7 +474,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
                 for (int i = 0; i < tempTableQuestions.size(); i++) {
                     final FrameLayout fixedFrameLayout = new FrameLayout(this);
-                    fixedFrameLayout.setPadding(0, 1, 1, 1);
+                    fixedFrameLayout.setPadding(0,  1, 1, 1);
                     final TextView fixedView = TableHelper.makeTableRowWithText(tempTableQuestions.get(i).getTitle().contains("*") ? tempTableQuestions.get(i).getTitle().split("\\*")[1] : tempTableQuestions.get(i).getTitle(), this);
                     fixedView.setId(i);
                     fixedView.setBackgroundColor(ContextCompat.getColor(this, R.color.backgroundMaterialLight));
@@ -1407,11 +1412,22 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             if (row == null) {
                 row = mInflater.inflate(R.layout.answer_item, parent, false);
                 holder = new ViewHolder();
+                holder.linpadding = row.findViewById(R.id.linpadding);
+                holder.linpadding.setPadding(0,setting.getInt("interval_between_answer",10),0,0);
                 holder.answerTitle = (TextView) row.findViewById(R.id.answer_title);
+                holder.answerTitle.setTextSize(setting.getInt("text_size",16));
                 holder.answerRadio = (RadioButton) row.findViewById(R.id.answer_radio);
+                holder.answerRadio.setScaleX(setting.getFloat("scale",1));
+                holder.answerRadio.setScaleY(setting.getFloat("scale",1));
                 holder.answerCheck = (CheckBox) row.findViewById(R.id.answer_check);
+                holder.answerCheck.setScaleX(setting.getFloat("scale",1));
+                holder.answerCheck.setScaleY(setting.getFloat("scale",1));
                 holder.answerPicture = (ImageView) row.findViewById(R.id.answer_picture);
+                holder.answerPicture.setScaleX(setting.getFloat("scale",1));
+                holder.answerPicture.setScaleY(setting.getFloat("scale",1));
                 holder.answerOpen = (EditText) row.findViewById(R.id.answer_open);
+                holder.answerOpen.setScaleX(setting.getFloat("scale",1));
+                holder.answerOpen.setScaleY(setting.getFloat("scale",1));
                 row.setTag(holder);
             } else {
                 holder = (ViewHolder) row.getTag();
@@ -1637,6 +1653,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             CheckBox answerCheck;
             ImageView answerPicture;
             EditText answerOpen;
+            LinearLayout linpadding;
         }
     }
 

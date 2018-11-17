@@ -15,5 +15,14 @@
     <string name="textSendForm">Отправлено анкет в данном сеансе: </string>
     <string name="textSendAudioWithCurrentDevice">Отправлено аудио в рамках проекта с данного устройства: </string>
     <string name="textSendAudio">Отправлено аудио в данном сеансе: </string>
+    <string name="text_text_size_in_questions">Размер шрифта в вопросах: </string>
+    <string name="text_interval_between_answers">Интервал между ответами: </string>
     <string name="synhronization">Синхронизация</string>
+    <string-array name="text_size">
+        <item>Очень маленький</item>
+        <item>Маленький</item>
+        <item>Средний</item>
+        <item>Большой</item>
+        <item>Очень большой</item>
+    </string-array>
 </resources>

@@ -30,6 +30,73 @@
 
     </FrameLayout>
 
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin">
+<TextView
+    android:id="@+id/size_questions"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/text_text_size_in_questions"
+    android:textSize="16sp"
+    android:textColor="@color/secondaryTextMaterialLight"
+    android:layout_weight=".4"/>
+        <TextView
+            android:id="@+id/size_example"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="A"
+            android:layout_weight=".6"/>
+    </LinearLayout>
+
+        <Spinner
+            android:id="@+id/switch_size"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/size_questions"
+            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+           />
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin">
+        <TextView
+            android:id="@+id/interval_between_answers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_interval_between_answers"
+            android:textSize="16sp"
+            android:layout_weight=".4"
+            />
+        <TextView
+            android:id="@+id/interval_example"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="18"
+            android:textSize="16sp"
+            android:layout_weight=".6"/>
+    </LinearLayout>
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="10dp"
+        android:min="20"
+        android:max="100" />
+
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -61,11 +128,19 @@
             android:layout_height="0.5dp"/>
 
         <Button
+            android:id="@+id/setting_delete_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onExit"
+            android:text="Удалить пользователя"
+            android:theme="@style/ThemeOverlay.MyBreakButton"/>
+
+        <Button
             android:id="@+id/start_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="onExit"
-            android:text="Выйти из приложения"
+            android:text="Сохранить"
             android:theme="@style/ThemeOverlay.MyDarkButton"/>
 
         <View

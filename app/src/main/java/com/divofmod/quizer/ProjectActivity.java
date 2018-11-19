@@ -413,12 +413,12 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                         .setTitle("Синхронизация")
                         .setView(R.layout.sync_dialog).create();
 
-                if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {
+                if (!mSharedPreferences.getString("QuizzesRequest_" + mSharedPreferences.getInt("CurrentUserId",0), "").equals("")) {
                     if (!((Activity) ProjectActivity.this).isFinishing()) {
                         syncDialog.show();
                     }
                     syncDialog.show();
-                    mTables = mSharedPreferences.getString("QuizzesRequest", "").split(";");
+                    mTables = mSharedPreferences.getString("QuizzesRequest_" + mSharedPreferences.getInt("CurrentUserId",0), "").split(";");
                     System.out.println(mTables[0]);
 
                     mQuestion = DBReader.read(mSQLiteDatabase,
@@ -501,7 +501,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                                                  mSQLiteDatabase.execSQL("DROP TABLE if exists " + "photo_" + mTables[0]);
 
                                                  final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                                                         .putString("QuizzesRequest", mSharedPreferences.getString("QuizzesRequest", "").replace(mTables[0] + ";", "")); //temp-оставшиеся анкеты.
+                                                         .putString("QuizzesRequest_" + mSharedPreferences.getInt("CurrentUserId",0), mSharedPreferences.getString("QuizzesRequest_" + mSharedPreferences.getInt("CurrentUserId",0), "").replace(mTables[0] + ";", "")); //temp-оставшиеся анкеты.
                                                  editor.apply();
 
                                                  new File(getFilesDir(), "files/" + mPhoto + ".jpg").delete();

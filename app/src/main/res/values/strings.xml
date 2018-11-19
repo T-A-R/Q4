@@ -18,6 +18,7 @@
     <string name="text_text_size_in_questions">Размер шрифта в вопросах: </string>
     <string name="text_interval_between_answers">Интервал между ответами: </string>
     <string name="synhronization">Синхронизация</string>
+    <string name="text_alert">Достигнуто максимальное количество пользователей на устройстве! \nОбратитесь к менеджеру!</string>
     <string-array name="text_size">
         <item>Очень маленький</item>
         <item>Маленький</item>

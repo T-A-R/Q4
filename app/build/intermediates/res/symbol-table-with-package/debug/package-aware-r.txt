@@ -1283,6 +1283,7 @@ string textSendAudioWithCurrentDevice
 string textSendForm
 string textSendFormWithCurrentDevice
 string textUser
+string text_alert
 string text_interval_between_answers
 string text_text_size_in_questions
 style AlertDialog_AppCompat

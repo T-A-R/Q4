@@ -4173,8 +4173,9 @@ public final class R {
     public static final int textSendForm=0x7f0d0037;
     public static final int textSendFormWithCurrentDevice=0x7f0d0038;
     public static final int textUser=0x7f0d0039;
-    public static final int text_interval_between_answers=0x7f0d003a;
-    public static final int text_text_size_in_questions=0x7f0d003b;
+    public static final int text_alert=0x7f0d003a;
+    public static final int text_interval_between_answers=0x7f0d003b;
+    public static final int text_text_size_in_questions=0x7f0d003c;
   }
   public static final class style {
     public static final int AlertDialog_AppCompat=0x7f0e0000;

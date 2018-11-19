@@ -52,8 +52,8 @@ public static final String TAG = "SendQuizzesActivity";
     String[] mAudioTables; // Аудио
     String[] mStatisticsPhoto; // Фото статистики
 
-    TextView mQuizzesNotSend;
-    TextView mAudioNotSend;
+    TextView mQuizzesNotSend,form_sended_in_session,form_in_device;
+    TextView mAudioNotSend,audio_sended_in_session,audio_in_device;
     TextView nameUser;
     int currentUser;
 
@@ -87,7 +87,7 @@ public static final String TAG = "SendQuizzesActivity";
 
         mSharedPreferences = getSharedPreferences("data",
                 Context.MODE_PRIVATE);
-        currentUser = currentUser = mSharedPreferences.getInt("CurrentUserId",0);
+        currentUser = mSharedPreferences.getInt("CurrentUserId",0);
 
         mSQLiteDatabase = new DBHelper(this,
                 mSharedPreferences.getString("name_file_" + currentUser, ""),
@@ -95,24 +95,52 @@ public static final String TAG = "SendQuizzesActivity";
                 getString(R.string.sql_file_name),
                 getString(R.string.old_sql_file_name)).getWritableDatabase();
 
-        mTables = mSharedPreferences.getString("QuizzesRequest", "").split(";");
-        mAudioTables = mSharedPreferences.getString("Quizzes_audio", "").split(";");
-        mStatisticsPhoto = mSharedPreferences.getString("Statistics_photo", "").split(";");
+        mTables = mSharedPreferences.getString("QuizzesRequest_" + currentUser, "").split(";");
+        mAudioTables = mSharedPreferences.getString("Quizzes_audio_" + currentUser, "").split(";");
+        mStatisticsPhoto = mSharedPreferences.getString("Statistics_photo_" + currentUser, "").split(";");
 
-        System.out.println(mSharedPreferences.getString("Quizzes_audio", ""));
+        System.out.println(mSharedPreferences.getString("Quizzes_audio_" + currentUser, ""));
 
         try {
-            mQuizzesNotSend = (TextView) findViewById(R.id.quizzes_not_send);
+            mQuizzesNotSend = findViewById(R.id.quizzes_not_send);
+            form_sended_in_session = findViewById(R.id.form_sended_in_current_session);
+            form_in_device = findViewById(R.id.count_form_in_device);
 
             mQuizzesNotSend.setText("0");
-            if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {
+            if (!mSharedPreferences.getString("QuizzesRequest_" + currentUser, "").equals("")) {
                 mQuizzesNotSend.setText(String.valueOf(mTables.length));
             }
 
-            mAudioNotSend = (TextView) findViewById(R.id.audio_not_send);
+            form_sended_in_session.setText("0");
+            if (!mSharedPreferences.getString("Sended_quizzes_" + currentUser, "").equals(""))
+            {
+                // Запилить счестчик
+            }
+            form_in_device.setText("0");
+            if (!mSharedPreferences.getString("All_sended_quizzes_" + currentUser, "").equals(""))
+            {
+                // Запилить счестчик
+            }
+
+            mAudioNotSend = findViewById(R.id.audio_not_send);
+            audio_sended_in_session = findViewById(R.id.audio_sended_in_current_session);
+            audio_in_device = findViewById(R.id.count_audio_in_device);
+
             mAudioNotSend.setText("0");
-            if (!mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
+            if (!mSharedPreferences.getString("Quizzes_audio_" + currentUser, "").equals("")) {
                 mAudioNotSend.setText(String.valueOf(mAudioTables.length));
+            }
+
+            audio_sended_in_session.setText("0");
+            if (!mSharedPreferences.getString("Sended_audios_" + currentUser, "").equals(""))
+            {
+                form_sended_in_session.setText(getResources().getString(R.string.textSendForm) + " " + mSharedPreferences.getString("Sended_quizzes_" + currentUser, ""));
+            }
+
+            audio_in_device.setText("0");
+            if (!mSharedPreferences.getString("All_sended_audios_" + currentUser, "").equals(""))
+            {
+                // Запилить счестчик
             }
         } catch (final Exception ignore) {
 
@@ -129,17 +157,37 @@ public static final String TAG = "SendQuizzesActivity";
         super.onResume();
 
         try {
-            mQuizzesNotSend = (TextView) findViewById(R.id.quizzes_not_send);
 
-            mQuizzesNotSend.setText(getResources().getString(R.string.textNotSendForm) + "0");
-            if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {
-                mQuizzesNotSend.setText(getResources().getString(R.string.textNotSendForm )+ String.valueOf(mTables.length));
+            mQuizzesNotSend.setText(getResources().getString(R.string.textNotSendForm) +  " " + "0");
+            if (!mSharedPreferences.getString("QuizzesRequest_" + currentUser, "").equals("")) {
+                mQuizzesNotSend.setText(getResources().getString(R.string.textNotSendForm ) + " " + String.valueOf(mTables.length));
             }
 
-            mAudioNotSend = (TextView) findViewById(R.id.audio_not_send);
-            mAudioNotSend.setText(getResources().getString(R.string.textNotSendAudio)+ "0");
-            if (!mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
-                mAudioNotSend.setText(getResources().getString(R.string.textNotSendAudio) + String.valueOf(mAudioTables.length));
+            form_sended_in_session.setText(getResources().getString(R.string.textSendForm) + " " +"0");
+            if (!mSharedPreferences.getString("Sended_quizzes_" + currentUser, "").equals(""))
+            {
+                form_sended_in_session.setText(getResources().getString(R.string.textSendForm) + " " + mSharedPreferences.getString("Sended_quizzes_" + currentUser, ""));
+            }
+            form_in_device.setText(getResources().getString(R.string.textSendFormWithCurrentDevice) + " " + "0");
+            if (!mSharedPreferences.getString("All_sended_quizzes_" + currentUser, "").equals(""))
+            {
+                form_sended_in_session.setText(getResources().getString(R.string.textSendFormWithCurrentDevice) + " " + mSharedPreferences.getString("All_sended_quizzes_" + currentUser, ""));
+            }
+
+            mAudioNotSend.setText(getResources().getString(R.string.textNotSendAudio) + " " + "0");
+            if (!mSharedPreferences.getString("Quizzes_audio_" + currentUser, "").equals("")) {
+                mAudioNotSend.setText(getResources().getString(R.string.textNotSendAudio) +  " " + String.valueOf(mAudioTables.length));
+            }
+
+            audio_sended_in_session.setText(getResources().getString(R.string.textSendAudio) + " " +"0");
+            if (!mSharedPreferences.getString("Sended_audios_" + currentUser, "").equals(""))
+            {
+                audio_sended_in_session.setText(getResources().getString(R.string.textSendAudio) + " " + mSharedPreferences.getString("Sended_audios_" + currentUser, ""));
+            }
+            audio_in_device.setText(getResources().getString(R.string.textSendAudioWithCurrentDevice) + " " + "0");
+            if (!mSharedPreferences.getString("All_sended_audios_" + currentUser, "").equals(""))
+            {
+                audio_sended_in_session.setText(getResources().getString(R.string.textSendAudioWithCurrentDevice) + " " + mSharedPreferences.getString("All_sended_audios_"  + currentUser, ""));
             }
         } catch (final Exception ignore) {
 
@@ -208,7 +256,8 @@ public static final String TAG = "SendQuizzesActivity";
             case R.id.send_audio:
                 final String audioValue = Utils.getConfig(this).getConfig().getAudio();
 
-                if (audioValue != null && audioValue.equals("1")) {
+//                 && audioValue.equals("1")
+                if (audioValue != null) {
                     sendAudio();
                 }
 
@@ -217,7 +266,6 @@ public static final String TAG = "SendQuizzesActivity";
                 try {
                     sendQuiz();
                 } catch (Exception pE) {
-
                 }
 
                 break;
@@ -236,12 +284,12 @@ public static final String TAG = "SendQuizzesActivity";
                             .setTitle("Синхронизация")
                             .setView(R.layout.sync_dialog).create();
 
-                    if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {
+                    if (!mSharedPreferences.getString("QuizzesRequest_" + currentUser, "").equals("")) {
                         syncDialog.show();
-                        mTables = mSharedPreferences.getString("QuizzesRequest", "").split(";");
+                        mTables = mSharedPreferences.getString("QuizzesRequest_" + currentUser, "").split(";");
 
                         System.out.println(mTables[0]);
-
+                        Log.i(TAG, "QuizzesRequest_" + currentUser + ": " + mTables[0]);
                         mQuestion = DBReader.read(mSQLiteDatabase,
                                 "answers_" + mTables[0],
                                 new String[]{"answer_id", "duration_time_question", "text_open_answer"});
@@ -310,8 +358,12 @@ public static final String TAG = "SendQuizzesActivity";
                                                      mSQLiteDatabase.execSQL("DROP TABLE if exists " + "common_" + mTables[0]);
                                                      mSQLiteDatabase.execSQL("DROP TABLE if exists " + "photo_" + mTables[0]);
 
+                                                     final int sendedForms = mTables[0].length();
+
                                                      final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                                                             .putString("QuizzesRequest", mSharedPreferences.getString("QuizzesRequest", "").replace(mTables[0] + ";", "")); //temp-оставшиеся анкеты.
+                                                             .putString("Sended_quizzes_" + currentUser,String.valueOf(Integer.parseInt(mSharedPreferences.getString("Sended_quizzes_" + currentUser,"0")) + sendedForms))
+                                                             .putString("All_sended_quizzes_" + currentUser,"0")
+                                                             .putString("QuizzesRequest_" + currentUser, mSharedPreferences.getString("QuizzesRequest_" + currentUser, "").replace(mTables[0] + ";", "")); //temp-оставшиеся анкеты.
                                                      editor.apply();
 
                                                      new File(getFilesDir(), "files/" + mPhoto + ".jpg").delete();
@@ -319,7 +371,7 @@ public static final String TAG = "SendQuizzesActivity";
 
                                                          @Override
                                                          public void run() {
-                                                             mQuizzesNotSend.setText(String.valueOf(Integer.parseInt(mQuizzesNotSend.getText().toString()) - 1));
+                                                             mQuizzesNotSend.setText(getResources().getString(R.string.textNotSendForm)  + " " + String.valueOf(mTables.length - 1));
                                                          }
                                                      });
                                                      syncDialog.dismiss();
@@ -333,9 +385,9 @@ public static final String TAG = "SendQuizzesActivity";
                                 );
                     }
 
-                    if (!mSharedPreferences.getString("Statistics_photo", "").equals("")) {
+                    if (!mSharedPreferences.getString("Statistics_photo_" + currentUser, "").equals("")) {
                         syncDialog.show();
-                        mStatisticsPhoto = mSharedPreferences.getString("Statistics_photo", "").split(";");
+                        mStatisticsPhoto = mSharedPreferences.getString("Statistics_photo_" + currentUser, "").split(";");
                         System.out.println(mStatisticsPhoto[0]);
                         mPhoto = DBReader.read(mSQLiteDatabase,
                                 "photo_statistics_" + mStatisticsPhoto[0],
@@ -374,7 +426,7 @@ public static final String TAG = "SendQuizzesActivity";
                                                      mSQLiteDatabase.execSQL("DROP TABLE if exists " + "photo_statistics_" + mStatisticsPhoto[0]);
 
                                                      final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                                                             .putString("Statistics_photo", mSharedPreferences.getString("Statistics_photo", "").replace(mStatisticsPhoto[0] + ";", "")); //temp-оставшиеся анкеты.
+                                                             .putString("Statistics_photo_"+ currentUser, mSharedPreferences.getString("Statistics_photo_" + currentUser, "").replace(mStatisticsPhoto[0] + ";", "")); //temp-оставшиеся анкеты.
                                                      editor.apply();
                                                      new File(getFilesDir(), "files/" + mPhoto + ".jpg").delete();
 
@@ -405,9 +457,9 @@ public static final String TAG = "SendQuizzesActivity";
                             .setTitle("Синхронизация")
                             .setView(R.layout.sync_dialog).create();
 
-                    if (!mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
+                    if (!mSharedPreferences.getString("Quizzes_audio_" + currentUser, "").equals("")) {
                         syncDialog.show();
-                        mAudioTables = mSharedPreferences.getString("Quizzes_audio", "").split(";");
+                        mAudioTables = mSharedPreferences.getString("Quizzes_audio_" + currentUser, "").split(";");
                         System.out.println(mAudioTables[0]);
 
                         mAudio = DBReader.read(mSQLiteDatabase,
@@ -446,8 +498,10 @@ public static final String TAG = "SendQuizzesActivity";
                                                      mSQLiteDatabase.execSQL("DROP TABLE if exists " + "audio_" + mAudioTables[0]);
 
                                                      final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                                                             .putString("Quizzes_audio", mSharedPreferences.getString("Quizzes_audio", "").replace(mAudioTables[0] + ";", "")); //temp-оставшиеся анкеты.
+                                                             .putInt("Quizer_sended_session",Integer.parseInt(mAudioTables[0]) )
+                                                             .putString("Quizzes_audio_" + currentUser, mSharedPreferences.getString("Quizzes_audio_" + currentUser, "").replace(mAudioTables[0] + ";", "")); //temp-оставшиеся анкеты.
                                                      editor.apply();
+                                                     Log.i(TAG, "Quizer_sended_session: " + mSharedPreferences.getInt("Quizer_sended_session",0));
                                                      for (final String[] audio : mAudio) {
                                                          if (new File(getFilesDir(), "files/" + audio[0] + ".amr").delete()) {
                                                              System.out.println(audio[0] + ".amr true");

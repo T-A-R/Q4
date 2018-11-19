@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -21,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -282,7 +284,18 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
 
         mQuestionTitle.setTextSize(setting.getInt("text_size",16) + 2);
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point point = new Point();
+
+        display.getSize(point);
+        int width = point.y;
+
+        Log.i(TAG, "onCreate: " + String .valueOf(width));
+        
+
     }
+
 
     private void setCurrentQuestion() {
 
@@ -1226,9 +1239,9 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             //Запоминаем названия таблиц из БД
 
             final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                    .putString("QuizzesRequest", mSharedPreferences.getString("QuizzesRequest", "") + date + ";")
-                    .putString("Quizzes_audio", mSharedPreferences.getString("Quizzes_audio", "") + date + ";")
-                    .putString("last_date_interview", mDateInterview);
+                    .putString("QuizzesRequest_" + currentUser, mSharedPreferences.getString("QuizzesRequest_" + currentUser, "") + date + ";")
+                    .putString("Quizzes_audio_" + currentUser, mSharedPreferences.getString("Quizzes_audio_" + currentUser, "") + date + ";")
+                    .putString("last_date_interview_" + currentUser, mDateInterview);
             editor.apply();
 
             //Создаем таблицы в БД
@@ -1918,7 +1931,9 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         locationManager.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER, 1000 * 10, 10,
                 this);
+
     }
+
 
     @Override
     protected void onPause() {

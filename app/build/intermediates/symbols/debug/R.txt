@@ -1282,8 +1282,9 @@ int string textSendAudioWithCurrentDevice 0x7f0d0036
 int string textSendForm 0x7f0d0037
 int string textSendFormWithCurrentDevice 0x7f0d0038
 int string textUser 0x7f0d0039
-int string text_interval_between_answers 0x7f0d003a
-int string text_text_size_in_questions 0x7f0d003b
+int string text_alert 0x7f0d003a
+int string text_interval_between_answers 0x7f0d003b
+int string text_text_size_in_questions 0x7f0d003c
 int style AlertDialog_AppCompat 0x7f0e0000
 int style AlertDialog_AppCompat_Light 0x7f0e0001
 int style Animation_AppCompat_Dialog 0x7f0e0002

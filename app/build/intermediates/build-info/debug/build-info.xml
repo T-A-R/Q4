@@ -2,71 +2,37 @@
 <instant-run
     abi="x86"
     api-level="23"
-    build-mode="COLD"
+    build-mode="HOT_WARM"
     density="xhdpi"
     format="10"
-    ir-eligibility="R_CLASS_CHANGE"
     plugin-version="3.2.1"
-    timestamp="1542474704401"
+    timestamp="1542637144987"
     token="-3727440119443059933"
-    verifier="COLD_SWAP_REQUESTED" >
+    verifier="COMPATIBLE" >
 
     <task
         name="javac"
-        duration="1162" />
+        duration="1762" />
     <task
         name="instant-run-dex"
-        duration="0" />
+        duration="403" />
     <task
         name="instant-run-transform"
-        duration="58" />
+        duration="143" />
     <task
         name="verifier"
-        duration="37" />
+        duration="40" />
 
     <artifact
-        location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_8.apk"
-        type="SPLIT" />
-    <artifact
-        location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_4.apk"
-        type="SPLIT" />
-    <artifact
-        location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_0.apk"
-        type="SPLIT" />
-    <artifact
-        location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_5.apk"
-        type="SPLIT" />
-    <artifact
-        location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_7.apk"
-        type="SPLIT" />
-    <artifact
-        location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_9.apk"
-        type="SPLIT" />
-    <artifact
-        location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_6.apk"
-        type="SPLIT" />
-    <artifact
-        location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_2.apk"
-        type="SPLIT" />
-    <artifact
-        location="/home/Funny/work/QUIZER_Android/app/build/intermediates/instant-run-apk/debug/app-debug.apk"
-        type="SPLIT_MAIN" />
+        location="/home/Funny/work/QUIZER_Android/app/build/intermediates/reload-dex/debug/classes.dex"
+        type="RELOAD_DEX" />
 
     <build
         build-mode="FULL"
-        timestamp="1542444525281"
+        timestamp="1542632834786"
         verifier="FULL_BUILD_REQUESTED" >
         <artifact
             location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_5.apk"
-            type="SPLIT" />
-        <artifact
-            location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_4.apk"
-            type="SPLIT" />
-        <artifact
-            location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_7.apk"
-            type="SPLIT" />
-        <artifact
-            location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_8.apk"
             type="SPLIT" />
         <artifact
             location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_0.apk"
@@ -74,15 +40,6 @@
         <artifact
             location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_6.apk"
             type="SPLIT" />
-        <artifact
-            location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_2.apk"
-            type="SPLIT" />
-        <artifact
-            location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_9.apk"
-            type="SPLIT" />
-        <artifact
-            location="/home/Funny/work/QUIZER_Android/app/build/intermediates/instant-run-apk/debug/app-debug.apk"
-            type="SPLIT_MAIN" />
         <artifact
             location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_1.apk"
             type="SPLIT" />
@@ -90,50 +47,45 @@
             location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_3.apk"
             type="SPLIT" />
         <artifact
-            location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/dep/dependencies.apk"
-            type="SPLIT" />
-    </build>
-    <build
-        build-mode="COLD"
-        ir-eligibility="R_CLASS_CHANGE"
-        timestamp="1542468787433"
-        verifier="COLD_SWAP_REQUESTED" >
-        <artifact
-            location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_1.apk"
-            type="SPLIT" />
-    </build>
-    <build
-        build-mode="COLD"
-        ir-eligibility="R_CLASS_CHANGE"
-        timestamp="1542474704401"
-        verifier="COLD_SWAP_REQUESTED" >
-        <artifact
-            location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_8.apk"
-            type="SPLIT" />
-        <artifact
             location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_4.apk"
             type="SPLIT" />
         <artifact
-            location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_0.apk"
-            type="SPLIT" />
-        <artifact
-            location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_5.apk"
+            location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_2.apk"
             type="SPLIT" />
         <artifact
             location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_7.apk"
             type="SPLIT" />
         <artifact
+            location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/dep/dependencies.apk"
+            type="SPLIT" />
+        <artifact
+            location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_8.apk"
+            type="SPLIT" />
+        <artifact
             location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_9.apk"
             type="SPLIT" />
         <artifact
-            location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_6.apk"
-            type="SPLIT" />
+            location="/home/Funny/work/QUIZER_Android/app/build/intermediates/instant-run-apk/debug/app-debug.apk"
+            type="SPLIT_MAIN" />
+    </build>
+    <build
+        build-mode="COLD"
+        timestamp="1542636770580"
+        verifier="METHOD_DELETED" >
         <artifact
             location="/home/Funny/work/QUIZER_Android/app/build/intermediates/split-apk/debug/slices/slice_2.apk"
             type="SPLIT" />
         <artifact
             location="/home/Funny/work/QUIZER_Android/app/build/intermediates/instant-run-apk/debug/app-debug.apk"
             type="SPLIT_MAIN" />
+    </build>
+    <build
+        build-mode="HOT_WARM"
+        timestamp="1542637144987"
+        verifier="COMPATIBLE" >
+        <artifact
+            location="/home/Funny/work/QUIZER_Android/app/build/intermediates/reload-dex/debug/classes.dex"
+            type="RELOAD_DEX" />
     </build>
 
 </instant-run>

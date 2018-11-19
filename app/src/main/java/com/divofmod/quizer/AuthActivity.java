@@ -117,6 +117,17 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
        
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (userQuota >= 2)
+        {
+            ((RelativeLayout)findViewById(R.id.moreUsers)).setVisibility(View.VISIBLE);
+            ((TextView) findViewById(R.id.textUsers)).setText(String.valueOf(switchUser.getChildCount()) + "/5");
+        }
+    }
+
     private String[] userLogins() {
             arr = new String[userQuota];
         for (int i = 0;i< arr.length; i++ ){
@@ -255,15 +266,29 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                                  .putString("user_project_id" + userQuota, authResponseModel.getUser_project_id());
                                          editor.apply();
 
-
                                          downloadConfig(authResponseModel.getConfig_id());
                                      }
                                      else
                                      {
-                                         Snackbar.make(AuthActivity.this.mLoginPasswordFields,"Квота пользователей превышена",Snackbar.LENGTH_SHORT).show();
+
+
                                          AuthActivity.this.runOnUiThread(new Runnable() {
                                              @Override
                                              public void run() {
+
+                                                 new AlertDialog.Builder(AuthActivity.this)
+                                                         .setIcon(android.R.drawable.ic_dialog_alert)
+                                                         .setTitle("Внимание!")
+                                                         .setMessage(R.string.text_alert)
+                                                         .setNeutralButton("Понятно", new DialogInterface.OnClickListener() {
+                                                             @Override
+                                                             public void onClick(DialogInterface dialogInterface, int i) {
+                                                                 dialogInterface.cancel();
+                                                             }
+                                                         })
+                                                         .create()
+                                                         .show();
+
                                                  mProgressBar.setVisibility(View.INVISIBLE);
                                                  mLoginPasswordFields.setVisibility(View.VISIBLE);
                                                  mSignInButton.setVisibility(View.VISIBLE);
@@ -299,7 +324,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         editor.apply();
 
         final Dictionary<String, String> mConfigDictionary = new Hashtable();
-        Log.i(TAG, "downloadConfig: " + mSharedPreferences.getString(Constants.Shared.LOGIN + userQuota, ""));
         final ConfigRequestModel configRequestModel = new ConfigRequestModel(
                 mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, ""),
                 mSharedPreferences.getString(Constants.Shared.LOGIN + userQuota, ""),
@@ -354,7 +378,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         dictionary.put("name_file_" + userQuota, name_file);
 
         if (!mSharedPreferences.getString("name_file_" + userQuota, "").equals(name_file)) {
-            if (mSharedPreferences.getString("QuizzesRequest", "").equals("") && mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
+            if (mSharedPreferences.getString("QuizzesRequest_" + mSharedPreferences.getInt("CurrentUserId",0), "").equals("") && mSharedPreferences.getString("Quizzes_audio_" + mSharedPreferences.getInt("CurrentUserId",0), "").equals("")) {
 
                 deleteDirectory(new File(getFilesDir() + "/files/"));
                 deleteDirectory(new File(getFilesDir() + "/background/"));
@@ -434,10 +458,10 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                         final TextView audioNotSend = view.findViewById(R.id.audio_not_send);
                         quizzesNotSend.setText("Неотправленные анкеты: 0");
                         audioNotSend.setText("Неотправленные аудио: 0");
-                        if (!mSharedPreferences.getString("QuizzesRequest", "").equals("")) {
+                        if (!mSharedPreferences.getString("QuizzesRequest_" + mSharedPreferences.getInt("CurrentUserId",0), "").equals("")) {
                             quizzesNotSend.setText("Неотправленные анкеты: " + mSharedPreferences.getString("QuizzesRequest", "").split(";").length);
                         }
-                        if (!mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
+                        if (!mSharedPreferences.getString("Quizzes_audio_" + mSharedPreferences.getInt("CurrentUserId",0), "").equals("")) {
                             audioNotSend.setText("Неотправленные аудио: " + mSharedPreferences.getString("Quizzes_audio", "").split(";").length);
                         }
 
@@ -487,9 +511,9 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                                 deleteDirectory(new File(getFilesDir() + "/answerimages/"));
                                                 deleteDatabase(sharedPreferences.getString("name_file_" + userQuota, ""));
                                                 final SharedPreferences.Editor editor = sharedPreferences.edit()
-                                                        .putString("QuizzesRequest", "")
-                                                        .putString("Quizzes_audio", "")
-                                                        .putString("Statistics_photo", "");
+                                                        .putString("QuizzesRequest_" + sharedPreferences.getInt("CurrentUserId",0), "")
+                                                        .putString("Quizzes_audio_" + sharedPreferences.getInt("CurrentUserId",0), "")
+                                                        .putString("Statistics_photo_" + sharedPreferences.getInt("CurrentUserId",0), "");
                                                 editor.apply();
                                                 dialog.dismiss();
                                                 download(name_file);
@@ -542,8 +566,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     private void getQuota() {
 
         int currentId = SearchCurrentUser();
-        Log.i(TAG, "SearchCurrentUser: " + String .valueOf(currentId));
-
         final SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putInt("CurrentUserId", currentId);
         editor.apply();
@@ -649,15 +671,15 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SEND_QUIZZES) {
-            if (mSharedPreferences.getString("QuizzesRequest", "").equals("") && mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
+            if (mSharedPreferences.getString("QuizzesRequest" + mSharedPreferences.getInt("CurrentUserId",0), "").equals("") && mSharedPreferences.getString("Quizzes_audio", "").equals("")) {
                 deleteDirectory(new File(getFilesDir() + "/files/"));
                 deleteDirectory(new File(getFilesDir() + "/background/"));
                 deleteDirectory(new File(getFilesDir() + "/answerimages/"));
                 deleteDatabase(mSharedPreferences.getString("name_file", ""));
                 final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                        .putString("QuizzesRequest", "")
-                        .putString("Quizzes_audio", "")
-                        .putString("Statistics_photo", "");
+                        .putString("QuizzesRequest_" + mSharedPreferences.getInt("CurrentUserId",0), "")
+                        .putString("Quizzes_audio_" + mSharedPreferences.getInt("CurrentUserId",0), "")
+                        .putString("Statistics_photo_" + mSharedPreferences.getInt("CurrentUserId",0), "");
                 editor.apply();
             }
             download(mNameFile);
@@ -707,13 +729,13 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         sqLiteDatabase.close();
 
         for (int i = 0; i < mConfig.size(); i++) {
-            if (mConfig.get(i)[0].equals("passport_block_location")) {
+            if (mConfig.get(i)[0].equals("passport_block_location_" + mSharedPreferences.getInt("CurrentUserId",0))) {
                 position = mConfig.get(i)[1];
                 break;
             }
         }
         final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                .putString("passport_block_location", position);
+                .putString("passport_block_location_" +mSharedPreferences.getInt("CurrentUserId",0), position);
         editor.apply();
 
         return position;

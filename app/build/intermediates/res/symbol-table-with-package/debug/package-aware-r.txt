@@ -1016,6 +1016,7 @@ id right
 id right_icon
 id right_side
 id saveData
+id save_button
 id save_image_matrix
 id save_non_transition_alpha
 id save_scale_type

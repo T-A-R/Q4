@@ -96,6 +96,7 @@ public static final String TAG = "SendQuizzesActivity";
                 getString(R.string.old_sql_file_name)).getWritableDatabase();
 
         mTables = mSharedPreferences.getString("QuizzesRequest_" + currentUser, "").split(";");
+
         mAudioTables = mSharedPreferences.getString("Quizzes_audio_" + currentUser, "").split(";");
         mStatisticsPhoto = mSharedPreferences.getString("Statistics_photo_" + currentUser, "").split(";");
 
@@ -106,42 +107,42 @@ public static final String TAG = "SendQuizzesActivity";
             form_sended_in_session = findViewById(R.id.form_sended_in_current_session);
             form_in_device = findViewById(R.id.count_form_in_device);
 
-            mQuizzesNotSend.setText("0");
-            if (!mSharedPreferences.getString("QuizzesRequest_" + currentUser, "").equals("")) {
-                mQuizzesNotSend.setText(String.valueOf(mTables.length));
-            }
-
-            form_sended_in_session.setText("0");
-            if (!mSharedPreferences.getString("Sended_quizzes_" + currentUser, "").equals(""))
-            {
-                // Запилить счестчик
-            }
-            form_in_device.setText("0");
-            if (!mSharedPreferences.getString("All_sended_quizzes_" + currentUser, "").equals(""))
-            {
-                // Запилить счестчик
-            }
+//            mQuizzesNotSend.setText("0");
+//            if (!mSharedPreferences.getString("QuizzesRequest_" + currentUser, "").equals("")) {
+//                mQuizzesNotSend.setText(String.valueOf(mTables.length));
+//            }
+//
+//            form_sended_in_session.setText("0");
+//            if (!mSharedPreferences.getString("Sended_quizzes_" + currentUser, "").equals(""))
+//            {
+//                // Запилить счестчик
+//            }
+//            form_in_device.setText("0");
+//            if (!mSharedPreferences.getString("All_sended_quizzes_" + currentUser, "").equals(""))
+//            {
+//                // Запилить счестчик
+//            }
 
             mAudioNotSend = findViewById(R.id.audio_not_send);
             audio_sended_in_session = findViewById(R.id.audio_sended_in_current_session);
             audio_in_device = findViewById(R.id.count_audio_in_device);
 
-            mAudioNotSend.setText("0");
-            if (!mSharedPreferences.getString("Quizzes_audio_" + currentUser, "").equals("")) {
-                mAudioNotSend.setText(String.valueOf(mAudioTables.length));
-            }
-
-            audio_sended_in_session.setText("0");
-            if (!mSharedPreferences.getString("Sended_audios_" + currentUser, "").equals(""))
-            {
-                form_sended_in_session.setText(getResources().getString(R.string.textSendForm) + " " + mSharedPreferences.getString("Sended_quizzes_" + currentUser, ""));
-            }
-
-            audio_in_device.setText("0");
-            if (!mSharedPreferences.getString("All_sended_audios_" + currentUser, "").equals(""))
-            {
-                // Запилить счестчик
-            }
+//            mAudioNotSend.setText("0");
+//            if (!mSharedPreferences.getString("Quizzes_audio_" + currentUser, "").equals("")) {
+//                mAudioNotSend.setText(String.valueOf(mAudioTables.length));
+//            }
+//
+//            audio_sended_in_session.setText("0");
+//            if (!mSharedPreferences.getString("Sended_audios_" + currentUser, "").equals(""))
+//            {
+//                audio_sended_in_session.setText(getResources().getString(R.string.textSendForm) + " " + mSharedPreferences.getString("Sended_audios_" + currentUser, ""));
+//            }
+//
+//            audio_in_device.setText("0");
+//            if (!mSharedPreferences.getString("All_sended_audios_" + currentUser, "").equals(""))
+//            {
+//                audio_in_device.setText(getResources().getString(R.string.textSendAudioWithCurrentDevice) + " " + mSharedPreferences.getString("All_sended_audios_" + currentUser, ""));
+//            }
         } catch (final Exception ignore) {
 
         }
@@ -171,7 +172,7 @@ public static final String TAG = "SendQuizzesActivity";
             form_in_device.setText(getResources().getString(R.string.textSendFormWithCurrentDevice) + " " + "0");
             if (!mSharedPreferences.getString("All_sended_quizzes_" + currentUser, "").equals(""))
             {
-                form_sended_in_session.setText(getResources().getString(R.string.textSendFormWithCurrentDevice) + " " + mSharedPreferences.getString("All_sended_quizzes_" + currentUser, ""));
+                form_in_device.setText(getResources().getString(R.string.textSendFormWithCurrentDevice) + " " + mSharedPreferences.getString("All_sended_quizzes_" + currentUser, ""));
             }
 
             mAudioNotSend.setText(getResources().getString(R.string.textNotSendAudio) + " " + "0");
@@ -288,7 +289,7 @@ public static final String TAG = "SendQuizzesActivity";
                         syncDialog.show();
                         mTables = mSharedPreferences.getString("QuizzesRequest_" + currentUser, "").split(";");
 
-                        System.out.println(mTables[0]);
+                        System.out.println(mTables[1]);
                         Log.i(TAG, "QuizzesRequest_" + currentUser + ": " + mTables[0]);
                         mQuestion = DBReader.read(mSQLiteDatabase,
                                 "answers_" + mTables[0],
@@ -358,10 +359,13 @@ public static final String TAG = "SendQuizzesActivity";
                                                      mSQLiteDatabase.execSQL("DROP TABLE if exists " + "common_" + mTables[0]);
                                                      mSQLiteDatabase.execSQL("DROP TABLE if exists " + "photo_" + mTables[0]);
 
-                                                     final int sendedForms = mTables[0].length();
 
+//                                                     final int sendedForms = mTables.length();
+
+                                                     Log.i(TAG, "sended form: " + String .valueOf(mTables[0].length()));
+                                                     Log.i(TAG, "Sended_quizzes_" + currentUser + ": " + mSharedPreferences.getString("Sended_quizzes_" + currentUser,"0"));
                                                      final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                                                             .putString("Sended_quizzes_" + currentUser,String.valueOf(Integer.parseInt(mSharedPreferences.getString("Sended_quizzes_" + currentUser,"0")) + sendedForms))
+                                                             .putString("Sended_quizzes_" + currentUser,String.valueOf(Integer.parseInt(mSharedPreferences.getString("Sended_quizzes_" + currentUser,"0")) + 1))
                                                              .putString("All_sended_quizzes_" + currentUser,"0")
                                                              .putString("QuizzesRequest_" + currentUser, mSharedPreferences.getString("QuizzesRequest_" + currentUser, "").replace(mTables[0] + ";", "")); //temp-оставшиеся анкеты.
                                                      editor.apply();
@@ -372,6 +376,8 @@ public static final String TAG = "SendQuizzesActivity";
                                                          @Override
                                                          public void run() {
                                                              mQuizzesNotSend.setText(getResources().getString(R.string.textNotSendForm)  + " " + String.valueOf(mTables.length - 1));
+                                                             form_sended_in_session.setText(getResources().getString(R.string.textSendForm) + " " + mSharedPreferences.getString("Sended_quizzes_" + currentUser, ""));
+                                                             form_in_device.setText(getResources().getString(R.string.textSendFormWithCurrentDevice) + " " + mSharedPreferences.getString("All_sended_quizzes_" + currentUser, ""));
                                                          }
                                                      });
                                                      syncDialog.dismiss();

@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -100,11 +101,13 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         mSignInButton = findViewById(R.id.sign_in_button);
 
         userLogins();
-        switchUser = findViewById(R.id.switchUser);
 
+
+        switchUser = findViewById(R.id.switchUser);
         adap = new ArrayAdapter<>(this,R.layout.spinner_maket,R.id.Tspiner_maket,arr);
         switchUser.setAdapter(adap);
         switchUser.setOnItemSelectedListener(spinnerClick);
+
 
         mSignInButton.setOnClickListener(this);
         mLoginEditText.setText(mSharedPreferences.getString("login" + userQuota, ""));
@@ -568,6 +571,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         int currentId = SearchCurrentUser();
         final SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putInt("CurrentUserId", currentId);
+        editor.remove("Sended_quizzes_" + currentId);
         editor.apply();
        this.runOnUiThread(new Runnable() {
            @Override
@@ -771,9 +775,8 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     AdapterView.OnItemSelectedListener spinnerClick = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//            String s = adapterView.getItemAtPosition(i).toString();
-//            mLoginEditText.setText(s);
-
+            String s = adapterView.getItemAtPosition(i).toString();
+            mLoginEditText.setText(s);
         }
 
         @Override

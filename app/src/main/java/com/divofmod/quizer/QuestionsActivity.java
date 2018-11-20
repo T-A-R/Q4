@@ -21,12 +21,14 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -38,6 +40,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -289,11 +292,32 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         Point point = new Point();
 
         display.getSize(point);
-        int width = point.y;
+        final int height = point.y;
 
-        Log.i(TAG, "onCreate: " + String .valueOf(width));
-        
+        Log.i(TAG, "onCreate: " + String .valueOf(height));
 
+
+        ViewTreeObserver viewTreeObserver = mQuestionTitle.getViewTreeObserver();
+        if (viewTreeObserver.isAlive()) {
+            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    mQuestionTitle.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    int viewWidth = mQuestionTitle.getWidth();
+                    int viewHeight = mQuestionTitle.getHeight();
+
+                    Log.i(TAG, "onGlobalLayout: " + viewWidth + " :: " + viewHeight );
+
+
+                    if (height/3 <= viewHeight )
+                    {
+                        mQuestionTitle.setVerticalScrollBarEnabled(true);
+                      mQuestionTitle.setHeight(height/3);
+                      mQuestionTitle.setMovementMethod(new ScrollingMovementMethod());
+                    }
+                }
+            });
+        }
     }
 
 

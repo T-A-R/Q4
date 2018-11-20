@@ -501,7 +501,10 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                                                  mSQLiteDatabase.execSQL("DROP TABLE if exists " + "photo_" + mTables[0]);
 
                                                  final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                                                         .putString("QuizzesRequest_" + mSharedPreferences.getInt("CurrentUserId",0), mSharedPreferences.getString("QuizzesRequest_" + mSharedPreferences.getInt("CurrentUserId",0), "").replace(mTables[0] + ";", "")); //temp-оставшиеся анкеты.
+                                                         .putString("QuizzesRequest_" + mSharedPreferences.getInt("CurrentUserId",0), mSharedPreferences.getString("QuizzesRequest_" + mSharedPreferences.getInt("CurrentUserId",0), "").replace(mTables[0] + ";", "")) //temp-оставшиеся анкеты.
+                                                         .putString("Sended_quizzes_" + currentUser,String.valueOf(Integer.parseInt(mSharedPreferences.getString("Sended_quizzes_" + currentUser,"0")) + 1))
+                                                         .putString("All_sended_quizzes_" + currentUser,String.valueOf(Integer.parseInt(mSharedPreferences.getString("All_sended_quizzes_" + currentUser,"0")) + 1));
+
                                                  editor.apply();
 
                                                  new File(getFilesDir(), "files/" + mPhoto + ".jpg").delete();
@@ -514,7 +517,6 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                                                  }
                                              } else {
                                                  openSQLiteDatabase();
-                                                 Log.i(TAG, "test 1");
                                                  SmsUtils.sendEndedSmsWaves(ProjectActivity.this, mSQLiteDatabase, "2", getSupportFragmentManager(), null);
                                                  syncDialog.dismiss();
 

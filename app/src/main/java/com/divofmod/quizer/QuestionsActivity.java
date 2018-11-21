@@ -302,16 +302,16 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-                    mQuestionTitle.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    mQuestionTitle.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                     int viewWidth = mQuestionTitle.getWidth();
                     int viewHeight = mQuestionTitle.getHeight();
 
                     Log.i(TAG, "onGlobalLayout: " + viewWidth + " :: " + viewHeight );
 
 
-                    if (height/3 <= viewHeight )
+                    if (height/3 <= viewHeight ) // если вью занимает 1/3 или больше высоты экрана то устанавливаем размер экрана 1/3  и устанавливаем прокрутку
                     {
-                        mQuestionTitle.setVerticalScrollBarEnabled(true);
+                      mQuestionTitle.setVerticalScrollBarEnabled(true);
                       mQuestionTitle.setHeight(height/3);
                       mQuestionTitle.setMovementMethod(new ScrollingMovementMethod());
                     }

@@ -102,50 +102,16 @@ public static final String TAG = "SendQuizzesActivity";
 
         System.out.println(mSharedPreferences.getString("Quizzes_audio_" + currentUser, ""));
 
-        try {
             mQuizzesNotSend = findViewById(R.id.quizzes_not_send);
             form_sended_in_session = findViewById(R.id.form_sended_in_current_session);
             form_in_device = findViewById(R.id.count_form_in_device);
 
-//            mQuizzesNotSend.setText("0");
-//            if (!mSharedPreferences.getString("QuizzesRequest_" + currentUser, "").equals("")) {
-//                mQuizzesNotSend.setText(String.valueOf(mTables.length));
-//            }
-//
-//            form_sended_in_session.setText("0");
-//            if (!mSharedPreferences.getString("Sended_quizzes_" + currentUser, "").equals(""))
-//            {
-//                // Запилить счестчик
-//            }
-//            form_in_device.setText("0");
-//            if (!mSharedPreferences.getString("All_sended_quizzes_" + currentUser, "").equals(""))
-//            {
-//                // Запилить счестчик
-//            }
 
             mAudioNotSend = findViewById(R.id.audio_not_send);
             audio_sended_in_session = findViewById(R.id.audio_sended_in_current_session);
             audio_in_device = findViewById(R.id.count_audio_in_device);
 
-//            mAudioNotSend.setText("0");
-//            if (!mSharedPreferences.getString("Quizzes_audio_" + currentUser, "").equals("")) {
-//                mAudioNotSend.setText(String.valueOf(mAudioTables.length));
-//            }
-//
-//            audio_sended_in_session.setText("0");
-//            if (!mSharedPreferences.getString("Sended_audios_" + currentUser, "").equals(""))
-//            {
-//                audio_sended_in_session.setText(getResources().getString(R.string.textSendForm) + " " + mSharedPreferences.getString("Sended_audios_" + currentUser, ""));
-//            }
-//
-//            audio_in_device.setText("0");
-//            if (!mSharedPreferences.getString("All_sended_audios_" + currentUser, "").equals(""))
-//            {
-//                audio_in_device.setText(getResources().getString(R.string.textSendAudioWithCurrentDevice) + " " + mSharedPreferences.getString("All_sended_audios_" + currentUser, ""));
-//            }
-        } catch (final Exception ignore) {
 
-        }
         nameUser = findViewById(R.id.nameUser);
         nameUser.setText(mSharedPreferences.getString("login" + currentUser, ""));
         findViewById(R.id.send_audio).setOnClickListener(this);
@@ -188,7 +154,7 @@ public static final String TAG = "SendQuizzesActivity";
             audio_in_device.setText(getResources().getString(R.string.textSendAudioWithCurrentDevice) + " " + "0");
             if (!mSharedPreferences.getString("All_sended_audios_" + currentUser, "").equals(""))
             {
-                audio_sended_in_session.setText(getResources().getString(R.string.textSendAudioWithCurrentDevice) + " " + mSharedPreferences.getString("All_sended_audios_"  + currentUser, ""));
+                audio_in_device.setText(getResources().getString(R.string.textSendAudioWithCurrentDevice) + " " + mSharedPreferences.getString("All_sended_audios_"  + currentUser, ""));
             }
         } catch (final Exception ignore) {
 
@@ -257,8 +223,10 @@ public static final String TAG = "SendQuizzesActivity";
             case R.id.send_audio:
                 final String audioValue = Utils.getConfig(this).getConfig().getAudio();
 
+                Log.i(TAG, "audio "  + audioValue);
+
 //                 && audioValue.equals("1")
-                if (audioValue != null) {
+                if (audioValue != null  && audioValue.equals("1")) {
                     sendAudio();
                 }
 
@@ -505,7 +473,10 @@ public static final String TAG = "SendQuizzesActivity";
 
                                                      final SharedPreferences.Editor editor = mSharedPreferences.edit()
                                                              .putInt("Quizer_sended_session",Integer.parseInt(mAudioTables[0]) )
-                                                             .putString("Quizzes_audio_" + currentUser, mSharedPreferences.getString("Quizzes_audio_" + currentUser, "").replace(mAudioTables[0] + ";", "")); //temp-оставшиеся анкеты.
+
+                                                             .putString("Sended_audios_" + currentUser, String.valueOf(Integer.parseInt(mSharedPreferences.getString("Sended_audios_" + currentUser, "")) + 1))
+                                                             .putString("All_sended_audios_" + currentUser, String.valueOf(Integer.parseInt(mSharedPreferences.getString("All_sended_audios_" + currentUser, "")) + 1))
+                                                             .putString("Quizzes_audio_" + currentUser, mSharedPreferences.getString("Quizzes_audio_" + currentUser, "").replace(mAudioTables[0] + ";", ""));
                                                      editor.apply();
                                                      Log.i(TAG, "Quizer_sended_session: " + mSharedPreferences.getInt("Quizer_sended_session",0));
                                                      for (final String[] audio : mAudio) {

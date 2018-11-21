@@ -520,7 +520,6 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
                                                  SmsUtils.sendEndedSmsWaves(ProjectActivity.this, mSQLiteDatabase, "2", getSupportFragmentManager(), null);
                                                  syncDialog.dismiss();
 
-                                                 //loopback
                                              }
                                          }
                                      }

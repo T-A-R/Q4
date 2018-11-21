@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -117,8 +118,8 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         mVer.setOnClickListener(clickVer);
 
 
-       
     }
+
 
     @Override
     protected void onResume() {
@@ -164,7 +165,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                         Toast.LENGTH_SHORT).show();
             } else {
                 if (mLoginEditText.getText().toString().equals(mSharedPreferences.getString("login" + userQuota, "")) &&
-                        DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))).equals(mSharedPreferences.getString("passw", ""))) {
+                        DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))).equals(mSharedPreferences.getString("passw" + userQuota, ""))) {
                     if (checkPassportBlock().equals("0")) {
                         startActivity(new Intent(this, PassportBlockActivity.class));
                     } else {
@@ -211,11 +212,8 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                  @Override
                                  public void onResponse(final Call call, final Response response) throws IOException {
                                      final String responseJson = response.body().string();
-
                                      final AuthResponseModel authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
-
                                      try {
-
                                          if (authResponseModel.getResult() == 0) {
                                              runOnUiThread(new Runnable() {
 
@@ -234,11 +232,10 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                          Toast.makeText(getBaseContext(), "Неполадки на сервере, попробуйте позже", Toast.LENGTH_SHORT).show();
                                      }
 
-//                                     final String oldLogin = mSharedPreferences.getString("login" + userQuota, "");
+
                                      final String newLogin = mLoginEditText.getText().toString();
                                      if (userQuota < 5) {
                                          if (!UserExist(newLogin)) {
-                                             Log.i(TAG, "onResponse: quota");
                                              userQuota++;
 
 
@@ -358,6 +355,8 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                              @Override
                              public void onResponse(final Call call, final Response response) throws IOException {
                                  final String responseJson = response.body().string();
+
+                                 Log.i(TAG, "config: " + responseJson);
                                  final GsonBuilder gsonBuilder = new GsonBuilder();
                                  final ConfigResponseModel configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
                                  Utils.saveConfig(AuthActivity.this, configResponseModel);
@@ -462,10 +461,10 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                         quizzesNotSend.setText("Неотправленные анкеты: 0");
                         audioNotSend.setText("Неотправленные аудио: 0");
                         if (!mSharedPreferences.getString("QuizzesRequest_" + mSharedPreferences.getInt("CurrentUserId",0), "").equals("")) {
-                            quizzesNotSend.setText("Неотправленные анкеты: " + mSharedPreferences.getString("QuizzesRequest", "").split(";").length);
+                            quizzesNotSend.setText("Неотправленные анкеты: " + mSharedPreferences.getString("QuizzesRequest_" + mSharedPreferences.getInt("CurrentUserId",0), "").split(";").length);
                         }
                         if (!mSharedPreferences.getString("Quizzes_audio_" + mSharedPreferences.getInt("CurrentUserId",0), "").equals("")) {
-                            audioNotSend.setText("Неотправленные аудио: " + mSharedPreferences.getString("Quizzes_audio", "").split(";").length);
+                            audioNotSend.setText("Неотправленные аудио: " + mSharedPreferences.getString("Quizzes_audio_" + mSharedPreferences.getInt("CurrentUserId",0), "").split(";").length);
                         }
 
                         final EditText deleteDataPassword = view.findViewById(R.id.delete_data_password);
@@ -572,6 +571,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         final SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putInt("CurrentUserId", currentId);
         editor.remove("Sended_quizzes_" + currentId);
+        editor.remove("Sended_audios_" + currentId);
         editor.apply();
        this.runOnUiThread(new Runnable() {
            @Override

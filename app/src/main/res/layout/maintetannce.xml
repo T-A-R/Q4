@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="60dp"
-            android:text="Колличество пользователей на данном устройстве: "
+            android:text="@string/textCountUsers"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="16sp"/>
         <TextView
@@ -38,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Колличество не отправленных анкет: "
+            android:text="@string/textNotSendForm"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="16sp"/>
         <TextView
@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Колличество не отправленных аудио файлов: "
+            android:text="@string/textNotSendAudio"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="16sp"/>
 

@@ -798,6 +798,7 @@ drawable abc_vector_test
 drawable avd_hide_password
 drawable avd_show_password
 drawable border_bottom
+drawable button_selector
 drawable design_bottom_navigation_item_background
 drawable design_fab_background
 drawable design_ic_visibility
@@ -1277,6 +1278,7 @@ string separator_path
 string sql_file_name
 string status_bar_notification_info_overflow
 string synhronization
+string textCountUsers
 string textNotSendAudio
 string textNotSendForm
 string textSendAudio

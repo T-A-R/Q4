@@ -27,6 +27,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     SharedPreferences mSharedPreferences, setting;
     SeekBar seekBar;
     Button save_button, setting_delete_user;
+    int currentUser;
 
     public void onBackClick(final View view) {
         onBackPressed();
@@ -69,14 +70,24 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_settings);
 
         mSharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
-        setting = getSharedPreferences("setting_" + mSharedPreferences.getInt("CurrentUserId", 0), MODE_PRIVATE);
+        currentUser = mSharedPreferences.getInt("CurrentUserId", 0);
+        setting = getSharedPreferences("setting_" + currentUser, MODE_PRIVATE);
+
+
         save_button = findViewById(R.id.save_button);
         setting_delete_user = findViewById(R.id.setting_delete_user);
 
         save_button.setOnClickListener(this);
         setting_delete_user.setOnClickListener(this);
 
-        initPhoneSpinner();
+        String [] Audio = mSharedPreferences.getString("Quizzes_audio_" + currentUser,"0").split(";");
+        String [] Quizzes = mSharedPreferences.getString("QuizzesRequest_" + currentUser,"0").split(";");
+
+        if (Quizzes.length != 0 && Audio.length != 0) {
+            setting_delete_user.setEnabled(false);
+        }
+
+            initPhoneSpinner();
         textSizeQuestion();
         intervalBetweenAnswer();
     }
@@ -201,8 +212,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             case R.id.save_button:
                 finish();
                 break;
-            case R.id.setting_delete_user:
-                break;
+            case R.id.setting_delete_user: {
+                Log.i("click", "onClick: ");
+                 break;
+            }
         }
     }
 }

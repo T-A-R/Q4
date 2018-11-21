@@ -133,7 +133,9 @@
             android:layout_height="wrap_content"
             android:onClick="onExit"
             android:text="Удалить пользователя"
-            android:theme="@style/ThemeOverlay.MyBreakButton"/>
+            android:background="@drawable/button_selector"
+            android:theme="@style/ThemeOverlay.MyBreakButton"
+            />
 
         <Button
             android:id="@+id/save_button"

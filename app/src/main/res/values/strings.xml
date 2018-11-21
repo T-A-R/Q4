@@ -10,6 +10,7 @@
     <string name="modulus">0xp1ux1gDERsUyGUpl+UZB/MK2TgZCDENQaM2cDsqiluTnW9jtTScLTrgyBhsCNVjDB7ZnJnWpMMdfFeJkxWSFEjFoKlJAqzs9VmHheLql+hUZavxY3q2x9whXc/IpXIvGXlWYzaLAuHEwbpSY8C0b93elkw1zN4GI3h19Yj+1WVgfPvpmweADocllZEIi26oBHNlcDlBGM/PE+YgownWbBCtr8kzaiZz9TUHjnbNEr8BkK/dKkv9BICBTF98A6c7gf/kiI0mqLAm5l3Eq8PL26kmjju5Bsa5ja4WywTT7CgFHBzlU/OzbHsiQYSKPVrFw7YyXfyZHy4qvtDXA7afQ==</string>
     <string name="textUser">Количество пользователей на данном устройстве: </string>
     <string name="textSendFormWithCurrentDevice">Отправлено анкет в рамках проекта с данного устройства:</string>
+    <string name="textCountUsers">Колличество пользователей на данном устройстве: </string>
     <string name="textNotSendForm">Колличество неотправленных анкет: </string>
     <string name="textNotSendAudio">Количество неотправленных аудио файлов: </string>
     <string name="textSendForm">Отправлено анкет в данном сеансе: </string>

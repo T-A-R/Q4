@@ -2,11 +2,15 @@ package com.divofmod.quizer;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,7 +30,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     SharedPreferences mSharedPreferences, setting;
     SeekBar seekBar;
-    Button save_button, setting_delete_user;
+    Button setting_reset, setting_delete_user;
     int currentUser;
 
     public void onBackClick(final View view) {
@@ -74,22 +78,48 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         setting = getSharedPreferences("setting_" + currentUser, MODE_PRIVATE);
 
 
-        save_button = findViewById(R.id.save_button);
+        setting_reset = findViewById(R.id.setting_reset);
         setting_delete_user = findViewById(R.id.setting_delete_user);
 
-        save_button.setOnClickListener(this);
+        setting_reset.setOnClickListener(this);
         setting_delete_user.setOnClickListener(this);
 
-        String [] Audio = mSharedPreferences.getString("Quizzes_audio_" + currentUser,"0").split(";");
-        String [] Quizzes = mSharedPreferences.getString("QuizzesRequest_" + currentUser,"0").split(";");
+        String Audio = mSharedPreferences.getString("Quizzes_audio_" + currentUser,"0");
+        String Quizzes = mSharedPreferences.getString("QuizzesRequest_" + currentUser,"0");
 
-        if (Quizzes.length != 0 && Audio.length != 0) {
+        if (!Quizzes.equals("0") && !Audio.equals("0")) {
             setting_delete_user.setEnabled(false);
+            Log.i("log", "lock ");
+            setting_delete_user.getContext().setTheme(R.style.ThemeOverlay_MyDarkButton);
+        }
+        else
+        {
+            Log.i("log", "unlock ");
         }
 
             initPhoneSpinner();
         textSizeQuestion();
         intervalBetweenAnswer();
+        initDrawer();
+    }
+
+    private void initDrawer() {
+        final DrawerLayout drawer = findViewById(R.id.drawer);
+        NavigationView navigation = findViewById(R.id.navigation);
+        Button buttonDrawer = findViewById(R.id.openDrawer_toolbar);
+        buttonDrawer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawer.openDrawer(Gravity.END);
+            }
+        });
+
+        View view = navigation.getHeaderView(0);
+        Button syns = view.findViewById(R.id.settings);
+        syns.setEnabled(false);
+        syns.setBackground(getResources().getDrawable(R.drawable.button_selector,getTheme()));
+        view.findViewById(R.id.sync_button).setOnClickListener(clickHeader);
+        view.findViewById(R.id.change_users).setOnClickListener(clickHeader);
     }
 
     private void intervalBetweenAnswer() {
@@ -209,7 +239,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.save_button:
+            case R.id.setting_reset:
                 finish();
                 break;
             case R.id.setting_delete_user: {
@@ -218,4 +248,21 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             }
         }
     }
+
+    View.OnClickListener clickHeader = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId())
+            {
+                case R.id.sync_button:
+                    startActivity(new Intent(SettingsActivity.this, SendQuizzesActivity.class));
+                    finish();
+                    break;
+                case R.id.change_users:
+                    startActivity(new Intent(SettingsActivity.this, AuthActivity.class));
+                    finish();
+                    break;
+            }
+        }
+    };
 }

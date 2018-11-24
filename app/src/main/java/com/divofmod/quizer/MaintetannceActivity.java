@@ -39,7 +39,7 @@ public class MaintetannceActivity extends AppCompatActivity implements View.OnCl
             notSendForm.setText(getResources().getString(R.string.textNotSendForm ) + " " + String.valueOf(countQuiz));
         }
 
-        int countAudio = Count("All_sended_audios_");
+        int countAudio = Count("Quizzes_audio_");
         notSendAudio.setText(getResources().getString(R.string.textSendAudioWithCurrentDevice) + " " + "0");
         if (countAudio != 0)
         {
@@ -58,6 +58,8 @@ public class MaintetannceActivity extends AppCompatActivity implements View.OnCl
         if (notSended() == true)
         deleteUser.setEnabled(false);
 
+
+
     }
 
     private int Count(String field)
@@ -66,7 +68,11 @@ public class MaintetannceActivity extends AppCompatActivity implements View.OnCl
         int count = 0;
         while (i < mSharedPreferences.getInt("lastUserId",0))
         {
-            count = count + Integer.parseInt(mSharedPreferences.getString(field + i,"0"));
+            if (!mSharedPreferences.getString(field + i, "0").equals("0"))
+            {
+            int audiosOrquizzers = mSharedPreferences.getString(field + i, "0").split(";").length;
+            count = count + audiosOrquizzers;
+            }
             i++;
         }
 
@@ -80,7 +86,10 @@ public class MaintetannceActivity extends AppCompatActivity implements View.OnCl
         try {
             while (i < mSharedPreferences.getInt("lastUserId", 0)) {
 
-                if (Integer.parseInt(mSharedPreferences.getString("Quizzes_audio_" + i, "0")) != 0 && Integer.parseInt(mSharedPreferences.getString("Quizzes_audio_" + i, "0")) != 0) {
+
+                int audio = mSharedPreferences.getString("Quizzes_audio_" + i, "0").split(";").length;
+                int quizzes = mSharedPreferences.getString("QuizzesRequest_" + i, "0").split(";").length;
+                if (audio != 0 || quizzes != 0) {
                     Log.i(TAG, "notSended: ");
                     return true;
                 }
@@ -102,4 +111,5 @@ public class MaintetannceActivity extends AppCompatActivity implements View.OnCl
 
         }
     }
+
 }

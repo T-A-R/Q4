@@ -19,7 +19,7 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <style name="ThemeOverlay.MyBreakButton" parent="ThemeOverlay.MyDarkButton">
+    <style name="ThemeOverlay.MyBreakButton" parent="ThemeOverlay.AppCompat.Dark">
         <item name="colorButtonNormal">@color/colorBreak</item>
         <item name="android:layout_marginRight">4dp</item>
         <item name="android:layout_marginLeft">4dp</item>

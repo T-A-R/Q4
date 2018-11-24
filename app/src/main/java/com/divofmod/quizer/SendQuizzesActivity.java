@@ -1,16 +1,22 @@
 package com.divofmod.quizer;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -117,6 +123,29 @@ public static final String TAG = "SendQuizzesActivity";
         findViewById(R.id.send_audio).setOnClickListener(this);
         findViewById(R.id.send_quiz).setOnClickListener(this);
         findViewById(R.id.sms_button).setOnClickListener(this);
+
+        initDrawer();
+
+    }
+
+    @SuppressLint("NewApi")
+    private void initDrawer() {
+        final DrawerLayout drawer = findViewById(R.id.drawer);
+        NavigationView navigation = findViewById(R.id.navigation);
+        Button buttonDrawer = findViewById(R.id.openDrawer_toolbar);
+        buttonDrawer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawer.openDrawer(Gravity.END);
+            }
+        });
+
+        View view = navigation.getHeaderView(0);
+        Button syns = view.findViewById(R.id.sync_button);
+        syns.setEnabled(false);
+        syns.setBackground(getResources().getDrawable(R.drawable.button_selector,getTheme()));
+        view.findViewById(R.id.settings).setOnClickListener(clickHeader);
+        view.findViewById(R.id.change_users).setOnClickListener(clickHeader);
     }
 
     @Override
@@ -256,13 +285,13 @@ public static final String TAG = "SendQuizzesActivity";
                     if (!mSharedPreferences.getString("QuizzesRequest_" + currentUser, "").equals("")) {
                         syncDialog.show();
                         mTables = mSharedPreferences.getString("QuizzesRequest_" + currentUser, "").split(";");
-
+                        Log.i(TAG, "run: 1111111111111111111");
                         System.out.println(mTables[1]);
                         Log.i(TAG, "QuizzesRequest_" + currentUser + ": " + mTables[0]);
                         mQuestion = DBReader.read(mSQLiteDatabase,
                                 "answers_" + mTables[0],
                                 new String[]{"answer_id", "duration_time_question", "text_open_answer"});
-
+                        
                         mQuestionSelective = DBReader.read(mSQLiteDatabase,
                                 "answers_selective_" + mTables[0],
                                 new String[]{"answer_id", "duration_time_question"});
@@ -271,6 +300,14 @@ public static final String TAG = "SendQuizzesActivity";
                                 "common_" + mTables[0],
                                 new String[]{"project_id", "questionnaire_id", "user_project_id","token", "date_interview", "gps", "duration_time_questionnaire", "selected_questions", "login"});
 
+                        for (int i =0; i < mCommon.size();i++)
+                        {
+                            Log.i(TAG, "run i: " + mCommon.get(i));
+                            for (int j = 0; j < mCommon.get(i).length; j++)
+                            {
+                                Log.i(TAG, "run j: " + mCommon.get(i)[j]);
+                            }
+                        }
                         if (mCommon == null || mCommon.isEmpty()) {
                             syncDialog.dismiss();
                             return;
@@ -284,8 +321,8 @@ public static final String TAG = "SendQuizzesActivity";
                         mDictionaryForRequest = new Hashtable();
                         mDictionaryForRequest.put(Constants.Shared.LOGIN_ADMIN, mSharedPreferences.getString("login_admin", ""));
                         mDictionaryForRequest.put("login", mCommon.get(0)[8]);
-                        mDictionaryForRequest.put("sess_login", mSharedPreferences.getString("login", ""));
-                        mDictionaryForRequest.put("sess_passw", mSharedPreferences.getString("passw", ""));
+                        mDictionaryForRequest.put("sess_login", mSharedPreferences.getString("login" + currentUser, ""));
+                        mDictionaryForRequest.put("sess_passw", mSharedPreferences.getString("passw" + currentUser, ""));
                         mDictionaryForRequest.put("project_id", mCommon.get(0)[0]);
                         mDictionaryForRequest.put("questionnaire_id", mCommon.get(0)[1]);
                         mDictionaryForRequest.put("user_project_id", mCommon.get(0)[2]);
@@ -515,4 +552,20 @@ public static final String TAG = "SendQuizzesActivity";
             mSQLiteDatabase.close();
         }
     }
+    View.OnClickListener clickHeader = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId())
+            {
+                case R.id.settings:
+                    startActivity(new Intent(SendQuizzesActivity.this, SettingsActivity.class));
+                    finish();
+                    break;
+                case R.id.change_users:
+                    startActivity(new Intent(SendQuizzesActivity.this, AuthActivity.class));
+                    finish();
+                    break;
+            }
+        }
+    };
 }

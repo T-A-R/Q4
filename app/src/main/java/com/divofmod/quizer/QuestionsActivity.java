@@ -15,8 +15,10 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -32,6 +34,7 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -132,6 +135,8 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
     ObservableScrollView scrollView1;
     ObservableScrollView scrollView2;
+    private DrawerLayout drawer;
+
     static boolean interceptScroll = true;
     int currentUser;
 
@@ -318,6 +323,25 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                 }
             });
         }
+
+        initDrawer();
+    }
+
+    private void initDrawer() {
+        drawer = findViewById(R.id.drawer);
+        NavigationView navigation = findViewById(R.id.navigation);
+        Button buttonDrawer = findViewById(R.id.openDrawer_toolbar);
+        buttonDrawer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawer.openDrawer(Gravity.END);
+            }
+        });
+
+        View view = navigation.getHeaderView(0);
+        view.findViewById(R.id.sync_button).setOnClickListener(clickHeader);
+        view.findViewById(R.id.settings).setOnClickListener(clickHeader);
+        view.findViewById(R.id.change_users).setOnClickListener(clickHeader);
     }
 
 
@@ -1450,15 +1474,17 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                 row = mInflater.inflate(R.layout.answer_item, parent, false);
                 holder = new ViewHolder();
                 holder.linpadding = row.findViewById(R.id.linpadding);
-                holder.linpadding.setPadding(0,setting.getInt("interval_between_answer",10),0,0);
+                holder.linpadding.setPadding(0,setting.getInt("interval_between_answer",10),0,setting.getInt("interval_between_answer",10));
                 holder.answerTitle = (TextView) row.findViewById(R.id.answer_title);
                 holder.answerTitle.setTextSize(setting.getInt("text_size",16));
                 holder.answerRadio = (RadioButton) row.findViewById(R.id.answer_radio);
+                holder.answerRadio.setPadding(0,0,10,0);
                 holder.answerRadio.setScaleX(setting.getFloat("scale",1));
                 holder.answerRadio.setScaleY(setting.getFloat("scale",1));
                 holder.answerCheck = (CheckBox) row.findViewById(R.id.answer_check);
                 holder.answerCheck.setScaleX(setting.getFloat("scale",1));
                 holder.answerCheck.setScaleY(setting.getFloat("scale",1));
+                holder.answerCheck.setPadding(0,0,10,0);
                 holder.answerPicture = (ImageView) row.findViewById(R.id.answer_picture);
                 holder.answerPicture.setScaleX(setting.getFloat("scale",1));
                 holder.answerPicture.setScaleY(setting.getFloat("scale",1));
@@ -1964,4 +1990,42 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         super.onPause();
         locationManager.removeUpdates(this);
     }
+
+    View.OnClickListener clickHeader = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId())
+            {
+                case R.id.sync_button:
+                    startActivity(new Intent(QuestionsActivity.this, SendQuizzesActivity.class));
+                    finish();
+                    break;
+                case R.id.settings:
+                    startActivity(new Intent(QuestionsActivity.this, SettingsActivity.class));
+                    finish();
+                    break;
+                case R.id.change_users:
+                    drawer.closeDrawer(Gravity.END);
+                    new AlertDialog.Builder(QuestionsActivity.this)
+                            .setIcon(R.drawable.ico)
+                            .setTitle("Выйти из опроса?")
+                            .setMessage("Вы действительно хотите выйти? Данные не будут сохранены!")
+                            .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    startActivity(new Intent(QuestionsActivity.this, AuthActivity.class));
+                                    finish();
+                                }
+                            })
+                            .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.cancel();
+                                }
+                            })
+                            .create().show();
+                    break;
+            }
+        }
+    };
 }

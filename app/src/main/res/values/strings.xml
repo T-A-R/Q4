@@ -20,6 +20,8 @@
     <string name="text_interval_between_answers">Интервал между ответами: </string>
     <string name="synhronization">Синхронизация</string>
     <string name="text_alert">Достигнуто максимальное количество пользователей на устройстве! \nОбратитесь к менеджеру!</string>
+    <string name="textDrawerOpen">Открыто</string>
+    <string name="textDrawerClose">Закрыто</string>
     <string-array name="text_size">
         <item>Очень маленький</item>
         <item>Маленький</item>

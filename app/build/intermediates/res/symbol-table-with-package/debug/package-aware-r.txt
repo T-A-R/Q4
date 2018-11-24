@@ -911,6 +911,7 @@ id design_navigation_view
 id dimensions
 id direct
 id disableHome
+id drawer
 id edit_query
 id empty_tv
 id end
@@ -958,12 +959,14 @@ id login_password_fields
 id masked
 id matchable_area
 id media_actions
+id menu_setting
 id message
 id middle
 id mini
 id moreUsers
 id multiply
 id nameUser
+id navigation
 id navigation_header_container
 id never
 id none
@@ -975,6 +978,7 @@ id not_sended_value
 id notification_background
 id notification_main_column
 id notification_main_column_container
+id openDrawer_toolbar
 id packed
 id parallax
 id parent
@@ -1055,6 +1059,7 @@ id send_button
 id send_quiz
 id sending_count
 id setting_delete_user
+id setting_reset
 id settings
 id shortcut
 id showCustom
@@ -1193,7 +1198,9 @@ layout design_navigation_item_subheader
 layout design_navigation_menu
 layout design_navigation_menu_item
 layout design_text_input_password_icon
+layout drawer_button
 layout fragment_sms
+layout header_layout
 layout maintetannce
 layout notification_action
 layout notification_action_tombstone
@@ -1226,7 +1233,9 @@ layout support_simple_spinner_dropdown_item
 layout sync_dialog
 layout text_size_maket
 layout tooltip
+menu navig_menu
 mipmap ic_launcher
+mipmap menu_vertical
 string DD
 string abc_action_bar_home_description
 string abc_action_bar_home_description_format
@@ -1279,6 +1288,8 @@ string sql_file_name
 string status_bar_notification_info_overflow
 string synhronization
 string textCountUsers
+string textDrawerClose
+string textDrawerOpen
 string textNotSendAudio
 string textNotSendForm
 string textSendAudio

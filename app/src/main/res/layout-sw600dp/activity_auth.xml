@@ -54,7 +54,7 @@
             android:layout_marginHorizontal="32dp"
             android:orientation="vertical">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -63,18 +63,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Логин"
-                    android:layout_weight=".2"
                     android:textSize="@dimen/textsize_low_600dp"
                     android:inputType="textEmailAddress"/>
                 <Spinner
                     android:id="@+id/switchUser"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".8"
+                    android:layout_alignParentRight="true"
                     android:layout_gravity="center">
 
                 </Spinner>
-            </LinearLayout>
+            </RelativeLayout>
 
             <EditText
                 android:id="@+id/field_password"

@@ -76,7 +76,8 @@
             android:layout_marginTop="10dp"
             android:layout_marginHorizontal="32dp"
             android:text="Удалить пользователей"
-            android:theme="@style/ThemeOverlay.MyBreakButton"/>
+            android:textColor="@android:color/white"
+            android:background="@drawable/button_selector" />
     </LinearLayout>
 
 

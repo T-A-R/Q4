@@ -10,12 +10,8 @@ public abstract class TokenQuiz {
    public static String TokenQuiz(String  id)
    {
 
-      SimpleDateFormat patt =  new SimpleDateFormat("yyyyMMDD");
-       patt.format(new Date());
-
-       String d  = patt + rand();
-       String token = d;
-
+      SimpleDateFormat patt =  new SimpleDateFormat("yyyyMMddHHmmss");
+      String token  = patt.format(new Date()) + id + rand();
        return token;
    }
 

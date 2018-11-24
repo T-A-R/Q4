@@ -10,13 +10,22 @@ import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,7 +55,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 
-public class ProjectActivity extends AppCompatActivity implements View.OnClickListener {
+public class ProjectActivity extends AppCompatActivity implements View.OnClickListener{
 
     public static final String TAG = "ProjectActivity";
     final int PERMISSION_REQUEST_CODE = 0;
@@ -86,9 +95,21 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
         final TextView projectAgreementTextView = (TextView) findViewById(R.id.project_agreement);
 
         findViewById(R.id.start_button).setOnClickListener(this);
-        findViewById(R.id.sync_button).setOnClickListener(this);
-        findViewById(R.id.settings).setOnClickListener(this);
-        findViewById(R.id.change_users).setOnClickListener(this);
+
+
+        final DrawerLayout drawer = findViewById(R.id.drawer);
+        NavigationView navigation = findViewById(R.id.navigation);
+        Button buttonDrawer = findViewById(R.id.openDrawer_toolbar);
+        buttonDrawer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawer.openDrawer(Gravity.END);
+            }
+        });
+        View view = navigation.getHeaderView(0);
+        view.findViewById(R.id.sync_button).setOnClickListener(this);
+        view.findViewById(R.id.settings).setOnClickListener(this);
+        view.findViewById(R.id.change_users).setOnClickListener(this);
 
         mSharedPreferences = getSharedPreferences("data",
                 Context.MODE_PRIVATE);
@@ -109,6 +130,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
             Toast.makeText(this, "Соглашение отсутствует", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     private void openSQLiteDatabase() {
         if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
@@ -502,8 +524,8 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
                                                  final SharedPreferences.Editor editor = mSharedPreferences.edit()
                                                          .putString("QuizzesRequest_" + mSharedPreferences.getInt("CurrentUserId",0), mSharedPreferences.getString("QuizzesRequest_" + mSharedPreferences.getInt("CurrentUserId",0), "").replace(mTables[0] + ";", "")) //temp-оставшиеся анкеты.
-                                                         .putString("Sended_quizzes_" + currentUser,String.valueOf(Integer.parseInt(mSharedPreferences.getString("Sended_quizzes_" + currentUser,"0")) + 1))
-                                                         .putString("All_sended_quizzes_" + currentUser,String.valueOf(Integer.parseInt(mSharedPreferences.getString("All_sended_quizzes_" + currentUser,"0")) + 1));
+                                                         .putInt("Sended_quizzes_" + currentUser,Integer.parseInt(mSharedPreferences.getString("Sended_quizzes_" + currentUser,"0") + 1))
+                                                         .putInt("All_sended_quizzes_" + currentUser,Integer.parseInt(mSharedPreferences.getString("All_sended_quizzes_" + currentUser,"0")) + 1);
 
                                                  editor.apply();
 
@@ -528,5 +550,4 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
     }
-
 }

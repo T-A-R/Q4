@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
 import android.icu.util.Calendar;
 import android.os.Bundle;
@@ -13,7 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -23,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +55,7 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.Inflater;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -102,16 +107,12 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         mSignInButton = findViewById(R.id.sign_in_button);
 
         userLogins();
-
-
+//arr
         switchUser = findViewById(R.id.switchUser);
         adap = new ArrayAdapter<>(this,R.layout.spinner_maket,R.id.Tspiner_maket,arr);
         switchUser.setAdapter(adap);
         switchUser.setOnItemSelectedListener(spinnerClick);
-
-
         mSignInButton.setOnClickListener(this);
-        mLoginEditText.setText(mSharedPreferences.getString("login" + userQuota, ""));
 
 
         mVer.setText(BuildConfig.VERSION_NAME);
@@ -128,7 +129,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         if (userQuota >= 2)
         {
             ((RelativeLayout)findViewById(R.id.moreUsers)).setVisibility(View.VISIBLE);
-            ((TextView) findViewById(R.id.textUsers)).setText(String.valueOf(switchUser.getChildCount()) + "/5");
+            ((TextView) findViewById(R.id.textUsers)).setText(getResources().getString(R.string.textUser) + " " +String.valueOf(switchUser.getCount()) + "/5");
         }
     }
 
@@ -187,7 +188,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                     mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, ""),
                     DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))),
                     mLoginEditText.getText().toString());
-
+           // Log.i(TAG, "url: " + mSharedPreferences.getString("url", "") +" Login_admin " + mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, "") + " Digest: " + DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3)) + " login " +  mLoginEditText.getText().toString());
             mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(authRequestModel));
 
             final Call.Factory client = new OkHttpClient();
@@ -232,16 +233,15 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                          Toast.makeText(getBaseContext(), "Неполадки на сервере, попробуйте позже", Toast.LENGTH_SHORT).show();
                                      }
 
-
+                                     Log.i(TAG, "onQuota " + userQuota);
                                      final String newLogin = mLoginEditText.getText().toString();
-                                     if (userQuota < 5) {
-                                         if (!UserExist(newLogin)) {
+                                     if (!UserExist(newLogin)) {
+                                         if (userQuota < 5) {
+
                                              userQuota++;
 
 
-                                             final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                                                     .putInt(Constants.Shared.NUMBER_POSITION, 0);
-                                             editor.apply();
+
 
                                              try {
                                                  final File file = new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file_" + userQuota, "").substring(0, mSharedPreferences.getString("name_file_" + userQuota, "").length() - 4));
@@ -256,45 +256,49 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                              } catch (final Exception pE) {
 
                                              }
+
+
+                                             final SharedPreferences.Editor editor = mSharedPreferences.edit()
+                                                     .putInt(Constants.Shared.NUMBER_POSITION, 0)
+                                                     .putString("login" + userQuota, newLogin)
+                                                     .putString("passw" + userQuota, DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))))
+                                                     .putInt("lastUserId", userQuota)
+                                                     .putString("user_project_id" + userQuota, authResponseModel.getUser_project_id());
+                                             editor.apply();
+                                             downloadConfig(authResponseModel.getConfig_id());
                                          }
 
+                                         else
+                                         {
 
-                                         final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                                                 .putString("login" + userQuota, newLogin)
-                                                 .putString("passw" + userQuota, DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))))
-                                                 .putInt("lastUserId",userQuota)
-                                                 .putString("user_project_id" + userQuota, authResponseModel.getUser_project_id());
-                                         editor.apply();
 
-                                         downloadConfig(authResponseModel.getConfig_id());
+                                             AuthActivity.this.runOnUiThread(new Runnable() {
+                                                 @Override
+                                                 public void run() {
+
+                                                     new AlertDialog.Builder(AuthActivity.this)
+                                                             .setIcon(android.R.drawable.ic_dialog_alert)
+                                                             .setTitle("Внимание!")
+                                                             .setMessage(R.string.text_alert)
+                                                             .setNeutralButton("Понятно", new DialogInterface.OnClickListener() {
+                                                                 @Override
+                                                                 public void onClick(DialogInterface dialogInterface, int i) {
+                                                                     dialogInterface.cancel();
+                                                                 }
+                                                             })
+                                                             .create()
+                                                             .show();
+
+                                                     mProgressBar.setVisibility(View.INVISIBLE);
+                                                     mLoginPasswordFields.setVisibility(View.VISIBLE);
+                                                     mSignInButton.setVisibility(View.VISIBLE);
+                                                 }
+                                             });
+                                         }
                                      }
                                      else
-                                     {
+                                         downloadConfig(authResponseModel.getConfig_id());
 
-
-                                         AuthActivity.this.runOnUiThread(new Runnable() {
-                                             @Override
-                                             public void run() {
-
-                                                 new AlertDialog.Builder(AuthActivity.this)
-                                                         .setIcon(android.R.drawable.ic_dialog_alert)
-                                                         .setTitle("Внимание!")
-                                                         .setMessage(R.string.text_alert)
-                                                         .setNeutralButton("Понятно", new DialogInterface.OnClickListener() {
-                                                             @Override
-                                                             public void onClick(DialogInterface dialogInterface, int i) {
-                                                                 dialogInterface.cancel();
-                                                             }
-                                                         })
-                                                         .create()
-                                                         .show();
-
-                                                 mProgressBar.setVisibility(View.INVISIBLE);
-                                                 mLoginPasswordFields.setVisibility(View.VISIBLE);
-                                                 mSignInButton.setVisibility(View.VISIBLE);
-                                             }
-                                         });
-                                     }
                                      // TODO: 8/7/18 WTF authArray[0]?
 //                                     download(authArray[0]);
                                  }
@@ -570,8 +574,8 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         int currentId = SearchCurrentUser();
         final SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putInt("CurrentUserId", currentId);
-        editor.remove("Sended_quizzes_" + currentId);
-        editor.remove("Sended_audios_" + currentId);
+        editor.putString("Sended_quizzes_" + currentId,"0");
+        editor.putString("Sended_audios_" + currentId,"0");
         editor.apply();
        this.runOnUiThread(new Runnable() {
            @Override
@@ -775,7 +779,9 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     AdapterView.OnItemSelectedListener spinnerClick = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-            String s = adapterView.getItemAtPosition(i).toString();
+
+            view.setVisibility(View.INVISIBLE);
+            String s = adapterView.getItemAtPosition(mSharedPreferences.getInt("CurrentUserId", i) - 1).toString();
             mLoginEditText.setText(s);
         }
 

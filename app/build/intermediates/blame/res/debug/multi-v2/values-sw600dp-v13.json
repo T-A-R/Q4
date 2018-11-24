@@ -21,6 +21,23 @@
                     }
                 },
                 {
+                    "source": "/home/Funny/work/QUIZER_Android/app/src/main/res/values-sw600dp/strings.xml",
+                    "from": {
+                        "startLines": "3,2",
+                        "startColumns": "4,4",
+                        "startOffsets": "106,55",
+                        "endColumns": "51,50",
+                        "endOffsets": "153,101"
+                    },
+                    "to": {
+                        "startLines": "30,31",
+                        "startColumns": "4,4",
+                        "startOffsets": "1866,1918",
+                        "endColumns": "51,50",
+                        "endOffsets": "1913,1964"
+                    }
+                },
+                {
                     "source": "/home/Funny/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/f837df24f100cf748e1061b52d6b1b9b/res/values-sw600dp-v13/values-sw600dp-v13.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
@@ -41,12 +58,12 @@
                         "endOffsets": "110,180,251,323,381,439,545,609,672,854"
                     },
                     "to": {
-                        "startLines": "15,16,17,18,19,20,21,22,29,30",
+                        "startLines": "15,16,17,18,19,20,21,22,29,32",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "919,979,1049,1120,1192,1250,1308,1414,1803,1866",
-                        "endLines": "15,16,17,18,19,20,21,22,29,33",
+                        "startOffsets": "919,979,1049,1120,1192,1250,1308,1414,1803,1969",
+                        "endLines": "15,16,17,18,19,20,21,22,29,35",
                         "endColumns": "59,69,70,71,57,57,105,63,62,12",
-                        "endOffsets": "974,1044,1115,1187,1245,1303,1409,1473,1861,2043"
+                        "endOffsets": "974,1044,1115,1187,1245,1303,1409,1473,1861,2146"
                     }
                 }
             ]

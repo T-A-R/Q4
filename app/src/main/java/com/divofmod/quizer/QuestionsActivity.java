@@ -329,6 +329,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
     private void initDrawer() {
         drawer = findViewById(R.id.drawer);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         NavigationView navigation = findViewById(R.id.navigation);
         Button buttonDrawer = findViewById(R.id.openDrawer_toolbar);
         buttonDrawer.setOnClickListener(new View.OnClickListener() {
@@ -1473,8 +1474,12 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             if (row == null) {
                 row = mInflater.inflate(R.layout.answer_item, parent, false);
                 holder = new ViewHolder();
-                holder.linpadding = row.findViewById(R.id.linpadding);
-                holder.linpadding.setPadding(0,setting.getInt("interval_between_answer",10),0,setting.getInt("interval_between_answer",10));
+
+
+                final LinearLayout lin = holder.linpadding = row.findViewById(R.id.linpadding);
+                lin.setPadding(0,setting.getInt("interval_between_answer",10),0,setting.getInt("interval_between_answer",10));
+
+
                 holder.answerTitle = (TextView) row.findViewById(R.id.answer_title);
                 holder.answerTitle.setTextSize(setting.getInt("text_size",16));
                 holder.answerRadio = (RadioButton) row.findViewById(R.id.answer_radio);
@@ -2001,8 +2006,8 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                     finish();
                     break;
                 case R.id.settings:
+                    drawer.closeDrawer(Gravity.END);
                     startActivity(new Intent(QuestionsActivity.this, SettingsActivity.class));
-                    finish();
                     break;
                 case R.id.change_users:
                     drawer.closeDrawer(Gravity.END);

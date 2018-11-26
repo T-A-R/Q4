@@ -40,8 +40,8 @@
 
         <Button
             android:id="@+id/openDrawer_toolbar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="end|center_vertical"
             android:background="@mipmap/menu_vertical"/>
 
@@ -51,7 +51,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_marginTop="10dp"
         android:layout_marginHorizontal="@dimen/activity_horizontal_margin">
 <TextView
@@ -75,7 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="bottom"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:layout_below="@id/size_questions"
             android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
            />
@@ -85,6 +85,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:layout_marginHorizontal="@dimen/activity_horizontal_margin">
         <TextView
             android:id="@+id/interval_between_answers"
@@ -92,7 +93,7 @@
             android:layout_height="wrap_content"
             android:text="@string/text_interval_between_answers"
             android:textSize="16sp"
-            android:layout_weight=".4"
+            android:layout_weight=".2"
             />
         <TextView
             android:id="@+id/interval_example"
@@ -100,7 +101,7 @@
             android:layout_height="wrap_content"
             android:text="18"
             android:textSize="16sp"
-            android:layout_weight=".6"/>
+            android:layout_weight=".8"/>
     </LinearLayout>
 
     <SeekBar

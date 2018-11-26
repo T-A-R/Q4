@@ -84,6 +84,7 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
     Timer mTimer;
     TimerTask mTimerTask;
+    DrawerLayout drawer;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -97,7 +98,8 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.start_button).setOnClickListener(this);
 
 
-        final DrawerLayout drawer = findViewById(R.id.drawer);
+        drawer = findViewById(R.id.drawer);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         NavigationView navigation = findViewById(R.id.navigation);
         Button buttonDrawer = findViewById(R.id.openDrawer_toolbar);
         buttonDrawer.setOnClickListener(new View.OnClickListener() {
@@ -255,9 +257,11 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
             case R.id.sync_button:
                 startActivity(new Intent(this, SendQuizzesActivity.class));
+                finish();
                 break;
             case R.id.settings:
                 startActivity(new Intent(this, SettingsActivity.class));
+                finish();
                 break;
             case R.id.change_users:
                 createDialog("Выход из приложения", "Выйти из приложения?", true, QUITE_DIALOG);
@@ -524,8 +528,8 @@ public class ProjectActivity extends AppCompatActivity implements View.OnClickLi
 
                                                  final SharedPreferences.Editor editor = mSharedPreferences.edit()
                                                          .putString("QuizzesRequest_" + mSharedPreferences.getInt("CurrentUserId",0), mSharedPreferences.getString("QuizzesRequest_" + mSharedPreferences.getInt("CurrentUserId",0), "").replace(mTables[0] + ";", "")) //temp-оставшиеся анкеты.
-                                                         .putInt("Sended_quizzes_" + currentUser,Integer.parseInt(mSharedPreferences.getString("Sended_quizzes_" + currentUser,"0") + 1))
-                                                         .putInt("All_sended_quizzes_" + currentUser,Integer.parseInt(mSharedPreferences.getString("All_sended_quizzes_" + currentUser,"0")) + 1);
+                                                         .putString("Sended_quizzes_" + currentUser,String.valueOf(Integer.parseInt(mSharedPreferences.getString("Sended_quizzes_" + currentUser,"0")) + 1))
+                                                         .putString("All_sended_quizzes_" + currentUser,String.valueOf(Integer.parseInt(mSharedPreferences.getString("All_sended_quizzes_" + currentUser,"0")) + 1));
 
                                                  editor.apply();
 

@@ -4,19 +4,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
-import android.icu.util.Calendar;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,17 +38,11 @@ import org.apache.commons.codec.digest.DigestUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
-import java.util.zip.Inflater;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -84,6 +71,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     private Spinner switchUser;
     private ArrayAdapter<String> adap;
     int userQuota = 0;
+    String [] Quota;
     private String [] arr;
     int i = 5;
 
@@ -93,8 +81,16 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_auth);
 
         mSharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
-        userQuota = mSharedPreferences.getInt("lastUserId",0);
+        Quota = mSharedPreferences.getString("lastUserId","0;").split(";");
+        userQuota = Quota.length;
 
+        int i =0;
+        Log.i(TAG, "onCreate Qouta: " + mSharedPreferences.getString("lastUserId","0;"));
+        while (i<Quota.length)
+        {
+            Log.i(TAG, "Quota: " + i + " " + Quota[i]);
+            i++;
+        }
         mUrl = mSharedPreferences.getString("url", "");
         mLoginAdmin = mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, "");
 
@@ -241,8 +237,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                              userQuota++;
 
 
-
-
                                              try {
                                                  final File file = new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file_" + userQuota, "").substring(0, mSharedPreferences.getString("name_file_" + userQuota, "").length() - 4));
                                                  final SQLiteDatabase mSQLiteDatabase = new DBHelper(AuthActivity.this,
@@ -262,7 +256,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                                      .putInt(Constants.Shared.NUMBER_POSITION, 0)
                                                      .putString("login" + userQuota, newLogin)
                                                      .putString("passw" + userQuota, DigestUtils.md5Hex(DigestUtils.md5Hex(mPasswordEditText.getText().toString()) + DigestUtils.md5Hex(mLoginEditText.getText().toString().substring(1, 3))))
-                                                     .putInt("lastUserId", userQuota)
+                                                     .putString("lastUserId",mSharedPreferences.getString("lastUserId","0;") +  userQuota + ";")
                                                      .putString("user_project_id" + userQuota, authResponseModel.getUser_project_id());
                                              editor.apply();
                                              downloadConfig(authResponseModel.getConfig_id());
@@ -781,7 +775,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
             view.setVisibility(View.INVISIBLE);
-            String s = adapterView.getItemAtPosition(mSharedPreferences.getInt("CurrentUserId", i) - 1).toString();
+            String s = adapterView.getItemAtPosition(i).toString();
             mLoginEditText.setText(s);
         }
 

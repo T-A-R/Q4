@@ -131,6 +131,7 @@ public static final String TAG = "SendQuizzesActivity";
     @SuppressLint("NewApi")
     private void initDrawer() {
         final DrawerLayout drawer = findViewById(R.id.drawer);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         NavigationView navigation = findViewById(R.id.navigation);
         Button buttonDrawer = findViewById(R.id.openDrawer_toolbar);
         buttonDrawer.setOnClickListener(new View.OnClickListener() {
@@ -285,13 +286,14 @@ public static final String TAG = "SendQuizzesActivity";
                     if (!mSharedPreferences.getString("QuizzesRequest_" + currentUser, "").equals("")) {
                         syncDialog.show();
                         mTables = mSharedPreferences.getString("QuizzesRequest_" + currentUser, "").split(";");
-                        Log.i(TAG, "run: 1111111111111111111");
-                        System.out.println(mTables[1]);
+
+                        System.out.println("table: " + mTables[0]);
                         Log.i(TAG, "QuizzesRequest_" + currentUser + ": " + mTables[0]);
                         mQuestion = DBReader.read(mSQLiteDatabase,
                                 "answers_" + mTables[0],
                                 new String[]{"answer_id", "duration_time_question", "text_open_answer"});
-                        
+
+                        Log.i(TAG, "MQUEST: " + mQuestion.get(0)[0]);
                         mQuestionSelective = DBReader.read(mSQLiteDatabase,
                                 "answers_selective_" + mTables[0],
                                 new String[]{"answer_id", "duration_time_question"});
@@ -475,7 +477,7 @@ public static final String TAG = "SendQuizzesActivity";
 
                         mAudio = DBReader.read(mSQLiteDatabase,
                                 "audio_" + mAudioTables[0],
-                                new String[]{"names"});
+                                new String[]{"names_" + currentUser});
 
                         mDictionaryForRequest = new Hashtable();
                         mDictionaryForRequest.put(Constants.Shared.LOGIN_ADMIN, mSharedPreferences.getString("login_admin", ""));
@@ -568,4 +570,10 @@ public static final String TAG = "SendQuizzesActivity";
             }
         }
     };
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(SendQuizzesActivity.this,ProjectActivity.class));
+    }
 }

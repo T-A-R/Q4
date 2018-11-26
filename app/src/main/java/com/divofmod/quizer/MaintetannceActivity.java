@@ -16,6 +16,8 @@ public class MaintetannceActivity extends AppCompatActivity implements View.OnCl
     TextView countUsers,notSendForm,notSendAudio;
     Button sendData, saveData,deleteUser;
     SharedPreferences mSharedPreferences;
+    String [] Users;
+    int CountUsers;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -26,11 +28,19 @@ public class MaintetannceActivity extends AppCompatActivity implements View.OnCl
         countUsers = findViewById(R.id.countUsers);
         notSendForm = findViewById(R.id.notSendForm);
         notSendAudio = findViewById(R.id.notSendAudio);
+        Users = mSharedPreferences.getString("lastUserId","0;").split(";");
+        int i = 0;
+        while (i < Users.length)
+        {
+            Log.i(TAG, "userid: " + Users[i]);
+            i++;
+        }
+        CountUsers = Users.length;
 
         countUsers.setText(getResources().getString(R.string.textCountUsers) + " " + 0);
-        if (mSharedPreferences.getInt("lastUserId",0) != 0)
+        if (CountUsers != 0)
         {
-            countUsers.setText(getResources().getString(R.string.textCountUsers) + " " + mSharedPreferences.getInt("lastUserId",0));
+            countUsers.setText(getResources().getString(R.string.textCountUsers) + " " + String.valueOf(CountUsers-1));
         }
 
         notSendForm.setText(getResources().getString(R.string.textNotSendForm) +  " " + "0");
@@ -56,7 +66,7 @@ public class MaintetannceActivity extends AppCompatActivity implements View.OnCl
 
 
         if (notSended() == true)
-        deleteUser.setEnabled(false);
+            deleteUser.setEnabled(false);
 
 
 
@@ -66,11 +76,13 @@ public class MaintetannceActivity extends AppCompatActivity implements View.OnCl
     {
         int i = 0;
         int count = 0;
-        while (i < mSharedPreferences.getInt("lastUserId",0))
+        while (i < CountUsers)
         {
-            if (!mSharedPreferences.getString(field + i, "0").equals("0"))
+            Log.i("Count I0", field + mSharedPreferences.getString(field + Users[i],"0"));
+            if (!mSharedPreferences.getString(field + Users[i], "0").equals("0"))
             {
-            int audiosOrquizzers = mSharedPreferences.getString(field + i, "0").split(";").length;
+            int audiosOrquizzers = mSharedPreferences.getString(field + Users[i], "0").split(";").length;
+                Log.i(TAG, "Count II: " + String .valueOf(audiosOrquizzers));
             count = count + audiosOrquizzers;
             }
             i++;
@@ -84,13 +96,31 @@ public class MaintetannceActivity extends AppCompatActivity implements View.OnCl
         int i = 0;
 
         try {
-            while (i < mSharedPreferences.getInt("lastUserId", 0)) {
+            while (i <= CountUsers) {
+
+                Log.i(TAG, "Quizze: " + mSharedPreferences.getString("QuizzesRequest_" + Users[i], "0;"));
+                Log.i(TAG, "Audio: " + mSharedPreferences.getString("Quizzes_audio_" + Users[i], "0;"));
+                Integer audio = Integer.parseInt(mSharedPreferences.getString("Quizzes_audio_" + Users[i], "0"));
+                Integer quizzes = Integer.parseInt(mSharedPreferences.getString("QuizzesRequest_" + Users[i], "0"));
+
+                if (!audio.equals(0) || quizzes.equals(0))
+                {
+                    Log.i(TAG, "rrrrrr1: " + String .valueOf(quizzes));
+                    if (!audio.equals(0))
+                    {
+                        audio = mSharedPreferences.getString("Quizzes_audio_" + Users[i], "0").split(";").length;
+                        Log.i(TAG, "rrrrrr:2 " + String .valueOf(quizzes));
+                    }
+                    if (!quizzes.equals(0))
+                    {
+                        quizzes = mSharedPreferences.getString("QuizzesRequest_" + Users[i], "0").split(";").length;
+                        Log.i(TAG, "rrrrrr3: " + String .valueOf(quizzes));
+                    }
+                }
 
 
-                int audio = mSharedPreferences.getString("Quizzes_audio_" + i, "0").split(";").length;
-                int quizzes = mSharedPreferences.getString("QuizzesRequest_" + i, "0").split(";").length;
-                if (audio != 0 || quizzes != 0) {
-                    Log.i(TAG, "notSended: ");
+                if (!audio.equals(0) || !quizzes.equals(0)) {
+                    Log.i(TAG, "true");
                     return true;
                 }
                 i++;
@@ -98,7 +128,6 @@ public class MaintetannceActivity extends AppCompatActivity implements View.OnCl
         }
         catch (Exception ignore)
         {
-            Log.i(TAG, "not: ");
         }
         return false;
     }

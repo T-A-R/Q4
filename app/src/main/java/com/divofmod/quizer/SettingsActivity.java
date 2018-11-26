@@ -1,5 +1,6 @@
 package com.divofmod.quizer;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import com.divofmod.quizer.Constants.Constants;
 import com.divofmod.quizer.Utils.Utils;
 import com.divofmod.quizer.model.Config.Phone;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,8 +105,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         initDrawer();
     }
 
+    @SuppressLint("NewApi")
     private void initDrawer() {
         final DrawerLayout drawer = findViewById(R.id.drawer);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         NavigationView navigation = findViewById(R.id.navigation);
         Button buttonDrawer = findViewById(R.id.openDrawer_toolbar);
         buttonDrawer.setOnClickListener(new View.OnClickListener() {
@@ -243,7 +247,41 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 finish();
                 break;
             case R.id.setting_delete_user: {
-                Log.i("click", "onClick: ");
+                AuthActivity.deleteDirectory(new File(getFilesDir() + "/files/"));
+                AuthActivity.deleteDirectory(new File(getFilesDir() + "/background/"));
+                AuthActivity.deleteDirectory(new File(getFilesDir() + "/answerimages/"));
+                deleteDatabase(mSharedPreferences.getString("name_file_" +  currentUser, ""));
+                final SharedPreferences.Editor editor = mSharedPreferences.edit()
+                        .putString("QuizzesRequest_" + currentUser,"0")
+                        .putString("Sended_quizzes_" + currentUser,"0")
+                        .putString("All_sended_quizzes_" + currentUser,"0")
+                        .putString("Quizzes_audio_" + currentUser,"0")
+                        .putString("Sended_audios_" + currentUser,"0")
+                        .putString("Quizzes_audio_" + currentUser,"0")
+                        .putString("All_sended_audios_" + currentUser,"0");
+                editor.apply();
+
+                String [] st = mSharedPreferences.getString("lastUserId","0;").split(";");
+                int i =0;
+                while (i<st.length)
+                {
+
+                    if (currentUser == i)
+                    {
+                        SharedPreferences.Editor edit = mSharedPreferences.edit();
+                        edit.remove("login " + currentUser);
+                        edit.remove("passw " + currentUser);
+                        edit.remove("user_project_id " + currentUser);
+                        edit.putString("lastUserId",mSharedPreferences.getString("lastUserId","0;").replaceFirst(st[i]+ ";",""));
+                        edit.apply();
+
+                    }
+
+                i++;
+                }
+
+                startActivity(new Intent(SettingsActivity.this,AuthActivity.class));
+                finish();
                  break;
             }
         }

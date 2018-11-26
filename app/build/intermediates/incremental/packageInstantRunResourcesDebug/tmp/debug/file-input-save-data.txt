@@ -1,7 +1,0 @@
-#Internal package file, do not edit.
-#Wed Nov 07 18:23:41 MSK 2018
-0.baseType=DIRECTORY
-0.base=/home/Funny/work/QUIZER_Android/app/build/intermediates/merged_assets/debug/mergeDebugAssets/out
-0.path=crashlytics-build.properties
-0.set=ASSET
-count=1

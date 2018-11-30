@@ -7,7 +7,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
+import com.activeandroid.query.Delete;
+import com.activeandroid.query.Select;
+
+import java.util.List;
+
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.model.database.ActivationModel;
+import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.utils.SPUtils;
@@ -31,7 +38,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public boolean isActivated() {
-        return SPUtils.isActivated(this);
+        return getActivationModel() != null;
     }
 
     public String getSPLogin() {
@@ -50,18 +57,32 @@ public class BaseActivity extends AppCompatActivity {
         return SPUtils.getConfigModel(this);
     }
 
-    public String getSPServer() {
-        return SPUtils.getServer(this);
+    public String getServer() {
+        return getActivationModel().server;
     }
 
-    public String getSPLoginAdmin() {
-        return SPUtils.getLoginAdmin(this);
+    public String getLoginAdmin() {
+        return getActivationModel().login_admin;
     }
 
-    public void saveActivationBundle(final String pServer, final String pLoginAdmin) {
-        SPUtils.saveActivationBundle(this,
-                pServer,
-                pLoginAdmin);
+    public void saveActivationBundle(final ActivationResponseModel pActivationModel) {
+        final ActivationModel activationModel = new ActivationModel();
+        activationModel.server = pActivationModel.getServer();
+        activationModel.login_admin = pActivationModel.getLoginAdmin();
+
+        new Delete().from(ActivationModel.class).execute();
+
+        activationModel.save();
+    }
+
+    public ActivationModel getActivationModel() {
+        final List<ActivationModel> list = new Select().from(ActivationModel.class).limit(1).execute();
+
+        if (list != null && !list.isEmpty()) {
+            return list.get(0);
+        } else {
+            return null;
+        }
     }
 
     public void saveConfigModel(final ConfigResponseModel pConfigResponseModel) {

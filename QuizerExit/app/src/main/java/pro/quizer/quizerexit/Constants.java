@@ -13,13 +13,11 @@ public final class Constants {
         String SHARED_PREFERENCES_INSTANCE = "SHARED_PREFERENCES_INSTANCE";
 
         String LOGIN = "LOGIN";
-        String LOGIN_ADMIN = "LOGIN_ADMIN";
         String CONFIG_ID = "CONFIG_ID";
         String USER_ID = "USER_ID";
         String ROLE_ID = "ROLE_ID";
         String USER_PROJECT_ID = "USER_PROJECT_ID";
         String PASSWORD = "PASSWORD";
-        String SERVER = "SERVER";
         String CONFIG_MODEl = "CONFIG_MODEl";
 
     }

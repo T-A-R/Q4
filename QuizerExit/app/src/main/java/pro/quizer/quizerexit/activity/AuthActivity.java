@@ -69,10 +69,10 @@ public class AuthActivity extends BaseActivity {
                 }
 
                 final Dictionary<String, String> mDictionaryForRequest = new Hashtable();
-                mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(new AuthRequestModel(getSPLoginAdmin(), password, login)));
+                mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(new AuthRequestModel(getLoginAdmin(), password, login)));
 
                 final Call.Factory client = new OkHttpClient();
-                client.newCall(new DoRequest().post(mDictionaryForRequest, getSPServer()))
+                client.newCall(new DoRequest().post(mDictionaryForRequest, getServer()))
                         .enqueue(new Callback() {
 
                             @Override
@@ -132,7 +132,7 @@ public class AuthActivity extends BaseActivity {
         final Dictionary<String, String> mConfigDictionary = new Hashtable();
 
         final ConfigRequestModel configRequestModel = new ConfigRequestModel(
-                getSPLoginAdmin(),
+                getLoginAdmin(),
                 getSPLogin(),
                 getSPPassword(),
                 getSPConfigId()
@@ -141,7 +141,7 @@ public class AuthActivity extends BaseActivity {
         mConfigDictionary.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(configRequestModel));
 
         final Call.Factory client = new OkHttpClient();
-        client.newCall(new DoRequest().post(mConfigDictionary, getSPServer()))
+        client.newCall(new DoRequest().post(mConfigDictionary, getServer()))
                 .enqueue(new Callback() {
 
                              @Override

@@ -4,7 +4,7 @@
     <string name="input_activation_key">Введите ключ активации</string>
     <string name="send">Отправить</string>
     <string name="empty_activation_key">Ключ активации не может быть пустым.</string>
-    <string name="internet_error_please_try_again">Ошибка сети. Проверьте подключение к интернету и попытайтесь снова.</string>
+    <string name="internet_error_please_try_again">Не удалось подключиться к серверу. Проверьте подключение к интернету или повторите позже.</string>
     <string name="server_error">Ошибка сервера.</string>
     <string name="incorrect_server_response">Некорретный ответ сервера.</string>
     <string name="input_login">Введите логин</string>

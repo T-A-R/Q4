@@ -22,6 +22,7 @@ import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.DoRequest;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.model.request.ActivationRequestModel;
+import pro.quizer.quizerexit.model.database.ActivationModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.utils.StringUtils;
 
@@ -42,6 +43,7 @@ public class ActivationActivity extends BaseActivity {
             @Override
             public void onClick(final View v) {
                 showProgressBar();
+
                 final String key = mActivationEditText.getText().toString();
 
                 if (StringUtils.isEmpty(key)) {
@@ -78,14 +80,14 @@ public class ActivationActivity extends BaseActivity {
                                 }
 
                                 final String responseJson = responseBody.string();
-                                final ActivationResponseModel activationResponseModel = new GsonBuilder().create().fromJson(responseJson, ActivationResponseModel.class);
+                                final ActivationResponseModel activationModel = new GsonBuilder().create().fromJson(responseJson, ActivationResponseModel.class);
 
-                                if (activationResponseModel != null) {
-                                    if (activationResponseModel.getResult() != 0) {
-                                        saveActivationBundle(activationResponseModel.getServer(), activationResponseModel.getLoginAdmin());
+                                if (activationModel != null) {
+                                    if (activationModel.getResult() != 0) {
+                                        saveActivationBundle(activationModel);
                                         startAuthActivity();
                                     } else {
-                                        showToastMessage(activationResponseModel.getError());
+                                        showToastMessage(activationModel.getError());
                                     }
                                 } else {
                                     showToastMessage(getString(R.string.server_error));

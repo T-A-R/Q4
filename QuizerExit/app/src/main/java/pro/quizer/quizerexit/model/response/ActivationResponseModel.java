@@ -18,9 +18,6 @@ public class ActivationResponseModel implements Serializable {
     @SerializedName("error")
     private String error;
 
-    public ActivationResponseModel() {
-    }
-
     public int getResult() {
         return result;
     }

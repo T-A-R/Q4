@@ -13,13 +13,13 @@ public class AuthResponseModel implements Serializable {
     private String config_id;
 
     @SerializedName("user_id")
-    private String user_id;
+    private int user_id;
 
     @SerializedName("role_id")
-    private String role_id;
+    private int role_id;
 
     @SerializedName("user_project_id")
-    private String user_project_id;
+    private int user_project_id;
 
     @SerializedName("error")
     private String error;
@@ -35,15 +35,15 @@ public class AuthResponseModel implements Serializable {
         return config_id;
     }
 
-    public String getUserId() {
+    public int getUserId() {
         return user_id;
     }
 
-    public String getRoleId() {
+    public int getRoleId() {
         return role_id;
     }
 
-    public String getUserProjectId() {
+    public int getUserProjectId() {
         return user_project_id;
     }
 

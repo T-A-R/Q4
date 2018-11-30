@@ -3,12 +3,15 @@
     <string name="app_name_exit">EXIT</string>
     <string name="input_activation_key">Введите ключ активации</string>
     <string name="send">Отправить</string>
+    <string name="empty_activation_key">Ключ активации не может быть пустым.</string>
     <string name="internet_error_please_try_again">Ошибка сети. Проверьте подключение к интернету и попытайтесь снова.</string>
     <string name="server_error">Ошибка сервера.</string>
     <string name="incorrect_server_response">Некорретный ответ сервера.</string>
     <string name="input_login">Введите логин</string>
     <string name="input_password">Введите пароль</string>
     <string name="incorrect_login_or_password">Неверный логин или пароль.</string>
+    <string name="empty_login_or_password">Логин и пароль обязателен.</string>
+    <string name="short_login">Минимальная длина логина - 3 символа.</string>
     <string name="incorrect_select_min_answers">Выберите минимум %1$s ответа.</string>
     <string name="incorrect_max_selected_answers">Вы можете выбрать максимум %1$s ответа.</string>
     <string name="back">Назад</string>

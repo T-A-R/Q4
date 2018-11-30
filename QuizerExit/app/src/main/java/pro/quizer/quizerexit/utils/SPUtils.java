@@ -30,15 +30,15 @@ public class SPUtils {
         editor.apply();
     }
 
-    public static void saveAuthBundle(final Context pContext, final String pLogin, final String pPassword, final String pConfigId, final String pUserId, final String pRoleId, final String pUserProjectId) {
+    public static void saveAuthBundle(final Context pContext, final String pLogin, final String pPassword, final String pConfigId, final int pUserId, final int pRoleId, final int pUserProjectId) {
         final SharedPreferences.Editor editor = getSharedPreferences(pContext).edit();
 
         editor.putString(Constants.SP.LOGIN, pLogin);
         editor.putString(Constants.SP.PASSWORD, pPassword);
         editor.putString(Constants.SP.CONFIG_ID, pConfigId);
-        editor.putString(Constants.SP.USER_ID, pUserId);
-        editor.putString(Constants.SP.ROLE_ID, pRoleId);
-        editor.putString(Constants.SP.USER_PROJECT_ID, pUserProjectId);
+        editor.putInt(Constants.SP.USER_ID, pUserId);
+        editor.putInt(Constants.SP.ROLE_ID, pRoleId);
+        editor.putInt(Constants.SP.USER_PROJECT_ID, pUserProjectId);
 
         editor.apply();
     }

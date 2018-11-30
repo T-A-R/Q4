@@ -70,11 +70,11 @@ public class TableQuestionFragment extends BaseFragment {
     }
 
     private void initView(final View pView) {
-        mQuestionNumber = pView.findViewById(R.id.question_number_text);
-        mQuestionText = pView.findViewById(R.id.question_text);
-
-        mQuestionNumber.setText(String.valueOf(mCurrentQuestion.getNumber()));
-        mQuestionText.setText(mCurrentQuestion.getTitle());
+//        mQuestionNumber = pView.findViewById(R.id.question_number_text);
+//        mQuestionText = pView.findViewById(R.id.question_text);
+//
+//        mQuestionNumber.setText(String.valueOf(mCurrentQuestion.getNumber()));
+//        mQuestionText.setText(mCurrentQuestion.getTitle());
 
         mRecyclerView = pView.findViewById(R.id.recycler_view);
         mNextBtn = pView.findViewById(R.id.selected);

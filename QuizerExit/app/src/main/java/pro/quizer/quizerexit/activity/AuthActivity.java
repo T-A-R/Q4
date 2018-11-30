@@ -52,8 +52,16 @@ public class AuthActivity extends BaseActivity {
                 final String login = mLoginEditText.getText().toString();
                 final String password = mPasswordEditText.getText().toString();
 
-                if (StringUtils.isEmpty(login) || StringUtils.isEmpty(password) || login.length() < 3) {
-                    showToastMessage(getString(R.string.incorrect_login_or_password));
+                if (StringUtils.isEmpty(login) || StringUtils.isEmpty(password)) {
+                    showToastMessage(getString(R.string.empty_login_or_password));
+
+                    hideProgressBar();
+
+                    return;
+                }
+
+                if (login.length() < 3) {
+                    showToastMessage(getString(R.string.short_login));
 
                     hideProgressBar();
 

@@ -23,6 +23,7 @@ import pro.quizer.quizerexit.DoRequest;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.model.request.ActivationRequestModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
+import pro.quizer.quizerexit.utils.StringUtils;
 
 public class ActivationActivity extends BaseActivity {
 
@@ -42,6 +43,14 @@ public class ActivationActivity extends BaseActivity {
             public void onClick(final View v) {
                 showProgressBar();
                 final String key = mActivationEditText.getText().toString();
+
+                if (StringUtils.isEmpty(key)) {
+                    showToastMessage(getString(R.string.empty_activation_key));
+
+                    hideProgressBar();
+
+                    return;
+                }
 
                 final Dictionary<String, String> mDictionaryForRequest = new Hashtable();
                 mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(new ActivationRequestModel(key)));

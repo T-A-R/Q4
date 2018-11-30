@@ -10,12 +10,32 @@ import java.io.Serializable;
 @Table(name = "User")
 public class UserModel extends Model implements Serializable {
 
-    @Column(name = "server")
-    @SerializedName("server")
-    public String server;
+    @Column(name = "password")
+    @SerializedName("password")
+    public String password;
 
-    @Column(name = "login_admin")
-    @SerializedName("login_admin")
-    public String login_admin;
+    @Column(name = "login")
+    @SerializedName("login")
+    public String login;
+
+    @Column(name = "config_id")
+    @SerializedName("config_id")
+    public String config_id;
+
+    @Column(name = "user_id")
+    @SerializedName("user_id")
+    public int user_id;
+
+    @Column(name = "role_id")
+    @SerializedName("role_id")
+    public int role_id;
+
+    @Column(name = "user_project_id")
+    @SerializedName("user_project_id")
+    public int user_project_id;
+
+    @Column(name = "config")
+    @SerializedName("config")
+    public String    config;
 
 }

@@ -15,9 +15,9 @@ import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 
 public class QuestionActivity extends BaseActivity implements OnNextQuestionCallback {
 
-    ConfigResponseModel mConfigResponseModel;
-    ConfigField mConfig;
-    List<QuestionField> mQuestions;
+//    ConfigResponseModel mConfigResponseModel;
+//    ConfigField mConfig;
+//    List<QuestionField> mQuestions;
 
     @Override
     public void onNextQuestion(final List<AnswersField> pAnswers, final int pNextQuestion) {
@@ -43,13 +43,13 @@ public class QuestionActivity extends BaseActivity implements OnNextQuestionCall
     }
 
     private void initView() {
-        mConfigResponseModel = getSPConfigModel();
-        mConfig = mConfigResponseModel.getConfig();
-        mQuestions = mConfig.getProjectInfo().getQuestions();
-        final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-        fragmentTransaction.add(android.R.id.content, SelectionQuestionFragment.newInstance(mQuestions.get(0), this));
-        fragmentTransaction.commit();
+//        mConfigResponseModel = getSPConfigModel();
+//        mConfig = mConfigResponseModel.getConfig();
+//        mQuestions = mConfig.getProjectInfo().getQuestions();
+//        final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+//
+//        fragmentTransaction.add(android.R.id.content, SelectionQuestionFragment.newInstance(mQuestions.get(0), this));
+//        fragmentTransaction.commit();
     }
 
     private void showNextQuestion(final int pNumberOfNextQuestion) {
@@ -76,11 +76,11 @@ public class QuestionActivity extends BaseActivity implements OnNextQuestionCall
             return null;
         }
 
-        for (final QuestionField questionField : mQuestions) {
-            if (questionField.getNumber() == pQuestionNumber) {
-                return questionField;
-            }
-        }
+//        for (final QuestionField questionField : mQuestions) {
+//            if (questionField.getNumber() == pQuestionNumber) {
+//                return questionField;
+//            }
+//        }
 
         return null;
     }

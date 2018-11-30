@@ -50,13 +50,13 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initViews() {
-        final ProjectInfoField projectInfo = getSPConfigModel().getConfig().getProjectInfo();
+//        final ProjectInfoField projectInfo = getSPConfigModel().getConfig().getProjectInfo();
 
         final TextView configAgreement = findViewById(R.id.config_agreement);
         final TextView configName = findViewById(R.id.config_name);
-
-        configName.setText(projectInfo.getName());
-        configAgreement.setText(projectInfo.getAgreement());
+//
+//        configName.setText(projectInfo.getName());
+//        configAgreement.setText(projectInfo.getAgreement());
 
         final Button settingsBtn = findViewById(R.id.settings);
         final Button syncBtn = findViewById(R.id.sync);

@@ -66,6 +66,7 @@
             android:value="
             pro.quizer.quizerexit.model.database.Item,
             pro.quizer.quizerexit.model.database.Category,
+            pro.quizer.quizerexit.model.database.UserModel,
             pro.quizer.quizerexit.model.database.ActivationModel" />
 
     </application>

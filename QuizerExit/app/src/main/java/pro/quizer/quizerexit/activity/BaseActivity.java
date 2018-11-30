@@ -9,15 +9,16 @@ import android.widget.Toast;
 
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
+import com.google.gson.GsonBuilder;
 
 import java.util.List;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.model.database.ActivationModel;
+import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
-import pro.quizer.quizerexit.utils.SPUtils;
 
 @SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
@@ -39,22 +40,6 @@ public class BaseActivity extends AppCompatActivity {
 
     public boolean isActivated() {
         return getActivationModel() != null;
-    }
-
-    public String getSPLogin() {
-        return SPUtils.getLogin(this);
-    }
-
-    public String getSPPassword() {
-        return SPUtils.getPassword(this);
-    }
-
-    public String getSPConfigId() {
-        return SPUtils.getConfigId(this);
-    }
-
-    public ConfigResponseModel getSPConfigModel() {
-        return SPUtils.getConfigModel(this);
     }
 
     public String getServer() {
@@ -85,18 +70,29 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public void saveConfigModel(final ConfigResponseModel pConfigResponseModel) {
-        SPUtils.saveConfig(this, pConfigResponseModel);
+    public UserModel getUserByUserId(final int pUserId) {
+        final List<UserModel> list = new Select().from(UserModel.class).where("user_id = ?", pUserId).execute();
+
+        if (list == null || list.isEmpty()) {
+            return null;
+        } else {
+            return list.get(0);
+        }
     }
 
-    public void saveAuthBundle(final String pLogin, final String pPassword, final AuthResponseModel pModel) {
-        SPUtils.saveAuthBundle(this,
-                pLogin,
-                pPassword,
-                pModel.getConfigId(),
-                pModel.getUserId(),
-                pModel.getRoleId(),
-                pModel.getUserProjectId());
+    public void saveUser(final String pLogin, final String pPassword, final AuthResponseModel pModel, final ConfigResponseModel pConfigResponseModel) {
+        new Delete().from(UserModel.class).where("user_id = ?", pModel.getUserId()).execute();
+
+        final UserModel userModel = new UserModel();
+        userModel.login = pLogin;
+        userModel.password = pPassword;
+        userModel.config_id = pModel.getConfigId();
+        userModel.role_id = pModel.getRoleId();
+        userModel.user_id = pModel.getUserId();
+        userModel.user_project_id = pModel.getUserProjectId();
+        userModel.config = new GsonBuilder().create().toJson(pConfigResponseModel);
+
+        userModel.save();
     }
 
     public void startAuthActivity() {

@@ -69,6 +69,18 @@ public class BaseActivity extends AppCompatActivity {
         activationModel.save();
     }
 
+    public int getUsersCount() {
+        return new Select().from(UserModel.class).count();
+    }
+
+    public int getCountAllUnsendedQuestionaires() {
+        return -1;
+    }
+
+    public int getCountAllUnsendedAudioFiled() {
+        return -1;
+    }
+
     public ActivationModel getActivationModel() {
         final List<ActivationModel> list = new Select().from(ActivationModel.class).limit(1).execute();
 
@@ -158,6 +170,10 @@ public class BaseActivity extends AppCompatActivity {
 
     public void startQuestionActivity() {
         startActivity(new Intent(this, QuestionActivity.class));
+    }
+
+    public void startServiceActivity() {
+        startActivity(new Intent(this, ServiceActivity.class));
     }
 
     public void startMainActivity() {

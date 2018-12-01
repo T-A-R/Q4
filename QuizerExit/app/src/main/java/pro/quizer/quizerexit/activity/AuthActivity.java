@@ -38,11 +38,13 @@ import pro.quizer.quizerexit.utils.StringUtils;
 public class AuthActivity extends BaseActivity {
 
     private static int MAX_USERS = 5;
+    private static int MAX_VERSION_TAP_COUNT = 5;
 
     private EditText mPasswordEditText;
     private EditSpinner mLoginSpinner;
     private List<String> mSavedUsers;
     private TextView mVersionView;
+    private int mVersionTapCount = 0;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -53,6 +55,18 @@ public class AuthActivity extends BaseActivity {
         mLoginSpinner = findViewById(R.id.login_spinner);
         mVersionView = findViewById(R.id.version_view);
         mVersionView.setText(String.format(getString(R.string.app_version), getAppVersionName()));
+        mVersionView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mVersionTapCount++;
+
+                if (mVersionTapCount == MAX_VERSION_TAP_COUNT) {
+                    startServiceActivity();
+
+                    mVersionTapCount = 0;
+                }
+            }
+        });
 
         mSavedUsers = getSavedUserLogins();
 
@@ -166,6 +180,7 @@ public class AuthActivity extends BaseActivity {
 
     private void onLoggedInWithoutUpdateLocalData(final int pUserId) {
         saveCurrentUserId(pUserId);
+        finish();
         startMainActivity();
     }
 

@@ -36,7 +36,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.AuthActivity"
-            android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ServiceActivity"
@@ -55,7 +54,7 @@
             android:name="com.activeandroid.content.ContentProvider"
             android:authorities="pro.quizer.quizerexit"
             android:enabled="true"
-            android:exported="false"></provider>
+            android:exported="false"/>
 
         <meta-data
             android:name="AA_DB_NAME"

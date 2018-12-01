@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -26,41 +27,19 @@
             android:textColor="@color/brand_color"
             android:textSize="48sp" />
 
-
-        <RelativeLayout
+        <com.reginald.editspinner.EditSpinner
+            android:id="@+id/login_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="56dp">
-
-            <ImageView
-                android:id="@+id/drop_down_menu_login"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerInParent="true"
-                android:clickable="true"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:src="@drawable/ic_arrow_down" />
-
-            <AutoCompleteTextView
-                android:id="@+id/auth_login_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_toStartOf="@+id/drop_down_menu_login"
-                android:layout_toLeftOf="@+id/drop_down_menu_login"
-                android:hint="@string/input_login"
-                android:inputType="textEmailAddress"
-                android:maxLines="1"
-                android:textSize="18sp">
-
-                <requestFocus />
-            </AutoCompleteTextView>
-
-        </RelativeLayout>
+            android:layout_marginTop="56dp"
+            android:hint="@string/input_login"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:textSize="18sp"
+            app:dropDownDrawable="@drawable/ic_arrow_down"
+            app:dropDownDrawableHeight="25dp"
+            app:dropDownDrawableSpacing="15dp"
+            app:dropDownDrawableWidth="25dp" />
 
         <EditText
             android:id="@+id/auth_password_edit_text"

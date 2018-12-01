@@ -4,13 +4,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 
 import com.activeandroid.query.Select;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.reginald.editspinner.EditSpinner;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,8 +38,8 @@ public class AuthActivity extends BaseActivity {
 
     private static int MAX_USERS = 5;
 
-    private AutoCompleteTextView mLoginEditText;
     private EditText mPasswordEditText;
+    private EditSpinner mLoginSpinner;
     private List<String> mSavedUsers;
 
     @Override
@@ -46,29 +47,17 @@ public class AuthActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
 
-        View mDropDownMenuIcon = findViewById(R.id.drop_down_menu_login);
         mPasswordEditText = findViewById(R.id.auth_password_edit_text);
+        mLoginSpinner = findViewById(R.id.login_spinner);
 
         mSavedUsers = getSavedUserLogins();
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_item, mSavedUsers);
-        mLoginEditText = findViewById(R.id.auth_login_edit_text);
-        mLoginEditText.setThreshold(1);
-        mLoginEditText.setAdapter(adapter);
+        ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mSavedUsers);
+        mLoginSpinner.setAdapter(adapter);
 
         if (mSavedUsers != null && !mSavedUsers.isEmpty()) {
-            mDropDownMenuIcon.setVisibility(View.VISIBLE);
-            mLoginEditText.setText(mSavedUsers.get(mSavedUsers.size() - 1));
-        } else {
-            mDropDownMenuIcon.setVisibility(View.GONE);
+            mLoginSpinner.setText(mSavedUsers.get(mSavedUsers.size() - 1));
         }
-
-        mDropDownMenuIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mLoginEditText.showDropDown();
-            }
-        });
 
         final Button sendAuthButton = findViewById(R.id.send_auth_button);
         sendAuthButton.setOnClickListener(new View.OnClickListener() {
@@ -77,16 +66,8 @@ public class AuthActivity extends BaseActivity {
             public void onClick(final View v) {
                 showProgressBar();
 
-                final String login = mLoginEditText.getText().toString();
+                final String login = mLoginSpinner.getText().toString();
                 final String password = mPasswordEditText.getText().toString();
-
-                if (mSavedUsers != null && mSavedUsers.size() >= MAX_USERS && !mSavedUsers.contains(login)) {
-                    showToastMessage(String.format(getString(R.string.error_max_users), String.valueOf(MAX_USERS)));
-
-                    hideProgressBar();
-
-                    return;
-                }
 
                 if (StringUtils.isEmpty(login) || StringUtils.isEmpty(password)) {
                     showToastMessage(getString(R.string.empty_login_or_password));
@@ -98,6 +79,14 @@ public class AuthActivity extends BaseActivity {
 
                 if (login.length() < 3) {
                     showToastMessage(getString(R.string.short_login));
+
+                    hideProgressBar();
+
+                    return;
+                }
+
+                if (mSavedUsers != null && mSavedUsers.size() >= MAX_USERS && !mSavedUsers.contains(login)) {
+                    showToastMessage(String.format(getString(R.string.error_max_users), String.valueOf(MAX_USERS)));
 
                     hideProgressBar();
 
@@ -224,7 +213,7 @@ public class AuthActivity extends BaseActivity {
                                  if (configResponseModel != null) {
                                      if (configResponseModel.getResult() != 0) {
                                          saveUser(pLogin, pPassword, pModel, configResponseModel);
-
+                                         saveCurrentUserId(pModel.getUserId())
                                          startMainActivity();
                                      } else {
                                          showToastMessage(configResponseModel.getError());

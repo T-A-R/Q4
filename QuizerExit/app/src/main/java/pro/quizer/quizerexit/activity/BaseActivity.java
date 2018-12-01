@@ -71,7 +71,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public UserModel getUserByUserId(final int pUserId) {
-        final List<UserModel> list = new Select().from(UserModel.class).where("user_id = ?", pUserId).execute();
+        final List<UserModel> list = new Select().from(UserModel.class).where(UserModel.USER_ID + " = ?", pUserId).execute();
 
         if (list == null || list.isEmpty()) {
             return null;
@@ -80,8 +80,12 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    public void saveCurrentUserId(final int pUserId) {
+        
+    }
+
     public void saveUser(final String pLogin, final String pPassword, final AuthResponseModel pModel, final ConfigResponseModel pConfigResponseModel) {
-        new Delete().from(UserModel.class).where("user_id = ?", pModel.getUserId()).execute();
+        new Delete().from(UserModel.class).where(UserModel.USER_ID + " = ?", pModel.getUserId()).execute();
 
         final UserModel userModel = new UserModel();
         userModel.login = pLogin;

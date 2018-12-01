@@ -10,6 +10,8 @@ import java.io.Serializable;
 @Table(name = "User")
 public class UserModel extends Model implements Serializable {
 
+    public static final String USER_ID = "user_id";
+
     @Column(name = "password")
     @SerializedName("password")
     public String password;
@@ -22,8 +24,8 @@ public class UserModel extends Model implements Serializable {
     @SerializedName("config_id")
     public String config_id;
 
-    @Column(name = "user_id")
-    @SerializedName("user_id")
+    @Column(name = USER_ID)
+    @SerializedName(USER_ID)
     public int user_id;
 
     @Column(name = "role_id")

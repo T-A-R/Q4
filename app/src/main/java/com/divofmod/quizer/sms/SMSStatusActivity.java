@@ -39,7 +39,16 @@ public class SMSStatusActivity extends AppCompatActivity {
             public void onComplete() {
                 initRecyclerView();
             }
+<<<<<<< HEAD
         });
+=======
+
+            @Override
+            public void onStart() {
+
+            }
+        }, "7");
+>>>>>>> dev
     }
 
     @Override

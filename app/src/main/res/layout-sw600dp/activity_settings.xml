@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
+    tools:openDrawer="end">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="@color/colorAccent">
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:onClick="onBackClick"
+            android:padding="8dp"
+            android:src="@drawable/ic_arrow_back_black_24dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center"
+            android:text="Настройки"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/textsize_600dp"/>
+        <Button
+            android:id="@+id/openDrawer_toolbar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end|center_vertical"
+            android:background="@mipmap/menu_vertical"/>
+
+    </FrameLayout>
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="32dp">
+        <TextView
+            android:id="@+id/size_questions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_text_size_in_questions"
+            android:textSize="@dimen/textsize_low_600dp"
+            android:textColor="@color/secondaryTextMaterialLight"
+            android:layout_weight=".3"/>
+        <TextView
+            android:id="@+id/size_example"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="A"
+            android:textSize="@dimen/textsize_low_600dp"
+            android:layout_weight=".7"/>
+    </LinearLayout>
+
+    <Spinner
+        android:id="@+id/switch_size"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="bottom"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/size_questions"
+        android:layout_marginHorizontal="32dp"
+        />
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp">
+        <TextView
+            android:id="@+id/interval_between_answers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_interval_between_answers"
+            android:textSize="@dimen/textsize_low_600dp"
+            android:layout_weight=".3"
+            />
+        <TextView
+            android:id="@+id/interval_example"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="18"
+            android:textSize="@dimen/textsize_low_600dp"
+            android:layout_weight=".7"/>
+    </LinearLayout>
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="10dp"
+        android:min="20"
+        android:max="100" />
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="32dp">
+
+        <View
+            android:background="@color/colorAccent"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"/>
+
+        <TextView
+            android:text="Номер отправки:"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/textsize_low_600dp"/>
+
+        <Spinner
+            android:id="@+id/spinner_phone"
+            android:layout_width="match_parent"
+            android:layout_height="40dp" />
+
+        <View
+            android:background="@color/colorAccent"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"/>
+
+        <Button
+            android:id="@+id/setting_delete_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onExit"
+            android:text="Удалить пользователя"
+            android:textSize="@dimen/textsize_low_600dp"
+            android:theme="@style/ThemeOverlay.MyBreakButton"/>
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:onClick="onExit"
+            android:text="Сохранить"
+            android:textSize="@dimen/textsize_low_600dp"
+            android:theme="@style/ThemeOverlay.MyDarkButton"/>
+
+        <View
+            android:background="@color/colorAccent"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"/>
+
+    </LinearLayout>
+
+</LinearLayout>
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigation"
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="#99AAAAAA"
+        android:fitsSystemWindows="false"
+        app:headerLayout="@layout/header_layout"
+        />
+
+
+</android.support.v4.widget.DrawerLayout>

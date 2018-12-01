@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title_service"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Сервисное обслуживание"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="@dimen/textsize_600dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin">
+
+        <TextView
+            android:id="@+id/countUsers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:text="Колличество пользователей на данном устройстве: "
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="@dimen/textsize_low_600dp"/>
+        <TextView
+            android:id="@+id/notSendForm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Колличество не отправленных анкет: "
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="@dimen/textsize_low_600dp"/>
+        <TextView
+            android:id="@+id/notSendAudio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Колличество не отправленных аудио файлов: "
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="@dimen/textsize_low_600dp"/>
+
+        <Button
+            android:id="@+id/sendData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginHorizontal="32dp"
+            android:text="Отправить данные"
+            android:theme="@style/ThemeOverlay.MyDarkButton"/>
+
+        <Button
+            android:id="@+id/saveData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="32dp"
+            android:text="Выгрузить данные"
+            android:theme="@style/ThemeOverlay.MyDarkButton"/>
+
+
+        <Button
+            android:id="@+id/deleteUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="32dp"
+            android:text="Удалить пользователей"
+            android:theme="@style/ThemeOverlay.MyBreakButton"/>
+    </LinearLayout>
+
+
+
+</android.support.constraint.ConstraintLayout>

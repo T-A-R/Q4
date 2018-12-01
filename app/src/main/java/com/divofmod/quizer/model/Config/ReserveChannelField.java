@@ -7,7 +7,7 @@ import java.util.List;
 public class ReserveChannelField {
 
     @SerializedName("phone")
-    private String phone;
+    private List<Phone> phone;
 
     @SerializedName("stages")
     private List<StagesField> stages;
@@ -15,7 +15,7 @@ public class ReserveChannelField {
     public ReserveChannelField() {
     }
 
-    public String getPhone() {
+    public List<Phone> getPhone() {
         return phone;
     }
 

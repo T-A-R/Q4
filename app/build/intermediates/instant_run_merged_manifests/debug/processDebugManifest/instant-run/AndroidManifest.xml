@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.quizer.quizerexit"
+    android:versionCode="14"
+    android:versionName="2.1.5" >
+
+    <uses-sdk
+        android:minSdkVersion="15"
+        android:targetSdkVersion="26" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <uses-feature android:name="android.hardware.camera" />
+
+    <application
+        android:name="com.divofmod.quizer.App"
+        android:allowBackup="true"
+        android:debuggable="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:testOnly="true"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.divofmod.quizer.ActivationActivity"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.divofmod.quizer.AuthActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.divofmod.quizer.sms.SMSStatusActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.divofmod.quizer.SettingsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.divofmod.quizer.QuotaActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.divofmod.quizer.QuestionsActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.divofmod.quizer.ProjectActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.divofmod.quizer.SendQuizzesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.divofmod.quizer.StatisticsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.divofmod.quizer.QuestionnaireActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.divofmod.quizer.ContactActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity android:name="com.divofmod.quizer.PassportBlockActivity" >
+        </activity>
+        <activity
+            android:name="com.divofmod.quizer.MaintetannceActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="50ad9a580199fa1709ff92b06b9d6f23625107c9" />
+        <meta-data
+            android:name="android.support.VERSION"
+            android:value="26.1.0" />
+
+        <provider
+            android:name="com.crashlytics.android.CrashlyticsInitProvider"
+            android:authorities="com.quizer.quizerexit.crashlyticsinitprovider"
+            android:exported="false"
+            android:initOrder="100" />
+
+        <meta-data
+            android:name="android.arch.lifecycle.VERSION"
+            android:value="27.0.0-SNAPSHOT" />
+
+        <provider
+            android:name="com.android.tools.ir.server.InstantRunContentProvider"
+            android:authorities="com.quizer.quizerexit.com.android.tools.ir.server.InstantRunContentProvider"
+            android:multiprocess="true" />
+    </application>
+
+</manifest>

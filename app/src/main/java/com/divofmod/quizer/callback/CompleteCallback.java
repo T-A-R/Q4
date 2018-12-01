@@ -4,4 +4,9 @@ public interface CompleteCallback {
 
     void onComplete();
 
+<<<<<<< HEAD
+=======
+    void onStart();
+
+>>>>>>> dev
 }

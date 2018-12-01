@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="30dp"
+    android:gravity="end"
+    android:layout_marginTop="20dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+        <Button
+            android:id="@+id/openDrawer_toolbar"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:background="@mipmap/menu_vertical"/>
+
+</LinearLayout>
+

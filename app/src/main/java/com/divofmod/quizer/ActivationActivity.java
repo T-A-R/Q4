@@ -1,18 +1,14 @@
 package com.divofmod.quizer;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -23,7 +19,6 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
 import com.divofmod.quizer.Constants.Constants;
-import com.divofmod.quizer.Utils.Utils;
 import com.divofmod.quizer.model.Activation.ActivationRequestModel;
 import com.divofmod.quizer.model.Activation.ActivationResponseModel;
 import com.google.gson.Gson;
@@ -38,10 +33,9 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 
-import static com.divofmod.quizer.QuestionsActivity.PERMISSION_SEND_SMS;
-
 public class ActivationActivity extends AppCompatActivity implements View.OnClickListener {
 
+    public static final String TAG = "ActivationActivity";
     Dictionary<String, String> mDictionaryForRequest;
     SharedPreferences mSharedPreferences;
 
@@ -144,6 +138,7 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
                     @Override
                     public void onResponse(final Call call, final Response response) throws IOException {
                         final String responseJson = response.body().string();
+
                         final ActivationResponseModel activationResponseModel = new GsonBuilder().create().fromJson(responseJson, ActivationResponseModel.class);
 
                         if (activationResponseModel.getResult() == 0) {
@@ -152,7 +147,7 @@ public class ActivationActivity extends AppCompatActivity implements View.OnClic
                                 @Override
                                 public void run() {
                                     mProgressBar.setVisibility(View.INVISIBLE);
-                                    Toast.makeText(ActivationActivity.this, "Неверный ключ. Попробуй еще раз.",
+                                    Toast.makeText(ActivationActivity.this, "Неверный ключ. Попробуйте еще раз.",
                                             Toast.LENGTH_SHORT).show();
                                     mKeyEditText.setVisibility(View.VISIBLE);
                                     mSendButton.setVisibility(View.VISIBLE);

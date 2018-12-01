@@ -38,6 +38,9 @@
             android:name=".sms.SMSStatusActivity"
             android:screenOrientation="portrait"/>
         <activity
+            android:name=".SettingsActivity"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".QuotaActivity"
             android:screenOrientation="portrait"/>
         <activity
@@ -61,7 +64,13 @@
             android:name=".ContactActivity"
             android:screenOrientation="portrait">
         </activity>
+
         <activity android:name=".PassportBlockActivity">
+        </activity>
+
+        <activity android:name=".MaintetannceActivity"
+            android:screenOrientation="portrait">
+
         </activity>
 
         <meta-data

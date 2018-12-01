@@ -8,33 +8,42 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -48,6 +57,7 @@ import com.divofmod.quizer.QuizHelper.PhotoCamera;
 import com.divofmod.quizer.QuizHelper.StopWatch;
 import com.divofmod.quizer.Utils.SmsUtils;
 import com.divofmod.quizer.Utils.Utils;
+import com.divofmod.quizer.model.API.QuizzesRequest;
 import com.divofmod.quizer.model.Config.QuestionsMatchesField;
 import com.divofmod.quizer.model.Config.StagesField;
 import com.divofmod.quizer.model.Sms.SmsAnswerModel;
@@ -69,11 +79,13 @@ import java.util.Random;
 
 public class QuestionsActivity extends AppCompatActivity implements View.OnClickListener, ScrollViewListener, LocationListener {
 
+    public static final String TAG = "QuestionsActivity";
+
     String mCurrentMessage;
     String mCurrentPhoneNumber;
     String mDateInterview;
 
-    SharedPreferences mSharedPreferences;
+    SharedPreferences mSharedPreferences,setting;
     SQLiteDatabase mSQLiteDatabase;
 
     ArrayList<String[]> mTableQuestion;
@@ -123,7 +135,10 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
     ObservableScrollView scrollView1;
     ObservableScrollView scrollView2;
+    private DrawerLayout drawer;
+
     static boolean interceptScroll = true;
+    int currentUser;
 
     public static int PERMISSION_SEND_SMS = 1001;
 
@@ -142,10 +157,12 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
         mSharedPreferences = getSharedPreferences("data",
                 Context.MODE_PRIVATE);
+        currentUser = mSharedPreferences.getInt("CurrentUserId",0);
+        setting = getSharedPreferences("setting_" + currentUser,MODE_PRIVATE);
 
         mSQLiteDatabase = new DBHelper(this,
-                mSharedPreferences.getString("name_file", ""),
-                new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+                mSharedPreferences.getString("name_file_" + currentUser, ""),
+                new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file_" + currentUser, "").substring(0, mSharedPreferences.getString("name_file_" + currentUser, "").length() - 4)),
                 getString(R.string.sql_file_name),
                 getString(R.string.old_sql_file_name)).getWritableDatabase();
 
@@ -235,6 +252,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         });
         findViewById(R.id.question_next_button).setOnClickListener(this);
         findViewById(R.id.question_previous_button).setOnClickListener(this);
+        findViewById(R.id.question_exit_button).setOnClickListener(this);
 
         frameLayout = (FrameLayout) findViewById(R.id.surfaceHolder);
 
@@ -252,6 +270,8 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
         });
 
+
+
         mQuestionTitle = (TextView) findViewById(R.id.question_title);
         questionPicture = (ImageView) findViewById(R.id.question_picture);
 
@@ -261,15 +281,70 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         if (mAudio != null) {
             if (mAudio.getAudioRecordQuestions().containsKey(0)) {
                 AudioRecorder.Start(this, mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, "") + "_" +
-                        mSharedPreferences.getString("login", "") + "_" +
-                        mSharedPreferences.getString("user_project_id", "") + "_" +
+                        mSharedPreferences.getString("login" + currentUser, "") + "_" +
+                        mSharedPreferences.getString("user_project_id" + currentUser, "") + "_" +
                         0 + "_" +
                         mDateInterview.replace(':', '-').replace(' ', '-'), mAudio.getAudioRecordLimitTime(), mAudio.getAudioSampleRate());
             }
         }
 
         StopWatch.setGlobalStart();
+
+
+        mQuestionTitle.setTextSize(setting.getInt("text_size",16) + 2);
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point point = new Point();
+
+        display.getSize(point);
+        final int height = point.y;
+
+        Log.i(TAG, "onCreate: " + String .valueOf(height));
+
+
+        ViewTreeObserver viewTreeObserver = mQuestionTitle.getViewTreeObserver();
+        if (viewTreeObserver.isAlive()) {
+            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    mQuestionTitle.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    int viewWidth = mQuestionTitle.getWidth();
+                    int viewHeight = mQuestionTitle.getHeight();
+
+                    Log.i(TAG, "onGlobalLayout: " + viewWidth + " :: " + viewHeight );
+
+
+                    if (height/3 <= viewHeight ) // если вью занимает 1/3 или больше высоты экрана то устанавливаем размер экрана 1/3  и устанавливаем прокрутку
+                    {
+                      mQuestionTitle.setVerticalScrollBarEnabled(true);
+                      mQuestionTitle.setHeight(height/3);
+                      mQuestionTitle.setMovementMethod(new ScrollingMovementMethod());
+                    }
+                }
+            });
+        }
+
+        initDrawer();
     }
+
+    private void initDrawer() {
+        drawer = findViewById(R.id.drawer);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        NavigationView navigation = findViewById(R.id.navigation);
+        Button buttonDrawer = findViewById(R.id.openDrawer_toolbar);
+        buttonDrawer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawer.openDrawer(Gravity.END);
+            }
+        });
+
+        View view = navigation.getHeaderView(0);
+        view.findViewById(R.id.sync_button).setOnClickListener(clickHeader);
+        view.findViewById(R.id.settings).setOnClickListener(clickHeader);
+        view.findViewById(R.id.change_users).setOnClickListener(clickHeader);
+    }
+
 
     private void setCurrentQuestion() {
 
@@ -338,7 +413,9 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         }
 
         for (int i = 0; i < infoForAnswer.size(); i++) {
-            if (Integer.parseInt(numbers) == i + 1) {
+
+
+            if (Integer.parseInt(numbers.substring(0,1)) == i + 1) {
                 finalAnswer = infoForAnswer.get(i)[1];
             }
         }
@@ -383,7 +460,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
         if (!currentQuestion[5].equals("")) {
             questionPicture.setVisibility(View.VISIBLE);
-            questionPicture.setImageURI(Uri.fromFile(new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4) + getString(R.string.separator_path) + "answerimages", currentQuestion[5])));
+            questionPicture.setImageURI(Uri.fromFile(new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file_" + currentUser, "").substring(0, mSharedPreferences.getString("name_file_" + currentUser, "").length() - 4) + getString(R.string.separator_path) + "answerimages", currentQuestion[5])));
         } else {
             questionPicture.setVisibility(View.GONE);
         }
@@ -459,7 +536,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
                 for (int i = 0; i < tempTableQuestions.size(); i++) {
                     final FrameLayout fixedFrameLayout = new FrameLayout(this);
-                    fixedFrameLayout.setPadding(0, 1, 1, 1);
+                    fixedFrameLayout.setPadding(0,  1, 1, 1);
                     final TextView fixedView = TableHelper.makeTableRowWithText(tempTableQuestions.get(i).getTitle().contains("*") ? tempTableQuestions.get(i).getTitle().split("\\*")[1] : tempTableQuestions.get(i).getTitle(), this);
                     fixedView.setId(i);
                     fixedView.setBackgroundColor(ContextCompat.getColor(this, R.color.backgroundMaterialLight));
@@ -601,13 +678,14 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                 for (int i = 0; i < currentAnswers.size(); i++) {
                     if (currentAnswers.get(i)[1].contains("#")) {
                         answer = currentAnswers.get(i)[1].substring(currentAnswers.get(i)[1].indexOf('#') + 1, currentAnswers.get(i)[1].indexOf('|'));
-                        answerNum = currentAnswers.get(i)[1].substring(currentAnswers.get(i)[1].indexOf('|') + 1, currentAnswers.get(i)[1].lastIndexOf('#'));
+                        Log.i(TAG, "currentAnswers: "  + currentAnswers.get(i)[1]);
+                        answerNum = currentAnswers.get(i)[1].substring(currentAnswers.get(i)[1].indexOf('|') + 1, currentAnswers.get(i)[1].lastIndexOf('$'));
                     }
                     answers.add(new Answer(
                             currentAnswers.get(i)[0],
                             currentAnswers.get(i)[1].contains("#") ? showAnswer(answer, answerNum) :
                                     currentAnswers.get(i)[1],
-                            currentAnswers.get(i)[2].equals("") ? null : new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4) + getString(R.string.separator_path) + "answerimages", currentAnswers.get(i)[2]),
+                            currentAnswers.get(i)[2].equals("") ? null : new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file_" + currentUser, "").substring(0, mSharedPreferences.getString("name_file_" + currentUser, "").length() - 4) + getString(R.string.separator_path) + "answerimages", currentAnswers.get(i)[2]),
                             currentQuestion[3],
                             currentQuestion[4],
                             currentAnswers.get(i)[5],
@@ -1121,6 +1199,10 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                     }
                 }
                 break;
+
+                case R.id.question_exit_button:
+                    openQuitDialog();
+                    break;
         }
 
         findViewById(R.id.question_next_button).setEnabled(false);
@@ -1138,8 +1220,8 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
     private void addToDB(final int model) {
         if (model == 0) {
             mSQLiteDatabase = new DBHelper(this,
-                    mSharedPreferences.getString("name_file", ""),
-                    new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file", "").substring(0, mSharedPreferences.getString("name_file", "").length() - 4)),
+                    mSharedPreferences.getString("name_file_" + currentUser, ""),
+                    new File(getFilesDir() + getString(R.string.separator_path) + mSharedPreferences.getString("name_file_" + currentUser, "").substring(0, mSharedPreferences.getString("name_file_" + currentUser, "").length() - 4)),
                     getString(R.string.sql_file_name),
                     getString(R.string.old_sql_file_name)).getWritableDatabase();
 
@@ -1206,15 +1288,15 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             //Запоминаем названия таблиц из БД
 
             final SharedPreferences.Editor editor = mSharedPreferences.edit()
-                    .putString("QuizzesRequest", mSharedPreferences.getString("QuizzesRequest", "") + date + ";")
-                    .putString("Quizzes_audio", mSharedPreferences.getString("Quizzes_audio", "") + date + ";")
-                    .putString("last_date_interview", mDateInterview);
+                    .putString("QuizzesRequest_" + currentUser, mSharedPreferences.getString("QuizzesRequest_" + currentUser, "") + date + ";")
+                    .putString("Quizzes_audio_" + currentUser, mSharedPreferences.getString("Quizzes_audio_" + currentUser, "") + date + ";")
+                    .putString("last_date_interview_" + currentUser, mDateInterview);
             editor.apply();
 
             //Создаем таблицы в БД
             mSQLiteDatabase.execSQL("create table if not exists " + answerSQL + "(answer_id text,duration_time_question text,text_open_answer text);");
             mSQLiteDatabase.execSQL("create table if not exists " + answerSQLSelective + "(answer_id text,duration_time_question text);");
-            mSQLiteDatabase.execSQL("create table if not exists " + commonSQL + "(project_id text, questionnaire_id text, user_project_id text, date_interview text, gps text, duration_time_questionnaire text, selected_questions text, login text);");
+            mSQLiteDatabase.execSQL("create table if not exists " + commonSQL + "(project_id text, questionnaire_id text, user_project_id text,token text, date_interview text, gps text, duration_time_questionnaire text, selected_questions text, login text);");
 
             //Заполняем таблицыд г
             for (int i = 0; i < answerSequenceInsideQuestions.size(); i++) {
@@ -1234,16 +1316,17 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
                 }
             }
 
-            mSQLiteDatabase.execSQL("insert into " + commonSQL + " (project_id,questionnaire_id,user_project_id,date_interview,gps,duration_time_questionnaire,selected_questions,login) " +
+            mSQLiteDatabase.execSQL("insert into " + commonSQL + " (project_id,questionnaire_id,user_project_id,token,date_interview,gps,duration_time_questionnaire,selected_questions,login) " +
                     "values('" +
                     Utils.getProjectId(this) + "','" +
                     Utils.getQuestionnaireId(this) + "','" +
-                    mSharedPreferences.getString("user_project_id", "") + "','" +
+                    mSharedPreferences.getString("user_project_id" + currentUser, "") + "','" +
+                    TokenQuiz.TokenQuiz(mSharedPreferences.getString("user_project_id" + currentUser, ""))+"','" +
                     mDateInterview + "','" +
                     mSharedPreferences.getString("gps", "") + "','" +
                     StopWatch.getGlobalTime() + "','" +
                     countQuestions + "','" +
-                    mSharedPreferences.getString("login", "") + "')");
+                    mSharedPreferences.getString("login" + currentUser, "") + "')");
 
             saveSmsAnswers();
             startActivity(new Intent(this, ProjectActivity.class));
@@ -1306,7 +1389,8 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
 
     private void insertOrUpdateToDatabase(final SmsFullAnswerModel pSmsFullAnswerModel) {
         for (final SmsAnswerModel smsAnswerModel : pSmsFullAnswerModel.getAnswers()) {
-            final StringBuilder message = new StringBuilder("#" + smsAnswerModel.getSmsNumber());
+            final String smsNumber2 = smsAnswerModel.getSmsNumber();
+            final StringBuilder message = new StringBuilder(smsNumber2.startsWith("#") ? smsNumber2 : "#" + smsNumber2);
 
             for (final String value : smsAnswerModel.getAnswers()) {
                 message.append(" ").append(value);
@@ -1390,11 +1474,28 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             if (row == null) {
                 row = mInflater.inflate(R.layout.answer_item, parent, false);
                 holder = new ViewHolder();
+
+
+                final LinearLayout lin = holder.linpadding = row.findViewById(R.id.linpadding);
+                lin.setPadding(0,setting.getInt("interval_between_answer",10),0,setting.getInt("interval_between_answer",10));
+
+
                 holder.answerTitle = (TextView) row.findViewById(R.id.answer_title);
+                holder.answerTitle.setTextSize(setting.getInt("text_size",16));
                 holder.answerRadio = (RadioButton) row.findViewById(R.id.answer_radio);
+                holder.answerRadio.setPadding(0,0,10,0);
+                holder.answerRadio.setScaleX(setting.getFloat("scale",1));
+                holder.answerRadio.setScaleY(setting.getFloat("scale",1));
                 holder.answerCheck = (CheckBox) row.findViewById(R.id.answer_check);
+                holder.answerCheck.setScaleX(setting.getFloat("scale",1));
+                holder.answerCheck.setScaleY(setting.getFloat("scale",1));
+                holder.answerCheck.setPadding(0,0,10,0);
                 holder.answerPicture = (ImageView) row.findViewById(R.id.answer_picture);
+                holder.answerPicture.setScaleX(setting.getFloat("scale",1));
+                holder.answerPicture.setScaleY(setting.getFloat("scale",1));
                 holder.answerOpen = (EditText) row.findViewById(R.id.answer_open);
+                holder.answerOpen.setScaleX(setting.getFloat("scale",1));
+                holder.answerOpen.setScaleY(setting.getFloat("scale",1));
                 row.setTag(holder);
             } else {
                 holder = (ViewHolder) row.getTag();
@@ -1620,6 +1721,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             CheckBox answerCheck;
             ImageView answerPicture;
             EditText answerOpen;
+            LinearLayout linpadding;
         }
     }
 
@@ -1814,8 +1916,8 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             if (mAudio.getAudioRecordQuestions().containsKey(number) && !mAudio.getAudioRecordQuestions().containsKey(0)) {
                 if (mAudio.getAudioRecordQuestions().get(number) == null) {
                     AudioRecorder.Start(this, mSharedPreferences.getString(Constants.Shared.LOGIN_ADMIN, "") + "_" +
-                            mSharedPreferences.getString("login", "") + "_" +
-                            mSharedPreferences.getString("user_project_id", "") + "_" +
+                            mSharedPreferences.getString("login" + currentUser, "") + "_" +
+                            mSharedPreferences.getString("user_project_id" + currentUser, "") + "_" +
                             currentQuestion[0] + "_" +
                             mDateInterview.replace(':', '-').replace(' ', '-') + "_" +
                             1, mAudio.getAudioRecordLimitTime(), mAudio.getAudioSampleRate());
@@ -1831,7 +1933,7 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
             if (photoNumber == number) {
                 if (photoName == null) {
                     photoName = "photo-" +
-                            mSharedPreferences.getString("login", "") + "-" +
+                            mSharedPreferences.getString("login" + currentUser, "") + "-" +
                             mDateInterview.replace(':', '-').replace(' ', '-');
                     System.out.println(photoName);
                     new PhotoCamera(this, frameLayout, photoName).createPhoto();
@@ -1884,11 +1986,51 @@ public class QuestionsActivity extends AppCompatActivity implements View.OnClick
         locationManager.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER, 1000 * 10, 10,
                 this);
+
     }
+
 
     @Override
     protected void onPause() {
         super.onPause();
         locationManager.removeUpdates(this);
     }
+
+    View.OnClickListener clickHeader = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId())
+            {
+                case R.id.sync_button:
+                    startActivity(new Intent(QuestionsActivity.this, SendQuizzesActivity.class));
+                    finish();
+                    break;
+                case R.id.settings:
+                    drawer.closeDrawer(Gravity.END);
+                    startActivity(new Intent(QuestionsActivity.this, SettingsActivity.class));
+                    break;
+                case R.id.change_users:
+                    drawer.closeDrawer(Gravity.END);
+                    new AlertDialog.Builder(QuestionsActivity.this)
+                            .setIcon(R.drawable.ico)
+                            .setTitle("Выйти из опроса?")
+                            .setMessage("Вы действительно хотите выйти? Данные не будут сохранены!")
+                            .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    startActivity(new Intent(QuestionsActivity.this, AuthActivity.class));
+                                    finish();
+                                }
+                            })
+                            .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.cancel();
+                                }
+                            })
+                            .create().show();
+                    break;
+            }
+        }
+    };
 }

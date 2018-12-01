@@ -38,6 +38,8 @@ public class Constants {
         String LOGIN = "login";
         String PASSW = "passw";
         String CONFIG = "config_shared";
+        String NUMBER_POSITION = "number_position";
+
     }
 
     public interface SmsDatabase {

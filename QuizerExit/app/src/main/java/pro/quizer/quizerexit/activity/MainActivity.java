@@ -6,40 +6,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.model.config.ConfigField;
 import pro.quizer.quizerexit.model.config.ProjectInfoField;
+import pro.quizer.quizerexit.model.database.UserModel;
 
 public class MainActivity extends BaseActivity {
-
-//    public void onSingleSelectionClick(final View view) {
-//        final Intent intent = new Intent(this, RecyclerViewActivity.class);
-//        intent.putExtra(RecyclerViewActivity.BUNDLE_MAX_ANSWERS, 1);
-//        intent.putExtra(RecyclerViewActivity.BUNDLE_MIN_ANSWERS, 1);
-//        startActivity(intent);
-//    }
-//
-//    public void onMaxSelectionClick(final View view) {
-//        final Intent intent = new Intent(this, RecyclerViewActivity.class);
-//        intent.putExtra(RecyclerViewActivity.BUNDLE_MAX_ANSWERS, 3);
-//        startActivity(intent);
-//    }
-//
-//    public void onMinSelectionClick(final View view) {
-//        final Intent intent = new Intent(this, RecyclerViewActivity.class);
-//        intent.putExtra(RecyclerViewActivity.BUNDLE_MIN_ANSWERS, 3);
-//        startActivity(intent);
-//    }
-//
-//    public void onMinAndMaxSelectionClick(final View view) {
-//        final Intent intent = new Intent(this, RecyclerViewActivity.class);
-//        intent.putExtra(RecyclerViewActivity.BUNDLE_MAX_ANSWERS, 4);
-//        intent.putExtra(RecyclerViewActivity.BUNDLE_MIN_ANSWERS, 2);
-//        startActivity(intent);
-//    }
-//
-//    public void onMultiSelectionClick(final View view) {
-//        final Intent intent = new Intent(this, RecyclerViewActivity.class);
-//        startActivity(intent);
-//    }
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -50,16 +21,25 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initViews() {
-//        final ProjectInfoField projectInfo = getSPConfigModel().getConfig().getProjectInfo();
+        final UserModel userModel = getUserByUserId(getCurrentUserId());
+        final ConfigField config = formatConfigStringToConfig(userModel.config);
+        final ProjectInfoField projectInfo = config.getProjectInfo();
 
         final TextView configAgreement = findViewById(R.id.config_agreement);
         final TextView configName = findViewById(R.id.config_name);
-//
-//        configName.setText(projectInfo.getName());
-//        configAgreement.setText(projectInfo.getAgreement());
 
-        final Button settingsBtn = findViewById(R.id.settings);
-        final Button syncBtn = findViewById(R.id.sync);
+        // TODO: 01.12.2018 remove debug
+        final TextView currentUser = findViewById(R.id.current_user);
+        currentUser.setText("login: " + userModel.login + " \n" +
+                "password: " + userModel.password + "\n" +
+                "config_id: " + userModel.config_id + "\n" +
+                "user_id: " + userModel.user_id + "\n" +
+                "user_project_id: " + userModel.user_project_id + "\n" +
+                "role_id: " + userModel.role_id);
+
+        configName.setText(projectInfo.getName());
+        configAgreement.setText(projectInfo.getAgreement());
+
         final Button startBtn = findViewById(R.id.start);
 
         startBtn.setOnClickListener(new View.OnClickListener() {

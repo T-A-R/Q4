@@ -1,108 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <TextView
-        android:id="@+id/config_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:gravity="center"
-        android:textColor="@android:color/black"
-        android:textSize="22sp"
-        tools:text="Экзит пул"/>
-
-    <TextView
-        android:id="@+id/config_agreement"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button_panel"
-        android:layout_below="@+id/config_name"
-        android:gravity="center|top"
-        android:textSize="16sp"
-        tools:text="Экзит пул agreement..."/>
+    android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/button_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginRight="16dp"
         android:orientation="vertical">
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_quizer" />
+
+        <TextView
+            android:id="@+id/config_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            tools:text="Экзит пул" />
+
+        <TextView
+            android:id="@+id/config_agreement"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center|top"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            tools:text="Экзит пул agreement..." />
+
+        <TextView
+            android:id="@+id/current_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            tools:text="Экзит пул agreement..." />
+
         <Button
-            android:id="@+id/settings"
-            android:layout_width="match_parent"
+            android:id="@+id/start"
+            style="@style/ButtonStyle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:background="@color/colorPrimary"
-            android:text="@string/settings"
-            android:textColor="#fff"/>
-
-        <android.support.v7.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/sync"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:background="@color/colorPrimary"
-                android:text="@string/sync"
-                android:textColor="#fff"/>
-
-            <Button
-                android:id="@+id/start"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:background="@color/colorPrimary"
-                android:text="@string/start"
-                android:textColor="#fff"/>
-
-        </android.support.v7.widget.LinearLayoutCompat>
-
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:text="@string/start" />
 
     </LinearLayout>
 
+    <include layout="@layout/view_progress" />
 
-    <!--<Button-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:onClick="onMultiSelectionClick"-->
-    <!--android:text="Multi selection (можно выбрать все, но минимальный один)"/>-->
-
-    <!--<Button-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:onClick="onSingleSelectionClick"-->
-    <!--android:text="Single selection (можно выбрать только один)"/>-->
-
-    <!--<Button-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:onClick="onMaxSelectionClick"-->
-    <!--android:text="Max selection (указан максимальный, но минимальный один"/>-->
-
-    <!--<Button-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:onClick="onMinSelectionClick"-->
-    <!--android:text="Min selection (указан минимальный, но минимальный один"/>-->
-
-    <!--<Button-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:onClick="onMinAndMaxSelectionClick"-->
-    <!--android:text="Min And Max selection (указан минимальный и максимальный, но минимальный один"/>-->
-
-</RelativeLayout>
+</FrameLayout>

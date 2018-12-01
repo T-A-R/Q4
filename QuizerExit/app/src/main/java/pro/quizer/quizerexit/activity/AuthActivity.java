@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
+import android.widget.TextView;
 
 import com.activeandroid.query.Select;
 import com.google.gson.Gson;
@@ -41,6 +42,7 @@ public class AuthActivity extends BaseActivity {
     private EditText mPasswordEditText;
     private EditSpinner mLoginSpinner;
     private List<String> mSavedUsers;
+    private TextView mVersionView;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -49,6 +51,8 @@ public class AuthActivity extends BaseActivity {
 
         mPasswordEditText = findViewById(R.id.auth_password_edit_text);
         mLoginSpinner = findViewById(R.id.login_spinner);
+        mVersionView = findViewById(R.id.version_view);
+        mVersionView.setText(String.format(getString(R.string.app_version), getAppVersionName()));
 
         mSavedUsers = getSavedUserLogins();
 
@@ -103,7 +107,15 @@ public class AuthActivity extends BaseActivity {
                             @Override
                             public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
                                 hideProgressBar();
-                                showToastMessage(getString(R.string.internet_error_please_try_again));
+
+                                final UserModel savedUserModel = getLocalUserModel(login, password);
+
+                                if (savedUserModel != null) {
+                                    showToastMessage("Удалось войти под сохраненными локальными данными.");
+                                    onLoggedInWithoutUpdateLocalData(savedUserModel.user_id);
+                                } else {
+                                    showToastMessage(getString(R.string.internet_error_please_try_again));
+                                }
                             }
 
                             @Override
@@ -119,14 +131,25 @@ public class AuthActivity extends BaseActivity {
                                 }
 
                                 final String responseJson = responseBody.string();
-                                final AuthResponseModel authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
+                                AuthResponseModel authResponseModel = null;
+
+                                try {
+                                    authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
+                                } catch (Exception pE) {
+                                    // empty
+                                }
 
                                 if (authResponseModel != null) {
                                     if (authResponseModel.getResult() != 0) {
                                         if (isNeedDownloadConfig(authResponseModel)) {
                                             downloadConfig(login, password, authResponseModel);
                                         } else {
-                                            startMainActivity();
+                                            onLoggedIn(login,
+                                                    password,
+                                                    authResponseModel.getConfigId(),
+                                                    authResponseModel.getUserId(),
+                                                    authResponseModel.getRoleId(),
+                                                    authResponseModel.getUserProjectId());
                                         }
                                     } else {
                                         showToastMessage(authResponseModel.getError());
@@ -139,6 +162,22 @@ public class AuthActivity extends BaseActivity {
 
             }
         });
+    }
+
+    private void onLoggedInWithoutUpdateLocalData(final int pUserId) {
+        saveCurrentUserId(pUserId);
+        startMainActivity();
+    }
+
+    private void onLoggedIn(final String pLogin,
+                            final String pPassword,
+                            final String pConfigId,
+                            final int pUserId,
+                            final int pRoleId,
+                            final int pUserProjectId) {
+        updateDatabaseUserByUserId(pLogin, pPassword, pConfigId, pUserId, pRoleId, pUserProjectId);
+
+        onLoggedInWithoutUpdateLocalData(pUserId);
     }
 
     private boolean isNeedDownloadConfig(final AuthResponseModel pAuthResponseModel) {
@@ -207,14 +246,19 @@ public class AuthActivity extends BaseActivity {
 
                                  final String responseJson = responseBody.string();
                                  final GsonBuilder gsonBuilder = new GsonBuilder();
+                                 ConfigResponseModel configResponseModel = null;
 
-                                 final ConfigResponseModel configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
+                                 try {
+                                     configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
+                                 } catch (Exception pE) {
+                                     // empty
+                                 }
 
                                  if (configResponseModel != null) {
                                      if (configResponseModel.getResult() != 0) {
                                          saveUser(pLogin, pPassword, pModel, configResponseModel);
-                                         saveCurrentUserId(pModel.getUserId())
-                                         startMainActivity();
+
+                                         onLoggedIn(pLogin, pPassword, pModel.getConfigId(), pModel.getUserId(), pModel.getRoleId(), pModel.getUserProjectId());
                                      } else {
                                          showToastMessage(configResponseModel.getError());
                                      }

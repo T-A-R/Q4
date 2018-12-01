@@ -22,7 +22,6 @@ import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.DoRequest;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.model.request.ActivationRequestModel;
-import pro.quizer.quizerexit.model.database.ActivationModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.utils.StringUtils;
 
@@ -80,7 +79,13 @@ public class ActivationActivity extends BaseActivity {
                                 }
 
                                 final String responseJson = responseBody.string();
-                                final ActivationResponseModel activationModel = new GsonBuilder().create().fromJson(responseJson, ActivationResponseModel.class);
+                                ActivationResponseModel activationModel = null;
+
+                                try {
+                                    activationModel = new GsonBuilder().create().fromJson(responseJson, ActivationResponseModel.class);
+                                } catch (Exception pE) {
+                                    // empty
+                                }
 
                                 if (activationModel != null) {
                                     if (activationModel.getResult() != 0) {

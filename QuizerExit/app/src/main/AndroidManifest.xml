@@ -39,6 +39,10 @@
             android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".activity.ServiceActivity"
+            android:noHistory="true"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activity.RecyclerViewActivity"
             android:noHistory="true"
             android:screenOrientation="portrait" />

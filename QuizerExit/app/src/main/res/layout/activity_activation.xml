@@ -19,15 +19,6 @@
             android:layout_weight="1"
             android:src="@drawable/ic_quizer"/>
 
-        <TextView
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/app_name_exit"
-            android:textColor="@color/brand_color"
-            android:textSize="48sp"/>
-
         <EditText
             android:id="@+id/activation_edit_text"
             android:layout_width="match_parent"

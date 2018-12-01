@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">QuizerExit</string>
-    <string name="app_name_exit">EXIT</string>
+    <string name="app_name">Quizer</string>
     <string name="input_activation_key">Введите ключ активации</string>
     <string name="send">Отправить</string>
     <string name="empty_activation_key">Ключ активации не может быть пустым.</string>
@@ -23,4 +22,11 @@
     <string name="dot">.</string>
     <string name="internal_app_error">Внутренняя ошибка приложения. Error code: </string>
     <string name="app_version">Версия: %1$s</string>
+    <string name="service_title">Сервисное обслуживание</string>
+    <string name="count_users_on_this_device">Количество пользователей на данном устройстве: %1$s</string>
+    <string name="count_unsended_questionnaires">Количество неотправленных анкет: %1$s</string>
+    <string name="count_unsended_audio_files">Количество неотправленных аудио файлов: %1$s</string>
+    <string name="delete_users">Удалить пользователей</string>
+    <string name="upload_data">Выгрузить данные</string>
+    <string name="send_data">Отправить данные</string>
 </resources>

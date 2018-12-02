@@ -10,19 +10,28 @@ public class ConfigField implements Serializable {
     private String server;
 
     @SerializedName("photo_questionnaire")
-    private String photo_questionnaire;
+    private boolean photo_questionnaire;
 
-    @SerializedName("count_questions_min")
-    private String count_questions_min;
+    @SerializedName("autonomous_limit_count_questionnare")
+    private int autonomous_limit_count_questionnare;
 
-    @SerializedName("gps")
-    private String gps;
+    @SerializedName("autonomous_limit_time_questionnare")
+    private int autonomous_limit_time_questionnare;
+
+    @SerializedName("config_date")
+    private String config_date;
 
     @SerializedName("audio")
-    private String audio;
+    private boolean audio;
 
-    @SerializedName("audio_record_questions")
-    private String audio_record_questions;
+    @SerializedName("gps")
+    private boolean gps;
+
+    @SerializedName("force_gps")
+    private boolean force_gps;
+
+    @SerializedName("audio_record_all")
+    private boolean audio_record_all;
 
     @SerializedName("audio_record_limit_time")
     private int audio_record_limit_time;
@@ -33,31 +42,40 @@ public class ConfigField implements Serializable {
     @SerializedName("project_info")
     private ProjectInfoField project_info;
 
-    public ConfigField() {
-    }
-
     public String getServer() {
         return server;
     }
 
-    public String getPhotoQuestionnaire() {
+    public boolean isPhotoQuestionnaire() {
         return photo_questionnaire;
     }
 
-    public String getCountQuestionsMin() {
-        return count_questions_min;
+    public int getAutonomousLimitCountQuestionnare() {
+        return autonomous_limit_count_questionnare;
     }
 
-    public String getGps() {
-        return gps;
+    public int getAutonomousLimitTimeQuestionnare() {
+        return autonomous_limit_time_questionnare;
     }
 
-    public String getAudio() {
+    public String getConfigDate() {
+        return config_date;
+    }
+
+    public boolean isAudio() {
         return audio;
     }
 
-    public String getAudioRecordQuestions() {
-        return audio_record_questions;
+    public boolean isGps() {
+        return gps;
+    }
+
+    public boolean isForceGps() {
+        return force_gps;
+    }
+
+    public boolean isAudioRecordAll() {
+        return audio_record_all;
     }
 
     public int getAudioRecordLimitTime() {

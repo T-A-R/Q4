@@ -19,14 +19,11 @@ public class ProjectInfoField implements Serializable {
     @SerializedName("agreement")
     private String agreement;
 
-    @SerializedName("questions")
-    private List<QuestionField> questions;
+    @SerializedName("elements")
+    private List<ElementField> elements;
 
     @SerializedName("reserve_channel")
     private ReserveChannelField reserve_channel;
-
-    public ProjectInfoField() {
-    }
 
     public int getProjectId() {
         return project_id;
@@ -44,8 +41,8 @@ public class ProjectInfoField implements Serializable {
         return agreement;
     }
 
-    public List<QuestionField> getQuestions() {
-        return questions;
+    public List<ElementField> getElements() {
+        return elements;
     }
 
     public ReserveChannelField getReserveChannel() {

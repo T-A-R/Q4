@@ -6,6 +6,12 @@ import java.io.Serializable;
 
 public class ConfigField implements Serializable {
 
+    @SerializedName("server_url")
+    private String server_url;
+
+    @SerializedName("login_admin")
+    private String login_admin;
+
     @SerializedName("server")
     private String server;
 
@@ -41,6 +47,22 @@ public class ConfigField implements Serializable {
 
     @SerializedName("project_info")
     private ProjectInfoField project_info;
+
+    public String getServerUrl() {
+        return server_url;
+    }
+
+    public String getLoginAdmin() {
+        return login_admin;
+    }
+
+    public void setServerUrl(String mServerUrl) {
+        this.server_url = mServerUrl;
+    }
+
+    public void setLoginAdmin(String mLoginAdmin) {
+        this.login_admin = mLoginAdmin;
+    }
 
     public String getServer() {
         return server;

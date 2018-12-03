@@ -29,6 +29,9 @@ dependencies {
     implementation "com.cleveroad:adaptivetablelayout:1.1.1"
     implementation 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
     implementation 'com.reginald:editspinner:1.0.0'
+    implementation 'com.madgag.spongycastle:core:1.56.0.0'
+
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

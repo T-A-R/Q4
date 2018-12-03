@@ -51,6 +51,8 @@ public class AuthActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
 
+        final TextView usersCount = findViewById(R.id.users_count);
+        usersCount.setText(String.format(getString(R.string.count_users_on_this_device), (getUsersCount() + "/" + MAX_USERS)));
         mPasswordEditText = findViewById(R.id.auth_password_edit_text);
         mLoginSpinner = findViewById(R.id.login_spinner);
         mVersionView = findViewById(R.id.version_view);
@@ -271,7 +273,11 @@ public class AuthActivity extends BaseActivity {
 
                                  if (configResponseModel != null) {
                                      if (configResponseModel.getResult() != 0) {
-                                         saveUser(pLogin, pPassword, pModel, configResponseModel);
+                                         try {
+                                             saveUser(pLogin, pPassword, pModel, configResponseModel);
+                                         } catch (Exception e) {
+                                             showToastMessage(getString(R.string.server_error) + "\n" + e.toString());
+                                         }
 
                                          onLoggedIn(pLogin, pPassword, pModel.getConfigId(), pModel.getUserId(), pModel.getRoleId(), pModel.getUserProjectId());
                                      } else {

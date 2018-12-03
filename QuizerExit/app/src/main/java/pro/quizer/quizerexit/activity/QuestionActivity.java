@@ -9,9 +9,7 @@ import pro.quizer.quizerexit.OnNextQuestionCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.fragment.SelectionQuestionFragment;
 import pro.quizer.quizerexit.model.config.AnswersField;
-import pro.quizer.quizerexit.model.config.ConfigField;
 import pro.quizer.quizerexit.model.config.QuestionField;
-import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 
 public class QuestionActivity extends BaseActivity implements OnNextQuestionCallback {
 

@@ -20,6 +20,16 @@
             android:layout_weight="1"
             android:src="@drawable/ic_quizer" />
 
+        <TextView
+            android:id="@+id/users_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            tools:text="@string/count_users_on_this_device" />
+
         <com.reginald.editspinner.EditSpinner
             android:id="@+id/login_spinner"
             android:layout_width="match_parent"

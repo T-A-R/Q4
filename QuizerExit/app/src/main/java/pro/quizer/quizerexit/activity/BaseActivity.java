@@ -18,11 +18,13 @@ import java.util.List;
 import pro.quizer.quizerexit.BuildConfig;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.model.config.ConfigField;
+import pro.quizer.quizerexit.model.config.ParseServerModel;
 import pro.quizer.quizerexit.model.database.ActivationModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
+import pro.quizer.quizerexit.utils.CryptoController;
 import pro.quizer.quizerexit.utils.SPUtils;
 
 @SuppressLint("Registered")
@@ -145,10 +147,17 @@ public class BaseActivity extends AppCompatActivity {
         return SPUtils.getCurrentUserId(this);
     }
 
-    public void saveUser(final String pLogin, final String pPassword, final AuthResponseModel pModel, final ConfigResponseModel pConfigResponseModel) {
+    public void saveUser(final String pLogin, final String pPassword, final AuthResponseModel pModel, final ConfigResponseModel pConfigResponseModel) throws Exception {
         new Delete().from(UserModel.class).where(UserModel.USER_ID + " = ?", pModel.getUserId()).execute();
 
         final UserModel userModel = new UserModel();
+        final ParseServerModel parseServerModel = CryptoController.parseServer(pConfigResponseModel.getConfig().getServer());
+        final String serverUrl = parseServerModel.getServerUrl();
+        final String loginAdmin = parseServerModel.getLoginAdmin();
+
+        pConfigResponseModel.getConfig().setLoginAdmin(loginAdmin);
+        pConfigResponseModel.getConfig().setServerUrl(serverUrl);
+
         userModel.login = pLogin;
         userModel.password = pPassword;
         userModel.config_id = pModel.getConfigId();
@@ -156,7 +165,6 @@ public class BaseActivity extends AppCompatActivity {
         userModel.user_id = pModel.getUserId();
         userModel.user_project_id = pModel.getUserProjectId();
         userModel.config = new GsonBuilder().create().toJson(pConfigResponseModel);
-
         userModel.save();
     }
 

@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
-public class ProjectInfoField implements Serializable {
+public class ProjectInfoModel implements Serializable {
 
     @SerializedName("project_id")
     private int project_id;
@@ -20,10 +20,10 @@ public class ProjectInfoField implements Serializable {
     private String agreement;
 
     @SerializedName("elements")
-    private List<ElementField> elements;
+    private List<ElementModel> elements;
 
     @SerializedName("reserve_channel")
-    private ReserveChannelField reserve_channel;
+    private ReserveChannelModel reserve_channel;
 
     public int getProjectId() {
         return project_id;
@@ -41,11 +41,11 @@ public class ProjectInfoField implements Serializable {
         return agreement;
     }
 
-    public List<ElementField> getElements() {
+    public List<ElementModel> getElements() {
         return elements;
     }
 
-    public ReserveChannelField getReserveChannel() {
+    public ReserveChannelModel getReserveChannel() {
         return reserve_channel;
     }
 }

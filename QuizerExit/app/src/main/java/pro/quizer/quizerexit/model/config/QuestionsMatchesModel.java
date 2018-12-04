@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class QuestionsMatchesField implements Serializable {
+public class QuestionsMatchesModel implements Serializable {
 
     @SerializedName("question_id")
     private String question_id;
@@ -12,7 +12,7 @@ public class QuestionsMatchesField implements Serializable {
     @SerializedName("sms_num")
     private String sms_num;
 
-    public QuestionsMatchesField() {
+    public QuestionsMatchesModel() {
     }
 
     public String getQuestionId() {

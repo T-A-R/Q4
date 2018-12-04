@@ -8,21 +8,21 @@ import java.util.List;
 import pro.quizer.quizerexit.OnNextQuestionCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.fragment.SelectionQuestionFragment;
-import pro.quizer.quizerexit.model.config.AnswersField;
-import pro.quizer.quizerexit.model.config.QuestionField;
+import pro.quizer.quizerexit.model.config.AnswersModel;
+import pro.quizer.quizerexit.model.config.QuestionModel;
 
 public class QuestionActivity extends BaseActivity implements OnNextQuestionCallback {
 
 //    ConfigResponseModel mConfigResponseModel;
-//    ConfigField mConfig;
-//    List<QuestionField> mQuestions;
+//    ConfigModel mConfig;
+//    List<QuestionModel> mQuestions;
 
     @Override
-    public void onNextQuestion(final List<AnswersField> pAnswers, final int pNextQuestion) {
+    public void onNextQuestion(final List<AnswersModel> pAnswers, final int pNextQuestion) {
         final StringBuilder sb = new StringBuilder();
 
         for (int index = 0; index < pAnswers.size(); index++) {
-            final AnswersField model = pAnswers.get(index);
+            final AnswersModel model = pAnswers.get(index);
 
             sb.append(model.getTitle()).append("\n");
         }
@@ -51,7 +51,7 @@ public class QuestionActivity extends BaseActivity implements OnNextQuestionCall
     }
 
     private void showNextQuestion(final int pNumberOfNextQuestion) {
-        final QuestionField nextQuestion = getQuestionByNumber(pNumberOfNextQuestion);
+        final QuestionModel nextQuestion = getQuestionByNumber(pNumberOfNextQuestion);
 
         if (nextQuestion == null) {
             // TODO: 27.10.2018 it was last question and we need to finish
@@ -69,12 +69,12 @@ public class QuestionActivity extends BaseActivity implements OnNextQuestionCall
                 .commit();
     }
 
-    private QuestionField getQuestionByNumber(final int pQuestionNumber) {
+    private QuestionModel getQuestionByNumber(final int pQuestionNumber) {
         if (pQuestionNumber == 0) {
             return null;
         }
 
-//        for (final QuestionField questionField : mQuestions) {
+//        for (final QuestionModel questionField : mQuestions) {
 //            if (questionField.getNumber() == pQuestionNumber) {
 //                return questionField;
 //            }

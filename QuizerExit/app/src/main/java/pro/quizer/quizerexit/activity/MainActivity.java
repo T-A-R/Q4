@@ -6,8 +6,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import pro.quizer.quizerexit.R;
-import pro.quizer.quizerexit.model.config.ConfigField;
-import pro.quizer.quizerexit.model.config.ProjectInfoField;
+import pro.quizer.quizerexit.model.config.ConfigModel;
+import pro.quizer.quizerexit.model.config.ProjectInfoModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 
 public class MainActivity extends BaseActivity {
@@ -22,8 +22,8 @@ public class MainActivity extends BaseActivity {
 
     private void initViews() {
         final UserModel userModel = getUserByUserId(getCurrentUserId());
-        final ConfigField config = formatConfigStringToConfig(userModel.config);
-        final ProjectInfoField projectInfo = config.getProjectInfo();
+        final ConfigModel config = formatConfigStringToConfig(userModel.config);
+        final ProjectInfoModel projectInfo = config.getProjectInfo();
 
         final TextView configAgreement = findViewById(R.id.config_agreement);
         final TextView configName = findViewById(R.id.config_name);

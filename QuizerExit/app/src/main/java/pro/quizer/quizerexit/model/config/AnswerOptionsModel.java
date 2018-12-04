@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class AnswerOptionsField implements Serializable {
+public class AnswerOptionsModel implements Serializable {
 
     @SerializedName("is_open")
     private int is_open;
@@ -27,7 +27,7 @@ public class AnswerOptionsField implements Serializable {
     @SerializedName("goto_if")
     private String goto_if;
 
-    public AnswerOptionsField() {
+    public AnswerOptionsModel() {
     }
 
     public boolean isOpen() {

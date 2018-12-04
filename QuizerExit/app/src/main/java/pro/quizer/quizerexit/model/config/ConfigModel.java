@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class ConfigField implements Serializable {
+public class ConfigModel implements Serializable {
 
     @SerializedName("server_url")
     private String server_url;
@@ -46,7 +46,7 @@ public class ConfigField implements Serializable {
     private String delete_data_password;
 
     @SerializedName("project_info")
-    private ProjectInfoField project_info;
+    private ProjectInfoModel project_info;
 
     public String getServerUrl() {
         return server_url;
@@ -108,7 +108,7 @@ public class ConfigField implements Serializable {
         return delete_data_password;
     }
 
-    public ProjectInfoField getProjectInfo() {
+    public ProjectInfoModel getProjectInfo() {
         return project_info;
     }
 }

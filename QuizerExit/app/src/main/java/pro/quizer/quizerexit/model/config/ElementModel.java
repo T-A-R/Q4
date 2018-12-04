@@ -7,7 +7,7 @@ import java.util.List;
 
 import pro.quizer.quizerexit.model.ElementType;
 
-public class ElementField implements Serializable {
+public class ElementModel implements Serializable {
 
     @SerializedName("relativeID")
     private int relativeID;
@@ -20,10 +20,10 @@ public class ElementField implements Serializable {
     private String type;
 
     @SerializedName("attributes")
-    private AttributesField attributes;
+    private AttributesModel attributes;
 
     @SerializedName("elements")
-    private List<ElementField> elements;
+    private List<ElementModel> elements;
 
     public int getRelativeID() {
         return relativeID;
@@ -37,7 +37,7 @@ public class ElementField implements Serializable {
         return type;
     }
 
-    public List<ElementField> getElements() {
+    public List<ElementModel> getElements() {
         return elements;
     }
 }

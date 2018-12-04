@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class AnswersField implements Serializable {
+public class AnswersModel implements Serializable {
 
     @SerializedName("id")
     private int id;
@@ -16,7 +16,7 @@ public class AnswersField implements Serializable {
     private int next_question;
 
     @SerializedName("options")
-    private AnswerOptionsField options;
+    private AnswerOptionsModel options;
 
     @SerializedName("title")
     private String title;
@@ -24,7 +24,7 @@ public class AnswersField implements Serializable {
     private boolean mIsSelected;
     private boolean mIsEnabled = true;
 
-    public AnswersField() {
+    public AnswersModel() {
     }
 
     public boolean isSelected() {
@@ -67,7 +67,7 @@ public class AnswersField implements Serializable {
         title = pTitle;
     }
 
-    public AnswerOptionsField getOptions() {
+    public AnswerOptionsModel getOptions() {
         return options;
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.adapter.SelectionAdapter;
-import pro.quizer.quizerexit.model.config.AnswersField;
+import pro.quizer.quizerexit.model.config.AnswersModel;
 
 public class RecyclerViewActivity extends AppCompatActivity {
 
@@ -48,7 +48,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
                 mMinAnswers = bundle.getInt(BUNDLE_MIN_ANSWERS, DEFAULT_MIN_ANSWERS);
             }
 
-            final List<AnswersField> list = getList();
+            final List<AnswersModel> list = getList();
 
             mSelectionAdapter = new SelectionAdapter(this, list, mMinAnswers, mMaxAnswers);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -63,11 +63,11 @@ public class RecyclerViewActivity extends AppCompatActivity {
             });
         }
 
-        private List<AnswersField> getList() {
-            final List<AnswersField> list = new ArrayList<>();
+        private List<AnswersModel> getList() {
+            final List<AnswersModel> list = new ArrayList<>();
 
             for (int i = 0; i < 10; i++) {
-                final AnswersField model = new AnswersField();
+                final AnswersModel model = new AnswersModel();
                 model.setTitle("Case " + i);
                 model.setId(i);
 
@@ -79,12 +79,12 @@ public class RecyclerViewActivity extends AppCompatActivity {
 
         public void selectedClick() {
             try {
-                final List<AnswersField> list = mSelectionAdapter.processNext();
+                final List<AnswersModel> list = mSelectionAdapter.processNext();
 
                 final StringBuilder sb = new StringBuilder();
 
                 for (int index = 0; index < list.size(); index++) {
-                    final AnswersField model = list.get(index);
+                    final AnswersModel model = list.get(index);
 
                     sb.append(model.getTitle()).append("\n");
                 }

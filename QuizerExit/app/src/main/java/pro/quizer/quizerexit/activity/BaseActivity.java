@@ -17,14 +17,12 @@ import java.util.List;
 
 import pro.quizer.quizerexit.BuildConfig;
 import pro.quizer.quizerexit.R;
-import pro.quizer.quizerexit.model.config.ConfigField;
-import pro.quizer.quizerexit.model.config.ParseServerModel;
+import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.database.ActivationModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
-import pro.quizer.quizerexit.utils.CryptoController;
 import pro.quizer.quizerexit.utils.SPUtils;
 
 @SuppressLint("Registered")
@@ -93,13 +91,13 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public ConfigField getConfigByUserId(final int pUserId) {
+    public ConfigModel getConfigByUserId(final int pUserId) {
         final UserModel userModel = getUserByUserId(pUserId);
 
         return formatConfigStringToConfig(userModel.config);
     }
 
-    public ConfigField formatConfigStringToConfig(final String pConfigString) {
+    public ConfigModel formatConfigStringToConfig(final String pConfigString) {
         return new Gson().fromJson(pConfigString, ConfigResponseModel.class).getConfig();
     }
 
@@ -151,12 +149,12 @@ public class BaseActivity extends AppCompatActivity {
         new Delete().from(UserModel.class).where(UserModel.USER_ID + " = ?", pModel.getUserId()).execute();
 
         final UserModel userModel = new UserModel();
-        final ParseServerModel parseServerModel = CryptoController.parseServer(pConfigResponseModel.getConfig().getServer());
-        final String serverUrl = parseServerModel.getServerUrl();
-        final String loginAdmin = parseServerModel.getLoginAdmin();
-
-        pConfigResponseModel.getConfig().setLoginAdmin(loginAdmin);
-        pConfigResponseModel.getConfig().setServerUrl(serverUrl);
+//        final ParseServerModel parseServerModel = CryptoController.parseServer(pConfigResponseModel.getConfig().getServer());
+//        final String serverUrl = parseServerModel.getServerUrl();
+//        final String loginAdmin = parseServerModel.getLoginAdmin();
+//
+//        pConfigResponseModel.getConfig().setLoginAdmin(loginAdmin);
+//        pConfigResponseModel.getConfig().setServerUrl(serverUrl);
 
         userModel.login = pLogin;
         userModel.password = pPassword;

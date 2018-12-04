@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-import pro.quizer.quizerexit.model.config.ConfigField;
+import pro.quizer.quizerexit.model.config.ConfigModel;
 
 public class ConfigResponseModel implements Serializable {
 
@@ -15,7 +15,7 @@ public class ConfigResponseModel implements Serializable {
     private String error;
 
     @SerializedName("config")
-    private ConfigField config;
+    private ConfigModel config;
 
     public ConfigResponseModel() {
     }
@@ -28,7 +28,7 @@ public class ConfigResponseModel implements Serializable {
         return error;
     }
 
-    public ConfigField getConfig() {
+    public ConfigModel getConfig() {
         return config;
     }
 }

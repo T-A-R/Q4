@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
-public class QuestionField implements Serializable {
+public class QuestionModel implements Serializable {
 
     @SerializedName("id")
     private int id;
@@ -20,12 +20,12 @@ public class QuestionField implements Serializable {
     private int type;
 
     @SerializedName("options")
-    private QuestionOptionsField options;
+    private QuestionOptionsModel options;
 
     @SerializedName("answers")
-    private List<AnswersField> answers;
+    private List<AnswersModel> answers;
 
-    public QuestionField() {
+    public QuestionModel() {
     }
 
     public int getId() {
@@ -44,11 +44,11 @@ public class QuestionField implements Serializable {
         return type;
     }
 
-    public QuestionOptionsField getOptions() {
+    public QuestionOptionsModel getOptions() {
         return options;
     }
 
-    public List<AnswersField> getAnswers() {
+    public List<AnswersModel> getAnswers() {
         return answers;
     }
 }

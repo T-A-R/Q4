@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class QuestionOptionsField implements Serializable {
+public class QuestionOptionsModel implements Serializable {
 
     @SerializedName("polyanswer")
     private int polyanswer;
@@ -39,7 +39,7 @@ public class QuestionOptionsField implements Serializable {
     @SerializedName("show_if")
     private String show_if;
 
-    public QuestionOptionsField() {
+    public QuestionOptionsModel() {
     }
 
     public int getPolyanswer() {

@@ -19,9 +19,9 @@ import java.util.List;
 import pro.quizer.quizerexit.OnNextQuestionCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.adapter.SelectionAdapter;
-import pro.quizer.quizerexit.model.config.AnswersField;
-import pro.quizer.quizerexit.model.config.QuestionField;
-import pro.quizer.quizerexit.model.config.QuestionOptionsField;
+import pro.quizer.quizerexit.model.config.AnswersModel;
+import pro.quizer.quizerexit.model.config.QuestionModel;
+import pro.quizer.quizerexit.model.config.QuestionOptionsModel;
 
 public class TableQuestionFragment extends BaseFragment {
 
@@ -33,10 +33,10 @@ public class TableQuestionFragment extends BaseFragment {
     Button mBackButton;
     SelectionAdapter mSelectionAdapter;
 
-    private QuestionField mCurrentQuestion;
+    private QuestionModel mCurrentQuestion;
     private OnNextQuestionCallback mCallback;
 
-    public static Fragment newInstance(@NonNull final QuestionField pQuestionField, final OnNextQuestionCallback pCallback) {
+    public static Fragment newInstance(@NonNull final QuestionModel pQuestionField, final OnNextQuestionCallback pCallback) {
         final TableQuestionFragment fragment = new TableQuestionFragment();
 
         final Bundle bundle = new Bundle();
@@ -59,7 +59,7 @@ public class TableQuestionFragment extends BaseFragment {
         final Bundle bundle = getArguments();
 
         if (bundle != null) {
-            mCurrentQuestion = (QuestionField) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
+            mCurrentQuestion = (QuestionModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
             mCallback = (OnNextQuestionCallback) bundle.getSerializable(BUNDLE_CALLBACK);
 
             initView(view);
@@ -79,21 +79,21 @@ public class TableQuestionFragment extends BaseFragment {
         mNextBtn = pView.findViewById(R.id.selected);
         mBackButton = pView.findViewById(R.id.back);
 
-        final QuestionOptionsField questionOptionsField = mCurrentQuestion.getOptions();
-        final List<AnswersField> answers = mCurrentQuestion.getAnswers();
+        final QuestionOptionsModel questionOptionsModel = mCurrentQuestion.getOptions();
+        final List<AnswersModel> answers = mCurrentQuestion.getAnswers();
 
         final int minAnswers;
         final int maxAnswers;
 
-        if (questionOptionsField.getPolyanswer() == 0) {
+        if (questionOptionsModel.getPolyanswer() == 0) {
             maxAnswers = 1;
             minAnswers = 1;
         } else {
-            maxAnswers = questionOptionsField.getMaxAnswers();
-            minAnswers = questionOptionsField.getMinAnswers();
+            maxAnswers = questionOptionsModel.getMaxAnswers();
+            minAnswers = questionOptionsModel.getMinAnswers();
         }
 
-        if (questionOptionsField.isRandomOrder()) {
+        if (questionOptionsModel.isRandomOrder()) {
             Collections.shuffle(answers);
         }
 
@@ -120,7 +120,7 @@ public class TableQuestionFragment extends BaseFragment {
 
     public void onNextClick() {
         try {
-            final List<AnswersField> list = mSelectionAdapter.processNext();
+            final List<AnswersModel> list = mSelectionAdapter.processNext();
 
             mCallback.onNextQuestion(list, list.get(0).getNextQuestion());
         } catch (final Exception pE) {

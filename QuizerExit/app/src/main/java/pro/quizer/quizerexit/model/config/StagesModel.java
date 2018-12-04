@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
-public class StagesField implements Serializable {
+public class StagesModel implements Serializable {
 
     @SerializedName("time_from")
     private String time_from;
@@ -14,9 +14,9 @@ public class StagesField implements Serializable {
     private String time_to;
 
     @SerializedName("questions_matches")
-    private List<QuestionsMatchesField> questions_matches;
+    private List<QuestionsMatchesModel> questions_matches;
 
-    public StagesField() {
+    public StagesModel() {
     }
 
     public String getTimeFrom() {
@@ -27,7 +27,7 @@ public class StagesField implements Serializable {
         return time_to;
     }
 
-    public List<QuestionsMatchesField> getQuestionsMatches() {
+    public List<QuestionsMatchesModel> getQuestionsMatches() {
         return questions_matches;
     }
 }

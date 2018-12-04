@@ -9,7 +9,7 @@ import pro.quizer.quizerexit.model.AttributeOpenType;
 import pro.quizer.quizerexit.model.AttributeType;
 import pro.quizer.quizerexit.model.ElementType;
 
-public class AttributesField implements Serializable {
+public class AttributesModel implements Serializable {
 
     @SerializedName("show_condition")
     private String show_condition;

@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class Phone implements Serializable {
+public class PhoneModel implements Serializable {
 
     @SerializedName("number")
     private String number;
@@ -12,7 +12,7 @@ public class Phone implements Serializable {
     @SerializedName("preffix")
     private String preffix;
 
-    public Phone() {
+    public PhoneModel() {
     }
 
     public String getNumber() {

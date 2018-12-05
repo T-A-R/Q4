@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pro.quizer.quizerexit.model.ElementType;
+import pro.quizer.quizerexit.utils.StringUtils;
+
+import static pro.quizer.quizerexit.model.AttributeOpenType.CHECKBOX;
 
 public class ElementModel implements Serializable {
 
@@ -27,7 +30,9 @@ public class ElementModel implements Serializable {
 
     // @Ignore start
     private boolean isChecked;
+    private boolean isFullySelected;
     private boolean isEnabled = true;
+    private String textAnswer;
     // @Ignore end
 
     public List<ElementModel> getSubElementsByType(@ElementType final String pType) {
@@ -67,6 +72,30 @@ public class ElementModel implements Serializable {
     // @Ignore start
     public boolean isChecked() {
         return isChecked;
+    }
+
+    public boolean isFullySelected() {
+        if (CHECKBOX.equals(attributes.getOpenType())) {
+            return isChecked;
+        } else {
+            return isChecked && StringUtils.isNotEmpty(textAnswer);
+        }
+    }
+
+    public boolean isCheckedAndTextIsEmptyForSpecialOpenTypes() {
+        if (CHECKBOX.equals(attributes.getOpenType())) {
+            return false;
+        } else {
+            return isChecked && StringUtils.isEmpty(textAnswer);
+        }
+    }
+
+    public String getTextAnswer() {
+        return textAnswer;
+    }
+
+    public void setTextAnswer(final String textAnswer) {
+        this.textAnswer = textAnswer;
     }
 
     public void setChecked(final boolean pIsChecked) {

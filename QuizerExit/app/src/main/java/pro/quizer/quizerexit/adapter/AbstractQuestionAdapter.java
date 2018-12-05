@@ -22,7 +22,12 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
         this.mAnswers = pAnswers;
         this.mMaxAnswer = pMaxAnswer;
         this.mMinAnswer = pMinAnswer;
-        this.mCheckedItemsCount = getSelectedItems().size();
+
+        try {
+            this.mCheckedItemsCount = getSelectedItems().size();
+        } catch (Exception e) {
+            this.mCheckedItemsCount = 0;
+        }
     }
 
     void setCheckedItemsCount(final int pCount) {
@@ -74,12 +79,17 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
         }
     }
 
-    private List<ElementModel> getSelectedItems() {
+    private List<ElementModel> getSelectedItems() throws Exception {
         final List<ElementModel> selectedList = new ArrayList<>();
 
         for (int i = 0; i < mAnswers.size(); i++) {
             final ElementModel itemModel = mAnswers.get(i);
-            if (itemModel.isChecked()) {
+
+            if (itemModel.isCheckedAndTextIsEmptyForSpecialOpenTypes()) {
+                throw new Exception("Заполните текстовое поле в выбранных вариантах ответа.");
+            }
+
+            if (itemModel.isFullySelected()) {
                 selectedList.add(itemModel);
             }
         }

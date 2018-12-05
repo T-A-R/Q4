@@ -75,7 +75,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         for (int index = 0; index < pElementModel.getElements().size(); index++) {
             final ElementModel model = pElementModel.getElements().get(index);
 
-            if (model.isChecked()) {
+            if (model.isFullySelected()) {
                 sb.append(model.getAttributes().getTitle()).append("\n");
                 jumpValue = model.getAttributes().getJump();
             }
@@ -84,7 +84,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         showToast(sb.toString());
 
         if (jumpValue == -1) {
-            showToast("Ошбка при подсчете следующего элемента");
+            showToast(getString(R.string.error_counting_next_element));
         } else {
             showNextElement(jumpValue);
         }

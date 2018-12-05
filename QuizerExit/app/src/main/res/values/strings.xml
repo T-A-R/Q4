@@ -29,4 +29,5 @@
     <string name="delete_users">Удалить пользователей</string>
     <string name="upload_data">Выгрузить данные</string>
     <string name="send_data">Отправить данные</string>
+    <string name="error_counting_next_element">Ошбка при подсчете следующего элемента</string>
 </resources>

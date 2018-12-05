@@ -2,6 +2,7 @@ package pro.quizer.quizerexit.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.Editable;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.SimpleTextWatcher;
 import pro.quizer.quizerexit.activity.RecyclerViewActivity;
 import pro.quizer.quizerexit.model.AttributeOpenType;
 import pro.quizer.quizerexit.model.config.AttributesModel;
@@ -59,8 +61,17 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
             final boolean isEnabled = pAnswer.isEnabled();
 
             if (!AttributeOpenType.CHECKBOX.equals(openType)) {
+                mEditText.setText(pAnswer.getTextAnswer());
                 mEditText.setVisibility(View.VISIBLE);
                 mEditText.setHint(attributes.getPlaceholder());
+                mEditText.setTag(pPosition);
+                mEditText.addTextChangedListener(new SimpleTextWatcher() {
+
+                    @Override
+                    public void afterTextChanged(Editable pEditable) {
+                        getModel((int) mEditText.getTag()).setTextAnswer(pEditable.toString());
+                    }
+                });
 
                 switch (attributes.getOpenType()) {
                     case AttributeOpenType.TIME:

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pro.quizer.quizerexit.R;
-import pro.quizer.quizerexit.adapter.SelectionAdapter;
+import pro.quizer.quizerexit.adapter.QuestionListAdapter;
 import pro.quizer.quizerexit.model.config.AnswersModel;
 
 public class RecyclerViewActivity extends AppCompatActivity {
@@ -27,12 +27,12 @@ public class RecyclerViewActivity extends AppCompatActivity {
 
     RecyclerView mRecyclerView;
     Button mSelected;
-    SelectionAdapter mSelectionAdapter;
+    QuestionListAdapter mQuestionListAdapter;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_selection_question);
+        setContentView(R.layout.fragment_element);
 
         initView();
     }
@@ -50,9 +50,9 @@ public class RecyclerViewActivity extends AppCompatActivity {
 
             final List<AnswersModel> list = getList();
 
-            mSelectionAdapter = new SelectionAdapter(this, list, mMinAnswers, mMaxAnswers);
+//            mQuestionListAdapter = new QuestionListAdapter(this, list, mMinAnswers, mMaxAnswers);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            mRecyclerView.setAdapter(mSelectionAdapter);
+            mRecyclerView.setAdapter(mQuestionListAdapter);
 
             mSelected.setOnClickListener(new View.OnClickListener() {
 
@@ -79,15 +79,15 @@ public class RecyclerViewActivity extends AppCompatActivity {
 
         public void selectedClick() {
             try {
-                final List<AnswersModel> list = mSelectionAdapter.processNext();
+//                final List<AnswersModel> list = mQuestionListAdapter.processNext();
 
                 final StringBuilder sb = new StringBuilder();
 
-                for (int index = 0; index < list.size(); index++) {
-                    final AnswersModel model = list.get(index);
-
-                    sb.append(model.getTitle()).append("\n");
-                }
+//                for (int index = 0; index < list.size(); index++) {
+//                    final AnswersModel model = list.get(index);
+//
+//                    sb.append(model.getTitle()).append("\n");
+//                }
 
                 showToast(sb.toString());
             } catch (final Exception pE) {

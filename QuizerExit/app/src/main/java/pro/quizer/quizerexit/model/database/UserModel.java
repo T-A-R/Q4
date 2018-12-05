@@ -3,9 +3,13 @@ package pro.quizer.quizerexit.model.database;
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+
+import pro.quizer.quizerexit.model.config.ConfigModel;
+import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 
 @Table(name = "User")
 public class UserModel extends Model implements Serializable {
@@ -45,4 +49,7 @@ public class UserModel extends Model implements Serializable {
     @SerializedName("config")
     public String config;
 
+    public ConfigModel getConfig() {
+        return new Gson().fromJson(config, ConfigResponseModel.class).getConfig();
+    }
 }

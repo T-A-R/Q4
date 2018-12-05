@@ -16,10 +16,11 @@ import android.widget.Toast;
 import java.util.Collections;
 import java.util.List;
 
-import pro.quizer.quizerexit.OnNextQuestionCallback;
+import pro.quizer.quizerexit.OnNextElementCallback;
 import pro.quizer.quizerexit.R;
-import pro.quizer.quizerexit.adapter.SelectionAdapter;
+import pro.quizer.quizerexit.adapter.QuestionListAdapter;
 import pro.quizer.quizerexit.model.config.AnswersModel;
+import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.QuestionModel;
 import pro.quizer.quizerexit.model.config.QuestionOptionsModel;
 
@@ -31,12 +32,12 @@ public class TableQuestionFragment extends BaseFragment {
     RecyclerView mRecyclerView;
     Button mNextBtn;
     Button mBackButton;
-    SelectionAdapter mSelectionAdapter;
+    QuestionListAdapter mQuestionListAdapter;
 
     private QuestionModel mCurrentQuestion;
-    private OnNextQuestionCallback mCallback;
+    private OnNextElementCallback mCallback;
 
-    public static Fragment newInstance(@NonNull final QuestionModel pQuestionField, final OnNextQuestionCallback pCallback) {
+    public static Fragment newInstance(@NonNull final QuestionModel pQuestionField, final OnNextElementCallback pCallback) {
         final TableQuestionFragment fragment = new TableQuestionFragment();
 
         final Bundle bundle = new Bundle();
@@ -49,7 +50,7 @@ public class TableQuestionFragment extends BaseFragment {
 
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_selection_question, container, false);
+        return inflater.inflate(R.layout.fragment_element, container, false);
     }
 
     @Override
@@ -60,7 +61,7 @@ public class TableQuestionFragment extends BaseFragment {
 
         if (bundle != null) {
             mCurrentQuestion = (QuestionModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
-            mCallback = (OnNextQuestionCallback) bundle.getSerializable(BUNDLE_CALLBACK);
+            mCallback = (OnNextElementCallback) bundle.getSerializable(BUNDLE_CALLBACK);
 
             initView(view);
         } else {
@@ -69,11 +70,11 @@ public class TableQuestionFragment extends BaseFragment {
     }
 
     private void initView(final View pView) {
-//        mQuestionNumber = pView.findViewById(R.id.question_number_text);
-//        mQuestionText = pView.findViewById(R.id.question_text);
+//        mElementNumber = pView.findViewById(R.id.question_number_text);
+//        mElementText = pView.findViewById(R.id.question_text);
 //
-//        mQuestionNumber.setText(String.valueOf(mCurrentQuestion.getNumber()));
-//        mQuestionText.setText(mCurrentQuestion.getTitle());
+//        mElementNumber.setText(String.valueOf(mCurrentQuestion.getNumber()));
+//        mElementText.setText(mCurrentQuestion.getTitle());
 
         mRecyclerView = pView.findViewById(R.id.recycler_view);
         mNextBtn = pView.findViewById(R.id.selected);
@@ -97,9 +98,9 @@ public class TableQuestionFragment extends BaseFragment {
             Collections.shuffle(answers);
         }
 
-        mSelectionAdapter = new SelectionAdapter(getContext(), answers, minAnswers, maxAnswers);
+//        mQuestionListAdapter = new QuestionListAdapter(getContext(), answers, minAnswers, maxAnswers);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.setAdapter(mSelectionAdapter);
+        mRecyclerView.setAdapter(mQuestionListAdapter);
 
         mNextBtn.setOnClickListener(new View.OnClickListener() {
 
@@ -120,15 +121,11 @@ public class TableQuestionFragment extends BaseFragment {
 
     public void onNextClick() {
         try {
-            final List<AnswersModel> list = mSelectionAdapter.processNext();
+            final List<ElementModel> list = mQuestionListAdapter.processNext();
 
-            mCallback.onNextQuestion(list, list.get(0).getNextQuestion());
+//            mCallback.onNextElement(list);
         } catch (final Exception pE) {
             showToast(pE.getMessage());
         }
-    }
-
-    private void showToast(final CharSequence message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
     }
 }

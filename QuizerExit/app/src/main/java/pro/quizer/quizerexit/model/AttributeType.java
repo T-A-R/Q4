@@ -8,11 +8,13 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.SOURCE)
 @StringDef({AttributeType.TEXT,
         AttributeType.AUDIO,
+        AttributeType.LIST,
         AttributeType.PHOTO,
         AttributeType.VIDEO,
         AttributeType.SLIDER})
 public @interface AttributeType {
 
+    String LIST = "list";
     String TEXT = "text";
     String AUDIO = "audio";
     String PHOTO = "photo";

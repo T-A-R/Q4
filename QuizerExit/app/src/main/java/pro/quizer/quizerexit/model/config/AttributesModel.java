@@ -3,11 +3,9 @@ package pro.quizer.quizerexit.model.config;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.util.List;
 
 import pro.quizer.quizerexit.model.AttributeOpenType;
 import pro.quizer.quizerexit.model.AttributeType;
-import pro.quizer.quizerexit.model.ElementType;
 
 public class AttributesModel implements Serializable {
 
@@ -19,6 +17,9 @@ public class AttributesModel implements Serializable {
 
     @SerializedName("order")
     private int order;
+
+    @SerializedName("number")
+    private int number;
 
     @SerializedName("rotation")
     private boolean rotation;
@@ -73,4 +74,87 @@ public class AttributesModel implements Serializable {
     @SerializedName("unchecker")
     private boolean unchecker;
 
+    public String getShowCondition() {
+        return show_condition;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public boolean isRotation() {
+        return rotation;
+    }
+
+    public boolean isStaticOrder() {
+        return static_order;
+    }
+
+    public boolean isPolyanswer() {
+        return polyanswer;
+    }
+
+    public int getMinAnswers() {
+        return min_answers;
+    }
+
+    public int getMaxAnswers() {
+        return max_answers;
+    }
+
+    public boolean isRecordSound() {
+        return record_sound;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public int getMinValue() {
+        return min_value;
+    }
+
+    public int getMaxValue() {
+        return max_value;
+    }
+
+    public boolean isFlipColsAndRows() {
+        return flip_cols_and_rows;
+    }
+
+    public boolean isComplicatedCells() {
+        return complicated_cells;
+    }
+
+    public int getJump() {
+        return jump;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public String getJumpCondition() {
+        return jump_condition;
+    }
+
+    public String getOpenType() {
+        return open_type;
+    }
+
+    public boolean isUnchecker() {
+        return unchecker;
+    }
 }

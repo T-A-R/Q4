@@ -22,7 +22,7 @@ public class MainActivity extends BaseActivity {
 
     private void initViews() {
         final UserModel userModel = getUserByUserId(getCurrentUserId());
-        final ConfigModel config = formatConfigStringToConfig(userModel.config);
+        final ConfigModel config = userModel.getConfig();
         final ProjectInfoModel projectInfo = config.getProjectInfo();
 
         final TextView configAgreement = findViewById(R.id.config_agreement);

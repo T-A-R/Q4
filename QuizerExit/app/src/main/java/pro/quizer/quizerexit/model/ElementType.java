@@ -7,6 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.SOURCE)
 @StringDef({ElementType.BOX,
+        ElementType.QUESTION,
         ElementType.LIST,
         ElementType.SCALE,
         ElementType.RANK,
@@ -18,6 +19,7 @@ import java.lang.annotation.RetentionPolicy;
         ElementType.ANSWER})
 public @interface ElementType {
 
+    String QUESTION = "question";
     String BOX = "box";
     String LIST = "question:list";
     String SCALE = "question:scale";

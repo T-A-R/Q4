@@ -94,11 +94,7 @@ public class BaseActivity extends AppCompatActivity {
     public ConfigModel getConfigByUserId(final int pUserId) {
         final UserModel userModel = getUserByUserId(pUserId);
 
-        return formatConfigStringToConfig(userModel.config);
-    }
-
-    public ConfigModel formatConfigStringToConfig(final String pConfigString) {
-        return new Gson().fromJson(pConfigString, ConfigResponseModel.class).getConfig();
+        return userModel.getConfig();
     }
 
     public UserModel getLocalUserModel(final String pLogin, final String pPassword) {
@@ -139,6 +135,10 @@ public class BaseActivity extends AppCompatActivity {
 
     public void saveCurrentUserId(final int pUserId) {
         SPUtils.saveCurrentUserId(this, pUserId);
+    }
+
+    public UserModel getCurrentUser() {
+        return getUserByUserId(getCurrentUserId());
     }
 
     public int getCurrentUserId() {

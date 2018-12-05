@@ -46,7 +46,7 @@ public class ActivationActivity extends BaseActivity {
                 final String key = mActivationEditText.getText().toString();
 
                 if (StringUtils.isEmpty(key)) {
-                    showToastMessage(getString(R.string.empty_activation_key));
+                    showToast(getString(R.string.empty_activation_key));
 
                     hideProgressBar();
 
@@ -63,7 +63,7 @@ public class ActivationActivity extends BaseActivity {
                             @Override
                             public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
                                 hideProgressBar();
-                                showToastMessage(getString(R.string.internet_error_please_try_again));
+                                showToast(getString(R.string.internet_error_please_try_again));
                             }
 
                             @Override
@@ -73,7 +73,7 @@ public class ActivationActivity extends BaseActivity {
                                 final ResponseBody responseBody = response.body();
 
                                 if (responseBody == null) {
-                                    showToastMessage(getString(R.string.incorrect_server_response));
+                                    showToast(getString(R.string.incorrect_server_response));
 
                                     return;
                                 }
@@ -92,10 +92,10 @@ public class ActivationActivity extends BaseActivity {
                                         saveActivationBundle(activationModel);
                                         startAuthActivity();
                                     } else {
-                                        showToastMessage(activationModel.getError());
+                                        showToast(activationModel.getError());
                                     }
                                 } else {
-                                    showToastMessage(getString(R.string.server_error));
+                                    showToast(getString(R.string.server_error));
                                 }
                             }
                         });

@@ -33,7 +33,7 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
     }
 
-    public void showToastMessage(final CharSequence pMessage) {
+    public void showToast(final CharSequence pMessage) {
         runOnUiThread(new Runnable() {
 
             @Override

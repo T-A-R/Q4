@@ -34,10 +34,7 @@
         android:id="@+id/content_element"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/button_panel"
         android:layout_below="@+id/question_text_divider"
         tools:ignore="UnknownIdInLayout" />
-
-    <include layout="@layout/view_question_buttons_panel" />
 
 </RelativeLayout>

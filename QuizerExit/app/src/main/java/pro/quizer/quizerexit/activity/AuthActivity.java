@@ -90,7 +90,7 @@ public class AuthActivity extends BaseActivity {
                 final String password = mPasswordEditText.getText().toString();
 
                 if (StringUtils.isEmpty(login) || StringUtils.isEmpty(password)) {
-                    showToastMessage(getString(R.string.empty_login_or_password));
+                    showToast(getString(R.string.empty_login_or_password));
 
                     hideProgressBar();
 
@@ -98,7 +98,7 @@ public class AuthActivity extends BaseActivity {
                 }
 
                 if (login.length() < 3) {
-                    showToastMessage(getString(R.string.short_login));
+                    showToast(getString(R.string.short_login));
 
                     hideProgressBar();
 
@@ -106,7 +106,7 @@ public class AuthActivity extends BaseActivity {
                 }
 
                 if (mSavedUsers != null && mSavedUsers.size() >= MAX_USERS && !mSavedUsers.contains(login)) {
-                    showToastMessage(String.format(getString(R.string.error_max_users), String.valueOf(MAX_USERS)));
+                    showToast(String.format(getString(R.string.error_max_users), String.valueOf(MAX_USERS)));
 
                     hideProgressBar();
 
@@ -127,10 +127,10 @@ public class AuthActivity extends BaseActivity {
                                 final UserModel savedUserModel = getLocalUserModel(login, password);
 
                                 if (savedUserModel != null) {
-                                    showToastMessage("Удалось войти под сохраненными локальными данными.");
+                                    showToast("Удалось войти под сохраненными локальными данными.");
                                     onLoggedInWithoutUpdateLocalData(savedUserModel.user_id);
                                 } else {
-                                    showToastMessage(getString(R.string.internet_error_please_try_again));
+                                    showToast(getString(R.string.internet_error_please_try_again));
                                 }
                             }
 
@@ -141,7 +141,7 @@ public class AuthActivity extends BaseActivity {
                                 final ResponseBody responseBody = response.body();
 
                                 if (responseBody == null) {
-                                    showToastMessage(getString(R.string.incorrect_server_response));
+                                    showToast(getString(R.string.incorrect_server_response));
 
                                     return;
                                 }
@@ -168,10 +168,10 @@ public class AuthActivity extends BaseActivity {
                                                     authResponseModel.getUserProjectId());
                                         }
                                     } else {
-                                        showToastMessage(authResponseModel.getError());
+                                        showToast(authResponseModel.getError());
                                     }
                                 } else {
-                                    showToastMessage(getString(R.string.server_error));
+                                    showToast(getString(R.string.server_error));
                                 }
                             }
                         });
@@ -224,7 +224,7 @@ public class AuthActivity extends BaseActivity {
     }
 
     public void downloadConfig(final String pLogin, final String pPassword, final AuthResponseModel pModel) {
-        showToastMessage("Downloading config...");
+        showToast("Downloading config...");
 
         showProgressBar();
 
@@ -246,7 +246,7 @@ public class AuthActivity extends BaseActivity {
                              @Override
                              public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
                                  hideProgressBar();
-                                 showToastMessage(getString(R.string.internet_error_please_try_again));
+                                 showToast(getString(R.string.internet_error_please_try_again));
                              }
 
                              @Override
@@ -256,7 +256,7 @@ public class AuthActivity extends BaseActivity {
                                  final ResponseBody responseBody = response.body();
 
                                  if (responseBody == null) {
-                                     showToastMessage(getString(R.string.incorrect_server_response));
+                                     showToast(getString(R.string.incorrect_server_response));
 
                                      return;
                                  }
@@ -276,15 +276,15 @@ public class AuthActivity extends BaseActivity {
                                          try {
                                              saveUser(pLogin, pPassword, pModel, configResponseModel);
                                          } catch (Exception e) {
-                                             showToastMessage(getString(R.string.server_error) + "\n" + e.toString());
+                                             showToast(getString(R.string.server_error) + "\n" + e.toString());
                                          }
 
                                          onLoggedIn(pLogin, pPassword, pModel.getConfigId(), pModel.getUserId(), pModel.getRoleId(), pModel.getUserProjectId());
                                      } else {
-                                         showToastMessage(configResponseModel.getError());
+                                         showToast(configResponseModel.getError());
                                      }
                                  } else {
-                                     showToastMessage(getString(R.string.server_error));
+                                     showToast(getString(R.string.server_error));
                                  }
                              }
                          }

@@ -22,7 +22,7 @@ import pro.quizer.quizerexit.model.ElementType;
 import pro.quizer.quizerexit.model.config.AttributesModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 
-public class QuestionFragment extends BaseFragment {
+public class QuestionFragment extends AbstractContentElementFragment {
 
     public static final String BUNDLE_CURRENT_QUESTION = "BUNDLE_CURRENT_QUESTION";
     public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
@@ -31,6 +31,26 @@ public class QuestionFragment extends BaseFragment {
     private ElementModel mCurrentElement;
     private AttributesModel mAttributes;
     private AbstractQuestionAdapter mAdapter;
+    private NavigationCallback mCallback;
+
+    private Runnable mForwardRunnable = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                mAdapter.processNext();
+                mCallback.onForward(mCurrentElement);
+            } catch (final Exception pE) {
+                showToast(pE.getMessage());
+            }
+        }
+    };
+
+    private Runnable mBackRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mCallback.onBack();
+        }
+    };
 
     public static Fragment newInstance(@NonNull final ElementModel pElement, final NavigationCallback pCallback) {
         final QuestionFragment fragment = new QuestionFragment();
@@ -56,12 +76,23 @@ public class QuestionFragment extends BaseFragment {
 
         if (bundle != null) {
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
+            mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
             mAttributes = mCurrentElement.getAttributes();
 
             initView(view);
         } else {
             showToast(getString(R.string.internal_app_error) + "1001");
         }
+    }
+
+    @Override
+    protected Runnable getForwardRunnable() {
+        return mForwardRunnable;
+    }
+
+    @Override
+    protected Runnable getBackRunnable() {
+        return mBackRunnable;
     }
 
     private void initView(final View pView) {

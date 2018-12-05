@@ -10,6 +10,6 @@ public interface NavigationCallback extends Serializable {
 
     void onForward(final ElementModel pElementModel);
 
-    void onBack(final ElementModel pElementModel);
+    void onBack();
 
 }

@@ -4,13 +4,14 @@ import android.os.Bundle;
 
 import java.util.List;
 
+import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.fragment.ElementFragment;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 
-public class ElementActivity extends BaseActivity {
+public class ElementActivity extends BaseActivity implements NavigationCallback {
 
     ConfigModel mConfig;
     List<ElementModel> mElements;
@@ -30,39 +31,67 @@ public class ElementActivity extends BaseActivity {
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(android.R.id.content, ElementFragment.newInstance(mElements.get(0)))
+                .add(android.R.id.content, ElementFragment.newInstance(mElements.get(0), this))
                 .commit();
     }
 
     private void showNextElement(final int pNumberOfNextElement) {
-        final ElementModel nextElement = getElementByNumber(pNumberOfNextElement);
+        final ElementModel nextElement = getElementByRelativeId(pNumberOfNextElement);
 
         if (nextElement == null) {
             // TODO: 27.10.2018 it was last Element and we need to finish
             // I CAN GET ALL INFO FROM mCurrentElement, because this model changed after selection
-            showToastMessage("это был последний вопрос");
+            showToast("это был последний вопрос");
 
             return;
         }
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(android.R.id.content, ElementFragment.newInstance(nextElement))
+                .replace(android.R.id.content, ElementFragment.newInstance(nextElement, this))
                 .addToBackStack(nextElement.getAttributes().getTitle())
                 .commit();
     }
 
-    private ElementModel getElementByNumber(final int pElementNumber) {
-        if (pElementNumber == 0) {
+    private ElementModel getElementByRelativeId(final int pRelativeId) {
+        if (pRelativeId == 0) {
             return null;
         }
 
         for (final ElementModel element : mElements) {
-            if (element.getAttributes().getNumber() == pElementNumber) {
+            if (element.getRelativeID() == pRelativeId) {
                 return element;
             }
         }
 
         return null;
+    }
+
+    @Override
+    public void onForward(final ElementModel pElementModel) {
+        final StringBuilder sb = new StringBuilder();
+        int jumpValue = -1;
+
+        for (int index = 0; index < pElementModel.getElements().size(); index++) {
+            final ElementModel model = pElementModel.getElements().get(index);
+
+            if (model.isChecked()) {
+                sb.append(model.getAttributes().getTitle()).append("\n");
+                jumpValue = model.getAttributes().getJump();
+            }
+        }
+
+        showToast(sb.toString());
+
+        if (jumpValue == -1) {
+            showToast("Ошбка при подсчете следующего элемента");
+        } else {
+            showNextElement(jumpValue);
+        }
+    }
+
+    @Override
+    public void onBack() {
+        onBackPressed();
     }
 }

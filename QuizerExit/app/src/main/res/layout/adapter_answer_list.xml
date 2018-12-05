@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:padding="16dp"
-              android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -18,12 +18,26 @@
                 android:id="@+id/answer_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_toLeftOf="@+id/answer_checkbox"
+                android:layout_alignParentLeft="true"
                 android:layout_toStartOf="@+id/answer_checkbox"
+                android:layout_toLeftOf="@+id/answer_checkbox"
                 android:textSize="16sp"
-                tools:text="Name"/>
+                tools:text="Name" />
+
+            <EditText
+                android:id="@+id/answer_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/answer_text"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_toStartOf="@+id/answer_checkbox"
+                android:layout_toLeftOf="@+id/answer_checkbox"
+                android:textSize="16sp"
+                android:visibility="gone"
+                tools:text="Name"
+                tools:visibility="visible" />
 
             <CheckBox
                 android:id="@+id/answer_checkbox"
@@ -31,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@+id/answer_text"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"/>
+                android:layout_alignParentRight="true" />
 
         </RelativeLayout>
 

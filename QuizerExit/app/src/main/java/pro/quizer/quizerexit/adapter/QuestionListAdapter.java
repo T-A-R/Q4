@@ -2,10 +2,12 @@ package pro.quizer.quizerexit.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,6 +15,7 @@ import java.util.List;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.RecyclerViewActivity;
+import pro.quizer.quizerexit.model.AttributeOpenType;
 import pro.quizer.quizerexit.model.config.AttributesModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 
@@ -38,21 +41,56 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
         TextView mAnswer;
         CheckBox mCheckBox;
+        EditText mEditText;
 
         AnswerListViewHolder(final View itemView) {
             super(itemView);
             mAnswer = itemView.findViewById(R.id.answer_text);
             mCheckBox = itemView.findViewById(R.id.answer_checkbox);
+            mEditText = itemView.findViewById(R.id.answer_edit_text);
         }
 
         @Override
         public void onBind(final ElementModel pAnswer, final int pPosition) {
             final AttributesModel attributes = pAnswer.getAttributes();
 
+            final String openType = attributes.getOpenType();
+            final boolean isChecked = pAnswer.isChecked();
+            final boolean isEnabled = pAnswer.isEnabled();
+
+            if (!AttributeOpenType.CHECKBOX.equals(openType)) {
+                mEditText.setVisibility(View.VISIBLE);
+                mEditText.setHint(attributes.getPlaceholder());
+
+                switch (attributes.getOpenType()) {
+                    case AttributeOpenType.TIME:
+                        mEditText.setInputType(InputType.TYPE_CLASS_DATETIME);
+
+                        break;
+                    case AttributeOpenType.DATE:
+                        mEditText.setInputType(InputType.TYPE_CLASS_DATETIME);
+
+                        break;
+                    case AttributeOpenType.NUMBER:
+                        mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+                        break;
+                    case AttributeOpenType.TEXT:
+                        mEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+
+                        break;
+                    default:
+                        // неизвестный тип open_type
+                }
+            } else {
+                mEditText.setVisibility(View.GONE);
+            }
+
+            mEditText.setEnabled(isChecked && isEnabled);
             mAnswer.setText(attributes.getTitle());
-            mCheckBox.setChecked(pAnswer.isChecked());
+            mCheckBox.setChecked(isChecked);
             mCheckBox.setTag(pPosition);
-            mCheckBox.setEnabled(pAnswer.isEnabled());
+            mCheckBox.setEnabled(isEnabled);
             mCheckBox.setOnClickListener(new View.OnClickListener() {
 
                 @Override

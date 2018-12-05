@@ -6,6 +6,9 @@ import java.io.Serializable;
 
 import pro.quizer.quizerexit.model.AttributeOpenType;
 import pro.quizer.quizerexit.model.AttributeType;
+import pro.quizer.quizerexit.utils.StringUtils;
+
+import static pro.quizer.quizerexit.model.AttributeOpenType.CHECKBOX;
 
 public class AttributesModel implements Serializable {
 
@@ -70,6 +73,9 @@ public class AttributesModel implements Serializable {
     @AttributeOpenType
     @SerializedName("open_type")
     private String open_type;
+
+    @SerializedName("placeholder")
+    private String placeholder;
 
     @SerializedName("unchecker")
     private boolean unchecker;
@@ -150,8 +156,13 @@ public class AttributesModel implements Serializable {
         return jump_condition;
     }
 
+    @AttributeOpenType
     public String getOpenType() {
-        return open_type;
+        return StringUtils.isEmpty(open_type) ? CHECKBOX : open_type;
+    }
+
+    public String getPlaceholder() {
+        return placeholder;
     }
 
     public boolean isUnchecker() {

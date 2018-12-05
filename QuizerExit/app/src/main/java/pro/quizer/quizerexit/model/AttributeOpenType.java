@@ -7,11 +7,13 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.SOURCE)
 @StringDef({AttributeOpenType.DATE,
+        AttributeOpenType.CHECKBOX,
         AttributeOpenType.TIME,
         AttributeOpenType.NUMBER,
         AttributeOpenType.TEXT})
 public @interface AttributeOpenType {
 
+    String CHECKBOX = "checkbox";
     String DATE = "date";
     String TIME = "time";
     String NUMBER = "number";

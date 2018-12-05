@@ -175,7 +175,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void startQuestionActivity() {
-        startActivity(new Intent(this, QuestionActivity.class));
+        startActivity(new Intent(this, ElementActivity.class));
     }
 
     public void startServiceActivity() {

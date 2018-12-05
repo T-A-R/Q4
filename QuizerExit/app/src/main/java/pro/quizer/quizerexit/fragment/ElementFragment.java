@@ -12,31 +12,40 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import pro.quizer.quizerexit.OnNextElementCallback;
+import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.model.ElementType;
 import pro.quizer.quizerexit.model.config.AttributesModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 
-public class ElementFragment extends BaseFragment {
+public class ElementFragment extends BaseFragment implements NavigationCallback {
 
     public static final String BUNDLE_CURRENT_QUESTION = "BUNDLE_CURRENT_QUESTION";
-    public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
 
     TextView mElementText;
-    TextView mElementNumber;
-
     private AttributesModel mAttributes;
     private ElementModel mCurrentElement;
-    private OnNextElementCallback mCallback;
     private FragmentManager mFragmentManger;
 
-    public static Fragment newInstance(@NonNull final ElementModel pElement, final OnNextElementCallback pCallback) {
+    private View.OnClickListener mBackClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View pView) {
+
+        }
+    };
+
+    private View.OnClickListener mForwardClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View pView) {
+
+        }
+    };
+
+    public static Fragment newInstance(@NonNull final ElementModel pElement) {
         final ElementFragment fragment = new ElementFragment();
 
         final Bundle bundle = new Bundle();
         bundle.putSerializable(BUNDLE_CURRENT_QUESTION, pElement);
-        bundle.putSerializable(BUNDLE_CALLBACK, pCallback);
         fragment.setArguments(bundle);
 
         return fragment;
@@ -60,7 +69,6 @@ public class ElementFragment extends BaseFragment {
 
         if (bundle != null) {
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
-            mCallback = (OnNextElementCallback) bundle.getSerializable(BUNDLE_CALLBACK);
             mAttributes = mCurrentElement.getAttributes();
 
             initView(view);
@@ -70,21 +78,43 @@ public class ElementFragment extends BaseFragment {
     }
 
     private void initView(final View pView) {
-        mElementNumber = pView.findViewById(R.id.element_number_text);
-        mElementText = pView.findViewById(R.id.element_text);
+        final View mBackButton = pView.findViewById(R.id.back_btn);
+        final View mForwardButton = pView.findViewById(R.id.forward_btn);
+        mBackButton.setOnClickListener(mBackClickListener);
+        mForwardButton.setOnClickListener(mForwardClickListener);
 
-        mElementNumber.setText(String.valueOf(mAttributes.getNumber()));
+        mElementText = pView.findViewById(R.id.element_text);
         mElementText.setText(mAttributes.getTitle());
 
         switch (mCurrentElement.getType()) {
             case ElementType.QUESTION:
                 mFragmentManger.beginTransaction()
-                        .add(R.id.content_element, QuestionFragment.newInstance(mCurrentElement, mCallback))
+                        .add(R.id.content_element, QuestionFragment.newInstance(mCurrentElement, this))
                         .commit();
 
                 break;
             default:
                 showToast("Неизвестный тип элемента");
         }
+    }
+
+    @Override
+    public void onForward(final ElementModel pElementModel) {
+//        final StringBuilder sb = new StringBuilder();
+//
+//        for (int index = 0; index < pSubElements.size(); index++) {
+//            final ElementModel model = pSubElements.get(index);
+//
+//            sb.append(model.getAttributes().getTitle()).append("\n");
+//        }
+//
+//        showToastMessage(sb.toString());
+//
+//        showNextElement(pNextElement);
+    }
+
+    @Override
+    public void onBack(ElementModel pElementModel) {
+
     }
 }

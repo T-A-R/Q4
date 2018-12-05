@@ -11,12 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import java.util.Collections;
 import java.util.List;
 
-import pro.quizer.quizerexit.OnNextElementCallback;
+import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.adapter.QuestionListAdapter;
 import pro.quizer.quizerexit.model.config.AnswersModel;
@@ -35,9 +34,9 @@ public class TableQuestionFragment extends BaseFragment {
     QuestionListAdapter mQuestionListAdapter;
 
     private QuestionModel mCurrentQuestion;
-    private OnNextElementCallback mCallback;
+    private NavigationCallback mCallback;
 
-    public static Fragment newInstance(@NonNull final QuestionModel pQuestionField, final OnNextElementCallback pCallback) {
+    public static Fragment newInstance(@NonNull final QuestionModel pQuestionField, final NavigationCallback pCallback) {
         final TableQuestionFragment fragment = new TableQuestionFragment();
 
         final Bundle bundle = new Bundle();
@@ -61,7 +60,7 @@ public class TableQuestionFragment extends BaseFragment {
 
         if (bundle != null) {
             mCurrentQuestion = (QuestionModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
-            mCallback = (OnNextElementCallback) bundle.getSerializable(BUNDLE_CALLBACK);
+            mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
 
             initView(view);
         } else {
@@ -76,9 +75,9 @@ public class TableQuestionFragment extends BaseFragment {
 //        mElementNumber.setText(String.valueOf(mCurrentQuestion.getNumber()));
 //        mElementText.setText(mCurrentQuestion.getTitle());
 
-        mRecyclerView = pView.findViewById(R.id.recycler_view);
-        mNextBtn = pView.findViewById(R.id.selected);
-        mBackButton = pView.findViewById(R.id.back);
+//        mRecyclerView = pView.findViewById(R.id.recycler_view);
+        mNextBtn = pView.findViewById(R.id.forward_btn);
+        mBackButton = pView.findViewById(R.id.back_btn);
 
         final QuestionOptionsModel questionOptionsModel = mCurrentQuestion.getOptions();
         final List<AnswersModel> answers = mCurrentQuestion.getAnswers();
@@ -123,7 +122,7 @@ public class TableQuestionFragment extends BaseFragment {
         try {
             final List<ElementModel> list = mQuestionListAdapter.processNext();
 
-//            mCallback.onNextElement(list);
+//            mCallback.onForward(list);
         } catch (final Exception pE) {
             showToast(pE.getMessage());
         }

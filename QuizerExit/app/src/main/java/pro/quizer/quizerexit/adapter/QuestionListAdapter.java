@@ -49,7 +49,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
         public void onBind(final ElementModel pAnswer, final int pPosition) {
             final AttributesModel attributes = pAnswer.getAttributes();
 
-            mAnswer.setText(attributes.getText());
+            mAnswer.setText(attributes.getTitle());
             mCheckBox.setChecked(pAnswer.isChecked());
             mCheckBox.setTag(pPosition);
             mCheckBox.setEnabled(pAnswer.isEnabled());

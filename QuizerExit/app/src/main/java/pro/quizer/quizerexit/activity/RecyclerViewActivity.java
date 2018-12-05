@@ -38,8 +38,8 @@ public class RecyclerViewActivity extends AppCompatActivity {
     }
 
         private void initView() {
-            mRecyclerView = findViewById(R.id.recycler_view);
-            mSelected = findViewById(R.id.selected);
+//            mRecyclerView = findViewById(R.id.recycler_view);
+            mSelected = findViewById(R.id.forward_btn);
 
             final Bundle bundle = getIntent().getExtras();
 

@@ -27,7 +27,7 @@ public class ElementModel implements Serializable {
 
     // @Ignore start
     private boolean isChecked;
-    private boolean isEnabled;
+    private boolean isEnabled = true;
     // @Ignore end
 
     public List<ElementModel> getSubElementsByType(@ElementType final String pType) {

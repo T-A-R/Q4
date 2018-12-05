@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import java.util.Collections;
 import java.util.List;
 
-import pro.quizer.quizerexit.OnNextElementCallback;
+import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.adapter.AbstractQuestionAdapter;
 import pro.quizer.quizerexit.adapter.QuestionListAdapter;
@@ -30,10 +30,9 @@ public class QuestionFragment extends BaseFragment {
     RecyclerView mRecyclerView;
     private ElementModel mCurrentElement;
     private AttributesModel mAttributes;
-    private OnNextElementCallback mCallback;
     private AbstractQuestionAdapter mAdapter;
 
-    public static Fragment newInstance(@NonNull final ElementModel pElement, final OnNextElementCallback pCallback) {
+    public static Fragment newInstance(@NonNull final ElementModel pElement, final NavigationCallback pCallback) {
         final QuestionFragment fragment = new QuestionFragment();
 
         final Bundle bundle = new Bundle();
@@ -57,7 +56,6 @@ public class QuestionFragment extends BaseFragment {
 
         if (bundle != null) {
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
-            mCallback = (OnNextElementCallback) bundle.getSerializable(BUNDLE_CALLBACK);
             mAttributes = mCurrentElement.getAttributes();
 
             initView(view);

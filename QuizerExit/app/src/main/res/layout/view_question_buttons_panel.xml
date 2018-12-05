@@ -11,7 +11,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/back"
+            android:id="@+id/back_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
@@ -21,7 +21,7 @@
             android:textColor="#fff"/>
 
         <Button
-            android:id="@+id/selected"
+            android:id="@+id/forward_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

@@ -3,7 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="pro.quizer.quizerexit">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".CoreApplication"
@@ -32,7 +37,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.MainActivity"
-            android:noHistory="false"
+            android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.AuthActivity"
@@ -43,18 +48,25 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.RecyclerViewActivity"
+            android:exported="true"
             android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ElementActivity"
             android:noHistory="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <activity
+            android:name=".activity.ThankYouActivity"
+            android:noHistory="true"
             android:screenOrientation="portrait" />
 
         <provider
             android:name="com.activeandroid.content.ContentProvider"
             android:authorities="pro.quizer.quizerexit"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
 
         <meta-data
             android:name="AA_DB_NAME"
@@ -70,6 +82,8 @@
             pro.quizer.quizerexit.model.database.Item,
             pro.quizer.quizerexit.model.database.Category,
             pro.quizer.quizerexit.model.database.UserModel,
+            pro.quizer.quizerexit.model.database.ElementDatabaseModel,
+            pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel,
             pro.quizer.quizerexit.model.database.ActivationModel" />
 
     </application>

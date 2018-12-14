@@ -1,13 +1,14 @@
 package pro.quizer.quizerexit.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.text.Editable;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,18 +21,36 @@ import pro.quizer.quizerexit.activity.RecyclerViewActivity;
 import pro.quizer.quizerexit.model.AttributeOpenType;
 import pro.quizer.quizerexit.model.config.AttributesModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
+import pro.quizer.quizerexit.utils.StringUtils;
 
 public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAdapter.AnswerListViewHolder> {
 
-    public QuestionListAdapter(final Context pContext, final List<ElementModel> pAnswers, final int pMaxAnswer, final int pMinAnswer) {
+    private final boolean mIsPolyAnswers;
+    private final String mDefaultPlaceHolder;
+    private Runnable mRefreshRunnable;
+
+    public QuestionListAdapter(final Context pContext,
+                               final List<ElementModel> pAnswers,
+                               final int pMaxAnswer,
+                               final int pMinAnswer,
+                               final Runnable pRefreshRunnable) {
         super(pContext, pAnswers, pMaxAnswer, pMinAnswer);
+
+        mRefreshRunnable = pRefreshRunnable;
+        mDefaultPlaceHolder = pContext.getString(R.string.default_placeholder);
+        mIsPolyAnswers = pMaxAnswer == 1 && pMinAnswer == 1;
     }
 
     @NonNull
     @Override
     public AnswerListViewHolder onCreateViewHolder(@NonNull final ViewGroup pViewGroup, final int pPosition) {
-        final View itemView = LayoutInflater.from(pViewGroup.getContext()).inflate(R.layout.adapter_answer_list, pViewGroup, false);
-        return new AnswerListViewHolder(itemView);
+        if (mIsPolyAnswers) {
+            final View itemView = LayoutInflater.from(pViewGroup.getContext()).inflate(R.layout.adapter_answer_list_radio, pViewGroup, false);
+            return new AnswerListViewHolder(itemView);
+        } else {
+            final View itemView = LayoutInflater.from(pViewGroup.getContext()).inflate(R.layout.adapter_answer_list_checkbox, pViewGroup, false);
+            return new AnswerListViewHolder(itemView);
+        }
     }
 
     @Override
@@ -42,7 +61,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
     class AnswerListViewHolder extends AbstractViewHolder {
 
         TextView mAnswer;
-        CheckBox mCheckBox;
+        CompoundButton mCheckBox;
         EditText mEditText;
 
         AnswerListViewHolder(final View itemView) {
@@ -52,26 +71,24 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
             mEditText = itemView.findViewById(R.id.answer_edit_text);
         }
 
+        @SuppressLint("ClickableViewAccessibility")
         @Override
         public void onBind(final ElementModel pAnswer, final int pPosition) {
-            final AttributesModel attributes = pAnswer.getAttributes();
+            final AttributesModel attributes = pAnswer.getOptions();
 
             final String openType = attributes.getOpenType();
             final boolean isChecked = pAnswer.isChecked();
             final boolean isEnabled = pAnswer.isEnabled();
 
             if (!AttributeOpenType.CHECKBOX.equals(openType)) {
-                mEditText.setText(pAnswer.getTextAnswer());
-                mEditText.setVisibility(View.VISIBLE);
-                mEditText.setHint(attributes.getPlaceholder());
-                mEditText.setTag(pPosition);
-                mEditText.addTextChangedListener(new SimpleTextWatcher() {
+                final String placeholder = attributes.getPlaceholder();
+                final String textAnswer = pAnswer.getTextAnswer();
 
-                    @Override
-                    public void afterTextChanged(Editable pEditable) {
-                        getModel((int) mEditText.getTag()).setTextAnswer(pEditable.toString());
-                    }
-                });
+                mEditText.setVisibility(View.VISIBLE);
+                mEditText.setHint(StringUtils.isEmpty(placeholder) ? mDefaultPlaceHolder : placeholder);
+                mEditText.setTag(pPosition);
+                mEditText.setText(textAnswer);
+                mEditText.addTextChangedListener(new ElementTextWatcher(pAnswer));
 
                 switch (attributes.getOpenType()) {
                     case AttributeOpenType.TIME:
@@ -107,7 +124,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                 @Override
                 public void onClick(final View view) {
                     final Context context = view.getContext();
-                    final CheckBox checkBox = (CheckBox) view;
+                    final CompoundButton checkBox = (CompoundButton) view;
                     final boolean isChecked = checkBox.isChecked();
                     final int minAnswers = getMinAnswer();
                     final int maxAnswers = getMaxAnswer();
@@ -118,7 +135,9 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
                         pAnswer.setChecked(true);
 
-                        notifyAdapter();
+                        if (mRefreshRunnable != null) {
+                            mRefreshRunnable.run();
+                        }
                     } else if (isChecked && maxAnswers != RecyclerViewActivity.EMPTY_COUNT_ANSWER && checkedItemsCount >= maxAnswers) {
                         checkBox.setChecked(false);
 
@@ -136,7 +155,10 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                         }
 
                         pAnswer.setChecked(isChecked);
-                        notifyAdapter();
+
+                        if (mRefreshRunnable != null) {
+                            mRefreshRunnable.run();
+                        }
                     } else {
                         if (isChecked) {
                             setCheckedItemsCount(checkedItemsCount + 1);
@@ -146,10 +168,24 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
                         pAnswer.setChecked(isChecked);
 
-                        notifyAdapter();
+                        if (mRefreshRunnable != null) {
+                            mRefreshRunnable.run();
+                        }
                     }
                 }
             });
+
+//            mEditText.setOnTouchListener(new View.OnTouchListener() {
+//                @Override
+//                public boolean onTouch(View v, MotionEvent event) {
+//                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//                        itemView.performClick();
+//                        mEditText.requestFocus();
+//                    }
+//
+//                    return false;
+//                }
+//            });
 
             itemView.setOnClickListener(new View.OnClickListener() {
 
@@ -160,6 +196,23 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                     }
                 }
             });
+        }
+    }
+
+    public class ElementTextWatcher extends SimpleTextWatcher {
+
+        private ElementModel mAnswer;
+
+        ElementTextWatcher(final ElementModel pAnswer) {
+            mAnswer = pAnswer;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            super.onTextChanged(s, start, before, count);
+
+            mAnswer.setTextAnswer(s.toString());
+            Log.d("thecriser", mAnswer.getOptions().getTitle() + " = " + s.toString());
         }
     }
 }

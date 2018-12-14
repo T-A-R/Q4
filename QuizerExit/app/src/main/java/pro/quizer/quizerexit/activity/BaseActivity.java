@@ -1,22 +1,38 @@
 package pro.quizer.quizerexit.activity;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.NonNull;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 import com.activeandroid.query.Update;
-import com.google.gson.Gson;
+import com.androidhiddencamera.CameraConfig;
+import com.androidhiddencamera.CameraError;
+import com.androidhiddencamera.HiddenCameraActivity;
+import com.androidhiddencamera.config.CameraFacing;
+import com.androidhiddencamera.config.CameraImageFormat;
+import com.androidhiddencamera.config.CameraResolution;
+import com.androidhiddencamera.config.CameraRotation;
 import com.google.gson.GsonBuilder;
 
+import java.io.File;
 import java.util.List;
 
 import pro.quizer.quizerexit.BuildConfig;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.fragment.HomeFragment;
+import pro.quizer.quizerexit.fragment.SettingsFragment;
+import pro.quizer.quizerexit.fragment.SyncFragment;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.database.ActivationModel;
 import pro.quizer.quizerexit.model.database.UserModel;
@@ -26,11 +42,30 @@ import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.utils.SPUtils;
 
 @SuppressLint("Registered")
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends HiddenCameraActivity {
 
+    private CameraConfig mCameraConfig;
+
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mCameraConfig = new CameraConfig()
+                .getBuilder(this)
+                .setCameraFacing(CameraFacing.FRONT_FACING_CAMERA)
+                .setCameraResolution(CameraResolution.MEDIUM_RESOLUTION)
+                .setImageFormat(CameraImageFormat.FORMAT_JPEG)
+                .setImageRotation(CameraRotation.ROTATION_270)
+                .build();
+    }
+
+    public CameraConfig getCameraConfig() {
+        return mCameraConfig;
+    }
+
+    public void shotPicture() {
+        takePicture();
     }
 
     public void showToast(final CharSequence pMessage) {
@@ -41,6 +76,27 @@ public class BaseActivity extends AppCompatActivity {
                 Toast.makeText(BaseActivity.this, pMessage, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void showHomeFragment() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.main_content, HomeFragment.newInstance())
+                .commit();
+    }
+
+    public void showSyncFragment() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.main_content, SyncFragment.newInstance())
+                .commit();
+    }
+
+    public void showSettingsFragment() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.main_content, SettingsFragment.newInstance())
+                .commit();
     }
 
     public boolean isActivated() {
@@ -73,11 +129,11 @@ public class BaseActivity extends AppCompatActivity {
         return new Select().from(UserModel.class).count();
     }
 
-    public int getCountAllUnsendedQuestionaires() {
+    public int getCountAllUnsendedAudioFiled() {
         return -1;
     }
 
-    public int getCountAllUnsendedAudioFiled() {
+    public int getCountAllUnsendedPhotoFiled() {
         return -1;
     }
 
@@ -186,6 +242,10 @@ public class BaseActivity extends AppCompatActivity {
         startActivity(new Intent(this, MainActivity.class));
     }
 
+    public void startThankYouActivity() {
+        startActivity(new Intent(this, ThankYouActivity.class));
+    }
+
     public View getProgressBar() {
         return findViewById(R.id.progressBar);
     }
@@ -200,6 +260,27 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
+    private DrawerLayout getDrawerLayout() {
+        return findViewById(R.id.drawer_layout);
+    }
+
+
+    public void disableDrawer() {
+        getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+    }
+
+    public void enableDrawer() {
+        getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+    }
+
+    public void openDrawer() {
+        getDrawerLayout().openDrawer(Gravity.START);
+    }
+
+    public void closeDrawer() {
+        getDrawerLayout().closeDrawer(Gravity.START);
+    }
+
     public void hideProgressBar() {
         runOnUiThread(new Runnable() {
 
@@ -208,5 +289,83 @@ public class BaseActivity extends AppCompatActivity {
                 getProgressBar().setVisibility(View.GONE);
             }
         });
+    }
+
+    public void showExitAlertDialog() {
+        new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle(R.string.exit_app_header)
+                .setMessage(R.string.exit_app_body)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setNegativeButton(R.string.no, null).show();
+    }
+
+    public void showChangeAccountAlertDialog() {
+        new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle(R.string.change_user)
+                .setMessage(R.string.change_user_body)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                        startAuthActivity();
+                    }
+                })
+                .setNegativeButton(R.string.no, null).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        showExitAlertDialog();
+    }
+
+    @Override
+    public void onImageCapture(@NonNull File pImageFile) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        Bitmap bitmap = BitmapFactory.decodeFile(pImageFile.getAbsolutePath(), options);
+
+        showToast("Фото сделано");
+    }
+
+    @Override
+    public void onCameraError(int errorCode) {
+        switch (errorCode) {
+            case CameraError.ERROR_CAMERA_OPEN_FAILED:
+                //Camera open failed. Probably because another application
+                //is using the camera
+                showToast("Не удается запустить камеру");
+
+                break;
+            case CameraError.ERROR_IMAGE_WRITE_FAILED:
+                //Image write failed. Please check if you have provided WRITE_EXTERNAL_STORAGE permission
+                showToast("Не удается сохранить фото");
+
+                break;
+            case CameraError.ERROR_CAMERA_PERMISSION_NOT_AVAILABLE:
+                //camera permission is not available
+                //Ask for the camera permission before initializing it.
+                showToast("Нет доступа на камеру");
+
+                break;
+            case CameraError.ERROR_DOES_NOT_HAVE_OVERDRAW_PERMISSION:
+                //Display information dialog to the user with steps to grant "Draw over other app"
+                //permission for the app.
+                //                HiddenCameraUtils.openDrawOverPermissionSetting(this);
+
+                showToast("Нет возможности делать фото поверх приложений");
+
+                break;
+            case CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA:
+                showToast("Нет передней камеры");
+
+                break;
+        }
     }
 }

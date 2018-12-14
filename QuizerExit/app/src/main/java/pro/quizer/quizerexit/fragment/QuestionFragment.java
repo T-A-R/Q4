@@ -21,17 +21,26 @@ import pro.quizer.quizerexit.model.AttributeType;
 import pro.quizer.quizerexit.model.ElementType;
 import pro.quizer.quizerexit.model.config.AttributesModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
+import pro.quizer.quizerexit.utils.UiUtils;
 
 public class QuestionFragment extends AbstractContentElementFragment {
 
     public static final String BUNDLE_CURRENT_QUESTION = "BUNDLE_CURRENT_QUESTION";
     public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
 
+    List<ElementModel> mAnswers;
     RecyclerView mRecyclerView;
+    LinearLayoutManager mLayoutManager;
     private ElementModel mCurrentElement;
     private AttributesModel mAttributes;
     private AbstractQuestionAdapter mAdapter;
     private NavigationCallback mCallback;
+    private Runnable mRefreshRecyclerViewRunnable = new Runnable() {
+        @Override
+        public void run() {
+            updateAdapter();
+        }
+    };
 
     private Runnable mForwardRunnable = new Runnable() {
         @Override
@@ -51,6 +60,18 @@ public class QuestionFragment extends AbstractContentElementFragment {
             mCallback.onBack();
         }
     };
+
+    private Runnable mExitRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mCallback.onExit();
+        }
+    };
+
+    private void updateAdapter() {
+        mRecyclerView.setAdapter(mAdapter);
+        UiUtils.hideKeyboard(getContext(), getView());
+    }
 
     public static Fragment newInstance(@NonNull final ElementModel pElement, final NavigationCallback pCallback) {
         final QuestionFragment fragment = new QuestionFragment();
@@ -77,7 +98,7 @@ public class QuestionFragment extends AbstractContentElementFragment {
         if (bundle != null) {
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
-            mAttributes = mCurrentElement.getAttributes();
+            mAttributes = mCurrentElement.getOptions();
 
             initView(view);
         } else {
@@ -95,10 +116,14 @@ public class QuestionFragment extends AbstractContentElementFragment {
         return mBackRunnable;
     }
 
+    @Override
+    protected Runnable getExitRunnable() {
+        return mExitRunnable;
+    }
+
     private void initView(final View pView) {
         mRecyclerView = pView.findViewById(R.id.question_recycler_view);
-
-        final List<ElementModel> answers = mCurrentElement.getSubElementsByType(ElementType.ANSWER);
+        mAnswers = mCurrentElement.getSubElementsByType(ElementType.ANSWER);
 
         final int minAnswers;
         final int maxAnswers;
@@ -114,12 +139,12 @@ public class QuestionFragment extends AbstractContentElementFragment {
 
         // рандомная сортировка дочерних элементов
         if (mAttributes.isRotation()) {
-            Collections.shuffle(answers);
+            shuffleAnswers();
         }
 
         switch (mAttributes.getType()) {
             case AttributeType.LIST:
-                mAdapter = new QuestionListAdapter(getContext(), answers, maxAnswers, minAnswers);
+                mAdapter = new QuestionListAdapter(getContext(), mAnswers, maxAnswers, minAnswers, mRefreshRecyclerViewRunnable);
 
                 break;
             default:
@@ -128,7 +153,26 @@ public class QuestionFragment extends AbstractContentElementFragment {
                 return;
         }
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.setAdapter(mAdapter);
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        updateAdapter();
+    }
+
+    private void shuffleAnswers() {
+        Collections.shuffle(mAnswers);
+
+        for (int i = 0; i < mAnswers.size(); i++) {
+            final ElementModel answer = mAnswers.get(i);
+            final AttributesModel attributes = answer.getOptions();
+            final int realOrder = attributes.getOrder() - 1;
+
+            if (attributes.isFixedOrder() && realOrder != i) {
+                mAnswers.remove(answer);
+                mAnswers.add(attributes.getOrder() - 1, answer);
+
+                i = 0;
+            }
+        }
     }
 }

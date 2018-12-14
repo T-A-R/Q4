@@ -12,4 +12,6 @@ public interface NavigationCallback extends Serializable {
 
     void onBack();
 
+    void onExit();
+
 }

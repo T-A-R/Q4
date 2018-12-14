@@ -22,16 +22,18 @@ public class ElementModel implements Serializable {
     @SerializedName("type")
     private String type;
 
-    @SerializedName("attributes")
-    private AttributesModel attributes;
+    @SerializedName("options")
+    private AttributesModel options;
 
     @SerializedName("elements")
     private List<ElementModel> elements;
 
     // @Ignore start
+    private boolean isShowing;
     private boolean isChecked;
-    private boolean isFullySelected;
     private boolean isEnabled = true;
+    private long startTime = 0;
+    private long endTime = 0;
     private String textAnswer;
     // @Ignore end
 
@@ -64,8 +66,8 @@ public class ElementModel implements Serializable {
         return elements;
     }
 
-    public AttributesModel getAttributes() {
-        return attributes;
+    public AttributesModel getOptions() {
+        return options;
     }
 
 
@@ -75,7 +77,7 @@ public class ElementModel implements Serializable {
     }
 
     public boolean isFullySelected() {
-        if (CHECKBOX.equals(attributes.getOpenType())) {
+        if (CHECKBOX.equals(options.getOpenType())) {
             return isChecked;
         } else {
             return isChecked && StringUtils.isNotEmpty(textAnswer);
@@ -83,7 +85,7 @@ public class ElementModel implements Serializable {
     }
 
     public boolean isCheckedAndTextIsEmptyForSpecialOpenTypes() {
-        if (CHECKBOX.equals(attributes.getOpenType())) {
+        if (CHECKBOX.equals(options.getOpenType())) {
             return false;
         } else {
             return isChecked && StringUtils.isEmpty(textAnswer);
@@ -104,6 +106,26 @@ public class ElementModel implements Serializable {
 
     public boolean isEnabled() {
         return isEnabled;
+    }
+
+    public void setShowing(boolean showing) {
+        isShowing = showing;
+    }
+
+    public boolean isShowing() {
+        return isShowing;
+    }
+
+    public void setStartTime(long start) {
+        this.startTime = start;
+    }
+
+    public void setEndTime(long end) {
+        this.endTime = end;
+    }
+
+    public long getDuration() {
+        return endTime - startTime;
     }
 
     public void setEnabled(final boolean pIsEnabled) {

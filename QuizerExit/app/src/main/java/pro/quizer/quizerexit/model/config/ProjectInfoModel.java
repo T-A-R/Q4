@@ -19,6 +19,12 @@ public class ProjectInfoModel implements Serializable {
     @SerializedName("agreement")
     private String agreement;
 
+    @SerializedName("thank_you_text")
+    private String thank_you_text;
+
+    @SerializedName("thank_you_picture")
+    private String thank_you_picture;
+
     @SerializedName("elements")
     private List<ElementModel> elements;
 
@@ -43,6 +49,15 @@ public class ProjectInfoModel implements Serializable {
 
     public List<ElementModel> getElements() {
         return elements;
+    }
+
+
+    public String getThankYouText() {
+        return thank_you_text;
+    }
+
+    public String getThankYouPicture() {
+        return thank_you_picture;
     }
 
     public ReserveChannelModel getReserveChannel() {

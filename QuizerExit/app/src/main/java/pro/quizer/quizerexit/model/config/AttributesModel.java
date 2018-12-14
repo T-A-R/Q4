@@ -18,6 +18,9 @@ public class AttributesModel implements Serializable {
     @SerializedName("title")
     private String title;
 
+    @SerializedName("description")
+    private String description;
+
     @SerializedName("order")
     private int order;
 
@@ -27,8 +30,8 @@ public class AttributesModel implements Serializable {
     @SerializedName("rotation")
     private boolean rotation;
 
-    @SerializedName("static_order")
-    private boolean static_order;
+    @SerializedName("fixed_order")
+    private boolean fixed_order;
 
     @SerializedName("polyanswer")
     private boolean polyanswer;
@@ -96,8 +99,8 @@ public class AttributesModel implements Serializable {
         return rotation;
     }
 
-    public boolean isStaticOrder() {
-        return static_order;
+    public boolean isFixedOrder() {
+        return fixed_order;
     }
 
     public boolean isPolyanswer() {
@@ -110,6 +113,10 @@ public class AttributesModel implements Serializable {
 
     public int getMaxAnswers() {
         return max_answers;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public boolean isRecordSound() {

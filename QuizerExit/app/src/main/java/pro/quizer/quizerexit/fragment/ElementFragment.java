@@ -17,6 +17,7 @@ import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.model.ElementType;
 import pro.quizer.quizerexit.model.config.AttributesModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
+import pro.quizer.quizerexit.utils.DateUtils;
 
 public class ElementFragment extends BaseFragment {
 
@@ -24,10 +25,12 @@ public class ElementFragment extends BaseFragment {
     public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
 
     TextView mElementText;
+    TextView mElementDescriptionText;
     private AttributesModel mAttributes;
     private ElementModel mCurrentElement;
     private FragmentManager mFragmentManger;
     private NavigationCallback mCallback;
+    private long mStartTime;
 
     public static Fragment newInstance(@NonNull final ElementModel pElement, final NavigationCallback pCallback) {
         final ElementFragment fragment = new ElementFragment();
@@ -42,6 +45,8 @@ public class ElementFragment extends BaseFragment {
 
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+        mStartTime = DateUtils.getCurrentTimeMillis();
+
         return inflater.inflate(R.layout.fragment_element, container, false);
     }
 
@@ -59,7 +64,7 @@ public class ElementFragment extends BaseFragment {
         if (bundle != null) {
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
-            mAttributes = mCurrentElement.getAttributes();
+            mAttributes = mCurrentElement.getOptions();
 
             initView(view);
         } else {
@@ -69,7 +74,12 @@ public class ElementFragment extends BaseFragment {
 
     private void initView(final View pView) {
         mElementText = pView.findViewById(R.id.element_text);
+        mElementDescriptionText = pView.findViewById(R.id.element_description_text);
         mElementText.setText(mAttributes.getTitle());
+        mElementDescriptionText.setText(mAttributes.getDescription());
+
+        mCurrentElement.setShowing(true);
+        mCurrentElement.setStartTime(mStartTime);
 
         switch (mCurrentElement.getType()) {
             case ElementType.QUESTION:
@@ -81,5 +91,10 @@ public class ElementFragment extends BaseFragment {
             default:
                 showToast("Неизвестный тип элемента");
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 }

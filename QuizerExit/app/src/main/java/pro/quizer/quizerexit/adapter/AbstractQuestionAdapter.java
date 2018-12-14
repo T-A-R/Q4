@@ -102,7 +102,7 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
         final int size = selectedList.size();
 
         if (size < mMinAnswer) {
-            if (size == 1 && selectedList.get(0).getAttributes().isUnchecker()) {
+            if (size == 1 && selectedList.get(0).getOptions().isUnchecker()) {
                 return selectedList;
             } else {
                 throw new Exception(String.format(mContext.getString(R.string.incorrect_select_min_answers), String.valueOf(mMinAnswer)));

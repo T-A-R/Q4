@@ -29,6 +29,7 @@ public final class Constants {
 
     public interface NameForm {
 
+        String QUESTIONNAIRE = "questionnaire";
         String KEY_CLIENT = "key_client";
         String USER_LOGIN = "user_login";
         String DOWNLOAD_UPDATE = "download_update";

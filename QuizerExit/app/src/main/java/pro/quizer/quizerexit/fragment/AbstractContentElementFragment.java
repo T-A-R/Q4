@@ -10,14 +10,23 @@ import pro.quizer.quizerexit.R;
 public abstract class AbstractContentElementFragment extends BaseFragment {
 
     private View mBackButton;
+    private View mExitButton;
     private View mForwardButton;
     private Runnable mBackRunnable;
+    private Runnable mExitRunnable;
     private Runnable mForwardRunnable;
 
     private View.OnClickListener mBackClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             mBackRunnable.run();
+        }
+    };
+
+    private View.OnClickListener mExitClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mExitRunnable.run();
         }
     };
 
@@ -32,13 +41,15 @@ public abstract class AbstractContentElementFragment extends BaseFragment {
     public void onViewCreated(@NonNull View pView, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(pView, savedInstanceState);
 
+        mExitButton = pView.findViewById(R.id.exit_btn);
         mBackButton = pView.findViewById(R.id.back_btn);
         mForwardButton = pView.findViewById(R.id.forward_btn);
         mBackRunnable = getBackRunnable();
+        mExitRunnable = getExitRunnable();
         mForwardRunnable = getForwardRunnable();
 
         mBackButton.setOnClickListener(mBackClickListener);
-
+        mExitButton.setOnClickListener(mExitClickListener);
         mForwardButton.setOnClickListener(mForwardClickListener);
     }
 
@@ -53,4 +64,6 @@ public abstract class AbstractContentElementFragment extends BaseFragment {
     protected abstract Runnable getForwardRunnable();
 
     protected abstract Runnable getBackRunnable();
+
+    protected abstract Runnable getExitRunnable();
 }

@@ -63,6 +63,7 @@ public class AuthActivity extends BaseActivity {
                 mVersionTapCount++;
 
                 if (mVersionTapCount == MAX_VERSION_TAP_COUNT) {
+                    finish();
                     startServiceActivity();
 
                     mVersionTapCount = 0;

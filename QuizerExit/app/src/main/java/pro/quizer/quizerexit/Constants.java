@@ -19,6 +19,7 @@ public final class Constants {
     public interface Strings {
 
         String EMPTY = "";
+        String UNKNOWN = "unknown";
 
     }
 

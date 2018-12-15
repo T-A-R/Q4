@@ -3,8 +3,6 @@ package pro.quizer.quizerexit.activity;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
@@ -29,6 +27,7 @@ import java.io.File;
 import java.util.List;
 
 import pro.quizer.quizerexit.BuildConfig;
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.fragment.HomeFragment;
 import pro.quizer.quizerexit.fragment.SettingsFragment;
@@ -39,12 +38,19 @@ import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
+import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.SPUtils;
 
 @SuppressLint("Registered")
 public class BaseActivity extends HiddenCameraActivity {
 
+    private final String PHOTO_NAME_JPEG_TEMPLATE = "%1$s_%2$s_%3$s.jpeg";
+
     private CameraConfig mCameraConfig;
+
+    private String mLoginAdmin = Constants.Strings.UNKNOWN;
+    private String mToken = Constants.Strings.UNKNOWN;
+    private int mRelativeId = 0;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -58,13 +64,27 @@ public class BaseActivity extends HiddenCameraActivity {
                 .setImageFormat(CameraImageFormat.FORMAT_JPEG)
                 .setImageRotation(CameraRotation.ROTATION_270)
                 .build();
+
+        try {
+            startCamera(getCameraConfig());
+        } catch (final Exception pException) {
+            showToast("Не удается стартануть камеру");
+        }
     }
 
     public CameraConfig getCameraConfig() {
         return mCameraConfig;
     }
 
-    public void shotPicture() {
+    public void shotPicture(final String pLoginAdmin, final String pToken) {
+        shotPicture(pLoginAdmin, pToken, 0);
+    }
+
+    public void shotPicture(final String pLoginAdmin, final String pToken, final int pRelativeId) {
+        mLoginAdmin = pLoginAdmin;
+        mToken = pToken;
+        mRelativeId = pRelativeId;
+
         takePicture();
     }
 
@@ -327,11 +347,13 @@ public class BaseActivity extends HiddenCameraActivity {
 
     @Override
     public void onImageCapture(@NonNull File pImageFile) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
-        Bitmap bitmap = BitmapFactory.decodeFile(pImageFile.getAbsolutePath(), options);
-
         showToast("Фото сделано");
+
+        if (FileUtils.renameFile(pImageFile, String.format(PHOTO_NAME_JPEG_TEMPLATE, mLoginAdmin, mToken, mRelativeId))) {
+            showToast("Фото переименованно");
+        } else {
+            showToast("Фото не переименованно");
+        }
     }
 
     @Override

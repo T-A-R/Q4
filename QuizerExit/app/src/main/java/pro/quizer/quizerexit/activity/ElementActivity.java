@@ -119,8 +119,6 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
 
     @SuppressLint("MissingPermission")
     private void initStartValues() {
-        startCamera(getCameraConfig());
-
         mLoginAdmin = mConfig.getLoginAdmin();
         mLogin = mUserModel.login;
         mPassword = mUserModel.password;
@@ -159,7 +157,10 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         final ElementModel nextElement = getElementByRelativeId(pNumberOfNextElement);
 
         if (nextElement == null) {
+            // it was last element
             saveQuestionnaireToDatabase();
+            shotPicture(mLoginAdmin, mToken);
+            
             finish();
             startMainActivity();
 
@@ -189,8 +190,6 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
 
     @Override
     public void onForward(final ElementModel pElementModel) {
-        shotPicture();
-
         final StringBuilder sb = new StringBuilder();
         int jumpValue = -1;
 

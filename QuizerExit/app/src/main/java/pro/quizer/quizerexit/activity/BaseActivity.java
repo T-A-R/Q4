@@ -48,7 +48,7 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
     }
 
-    public List<String> getAllPhotos() {
+    public List<File> getAllPhotos() {
         return FileUtils.getFilesRecursion(getPhotosStoragePath());
     }
 
@@ -56,7 +56,7 @@ public class BaseActivity extends AppCompatActivity {
         return FileUtils.getFiles(getPhotosStoragePath() + FileUtils.FOLDER_DIVIDER + pUserId);
     }
 
-    public List<String> getAllAudio() {
+    public List<File> getAllAudio() {
         return FileUtils.getFilesRecursion(getAudioStoragePath());
     }
 

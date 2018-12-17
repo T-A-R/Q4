@@ -67,8 +67,8 @@ public final class FileUtils {
         return inFiles;
     }
 
-    public static List<String> getFilesRecursion(final String pPath) {
-        List<String> inFiles = new ArrayList<>();
+    public static List<File> getFilesRecursion(final String pPath) {
+        List<File> inFiles = new ArrayList<>();
 
         if (StringUtils.isEmpty(pPath)) {
             return inFiles;
@@ -89,7 +89,7 @@ public final class FileUtils {
             if (file.isDirectory()) {
                 files.addAll(Arrays.asList(file.listFiles()));
             } else if (file.getName().endsWith(JPEG)) {
-                inFiles.add(file.getAbsolutePath());
+                inFiles.add(file);
             }
         }
 

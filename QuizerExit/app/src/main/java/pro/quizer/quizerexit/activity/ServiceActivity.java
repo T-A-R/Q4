@@ -1,12 +1,20 @@
 package pro.quizer.quizerexit.activity;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.executable.DeleteUsersExecutable;
 import pro.quizer.quizerexit.executable.ICallback;
@@ -77,8 +85,8 @@ public class ServiceActivity extends BaseActivity implements ICallback {
     }
 
     private void updateData(final ServiceViewModel pServiceViewModel) {
-        final List<String> notSentAudio = getAllAudio();
-        final List<String> notSentPhoto = getAllPhotos();
+        final List<File> notSentAudio = getAllAudio();
+        final List<File> notSentPhoto = getAllPhotos();
         final int notSentAudioCount = notSentAudio.size();
         final int notSentPhotoCount = notSentPhoto.size();
         final int notSentQuestionnairesCount = pServiceViewModel.getQuestionnaireModels().size();
@@ -121,13 +129,40 @@ public class ServiceActivity extends BaseActivity implements ICallback {
         mSendPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (notSentQuestionnairesCount == 0) {
+                if (notSentQuestionnairesCount > 0) {
                     showToast(getString(R.string.please_send_q));
 
                     return;
                 }
 
-                OkHttpUtils.sendPhotos(serverUrl, notSentPhoto);
+
+                final Call.Factory client = new OkHttpClient();
+                client.newCall(OkHttpUtils.postPhoto(notSentPhoto, getServer()))
+                        .enqueue(new Callback() {
+
+                            @Override
+                            public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
+                                hideProgressBar();
+
+                            }
+
+                            @Override
+                            public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
+                                hideProgressBar();
+
+                                final ResponseBody responseBody = response.body();
+
+                                if (responseBody == null) {
+                                    showToast(getString(R.string.incorrect_server_response));
+
+                                    return;
+                                }
+
+//                                final String responseJson = responseBody.string();
+                            }
+                        });
+
+//                OkHttpUtils.sendPhotos(serverUrl, notSentPhoto);
             }
         });
 

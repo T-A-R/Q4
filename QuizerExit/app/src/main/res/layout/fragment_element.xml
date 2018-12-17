@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_below="@+id/question_panel"
-        android:background="@android:color/darker_gray" />
+        android:background="@color/gray" />
 
     <FrameLayout
         android:id="@+id/content_element"

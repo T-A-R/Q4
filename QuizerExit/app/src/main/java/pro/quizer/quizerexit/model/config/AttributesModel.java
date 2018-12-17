@@ -42,6 +42,9 @@ public class AttributesModel implements Serializable {
     @SerializedName("max_answers")
     private int max_answers;
 
+    @SerializedName("take_photo")
+    private boolean take_photo;
+
     @SerializedName("record_sound")
     private boolean record_sound;
 
@@ -170,6 +173,10 @@ public class AttributesModel implements Serializable {
 
     public String getPlaceholder() {
         return placeholder;
+    }
+
+    public boolean isTakePhoto() {
+        return take_photo;
     }
 
     public boolean isUnchecker() {

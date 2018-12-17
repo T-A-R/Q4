@@ -56,7 +56,7 @@
     <string name="sended_a_in_session_string">Отправлено аудио в данном сеансе: %1$s</string>
     <string name="sended_p_in_session_string">Отправлено фото в данном сеансе: %1$s</string>
     <string name="sms">SMS</string>
-    <string name="home_title">Гланвый экран</string>
+    <string name="home_title">Главный экран</string>
     <string name="change_user">Сменить пользователя</string>
     <string name="config_title">Конфигурация</string>
     <string name="settings_id_string">ID: %1$s</string>

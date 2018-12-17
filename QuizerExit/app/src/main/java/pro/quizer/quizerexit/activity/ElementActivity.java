@@ -48,7 +48,9 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     private int mQuestionnaireId;
     private int mProjectId;
     private int mUserProjectId;
+    private int mUserId;
     private String mGps;
+    private String mUserLogin;
     private long mStartDateInterview;
 
     private static final int PERMISSION_REQUEST_CODE = 200;
@@ -124,7 +126,9 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         mPassword = mUserModel.password;
         mQuestionnaireId = mProjectInfo.getQuestionnaireId();
         mProjectId = mProjectInfo.getProjectId();
+        mUserLogin = mUserModel.login;
         mUserProjectId = mUserModel.user_project_id;
+        mUserId = mUserModel.user_id;
         mStartDateInterview = DateUtils.getCurrentTimeMillis();
         mToken = StringUtils.generateToken();
 
@@ -138,19 +142,16 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
                 if (mConfig.isForceGps()) {
                     finish();
                 } else {
-                    startQuestionnaire();
+                    showNextElement();
                 }
             }
         }
 
-        startQuestionnaire();
+        showNextElement();
     }
 
-    private void startQuestionnaire() {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(android.R.id.content, ElementFragment.newInstance(mElements.get(0), this))
-                .commit();
+    private void showNextElement() {
+        showNextElement(mElements.get(0).getRelativeID());
     }
 
     private void showNextElement(final int pNumberOfNextElement) {
@@ -159,8 +160,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         if (nextElement == null) {
             // it was last element
             saveQuestionnaireToDatabase();
-            shotPicture(mLoginAdmin, mToken);
-            
+
             finish();
             startMainActivity();
 
@@ -169,7 +169,15 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(android.R.id.content, ElementFragment.newInstance(nextElement, this))
+                .replace(android.R.id.content,
+                        ElementFragment.newInstance(
+                                nextElement,
+                                this,
+                                mToken,
+                                mLoginAdmin,
+                                mUserId,
+                                mUserLogin,
+                                mProjectId))
                 .addToBackStack(nextElement.getOptions().getTitle())
                 .commit();
     }

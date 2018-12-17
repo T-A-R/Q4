@@ -9,5 +9,7 @@
     <color name="brand_color">#209A47</color>
 
     <color name="gray_shadow">#99000000</color>
+    <color name="red">#985E52</color>
+    <color name="gray">#AAAAAA</color>
 
 </resources>

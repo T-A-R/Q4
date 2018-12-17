@@ -4,9 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
@@ -15,19 +15,15 @@ import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 import com.activeandroid.query.Update;
 import com.androidhiddencamera.CameraConfig;
-import com.androidhiddencamera.CameraError;
-import com.androidhiddencamera.HiddenCameraActivity;
 import com.androidhiddencamera.config.CameraFacing;
 import com.androidhiddencamera.config.CameraImageFormat;
 import com.androidhiddencamera.config.CameraResolution;
 import com.androidhiddencamera.config.CameraRotation;
 import com.google.gson.GsonBuilder;
 
-import java.io.File;
 import java.util.List;
 
 import pro.quizer.quizerexit.BuildConfig;
-import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.fragment.HomeFragment;
 import pro.quizer.quizerexit.fragment.SettingsFragment;
@@ -38,54 +34,17 @@ import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
-import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.SPUtils;
 
 @SuppressLint("Registered")
-public class BaseActivity extends HiddenCameraActivity {
-
-    private final String PHOTO_NAME_JPEG_TEMPLATE = "%1$s_%2$s_%3$s.jpeg";
+public class BaseActivity extends AppCompatActivity {
 
     private CameraConfig mCameraConfig;
-
-    private String mLoginAdmin = Constants.Strings.UNKNOWN;
-    private String mToken = Constants.Strings.UNKNOWN;
-    private int mRelativeId = 0;
 
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mCameraConfig = new CameraConfig()
-                .getBuilder(this)
-                .setCameraFacing(CameraFacing.FRONT_FACING_CAMERA)
-                .setCameraResolution(CameraResolution.MEDIUM_RESOLUTION)
-                .setImageFormat(CameraImageFormat.FORMAT_JPEG)
-                .setImageRotation(CameraRotation.ROTATION_270)
-                .build();
-
-        try {
-            startCamera(getCameraConfig());
-        } catch (final Exception pException) {
-            showToast("Не удается стартануть камеру");
-        }
-    }
-
-    public CameraConfig getCameraConfig() {
-        return mCameraConfig;
-    }
-
-    public void shotPicture(final String pLoginAdmin, final String pToken) {
-        shotPicture(pLoginAdmin, pToken, 0);
-    }
-
-    public void shotPicture(final String pLoginAdmin, final String pToken, final int pRelativeId) {
-        mLoginAdmin = pLoginAdmin;
-        mToken = pToken;
-        mRelativeId = pRelativeId;
-
-        takePicture();
     }
 
     public void showToast(final CharSequence pMessage) {
@@ -343,51 +302,5 @@ public class BaseActivity extends HiddenCameraActivity {
     @Override
     public void onBackPressed() {
         showExitAlertDialog();
-    }
-
-    @Override
-    public void onImageCapture(@NonNull File pImageFile) {
-        showToast("Фото сделано");
-
-        if (FileUtils.renameFile(pImageFile, String.format(PHOTO_NAME_JPEG_TEMPLATE, mLoginAdmin, mToken, mRelativeId))) {
-            showToast("Фото переименованно");
-        } else {
-            showToast("Фото не переименованно");
-        }
-    }
-
-    @Override
-    public void onCameraError(int errorCode) {
-        switch (errorCode) {
-            case CameraError.ERROR_CAMERA_OPEN_FAILED:
-                //Camera open failed. Probably because another application
-                //is using the camera
-                showToast("Не удается запустить камеру");
-
-                break;
-            case CameraError.ERROR_IMAGE_WRITE_FAILED:
-                //Image write failed. Please check if you have provided WRITE_EXTERNAL_STORAGE permission
-                showToast("Не удается сохранить фото");
-
-                break;
-            case CameraError.ERROR_CAMERA_PERMISSION_NOT_AVAILABLE:
-                //camera permission is not available
-                //Ask for the camera permission before initializing it.
-                showToast("Нет доступа на камеру");
-
-                break;
-            case CameraError.ERROR_DOES_NOT_HAVE_OVERDRAW_PERMISSION:
-                //Display information dialog to the user with steps to grant "Draw over other app"
-                //permission for the app.
-                //                HiddenCameraUtils.openDrawOverPermissionSetting(this);
-
-                showToast("Нет возможности делать фото поверх приложений");
-
-                break;
-            case CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA:
-                showToast("Нет передней камеры");
-
-                break;
-        }
     }
 }

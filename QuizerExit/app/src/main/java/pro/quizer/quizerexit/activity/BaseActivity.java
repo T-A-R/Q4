@@ -15,15 +15,13 @@ import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 import com.activeandroid.query.Update;
 import com.androidhiddencamera.CameraConfig;
-import com.androidhiddencamera.config.CameraFacing;
-import com.androidhiddencamera.config.CameraImageFormat;
-import com.androidhiddencamera.config.CameraResolution;
-import com.androidhiddencamera.config.CameraRotation;
 import com.google.gson.GsonBuilder;
 
+import java.io.File;
 import java.util.List;
 
 import pro.quizer.quizerexit.BuildConfig;
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.fragment.HomeFragment;
 import pro.quizer.quizerexit.fragment.SettingsFragment;
@@ -34,17 +32,67 @@ import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
+import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.SPUtils;
+import pro.quizer.quizerexit.utils.StringUtils;
 
 @SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
 
+    public static final String CACHE = "cache";
     private CameraConfig mCameraConfig;
 
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    public List<String> getAllPhotos() {
+        return FileUtils.getFilesRecursion(getPhotosStoragePath());
+    }
+
+    public List<String> getPhotosByUserId(final int pUserId) {
+        return FileUtils.getFiles(getPhotosStoragePath() + FileUtils.FOLDER_DIVIDER + pUserId);
+    }
+
+    public List<String> getAllAudio() {
+        return FileUtils.getFilesRecursion(getAudioStoragePath());
+    }
+
+    public List<String> getAudioByUserId(final int pUserId) {
+        return FileUtils.getFiles(getAudioStoragePath() + FileUtils.FOLDER_DIVIDER + pUserId);
+    }
+
+    private String getDataStoragePath() {
+        final File file = getExternalCacheDir();
+
+        if (file != null) {
+            final String path = getExternalCacheDir().getAbsolutePath();
+            return path.replace(CACHE, Constants.Strings.EMPTY);
+        } else {
+            return Constants.Strings.EMPTY;
+        }
+    }
+
+    private String getPhotosStoragePath() {
+        String dataStoragePath = getDataStoragePath();
+
+        if (StringUtils.isEmpty(dataStoragePath)) {
+            return Constants.Strings.EMPTY;
+        } else {
+            return dataStoragePath + FileUtils.FOLDER_PHOTOS;
+        }
+    }
+
+    private String getAudioStoragePath() {
+        String dataStoragePath = getDataStoragePath();
+
+        if (StringUtils.isEmpty(dataStoragePath)) {
+            return Constants.Strings.EMPTY;
+        } else {
+            return dataStoragePath + FileUtils.FOLDER_AUDIO;
+        }
     }
 
     public void showToast(final CharSequence pMessage) {
@@ -106,14 +154,6 @@ public class BaseActivity extends AppCompatActivity {
 
     public int getUsersCount() {
         return new Select().from(UserModel.class).count();
-    }
-
-    public int getCountAllUnsendedAudioFiled() {
-        return -1;
-    }
-
-    public int getCountAllUnsendedPhotoFiled() {
-        return -1;
     }
 
     public ActivationModel getActivationModel() {

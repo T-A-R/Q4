@@ -17,13 +17,15 @@ import java.util.List;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.SimpleTextWatcher;
-import pro.quizer.quizerexit.activity.RecyclerViewActivity;
 import pro.quizer.quizerexit.model.AttributeOpenType;
 import pro.quizer.quizerexit.model.config.AttributesModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.utils.StringUtils;
 
 public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAdapter.AnswerListViewHolder> {
+
+    private static final int EMPTY_COUNT_ANSWER = 1;
+    private static final int DEFAULT_MIN_ANSWERS = 1;
 
     private final boolean mIsPolyAnswers;
     private final String mDefaultPlaceHolder;
@@ -130,7 +132,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                     final int maxAnswers = getMaxAnswer();
                     final int checkedItemsCount = getCheckedItemsCount();
 
-                    if (isChecked && minAnswers == RecyclerViewActivity.DEFAULT_MIN_ANSWERS && minAnswers == maxAnswers) {
+                    if (isChecked && minAnswers == DEFAULT_MIN_ANSWERS && minAnswers == maxAnswers) {
                         unselectAll();
 
                         pAnswer.setChecked(true);
@@ -138,7 +140,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                         if (mRefreshRunnable != null) {
                             mRefreshRunnable.run();
                         }
-                    } else if (isChecked && maxAnswers != RecyclerViewActivity.EMPTY_COUNT_ANSWER && checkedItemsCount >= maxAnswers) {
+                    } else if (isChecked && maxAnswers != EMPTY_COUNT_ANSWER && checkedItemsCount >= maxAnswers) {
                         checkBox.setChecked(false);
 
                         Toast.makeText(context,

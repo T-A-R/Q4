@@ -72,23 +72,23 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/send_data" />
 
-            <TextView
-                android:id="@+id/sended_audio_from_this_device"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                tools:text="ПУСТО" />
+            <!--<TextView-->
+                <!--android:id="@+id/sended_audio_from_this_device"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="4dp"-->
+                <!--android:textColor="@android:color/black"-->
+                <!--android:textSize="16sp"-->
+                <!--tools:text="ПУСТО" />-->
 
-            <TextView
-                android:id="@+id/sended_audio_in_session"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                tools:text="ПУСТО" />
+            <!--<TextView-->
+                <!--android:id="@+id/sended_audio_in_session"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="4dp"-->
+                <!--android:textColor="@android:color/black"-->
+                <!--android:textSize="16sp"-->
+                <!--tools:text="ПУСТО" />-->
 
             <TextView
                 android:id="@+id/unsended_audio"
@@ -108,23 +108,23 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/send_audio" />
 
-            <TextView
-                android:id="@+id/sended_photo_from_this_device"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                tools:text="ПУСТО" />
+            <!--<TextView-->
+                <!--android:id="@+id/sended_photo_from_this_device"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="4dp"-->
+                <!--android:textColor="@android:color/black"-->
+                <!--android:textSize="16sp"-->
+                <!--tools:text="ПУСТО" />-->
 
-            <TextView
-                android:id="@+id/sended_photo_in_session"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                tools:text="ПУСТО" />
+            <!--<TextView-->
+                <!--android:id="@+id/sended_photo_in_session"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="4dp"-->
+                <!--android:textColor="@android:color/black"-->
+                <!--android:textSize="16sp"-->
+                <!--tools:text="ПУСТО" />-->
 
             <TextView
                 android:id="@+id/unsended_photo"

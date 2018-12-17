@@ -5,15 +5,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.List;
+
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.executable.DeleteUsersExecutable;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.SendAllQuestionnairesExecutable;
 import pro.quizer.quizerexit.executable.ServiceInfoExecutable;
 import pro.quizer.quizerexit.model.view.ServiceViewModel;
+import pro.quizer.quizerexit.utils.OkHttpUtils;
 import pro.quizer.quizerexit.view.Toolbar;
 
 public class ServiceActivity extends BaseActivity implements ICallback {
+
+    private String serverUrl;
 
     private Button mSendDataButton;
     private Button mSendAudioButton;
@@ -35,6 +40,8 @@ public class ServiceActivity extends BaseActivity implements ICallback {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service);
+
+        serverUrl = getCurrentUser().getConfig().getServerUrl();
 
         initViews();
         initStrings();
@@ -70,10 +77,12 @@ public class ServiceActivity extends BaseActivity implements ICallback {
     }
 
     private void updateData(final ServiceViewModel pServiceViewModel) {
+        final List<String> notSentAudio = getAllAudio();
+        final List<String> notSentPhoto = getAllPhotos();
+        final int notSentAudioCount = notSentAudio.size();
+        final int notSentPhotoCount = notSentPhoto.size();
         final int notSentQuestionnairesCount = pServiceViewModel.getQuestionnaireModels().size();
         final int usersCount = pServiceViewModel.getUserModels().size();
-        final int notSentAudioCount = getCountAllUnsendedAudioFiled();
-        final int notSentPhotoCount = getCountAllUnsendedPhotoFiled();
 
         runOnUiThread(new Runnable() {
 
@@ -106,6 +115,19 @@ public class ServiceActivity extends BaseActivity implements ICallback {
             @Override
             public void onClick(View view) {
                 new SendAllQuestionnairesExecutable(ServiceActivity.this, ServiceActivity.this).execute();
+            }
+        });
+
+        mSendPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (notSentQuestionnairesCount == 0) {
+                    showToast(getString(R.string.please_send_q));
+
+                    return;
+                }
+
+                OkHttpUtils.sendPhotos(serverUrl, notSentPhoto);
             }
         });
 

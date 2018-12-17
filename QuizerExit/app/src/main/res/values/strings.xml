@@ -66,4 +66,5 @@
     <string name="space_between_answers_string">Интервал между ответами: %1$s</string>
     <string name="select_number_for_exit_pull">Выбор номера (для Экзит-Пулл)</string>
     <string name="change_user_body">Вы уверены, что хотите сменить пользователя?</string>
+    <string name="please_send_q">Сначала отправьте анкеты</string>
 </resources>

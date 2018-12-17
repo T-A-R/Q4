@@ -47,11 +47,6 @@
             android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.RecyclerViewActivity"
-            android:exported="true"
-            android:noHistory="true"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.ElementActivity"
             android:noHistory="false"
             android:screenOrientation="portrait"

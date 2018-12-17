@@ -30,12 +30,12 @@ public class SyncFragment extends BaseFragment implements ICallback {
     private TextView mQSendedInSessionView;
     private TextView mQUnsendedView;
 
-    private TextView mASendedFromThisDeviceView;
-    private TextView mASendedInSessionView;
+//    private TextView mASendedFromThisDeviceView;
+//    private TextView mASendedInSessionView;
     private TextView mAUnsendedView;
 
-    private TextView mPSendedFromThisDeviceView;
-    private TextView mPSendedInSessionView;
+//    private TextView mPSendedFromThisDeviceView;
+//    private TextView mPSendedInSessionView;
     private TextView mPUnsendedView;
 
     private UserModel mUserModel;
@@ -43,11 +43,11 @@ public class SyncFragment extends BaseFragment implements ICallback {
     private String mQSendedFromThisDeviceViewString;
     private String mQSendedInSessionViewString;
     private String mQUnsendedViewString;
-    private String mASendedFromThisDeviceViewString;
-    private String mASendedInSessionViewString;
+//    private String mASendedFromThisDeviceViewString;
+//    private String mASendedInSessionViewString;
     private String mAUnsendedViewString;
-    private String mPSendedFromThisDeviceViewString;
-    private String mPSendedInSessionViewString;
+//    private String mPSendedFromThisDeviceViewString;
+//    private String mPSendedInSessionViewString;
     private String mPUnsendedViewString;
 
     public static Fragment newInstance() {
@@ -90,12 +90,12 @@ public class SyncFragment extends BaseFragment implements ICallback {
         mQSendedInSessionView = pView.findViewById(R.id.sended_q_in_session);
         mQUnsendedView = pView.findViewById(R.id.unsended_q);
 
-        mASendedFromThisDeviceView = pView.findViewById(R.id.sended_audio_from_this_device);
-        mASendedInSessionView = pView.findViewById(R.id.sended_audio_in_session);
+//        mASendedFromThisDeviceView = pView.findViewById(R.id.sended_audio_from_this_device);
+//        mASendedInSessionView = pView.findViewById(R.id.sended_audio_in_session);
         mAUnsendedView = pView.findViewById(R.id.unsended_audio);
 
-        mPSendedFromThisDeviceView = pView.findViewById(R.id.sended_photo_from_this_device);
-        mPSendedInSessionView = pView.findViewById(R.id.sended_photo_in_session);
+//        mPSendedFromThisDeviceView = pView.findViewById(R.id.sended_photo_from_this_device);
+//        mPSendedInSessionView = pView.findViewById(R.id.sended_photo_in_session);
         mPUnsendedView = pView.findViewById(R.id.unsended_photo);
     }
 
@@ -103,11 +103,11 @@ public class SyncFragment extends BaseFragment implements ICallback {
         mQSendedFromThisDeviceViewString = getString(R.string.sended_q_from_this_device_string);
         mQSendedInSessionViewString = getString(R.string.sended_q_in_session_string);
         mQUnsendedViewString = getString(R.string.count_unsended_questionnaires);
-        mASendedFromThisDeviceViewString = getString(R.string.sended_a_from_this_device_string);
-        mASendedInSessionViewString = getString(R.string.sended_a_in_session_string);
+//        mASendedFromThisDeviceViewString = getString(R.string.sended_a_from_this_device_string);
+//        mASendedInSessionViewString = getString(R.string.sended_a_in_session_string);
         mAUnsendedViewString = getString(R.string.count_unsended_audio_files);
-        mPSendedFromThisDeviceViewString = getString(R.string.sended_p_from_this_device_string);
-        mPSendedInSessionViewString = getString(R.string.sended_p_in_session_string);
+//        mPSendedFromThisDeviceViewString = getString(R.string.sended_p_from_this_device_string);
+//        mPSendedInSessionViewString = getString(R.string.sended_p_in_session_string);
         mPUnsendedViewString = getString(R.string.count_unsended_photo_files);
     }
 
@@ -130,12 +130,12 @@ public class SyncFragment extends BaseFragment implements ICallback {
                 mQSendedInSessionView.setText(String.format(mQSendedInSessionViewString, mQSendedInSessionCount));
                 mQUnsendedView.setText(String.format(mQUnsendedViewString, mQUnsendedCount));
 
-                mASendedFromThisDeviceView.setText(String.format(mASendedFromThisDeviceViewString, mASendedFromThisDeviceCount));
-                mASendedInSessionView.setText(String.format(mASendedInSessionViewString, mASendedInSessionCount));
+//                mASendedFromThisDeviceView.setText(String.format(mASendedFromThisDeviceViewString, mASendedFromThisDeviceCount));
+//                mASendedInSessionView.setText(String.format(mASendedInSessionViewString, mASendedInSessionCount));
                 mAUnsendedView.setText(String.format(mAUnsendedViewString, mAUnsendedCount));
 
-                mPSendedFromThisDeviceView.setText(String.format(mPSendedFromThisDeviceViewString, mPSendedFromThisDeviceCount));
-                mPSendedInSessionView.setText(String.format(mPSendedInSessionViewString, mPSendedInSessionCount));
+//                mPSendedFromThisDeviceView.setText(String.format(mPSendedFromThisDeviceViewString, mPSendedFromThisDeviceCount));
+//                mPSendedInSessionView.setText(String.format(mPSendedInSessionViewString, mPSendedInSessionCount));
                 mPUnsendedView.setText(String.format(mPUnsendedViewString, mPUnsendedCount));
             }
         });

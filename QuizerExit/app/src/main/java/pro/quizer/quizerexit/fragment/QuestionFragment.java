@@ -10,6 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
+import com.cleveroad.adaptivetablelayout.OnItemClickListener;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -17,6 +20,7 @@ import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.adapter.AbstractQuestionAdapter;
 import pro.quizer.quizerexit.adapter.QuestionListAdapter;
+import pro.quizer.quizerexit.adapter.TableQuestionAdapter;
 import pro.quizer.quizerexit.model.AttributeType;
 import pro.quizer.quizerexit.model.ElementType;
 import pro.quizer.quizerexit.model.config.AttributesModel;
@@ -29,11 +33,13 @@ public class QuestionFragment extends AbstractContentElementFragment {
     public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
 
     List<ElementModel> mAnswers;
+    AdaptiveTableLayout mTableLayout;
     RecyclerView mRecyclerView;
     LinearLayoutManager mLayoutManager;
     private ElementModel mCurrentElement;
     private AttributesModel mAttributes;
     private AbstractQuestionAdapter mAdapter;
+    private TableQuestionAdapter mTableQuestionAdapter;
     private NavigationCallback mCallback;
     private Runnable mRefreshRecyclerViewRunnable = new Runnable() {
         @Override
@@ -47,6 +53,10 @@ public class QuestionFragment extends AbstractContentElementFragment {
         public void run() {
             try {
                 mAdapter.processNext();
+
+                // TODO: 25.12.2018 implement
+                mTableQuestionAdapter.processNext();
+
                 mCallback.onForward(mCurrentElement);
             } catch (final Exception pE) {
                 showToast(pE.getMessage());
@@ -69,6 +79,7 @@ public class QuestionFragment extends AbstractContentElementFragment {
     };
 
     private void updateAdapter() {
+        // TODO: 24.12.2018 try                 mTableAdapter.notifyDataSetChanged();
         mRecyclerView.setAdapter(mAdapter);
         UiUtils.hideKeyboard(getContext(), getView());
     }
@@ -100,6 +111,8 @@ public class QuestionFragment extends AbstractContentElementFragment {
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
             mAttributes = mCurrentElement.getOptions();
 
+
+            // current
             initView(view);
         } else {
             showToast(getString(R.string.internal_app_error) + "1001");
@@ -123,6 +136,7 @@ public class QuestionFragment extends AbstractContentElementFragment {
 
     private void initView(final View pView) {
         mRecyclerView = pView.findViewById(R.id.question_recycler_view);
+        mTableLayout = pView.findViewById(R.id.table_question_layout);
         mAnswers = mCurrentElement.getSubElementsByType(ElementType.ANSWER);
 
         final int minAnswers;
@@ -146,15 +160,23 @@ public class QuestionFragment extends AbstractContentElementFragment {
             case AttributeType.LIST:
                 mAdapter = new QuestionListAdapter(getContext(), mAnswers, maxAnswers, minAnswers, mRefreshRecyclerViewRunnable);
 
+                mLayoutManager = new LinearLayoutManager(getContext());
+                mRecyclerView.setLayoutManager(mLayoutManager);
+
+                break;
+            case AttributeType.TABLE:
+                mTableQuestionAdapter = new TableQuestionAdapter(getContext(), mCurrentElement, mRefreshRecyclerViewRunnable);
+                mTableLayout.setAdapter(mTableQuestionAdapter);
+
+                mTableLayout.setHeaderFixed(true);
+                mTableLayout.setSolidRowHeader(true);
+
                 break;
             default:
                 showToast("Неизвестный тип аттрибута.");
 
                 return;
         }
-
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
 
         updateAdapter();
     }

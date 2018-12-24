@@ -15,6 +15,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface AttributeType {
 
     String LIST = "list";
+    String TABLE = "table";
     String TEXT = "text";
     String AUDIO = "audio";
     String PHOTO = "photo";

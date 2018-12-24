@@ -1,32 +1,24 @@
 package pro.quizer.quizerexit.activity;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.executable.DeleteUsersExecutable;
 import pro.quizer.quizerexit.executable.ICallback;
+import pro.quizer.quizerexit.executable.files.AllAudiosSendingExecutable;
+import pro.quizer.quizerexit.executable.files.AllPhotosSendingExecutable;
 import pro.quizer.quizerexit.executable.SendAllQuestionnairesExecutable;
 import pro.quizer.quizerexit.executable.ServiceInfoExecutable;
 import pro.quizer.quizerexit.model.view.ServiceViewModel;
-import pro.quizer.quizerexit.utils.OkHttpUtils;
 import pro.quizer.quizerexit.view.Toolbar;
 
 public class ServiceActivity extends BaseActivity implements ICallback {
-
-    private String serverUrl;
 
     private Button mSendDataButton;
     private Button mSendAudioButton;
@@ -48,8 +40,6 @@ public class ServiceActivity extends BaseActivity implements ICallback {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service);
-
-        serverUrl = getCurrentUser().getConfig().getServerUrl();
 
         initViews();
         initStrings();
@@ -135,34 +125,20 @@ public class ServiceActivity extends BaseActivity implements ICallback {
                     return;
                 }
 
+                new AllPhotosSendingExecutable(ServiceActivity.this, ServiceActivity.this).execute();
+            }
+        });
 
-                final Call.Factory client = new OkHttpClient();
-                client.newCall(OkHttpUtils.postPhoto(notSentPhoto, getServer()))
-                        .enqueue(new Callback() {
+        mSendAudioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (notSentQuestionnairesCount > 0) {
+                    showToast(getString(R.string.please_send_q));
 
-                            @Override
-                            public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
-                                hideProgressBar();
+                    return;
+                }
 
-                            }
-
-                            @Override
-                            public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
-                                hideProgressBar();
-
-                                final ResponseBody responseBody = response.body();
-
-                                if (responseBody == null) {
-                                    showToast(getString(R.string.incorrect_server_response));
-
-                                    return;
-                                }
-
-//                                final String responseJson = responseBody.string();
-                            }
-                        });
-
-//                OkHttpUtils.sendPhotos(serverUrl, notSentPhoto);
+                new AllAudiosSendingExecutable(ServiceActivity.this, ServiceActivity.this).execute();
             }
         });
 

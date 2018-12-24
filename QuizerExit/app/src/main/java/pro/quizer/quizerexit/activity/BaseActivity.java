@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
@@ -14,14 +15,13 @@ import android.widget.Toast;
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 import com.activeandroid.query.Update;
-import com.androidhiddencamera.CameraConfig;
 import com.google.gson.GsonBuilder;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.List;
 
 import pro.quizer.quizerexit.BuildConfig;
-import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.fragment.HomeFragment;
 import pro.quizer.quizerexit.fragment.SettingsFragment;
@@ -34,65 +34,70 @@ import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.SPUtils;
-import pro.quizer.quizerexit.utils.StringUtils;
+
+import static pro.quizer.quizerexit.utils.FileUtils.JPEG;
+import static pro.quizer.quizerexit.utils.FileUtils.MP3;
 
 @SuppressLint("Registered")
-public class BaseActivity extends AppCompatActivity {
-
-    public static final String CACHE = "cache";
-    private CameraConfig mCameraConfig;
+public class BaseActivity extends AppCompatActivity implements Serializable {
 
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+        Log.d("ActivityLifeCycle", this + " - > onCreate()");
+
         super.onCreate(savedInstanceState);
     }
 
-    public List<File> getAllPhotos() {
-        return FileUtils.getFilesRecursion(getPhotosStoragePath());
+    @Override
+    protected void onDestroy() {
+        Log.d("ActivityLifeCycle", this + " - > onDestroy()");
+
+        super.onDestroy();
     }
 
-    public List<String> getPhotosByUserId(final int pUserId) {
-        return FileUtils.getFiles(getPhotosStoragePath() + FileUtils.FOLDER_DIVIDER + pUserId);
+    @Override
+    protected void onResume() {
+        Log.d("ActivityLifeCycle", this + " - > onResume()");
+
+        super.onResume();
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d("ActivityLifeCycle", this + " - > onStart()");
+
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d("ActivityLifeCycle", this + " - > onStop()");
+
+        super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d("ActivityLifeCycle", this + " - > onPause()");
+
+        super.onPause();
+    }
+
+    public List<File> getAllPhotos() {
+        return FileUtils.getFilesRecursion(JPEG, FileUtils.getPhotosStoragePath(this));
+    }
+
+    public List<File> getPhotosByUserId(final int pUserId) {
+        return FileUtils.getFilesRecursion(JPEG, FileUtils.getPhotosStoragePath(this) + FileUtils.FOLDER_DIVIDER + pUserId);
     }
 
     public List<File> getAllAudio() {
-        return FileUtils.getFilesRecursion(getAudioStoragePath());
+        return FileUtils.getFilesRecursion(MP3, FileUtils.getAudioStoragePath(this));
     }
 
-    public List<String> getAudioByUserId(final int pUserId) {
-        return FileUtils.getFiles(getAudioStoragePath() + FileUtils.FOLDER_DIVIDER + pUserId);
-    }
-
-    private String getDataStoragePath() {
-        final File file = getExternalCacheDir();
-
-        if (file != null) {
-            final String path = getExternalCacheDir().getAbsolutePath();
-            return path.replace(CACHE, Constants.Strings.EMPTY);
-        } else {
-            return Constants.Strings.EMPTY;
-        }
-    }
-
-    private String getPhotosStoragePath() {
-        String dataStoragePath = getDataStoragePath();
-
-        if (StringUtils.isEmpty(dataStoragePath)) {
-            return Constants.Strings.EMPTY;
-        } else {
-            return dataStoragePath + FileUtils.FOLDER_PHOTOS;
-        }
-    }
-
-    private String getAudioStoragePath() {
-        String dataStoragePath = getDataStoragePath();
-
-        if (StringUtils.isEmpty(dataStoragePath)) {
-            return Constants.Strings.EMPTY;
-        } else {
-            return dataStoragePath + FileUtils.FOLDER_AUDIO;
-        }
+    public List<File> getAudioByUserId(final int pUserId) {
+        return FileUtils.getFilesRecursion(MP3, FileUtils.getAudioStoragePath(this) + FileUtils.FOLDER_DIVIDER + pUserId);
     }
 
     public void showToast(final CharSequence pMessage) {

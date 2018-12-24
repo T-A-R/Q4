@@ -96,8 +96,12 @@ public class ConfigModel implements Serializable {
         return force_gps;
     }
 
+    public boolean isRecordFullQuestionnaire() {
+        return isAudio() && isAudioRecordAll();
+    }
+
     public boolean isAudioRecordAll() {
-        return audio_record_all;
+        return false;//audio_record_all;
     }
 
     public int getAudioRecordLimitTime() {

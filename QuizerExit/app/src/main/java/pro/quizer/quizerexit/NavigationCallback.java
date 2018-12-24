@@ -1,17 +1,21 @@
 package pro.quizer.quizerexit;
 
-import java.io.Serializable;
-import java.util.List;
+import android.os.Parcelable;
 
-import pro.quizer.quizerexit.model.config.AnswersModel;
+import java.io.Serializable;
+
 import pro.quizer.quizerexit.model.config.ElementModel;
 
-public interface NavigationCallback extends Serializable {
+public interface NavigationCallback extends Serializable, Parcelable {
 
     void onForward(final ElementModel pElementModel);
 
     void onBack();
 
     void onExit();
+
+    void onShowFragment(final ElementModel pCurrentElement);
+
+    void onHideFragment(final ElementModel pCurrentElement);
 
 }

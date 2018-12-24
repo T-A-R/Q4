@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,15 +21,14 @@ import com.androidhiddencamera.config.CameraResolution;
 import com.androidhiddencamera.config.CameraRotation;
 
 import java.io.File;
+import java.io.Serializable;
 
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.utils.FileUtils;
 
-public class BaseFragment extends HiddenCameraFragment {
-
-    private final String PHOTO_NAME_JPEG_TEMPLATE = "%1$s_%2$s_%3$s_%4$s_%5$s.jpeg";
+public class BaseFragment extends HiddenCameraFragment implements Serializable {
 
     private BaseActivity mBaseActivity;
 
@@ -49,17 +49,91 @@ public class BaseFragment extends HiddenCameraFragment {
     }
 
     public View onCreateView(@NonNull LayoutInflater pInflater, ViewGroup pContainer, Bundle pSavedInstanceState) {
+        Log.d("FragmentLifeCycle", this + " - > onCreateView()");
+
         return null;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        Log.d("FragmentLifeCycle", this + " - > onViewCreated()");
+
         super.onViewCreated(view, savedInstanceState);
 
         final Context context = getContext();
         if (context instanceof BaseActivity) {
             mBaseActivity = (BaseActivity) context;
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        Log.d("FragmentLifeCycle", this + " - > onAttach()");
+
+        super.onAttach(context);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.d("FragmentLifeCycle", this + " - > onCreate()");
+
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        Log.d("FragmentLifeCycle", this + " - > onActivityCreated()");
+
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
+        Log.d("FragmentLifeCycle", this + " - > onStart()");
+
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        Log.d("FragmentLifeCycle", this + " - > onResume()");
+
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        Log.d("FragmentLifeCycle", this + " - > onPause()");
+
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        Log.d("FragmentLifeCycle", this + " - > onStop()");
+
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        Log.d("FragmentLifeCycle", this + " - > onDestroyView()");
+
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d("FragmentLifeCycle", this + " - > onDestroy()");
+
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDetach() {
+        Log.d("FragmentLifeCycle", this + " - > onDetach()");
+
+        super.onDetach();
     }
 
     public void showToast(final CharSequence message) {
@@ -105,7 +179,10 @@ public class BaseFragment extends HiddenCameraFragment {
     public void onImageCapture(@NonNull File pImageFile) {
         showToast("Фото сделано");
 
-        if (FileUtils.renameFile(pImageFile, mUserId, String.format(PHOTO_NAME_JPEG_TEMPLATE, mLoginAdmin, mProjectId, mUserLogin, mToken, mRelativeId))) {
+        if (FileUtils.renameFile(getContext(),
+                pImageFile,
+                mUserId,
+                FileUtils.generatePhotoFileName(mLoginAdmin, mProjectId, mUserLogin, mToken, mRelativeId))) {
             showToast("Фото переименованно");
         } else {
             showToast("Фото не переименованно");

@@ -30,8 +30,6 @@ public class ElementFragment extends BaseFragment {
     public static final String BUNDLE_USER_LOGIN = "BUNDLE_USER_LOGIN";
     public static final String BUNDLE_PROJECT_ID = "BUNDLE_PROJECT_ID";
 
-    private final String PHOTO_NAME_JPEG_TEMPLATE = "%1$s_%2$s_%3$s.jpeg";
-
     TextView mElementText;
     TextView mElementDescriptionText;
     private AttributesModel mAttributes;
@@ -104,6 +102,8 @@ public class ElementFragment extends BaseFragment {
     }
 
     private void initView(final View pView) {
+        mCallback.onShowFragment(mCurrentElement);
+
         if (mCurrentElement.getOptions().isTakePhoto()) {
             shotPicture(mLoginAdmin, mToken, mCurrentElement.getRelativeID(), mUserId, mProjectId, mUserLogin);
         }
@@ -130,6 +130,7 @@ public class ElementFragment extends BaseFragment {
 
     @Override
     public void onDestroyView() {
+        mCallback.onHideFragment(mCurrentElement);
         super.onDestroyView();
     }
 }

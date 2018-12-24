@@ -1,9 +1,10 @@
 package pro.quizer.quizerexit.model.request;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuestionnaireRequestModel {
+public class QuestionnaireRequestModel implements Serializable {
 
     private final int questionnaire_id;
     private final int questions_passed;

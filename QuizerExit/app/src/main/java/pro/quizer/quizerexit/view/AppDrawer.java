@@ -6,10 +6,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import java.io.Serializable;
+
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 
-public class AppDrawer extends RelativeLayout {
+public class AppDrawer extends RelativeLayout implements Serializable {
 
     Button mHomeBtn;
     Button mSyncBtn;

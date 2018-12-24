@@ -1,6 +1,8 @@
 package pro.quizer.quizerexit.model.config;
 
-public class ParseServerModel {
+import java.io.Serializable;
+
+public class ParseServerModel implements Serializable {
 
     private String mServerUrl;
     private String mLoginAdmin;

@@ -14,8 +14,11 @@ import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizerexit.executable.SyncInfoExecutable;
+import pro.quizer.quizerexit.executable.files.AudiosSendingByUserModelExecutable;
+import pro.quizer.quizerexit.executable.files.PhotosSendingByUserModelExecutable;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.view.SyncViewModel;
+import pro.quizer.quizerexit.utils.UiUtils;
 
 public class SyncFragment extends BaseFragment implements ICallback {
 
@@ -30,12 +33,8 @@ public class SyncFragment extends BaseFragment implements ICallback {
     private TextView mQSendedInSessionView;
     private TextView mQUnsendedView;
 
-//    private TextView mASendedFromThisDeviceView;
-//    private TextView mASendedInSessionView;
     private TextView mAUnsendedView;
 
-//    private TextView mPSendedFromThisDeviceView;
-//    private TextView mPSendedInSessionView;
     private TextView mPUnsendedView;
 
     private UserModel mUserModel;
@@ -43,11 +42,7 @@ public class SyncFragment extends BaseFragment implements ICallback {
     private String mQSendedFromThisDeviceViewString;
     private String mQSendedInSessionViewString;
     private String mQUnsendedViewString;
-//    private String mASendedFromThisDeviceViewString;
-//    private String mASendedInSessionViewString;
     private String mAUnsendedViewString;
-//    private String mPSendedFromThisDeviceViewString;
-//    private String mPSendedInSessionViewString;
     private String mPUnsendedViewString;
 
     public static Fragment newInstance() {
@@ -71,7 +66,7 @@ public class SyncFragment extends BaseFragment implements ICallback {
         initViews(view);
         initStrings();
 
-        updateData(new SyncInfoExecutable().execute());
+        updateData(new SyncInfoExecutable(getContext()).execute());
     }
 
 
@@ -112,15 +107,11 @@ public class SyncFragment extends BaseFragment implements ICallback {
     }
 
     private void updateData(final SyncViewModel pSyncViewModel) {
-        final int mQSendedFromThisDeviceCount = pSyncViewModel.getQSendedFromThisDeviceCount();
-        final int mQSendedInSessionCount = pSyncViewModel.getQSendedInSessionCount();
-        final int mQUnsendedCount = pSyncViewModel.getQUnsendedCount();
-        final int mASendedFromThisDeviceCount = pSyncViewModel.getASendedFromThisDeviceCount();
-        final int mASendedInSessionCount = pSyncViewModel.getASendedInSessionCount();
-        final int mAUnsendedCount = pSyncViewModel.getAUnsendedCount();
-        final int mPSendedFromThisDeviceCount = pSyncViewModel.getPSendedFromThisDeviceCount();
-        final int mPSendedInSessionCount = pSyncViewModel.getPSendedInSessionCount();
-        final int mPUnsendedCount = pSyncViewModel.getPUnsendedCount();
+        final int mQSendedFromThisDeviceCount = pSyncViewModel.getmSentQuestionnaireModelsFromThisDevice().size();
+        final int mQSendedInSessionCount = pSyncViewModel.getmSentQuestionnaireModelsInSession().size();
+        final int mQUnsendedCount = pSyncViewModel.getmNotSentQuestionnaireModels().size();
+        final int mAUnsendedCount = pSyncViewModel.getmNotSendedAudio().size();
+        final int mPUnsendedCount = pSyncViewModel.getmNotSendedPhoto().size();
 
         getBaseActivity().runOnUiThread(new Runnable() {
 
@@ -130,20 +121,45 @@ public class SyncFragment extends BaseFragment implements ICallback {
                 mQSendedInSessionView.setText(String.format(mQSendedInSessionViewString, mQSendedInSessionCount));
                 mQUnsendedView.setText(String.format(mQUnsendedViewString, mQUnsendedCount));
 
-//                mASendedFromThisDeviceView.setText(String.format(mASendedFromThisDeviceViewString, mASendedFromThisDeviceCount));
-//                mASendedInSessionView.setText(String.format(mASendedInSessionViewString, mASendedInSessionCount));
                 mAUnsendedView.setText(String.format(mAUnsendedViewString, mAUnsendedCount));
 
-//                mPSendedFromThisDeviceView.setText(String.format(mPSendedFromThisDeviceViewString, mPSendedFromThisDeviceCount));
-//                mPSendedInSessionView.setText(String.format(mPSendedInSessionViewString, mPSendedInSessionCount));
                 mPUnsendedView.setText(String.format(mPUnsendedViewString, mPUnsendedCount));
-            }
-        });
 
-        mSendDataButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new SendQuestionnairesByUserModelExecutable(getBaseActivity(), mUserModel, SyncFragment.this).execute();
+                UiUtils.setEnabled(getContext(), mSendDataButton, mQUnsendedCount > 0);
+                mSendDataButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        new SendQuestionnairesByUserModelExecutable(getBaseActivity(), mUserModel, SyncFragment.this).execute();
+                    }
+                });
+
+                UiUtils.setEnabled(getContext(), mSendPhotoButton, mPUnsendedCount > 0);
+                mSendPhotoButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (mQUnsendedCount > 0) {
+                            showToast(getString(R.string.please_send_q));
+
+                            return;
+                        }
+
+                        new PhotosSendingByUserModelExecutable(getBaseActivity(), mUserModel, SyncFragment.this).execute();
+                    }
+                });
+
+                UiUtils.setEnabled(getContext(), mSendAudioButton, mAUnsendedCount > 0);
+                mSendAudioButton.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        if (mQUnsendedCount > 0) {
+                            showToast(getString(R.string.please_send_q));
+
+                            return;
+                        }
+                        new AudiosSendingByUserModelExecutable(getBaseActivity(), mUserModel, SyncFragment.this).execute();
+                    }
+                });
             }
         });
     }
@@ -157,13 +173,15 @@ public class SyncFragment extends BaseFragment implements ICallback {
     public void onSuccess() {
         hideProgressBar();
 
-        updateData(new SyncInfoExecutable().execute());
+        updateData(new SyncInfoExecutable(getContext()).execute());
     }
 
     @Override
     public void onError(Exception pException) {
         hideProgressBar();
 
-        updateData(new SyncInfoExecutable().execute());
+        showToast(pException.toString());
+
+        updateData(new SyncInfoExecutable(getContext()).execute());
     }
 }

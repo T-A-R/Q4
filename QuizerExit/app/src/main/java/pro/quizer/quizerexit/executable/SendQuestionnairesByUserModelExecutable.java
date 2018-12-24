@@ -29,7 +29,7 @@ import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.request.ElementRequestModel;
 import pro.quizer.quizerexit.model.request.QuestionnaireListRequestModel;
 import pro.quizer.quizerexit.model.request.QuestionnaireRequestModel;
-import pro.quizer.quizerexit.model.response.QuestionnaireListResponseModel;
+import pro.quizer.quizerexit.model.response.DeletingListResponseModel;
 
 public class SendQuestionnairesByUserModelExecutable extends BaseExecutable {
 
@@ -130,17 +130,17 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable {
                         }
 
                         final String responseJson = responseBody.string();
-                        QuestionnaireListResponseModel questionnaireListResponseModel = null;
+                        DeletingListResponseModel deletingListResponseModel = null;
 
                         try {
-                            questionnaireListResponseModel = new GsonBuilder().create().fromJson(responseJson, QuestionnaireListResponseModel.class);
+                            deletingListResponseModel = new GsonBuilder().create().fromJson(responseJson, DeletingListResponseModel.class);
                         } catch (Exception pE) {
                             // empty
                         }
 
-                        if (questionnaireListResponseModel != null) {
-                            if (questionnaireListResponseModel.getResult() != 0) {
-                                final List<String> tokensToRemove = questionnaireListResponseModel.getAcceptedTokens();
+                        if (deletingListResponseModel != null) {
+                            if (deletingListResponseModel.getResult() != 0) {
+                                final List<String> tokensToRemove = deletingListResponseModel.getAccepted();
 
                                 if (tokensToRemove == null || tokensToRemove.isEmpty()) {
                                     onError(new Exception(mContext.getString(R.string.empty_list_of_accepted_questionnairies)));
@@ -163,7 +163,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable {
                                     onSuccess();
                                 }
                             } else {
-                                onError(new Exception(questionnaireListResponseModel.getError()));
+                                onError(new Exception(deletingListResponseModel.getError()));
                             }
                         } else {
                             onError(new Exception(mContext.getString(R.string.server_error)));

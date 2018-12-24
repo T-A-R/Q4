@@ -13,6 +13,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.vicmikhailau.maskededittext.MaskedEditText;
+import com.vicmikhailau.maskededittext.MaskedFormatter;
+import com.vicmikhailau.maskededittext.MaskedWatcher;
+
 import java.util.List;
 
 import pro.quizer.quizerexit.R;
@@ -64,7 +68,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
         TextView mAnswer;
         CompoundButton mCheckBox;
-        EditText mEditText;
+        MaskedEditText mEditText;
 
         AnswerListViewHolder(final View itemView) {
             super(itemView);
@@ -92,13 +96,21 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                 mEditText.setText(textAnswer);
                 mEditText.addTextChangedListener(new ElementTextWatcher(pAnswer));
 
+                final Context context = mEditText.getContext();
+
                 switch (attributes.getOpenType()) {
                     case AttributeOpenType.TIME:
                         mEditText.setInputType(InputType.TYPE_CLASS_DATETIME);
+                        mEditText.setHint(R.string.hint_time);
+                        MaskedFormatter timeFormatter = new MaskedFormatter(context.getString(R.string.mask_time));
+                        mEditText.addTextChangedListener(new MaskedWatcher(timeFormatter, mEditText));
 
                         break;
                     case AttributeOpenType.DATE:
                         mEditText.setInputType(InputType.TYPE_CLASS_DATETIME);
+                        mEditText.setHint(R.string.hint_date);
+                        MaskedFormatter dateFormatter = new MaskedFormatter(context.getString(R.string.mask_date));
+                        mEditText.addTextChangedListener(new MaskedWatcher(dateFormatter, mEditText));
 
                         break;
                     case AttributeOpenType.NUMBER:

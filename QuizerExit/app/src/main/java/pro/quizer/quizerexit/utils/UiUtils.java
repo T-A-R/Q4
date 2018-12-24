@@ -11,11 +11,23 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import pro.quizer.quizerexit.R;
+
 public class UiUtils {
 
     private static final String STATUS_BAR_HEIGHT = "status_bar_height";
     private static final String DIMEN = "dimen";
     private static final String ANDROID = "android";
+
+    public static void setEnabled(final Context pContext, final View pView, final boolean pIsEnabled) {
+        if (pIsEnabled) {
+            pView.setEnabled(true);
+            pView.setBackgroundColor(ContextCompat.getColor(pContext, R.color.brand_color));
+        } else {
+            pView.setEnabled(false);
+            pView.setBackgroundColor(ContextCompat.getColor(pContext, R.color.gray));
+        }
+    }
 
     public static float pxToDp(final Context context, final int px) {
         return px / context.getResources().getDisplayMetrics().density;

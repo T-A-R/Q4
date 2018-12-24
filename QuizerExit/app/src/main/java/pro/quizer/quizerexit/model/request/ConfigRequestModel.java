@@ -1,8 +1,10 @@
 package pro.quizer.quizerexit.model.request;
 
+import java.io.Serializable;
+
 import pro.quizer.quizerexit.Constants;
 
-public class ConfigRequestModel {
+public class ConfigRequestModel implements Serializable {
 
     private final String login_admin;
     private final String name_form;

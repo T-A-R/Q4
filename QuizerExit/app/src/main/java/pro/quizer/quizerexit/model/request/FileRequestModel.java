@@ -1,13 +1,15 @@
 package pro.quizer.quizerexit.model.request;
 
+import java.io.Serializable;
+
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.utils.MD5Utils;
 
-public class PhotoRequestModel {
+public class FileRequestModel implements Serializable {
 
     private final String name_form;
 
-    public PhotoRequestModel() {
-        name_form = Constants.NameForm.PHOTO_FILE;
+    public FileRequestModel(final String pNameForm) {
+        name_form = pNameForm;
     }
 }

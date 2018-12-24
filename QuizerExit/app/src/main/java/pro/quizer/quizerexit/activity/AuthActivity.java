@@ -33,6 +33,7 @@ import pro.quizer.quizerexit.model.request.AuthRequestModel;
 import pro.quizer.quizerexit.model.request.ConfigRequestModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
+import pro.quizer.quizerexit.utils.MD5Utils;
 import pro.quizer.quizerexit.utils.StringUtils;
 
 public class AuthActivity extends BaseActivity {
@@ -43,6 +44,7 @@ public class AuthActivity extends BaseActivity {
     private EditText mPasswordEditText;
     private EditSpinner mLoginSpinner;
     private List<String> mSavedUsers;
+    private List<UserModel> mSavedUserModels;
     private TextView mVersionView;
     private int mVersionTapCount = 0;
 
@@ -71,13 +73,22 @@ public class AuthActivity extends BaseActivity {
             }
         });
 
+        mSavedUserModels = getSavedUserModels();
         mSavedUsers = getSavedUserLogins();
 
         ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mSavedUsers);
         mLoginSpinner.setAdapter(adapter);
 
-        if (mSavedUsers != null && !mSavedUsers.isEmpty()) {
-            mLoginSpinner.setText(mSavedUsers.get(mSavedUsers.size() - 1));
+        if (mSavedUserModels != null && !mSavedUserModels.isEmpty()) {
+            final int lastUserId = getCurrentUserId();
+
+            if (lastUserId != -1) {
+                for (final UserModel userModel : mSavedUserModels) {
+                    if (userModel.user_id == lastUserId) {
+                        mLoginSpinner.setText(userModel.login);
+                    }
+                }
+            }
         }
 
         final Button sendAuthButton = findViewById(R.id.send_auth_button);
@@ -114,8 +125,9 @@ public class AuthActivity extends BaseActivity {
                     return;
                 }
 
+                final String passwordMD5 = MD5Utils.formatPassword(login, password);
                 final Dictionary<String, String> mDictionaryForRequest = new Hashtable();
-                mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(new AuthRequestModel(getLoginAdmin(), password, login)));
+                mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(new AuthRequestModel(getLoginAdmin(), passwordMD5, login)));
 
                 final Call.Factory client = new OkHttpClient();
                 client.newCall(new DoRequest().post(mDictionaryForRequest, getServer()))
@@ -125,7 +137,7 @@ public class AuthActivity extends BaseActivity {
                             public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
                                 hideProgressBar();
 
-                                final UserModel savedUserModel = getLocalUserModel(login, password);
+                                final UserModel savedUserModel = getLocalUserModel(login, passwordMD5);
 
                                 if (savedUserModel != null) {
                                     showToast("Удалось войти под сохраненными локальными данными.");
@@ -159,10 +171,10 @@ public class AuthActivity extends BaseActivity {
                                 if (authResponseModel != null) {
                                     if (authResponseModel.getResult() != 0) {
                                         if (isNeedDownloadConfig(authResponseModel)) {
-                                            downloadConfig(login, password, authResponseModel);
+                                            downloadConfig(login, passwordMD5, authResponseModel);
                                         } else {
                                             onLoggedIn(login,
-                                                    password,
+                                                    passwordMD5,
                                                     authResponseModel.getConfigId(),
                                                     authResponseModel.getUserId(),
                                                     authResponseModel.getRoleId(),
@@ -211,7 +223,7 @@ public class AuthActivity extends BaseActivity {
     private List<String> getSavedUserLogins() {
         final List<String> users = new ArrayList<>();
 
-        for (UserModel model : getSavedUserModels()) {
+        for (UserModel model : mSavedUserModels) {
             users.add(model.login);
         }
 

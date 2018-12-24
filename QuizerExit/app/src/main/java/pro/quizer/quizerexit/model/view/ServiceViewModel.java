@@ -1,12 +1,13 @@
 package pro.quizer.quizerexit.model.view;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 
-public class ServiceViewModel {
+public class ServiceViewModel implements Serializable {
 
     private List<QuestionnaireDatabaseModel> mNotSentQuestionnaireModels;
     //    private List<AudioDatabaseModel> mNotSentAudioModels;

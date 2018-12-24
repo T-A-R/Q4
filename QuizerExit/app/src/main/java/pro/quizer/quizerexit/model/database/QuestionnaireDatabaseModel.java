@@ -14,6 +14,7 @@ public class QuestionnaireDatabaseModel extends Model implements Serializable {
     public final static String TOKEN = "token";
     public final static String LOGIN = "login";
     public final static String LOGIN_ADMIN = "login_admin";
+    public final static String USER_ID = "user_id";
 
     // like id
     @Column(name = TOKEN)
@@ -24,6 +25,9 @@ public class QuestionnaireDatabaseModel extends Model implements Serializable {
 
     @Column(name = LOGIN)
     public String login;
+
+    @Column(name = USER_ID)
+    public int user_id;
 
     @Column(name = "passw")
     public String passw;

@@ -1,11 +1,12 @@
 package pro.quizer.quizerexit.model.request;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import pro.quizer.quizerexit.Constants;
 
-public class QuestionnaireListRequestModel {
+public class QuestionnaireListRequestModel implements Serializable {
 
     private final String login_admin;
     private final String name_form;

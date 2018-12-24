@@ -36,7 +36,10 @@
                 android:textStyle="bold"
                 tools:text="user4" />
 
+            <include layout="@layout/view_divider"/>
+
             <TextView
+                android:layout_marginTop="12dp"
                 android:id="@+id/sended_q_from_this_device"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -64,6 +67,7 @@
                 tools:text="ПУСТО" />
 
             <Button
+                android:layout_marginBottom="12dp"
                 android:id="@+id/send_q"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
@@ -71,6 +75,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
                 android:text="@string/send_data" />
+
+            <include layout="@layout/view_divider"/>
 
             <!--<TextView-->
                 <!--android:id="@+id/sended_audio_from_this_device"-->
@@ -91,6 +97,7 @@
                 <!--tools:text="ПУСТО" />-->
 
             <TextView
+                android:layout_marginTop="12dp"
                 android:id="@+id/unsended_audio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -100,6 +107,7 @@
                 tools:text="ПУСТО" />
 
             <Button
+                android:layout_marginBottom="12dp"
                 android:id="@+id/send_audio"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
@@ -107,6 +115,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
                 android:text="@string/send_audio" />
+
+            <include layout="@layout/view_divider"/>
 
             <!--<TextView-->
                 <!--android:id="@+id/sended_photo_from_this_device"-->
@@ -127,6 +137,7 @@
                 <!--tools:text="ПУСТО" />-->
 
             <TextView
+                android:layout_marginTop="12dp"
                 android:id="@+id/unsended_photo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

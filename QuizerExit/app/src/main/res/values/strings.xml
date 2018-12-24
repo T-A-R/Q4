@@ -1,4 +1,34 @@
 <resources>
+
+    <!--// recording-->
+    <string name="text_preparing">Preparing..</string>
+    <string name="text_dots">..</string>
+    <string name="text_ready">Ready</string>
+    <string name="text_error">Error</string>
+    <string name="text_recording">Recording..</string>
+    <string name="text_playing">Playing..</string>
+    <string name="text_record">Record</string>
+    <string name="text_play">Play</string>
+    <string name="text_pause">Pause</string>
+    <string name="text_paused">Paused</string>
+    <string name="text_paused_rec">Paused recording</string>
+    <string name="text_paused_play">Paused playing</string>
+    <string name="text_stop">Stop</string>
+
+    <string name="text_vsl_data_written">Visualization data saved to JSON and XML at </string>
+    <string name="text_service_conn_err">Can\'t connect to media service</string>
+    <string name="text_perm_record_required">Permission RECORD_AUDIO required to operate</string>
+    <string name="text_perm_write_required">Permission WRITE_EXTERNAL_STORAGE required to save audio files</string>
+    <string name="text_perm_required">Required permissions not granted</string>
+
+    <string name="text_err_player_start">Can\'t start player</string>
+    <string name="text_err_recorder_start">Can\'t start recorder</string>
+    <string name="text_err_recorder_stop">No valid audio/video data has been received</string>
+    <string name="text_err_no_audio_player">No appropriate audio player installed</string>
+    <string name="text_err_vsl_data">Visualization data not saved</string>
+
+    <!-- end recording-->
+
     <string name="app_name">Quizer</string>
     <string name="input_activation_key">Введите ключ активации</string>
     <string name="send">Отправить</string>
@@ -67,4 +97,8 @@
     <string name="select_number_for_exit_pull">Выбор номера (для Экзит-Пулл)</string>
     <string name="change_user_body">Вы уверены, что хотите сменить пользователя?</string>
     <string name="please_send_q">Сначала отправьте анкеты</string>
+    <string name="hint_time">чч:мм:сс</string>
+    <string name="hint_date">гггг-мм-дд</string>
+    <string name="mask_time">##:##:##</string>
+    <string name="mask_date">####.##.##</string>
 </resources>

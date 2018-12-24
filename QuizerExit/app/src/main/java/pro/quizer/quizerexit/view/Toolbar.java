@@ -6,9 +6,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import java.io.Serializable;
+
 import pro.quizer.quizerexit.R;
 
-public class Toolbar extends RelativeLayout {
+public class Toolbar extends RelativeLayout implements Serializable {
 
     private ImageView mTitle;
     private View mCloseView;

@@ -1,6 +1,8 @@
 package pro.quizer.quizerexit.model.request;
 
-public class ElementRequestModel {
+import java.io.Serializable;
+
+public class ElementRequestModel implements Serializable {
 
     private final Integer relative_id;
     private final Long duration;

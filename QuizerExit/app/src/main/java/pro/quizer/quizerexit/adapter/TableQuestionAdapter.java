@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,48 +68,53 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     @NonNull
     @Override
     public ViewHolderImpl onCreateItemViewHolder(@NonNull ViewGroup parent) {
-        return new TestViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item, parent, false));
+        return new TableItemViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item, parent, false));
     }
 
     @NonNull
     @Override
     public ViewHolderImpl onCreateColumnHeaderViewHolder(@NonNull ViewGroup parent) {
-        return new TestHeaderColumnViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item_header_column, parent, false));
+        return new TableHeaderColumnViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item_header_column, parent, false));
     }
 
     @NonNull
     @Override
     public ViewHolderImpl onCreateRowHeaderViewHolder(@NonNull ViewGroup parent) {
-        return new TestHeaderRowViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item_header_row, parent, false));
+        return new TableHeaderRowViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item_header_row, parent, false));
     }
 
     @NonNull
     @Override
     public ViewHolderImpl onCreateLeftTopHeaderViewHolder(@NonNull ViewGroup parent) {
-        return new TestHeaderLeftTopViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item_header_left_top, parent, false));
+        return new TableHeaderLeftTopViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item_header_left_top, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolderImpl viewHolder, final int row, final int column) {
-        final TestViewHolder vh = (TestViewHolder) viewHolder;
+        final TableItemViewHolder vh = (TableItemViewHolder) viewHolder;
+
+        final ElementModel currentElement = getElement(row, column);
+
+        vh.mTableItemCheckBox.setChecked(currentElement.isChecked());
     }
 
     @Override
     public void onBindHeaderColumnViewHolder(@NonNull ViewHolderImpl viewHolder, int column) {
-        TestHeaderColumnViewHolder vh = (TestHeaderColumnViewHolder) viewHolder;
-        vh.tvText.setText(mAnswers.get(column).getOptions().getTitle());
+        TableHeaderColumnViewHolder vh = (TableHeaderColumnViewHolder) viewHolder;
+        // TODO: 24.12.2018 OR getText()
+        vh.mHeaderColumnTextView.setText(mAnswers.get(column).getOptions().getTitle());
     }
 
     @Override
     public void onBindHeaderRowViewHolder(@NonNull ViewHolderImpl viewHolder, int row) {
-        TestHeaderRowViewHolder vh = (TestHeaderRowViewHolder) viewHolder;
-        vh.tvText.setText(mQuestions.get(row).getOptions().getTitle());
+        TableHeaderRowViewHolder vh = (TableHeaderRowViewHolder) viewHolder;
+        vh.mHeaderRowTextView.setText(mQuestions.get(row).getOptions().getTitle());
     }
 
     @Override
     public void onBindLeftTopHeaderViewHolder(@NonNull ViewHolderImpl viewHolder) {
-        TestHeaderLeftTopViewHolder vh = (TestHeaderLeftTopViewHolder) viewHolder;
-        vh.tvText.setText("Вопрос/ответ");
+        TableHeaderLeftTopViewHolder vh = (TableHeaderLeftTopViewHolder) viewHolder;
+        vh.mHeaderLeftTopTextView.setText("Вопрос/ответ");
     }
 
     @Override
@@ -132,9 +137,22 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         return mHeaderWidth;
     }
 
+    private ElementModel getElement(int row, int column) {
+        final int questionIndex = row - 1;
+        final int answerIndex = column - 1;
+
+        return mQuestions.get(questionIndex).getElements().get(answerIndex);
+    }
+
     @Override
     public void onItemClick(int row, int column) {
         Toast.makeText(mContext, "Строка: " + row + " столбец: " + column, Toast.LENGTH_LONG).show();
+        final ElementModel clickedElement = getElement(row, column);
+        final boolean isElementChecked = clickedElement.isChecked();
+
+        clickedElement.setChecked(!isElementChecked);
+
+        notifyDataSetChanged();
     }
 
     @Override
@@ -152,44 +170,41 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     }
 
-    private static class TestViewHolder extends ViewHolderImpl {
-        TextView tvText;
-        ImageView ivImage;
+    private static class TableItemViewHolder extends ViewHolderImpl {
 
-        private TestViewHolder(@NonNull View itemView) {
+        CheckBox mTableItemCheckBox;
+
+        private TableItemViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvText = itemView.findViewById(R.id.tvText);
-            ivImage = itemView.findViewById(R.id.ivImage);
+            mTableItemCheckBox = itemView.findViewById(R.id.table_item_check_box);
         }
     }
 
-    private static class TestHeaderColumnViewHolder extends ViewHolderImpl {
-        TextView tvText;
-        View vLine;
+    private static class TableHeaderColumnViewHolder extends ViewHolderImpl {
+        TextView mHeaderColumnTextView;
 
-        private TestHeaderColumnViewHolder(@NonNull View itemView) {
+        private TableHeaderColumnViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvText = itemView.findViewById(R.id.tvText);
-            vLine = itemView.findViewById(R.id.vLine);
+            mHeaderColumnTextView = itemView.findViewById(R.id.table_header_column_text_view);
         }
     }
 
-    private static class TestHeaderRowViewHolder extends ViewHolderImpl {
-        TextView tvText;
+    private static class TableHeaderRowViewHolder extends ViewHolderImpl {
+        TextView mHeaderRowTextView;
 
-        TestHeaderRowViewHolder(@NonNull View itemView) {
+        TableHeaderRowViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvText = itemView.findViewById(R.id.tvText);
+            mHeaderRowTextView = itemView.findViewById(R.id.table_header_row_text_view);
         }
     }
 
-    private static class TestHeaderLeftTopViewHolder extends ViewHolderImpl {
-        TextView tvText;
+    private static class TableHeaderLeftTopViewHolder extends ViewHolderImpl {
+        TextView mHeaderLeftTopTextView;
 
-        private TestHeaderLeftTopViewHolder(@NonNull View itemView) {
+        private TableHeaderLeftTopViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            tvText = itemView.findViewById(R.id.tvText);
+            mHeaderLeftTopTextView = itemView.findViewById(R.id.table_header_left_top_text_view);
         }
     }
 }

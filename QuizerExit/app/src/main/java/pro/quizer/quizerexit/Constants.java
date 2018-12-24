@@ -13,6 +13,7 @@ public final class Constants {
         String SHARED_PREFERENCES_INSTANCE = "SHARED_PREFERENCES_INSTANCE";
 
         String CURRENT_USED_ID = "CURRENT_USED_ID";
+        String SENDED_Q_IN_SESSSION = "SENDED_Q_IN_SESSSION";
 
     }
 

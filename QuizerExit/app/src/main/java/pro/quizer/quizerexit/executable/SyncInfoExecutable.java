@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.activeandroid.query.Select;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
@@ -47,13 +46,10 @@ public class SyncInfoExecutable extends BaseModelExecutable<SyncViewModel> {
                             QuestionnaireStatus.SENT, pUserId, pUserProjectId)
                     .execute();
 
-            syncViewModel.setmSentQuestionnaireModelsInSession(new ArrayList<QuestionnaireDatabaseModel>());
-            // TODO: 18.12.2018 implement
-
             syncViewModel.setmSentQuestionnaireModelsFromThisDevice(sendFromThisDevice);
-            syncViewModel.setmNotSentQuestionnaireModels(notSentQDM);
-            syncViewModel.setmNotSendedPhoto(activity.getPhotosByUserId(pUserId));
-            syncViewModel.setmNotSendedAudio(activity.getAudioByUserId(pUserId));
+            syncViewModel.setNotSentQuestionnaireModels(notSentQDM);
+            syncViewModel.setNotSendedPhoto(activity.getPhotosByUserId(pUserId));
+            syncViewModel.setNotSendedAudio(activity.getAudioByUserId(pUserId));
 
             return syncViewModel;
         } else {

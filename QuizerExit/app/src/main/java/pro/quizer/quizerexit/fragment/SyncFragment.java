@@ -108,7 +108,7 @@ public class SyncFragment extends BaseFragment implements ICallback {
 
     private void updateData(final SyncViewModel pSyncViewModel) {
         final int mQSendedFromThisDeviceCount = pSyncViewModel.getmSentQuestionnaireModelsFromThisDevice().size();
-        final int mQSendedInSessionCount = pSyncViewModel.getmSentQuestionnaireModelsInSession().size();
+        final int mQSendedInSessionCount = pSyncViewModel.getSentQuestionnaireModelsInSession(getContext());
         final int mQUnsendedCount = pSyncViewModel.getmNotSentQuestionnaireModels().size();
         final int mAUnsendedCount = pSyncViewModel.getmNotSendedAudio().size();
         final int mPUnsendedCount = pSyncViewModel.getmNotSendedPhoto().size();

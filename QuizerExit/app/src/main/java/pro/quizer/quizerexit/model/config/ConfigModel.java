@@ -101,7 +101,7 @@ public class ConfigModel implements Serializable {
     }
 
     public boolean isAudioRecordAll() {
-        return false;//audio_record_all;
+        return audio_record_all;
     }
 
     public int getAudioRecordLimitTime() {

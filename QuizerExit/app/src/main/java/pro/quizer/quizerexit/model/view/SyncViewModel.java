@@ -1,10 +1,13 @@
 package pro.quizer.quizerexit.model.view;
 
+import android.content.Context;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.List;
 
 import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
+import pro.quizer.quizerexit.utils.SPUtils;
 
 public class SyncViewModel implements Serializable {
 
@@ -12,7 +15,6 @@ public class SyncViewModel implements Serializable {
     private List<File> mNotSendedPhoto;
     private List<QuestionnaireDatabaseModel> mNotSentQuestionnaireModels;
     private List<QuestionnaireDatabaseModel> mSentQuestionnaireModelsFromThisDevice;
-    private List<QuestionnaireDatabaseModel> mSentQuestionnaireModelsInSession;
 
     public List<QuestionnaireDatabaseModel> getmNotSentQuestionnaireModels() {
         return mNotSentQuestionnaireModels;
@@ -22,27 +24,23 @@ public class SyncViewModel implements Serializable {
         this.mSentQuestionnaireModelsFromThisDevice = mSentQuestionnaireModelsFromThisDevice;
     }
 
-    public void setmSentQuestionnaireModelsInSession(List<QuestionnaireDatabaseModel> mSentQuestionnaireModelsInSession) {
-        this.mSentQuestionnaireModelsInSession = mSentQuestionnaireModelsInSession;
-    }
-
     public List<QuestionnaireDatabaseModel> getmSentQuestionnaireModelsFromThisDevice() {
         return mSentQuestionnaireModelsFromThisDevice;
     }
 
-    public List<QuestionnaireDatabaseModel> getmSentQuestionnaireModelsInSession() {
-        return mSentQuestionnaireModelsInSession;
+    public int getSentQuestionnaireModelsInSession(final Context pContext) {
+        return SPUtils.getSendedQInSession(pContext);
     }
 
-    public void setmNotSentQuestionnaireModels(List<QuestionnaireDatabaseModel> mNotSentQuestionnaireModels) {
+    public void setNotSentQuestionnaireModels(List<QuestionnaireDatabaseModel> mNotSentQuestionnaireModels) {
         this.mNotSentQuestionnaireModels = mNotSentQuestionnaireModels;
     }
 
-    public void setmNotSendedAudio(List<File> mNotSendedAudio) {
+    public void setNotSendedAudio(List<File> mNotSendedAudio) {
         this.mNotSendedAudio = mNotSendedAudio;
     }
 
-    public void setmNotSendedPhoto(List<File> mNotSendedPhoto) {
+    public void setNotSendedPhoto(List<File> mNotSendedPhoto) {
         this.mNotSendedPhoto = mNotSendedPhoto;
     }
 

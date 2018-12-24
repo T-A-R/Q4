@@ -275,13 +275,13 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     public void showProgressBar() {
-        runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                getProgressBar().setVisibility(View.VISIBLE);
-            }
-        });
+//        runOnUiThread(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                getProgressBar().setVisibility(View.VISIBLE);
+//            }
+//        });
     }
 
     private DrawerLayout getDrawerLayout() {

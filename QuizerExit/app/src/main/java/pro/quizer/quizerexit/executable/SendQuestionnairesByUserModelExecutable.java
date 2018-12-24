@@ -30,6 +30,7 @@ import pro.quizer.quizerexit.model.request.ElementRequestModel;
 import pro.quizer.quizerexit.model.request.QuestionnaireListRequestModel;
 import pro.quizer.quizerexit.model.request.QuestionnaireRequestModel;
 import pro.quizer.quizerexit.model.response.DeletingListResponseModel;
+import pro.quizer.quizerexit.utils.SPUtils;
 
 public class SendQuestionnairesByUserModelExecutable extends BaseExecutable {
 
@@ -145,19 +146,13 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable {
                                 if (tokensToRemove == null || tokensToRemove.isEmpty()) {
                                     onError(new Exception(mContext.getString(R.string.empty_list_of_accepted_questionnairies)));
                                 } else {
+                                    SPUtils.addSendedQInSession(mContext, tokensToRemove.size());
+
                                     for (final String token : tokensToRemove) {
                                         new Update(QuestionnaireDatabaseModel.class)
                                                 .set(QuestionnaireDatabaseModel.STATUS + " = ?", QuestionnaireStatus.SENT)
                                                 .where(QuestionnaireDatabaseModel.TOKEN + " = ?", token)
                                                 .execute();
-
-//                                        new Select()
-//                                                .from(QuestionnaireDatabaseModel.class)
-//                                                .where(QuestionnaireDatabaseModel.TOKEN + " = ?", token)
-//                                                .execute();
-
-                                        // TODO: 12.12.2018 REMOVE AUDIO DATABASE MODE
-                                        // TODO: 12.12.2018 REMOVE PHOTO??? DATABASE MODE
                                     }
 
                                     onSuccess();

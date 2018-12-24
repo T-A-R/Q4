@@ -34,6 +34,7 @@ import pro.quizer.quizerexit.model.request.ConfigRequestModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.utils.MD5Utils;
+import pro.quizer.quizerexit.utils.SPUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 
 public class AuthActivity extends BaseActivity {
@@ -205,6 +206,7 @@ public class AuthActivity extends BaseActivity {
                             final int pUserId,
                             final int pRoleId,
                             final int pUserProjectId) {
+        SPUtils.resetSendedQInSession(this);
         updateDatabaseUserByUserId(pLogin, pPassword, pConfigId, pUserId, pRoleId, pUserProjectId);
 
         onLoggedInWithoutUpdateLocalData(pUserId);

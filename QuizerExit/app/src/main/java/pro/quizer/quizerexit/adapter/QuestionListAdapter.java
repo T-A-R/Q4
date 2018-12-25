@@ -36,12 +36,13 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
     private final String mDefaultPlaceHolder;
     private Runnable mRefreshRunnable;
 
-    public QuestionListAdapter(final Context pContext,
+    public QuestionListAdapter(final ElementModel pCurrentElement,
+                               final Context pContext,
                                final List<ElementModel> pAnswers,
                                final int pMaxAnswer,
                                final int pMinAnswer,
                                final Runnable pRefreshRunnable) {
-        super(pContext, pAnswers, pMaxAnswer, pMinAnswer);
+        super(pCurrentElement, pContext, pAnswers, pMaxAnswer, pMinAnswer);
 
         mRefreshRunnable = pRefreshRunnable;
         mDefaultPlaceHolder = pContext.getString(R.string.default_placeholder);

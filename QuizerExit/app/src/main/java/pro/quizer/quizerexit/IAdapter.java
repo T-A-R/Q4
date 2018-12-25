@@ -9,6 +9,6 @@ import pro.quizer.quizerexit.model.config.ElementModel;
 
 public interface IAdapter extends Serializable, Parcelable {
 
-    List<ElementModel> processNext() throws Exception;
+    ElementModel processNext() throws Exception;
 
 }

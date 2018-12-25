@@ -17,8 +17,10 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
     private final int mMinAnswer;
     private final List<ElementModel> mAnswers;
     private int mCheckedItemsCount;
+    private ElementModel mCurrentElement;
 
-    AbstractQuestionAdapter(final Context pContext, final List<ElementModel> pAnswers, final int pMaxAnswer, final int pMinAnswer) {
+    AbstractQuestionAdapter(final ElementModel pCurrentElement, final Context pContext, final List<ElementModel> pAnswers, final int pMaxAnswer, final int pMinAnswer) {
+        this.mCurrentElement = pCurrentElement;
         this.mContext = pContext;
         this.mAnswers = pAnswers;
         this.mMaxAnswer = pMaxAnswer;
@@ -99,18 +101,18 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
     }
 
     @Override
-    public List<ElementModel> processNext() throws Exception {
+    public ElementModel processNext() throws Exception {
         final List<ElementModel> selectedList = getSelectedItems();
         final int size = selectedList.size();
 
         if (size < mMinAnswer) {
             if (size == 1 && selectedList.get(0).getOptions().isUnchecker()) {
-                return selectedList;
+                return mCurrentElement;
             } else {
                 throw new Exception(String.format(mContext.getString(R.string.incorrect_select_min_answers), String.valueOf(mMinAnswer)));
             }
         }
 
-        return selectedList;
+        return mCurrentElement;
     }
 }

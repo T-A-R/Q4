@@ -54,8 +54,8 @@ public class QuestionListFragment extends AbstractQuestionFragment {
     }
 
     @Override
-    void createAdapter(List<ElementModel> subElements, int minAnswers, int maxAnswers, Runnable refreshRecyclerViewRunnable) {
-        mAdapter = new QuestionListAdapter(getContext(), subElements, maxAnswers, minAnswers, refreshRecyclerViewRunnable);
+    void createAdapter(final ElementModel pCurrentElement, List<ElementModel> subElements, int minAnswers, int maxAnswers, Runnable refreshRecyclerViewRunnable) {
+        mAdapter = new QuestionListAdapter(pCurrentElement, getContext(), subElements, maxAnswers, minAnswers, refreshRecyclerViewRunnable);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 

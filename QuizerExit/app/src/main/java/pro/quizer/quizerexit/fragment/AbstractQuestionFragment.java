@@ -39,9 +39,7 @@ public abstract class AbstractQuestionFragment extends AbstractContentElementFra
         @Override
         public void run() {
             try {
-                getAdapter().processNext();
-
-                mCallback.onForward(mCurrentElement);
+                mCallback.onForward(getAdapter().processNext());
             } catch (final Exception pE) {
                 showToast(pE.getMessage());
             }
@@ -50,7 +48,7 @@ public abstract class AbstractQuestionFragment extends AbstractContentElementFra
 
     abstract IAdapter getAdapter();
 
-    abstract void createAdapter(final List<ElementModel> subElements, final int minAnswers, final int maxAnswers, final Runnable refreshRecyclerViewRunnable);
+    abstract void createAdapter(final ElementModel pCurrentElement, final List<ElementModel> subElements, final int minAnswers, final int maxAnswers, final Runnable refreshRecyclerViewRunnable);
 
     private Runnable mBackRunnable = new Runnable() {
         @Override
@@ -122,7 +120,7 @@ public abstract class AbstractQuestionFragment extends AbstractContentElementFra
             shuffleAnswers(subElements);
         }
 
-        createAdapter(subElements, minAnswers, maxAnswers, mRefreshRecyclerViewRunnable);
+        createAdapter(mCurrentElement, subElements, minAnswers, maxAnswers, mRefreshRecyclerViewRunnable);
 
         updateAdapter();
     }

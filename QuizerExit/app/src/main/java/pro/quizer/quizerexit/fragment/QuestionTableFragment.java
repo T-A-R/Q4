@@ -53,8 +53,8 @@ public class QuestionTableFragment extends AbstractQuestionFragment {
     }
 
     @Override
-    void createAdapter(List<ElementModel> subElements, int minAnswers, int maxAnswers, Runnable refreshRecyclerViewRunnable) {
-        mAdapter = new TableQuestionAdapter(getContext(), subElements, refreshRecyclerViewRunnable);
+    void createAdapter(final ElementModel pCurrentElement, List<ElementModel> subElements, int minAnswers, int maxAnswers, Runnable refreshRecyclerViewRunnable) {
+        mAdapter = new TableQuestionAdapter(pCurrentElement, getContext(), subElements, refreshRecyclerViewRunnable);
         mTableLayout.setAdapter(mAdapter);
 
         mTableLayout.setHeaderFixed(true);

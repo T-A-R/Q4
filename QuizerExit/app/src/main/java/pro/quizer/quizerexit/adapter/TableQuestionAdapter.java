@@ -21,7 +21,6 @@ import com.vicmikhailau.maskededittext.MaskedEditText;
 import com.vicmikhailau.maskededittext.MaskedFormatter;
 import com.vicmikhailau.maskededittext.MaskedWatcher;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import pro.quizer.quizerexit.Constants;
@@ -45,15 +44,29 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private List<ElementModel> mQuestions;
     private List<ElementModel> mAnswers;
     private Runnable mRefreshRunnable;
+    private ElementModel mCurrentElement;
 
     @Override
-    public List<ElementModel> processNext() throws Exception {
-        return new ArrayList<>();
+    public ElementModel processNext() throws Exception {
+        // TODO: 26.12.2018 implement MAX and MIN logic
+
+        int count = 0;
+        for (final ElementModel question : mQuestions) {
+            for (ElementModel answer : question.getElements()) {
+                if (answer.isFullySelected()) {
+                    count++;
+
+                    break;
+                }
+            }
+        }
+
+        return mQuestions.get(0);
     }
 
-    public TableQuestionAdapter(Context context, final List<ElementModel> pQuestions, final Runnable pRefreshRunnable) {
+    public TableQuestionAdapter(final ElementModel pCurrentElement, Context context, final List<ElementModel> pQuestions, final Runnable pRefreshRunnable) {
+        mCurrentElement = pCurrentElement;
         setOnItemClickListener(this);
-
         // TODO: 24.12.2018 call run method
         mRefreshRunnable = pRefreshRunnable;
         mContext = context;

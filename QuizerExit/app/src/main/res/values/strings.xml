@@ -46,6 +46,7 @@
     <string name="incorrect_max_selected_answers">Вы можете выбрать максимум %1$s ответа.</string>
     <string name="back">Назад</string>
     <string name="exit">Выход</string>
+    <string name="cancel">Отмена</string>
     <string name="apply">Принять</string>
     <string name="settings">Настройки</string>
     <string name="sync">Синхронизация</string>
@@ -101,4 +102,5 @@
     <string name="hint_date">гггг-мм-дд</string>
     <string name="mask_time">##:##:##</string>
     <string name="mask_date">####.##.##</string>
+    <string name="fill_input">Заполните текстовое поле в выбранных вариантах ответа.</string>
 </resources>

@@ -2,6 +2,7 @@ package pro.quizer.quizerexit.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.text.InputType;
 import android.util.Log;
@@ -62,6 +63,16 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
     @Override
     public void onBindViewHolder(@NonNull AnswerListViewHolder pAnswerListViewHolder, int pPosition) {
         pAnswerListViewHolder.onBind(getModel(pPosition), pPosition);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 
     class AnswerListViewHolder extends AbstractViewHolder {
@@ -213,7 +224,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
         }
     }
 
-    public class ElementTextWatcher extends SimpleTextWatcher {
+    public static class ElementTextWatcher extends SimpleTextWatcher {
 
         private ElementModel mAnswer;
 

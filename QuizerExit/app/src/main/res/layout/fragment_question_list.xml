@@ -13,18 +13,6 @@
         android:layout_alignParentTop="true"
         tools:ignore="UnknownIdInLayout" />
 
-    <com.cleveroad.adaptivetablelayout.AdaptiveTableLayout
-        android:id="@+id/table_question_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/button_panel"
-        android:layout_alignParentTop="true"
-        app:cellMargin="1dp"
-        app:dragAndDropEnabled="true"
-        app:fixedHeaders="true"
-        app:solidRowHeaders="true"
-        tools:ignore="UnknownIdInLayout" />
-
     <include layout="@layout/view_question_buttons_panel" />
 
 </RelativeLayout>

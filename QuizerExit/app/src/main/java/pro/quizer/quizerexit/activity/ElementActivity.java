@@ -231,7 +231,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     }
 
     private void showFirstElement() {
-        showNextElement(mElements.get(3).getRelativeID(), false);
+        showNextElement(mElements.get(0).getRelativeID(), false);
     }
 
     private void showNextElement(final int pNumberOfNextElement, final boolean pIsAddToBackStack) {

@@ -6,10 +6,11 @@ import android.support.v7.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import pro.quizer.quizerexit.IAdapter;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.model.config.ElementModel;
 
-public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<T> {
+public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<T> implements IAdapter {
 
     private final Context mContext;
     private final int mMaxAnswer;
@@ -86,7 +87,7 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
             final ElementModel itemModel = mAnswers.get(i);
 
             if (itemModel.isCheckedAndTextIsEmptyForSpecialOpenTypes()) {
-                throw new Exception("Заполните текстовое поле в выбранных вариантах ответа.");
+                throw new Exception(mContext.getString(R.string.fill_input));
             }
 
             if (itemModel.isFullySelected()) {
@@ -97,6 +98,7 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
         return selectedList;
     }
 
+    @Override
     public List<ElementModel> processNext() throws Exception {
         final List<ElementModel> selectedList = getSelectedItems();
         final int size = selectedList.size();

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.model.AttributeType;
 import pro.quizer.quizerexit.model.ElementType;
 import pro.quizer.quizerexit.model.config.AttributesModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
@@ -118,9 +119,24 @@ public class ElementFragment extends BaseFragment {
 
         switch (mCurrentElement.getType()) {
             case ElementType.QUESTION:
-                mFragmentManger.beginTransaction()
-                        .add(R.id.content_element, QuestionFragment.newInstance(mCurrentElement, mCallback))
-                        .commit();
+                switch (mCurrentElement.getOptions().getType()) {
+                    case AttributeType.LIST:
+                        mFragmentManger.beginTransaction()
+                                .add(R.id.content_element, QuestionListFragment.newInstance(mCurrentElement, mCallback))
+                                .commit();
+
+                        break;
+                    case AttributeType.TABLE:
+                        mFragmentManger.beginTransaction()
+                                .add(R.id.content_element, QuestionTableFragment.newInstance(mCurrentElement, mCallback))
+                                .commit();
+
+                        break;
+                    default:
+                        showToast("Неизвестный тип элемента");
+
+                        break;
+                }
 
                 break;
             default:

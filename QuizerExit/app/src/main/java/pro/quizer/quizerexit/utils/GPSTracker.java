@@ -90,7 +90,7 @@ public class GPSTracker extends Service implements LocationListener {
 
     public double getLatitude() throws Exception {
         if (location == null) {
-            throw new Exception("Не удается поулчить текущие координаты GPS");
+            throw new Exception("Не удается получить текущие координаты GPS");
         }
 
         latitude = location.getLatitude();
@@ -114,6 +114,7 @@ public class GPSTracker extends Service implements LocationListener {
 
     public void showSettingsAlert() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
+        alertDialog.setCancelable(false);
         alertDialog.setTitle("Включите GPS");
         alertDialog.setMessage("Для прохождения анкеты необходимо включить GPS");
         alertDialog.setPositiveButton("Включить", new DialogInterface.OnClickListener() {

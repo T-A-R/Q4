@@ -15,6 +15,7 @@ import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizerexit.executable.SyncInfoExecutable;
 import pro.quizer.quizerexit.executable.files.AudiosSendingByUserModelExecutable;
+import pro.quizer.quizerexit.executable.files.CleanUpFilesExecutable;
 import pro.quizer.quizerexit.executable.files.PhotosSendingByUserModelExecutable;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.view.SyncViewModel;
@@ -66,9 +67,9 @@ public class SyncFragment extends BaseFragment implements ICallback {
         initViews(view);
         initStrings();
 
+        new CleanUpFilesExecutable(getContext(), null).execute();
         updateData(new SyncInfoExecutable(getContext()).execute());
     }
-
 
     private void initViews(final View pView) {
         mUserModel = getBaseActivity().getCurrentUser();

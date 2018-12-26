@@ -85,7 +85,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
         int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
 
-        return location == PackageManager.PERMISSION_GRANTED &&
+        return (location == PackageManager.PERMISSION_GRANTED || !mConfig.isGps()) &&
                 camera == PackageManager.PERMISSION_GRANTED &&
                 audio == PackageManager.PERMISSION_GRANTED &&
                 writeStorage == PackageManager.PERMISSION_GRANTED &&
@@ -118,12 +118,13 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
                         showToast(getString(R.string.permission_error));
 
                         finish();
+                        startMainActivity();
 
                         return;
                     }
                 }
 
-                initStartValues();
+                startGps();
 
                 break;
         }
@@ -166,9 +167,25 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         mConfig = mUserModel.getConfig();
         mProjectInfo = mConfig.getProjectInfo();
         mElements = mProjectInfo.getElements();
+    }
 
-        if (!checkPermission()) {
-            requestPermission();
+    private void startGps() {
+        if (mConfig.isGps()) {
+            try {
+                mGps = GpsUtils.getCurrentGps(this, mConfig.isForceGps());
+                showToast("Current GPS = " + mGps);
+
+                initStartValues();
+            } catch (Exception e) {
+                showToast(e.toString());
+
+                if (mConfig.isForceGps()) {
+                    finish();
+                    startMainActivity();
+                } else {
+                    initStartValues();
+                }
+            }
         } else {
             initStartValues();
         }
@@ -176,44 +193,31 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
 
     @SuppressLint("MissingPermission")
     private void initStartValues() {
-        mStop.setVisibility(View.INVISIBLE);
-        mStart.setVisibility(View.INVISIBLE);
+        if (StringUtils.isEmpty(mToken)) {
+            mStop.setVisibility(View.INVISIBLE);
+            mStart.setVisibility(View.INVISIBLE);
 
-        mMediaBrowser = new MediaBrowserCompat(this, new ComponentName(this, AudioService.class), mConnCallbacks, null); // optional bundle
+            mMediaBrowser = new MediaBrowserCompat(this, new ComponentName(this, AudioService.class), mConnCallbacks, null); // optional bundle
 
-        if (!mMediaBrowser.isConnected()) {
-            mMediaBrowser.connect();
-        }
-
-        setVolumeControlStream(AudioManager.STREAM_MUSIC);
-
-        mLoginAdmin = mConfig.getLoginAdmin();
-        mLogin = mUserModel.login;
-        mPassword = mUserModel.password;
-        mQuestionnaireId = mProjectInfo.getQuestionnaireId();
-        mProjectId = mProjectInfo.getProjectId();
-        mUserLogin = mUserModel.login;
-        mUserProjectId = mUserModel.user_project_id;
-        mUserId = mUserModel.user_id;
-        mStartDateInterview = DateUtils.getCurrentTimeMillis();
-        mToken = StringUtils.generateToken();
-
-        if (mConfig.isGps()) {
-            try {
-                mGps = GpsUtils.getCurrentGps(this, mConfig.isForceGps());
-                showToast("Current GPS = " + mGps);
-            } catch (Exception e) {
-                showToast(e.toString());
-
-                if (mConfig.isForceGps()) {
-                    finish();
-                } else {
-                    showFirstElement();
-                }
+            if (!mMediaBrowser.isConnected()) {
+                mMediaBrowser.connect();
             }
-        }
 
-        showFirstElement();
+            setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+            mLoginAdmin = mConfig.getLoginAdmin();
+            mLogin = mUserModel.login;
+            mPassword = mUserModel.password;
+            mQuestionnaireId = mProjectInfo.getQuestionnaireId();
+            mProjectId = mProjectInfo.getProjectId();
+            mUserLogin = mUserModel.login;
+            mUserProjectId = mUserModel.user_project_id;
+            mUserId = mUserModel.user_id;
+            mStartDateInterview = DateUtils.getCurrentTimeMillis();
+            mToken = StringUtils.generateToken();
+
+            showFirstElement();
+        }
     }
 
     @Override
@@ -221,6 +225,17 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         super.onPause();
 
         pauseRecording();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (!checkPermission()) {
+            requestPermission();
+        } else {
+            startGps();
+        }
     }
 
     @Override
@@ -360,30 +375,41 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
 
     private void saveScreenElements(final List<ElementModel> pScreenElements) {
         for (final ElementModel element : pScreenElements) {
-            // TODO: 26.12.2018 check if is showing
-            final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
-            elementDatabaseModel.token = mToken;
-            elementDatabaseModel.relative_id = element.getRelativeID();
-            elementDatabaseModel.duration = element.getDuration();
-            elementDatabaseModel.type = ElementDatabaseType.SCREEN;
+            if (element != null && element.isShowing()) {
+                final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
+                elementDatabaseModel.token = mToken;
+                elementDatabaseModel.relative_id = element.getRelativeID();
+                elementDatabaseModel.duration = element.getDuration();
+                elementDatabaseModel.type = ElementDatabaseType.SCREEN;
 
-            elementDatabaseModel.save();
+                elementDatabaseModel.save();
+            }
         }
     }
 
     private void saveAnswersElements(final List<ElementModel> pScreenElements) {
         for (final ElementModel screenElement : pScreenElements) {
             for (final ElementModel element : screenElement.getElements()) {
-                if (element != null && ElementType.ANSWER.equals(element.getType()) && element.isFullySelected()) {
-                    final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
-                    elementDatabaseModel.token = mToken;
-                    elementDatabaseModel.value = element.getTextAnswer();
-                    elementDatabaseModel.relative_id = element.getRelativeID();
-                    elementDatabaseModel.type = ElementDatabaseType.ELEMENT;
-
-                    elementDatabaseModel.save();
+                if (element != null && ElementType.QUESTION.equals(element.getType())) {
+                    for (final ElementModel subElement : element.getElements()) {
+                        saveElement(subElement);
+                    }
+                } else {
+                    saveElement(element);
                 }
             }
+        }
+    }
+
+    private void saveElement(final ElementModel element) {
+        if (element != null && ElementType.ANSWER.equals(element.getType()) && element.isFullySelected()) {
+            final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
+            elementDatabaseModel.token = mToken;
+            elementDatabaseModel.value = element.getTextAnswer();
+            elementDatabaseModel.relative_id = element.getRelativeID();
+            elementDatabaseModel.type = ElementDatabaseType.ELEMENT;
+
+            elementDatabaseModel.save();
         }
     }
 
@@ -454,7 +480,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
             cntrlr.unregisterCallback(mCntrlrCallback);
         }
 
-        if (mMediaBrowser.isConnected()) {
+        if (mMediaBrowser != null && mMediaBrowser.isConnected()) {
             mIsMediaConnected = false;
 
             mMediaBrowser.unsubscribe(mMediaBrowser.getRoot());

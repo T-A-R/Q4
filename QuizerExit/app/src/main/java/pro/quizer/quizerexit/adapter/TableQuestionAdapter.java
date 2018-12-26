@@ -70,7 +70,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     public TableQuestionAdapter(final ElementModel pCurrentElement, Context context, final List<ElementModel> pQuestions, final Runnable pRefreshRunnable) {
         mCurrentElement = pCurrentElement;
         setOnItemClickListener(this);
-        // TODO: 24.12.2018 call run method
         mRefreshRunnable = pRefreshRunnable;
         mContext = context;
         mLayoutInflater = LayoutInflater.from(context);
@@ -268,6 +267,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                             clickedElement.setTextAnswer(answer);
                             clickedElement.setChecked(true);
                             notifyDataSetChanged();
+                            mRefreshRunnable.run();
                         }
                     })
 
@@ -278,6 +278,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                                     clickedElement.setChecked(false);
                                     dialogBox.cancel();
                                     notifyDataSetChanged();
+                                    mRefreshRunnable.run();
                                 }
                             });
 

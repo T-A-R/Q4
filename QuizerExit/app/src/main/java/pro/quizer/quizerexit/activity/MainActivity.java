@@ -27,7 +27,7 @@ public class MainActivity extends BaseActivity implements ICallback {
             }
         });
 
-        showHomeFragment();
+        showHomeFragment(false);
     }
 
     @Override

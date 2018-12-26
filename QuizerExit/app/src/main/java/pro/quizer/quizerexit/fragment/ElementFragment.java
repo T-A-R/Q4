@@ -132,6 +132,9 @@ public class ElementFragment extends BaseFragment {
                                 .commit();
 
                         break;
+
+                    case ElementType.BOX:
+
                     default:
                         showToast("Неизвестный тип элемента");
 

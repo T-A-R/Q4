@@ -13,8 +13,9 @@ import pro.quizer.quizerexit.Constants;
 
 public final class FileUtils {
 
-    public static String PHOTO_NAME_JPEG_TEMPLATE = "%1$s^%2$s^%3$s^%4$s^%5$s.jpeg";
-    public static String AUDIO_NAME_MP3_TEMPLATE = "%1$s/%2$s^%3$s^%4$s^%5$s^%6$s.mp3";
+    public static String FILE_NAME_DIVIDER = "^";
+    public static String PHOTO_NAME_JPEG_TEMPLATE = "%1$s" + FILE_NAME_DIVIDER + "%2$s" + FILE_NAME_DIVIDER + "%3$s" + FILE_NAME_DIVIDER + "%4$s" + FILE_NAME_DIVIDER + "%5$s.jpeg";
+    public static String AUDIO_NAME_MP3_TEMPLATE = "%1$s/%2$s" + FILE_NAME_DIVIDER + "%3$s" + FILE_NAME_DIVIDER + "%4$s" + FILE_NAME_DIVIDER + "%5$s" + FILE_NAME_DIVIDER + "%6$s.mp3";
 
     public static final String MP3 = ".mp3";
     public static final String JPEG = ".jpeg";

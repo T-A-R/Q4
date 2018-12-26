@@ -66,7 +66,7 @@ public class AppDrawer extends RelativeLayout implements Serializable {
             @Override
             public void onClick(View view) {
                 baseActivity.closeDrawer();
-                baseActivity.showHomeFragment();
+                baseActivity.showHomeFragment(true);
             }
         });
 

@@ -89,11 +89,11 @@ public class ConfigModel implements Serializable {
     }
 
     public boolean isGps() {
-        return gps;
+        return true;//gps;
     }
 
     public boolean isForceGps() {
-        return force_gps;
+        return true;//force_gps;
     }
 
     public boolean isRecordFullQuestionnaire() {

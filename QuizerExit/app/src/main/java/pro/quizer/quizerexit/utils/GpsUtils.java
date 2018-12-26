@@ -1,6 +1,7 @@
 package pro.quizer.quizerexit.utils;
 
 import android.content.Context;
+import android.os.Handler;
 
 public final class GpsUtils {
 
@@ -23,10 +24,8 @@ public final class GpsUtils {
                 }
             }
         } else {
-            gps.showSettingsAlert();
-
             if (pIsForceGps) {
-                throw new Exception("Не удалось получить GPS координаты.");
+                gps.showSettingsAlert();
             }
         }
 

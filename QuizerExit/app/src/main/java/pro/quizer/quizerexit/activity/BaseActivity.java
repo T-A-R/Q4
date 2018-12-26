@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -110,25 +112,44 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         });
     }
 
-    public void showHomeFragment() {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.main_content, HomeFragment.newInstance())
+
+    private void addFragment(final Fragment pFragment, final boolean pIsAddToBackstack) {
+        final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+        fragmentTransaction
+                .replace(R.id.main_content, pFragment);
+
+        if (pIsAddToBackstack) {
+            fragmentTransaction
+                    .addToBackStack(pFragment.getClass().getSimpleName());
+        }
+
+        fragmentTransaction
                 .commit();
+    }
+
+    private void showFragmentWithBackstack(final Fragment pFragment) {
+        addFragment(pFragment, true);
+    }
+
+    private void showFragmentWithoutBackstack(final Fragment pFragment) {
+        addFragment(pFragment, false);
+    }
+
+    public void showHomeFragment(final boolean pIsAddToBackstack) {
+        if (pIsAddToBackstack) {
+            showFragmentWithBackstack(HomeFragment.newInstance());
+        } else {
+            showFragmentWithoutBackstack(HomeFragment.newInstance());
+        }
     }
 
     public void showSyncFragment() {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.main_content, SyncFragment.newInstance())
-                .commit();
+        showFragmentWithBackstack(SyncFragment.newInstance());
     }
 
     public void showSettingsFragment() {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.main_content, SettingsFragment.newInstance())
-                .commit();
+        showFragmentWithBackstack(SettingsFragment.newInstance());
     }
 
     public boolean isActivated() {
@@ -346,6 +367,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     @Override
     public void onBackPressed() {
-        showExitAlertDialog();
+        if (!getSupportFragmentManager().popBackStackImmediate()) {
+            showExitAlertDialog();
+        }
     }
 }

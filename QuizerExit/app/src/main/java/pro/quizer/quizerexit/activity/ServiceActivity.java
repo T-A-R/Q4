@@ -15,8 +15,11 @@ import pro.quizer.quizerexit.executable.files.AllAudiosSendingExecutable;
 import pro.quizer.quizerexit.executable.files.AllPhotosSendingExecutable;
 import pro.quizer.quizerexit.executable.SendAllQuestionnairesExecutable;
 import pro.quizer.quizerexit.executable.ServiceInfoExecutable;
+import pro.quizer.quizerexit.executable.files.CleanUpFilesExecutable;
 import pro.quizer.quizerexit.model.view.ServiceViewModel;
 import pro.quizer.quizerexit.view.Toolbar;
+
+import static com.activeandroid.Cache.getContext;
 
 public class ServiceActivity extends BaseActivity implements ICallback {
 
@@ -44,6 +47,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
         initViews();
         initStrings();
 
+        new CleanUpFilesExecutable(getContext(), null).execute();
         updateData(new ServiceInfoExecutable().execute());
     }
 

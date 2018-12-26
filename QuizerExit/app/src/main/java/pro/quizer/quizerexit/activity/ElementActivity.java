@@ -234,8 +234,8 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         showNextElement(mElements.get(0).getRelativeID(), false);
     }
 
-    private void showNextElement(final int pNumberOfNextElement, final boolean pIsAddToBackStack) {
-        final ElementModel nextElement = getElementByRelativeId(pNumberOfNextElement);
+    private void showNextElement(final int pNextRelativeId, final boolean pIsAddToBackStack) {
+        final ElementModel nextElement = getElementByRelativeId(pNextRelativeId);
 
         if (nextElement == null) {
             // it was last element
@@ -274,27 +274,8 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     }
 
     @Override
-    public void onForward(final ElementModel pElementModel) {
-        final StringBuilder sb = new StringBuilder();
-        int jumpValue = -1;
-
-        for (int index = 0; index < pElementModel.getElements().size(); index++) {
-            final ElementModel model = pElementModel.getElements().get(index);
-
-            if (model.isFullySelected()) {
-                sb.append(model.getOptions().getTitle()).append("\n");
-                jumpValue = model.getOptions().getJump();
-            }
-        }
-
-        showToast(sb.toString());
-
-        if (jumpValue == -1) {
-            showToast(getString(R.string.error_counting_next_element));
-        } else {
-            pElementModel.setEndTime(DateUtils.getCurrentTimeMillis());
-            showNextElement(jumpValue, true);
-        }
+    public void onForward(final int pNextRelativeId) {
+        showNextElement(pNextRelativeId, true);
     }
 
     @Override
@@ -379,6 +360,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
 
     private void saveScreenElements(final List<ElementModel> pScreenElements) {
         for (final ElementModel element : pScreenElements) {
+            // TODO: 26.12.2018 check if is showing
             final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
             elementDatabaseModel.token = mToken;
             elementDatabaseModel.relative_id = element.getRelativeID();
@@ -392,7 +374,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     private void saveAnswersElements(final List<ElementModel> pScreenElements) {
         for (final ElementModel screenElement : pScreenElements) {
             for (final ElementModel element : screenElement.getElements()) {
-                if (ElementType.ANSWER.equals(element.getType()) && element.isFullySelected()) {
+                if (element != null && ElementType.ANSWER.equals(element.getType()) && element.isFullySelected()) {
                     final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
                     elementDatabaseModel.token = mToken;
                     elementDatabaseModel.value = element.getTextAnswer();
@@ -410,7 +392,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         int count = 0;
 
         for (final ElementModel elementModel : mElements) {
-            if (ElementType.QUESTION.equals(elementModel.getType()) && elementModel.isShowing()) {
+            if (elementModel != null && ElementType.QUESTION.equals(elementModel.getType()) && elementModel.isShowing()) {
                 count++;
             }
         }

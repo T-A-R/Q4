@@ -12,10 +12,11 @@
         android:layout_above="@+id/button_panel"
         android:layout_alignParentTop="true"
         app:cellMargin="1dp"
-        app:dragAndDropEnabled="true"
-        app:fixedHeaders="true"
-        app:solidRowHeaders="true"
         tools:ignore="UnknownIdInLayout" />
+
+    <!--app:dragAndDropEnable//d="true"-->
+        <!--app:fixedHeaders="true"-->
+        <!--app:solidRowHeaders="true"-->
 
     <include layout="@layout/view_question_buttons_panel" />
 

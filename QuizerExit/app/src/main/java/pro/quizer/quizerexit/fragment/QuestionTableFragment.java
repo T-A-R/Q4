@@ -57,8 +57,8 @@ public class QuestionTableFragment extends AbstractQuestionFragment {
         mAdapter = new TableQuestionAdapter(pCurrentElement, getContext(), subElements, refreshRecyclerViewRunnable);
         mTableLayout.setAdapter(mAdapter);
 
-        mTableLayout.setHeaderFixed(true);
-        mTableLayout.setSolidRowHeader(true);
+//        mTableLayout.setHeaderFixed(true);
+//        mTableLayout.setSolidRowHeader(true);
     }
 
     @Override

@@ -42,6 +42,7 @@
     <string name="empty_login_or_password">Логин и пароль обязателен.</string>
     <string name="error_max_users">Максимальное количество аккаунтов -  %1$s.</string>
     <string name="short_login">Минимальная длина логина - 3 символа.</string>
+    <string name="incorrect_select_min_answers_table">Выберите минимум 1 вариант ответа в каждов вопросе из таблицы.</string>
     <string name="incorrect_select_min_answers">Выберите минимум %1$s ответа.</string>
     <string name="incorrect_max_selected_answers">Вы можете выбрать максимум %1$s ответа.</string>
     <string name="back">Назад</string>

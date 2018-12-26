@@ -9,6 +9,7 @@ import java.util.List;
 import pro.quizer.quizerexit.IAdapter;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.model.config.ElementModel;
+import pro.quizer.quizerexit.utils.DateUtils;
 
 public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<T> implements IAdapter {
 
@@ -92,7 +93,7 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
                 throw new Exception(mContext.getString(R.string.fill_input));
             }
 
-            if (itemModel.isFullySelected()) {
+            if (itemModel != null && itemModel.isFullySelected()) {
                 selectedList.add(itemModel);
             }
         }
@@ -101,18 +102,25 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
     }
 
     @Override
-    public ElementModel processNext() throws Exception {
+    public int processNext() throws Exception {
         final List<ElementModel> selectedList = getSelectedItems();
         final int size = selectedList.size();
 
         if (size < mMinAnswer) {
-            if (size == 1 && selectedList.get(0).getOptions().isUnchecker()) {
-                return mCurrentElement;
-            } else {
+            if (!(size == 1 && selectedList.get(0).getOptions().isUnchecker())) {
                 throw new Exception(String.format(mContext.getString(R.string.incorrect_select_min_answers), String.valueOf(mMinAnswer)));
             }
         }
 
-        return mCurrentElement;
+        for (int index = 0; index < selectedList.size(); index++) {
+            final ElementModel model = selectedList.get(index);
+
+            if (model != null && model.isFullySelected()) {
+                mCurrentElement.setEndTime(DateUtils.getCurrentTimeMillis());
+                return model.getOptions().getJump();
+            }
+        }
+
+        throw new Exception(mContext.getString(R.string.error_counting_next_element));
     }
 }

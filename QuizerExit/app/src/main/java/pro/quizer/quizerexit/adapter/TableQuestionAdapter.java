@@ -31,6 +31,7 @@ import pro.quizer.quizerexit.model.AttributeOpenType;
 import pro.quizer.quizerexit.model.ElementType;
 import pro.quizer.quizerexit.model.config.AttributesModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
+import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 
 public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderImpl> implements OnItemClickListener, IAdapter {
@@ -47,21 +48,23 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private ElementModel mCurrentElement;
 
     @Override
-    public ElementModel processNext() throws Exception {
-        // TODO: 26.12.2018 implement MAX and MIN logic
-
-        int count = 0;
+    public int processNext() throws Exception {
         for (final ElementModel question : mQuestions) {
-            for (ElementModel answer : question.getElements()) {
-                if (answer.isFullySelected()) {
-                    count++;
-
-                    break;
-                }
+            if (question != null && question.getCountOfSelectedSubElements() == 0) {
+                throw new Exception(mContext.getString(R.string.incorrect_select_min_answers_table));
             }
         }
 
-        return mQuestions.get(0);
+        for (int index = 0; index < mAnswers.size(); index++) {
+            final ElementModel model = mAnswers.get(index);
+
+            if (model != null && model.isFullySelected()) {
+                mCurrentElement.setEndTime(DateUtils.getCurrentTimeMillis());
+                return model.getOptions().getJump();
+            }
+        }
+
+        throw new Exception(mContext.getString(R.string.error_counting_next_element));
     }
 
     public TableQuestionAdapter(final ElementModel pCurrentElement, Context context, final List<ElementModel> pQuestions, final Runnable pRefreshRunnable) {
@@ -78,7 +81,21 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         mHeaderWidth = res.getDimensionPixelSize(R.dimen.row_header_width);
 
         mQuestions = pQuestions;
-        mAnswers = mQuestions.get(0).getSubElementsByType(ElementType.ANSWER);
+
+        if (mQuestions.get(0) != null) {
+            mQuestions.add(0, null);
+        }
+
+        for (final ElementModel question : mQuestions)
+            if (question != null) {
+            final List<ElementModel> answers = question.getElements();
+
+            if (answers.get(0) != null) {
+                answers.add(0, null);
+            }
+        }
+
+        mAnswers = mQuestions.get(1).getElements();
     }
 
     @Override
@@ -121,7 +138,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         final ElementModel currentElement = getElement(row, column);
 
-        vh.mTableItemCheckBox.setChecked(currentElement.isChecked());
+        if (currentElement != null) {
+            vh.mTableItemCheckBox.setChecked(currentElement.isChecked());
+        }
     }
 
     @Override
@@ -164,16 +183,26 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     private ElementModel getElement(int row, int column) {
-        final int questionIndex = row - 1;
-        final int answerIndex = column - 1;
+        final int questionIndex = row;
+        final int answerIndex = column;
 
-        return mQuestions.get(questionIndex).getElements().get(answerIndex);
+        final ElementModel element = mQuestions.get(questionIndex);
+
+        if (element != null) {
+            return element.getElements().get(answerIndex);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public void onItemClick(int row, int column) {
         Toast.makeText(mContext, "Строка: " + row + " столбец: " + column, Toast.LENGTH_LONG).show();
         final ElementModel clickedElement = getElement(row, column);
+
+        if (clickedElement == null) {
+            return;
+        }
         final boolean isElementChecked = clickedElement.isChecked();
         final AttributesModel options = clickedElement.getOptions();
         final String openType = options.getOpenType();

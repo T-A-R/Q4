@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import pro.quizer.quizerexit.model.ElementType;
@@ -42,7 +41,7 @@ public class ElementModel implements Serializable {
         final List<ElementModel> list = new ArrayList<>();
 
         for (final ElementModel subElement : getElements()) {
-            if (subElement.getType().equals(pType)) {
+            if (subElement != null && subElement.getType().equals(pType)) {
                 list.add(subElement);
             }
         }
@@ -61,6 +60,20 @@ public class ElementModel implements Serializable {
     @ElementType
     public String getType() {
         return type;
+    }
+
+    public int getCountOfSelectedSubElements() {
+        int count = 0;
+
+        if (elements != null) {
+            for (final ElementModel element : elements) {
+                if (element != null && element.isFullySelected()) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
     }
 
     public List<ElementModel> getElements() {

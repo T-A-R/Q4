@@ -3,6 +3,8 @@ package pro.quizer.quizerexit.utils;
 import android.content.Context;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -14,19 +16,35 @@ import pro.quizer.quizerexit.Constants;
 public final class FileUtils {
 
     public static String FILE_NAME_DIVIDER = "^";
-    public static String PHOTO_NAME_JPEG_TEMPLATE = "%1$s" + FILE_NAME_DIVIDER + "%2$s" + FILE_NAME_DIVIDER + "%3$s" + FILE_NAME_DIVIDER + "%4$s" + FILE_NAME_DIVIDER + "%5$s.jpeg";
-    public static String AUDIO_NAME_MP3_TEMPLATE = "%1$s/%2$s" + FILE_NAME_DIVIDER + "%3$s" + FILE_NAME_DIVIDER + "%4$s" + FILE_NAME_DIVIDER + "%5$s" + FILE_NAME_DIVIDER + "%6$s.mp3";
+    private static final String PHOTO_NAME_JPEG_TEMPLATE = "%1$s" + FILE_NAME_DIVIDER + "%2$s" + FILE_NAME_DIVIDER + "%3$s" + FILE_NAME_DIVIDER + "%4$s" + FILE_NAME_DIVIDER + "%5$s.jpeg";
+    private static final String AUDIO_NAME_MP3_TEMPLATE = "%1$s/%2$s" + FILE_NAME_DIVIDER + "%3$s" + FILE_NAME_DIVIDER + "%4$s" + FILE_NAME_DIVIDER + "%5$s" + FILE_NAME_DIVIDER + "%6$s.mp3";
 
     public static final String MP3 = ".mp3";
     public static final String JPEG = ".jpeg";
 
     public static final String FOLDER_DIVIDER = "/";
-    public static final String FOLDER_PHOTOS = "photos";
-    public static final String FOLDER_AUDIO = "audios";
-    public static final String CACHE = "cache";
+    private static final String FOLDER_PHOTOS = "photos";
+    private static final String FOLDER_AUDIO = "audios";
+    private static final String CACHE = "cache";
+
+    public static void createTxtFile(final String pFilePath, final String pFileName, final CharSequence pBody) throws IOException {
+        final File root = new File(pFilePath);
+
+        if (!root.exists()) {
+            root.mkdirs();
+        }
+
+        final File gpxfile = new File(root, pFileName);
+        final FileWriter writer = new FileWriter(gpxfile);
+
+        writer.append(pBody);
+        writer.flush();
+        writer.close();
+
+    }
 
     public static String getPhotosStoragePath(final Context pContext) {
-        String dataStoragePath = getDataStoragePath(pContext);
+        final String dataStoragePath = getDataStoragePath(pContext);
         final String path;
 
         if (StringUtils.isEmpty(dataStoragePath)) {
@@ -41,7 +59,7 @@ public final class FileUtils {
     }
 
     public static String getAudioStoragePath(final Context pContext) {
-        String dataStoragePath = getDataStoragePath(pContext);
+        final String dataStoragePath = getDataStoragePath(pContext);
         final String path;
 
         if (StringUtils.isEmpty(dataStoragePath)) {
@@ -56,7 +74,7 @@ public final class FileUtils {
     }
 
     public static String getAudioFileStoragePath(final Context pContext, final String pAudioFileName) {
-        String audioStoragePath = getAudioStoragePath(pContext);
+        final String audioStoragePath = getAudioStoragePath(pContext);
 
         if (StringUtils.isEmpty(audioStoragePath)) {
             return Constants.Strings.EMPTY;
@@ -65,7 +83,7 @@ public final class FileUtils {
         }
     }
 
-    public static String getDataStoragePath(final Context pContext) {
+    private static String getDataStoragePath(final Context pContext) {
         final File file = pContext.getExternalCacheDir();
 
         if (file != null) {
@@ -74,6 +92,12 @@ public final class FileUtils {
         } else {
             return Constants.Strings.EMPTY;
         }
+    }
+
+    public static boolean moveFile(final File pFile, final String pNewFilePath) {
+        final File newFile = new File(pNewFilePath, pFile.getName());
+
+        return pFile.renameTo(newFile);
     }
 
     public static boolean renameFile(final Context pContext, final File pOldFile, final int pUserId, final String pNewNameName) {
@@ -85,7 +109,7 @@ public final class FileUtils {
 
         final String pNewFilePath = pCurrentFilePath + pNewNameName;
 
-        File file2 = new File(pNewFilePath);
+        final File file2 = new File(pNewFilePath);
 
         return pOldFile.renameTo(file2);
     }
@@ -100,8 +124,8 @@ public final class FileUtils {
         return true;
     }
 
-    public static List<String> getFiles(final String pPath) {
-        List<String> inFiles = new ArrayList<>();
+    private static List<String> getFiles(final String pPath) {
+        final List<String> inFiles = new ArrayList<>();
 
         if (StringUtils.isEmpty(pPath)) {
             return inFiles;
@@ -113,9 +137,9 @@ public final class FileUtils {
             return inFiles;
         }
 
-        File[] files = parentDir.listFiles();
+        final File[] files = parentDir.listFiles();
 
-        for (File file : files) {
+        for (final File file : files) {
             if (file.isDirectory()) {
                 inFiles.addAll(getFiles(file.getAbsolutePath()));
             } else {
@@ -129,13 +153,13 @@ public final class FileUtils {
     }
 
     public static List<File> getFilesRecursion(final String pType, final String pPath) {
-        List<File> inFiles = new ArrayList<>();
+        final List<File> inFiles = new ArrayList<>();
 
         if (StringUtils.isEmpty(pPath)) {
             return inFiles;
         }
 
-        Queue<File> files = new LinkedList<>();
+        final Queue<File> files = new LinkedList<>();
 
         final File parentDir = new File(pPath);
 
@@ -146,7 +170,7 @@ public final class FileUtils {
         files.addAll(Arrays.asList(parentDir.listFiles()));
 
         while (!files.isEmpty()) {
-            File file = files.remove();
+            final File file = files.remove();
             if (file.isDirectory()) {
                 files.addAll(Arrays.asList(file.listFiles()));
             } else if (file.getName().endsWith(pType)) {
@@ -157,7 +181,7 @@ public final class FileUtils {
         return inFiles;
     }
 
-    public static String getFullPathByFileName(final List<File> pFiles, final String pFileName) {
+    public static String getFullPathByFileName(final Iterable<File> pFiles, final String pFileName) {
         for (final File file : pFiles) {
             final String path = file.getAbsolutePath();
 

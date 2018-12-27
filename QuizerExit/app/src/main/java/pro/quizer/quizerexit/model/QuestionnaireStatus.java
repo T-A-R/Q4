@@ -10,6 +10,6 @@ import java.lang.annotation.RetentionPolicy;
         QuestionnaireStatus.NOT_SENT})
 public @interface QuestionnaireStatus {
 
-    String SENT = "send";
+    String SENT = "sent";
     String NOT_SENT = "not";
 }

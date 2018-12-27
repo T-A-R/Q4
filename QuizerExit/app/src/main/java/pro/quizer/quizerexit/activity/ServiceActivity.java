@@ -11,6 +11,7 @@ import java.util.List;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.executable.DeleteUsersExecutable;
 import pro.quizer.quizerexit.executable.ICallback;
+import pro.quizer.quizerexit.executable.UploadingExecutable;
 import pro.quizer.quizerexit.executable.files.AllAudiosSendingExecutable;
 import pro.quizer.quizerexit.executable.files.AllPhotosSendingExecutable;
 import pro.quizer.quizerexit.executable.SendAllQuestionnairesExecutable;
@@ -65,7 +66,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
         mToolbar = findViewById(R.id.toolbar);
         mToolbar.showCloseView(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 startAuthActivity();
             }
         });
@@ -115,14 +116,14 @@ public class ServiceActivity extends BaseActivity implements ICallback {
 
         mSendDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 new SendAllQuestionnairesExecutable(ServiceActivity.this, ServiceActivity.this).execute();
             }
         });
 
         mSendPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 if (notSentQuestionnairesCount > 0) {
                     showToast(getString(R.string.please_send_q));
 
@@ -135,7 +136,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
 
         mSendAudioButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 if (notSentQuestionnairesCount > 0) {
                     showToast(getString(R.string.please_send_q));
 
@@ -148,8 +149,15 @@ public class ServiceActivity extends BaseActivity implements ICallback {
 
         mDeleteUsersButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 new DeleteUsersExecutable(ServiceActivity.this, ServiceActivity.this).execute();
+            }
+        });
+
+        mUploadDataButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                new UploadingExecutable(ServiceActivity.this, ServiceActivity.this).execute();
             }
         });
     }
@@ -166,7 +174,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
     }
 
     @Override
-    public void onError(Exception pException) {
+    public void onError(final Exception pException) {
         updateData(new ServiceInfoExecutable().execute());
         hideProgressBar();
     }

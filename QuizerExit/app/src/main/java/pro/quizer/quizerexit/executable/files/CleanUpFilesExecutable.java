@@ -35,8 +35,6 @@ public class CleanUpFilesExecutable extends BaseExecutable {
         onStarting();
 
         if (mContext instanceof  BaseActivity) {
-            final BaseActivity baseActivity = ((BaseActivity) mContext);
-
             final List<File> files = new ArrayList<>();
 
             files.addAll(FileUtils.getFilesRecursion(FileUtils.JPEG, FileUtils.getPhotosStoragePath(mContext)));

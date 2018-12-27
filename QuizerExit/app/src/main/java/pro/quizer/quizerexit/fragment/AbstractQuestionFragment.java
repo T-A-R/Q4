@@ -3,10 +3,7 @@ package pro.quizer.quizerexit.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
-
-import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,9 +11,7 @@ import java.util.List;
 import pro.quizer.quizerexit.IAdapter;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
-import pro.quizer.quizerexit.adapter.TableQuestionAdapter;
-import pro.quizer.quizerexit.model.AttributeType;
-import pro.quizer.quizerexit.model.config.AttributesModel;
+import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 
 public abstract class AbstractQuestionFragment extends AbstractContentElementFragment {
@@ -25,7 +20,7 @@ public abstract class AbstractQuestionFragment extends AbstractContentElementFra
     public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
 
     private ElementModel mCurrentElement;
-    private AttributesModel mAttributes;
+    private OptionsModel mAttributes;
     private NavigationCallback mCallback;
 
     private Runnable mRefreshRecyclerViewRunnable = new Runnable() {
@@ -130,7 +125,7 @@ public abstract class AbstractQuestionFragment extends AbstractContentElementFra
 
         for (int i = 0; i < pList.size(); i++) {
             final ElementModel answer = pList.get(i);
-            final AttributesModel attributes = answer.getOptions();
+            final OptionsModel attributes = answer.getOptions();
             final int realOrder = attributes.getOrder() - 1;
 
             if (attributes.isFixedOrder() && realOrder != i) {

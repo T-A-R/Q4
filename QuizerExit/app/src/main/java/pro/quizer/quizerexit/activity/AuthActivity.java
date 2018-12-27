@@ -36,6 +36,7 @@ import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.utils.MD5Utils;
 import pro.quizer.quizerexit.utils.SPUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
+import pro.quizer.quizerexit.utils.UiUtils;
 
 public class AuthActivity extends BaseActivity {
 
@@ -55,11 +56,11 @@ public class AuthActivity extends BaseActivity {
         setContentView(R.layout.activity_auth);
 
         final TextView usersCount = findViewById(R.id.users_count);
-        usersCount.setText(String.format(getString(R.string.count_users_on_this_device), (getUsersCount() + "/" + MAX_USERS)));
+        UiUtils.setTextOrHide(usersCount, String.format(getString(R.string.count_users_on_this_device), (getUsersCount() + "/" + MAX_USERS)));
         mPasswordEditText = findViewById(R.id.auth_password_edit_text);
         mLoginSpinner = findViewById(R.id.login_spinner);
         mVersionView = findViewById(R.id.version_view);
-        mVersionView.setText(String.format(getString(R.string.app_version), getAppVersionName()));
+        UiUtils.setTextOrHide(mVersionView, String.format(getString(R.string.app_version), getAppVersionName()));
         mVersionView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,7 +87,7 @@ public class AuthActivity extends BaseActivity {
             if (lastUserId != -1) {
                 for (final UserModel userModel : mSavedUserModels) {
                     if (userModel.user_id == lastUserId) {
-                        mLoginSpinner.setText(userModel.login);
+                        UiUtils.setTextOrHide(mLoginSpinner, userModel.login);
                     }
                 }
             }
@@ -156,6 +157,7 @@ public class AuthActivity extends BaseActivity {
 
                                 if (responseBody == null) {
                                     showToast(getString(R.string.incorrect_server_response));
+                                    onFailure(call, null);
 
                                     return;
                                 }
@@ -186,6 +188,7 @@ public class AuthActivity extends BaseActivity {
                                     }
                                 } else {
                                     showToast(getString(R.string.server_error));
+                                    onFailure(call, null);
                                 }
                             }
                         });

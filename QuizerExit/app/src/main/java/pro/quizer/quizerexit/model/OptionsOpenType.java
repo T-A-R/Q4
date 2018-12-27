@@ -6,12 +6,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.SOURCE)
-@StringDef({AttributeOpenType.DATE,
-        AttributeOpenType.CHECKBOX,
-        AttributeOpenType.TIME,
-        AttributeOpenType.NUMBER,
-        AttributeOpenType.TEXT})
-public @interface AttributeOpenType {
+@StringDef({OptionsOpenType.DATE,
+        OptionsOpenType.CHECKBOX,
+        OptionsOpenType.TIME,
+        OptionsOpenType.NUMBER,
+        OptionsOpenType.TEXT})
+public @interface OptionsOpenType {
 
     String CHECKBOX = "checkbox";
     String DATE = "date";

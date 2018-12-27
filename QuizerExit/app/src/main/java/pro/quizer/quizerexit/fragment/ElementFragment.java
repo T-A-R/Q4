@@ -15,11 +15,12 @@ import android.widget.TextView;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
-import pro.quizer.quizerexit.model.AttributeType;
+import pro.quizer.quizerexit.model.OptionsType;
 import pro.quizer.quizerexit.model.ElementType;
-import pro.quizer.quizerexit.model.config.AttributesModel;
+import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.utils.DateUtils;
+import pro.quizer.quizerexit.utils.UiUtils;
 
 public class ElementFragment extends BaseFragment {
 
@@ -33,7 +34,7 @@ public class ElementFragment extends BaseFragment {
 
     TextView mElementText;
     TextView mElementDescriptionText;
-    private AttributesModel mAttributes;
+    private OptionsModel mAttributes;
     private ElementModel mCurrentElement;
     private FragmentManager mFragmentManger;
     private NavigationCallback mCallback;
@@ -111,8 +112,8 @@ public class ElementFragment extends BaseFragment {
 
         mElementText = pView.findViewById(R.id.element_text);
         mElementDescriptionText = pView.findViewById(R.id.element_description_text);
-        mElementText.setText(mAttributes.getTitle());
-        mElementDescriptionText.setText(mAttributes.getDescription());
+        UiUtils.setTextOrHide(mElementText, mAttributes.getTitle());
+        UiUtils.setTextOrHide(mElementDescriptionText, mAttributes.getDescription());
 
         mCurrentElement.setShowing(true);
         mCurrentElement.setStartTime(mStartTime);
@@ -120,26 +121,29 @@ public class ElementFragment extends BaseFragment {
         switch (mCurrentElement.getType()) {
             case ElementType.QUESTION:
                 switch (mCurrentElement.getOptions().getType()) {
-                    case AttributeType.LIST:
+                    case OptionsType.LIST:
                         mFragmentManger.beginTransaction()
                                 .add(R.id.content_element, QuestionListFragment.newInstance(mCurrentElement, mCallback))
                                 .commit();
 
                         break;
-                    case AttributeType.TABLE:
+                    case OptionsType.TABLE:
                         mFragmentManger.beginTransaction()
                                 .add(R.id.content_element, QuestionTableFragment.newInstance(mCurrentElement, mCallback))
                                 .commit();
 
                         break;
-
-                    case ElementType.BOX:
-
                     default:
                         showToast("Неизвестный тип элемента");
 
                         break;
                 }
+
+                break;
+            case ElementType.INFO:
+                mFragmentManger.beginTransaction()
+                        .add(R.id.content_element, InfoFragment.newInstance(mCurrentElement, mCallback))
+                        .commit();
 
                 break;
             default:

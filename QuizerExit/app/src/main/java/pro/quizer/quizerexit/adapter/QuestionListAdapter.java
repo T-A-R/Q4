@@ -2,7 +2,6 @@ package pro.quizer.quizerexit.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.text.InputType;
 import android.util.Log;
@@ -10,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,10 +20,11 @@ import java.util.List;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.SimpleTextWatcher;
-import pro.quizer.quizerexit.model.AttributeOpenType;
-import pro.quizer.quizerexit.model.config.AttributesModel;
+import pro.quizer.quizerexit.model.OptionsOpenType;
+import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.utils.StringUtils;
+import pro.quizer.quizerexit.utils.UiUtils;
 
 public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAdapter.AnswerListViewHolder> {
 
@@ -66,16 +65,6 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
         pAnswerListViewHolder.onBind(getModel(pPosition), pPosition);
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
-
     class AnswerListViewHolder extends AbstractViewHolder {
 
         TextView mAnswer;
@@ -92,13 +81,13 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
         @SuppressLint("ClickableViewAccessibility")
         @Override
         public void onBind(final ElementModel pAnswer, final int pPosition) {
-            final AttributesModel attributes = pAnswer.getOptions();
+            final OptionsModel attributes = pAnswer.getOptions();
 
             final String openType = attributes.getOpenType();
             final boolean isChecked = pAnswer.isChecked();
             final boolean isEnabled = pAnswer.isEnabled();
 
-            if (!AttributeOpenType.CHECKBOX.equals(openType)) {
+            if (!OptionsOpenType.CHECKBOX.equals(openType)) {
                 final String placeholder = attributes.getPlaceholder();
                 final String textAnswer = pAnswer.getTextAnswer();
 
@@ -111,25 +100,25 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                 final Context context = mEditText.getContext();
 
                 switch (attributes.getOpenType()) {
-                    case AttributeOpenType.TIME:
+                    case OptionsOpenType.TIME:
                         mEditText.setInputType(InputType.TYPE_CLASS_DATETIME);
                         mEditText.setHint(R.string.hint_time);
                         MaskedFormatter timeFormatter = new MaskedFormatter(context.getString(R.string.mask_time));
                         mEditText.addTextChangedListener(new MaskedWatcher(timeFormatter, mEditText));
 
                         break;
-                    case AttributeOpenType.DATE:
+                    case OptionsOpenType.DATE:
                         mEditText.setInputType(InputType.TYPE_CLASS_DATETIME);
                         mEditText.setHint(R.string.hint_date);
                         MaskedFormatter dateFormatter = new MaskedFormatter(context.getString(R.string.mask_date));
                         mEditText.addTextChangedListener(new MaskedWatcher(dateFormatter, mEditText));
 
                         break;
-                    case AttributeOpenType.NUMBER:
+                    case OptionsOpenType.NUMBER:
                         mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
 
                         break;
-                    case AttributeOpenType.TEXT:
+                    case OptionsOpenType.TEXT:
                         mEditText.setInputType(InputType.TYPE_CLASS_TEXT);
 
                         break;
@@ -141,7 +130,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
             }
 
             mEditText.setEnabled(isChecked && isEnabled);
-            mAnswer.setText(attributes.getTitle());
+            UiUtils.setTextOrHide(mAnswer, attributes.getTitle());
             mCheckBox.setChecked(isChecked);
             mCheckBox.setTag(pPosition);
             mCheckBox.setEnabled(isEnabled);

@@ -13,6 +13,7 @@ import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ProjectInfoModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.utils.StringUtils;
+import pro.quizer.quizerexit.utils.UiUtils;
 
 public class ThankYouActivity extends BaseActivity {
 
@@ -25,9 +26,9 @@ public class ThankYouActivity extends BaseActivity {
     }
 
     private void initViews() {
-        TextView mThankYouTextView = findViewById(R.id.thank_you_text_view);
-        ImageView mThankYouImageView = findViewById(R.id.thank_you_image_view);
-        Button mButton = findViewById(R.id.end_btn);
+        final TextView mThankYouTextView = findViewById(R.id.thank_you_text_view);
+        final ImageView mThankYouImageView = findViewById(R.id.thank_you_image_view);
+        final Button mButton = findViewById(R.id.end_btn);
 
         final UserModel userModel = getCurrentUser();
         final ConfigModel configModel = userModel.getConfig();
@@ -38,7 +39,7 @@ public class ThankYouActivity extends BaseActivity {
 
         if (StringUtils.isNotEmpty(thankYouText)) {
             mThankYouTextView.setVisibility(View.VISIBLE);
-            mThankYouTextView.setText(thankYouText);
+            UiUtils.setTextOrHide(mThankYouTextView, thankYouText);
         }
 
         if (StringUtils.isNotEmpty(thankYouImageUrl)) {
@@ -50,8 +51,9 @@ public class ThankYouActivity extends BaseActivity {
         }
 
         mButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 finish();
                 startMainActivity();
             }

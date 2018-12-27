@@ -4,13 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-import pro.quizer.quizerexit.model.AttributeOpenType;
-import pro.quizer.quizerexit.model.AttributeType;
+import pro.quizer.quizerexit.model.OptionsOpenType;
+import pro.quizer.quizerexit.model.OptionsType;
 import pro.quizer.quizerexit.utils.StringUtils;
 
-import static pro.quizer.quizerexit.model.AttributeOpenType.CHECKBOX;
+import static pro.quizer.quizerexit.model.OptionsOpenType.CHECKBOX;
 
-public class AttributesModel implements Serializable {
+public class OptionsModel implements Serializable {
 
     @SerializedName("show_condition")
     private String show_condition;
@@ -63,7 +63,7 @@ public class AttributesModel implements Serializable {
     @SerializedName("jump")
     private int jump;
 
-    @AttributeType
+    @OptionsType
     @SerializedName("type")
     private String type;
 
@@ -76,7 +76,7 @@ public class AttributesModel implements Serializable {
     @SerializedName("jump_condition")
     private String jump_condition;
 
-    @AttributeOpenType
+    @OptionsOpenType
     @SerializedName("open_type")
     private String open_type;
 
@@ -166,7 +166,7 @@ public class AttributesModel implements Serializable {
         return jump_condition;
     }
 
-    @AttributeOpenType
+    @OptionsOpenType
     public String getOpenType() {
         return StringUtils.isEmpty(open_type) ? CHECKBOX : open_type;
     }

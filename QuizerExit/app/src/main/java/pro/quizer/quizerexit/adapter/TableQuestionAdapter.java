@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
-import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -27,12 +26,12 @@ import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.IAdapter;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
-import pro.quizer.quizerexit.model.AttributeOpenType;
-import pro.quizer.quizerexit.model.ElementType;
-import pro.quizer.quizerexit.model.config.AttributesModel;
+import pro.quizer.quizerexit.model.OptionsOpenType;
+import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
+import pro.quizer.quizerexit.utils.UiUtils;
 
 public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderImpl> implements OnItemClickListener, IAdapter {
 
@@ -67,13 +66,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         throw new Exception(mContext.getString(R.string.error_counting_next_element));
     }
 
-    public TableQuestionAdapter(final ElementModel pCurrentElement, Context context, final List<ElementModel> pQuestions, final Runnable pRefreshRunnable) {
+    public TableQuestionAdapter(final ElementModel pCurrentElement, final Context context, final List<ElementModel> pQuestions, final Runnable pRefreshRunnable) {
         mCurrentElement = pCurrentElement;
         setOnItemClickListener(this);
         mRefreshRunnable = pRefreshRunnable;
         mContext = context;
         mLayoutInflater = LayoutInflater.from(context);
-        Resources res = context.getResources();
+        final Resources res = context.getResources();
         mColumnWidth = res.getDimensionPixelSize(R.dimen.column_width);
         mRowHeight = res.getDimensionPixelSize(R.dimen.row_height);
         mHeaderHeight = res.getDimensionPixelSize(R.dimen.column_header_height);
@@ -109,30 +108,30 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     @NonNull
     @Override
-    public ViewHolderImpl onCreateItemViewHolder(@NonNull ViewGroup parent) {
+    public ViewHolderImpl onCreateItemViewHolder(@NonNull final ViewGroup parent) {
         return new TableItemViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item, parent, false));
     }
 
     @NonNull
     @Override
-    public ViewHolderImpl onCreateColumnHeaderViewHolder(@NonNull ViewGroup parent) {
+    public ViewHolderImpl onCreateColumnHeaderViewHolder(@NonNull final ViewGroup parent) {
         return new TableHeaderColumnViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item_header_column, parent, false));
     }
 
     @NonNull
     @Override
-    public ViewHolderImpl onCreateRowHeaderViewHolder(@NonNull ViewGroup parent) {
+    public ViewHolderImpl onCreateRowHeaderViewHolder(@NonNull final ViewGroup parent) {
         return new TableHeaderRowViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item_header_row, parent, false));
     }
 
     @NonNull
     @Override
-    public ViewHolderImpl onCreateLeftTopHeaderViewHolder(@NonNull ViewGroup parent) {
+    public ViewHolderImpl onCreateLeftTopHeaderViewHolder(@NonNull final ViewGroup parent) {
         return new TableHeaderLeftTopViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item_header_left_top, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolderImpl viewHolder, final int row, final int column) {
+    public void onBindViewHolder(@NonNull final ViewHolderImpl viewHolder, final int row, final int column) {
         final TableItemViewHolder vh = (TableItemViewHolder) viewHolder;
 
         final ElementModel currentElement = getElement(row, column);
@@ -143,26 +142,26 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     @Override
-    public void onBindHeaderColumnViewHolder(@NonNull ViewHolderImpl viewHolder, int column) {
-        TableHeaderColumnViewHolder vh = (TableHeaderColumnViewHolder) viewHolder;
+    public void onBindHeaderColumnViewHolder(@NonNull final ViewHolderImpl viewHolder, final int column) {
+        final TableHeaderColumnViewHolder vh = (TableHeaderColumnViewHolder) viewHolder;
         // TODO: 24.12.2018 OR getText()
-        vh.mHeaderColumnTextView.setText(mAnswers.get(column).getOptions().getTitle());
+        UiUtils.setTextOrHide(vh.mHeaderColumnTextView, mAnswers.get(column).getOptions().getTitle());
     }
 
     @Override
-    public void onBindHeaderRowViewHolder(@NonNull ViewHolderImpl viewHolder, int row) {
-        TableHeaderRowViewHolder vh = (TableHeaderRowViewHolder) viewHolder;
-        vh.mHeaderRowTextView.setText(mQuestions.get(row).getOptions().getTitle());
+    public void onBindHeaderRowViewHolder(@NonNull final ViewHolderImpl viewHolder, final int row) {
+        final TableHeaderRowViewHolder vh = (TableHeaderRowViewHolder) viewHolder;
+        UiUtils.setTextOrHide(vh.mHeaderRowTextView, mQuestions.get(row).getOptions().getTitle());
     }
 
     @Override
-    public void onBindLeftTopHeaderViewHolder(@NonNull ViewHolderImpl viewHolder) {
-        TableHeaderLeftTopViewHolder vh = (TableHeaderLeftTopViewHolder) viewHolder;
-        vh.mHeaderLeftTopTextView.setText("Вопрос/ответ");
+    public void onBindLeftTopHeaderViewHolder(@NonNull final ViewHolderImpl viewHolder) {
+        final TableHeaderLeftTopViewHolder vh = (TableHeaderLeftTopViewHolder) viewHolder;
+        UiUtils.setTextOrHide(vh.mHeaderLeftTopTextView, "Вопрос/ответ");
     }
 
     @Override
-    public int getColumnWidth(int column) {
+    public int getColumnWidth(final int column) {
         return mColumnWidth;
     }
 
@@ -172,7 +171,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     @Override
-    public int getRowHeight(int row) {
+    public int getRowHeight(final int row) {
         return mRowHeight;
     }
 
@@ -181,7 +180,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         return mHeaderWidth;
     }
 
-    private ElementModel getElement(int row, int column) {
+    private ElementModel getElement(final int row, final int column) {
         final int questionIndex = row;
         final int answerIndex = column;
 
@@ -195,7 +194,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     @Override
-    public void onItemClick(int row, int column) {
+    public void onItemClick(final int row, final int column) {
         Toast.makeText(mContext, "Строка: " + row + " столбец: " + column, Toast.LENGTH_LONG).show();
         final ElementModel clickedElement = getElement(row, column);
 
@@ -203,13 +202,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             return;
         }
         final boolean isElementChecked = clickedElement.isChecked();
-        final AttributesModel options = clickedElement.getOptions();
+        final OptionsModel options = clickedElement.getOptions();
         final String openType = options.getOpenType();
 
-        if (!AttributeOpenType.CHECKBOX.equals(openType)) {
-            LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mContext);
-            View mView = layoutInflaterAndroid.inflate(R.layout.user_input_dialog_box, null);
-            AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
+        if (!OptionsOpenType.CHECKBOX.equals(openType)) {
+            final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mContext);
+            final View mView = layoutInflaterAndroid.inflate(R.layout.user_input_dialog_box, null);
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
             dialog.setView(mView);
 
             final MaskedEditText mEditText = mView.findViewById(R.id.answer_edit_text);
@@ -224,25 +223,25 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             final Context context = mEditText.getContext();
 
             switch (options.getOpenType()) {
-                case AttributeOpenType.TIME:
+                case OptionsOpenType.TIME:
                     mEditText.setInputType(InputType.TYPE_CLASS_DATETIME);
                     mEditText.setHint(R.string.hint_time);
-                    MaskedFormatter timeFormatter = new MaskedFormatter(context.getString(R.string.mask_time));
+                    final MaskedFormatter timeFormatter = new MaskedFormatter(context.getString(R.string.mask_time));
                     mEditText.addTextChangedListener(new MaskedWatcher(timeFormatter, mEditText));
 
                     break;
-                case AttributeOpenType.DATE:
+                case OptionsOpenType.DATE:
                     mEditText.setInputType(InputType.TYPE_CLASS_DATETIME);
                     mEditText.setHint(R.string.hint_date);
-                    MaskedFormatter dateFormatter = new MaskedFormatter(context.getString(R.string.mask_date));
+                    final MaskedFormatter dateFormatter = new MaskedFormatter(context.getString(R.string.mask_date));
                     mEditText.addTextChangedListener(new MaskedWatcher(dateFormatter, mEditText));
 
                     break;
-                case AttributeOpenType.NUMBER:
+                case OptionsOpenType.NUMBER:
                     mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
 
                     break;
-                case AttributeOpenType.TEXT:
+                case OptionsOpenType.TEXT:
                     mEditText.setInputType(InputType.TYPE_CLASS_TEXT);
 
                     break;
@@ -253,7 +252,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
             dialog.setCancelable(false)
                     .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialogBox, int id) {
+                        public void onClick(final DialogInterface dialogBox, final int id) {
                             final String answer = mEditText.getText().toString();
 
                             if (StringUtils.isEmpty(answer)) {
@@ -273,7 +272,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
                     .setNegativeButton(R.string.cancel,
                             new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialogBox, int id) {
+                                public void onClick(final DialogInterface dialogBox, final int id) {
                                     clickedElement.setTextAnswer(Constants.Strings.EMPTY);
                                     clickedElement.setChecked(false);
                                     dialogBox.cancel();
@@ -282,7 +281,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                                 }
                             });
 
-            AlertDialog alertDialog = dialog.create();
+            final AlertDialog alertDialog = dialog.create();
             alertDialog.show();
         } else {
             clickedElement.setChecked(!isElementChecked);
@@ -292,12 +291,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     @Override
-    public void onRowHeaderClick(int row) {
+    public void onRowHeaderClick(final int row) {
 
     }
 
     @Override
-    public void onColumnHeaderClick(int column) {
+    public void onColumnHeaderClick(final int column) {
 
     }
 
@@ -306,21 +305,11 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
-
     private static class TableItemViewHolder extends ViewHolderImpl {
 
         CheckBox mTableItemCheckBox;
 
-        private TableItemViewHolder(@NonNull View itemView) {
+        private TableItemViewHolder(@NonNull final View itemView) {
             super(itemView);
             mTableItemCheckBox = itemView.findViewById(R.id.table_item_check_box);
         }
@@ -329,7 +318,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private static class TableHeaderColumnViewHolder extends ViewHolderImpl {
         TextView mHeaderColumnTextView;
 
-        private TableHeaderColumnViewHolder(@NonNull View itemView) {
+        private TableHeaderColumnViewHolder(@NonNull final View itemView) {
             super(itemView);
             mHeaderColumnTextView = itemView.findViewById(R.id.table_header_column_text_view);
         }
@@ -338,7 +327,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private static class TableHeaderRowViewHolder extends ViewHolderImpl {
         TextView mHeaderRowTextView;
 
-        TableHeaderRowViewHolder(@NonNull View itemView) {
+        TableHeaderRowViewHolder(@NonNull final View itemView) {
             super(itemView);
             mHeaderRowTextView = itemView.findViewById(R.id.table_header_row_text_view);
         }
@@ -347,7 +336,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private static class TableHeaderLeftTopViewHolder extends ViewHolderImpl {
         TextView mHeaderLeftTopTextView;
 
-        private TableHeaderLeftTopViewHolder(@NonNull View itemView) {
+        private TableHeaderLeftTopViewHolder(@NonNull final View itemView) {
             super(itemView);
 
             mHeaderLeftTopTextView = itemView.findViewById(R.id.table_header_left_top_text_view);

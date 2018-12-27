@@ -1,7 +1,6 @@
 package pro.quizer.quizerexit.utils;
 
 import android.content.Context;
-import android.os.Handler;
 
 public final class GpsUtils {
 
@@ -18,15 +17,13 @@ public final class GpsUtils {
             try {
                 lat = gps.getLatitude();
                 lon = gps.getLongitude();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 if (pIsForceGps) {
                     throw new Exception("Не удалось получить GPS координаты.");
                 }
             }
         } else {
-            if (pIsForceGps) {
-                gps.showSettingsAlert();
-            }
+            gps.showSettingsAlert();
         }
 
         return String.format(GPS_FORMAT, lat, lon);

@@ -9,7 +9,7 @@ import java.util.List;
 import pro.quizer.quizerexit.model.ElementType;
 import pro.quizer.quizerexit.utils.StringUtils;
 
-import static pro.quizer.quizerexit.model.AttributeOpenType.CHECKBOX;
+import static pro.quizer.quizerexit.model.OptionsOpenType.CHECKBOX;
 
 public class ElementModel implements Serializable {
 
@@ -23,7 +23,7 @@ public class ElementModel implements Serializable {
     private String type;
 
     @SerializedName("options")
-    private AttributesModel options;
+    private OptionsModel options;
 
     @SerializedName("elements")
     private List<ElementModel> elements;
@@ -80,7 +80,7 @@ public class ElementModel implements Serializable {
         return elements;
     }
 
-    public AttributesModel getOptions() {
+    public OptionsModel getOptions() {
         return options;
     }
 

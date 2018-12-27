@@ -41,6 +41,7 @@ import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.GpsUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
+import pro.quizer.quizerexit.utils.UiUtils;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CAMERA;
@@ -337,6 +338,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
                 .setTitle(R.string.exit_pool_header)
                 .setMessage(R.string.exit_pool_body)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         finish();
@@ -439,6 +441,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     }
 
     private MediaBrowserCompat.SubscriptionCallback mSubscriptCallback = new MediaBrowserCompat.SubscriptionCallback() {
+
         @Override
         public void onChildrenLoaded(@NonNull String parentId, @NonNull List<MediaBrowserCompat.MediaItem> children) {
             onChildrenLoaded(parentId, children, new Bundle());
@@ -489,6 +492,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     }
 
     private final MediaBrowserCompat.ConnectionCallback mConnCallbacks = new MediaBrowserCompat.ConnectionCallback() {
+
         @Override
         public void onConnected() {
             mIsMediaConnected = true;
@@ -533,19 +537,20 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     }
 
     private final MediaControllerCompat.Callback mCntrlrCallback = new MediaControllerCompat.Callback() {
+
         @Override
         public void onPlaybackStateChanged(PlaybackStateCompat state) {
             MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(ElementActivity.this);
             if (mediaCntrlr == null) {
                 setLocalStateError();
-                mStatus.setText(R.string.text_service_conn_err);
+                UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
                 return;
             }
 
             String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
             if (mediaID == null) {
                 setLocalStateError();
-                mStatus.setText(R.string.text_service_conn_err);
+                UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
                 return;
             }
 
@@ -631,7 +636,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     }
 
     private void setLocalStatePlaying() {
-        mStatus.setText(R.string.text_playing);
+        UiUtils.setTextOrHide(mStatus, getString(R.string.text_playing));
         mStart.setOnClickListener(mIbPlayOCL);
         mStart.setImageResource(R.drawable.ic_pause);
         mStart.setVisibility(View.VISIBLE);
@@ -641,7 +646,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     }
 
     private void setLocalStateRecording() {
-        mStatus.setText(R.string.text_recording);
+        UiUtils.setTextOrHide(mStatus, getString(R.string.text_recording));
         mStart.setOnClickListener(mIbRecordOCL);
         if (AudioService.isPauseRecordingSupported()) {
             mStart.setImageResource(R.drawable.ic_pause);
@@ -654,7 +659,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     }
 
     private void setLocalStatePausedPlaying() {
-        mStatus.setText(R.string.text_paused_play);
+        UiUtils.setTextOrHide(mStatus, getString(R.string.text_paused_play));
         mStart.setOnClickListener(mIbPlayOCL);
         mStart.setImageResource(R.drawable.ic_play);
         mStart.setEnabled(true);
@@ -664,7 +669,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     }
 
     private void setLocalStatePausedRecording() {
-        mStatus.setText(R.string.text_paused_rec);
+        UiUtils.setTextOrHide(mStatus, getString(R.string.text_paused_rec));
         mStart.setOnClickListener(mIbRecordOCL);
         mStart.setImageResource(R.drawable.ic_mic);
         mStart.setEnabled(true);
@@ -674,7 +679,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     }
 
     private void setLocalStateStoppedReady() {
-        mStatus.setText(R.string.text_ready);
+        UiUtils.setTextOrHide(mStatus, getString(R.string.text_ready));
         mStart.setOnClickListener(mIbRecordOCL);
         mStart.setImageResource(R.drawable.ic_mic);
         mStart.setEnabled(true);
@@ -684,7 +689,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     }
 
     private void setLocalStateError() {
-        mStatus.setText(R.string.text_error);
+        UiUtils.setTextOrHide(mStatus, getString(R.string.text_error));
         mStart.setOnClickListener(mIbRecordOCL);
         mStart.setImageResource(R.drawable.ic_mic);
         mStart.setEnabled(true);
@@ -697,7 +702,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
 
         if (mediaCntrlr == null) {
-            mStatus.setText(R.string.text_service_conn_err);
+            UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
 
             return;
         }
@@ -705,7 +710,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
 
         String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
         if (mediaID == null) {
-            mStatus.setText(R.string.text_service_conn_err);
+            UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
             return;
         }
 
@@ -755,22 +760,23 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
                 }
                 break;
             default:
-                mStatus.setText(R.string.text_service_conn_err);
+                UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
         }
     }
 
     // save
     private final View.OnClickListener mIbRecordOCL = new View.OnClickListener() {
+
         @Override
         public void onClick(View v) {
             MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(ElementActivity.this);
             if (mediaCntrlr == null) {
-                mStatus.setText(R.string.text_service_conn_err);
+                UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
                 return;
             }
             String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
             if (mediaID == null) {
-                mStatus.setText(R.string.text_service_conn_err);
+                UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
                 return;
             }
             int pbState = mediaCntrlr.getPlaybackState().getState();
@@ -814,25 +820,25 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
                     }
                     break;
                 default:
-                    mStatus.setText(R.string.text_service_conn_err);
+                    UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
                     break;
             }
         }
     };
 
-
     // need sava
     private final View.OnClickListener mIbPlayOCL = new View.OnClickListener() {
+
         @Override
         public void onClick(View v) {
             MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(ElementActivity.this);
             if (mediaCntrlr == null) {
-                mStatus.setText(R.string.text_service_conn_err);
+                UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
                 return;
             }
             String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
             if (mediaID == null) {
-                mStatus.setText(R.string.text_service_conn_err);
+                UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
                 return;
             }
             int pbState = mediaCntrlr.getPlaybackState().getState();
@@ -860,7 +866,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
                     break;
                 case AudioService.SOURCE_MIC:
                 default:
-                    mStatus.setText(R.string.text_service_conn_err);
+                    UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
                     break;
             }
         }
@@ -868,16 +874,17 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
 
     // save
     private final View.OnClickListener mStopOCL = new View.OnClickListener() {
+
         @Override
         public void onClick(View v) {
             MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(ElementActivity.this);
             if (mediaCntrlr == null) {
-                mStatus.setText(R.string.text_service_conn_err);
+                UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
                 return;
             }
             String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
             if (mediaID == null) {
-                mStatus.setText(R.string.text_service_conn_err);
+                UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
                 return;
             }
             int pbState = mediaCntrlr.getPlaybackState().getState();

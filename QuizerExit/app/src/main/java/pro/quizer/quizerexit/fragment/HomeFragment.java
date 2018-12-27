@@ -16,6 +16,7 @@ import pro.quizer.quizerexit.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ProjectInfoModel;
 import pro.quizer.quizerexit.model.database.UserModel;
+import pro.quizer.quizerexit.utils.UiUtils;
 
 public class HomeFragment extends BaseFragment implements ICallback {
 
@@ -58,12 +59,13 @@ public class HomeFragment extends BaseFragment implements ICallback {
 //                "user_project_id: " + userModel.user_project_id + "\n" +
 //                "role_id: " + userModel.role_id);
 
-        configName.setText(projectInfo.getName());
-        configAgreement.setText(projectInfo.getAgreement());
+        UiUtils.setTextOrHide(configName, projectInfo.getName());
+        UiUtils.setTextOrHide(configAgreement, projectInfo.getAgreement());
 
         // TODO: 12.12.2018 remove stubLoadQuiz
         final Button stubLoadQuiz = pView.findViewById(R.id.stub_load);
         stubLoadQuiz.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 new SendQuestionnairesByUserModelExecutable(getBaseActivity(), userModel, HomeFragment.this).execute();

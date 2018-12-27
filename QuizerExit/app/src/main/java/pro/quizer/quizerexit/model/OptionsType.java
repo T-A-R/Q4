@@ -6,13 +6,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.SOURCE)
-@StringDef({AttributeType.TEXT,
-        AttributeType.AUDIO,
-        AttributeType.LIST,
-        AttributeType.PHOTO,
-        AttributeType.VIDEO,
-        AttributeType.SLIDER})
-public @interface AttributeType {
+@StringDef({OptionsType.TEXT,
+        OptionsType.AUDIO,
+        OptionsType.LIST,
+        OptionsType.PHOTO,
+        OptionsType.VIDEO,
+        OptionsType.SLIDER})
+public @interface OptionsType {
 
     String LIST = "list";
     String TABLE = "table";

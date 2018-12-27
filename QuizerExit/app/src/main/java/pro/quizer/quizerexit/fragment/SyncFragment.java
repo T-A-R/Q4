@@ -75,7 +75,7 @@ public class SyncFragment extends BaseFragment implements ICallback {
         mUserModel = getBaseActivity().getCurrentUser();
 
         mUserNameTitle = pView.findViewById(R.id.user_name_title);
-        mUserNameTitle.setText(mUserModel.login);
+        UiUtils.setTextOrHide(mUserNameTitle, mUserModel.login);
 
         mSendDataButton = pView.findViewById(R.id.send_q);
         mSendAudioButton = pView.findViewById(R.id.send_audio);
@@ -118,13 +118,11 @@ public class SyncFragment extends BaseFragment implements ICallback {
 
             @Override
             public void run() {
-                mQSendedFromThisDeviceView.setText(String.format(mQSendedFromThisDeviceViewString, mQSendedFromThisDeviceCount));
-                mQSendedInSessionView.setText(String.format(mQSendedInSessionViewString, mQSendedInSessionCount));
-                mQUnsendedView.setText(String.format(mQUnsendedViewString, mQUnsendedCount));
-
-                mAUnsendedView.setText(String.format(mAUnsendedViewString, mAUnsendedCount));
-
-                mPUnsendedView.setText(String.format(mPUnsendedViewString, mPUnsendedCount));
+                UiUtils.setTextOrHide(mQSendedFromThisDeviceView, (String.format(mQSendedFromThisDeviceViewString, mQSendedFromThisDeviceCount)));
+                UiUtils.setTextOrHide(mQSendedInSessionView, (String.format(mQSendedInSessionViewString, mQSendedInSessionCount)));
+                UiUtils.setTextOrHide(mQUnsendedView, (String.format(mQUnsendedViewString, mQUnsendedCount)));
+                UiUtils.setTextOrHide(mAUnsendedView, (String.format(mAUnsendedViewString, mAUnsendedCount)));
+                UiUtils.setTextOrHide(mPUnsendedView, (String.format(mPUnsendedViewString, mPUnsendedCount)));
 
                 UiUtils.setEnabled(getContext(), mSendDataButton, mQUnsendedCount > 0);
                 mSendDataButton.setOnClickListener(new View.OnClickListener() {

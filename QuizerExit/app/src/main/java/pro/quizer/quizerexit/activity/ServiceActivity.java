@@ -18,6 +18,7 @@ import pro.quizer.quizerexit.executable.SendAllQuestionnairesExecutable;
 import pro.quizer.quizerexit.executable.ServiceInfoExecutable;
 import pro.quizer.quizerexit.executable.files.CleanUpFilesExecutable;
 import pro.quizer.quizerexit.model.view.ServiceViewModel;
+import pro.quizer.quizerexit.utils.UiUtils;
 import pro.quizer.quizerexit.view.Toolbar;
 
 import static com.activeandroid.Cache.getContext;
@@ -91,10 +92,10 @@ public class ServiceActivity extends BaseActivity implements ICallback {
 
             @Override
             public void run() {
-                mUsersCount.setText(String.format(mUsersCountString, usersCount));
-                mUnsendedQuestionaires.setText(String.format(mUnsendedQuestionairesString, notSentQuestionnairesCount));
-                mUnsendedAudio.setText(String.format(mUnsendedAudioString, notSentAudioCount));
-                mUnsendePhoto.setText(String.format(mUnsendedPhotoString, notSentPhotoCount));
+                UiUtils.setTextOrHide(mUsersCount, String.format(mUsersCountString, usersCount));
+                UiUtils.setTextOrHide(mUnsendedQuestionaires, String.format(mUnsendedQuestionairesString, notSentQuestionnairesCount));
+                UiUtils.setTextOrHide(mUnsendedAudio, String.format(mUnsendedAudioString, notSentAudioCount));
+                UiUtils.setTextOrHide(mUnsendePhoto, String.format(mUnsendedPhotoString, notSentPhotoCount));
 
                 mSendDataButton.setVisibility(notSentQuestionnairesCount > 0 ? View.VISIBLE : View.GONE);
                 mSendAudioButton.setVisibility(notSentAudioCount > 0 ? View.VISIBLE : View.GONE);

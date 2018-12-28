@@ -52,6 +52,11 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     @Override
+    public void onPointerCaptureChanged(final boolean hasCapture) {
+
+    }
+
+    @Override
     protected void onDestroy() {
         Log.d("ActivityLifeCycle", this + " - > onDestroy()");
 
@@ -343,7 +348,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                 .setMessage(R.string.exit_app_body)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(final DialogInterface dialog, final int which) {
                         finish();
                     }
                 })
@@ -357,7 +362,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                 .setMessage(R.string.change_user_body)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(final DialogInterface dialog, final int which) {
                         finish();
                         startAuthActivity();
                     }

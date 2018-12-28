@@ -1,6 +1,7 @@
 package pro.quizer.quizerexit.activity;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -12,8 +13,11 @@ import android.widget.TextView;
 import com.activeandroid.query.Select;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.krishna.fileloader.FileLoader;
+import com.krishna.fileloader.listener.MultiFileDownloadListener;
 import com.reginald.editspinner.EditSpinner;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -33,6 +37,7 @@ import pro.quizer.quizerexit.model.request.AuthRequestModel;
 import pro.quizer.quizerexit.model.request.ConfigRequestModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
+import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.MD5Utils;
 import pro.quizer.quizerexit.utils.SPUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
@@ -63,7 +68,7 @@ public class AuthActivity extends BaseActivity {
         UiUtils.setTextOrHide(mVersionView, String.format(getString(R.string.app_version), getAppVersionName()));
         mVersionView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 mVersionTapCount++;
 
                 if (mVersionTapCount == MAX_VERSION_TAP_COUNT) {
@@ -78,7 +83,7 @@ public class AuthActivity extends BaseActivity {
         mSavedUserModels = getSavedUserModels();
         mSavedUsers = getSavedUserLogins();
 
-        ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mSavedUsers);
+        final ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mSavedUsers);
         mLoginSpinner.setAdapter(adapter);
 
         if (mSavedUserModels != null && !mSavedUserModels.isEmpty()) {
@@ -167,7 +172,7 @@ public class AuthActivity extends BaseActivity {
 
                                 try {
                                     authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
-                                } catch (Exception pE) {
+                                } catch (final Exception pE) {
                                     // empty
                                 }
 
@@ -228,7 +233,7 @@ public class AuthActivity extends BaseActivity {
     private List<String> getSavedUserLogins() {
         final List<String> users = new ArrayList<>();
 
-        for (UserModel model : mSavedUserModels) {
+        for (final UserModel model : mSavedUserModels) {
             users.add(model.login);
         }
 
@@ -285,20 +290,13 @@ public class AuthActivity extends BaseActivity {
 
                                  try {
                                      configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
-                                 } catch (Exception pE) {
+                                 } catch (final Exception pE) {
                                      // empty
                                  }
 
                                  if (configResponseModel != null) {
                                      if (configResponseModel.getResult() != 0) {
-                                         try {
-                                             saveUser(pLogin, pPassword, pModel, configResponseModel);
-                                         } catch (Exception e) {
-                                             showToast(getString(R.string.server_error) + "\n" + e.toString());
-                                         }
-
-                                         // TODO: 12/28/18 download jpg,mp3,mp4
-                                         onLoggedIn(pLogin, pPassword, pModel.getConfigId(), pModel.getUserId(), pModel.getRoleId(), pModel.getUserProjectId());
+                                         downloadFiles(configResponseModel, pModel, pLogin, pPassword, pModel.getConfigId(), pModel.getUserId(), pModel.getRoleId(), pModel.getUserProjectId());
                                      } else {
                                          showToast(configResponseModel.getError());
                                      }
@@ -309,5 +307,65 @@ public class AuthActivity extends BaseActivity {
                          }
 
                 );
+    }
+
+    private void saveUserAndLogin(final ConfigResponseModel pConfigResponseModel,
+                                  final AuthResponseModel pAuthResponseModel,
+                                  final String pLogin,
+                                  final String pPassword,
+                                  final String pConfigId,
+                                  final int pUserId,
+                                  final int pRoleId,
+                                  final int pUserProjectId) {
+        try {
+            saveUser(pLogin, pPassword, pAuthResponseModel, pConfigResponseModel);
+        } catch (final Exception e) {
+            showToast(getString(R.string.server_error) + "\n" + e);
+        }
+
+        onLoggedIn(pLogin, pPassword, pConfigId, pUserId, pRoleId, pUserProjectId);
+    }
+
+    private void downloadFiles(final ConfigResponseModel pConfigResponseModel,
+                               final AuthResponseModel pAuthResponseModel,
+                               final String pLogin,
+                               final String pPassword,
+                               final String pConfigId,
+                               final int pUserId,
+                               final int pRoleId,
+                               final int pUserProjectId) {
+        final String[] fileUris = pConfigResponseModel.getConfig().getMediaFiles();
+
+        if (fileUris == null || fileUris.length == 0) {
+            saveUserAndLogin(pConfigResponseModel, pAuthResponseModel, pLogin, pPassword, pConfigId, pUserId, pRoleId, pUserProjectId);
+        } else {
+            showProgressBar();
+
+            final String[] uris = {"https://images.pexels.com/photos/45170/kittens-cat-cat-puppy-rush-45170.jpeg",
+                    "https://upload.wikimedia.org/wikipedia/commons/3/3c/Enrique_Simonet_-_Marina_veneciana_6MB.jpg",
+                    "https://d15shllkswkct0.cloudfront.net/wp-content/blogs.dir/1/files/2017/01/Google-acquires-Fabric.png"};
+
+            FileLoader.multiFileDownload(this)
+                    .fromDirectory(Environment.DIRECTORY_PICTURES, FileLoader.DIR_EXTERNAL_PUBLIC)
+                    .progressListener(new MultiFileDownloadListener() {
+                        @Override
+                        public void onProgress(final File downloadedFile, final int progress, final int totalFiles) {
+                            if (progress == 100) {
+                                hideProgressBar();
+
+                                saveUserAndLogin(pConfigResponseModel, pAuthResponseModel, pLogin, pPassword, pConfigId, pUserId, pRoleId, pUserProjectId);
+                            }
+
+                            showToast("Прогресс: " + progress + "%");
+                        }
+
+                        @Override
+                        public void onError(final Exception e, final int progress) {
+                            super.onError(e, progress);
+                            showToast("Ошибка при загрузке медиа-файлов");
+                            hideProgressBar();
+                        }
+                    }).loadMultiple(uris);
+        }
     }
 }

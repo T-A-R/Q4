@@ -1,12 +1,10 @@
 package pro.quizer.quizerexit;
 
-import android.os.Parcelable;
-
 import java.io.Serializable;
 
 import pro.quizer.quizerexit.model.config.ElementModel;
 
-public interface NavigationCallback extends Serializable, Parcelable {
+public interface NavigationCallback extends Serializable {
 
     void onForward(final int pNextRelativeId);
 

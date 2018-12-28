@@ -325,7 +325,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         UiUtils.setTextOrHide(description, pOptionsModel.getDescription());
 
         dialog.setCancelable(false)
-                .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 
                     public void onClick(final DialogInterface dialogBox, final int id) {
                         dialogBox.cancel();

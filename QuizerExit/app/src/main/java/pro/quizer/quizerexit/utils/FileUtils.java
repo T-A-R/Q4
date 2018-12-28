@@ -25,6 +25,7 @@ public final class FileUtils {
     public static final String FOLDER_DIVIDER = "/";
     private static final String FOLDER_PHOTOS = "photos";
     private static final String FOLDER_AUDIO = "audios";
+    private static final String MEDIA_FILES = "media_files";
     private static final String CACHE = "cache";
 
     public static void createTxtFile(final String pFilePath, final String pFileName, final CharSequence pBody) throws IOException {
@@ -66,6 +67,21 @@ public final class FileUtils {
             path = Constants.Strings.EMPTY;
         } else {
             path = dataStoragePath + FileUtils.FOLDER_AUDIO;
+        }
+
+        createFolderIfNotExist(path);
+
+        return path;
+    }
+
+    public static String getMediaFillesStoragePath(final Context pContext) {
+        final String dataStoragePath = getDataStoragePath(pContext);
+        final String path;
+
+        if (StringUtils.isEmpty(dataStoragePath)) {
+            path = Constants.Strings.EMPTY;
+        } else {
+            path = dataStoragePath + FileUtils.MEDIA_FILES;
         }
 
         createFolderIfNotExist(path);

@@ -16,12 +16,12 @@
             android:layout_height="wrap_content"
             android:visibility="gone"/>
 
-        <com.halilibo.bettervideoplayer.BetterVideoPlayer
-            android:id="@+id/bvp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            bvp:bvp_captionSize="20sp"
-            bvp:bvp_captionColor="@android:color/holo_blue_light"/>
+        <!--<com.halilibo.bettervideoplayer.BetterVideoPlayer-->
+            <!--android:id="@+id/bvp"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--bvp:bvp_captionSize="20sp"-->
+            <!--bvp:bvp_captionColor="@android:color/holo_blue_light"/>-->
 
 
     </LinearLayout>

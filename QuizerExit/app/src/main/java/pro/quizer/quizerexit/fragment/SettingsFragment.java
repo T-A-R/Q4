@@ -7,12 +7,20 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.executable.ICallback;
-import pro.quizer.quizerexit.model.view.SyncViewModel;
+import pro.quizer.quizerexit.executable.SettingViewModelExecutable;
+import pro.quizer.quizerexit.model.view.SettingsViewModel;
+import pro.quizer.quizerexit.utils.UiUtils;
 
 public class SettingsFragment extends BaseFragment implements ICallback {
+
+    private TextView mConfigDateView;
+    private TextView mConfigIdView;
+    private String mConfigDateString;
+    private String mConfigIdString;
 
     public static Fragment newInstance() {
         final SettingsFragment fragment = new SettingsFragment();
@@ -35,24 +43,27 @@ public class SettingsFragment extends BaseFragment implements ICallback {
         initViews(view);
         initStrings();
 
-//        updateData(new SyncInfoExecutable().execute());
+        updateData(new SettingViewModelExecutable(getContext()).execute());
     }
 
 
     private void initViews(final View pView) {
-
+        mConfigDateView = pView.findViewById(R.id.settings_date);
+        mConfigIdView = pView.findViewById(R.id.settings_id);
     }
 
     private void initStrings() {
-
+        mConfigDateString = getString(R.string.settings_date_string);
+        mConfigIdString = getString(R.string.settings_id_string);
     }
 
-    private void updateData(final SyncViewModel pSyncViewModel) {
+    private void updateData(final SettingsViewModel pSettingsViewModel) {
         getBaseActivity().runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
-
+                UiUtils.setTextOrHide(mConfigDateView, String.format(mConfigDateString, pSettingsViewModel.getConfigDate()));
+                UiUtils.setTextOrHide(mConfigIdView, String.format(mConfigIdString, pSettingsViewModel.getConfigId()));
             }
         });
     }
@@ -66,13 +77,13 @@ public class SettingsFragment extends BaseFragment implements ICallback {
     public void onSuccess() {
         hideProgressBar();
 
-//        updateData(new SyncInfoExecutable().execute());
+        updateData(new SettingViewModelExecutable(getContext()).execute());
     }
 
     @Override
-    public void onError(Exception pException) {
+    public void onError(final Exception pException) {
         hideProgressBar();
 
-//        updateData(new SyncInfoExecutable().execute());
+        updateData(new SettingViewModelExecutable(getContext()).execute());
     }
 }

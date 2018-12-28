@@ -49,6 +49,7 @@
     <string name="exit">Выход</string>
     <string name="cancel">Отмена</string>
     <string name="apply">Принять</string>
+    <string name="ok">ОК</string>
     <string name="settings">Настройки</string>
     <string name="sync">Синхронизация</string>
     <string name="start">Начать</string>

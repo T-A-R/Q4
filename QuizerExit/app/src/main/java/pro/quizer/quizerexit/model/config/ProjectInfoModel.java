@@ -28,6 +28,9 @@ public class ProjectInfoModel implements Serializable {
     @SerializedName("elements")
     private List<ElementModel> elements;
 
+    @SerializedName("media_files")
+    private List<String> media_files;
+
     @SerializedName("reserve_channel")
     private ReserveChannelModel reserve_channel;
 
@@ -51,7 +54,6 @@ public class ProjectInfoModel implements Serializable {
         return elements;
     }
 
-
     public String getThankYouText() {
         return thank_you_text;
     }
@@ -62,5 +64,9 @@ public class ProjectInfoModel implements Serializable {
 
     public ReserveChannelModel getReserveChannel() {
         return reserve_channel;
+    }
+
+    public List<String> getMediaFiles() {
+        return media_files;
     }
 }

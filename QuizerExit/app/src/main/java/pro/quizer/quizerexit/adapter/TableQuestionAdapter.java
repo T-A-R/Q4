@@ -27,8 +27,8 @@ import pro.quizer.quizerexit.IAdapter;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.OptionsOpenType;
-import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
+import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
@@ -84,12 +84,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mQuestions.add(0, null);
         }
 
-        for (final ElementModel question : mQuestions)
+        for (final ElementModel question : mQuestions) {
             if (question != null) {
-            final List<ElementModel> answers = question.getElements();
+                final List<ElementModel> answers = question.getElements();
 
-            if (answers.get(0) != null) {
-                answers.add(0, null);
+                if (answers.get(0) != null) {
+                    answers.add(0, null);
+                }
             }
         }
 
@@ -152,6 +153,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     public void onBindHeaderRowViewHolder(@NonNull final ViewHolderImpl viewHolder, final int row) {
         final TableHeaderRowViewHolder vh = (TableHeaderRowViewHolder) viewHolder;
         UiUtils.setTextOrHide(vh.mHeaderRowTextView, mQuestions.get(row).getOptions().getTitle());
+
     }
 
     @Override
@@ -207,7 +209,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         if (!OptionsOpenType.CHECKBOX.equals(openType)) {
             final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mContext);
-            final View mView = layoutInflaterAndroid.inflate(R.layout.user_input_dialog_box, null);
+            final View mView = layoutInflaterAndroid.inflate(R.layout.dialog_user_input_box, null);
             final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
             dialog.setView(mView);
 
@@ -249,9 +251,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                     // неизвестный тип open_type
             }
 
-
             dialog.setCancelable(false)
                     .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
+
                         public void onClick(final DialogInterface dialogBox, final int id) {
                             final String answer = mEditText.getText().toString();
 
@@ -272,6 +274,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
                     .setNegativeButton(R.string.cancel,
                             new DialogInterface.OnClickListener() {
+
                                 public void onClick(final DialogInterface dialogBox, final int id) {
                                     clickedElement.setTextAnswer(Constants.Strings.EMPTY);
                                     clickedElement.setChecked(false);
@@ -292,17 +295,45 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     @Override
     public void onRowHeaderClick(final int row) {
+        Toast.makeText(mContext, "row " + row, Toast.LENGTH_LONG).show();
 
+        showAdditionalInfoDialog(mQuestions.get(row).getOptions());
     }
 
     @Override
     public void onColumnHeaderClick(final int column) {
+        Toast.makeText(mContext, "column " + column, Toast.LENGTH_LONG).show();
 
+        showAdditionalInfoDialog(mAnswers.get(column).getOptions());
     }
 
     @Override
     public void onLeftTopHeaderClick() {
 
+    }
+
+    private void showAdditionalInfoDialog(final OptionsModel pOptionsModel) {
+        final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mContext);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.dialog_table_question_additional_info, null);
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
+        dialog.setView(mView);
+
+        final TextView title = mView.findViewById(R.id.title);
+        final TextView description = mView.findViewById(R.id.description);
+
+        UiUtils.setTextOrHide(title, pOptionsModel.getTitle());
+        UiUtils.setTextOrHide(description, pOptionsModel.getDescription());
+
+        dialog.setCancelable(false)
+                .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
+
+                    public void onClick(final DialogInterface dialogBox, final int id) {
+                        dialogBox.cancel();
+                    }
+                });
+
+        final AlertDialog alertDialog = dialog.create();
+        alertDialog.show();
     }
 
     private static class TableItemViewHolder extends ViewHolderImpl {
@@ -316,6 +347,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     private static class TableHeaderColumnViewHolder extends ViewHolderImpl {
+
         TextView mHeaderColumnTextView;
 
         private TableHeaderColumnViewHolder(@NonNull final View itemView) {
@@ -325,6 +357,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     private static class TableHeaderRowViewHolder extends ViewHolderImpl {
+
         TextView mHeaderRowTextView;
 
         TableHeaderRowViewHolder(@NonNull final View itemView) {
@@ -334,6 +367,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     private static class TableHeaderLeftTopViewHolder extends ViewHolderImpl {
+
         TextView mHeaderLeftTopTextView;
 
         private TableHeaderLeftTopViewHolder(@NonNull final View itemView) {

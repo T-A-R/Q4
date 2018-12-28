@@ -297,6 +297,7 @@ public class AuthActivity extends BaseActivity {
                                              showToast(getString(R.string.server_error) + "\n" + e.toString());
                                          }
 
+                                         // TODO: 12/28/18 download jpg,mp3,mp4
                                          onLoggedIn(pLogin, pPassword, pModel.getConfigId(), pModel.getUserId(), pModel.getRoleId(), pModel.getUserProjectId());
                                      } else {
                                          showToast(configResponseModel.getError());

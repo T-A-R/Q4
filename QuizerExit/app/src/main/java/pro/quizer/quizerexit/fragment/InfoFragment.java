@@ -13,8 +13,8 @@ import android.view.ViewGroup;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.adapter.InfoElementAdapter;
-import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
+import pro.quizer.quizerexit.model.config.OptionsModel;
 
 public class InfoFragment extends BaseFragment {
 
@@ -66,6 +66,10 @@ public class InfoFragment extends BaseFragment {
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setHasFixedSize(true);
+//        mRecyclerView.setItemViewCacheSize(100);
+//        mRecyclerView.setDrawingCacheEnabled(true);
+//        mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+//        mRecyclerView.getRecycledViewPool().setMaxRecycledViews(0, 100);
 
         mAdapter = new InfoElementAdapter(getContext(), mCurrentElement.getElements());
         mRecyclerView.setAdapter(mAdapter);

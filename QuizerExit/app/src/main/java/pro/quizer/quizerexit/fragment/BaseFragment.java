@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -28,7 +30,7 @@ import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.utils.FileUtils;
 
-public class BaseFragment extends HiddenCameraFragment implements Serializable {
+public class BaseFragment extends HiddenCameraFragment implements Serializable, Parcelable {
 
     private BaseActivity mBaseActivity;
 
@@ -260,5 +262,15 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable {
                 takePicture();
             }
         }, 1000);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }

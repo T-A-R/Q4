@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -41,7 +43,7 @@ import static pro.quizer.quizerexit.utils.FileUtils.JPEG;
 import static pro.quizer.quizerexit.utils.FileUtils.MP3;
 
 @SuppressLint("Registered")
-public class BaseActivity extends AppCompatActivity implements Serializable {
+public class BaseActivity extends AppCompatActivity implements Serializable, Parcelable {
 
     @SuppressLint("MissingPermission")
     @Override
@@ -301,13 +303,13 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     public void showProgressBar() {
-//        runOnUiThread(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                getProgressBar().setVisibility(View.VISIBLE);
-//            }
-//        });
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                getProgressBar().setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private DrawerLayout getDrawerLayout() {
@@ -375,5 +377,15 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         if (!getSupportFragmentManager().popBackStackImmediate()) {
             showExitAlertDialog();
         }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }

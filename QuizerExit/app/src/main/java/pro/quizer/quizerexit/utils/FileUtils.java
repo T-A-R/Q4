@@ -103,8 +103,18 @@ public final class FileUtils {
         final File file = pContext.getExternalCacheDir();
 
         if (file != null) {
-            final String path = pContext.getExternalCacheDir().getAbsolutePath();
+            final String path = file.getAbsolutePath();
             return path.replace(CACHE, Constants.Strings.EMPTY);
+        } else {
+            return Constants.Strings.EMPTY;
+        }
+    }
+
+    public static String getFilesStoragePath(final Context pContext) {
+        final File file = pContext.getExternalFilesDir(null);
+
+        if (file != null) {
+            return file.getAbsolutePath();
         } else {
             return Constants.Strings.EMPTY;
         }

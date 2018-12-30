@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical">
+    xmlns:bvp="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
+    android:orientation="vertical">
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,18 +17,41 @@
             android:id="@+id/info_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
-        <!--<com.halilibo.bettervideoplayer.BetterVideoPlayer-->
-            <!--android:id="@+id/bvp"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--bvp:bvp_captionSize="20sp"-->
-            <!--bvp:bvp_captionColor="@android:color/holo_blue_light"/>-->
+        <ImageView
+            android:id="@+id/info_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
+        <com.halilibo.bettervideoplayer.BetterVideoPlayer
+            android:id="@+id/info_audio_player"
+            android:layout_width="wrap_content"
+            android:layout_height="96dp"
+            android:visibility="gone"
+            bvp:bvp_captionColor="@android:color/holo_blue_light"
+            bvp:bvp_captionSize="16sp"
+            bvp:bvp_loadingStyle="RotatingPlane"
+            bvp:bvp_showBottomProgressBar="true"
+            bvp:bvp_showTotalDuration="false"
+            bvp:bvp_title="Аудио файл" />
+
+        <com.halilibo.bettervideoplayer.BetterVideoPlayer
+            android:id="@+id/info_video_player"
+            android:layout_width="wrap_content"
+            android:layout_height="240dp"
+            android:visibility="gone"
+            bvp:bvp_captionColor="@android:color/holo_blue_light"
+            bvp:bvp_captionSize="16sp"
+            bvp:bvp_hideControlsOnPlay="true"
+            bvp:bvp_loadingStyle="RotatingPlane"
+            bvp:bvp_showBottomProgressBar="true"
+            bvp:bvp_showTotalDuration="false"
+            bvp:bvp_title="Видео файл" />
 
     </LinearLayout>
 
-    <include layout="@layout/view_divider"/>
+    <include layout="@layout/view_divider" />
 
 </LinearLayout>

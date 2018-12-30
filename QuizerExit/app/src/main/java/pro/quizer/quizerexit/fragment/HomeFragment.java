@@ -39,6 +39,10 @@ public class HomeFragment extends BaseFragment implements ICallback {
         super.onViewCreated(view, savedInstanceState);
 
         initView(view);
+
+        final UserModel userModel = getBaseActivity().getUserByUserId(getBaseActivity().getCurrentUserId());
+
+        new SendQuestionnairesByUserModelExecutable(getBaseActivity(), userModel, this).execute();
     }
 
     private void initView(final View pView) {
@@ -64,10 +68,11 @@ public class HomeFragment extends BaseFragment implements ICallback {
 
         // TODO: 12.12.2018 remove stubLoadQuiz
         final Button stubLoadQuiz = pView.findViewById(R.id.stub_load);
+        stubLoadQuiz.setVisibility(View.GONE);
         stubLoadQuiz.setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 new SendQuestionnairesByUserModelExecutable(getBaseActivity(), userModel, HomeFragment.this).execute();
             }
         });
@@ -96,7 +101,7 @@ public class HomeFragment extends BaseFragment implements ICallback {
     }
 
     @Override
-    public void onError(Exception pException) {
+    public void onError(final Exception pException) {
         hideProgressBar();
 
         showToast(pException.toString());

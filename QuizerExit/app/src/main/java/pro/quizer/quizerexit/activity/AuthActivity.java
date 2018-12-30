@@ -1,7 +1,6 @@
 package pro.quizer.quizerexit.activity;
 
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -37,7 +36,6 @@ import pro.quizer.quizerexit.model.request.AuthRequestModel;
 import pro.quizer.quizerexit.model.request.ConfigRequestModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
-import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.MD5Utils;
 import pro.quizer.quizerexit.utils.SPUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
@@ -341,31 +339,27 @@ public class AuthActivity extends BaseActivity {
         } else {
             showProgressBar();
 
-            final String[] uris = {"https://images.pexels.com/photos/45170/kittens-cat-cat-puppy-rush-45170.jpeg",
-                    "https://upload.wikimedia.org/wikipedia/commons/3/3c/Enrique_Simonet_-_Marina_veneciana_6MB.jpg",
-                    "https://d15shllkswkct0.cloudfront.net/wp-content/blogs.dir/1/files/2017/01/Google-acquires-Fabric.png"};
-
             FileLoader.multiFileDownload(this)
-                    .fromDirectory(Environment.DIRECTORY_PICTURES, FileLoader.DIR_EXTERNAL_PUBLIC)
+                    .fromDirectory(Constants.Strings.EMPTY, FileLoader.DIR_EXTERNAL_PRIVATE)
                     .progressListener(new MultiFileDownloadListener() {
                         @Override
                         public void onProgress(final File downloadedFile, final int progress, final int totalFiles) {
-                            if (progress == 100) {
+                            if (progress == totalFiles) {
                                 hideProgressBar();
 
                                 saveUserAndLogin(pConfigResponseModel, pAuthResponseModel, pLogin, pPassword, pConfigId, pUserId, pRoleId, pUserProjectId);
                             }
 
-                            showToast("Прогресс: " + progress + "%");
+                            showToast(String.format(getString(R.string.downloaded_count_files), String.valueOf(progress)));
                         }
 
                         @Override
                         public void onError(final Exception e, final int progress) {
                             super.onError(e, progress);
-                            showToast("Ошибка при загрузке медиа-файлов");
+                            showToast(getString(R.string.downloading_files_error));
                             hideProgressBar();
                         }
-                    }).loadMultiple(uris);
+                    }).loadMultiple(fileUris);
         }
     }
 }

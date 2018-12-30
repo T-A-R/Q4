@@ -105,4 +105,6 @@
     <string name="mask_time">##:##:##</string>
     <string name="mask_date">####.##.##</string>
     <string name="fill_input">Заполните текстовое поле в выбранных вариантах ответа.</string>
+    <string name="downloaded_count_files">Скачано %1$s файл(а)</string>
+    <string name="downloading_files_error">Ошибка при загрузке медиа-файлов</string>
 </resources>

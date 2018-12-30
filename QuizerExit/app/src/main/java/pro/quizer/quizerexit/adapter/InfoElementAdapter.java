@@ -1,21 +1,33 @@
 package pro.quizer.quizerexit.adapter;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.halilibo.bettervideoplayer.BetterVideoCallback;
+import com.halilibo.bettervideoplayer.BetterVideoPlayer;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 import java.util.List;
 
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.IAdapter;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.OptionsType;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
+import pro.quizer.quizerexit.utils.FileUtils;
+import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 
 public class InfoElementAdapter extends RecyclerView.Adapter<InfoElementAdapter.InfoElementViewHolder> implements IAdapter {
@@ -26,6 +38,16 @@ public class InfoElementAdapter extends RecyclerView.Adapter<InfoElementAdapter.
     public InfoElementAdapter(final Context pContext, final List<ElementModel> pContents) {
         this.mContext = pContext;
         this.mContents = pContents;
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(final InfoElementViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+    }
+
+    @Override
+    public int getItemViewType(final int position) {
+        return super.getItemViewType(position);
     }
 
     @Override
@@ -53,10 +75,16 @@ public class InfoElementAdapter extends RecyclerView.Adapter<InfoElementAdapter.
     class InfoElementViewHolder extends AbstractViewHolder {
 
         TextView mText;
+        ImageView mImageView;
+        BetterVideoPlayer mVideoPlayer;
+        BetterVideoPlayer mAudioPlayer;
 
         InfoElementViewHolder(final View itemView) {
             super(itemView);
             mText = itemView.findViewById(R.id.info_text);
+            mImageView = itemView.findViewById(R.id.info_image);
+            mVideoPlayer = itemView.findViewById(R.id.info_video_player);
+            mAudioPlayer = itemView.findViewById(R.id.info_audio_player);
         }
 
         @SuppressLint("ClickableViewAccessibility")
@@ -70,13 +98,45 @@ public class InfoElementAdapter extends RecyclerView.Adapter<InfoElementAdapter.
 
                     break;
                 case OptionsType.AUDIO:
+                    final String fileAudioPath = getFilePath(options);
+
+                    if (StringUtils.isEmpty(fileAudioPath)) {
+                        return;
+                    }
+
+                    mAudioPlayer.setVisibility(View.VISIBLE);
+                    mAudioPlayer.setSource(Uri.fromFile(new File(fileAudioPath)));
+                    mAudioPlayer.enableSwipeGestures(((BaseActivity) mContext).getWindow());
 
                     break;
-
                 case OptionsType.VIDEO:
+                    final String fileVideoPath = getFilePath(options);
+
+                    if (StringUtils.isEmpty(fileVideoPath)) {
+                        return;
+                    }
+
+                    mVideoPlayer.setVisibility(View.VISIBLE);
+                    mVideoPlayer.setSource(Uri.fromFile(new File(fileVideoPath)));
+
+                    mVideoPlayer.setHideControlsOnPlay(true);
+
+                    mVideoPlayer.enableSwipeGestures(((BaseActivity) mContext).getWindow());
 
                     break;
                 case OptionsType.PHOTO:
+                    final String filePhotooPath = getFilePath(options);
+
+                    if (StringUtils.isEmpty(filePhotooPath)) {
+                        return;
+                    }
+
+                    mImageView.setVisibility(View.VISIBLE);
+
+                    Picasso.with(mContext)
+                            .load(new File(filePhotooPath))
+                            .into(mImageView);
+
 
                     break;
                 default:
@@ -84,6 +144,19 @@ public class InfoElementAdapter extends RecyclerView.Adapter<InfoElementAdapter.
                     break;
             }
         }
+    }
+
+    private String getFilePath(final OptionsModel pOptions) {
+        final String path = FileUtils.getFilesStoragePath(mContext);
+        final String url = pOptions.getLink();
+
+        if (StringUtils.isEmpty(url)) {
+            return Constants.Strings.EMPTY;
+        }
+
+        final String fileName = url.substring(url.lastIndexOf(FileUtils.FOLDER_DIVIDER), url.length());
+
+        return path + fileName;
     }
 
 }

@@ -16,7 +16,7 @@ import pro.quizer.quizerexit.adapter.InfoElementAdapter;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
 
-public class InfoFragment extends BaseFragment {
+public class InfoFragment extends AbstractContentElementFragment {
 
     public static final String BUNDLE_CURRENT_QUESTION = "BUNDLE_CURRENT_QUESTION";
     public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
@@ -59,6 +59,46 @@ public class InfoFragment extends BaseFragment {
         } else {
             showToast(getString(R.string.internal_app_error) + "1002");
         }
+    }
+
+    private final Runnable mBackRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mCallback.onBack();
+        }
+    };
+
+    private final Runnable mExitRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mCallback.onExit();
+        }
+    };
+
+    private final Runnable mForwardRunnable = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                mCallback.onForward(mCurrentElement.getOptions().getJump());
+            } catch (final Exception pE) {
+                showToast(pE.getMessage());
+            }
+        }
+    };
+
+    @Override
+    protected Runnable getForwardRunnable() {
+        return mForwardRunnable;
+    }
+
+    @Override
+    protected Runnable getBackRunnable() {
+        return mBackRunnable;
+    }
+
+    @Override
+    protected Runnable getExitRunnable() {
+        return mExitRunnable;
     }
 
     private void initView(final View pView) {

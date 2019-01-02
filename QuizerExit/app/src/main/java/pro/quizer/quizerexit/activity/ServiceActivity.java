@@ -165,18 +165,25 @@ public class ServiceActivity extends BaseActivity implements ICallback {
 
     @Override
     public void onStarting() {
-        showProgressBar();
+//        showProgressBar();
+        if (!isFinishing()) {
+            showToast(getString(R.string.sending));
+        }
     }
 
     @Override
     public void onSuccess() {
-        updateData(new ServiceInfoExecutable().execute());
-        hideProgressBar();
+        if (!isFinishing()) {
+            updateData(new ServiceInfoExecutable().execute());
+        }
+//        hideProgressBar();
     }
 
     @Override
     public void onError(final Exception pException) {
-        updateData(new ServiceInfoExecutable().execute());
-        hideProgressBar();
+        if (!isFinishing()) {
+            updateData(new ServiceInfoExecutable().execute());
+        }
+//        hideProgressBar();
     }
 }

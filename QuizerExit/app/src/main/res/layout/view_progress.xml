@@ -15,11 +15,11 @@
         android:layout_gravity="center">
 
         <ImageView
-            android:layout_width="@dimen/progress_bar_frame_size"
-            android:layout_height="@dimen/progress_bar_frame_size"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:src="@drawable/loading_frame"/>
 
-        <ProgressBar
+        <pro.quizer.quizerexit.view.LoadingSpinner
             android:layout_width="@dimen/progress_bar_size"
             android:layout_height="@dimen/progress_bar_size"
             android:layout_gravity="center"/>

@@ -77,7 +77,7 @@
     <string name="no">Нет</string>
     <string name="exit_pool_header">Завершить анкету</string>
     <string name="exit_pool_body">Вы уверены, что хотите завершить анкету?</string>
-    <string name="permission_error">Разрешения на обязательное для данной анкеты</string>
+    <string name="permission_error">Все запрашиваемые разрешения обязательны для продолжения работы</string>
     <string name="success_send_questionnaries">Отправка анкет успешна выполнена</string>
     <string name="error_send_questionnaries">Возникла ошибка при отправке анкет</string>
     <string name="empty_list_of_accepted_questionnairies">Пустой список принятых анкет</string>
@@ -107,4 +107,8 @@
     <string name="fill_input">Заполните текстовое поле в выбранных вариантах ответа.</string>
     <string name="downloaded_count_files">Скачано %1$s файл(а)</string>
     <string name="downloading_files_error">Ошибка при загрузке медиа-файлов</string>
+    <string name="force_gps_error_string">Работа без GPS координат невозможна в данном режиме работы! Спутники не инициализированы. Выйдите на отрытое пространство и дождитесь инициализации GPS.</string>
+    <string name="success_file_sending">Файлы успешно отправлены</string>
+    <string name="sending">Идет отправка...</string>
+    <string name="updating">Идет <обновление></обновление>...</string>
 </resources>

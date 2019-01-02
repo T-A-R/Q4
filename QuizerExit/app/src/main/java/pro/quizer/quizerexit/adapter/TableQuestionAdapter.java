@@ -145,7 +145,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     @Override
     public void onBindHeaderColumnViewHolder(@NonNull final ViewHolderImpl viewHolder, final int column) {
         final TableHeaderColumnViewHolder vh = (TableHeaderColumnViewHolder) viewHolder;
-        // TODO: 24.12.2018 OR getText()
         UiUtils.setTextOrHide(vh.mHeaderColumnTextView, mAnswers.get(column).getOptions().getTitle());
     }
 

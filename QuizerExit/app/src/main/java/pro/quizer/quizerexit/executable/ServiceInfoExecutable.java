@@ -32,8 +32,6 @@ public class ServiceInfoExecutable extends BaseModelExecutable<ServiceViewModel>
 
         serviceViewModel.setUserModels(users);
 
-        // TODO: 13.12.2018 PHOTO AND AUDIO count
-
         return serviceViewModel;
     }
 }

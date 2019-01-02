@@ -70,20 +70,28 @@ public class SettingsFragment extends BaseFragment implements ICallback {
 
     @Override
     public void onStarting() {
-        showProgressBar();
+        if (isAdded()) {
+            showToast(getString(R.string.updating));
+        }
+
+//        showProgressBar();
     }
 
     @Override
     public void onSuccess() {
-        hideProgressBar();
+//        hideProgressBar();
 
-        updateData(new SettingViewModelExecutable(getContext()).execute());
+        if (isAdded()) {
+            updateData(new SettingViewModelExecutable(getContext()).execute());
+        }
     }
 
     @Override
     public void onError(final Exception pException) {
-        hideProgressBar();
+//        hideProgressBar();
 
-        updateData(new SettingViewModelExecutable(getContext()).execute());
+        if (isAdded()) {
+            updateData(new SettingViewModelExecutable(getContext()).execute());
+        }
     }
 }

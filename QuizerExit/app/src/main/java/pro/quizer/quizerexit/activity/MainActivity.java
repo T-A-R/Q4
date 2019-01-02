@@ -22,7 +22,7 @@ public class MainActivity extends BaseActivity implements ICallback {
         final Toolbar mToolbar = findViewById(R.id.toolbar);
         mToolbar.showOptionsView(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 openDrawer();
             }
         });
@@ -32,16 +32,16 @@ public class MainActivity extends BaseActivity implements ICallback {
 
     @Override
     public void onStarting() {
-        showProgressBar();
+//        showProgressBar();
     }
 
     @Override
     public void onSuccess() {
-        hideProgressBar();
+//        hideProgressBar();
     }
 
     @Override
-    public void onError(Exception pException) {
-        hideProgressBar();
+    public void onError(final Exception pException) {
+//        hideProgressBar();
     }
 }

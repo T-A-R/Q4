@@ -78,11 +78,11 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     private static final int PERMISSION_REQUEST_CODE = 200;
 
     private boolean checkPermission() {
-        int location = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
-        int camera = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
-        int audio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
-        int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
-        int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+        final int location = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
+        final int camera = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
+        final int audio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
+        final int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+        final int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
 
         return (location == PackageManager.PERMISSION_GRANTED || !mConfig.isGps()) &&
                 camera == PackageManager.PERMISSION_GRANTED &&
@@ -103,15 +103,15 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
 
     @SuppressLint("MissingPermission")
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
         switch (requestCode) {
             case PERMISSION_REQUEST_CODE:
                 if (grantResults.length > 0) {
-                    boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                    boolean audioAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
-                    boolean writeStorageAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED;
-                    boolean readStorageAccepted = grantResults[4] == PackageManager.PERMISSION_GRANTED;
+                    final boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    final boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    final boolean audioAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                    final boolean writeStorageAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+                    final boolean readStorageAccepted = grantResults[4] == PackageManager.PERMISSION_GRANTED;
 
                     if ((mConfig.isForceGps() && !locationAccepted) || !cameraAccepted || !audioAccepted || !writeStorageAccepted || !readStorageAccepted) {
                         showToast(getString(R.string.permission_error));
@@ -175,7 +175,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
                 showToast("Current GPS = " + mGps);
 
                 initStartValues();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 showToast(e.toString());
 
                 if (mConfig.isForceGps()) {
@@ -338,7 +338,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(final DialogInterface dialog, final int which) {
                         finish();
                         startMainActivity();
                     }
@@ -363,17 +363,20 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         questionnaireDatabaseModel.gps = mGps;
         questionnaireDatabaseModel.date_interview = mStartDateInterview;
 
+        final int showingScreensCount = saveScreenElements(mElements);
+        final int answersCount = saveAnswersElements(mElements);
+
         questionnaireDatabaseModel.questions_passed = getCountOfShowingQuestions();
-        questionnaireDatabaseModel.screens_passed = getCountOfShowingScreens();
+        questionnaireDatabaseModel.screens_passed = showingScreensCount;
+        questionnaireDatabaseModel.selected_questions = answersCount;
         questionnaireDatabaseModel.duration_time_questionnaire = (int) durationTimeQuestionnaire;
 
         questionnaireDatabaseModel.save();
-
-        saveScreenElements(mElements);
-        saveAnswersElements(mElements);
     }
 
-    private void saveScreenElements(final List<ElementModel> pScreenElements) {
+    private int saveScreenElements(final List<ElementModel> pScreenElements) {
+        int count = 0;
+
         for (final ElementModel element : pScreenElements) {
             if (element != null && element.isShowing()) {
                 final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
@@ -383,22 +386,31 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
                 elementDatabaseModel.type = ElementDatabaseType.SCREEN;
 
                 elementDatabaseModel.save();
+                count++;
             }
         }
+
+        return count;
     }
 
-    private void saveAnswersElements(final List<ElementModel> pScreenElements) {
+    private int saveAnswersElements(final List<ElementModel> pScreenElements) {
+        int count = 0;
+
         for (final ElementModel screenElement : pScreenElements) {
             for (final ElementModel element : screenElement.getElements()) {
                 if (element != null && ElementType.QUESTION.equals(element.getType())) {
                     for (final ElementModel subElement : element.getElements()) {
                         saveElement(subElement);
+                        count++;
                     }
                 } else {
                     saveElement(element);
+                    count++;
                 }
             }
         }
+
+        return count;
     }
 
     private void saveElement(final ElementModel element) {
@@ -426,29 +438,17 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         return count;
     }
 
-    private int getCountOfShowingScreens() {
-        int count = 0;
-
-        for (final ElementModel elementModel : mElements) {
-            if (elementModel.isShowing()) {
-                count++;
-            }
-        }
-
-        return count;
-    }
-
-    private MediaBrowserCompat.SubscriptionCallback mSubscriptCallback = new MediaBrowserCompat.SubscriptionCallback() {
+    private final MediaBrowserCompat.SubscriptionCallback mSubscriptCallback = new MediaBrowserCompat.SubscriptionCallback() {
 
         @Override
-        public void onChildrenLoaded(@NonNull String parentId, @NonNull List<MediaBrowserCompat.MediaItem> children) {
+        public void onChildrenLoaded(@NonNull final String parentId, @NonNull final List<MediaBrowserCompat.MediaItem> children) {
             onChildrenLoaded(parentId, children, new Bundle());
         }
 
         @Override
-        public void onChildrenLoaded(@NonNull String parentId,
-                                     @NonNull List<MediaBrowserCompat.MediaItem> children,
-                                     @NonNull Bundle options) {
+        public void onChildrenLoaded(@NonNull final String parentId,
+                                     @NonNull final List<MediaBrowserCompat.MediaItem> children,
+                                     @NonNull final Bundle options) {
 
             if (children.size() == 0) {
                 setLocalStateStoppedReady();
@@ -456,12 +456,12 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         }
 
         @Override
-        public void onError(@NonNull String parentId) {
+        public void onError(@NonNull final String parentId) {
             onError(parentId, new Bundle());
         }
 
         @Override
-        public void onError(@NonNull String parentId, @NonNull Bundle options) {
+        public void onError(@NonNull final String parentId, @NonNull final Bundle options) {
             callStopReady();
             setLocalStateError();
         }
@@ -475,7 +475,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
             stopRecording();
         }
 
-        MediaControllerCompat cntrlr = MediaControllerCompat.getMediaController(this);
+        final MediaControllerCompat cntrlr = MediaControllerCompat.getMediaController(this);
 
         if (cntrlr != null) {
             cntrlr.unregisterCallback(mCntrlrCallback);
@@ -497,12 +497,12 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
 
             mMediaBrowser.subscribe(mMediaBrowser.getRoot(), new Bundle(), mSubscriptCallback);
 
-            MediaSessionCompat.Token sesTok = mMediaBrowser.getSessionToken();
+            final MediaSessionCompat.Token sesTok = mMediaBrowser.getSessionToken();
 
             try {
-                MediaControllerCompat mediaCntrlr = new MediaControllerCompat(ElementActivity.this, sesTok);
+                final MediaControllerCompat mediaCntrlr = new MediaControllerCompat(ElementActivity.this, sesTok);
                 MediaControllerCompat.setMediaController(ElementActivity.this, mediaCntrlr);
-            } catch (RemoteException ignored) {
+            } catch (final RemoteException ignored) {
 
             }
 
@@ -537,26 +537,26 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     private final MediaControllerCompat.Callback mCntrlrCallback = new MediaControllerCompat.Callback() {
 
         @Override
-        public void onPlaybackStateChanged(PlaybackStateCompat state) {
-            MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(ElementActivity.this);
+        public void onPlaybackStateChanged(final PlaybackStateCompat state) {
+            final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(ElementActivity.this);
             if (mediaCntrlr == null) {
                 setLocalStateError();
                 UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
                 return;
             }
 
-            String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
+            final String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
             if (mediaID == null) {
                 setLocalStateError();
                 UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
                 return;
             }
 
-            Bundle bndl = state.getExtras();
+            final Bundle bndl = state.getExtras();
             if (state.getState() == PlaybackStateCompat.STATE_PLAYING && bndl != null) {
                 // update of extra, not state
-                double amp = bndl.getDouble(AudioService.EXTRA_KEY_AMPL, -1);
-                double[] arFreq = bndl.getDoubleArray(AudioService.EXTRA_KEY_AR_FREQ);
+                final double amp = bndl.getDouble(AudioService.EXTRA_KEY_AMPL, -1);
+                final double[] arFreq = bndl.getDoubleArray(AudioService.EXTRA_KEY_AR_FREQ);
                 if (amp != -1 && !Double.isInfinite(amp) && !Double.isNaN(amp)) {
                     // update db meter
                     return; // handled
@@ -597,7 +597,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         }
 
         @Override
-        public void onMetadataChanged(MediaMetadataCompat metadata) {
+        public void onMetadataChanged(final MediaMetadataCompat metadata) {
             super.onMetadataChanged(metadata);
         }
     };
@@ -697,7 +697,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     }
 
     private void buildTransportControls() {
-        MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
+        final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
 
         if (mediaCntrlr == null) {
             UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
@@ -706,13 +706,13 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         }
         mediaCntrlr.registerCallback(mCntrlrCallback); // can pass Handler for worker thread
 
-        String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
+        final String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
         if (mediaID == null) {
             UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
             return;
         }
 
-        int pbState = mediaCntrlr.getPlaybackState().getState();
+        final int pbState = mediaCntrlr.getPlaybackState().getState();
 
         // set initial UI state
         mStart.setVisibility(View.VISIBLE);
@@ -766,18 +766,18 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     private final View.OnClickListener mIbRecordOCL = new View.OnClickListener() {
 
         @Override
-        public void onClick(View v) {
-            MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(ElementActivity.this);
+        public void onClick(final View v) {
+            final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(ElementActivity.this);
             if (mediaCntrlr == null) {
                 UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
                 return;
             }
-            String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
+            final String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
             if (mediaID == null) {
                 UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
                 return;
             }
-            int pbState = mediaCntrlr.getPlaybackState().getState();
+            final int pbState = mediaCntrlr.getPlaybackState().getState();
 
             if (pbState == PlaybackStateCompat.STATE_ERROR) {
                 callStopReady();
@@ -828,18 +828,18 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     private final View.OnClickListener mIbPlayOCL = new View.OnClickListener() {
 
         @Override
-        public void onClick(View v) {
-            MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(ElementActivity.this);
+        public void onClick(final View v) {
+            final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(ElementActivity.this);
             if (mediaCntrlr == null) {
                 UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
                 return;
             }
-            String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
+            final String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
             if (mediaID == null) {
                 UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
                 return;
             }
-            int pbState = mediaCntrlr.getPlaybackState().getState();
+            final int pbState = mediaCntrlr.getPlaybackState().getState();
 
             if (pbState == PlaybackStateCompat.STATE_ERROR) {
                 callStopReady();
@@ -874,18 +874,18 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     private final View.OnClickListener mStopOCL = new View.OnClickListener() {
 
         @Override
-        public void onClick(View v) {
-            MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(ElementActivity.this);
+        public void onClick(final View v) {
+            final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(ElementActivity.this);
             if (mediaCntrlr == null) {
                 UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
                 return;
             }
-            String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
+            final String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
             if (mediaID == null) {
                 UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
                 return;
             }
-            int pbState = mediaCntrlr.getPlaybackState().getState();
+            final int pbState = mediaCntrlr.getPlaybackState().getState();
 
             if (pbState == PlaybackStateCompat.STATE_ERROR) {
                 setLocalStateError();

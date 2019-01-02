@@ -16,29 +16,29 @@ public abstract class AbstractContentElementFragment extends BaseFragment {
     private Runnable mExitRunnable;
     private Runnable mForwardRunnable;
 
-    private View.OnClickListener mBackClickListener = new View.OnClickListener() {
+    private final View.OnClickListener mBackClickListener = new View.OnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onClick(final View v) {
             mBackRunnable.run();
         }
     };
 
-    private View.OnClickListener mExitClickListener = new View.OnClickListener() {
+    private final View.OnClickListener mExitClickListener = new View.OnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onClick(final View v) {
             mExitRunnable.run();
         }
     };
 
-    private View.OnClickListener mForwardClickListener = new View.OnClickListener() {
+    private final View.OnClickListener mForwardClickListener = new View.OnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onClick(final View v) {
             mForwardRunnable.run();
         }
     };
 
     @Override
-    public void onViewCreated(@NonNull View pView, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull final View pView, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(pView, savedInstanceState);
 
         mExitButton = pView.findViewById(R.id.exit_btn);

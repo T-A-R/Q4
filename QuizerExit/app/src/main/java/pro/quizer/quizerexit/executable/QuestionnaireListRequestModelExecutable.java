@@ -48,6 +48,7 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
                     questionnaireDatabaseModel.questionnaire_id,
                     questionnaireDatabaseModel.questions_passed,
                     questionnaireDatabaseModel.screens_passed,
+                    questionnaireDatabaseModel.selected_questions,
                     questionnaireDatabaseModel.project_id,
                     questionnaireDatabaseModel.user_project_id,
                     questionnaireDatabaseModel.duration_time_questionnaire,

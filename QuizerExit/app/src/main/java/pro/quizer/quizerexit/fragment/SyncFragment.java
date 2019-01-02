@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizerexit.executable.SyncInfoExecutable;
@@ -114,7 +115,13 @@ public class SyncFragment extends BaseFragment implements ICallback {
         final int mAUnsendedCount = pSyncViewModel.getmNotSendedAudio().size();
         final int mPUnsendedCount = pSyncViewModel.getmNotSendedPhoto().size();
 
-        getBaseActivity().runOnUiThread(new Runnable() {
+        final BaseActivity activity = getBaseActivity();
+
+        if (activity == null) {
+            return;
+        }
+
+        activity.runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
@@ -127,7 +134,7 @@ public class SyncFragment extends BaseFragment implements ICallback {
                 UiUtils.setEnabled(getContext(), mSendDataButton, mQUnsendedCount > 0);
                 mSendDataButton.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View view) {
+                    public void onClick(final View view) {
                         new SendQuestionnairesByUserModelExecutable(getBaseActivity(), mUserModel, SyncFragment.this).execute();
                     }
                 });
@@ -135,7 +142,7 @@ public class SyncFragment extends BaseFragment implements ICallback {
                 UiUtils.setEnabled(getContext(), mSendPhotoButton, mPUnsendedCount > 0);
                 mSendPhotoButton.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View view) {
+                    public void onClick(final View view) {
                         if (mQUnsendedCount > 0) {
                             showToast(getString(R.string.please_send_q));
 
@@ -150,7 +157,7 @@ public class SyncFragment extends BaseFragment implements ICallback {
                 mSendAudioButton.setOnClickListener(new View.OnClickListener() {
 
                     @Override
-                    public void onClick(View view) {
+                    public void onClick(final View view) {
                         if (mQUnsendedCount > 0) {
                             showToast(getString(R.string.please_send_q));
 
@@ -165,22 +172,31 @@ public class SyncFragment extends BaseFragment implements ICallback {
 
     @Override
     public void onStarting() {
-        showProgressBar();
+        if (isAdded()) {
+            showToast(getString(R.string.sending));
+        }
+//        showProgressBar();
     }
 
     @Override
     public void onSuccess() {
-        hideProgressBar();
+//        hideProgressBar();
+//
+        if (isAdded()) {
+            showToast(getString(R.string.success_file_sending));
 
-        updateData(new SyncInfoExecutable(getContext()).execute());
+            updateData(new SyncInfoExecutable(getContext()).execute());
+        }
     }
 
     @Override
-    public void onError(Exception pException) {
-        hideProgressBar();
+    public void onError(final Exception pException) {
+//        hideProgressBar();
 
-        showToast(pException.toString());
+        if (isAdded()) {
+            showToast(pException.toString());
 
-        updateData(new SyncInfoExecutable(getContext()).execute());
+            updateData(new SyncInfoExecutable(getContext()).execute());
+        }
     }
 }

@@ -53,29 +53,8 @@ public class HomeFragment extends BaseFragment implements ICallback {
         final TextView configAgreement = pView.findViewById(R.id.config_agreement);
         final TextView configName = pView.findViewById(R.id.config_name);
 
-//        // TODO: 01.12.2018 remove debug
-//        final TextView currentUser = findViewById(R.id.current_user);
-//        currentUser.setVisibility(View.VISIBLE);
-//        currentUser.setText("login: " + userModel.login + " \n" +
-//                "password: " + userModel.password + "\n" +
-//                "config_id: " + userModel.config_id + "\n" +
-//                "user_id: " + userModel.user_id + "\n" +
-//                "user_project_id: " + userModel.user_project_id + "\n" +
-//                "role_id: " + userModel.role_id);
-
         UiUtils.setTextOrHide(configName, projectInfo.getName());
         UiUtils.setTextOrHide(configAgreement, projectInfo.getAgreement());
-
-        // TODO: 12.12.2018 remove stubLoadQuiz
-        final Button stubLoadQuiz = pView.findViewById(R.id.stub_load);
-        stubLoadQuiz.setVisibility(View.GONE);
-        stubLoadQuiz.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(final View view) {
-                new SendQuestionnairesByUserModelExecutable(getBaseActivity(), userModel, HomeFragment.this).execute();
-            }
-        });
 
         final Button startBtn = pView.findViewById(R.id.start);
         startBtn.setOnClickListener(new View.OnClickListener() {
@@ -90,21 +69,24 @@ public class HomeFragment extends BaseFragment implements ICallback {
 
     @Override
     public void onStarting() {
-        showProgressBar();
+//        showProgressBar();
     }
 
     @Override
     public void onSuccess() {
-        hideProgressBar();
+//        hideProgressBar();
 
-        showToast(getString(R.string.success_send_questionnaries));
+        if (isAdded()) {
+            showToast(getString(R.string.success_send_questionnaries));
+        }
     }
 
     @Override
     public void onError(final Exception pException) {
-        hideProgressBar();
+//        hideProgressBar();
 
-        showToast(pException.toString());
-        showToast(getString(R.string.error_send_questionnaries));
+        if (isAdded()) {
+            showToast(getString(R.string.error_send_questionnaries) + "\n" + pException);
+        }
     }
 }

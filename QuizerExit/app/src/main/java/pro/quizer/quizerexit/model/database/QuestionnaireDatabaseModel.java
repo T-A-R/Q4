@@ -53,6 +53,9 @@ public class QuestionnaireDatabaseModel extends Model implements Serializable {
     @Column(name = "screens_passed")
     public int screens_passed;
 
+    @Column(name = "selected_questions")
+    public int selected_questions;
+
     @Column(name = "duration_time_questionnaire")
     public int duration_time_questionnaire;
 

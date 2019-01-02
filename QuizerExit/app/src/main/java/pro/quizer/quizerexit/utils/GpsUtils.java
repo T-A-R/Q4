@@ -2,6 +2,8 @@ package pro.quizer.quizerexit.utils;
 
 import android.content.Context;
 
+import pro.quizer.quizerexit.R;
+
 public final class GpsUtils {
 
     private static String GPS_FORMAT = "%1$s:%2$s";
@@ -19,7 +21,7 @@ public final class GpsUtils {
                 lon = gps.getLongitude();
             } catch (final Exception e) {
                 if (pIsForceGps) {
-                    throw new Exception("Не удалось получить GPS координаты.");
+                    throw new Exception(pContext.getString(R.string.force_gps_error_string));
                 }
             }
         } else {

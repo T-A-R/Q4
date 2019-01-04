@@ -264,7 +264,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         final FragmentTransaction fragmentTransaction = getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.element_content,
-                        ElementFragment.newInstance(nextElement, this, mToken, mLoginAdmin, mUserId, mUserLogin, mProjectId));
+                        ElementFragment.newInstance(nextElement, this, mToken, mLoginAdmin, mUserId, mUserLogin, mConfig.isPhotoQuestionnaire(), mProjectId));
 
         if (pIsAddToBackStack) {
             fragmentTransaction.addToBackStack(nextElement.getOptions().getTitle());

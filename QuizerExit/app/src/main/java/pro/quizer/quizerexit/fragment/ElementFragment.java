@@ -30,6 +30,7 @@ public class ElementFragment extends BaseFragment {
     public static final String BUNDLE_TOKEN = "BUNDLE_TOKEN";
     public static final String BUNDLE_USER_ID = "BUNDLE_USER_ID";
     public static final String BUNDLE_USER_LOGIN = "BUNDLE_USER_LOGIN";
+    public static final String BUNDLE_IS_PHOTO_QUESTIONNAIRE = "BUNDLE_IS_PHOTO_QUESTIONNAIRE";
     public static final String BUNDLE_PROJECT_ID = "BUNDLE_PROJECT_ID";
 
     TextView mElementText;
@@ -45,6 +46,7 @@ public class ElementFragment extends BaseFragment {
     private String mToken = Constants.Strings.UNKNOWN;
     private int mProjectId = 0;
     private int mUserId = 0;
+    private boolean mIsPhotoQuestionnaire;
 
     public static Fragment newInstance(
             @NonNull final ElementModel pElement,
@@ -53,6 +55,7 @@ public class ElementFragment extends BaseFragment {
             final String pLoginAdmin,
             final int pUserId,
             final String pUserLogin,
+            final boolean pIsPhotoQuestionnaire,
             final int pProjectId) {
         final ElementFragment fragment = new ElementFragment();
 
@@ -63,6 +66,7 @@ public class ElementFragment extends BaseFragment {
         bundle.putInt(BUNDLE_USER_ID, pUserId);
         bundle.putString(BUNDLE_LOGIN_ADMIN, pLoginAdmin);
         bundle.putString(BUNDLE_USER_LOGIN, pUserLogin);
+        bundle.putBoolean(BUNDLE_IS_PHOTO_QUESTIONNAIRE, pIsPhotoQuestionnaire);
         bundle.putInt(BUNDLE_PROJECT_ID, pProjectId);
         fragment.setArguments(bundle);
 
@@ -91,6 +95,7 @@ public class ElementFragment extends BaseFragment {
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
             mAttributes = mCurrentElement.getOptions();
+            mIsPhotoQuestionnaire = bundle.getBoolean(BUNDLE_IS_PHOTO_QUESTIONNAIRE);
             mUserLogin = bundle.getString(BUNDLE_USER_LOGIN);
             mProjectId = bundle.getInt(BUNDLE_PROJECT_ID);
             mLoginAdmin = bundle.getString(BUNDLE_LOGIN_ADMIN);
@@ -143,6 +148,15 @@ public class ElementFragment extends BaseFragment {
             case ElementType.INFO:
                 mFragmentManger.beginTransaction()
                         .add(R.id.content_element, InfoFragment.newInstance(mCurrentElement, mCallback))
+                        .commit();
+
+                break;
+
+            case ElementType.BOX:
+                final ElementModel nestedElement = mCurrentElement.getElements().get(0);
+
+                mFragmentManger.beginTransaction()
+                        .add(R.id.content_element, ElementFragment.newInstance(nestedElement, mCallback, mToken, mLoginAdmin, mUserId, mUserLogin, mIsPhotoQuestionnaire, mProjectId))
                         .commit();
 
                 break;

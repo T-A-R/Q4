@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_quizer_white"/>
+        android:tint="@android:color/white"
+        android:src="@drawable/ic_quizer"/>
 
 </FrameLayout>

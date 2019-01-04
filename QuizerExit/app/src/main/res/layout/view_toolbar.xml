@@ -44,7 +44,8 @@
                 android:layout_toRightOf="@+id/toolbar_left_frame"
                 android:gravity="center"
                 android:padding="8dp"
-                android:src="@drawable/ic_quizer_white" />
+                android:tint="@android:color/white"
+                android:src="@drawable/ic_quizer" />
 
             <LinearLayout
                 android:id="@+id/toolbar_right_frame"

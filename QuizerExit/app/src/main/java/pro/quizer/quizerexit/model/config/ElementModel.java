@@ -13,11 +13,11 @@ import static pro.quizer.quizerexit.model.OptionsOpenType.CHECKBOX;
 
 public class ElementModel implements Serializable {
 
-    @SerializedName("relativeID")
-    private int relativeID;
+    @SerializedName("relative_id")
+    private int relative_id;
 
-    @SerializedName("relativeParentID")
-    private int relativeParentID;
+    @SerializedName("relative_parent_id")
+    private int relative_parent_id;
 
     @SerializedName("type")
     private String type;
@@ -50,11 +50,11 @@ public class ElementModel implements Serializable {
     }
 
     public int getRelativeID() {
-        return relativeID;
+        return relative_id;
     }
 
     public int getRelativeParentID() {
-        return relativeParentID;
+        return relative_parent_id;
     }
 
     @ElementType

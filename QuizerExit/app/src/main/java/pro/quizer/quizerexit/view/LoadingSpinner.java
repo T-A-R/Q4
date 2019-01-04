@@ -13,7 +13,7 @@ import pro.quizer.quizerexit.R;
 public class LoadingSpinner extends AppCompatImageView {
 
     private static final int ROTATE_ANIMATION_DURATION = 800;
-    private static final int IMAGE_RESOURCE_ID = R.drawable.logo_q;
+    private static final int IMAGE_RESOURCE_ID = R.drawable.ic_preloader;
 
     public LoadingSpinner(final Context context) {
         super(context, null);

@@ -22,6 +22,10 @@ public class ProjectInfoModel implements Serializable {
     @SerializedName("thank_you_text")
     private String thank_you_text;
 
+    // TODO: 1/5/2019 remove filess
+    @SerializedName("media_filess")
+    private String[] media_filess;
+
     @SerializedName("thank_you_picture")
     private String thank_you_picture;
 
@@ -30,6 +34,10 @@ public class ProjectInfoModel implements Serializable {
 
     @SerializedName("reserve_channel")
     private ReserveChannelModel reserve_channel;
+
+    public String[] getMediaFiles() {
+        return media_filess;
+    }
 
     public int getProjectId() {
         return project_id;

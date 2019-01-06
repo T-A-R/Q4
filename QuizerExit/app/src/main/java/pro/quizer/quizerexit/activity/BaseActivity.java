@@ -23,6 +23,7 @@ import com.google.gson.GsonBuilder;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 
 import pro.quizer.quizerexit.BuildConfig;
@@ -31,6 +32,7 @@ import pro.quizer.quizerexit.fragment.HomeFragment;
 import pro.quizer.quizerexit.fragment.SettingsFragment;
 import pro.quizer.quizerexit.fragment.SyncFragment;
 import pro.quizer.quizerexit.model.config.ConfigModel;
+import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.database.ActivationModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
@@ -44,6 +46,9 @@ import static pro.quizer.quizerexit.utils.FileUtils.MP3;
 
 @SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity implements Serializable, Parcelable {
+
+    private HashMap<Integer, ElementModel> mMap;
+    private UserModel mCurrentUser;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -119,6 +124,32 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
         });
     }
 
+    private void generateMap(final List<ElementModel> elements) {
+        for (final ElementModel element : elements) {
+            mMap.put(element.getRelativeID(), element);
+
+            final List<ElementModel> nestedList = element.getElements();
+            if (nestedList != null && !nestedList.isEmpty()) {
+                generateMap(nestedList);
+            }
+        }
+    }
+
+    private List<ElementModel> getElements() {
+        return mCurrentUser.getConfig().getProjectInfo().getElements();
+    }
+
+    public HashMap<Integer, ElementModel> getMap() {
+        if (mMap == null) {
+            mMap = new HashMap<>();
+
+            generateMap(getElements());
+
+            return mMap;
+        } else {
+            return mMap;
+        }
+    }
 
     private void addFragment(final Fragment pFragment, final boolean pIsAddToBackstack) {
         final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -246,7 +277,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
     }
 
     public UserModel getCurrentUser() {
-        return getUserByUserId(getCurrentUserId());
+        mCurrentUser = getUserByUserId(getCurrentUserId());
+        return mCurrentUser;
     }
 
     public int getCurrentUserId() {

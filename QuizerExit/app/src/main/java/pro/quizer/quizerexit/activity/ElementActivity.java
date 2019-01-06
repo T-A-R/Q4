@@ -21,7 +21,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import pro.quizer.quizerexit.AudioService;
 import pro.quizer.quizerexit.NavigationCallback;
@@ -54,6 +56,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     ConfigModel mConfig;
     ProjectInfoModel mProjectInfo;
     List<ElementModel> mElements;
+    HashMap<Integer, ElementModel> mMap;
 
     private String mToken;
     private String mLoginAdmin;
@@ -166,6 +169,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         mConfig = mUserModel.getConfig();
         mProjectInfo = mConfig.getProjectInfo();
         mElements = mProjectInfo.getElements();
+        mMap = getMap();
     }
 
     private void startGps() {
@@ -245,7 +249,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     }
 
     private void showFirstElement() {
-        showNextElement(mElements.get(0).getRelativeID(), false);
+        showNextElement(1, false);
     }
 
     private void showNextElement(final int pNextRelativeId, final boolean pIsAddToBackStack) {
@@ -267,7 +271,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
                         ElementFragment.newInstance(nextElement, this, mToken, mLoginAdmin, mUserId, mUserLogin, mConfig.isPhotoQuestionnaire(), mProjectId));
 
         if (pIsAddToBackStack) {
-            fragmentTransaction.addToBackStack(nextElement.getOptions().getTitle());
+            fragmentTransaction.addToBackStack(nextElement.getOptions().getTitle(this));
         }
 
         fragmentTransaction.commit();
@@ -278,13 +282,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
             return null;
         }
 
-        for (final ElementModel element : mElements) {
-            if (element.getRelativeID() == pRelativeId) {
-                return element;
-            }
-        }
-
-        return null;
+        return mMap.get(pRelativeId);
     }
 
     @Override
@@ -363,6 +361,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         questionnaireDatabaseModel.gps = mGps;
         questionnaireDatabaseModel.date_interview = mStartDateInterview;
 
+        // TODO: 1/5/2019 как мы узнаем, что это был скрин?? ЗАМЕНИТЬ mElements на mMap
         final int showingScreensCount = saveScreenElements(mElements);
         final int answersCount = saveAnswersElements(mElements);
 
@@ -429,7 +428,9 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     private int getCountOfShowingQuestions() {
         int count = 0;
 
-        for (final ElementModel elementModel : mElements) {
+        for (final Map.Entry<Integer, ElementModel> element : mMap.entrySet()) {
+            final ElementModel elementModel = element.getValue();
+
             if (elementModel != null && ElementType.QUESTION.equals(elementModel.getType()) && elementModel.isShowing()) {
                 count++;
             }

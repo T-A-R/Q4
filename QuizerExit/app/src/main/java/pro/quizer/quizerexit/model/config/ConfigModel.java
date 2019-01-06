@@ -46,15 +46,8 @@ public class ConfigModel implements Serializable {
     @SerializedName("delete_data_password")
     private String delete_data_password;
 
-    @SerializedName("media_files")
-    private String[] media_files;
-
     @SerializedName("project_info")
     private ProjectInfoModel project_info;
-
-    public String[] getMediaFiles() {
-        return media_files;
-    }
 
     public String getServerUrl() {
         return server_url;
@@ -77,7 +70,9 @@ public class ConfigModel implements Serializable {
     }
 
     public boolean isPhotoQuestionnaire() {
-        return photo_questionnaire;
+        // TODO: 1/5/2019 stub
+        return false;
+//        return photo_questionnaire;
     }
 
     public int getAutonomousLimitCountQuestionnare() {
@@ -93,7 +88,9 @@ public class ConfigModel implements Serializable {
     }
 
     public boolean isAudio() {
-        return audio;
+        // TODO: 1/5/2019 stub
+        return false;
+//        return audio;
     }
 
     public boolean isGps() {

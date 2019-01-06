@@ -41,10 +41,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private final int mHeaderHeight;
     private final int mHeaderWidth;
     private Context mContext;
-    private List<ElementModel> mQuestions;
+    private List<ElementModel> mLeftSide;
+    private List<ElementModel> mTopSide;
     private List<ElementModel> mAnswers;
+    private List<ElementModel> mQuestions;
     private Runnable mRefreshRunnable;
     private ElementModel mCurrentElement;
+    private boolean mIsFlipColsAndRows;
 
     @Override
     public int processNext() throws Exception {
@@ -77,6 +80,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         mRowHeight = res.getDimensionPixelSize(R.dimen.row_height);
         mHeaderHeight = res.getDimensionPixelSize(R.dimen.column_header_height);
         mHeaderWidth = res.getDimensionPixelSize(R.dimen.row_header_width);
+        mIsFlipColsAndRows = pCurrentElement.getOptions().isFlipColsAndRows();
 
         mQuestions = pQuestions;
 
@@ -95,16 +99,24 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         }
 
         mAnswers = mQuestions.get(1).getElements();
+
+        if (mIsFlipColsAndRows) {
+            mTopSide = mQuestions;
+            mLeftSide = mAnswers;
+        } else {
+            mTopSide = mAnswers;
+            mLeftSide = mQuestions;
+        }
     }
 
     @Override
     public int getRowCount() {
-        return mQuestions.size();
+        return mLeftSide.size();
     }
 
     @Override
     public int getColumnCount() {
-        return mAnswers.size();
+        return mTopSide.size();
     }
 
     @NonNull
@@ -145,13 +157,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     @Override
     public void onBindHeaderColumnViewHolder(@NonNull final ViewHolderImpl viewHolder, final int column) {
         final TableHeaderColumnViewHolder vh = (TableHeaderColumnViewHolder) viewHolder;
-        UiUtils.setTextOrHide(vh.mHeaderColumnTextView, mAnswers.get(column).getOptions().getTitle());
+        UiUtils.setTextOrHide(vh.mHeaderColumnTextView, mTopSide.get(column).getOptions().getTitle((BaseActivity) mContext));
     }
 
     @Override
     public void onBindHeaderRowViewHolder(@NonNull final ViewHolderImpl viewHolder, final int row) {
         final TableHeaderRowViewHolder vh = (TableHeaderRowViewHolder) viewHolder;
-        UiUtils.setTextOrHide(vh.mHeaderRowTextView, mQuestions.get(row).getOptions().getTitle());
+        UiUtils.setTextOrHide(vh.mHeaderRowTextView, mLeftSide.get(row).getOptions().getTitle((BaseActivity) mContext));
 
     }
 
@@ -182,10 +194,21 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     private ElementModel getElement(final int row, final int column) {
-        final int questionIndex = row;
-        final int answerIndex = column;
+        final int questionIndex;
+        final int answerIndex;
+        final ElementModel element;
 
-        final ElementModel element = mQuestions.get(questionIndex);
+        if (mIsFlipColsAndRows) {
+            questionIndex = column;
+            answerIndex = row;
+
+            element = mTopSide.get(questionIndex);
+        } else {
+            questionIndex = row;
+            answerIndex = column;
+
+            element = mLeftSide.get(questionIndex);
+        }
 
         if (element != null) {
             return element.getElements().get(answerIndex);
@@ -296,14 +319,14 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     public void onRowHeaderClick(final int row) {
         Toast.makeText(mContext, "row " + row, Toast.LENGTH_LONG).show();
 
-        showAdditionalInfoDialog(mQuestions.get(row).getOptions());
+        showAdditionalInfoDialog(mLeftSide.get(row).getOptions());
     }
 
     @Override
     public void onColumnHeaderClick(final int column) {
         Toast.makeText(mContext, "column " + column, Toast.LENGTH_LONG).show();
 
-        showAdditionalInfoDialog(mAnswers.get(column).getOptions());
+        showAdditionalInfoDialog(mTopSide.get(column).getOptions());
     }
 
     @Override
@@ -320,7 +343,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final TextView title = mView.findViewById(R.id.title);
         final TextView description = mView.findViewById(R.id.description);
 
-        UiUtils.setTextOrHide(title, pOptionsModel.getTitle());
+        UiUtils.setTextOrHide(title, pOptionsModel.getTitle((BaseActivity) mContext));
         UiUtils.setTextOrHide(description, pOptionsModel.getDescription());
 
         dialog.setCancelable(false)

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.OptionsType;
 import pro.quizer.quizerexit.model.ElementType;
 import pro.quizer.quizerexit.model.config.OptionsModel;
@@ -111,13 +112,13 @@ public class ElementFragment extends BaseFragment {
     private void initView(final View pView) {
         mCallback.onShowFragment(mCurrentElement);
 
-        if (mCurrentElement.getOptions().isTakePhoto()) {
+        if (mIsPhotoQuestionnaire && mCurrentElement.getOptions().isTakePhoto()) {
             shotPicture(mLoginAdmin, mToken, mCurrentElement.getRelativeID(), mUserId, mProjectId, mUserLogin);
         }
 
         mElementText = pView.findViewById(R.id.element_text);
         mElementDescriptionText = pView.findViewById(R.id.element_description_text);
-        UiUtils.setTextOrHide(mElementText, mAttributes.getTitle());
+        UiUtils.setTextOrHide(mElementText, mAttributes.getTitle((BaseActivity) getContext()));
         UiUtils.setTextOrHide(mElementDescriptionText, mAttributes.getDescription());
 
         mCurrentElement.setShowing(true);

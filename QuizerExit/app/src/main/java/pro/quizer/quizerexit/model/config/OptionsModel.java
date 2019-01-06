@@ -4,8 +4,10 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
+import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.OptionsOpenType;
 import pro.quizer.quizerexit.model.OptionsType;
+import pro.quizer.quizerexit.utils.ConditionUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 
 import static pro.quizer.quizerexit.model.OptionsOpenType.CHECKBOX;
@@ -90,8 +92,8 @@ public class OptionsModel implements Serializable {
         return show_condition;
     }
 
-    public String getTitle() {
-        return title;
+    public String getTitle(final BaseActivity pBaseActivity) {
+        return ConditionUtils.formatTitle(pBaseActivity, title, pBaseActivity.getMap());
     }
 
     public int getOrder() {

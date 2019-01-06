@@ -20,6 +20,7 @@ import java.util.List;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.SimpleTextWatcher;
+import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.OptionsOpenType;
 import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
@@ -86,6 +87,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
             final String openType = attributes.getOpenType();
             final boolean isChecked = pAnswer.isChecked();
             final boolean isEnabled = pAnswer.isEnabled();
+            final Context context = mEditText.getContext();
 
             if (!OptionsOpenType.CHECKBOX.equals(openType)) {
                 final String placeholder = attributes.getPlaceholder();
@@ -96,8 +98,6 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                 mEditText.setTag(pPosition);
                 mEditText.setText(textAnswer);
                 mEditText.addTextChangedListener(new ElementTextWatcher(pAnswer));
-
-                final Context context = mEditText.getContext();
 
                 switch (attributes.getOpenType()) {
                     case OptionsOpenType.TIME:
@@ -130,7 +130,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
             }
 
             mEditText.setEnabled(isChecked && isEnabled);
-            UiUtils.setTextOrHide(mAnswer, attributes.getTitle());
+            UiUtils.setTextOrHide(mAnswer, attributes.getTitle((BaseActivity) context));
             mCheckBox.setChecked(isChecked);
             mCheckBox.setTag(pPosition);
             mCheckBox.setEnabled(isEnabled);
@@ -227,7 +227,6 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
             super.onTextChanged(s, start, before, count);
 
             mAnswer.setTextAnswer(s.toString());
-            Log.d("thecriser", mAnswer.getOptions().getTitle() + " = " + s.toString());
         }
     }
 }

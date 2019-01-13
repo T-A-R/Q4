@@ -9,18 +9,23 @@ import pro.quizer.quizerexit.utils.Evaluator.TreeBooleanEvaluator;
 
 public final class ConditionUtils {
 
+    public static final int CAN_SHOW = -1;
+    public static final int CANT_SHOW = -2;
+
     private static final String ELEMENT_INDEX = "$e.";
     private static final String START_STRING = "<# " + ELEMENT_INDEX;
     private static final String END_STRING = " #>";
-    private static final String FORMAT_TITLE_DIVIDER = ".";
-    private static final String DISPLAY_CONDITION_DIVIDER = "###";
-    private static final String IF_ = "if ";
+    private static final String FORMAT_DIVIDER_DOT = ".";
+    private static final String DISPLAY_CONDITION_DIVIDER = "else";
+    private static final String IF = "if";
     public static final String FALSE = "F";
     public static final String TRUE = "T";
     public static final String SPACE = " ";
+    public static final String RIGHT_BRACKET = "}";
+    public static final String LEFT_BRACKET = "{";
 
     private static String[] getArrayElement(final String pCondition) {
-        return pCondition.split("\\" + FORMAT_TITLE_DIVIDER);
+        return pCondition.split("\\" + FORMAT_DIVIDER_DOT);
     }
 
     public static String formatTitle(final BaseActivity pBaseActivity, final String pTitle, final HashMap<Integer, ElementModel> pModel) {
@@ -45,36 +50,73 @@ public final class ConditionUtils {
         return formatTitle(pBaseActivity, pTitle.replace(START_STRING + condition + END_STRING, replaceString), pModel);
     }
 
-    public static boolean isCanShow(final String pShowCondition, final HashMap<Integer, ElementModel> pModel, final BaseActivity pBaseActivity) {
+    public static int evaluateCondition(final String pShowCondition, final HashMap<Integer, ElementModel> pModel, final BaseActivity pBaseActivity, final boolean pIsAnswer) {
         if (StringUtils.isEmpty(pShowCondition)) {
-            return true;
+            return CAN_SHOW;
         }
 
-        final String[] conditionArray = pShowCondition.split(DISPLAY_CONDITION_DIVIDER);
-
-        boolean isNeedShow = true;
-        boolean isNeedNotShow = false;
+        final String[] conditionArray = pShowCondition.replaceAll(SPACE, Constants.Strings.EMPTY).split(DISPLAY_CONDITION_DIVIDER);
 
         final TreeBooleanEvaluator evaluator = new TreeBooleanEvaluator();
 
         for (final String conditionElement : conditionArray) {
-            String condition = conditionElement.replace(IF_, Constants.Strings.EMPTY);
+            if (conditionElement.contains(IF)) {
+                String condition = conditionElement.replace(IF, Constants.Strings.EMPTY);
 
-            if (condition.contains(DisplayConditionType.SHOW)) {
-                condition = condition.replace(DisplayConditionType.SHOW, Constants.Strings.EMPTY);
-                isNeedShow = TreeBooleanEvaluator.evaluateBoolean(evaluator, formatCondition(condition, pModel, pBaseActivity));
+                if (condition.contains(DisplayConditionType.SHOW)) {
+                    condition = condition.replace(LEFT_BRACKET + DisplayConditionType.SHOW + RIGHT_BRACKET, Constants.Strings.EMPTY);
+                    final boolean isCanShow = TreeBooleanEvaluator.evaluateBoolean(evaluator, formatCondition(condition, pModel, pBaseActivity));
 
-            } else if (condition.contains(DisplayConditionType.NOT_SHOW)) {
-                condition = condition.replace(DisplayConditionType.NOT_SHOW, Constants.Strings.EMPTY);
-                isNeedNotShow = TreeBooleanEvaluator.evaluateBoolean(evaluator, formatCondition(condition, pModel, pBaseActivity));
+                    if (pIsAnswer) {
+                        return isCanShow ? CAN_SHOW : CANT_SHOW;
+                    } else if (isCanShow) {
+                        return CAN_SHOW;
+                    }
+                } else if (condition.contains(DisplayConditionType.JUMP)) {
+                    int jump = Integer.valueOf(condition.substring(condition.indexOf(DisplayConditionType.JUMP) + DisplayConditionType.JUMP.length(), condition.indexOf(RIGHT_BRACKET)));
+
+                    condition = condition.replace(LEFT_BRACKET + DisplayConditionType.JUMP + jump + RIGHT_BRACKET, Constants.Strings.EMPTY);
+                    final boolean isNeedJump = TreeBooleanEvaluator.evaluateBoolean(evaluator, formatCondition(condition, pModel, pBaseActivity));
+
+                    if (isNeedJump) {
+                        return jump;
+                    }
+                } else if (condition.contains(DisplayConditionType.HIDE)) {
+                    condition = condition.replace(LEFT_BRACKET + DisplayConditionType.HIDE + RIGHT_BRACKET, Constants.Strings.EMPTY);
+                    final boolean isCantShow = TreeBooleanEvaluator.evaluateBoolean(evaluator, formatCondition(condition, pModel, pBaseActivity));
+
+                    if (pIsAnswer) {
+                        return isCantShow ? CANT_SHOW : CAN_SHOW;
+                    } else if (isCantShow) {
+                        return CANT_SHOW;
+                    }
+                }
+            } else if (conditionElement.contains(DisplayConditionType.SHOW)) {
+                return CAN_SHOW;
+            } else if (conditionElement.contains(DisplayConditionType.JUMP)){
+                return Integer.valueOf(conditionElement.substring(conditionElement.indexOf(DisplayConditionType.JUMP) + DisplayConditionType.JUMP.length(), conditionElement.indexOf(RIGHT_BRACKET)));
+            } else if (conditionElement.contains(DisplayConditionType.HIDE)) {
+                return CANT_SHOW;
             }
         }
 
-        if (isNeedNotShow) {
-            return false;
+        return CAN_SHOW;
+    }
+
+    private static String getConditionString(final String pString) {
+        final int startConditionIndex = pString.indexOf(ELEMENT_INDEX) + ELEMENT_INDEX.length();
+        String condition = Constants.Strings.EMPTY;
+
+        for (int i = startConditionIndex; i < pString.length(); i++) {
+            final char currentChar = pString.charAt(i);
+            if (Character.isLetter(currentChar) || Character.isDigit(currentChar) || FORMAT_DIVIDER_DOT.equals(String.valueOf(currentChar))) {
+                condition += currentChar;
+            } else {
+                return condition;
+            }
         }
 
-        return isNeedShow;
+        return condition;
     }
 
     private static String formatCondition(final String pExpression, final HashMap<Integer, ElementModel> pModel, final BaseActivity pBaseActivity) {
@@ -82,7 +124,7 @@ public final class ConditionUtils {
             return pExpression;
         }
 
-        final String condition = pExpression.substring(pExpression.indexOf(ELEMENT_INDEX) + ELEMENT_INDEX.length(), pExpression.indexOf(SPACE));
+        final String condition = getConditionString(pExpression);
         final String[] array = getArrayElement(condition);
 
         final Integer index = Integer.parseInt(array[0]);

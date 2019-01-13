@@ -7,9 +7,10 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.SOURCE)
 @StringDef({DisplayConditionType.SHOW,
-        DisplayConditionType.NOT_SHOW})
+        DisplayConditionType.JUMP})
 public @interface DisplayConditionType {
 
-    String SHOW = " {show}";
-    String NOT_SHOW = " {not_show}";
+    String SHOW = "show";
+    String JUMP = "jump:";
+    String HIDE = "hide";
 }

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +21,8 @@ import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.SimpleTextWatcher;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.OptionsOpenType;
-import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
+import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 
@@ -63,7 +62,13 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
     @Override
     public void onBindViewHolder(@NonNull AnswerListViewHolder pAnswerListViewHolder, int pPosition) {
+        final ElementModel elementModel = getModel(pPosition);
+
         pAnswerListViewHolder.onBind(getModel(pPosition), pPosition);
+
+        if (elementModel != null && !elementModel.getOptions().isCanShow(getBaseActivity(), getMap())) {
+            pAnswerListViewHolder.itemView.setLayoutParams(new ViewGroup.LayoutParams(0,0));
+        }
     }
 
     class AnswerListViewHolder extends AbstractViewHolder {

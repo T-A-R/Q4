@@ -34,6 +34,7 @@ import pro.quizer.quizerexit.model.ElementType;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
+import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.model.config.ProjectInfoModel;
 import pro.quizer.quizerexit.model.database.ElementDatabaseModel;
 import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
@@ -266,13 +267,20 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
             return;
         }
 
+        final OptionsModel options = nextElement.getOptions();
+        final int showValue = ConditionUtils.evaluateCondition(options.getShowCondition(), mMap, this, false);
+
+        if (showValue != ConditionUtils.CAN_SHOW) {
+            showNextElement(showValue, true);
+        }
+
         final FragmentTransaction fragmentTransaction = getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.element_content,
                         ElementFragment.newInstance(nextElement, this, mToken, mLoginAdmin, mUserId, mUserLogin, mConfig.isPhotoQuestionnaire(), mProjectId));
 
         if (pIsAddToBackStack) {
-            fragmentTransaction.addToBackStack(nextElement.getOptions().getTitle(this));
+            fragmentTransaction.addToBackStack(options.getTitle(this));
         }
 
         fragmentTransaction.commit();

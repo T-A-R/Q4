@@ -23,7 +23,7 @@ public class BooleanEvaluationTest {
         assertEquals((true), TreeBooleanEvaluator.evaluateBoolean(evaluator, "((T))"));
         assertEquals((true), TreeBooleanEvaluator.evaluateBoolean(evaluator, "( T )"));
         assertEquals(true && false, TreeBooleanEvaluator.evaluateBoolean(evaluator, "T && F"));
-        assertEquals((true && true) || (false && true), TreeBooleanEvaluator.evaluateBoolean(evaluator, "(T && T) || ( F && T )"));
+        assertEquals((true && true) || (false && true), TreeBooleanEvaluator.evaluateBoolean(evaluator, "(T&&T)||(F&&T)"));
         assertEquals(true && (false || (false && true)), TreeBooleanEvaluator.evaluateBoolean(evaluator, "T && ( F || ( F && T ) )"));
         assertEquals((true && false), TreeBooleanEvaluator.evaluateBoolean(evaluator, "(T && F)"));
         assertEquals(false && true, TreeBooleanEvaluator.evaluateBoolean(evaluator, "( T && F )"));
@@ -40,8 +40,8 @@ public class BooleanEvaluationTest {
 
     @Test
     public void testIsCanShow() {
-        ConditionUtils.isCanShow("if (выражение) {show}###if (выражение) {not_show}", null);
-        ConditionUtils.isCanShow("if (выражение) {not_show}", null);
-        ConditionUtils.isCanShow("if (выражение) {show}", null);
+//        ConditionUtils.isCanShowScreen("if (выражение) {show} else if (выражение) {jump:185}", null);
+//        ConditionUtils.isCanShowScreen("if (выражение) {not_show}", null);
+//        ConditionUtils.isCanShowScreen("if (выражение) {show}", null);
     }
 }

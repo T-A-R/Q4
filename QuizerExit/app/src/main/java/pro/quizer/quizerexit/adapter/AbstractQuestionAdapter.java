@@ -4,10 +4,12 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import pro.quizer.quizerexit.IAdapter;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.utils.DateUtils;
 
@@ -19,6 +21,7 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
     private final List<ElementModel> mAnswers;
     private int mCheckedItemsCount;
     private ElementModel mCurrentElement;
+    private HashMap<Integer, ElementModel> mMap;
 
     AbstractQuestionAdapter(final ElementModel pCurrentElement, final Context pContext, final List<ElementModel> pAnswers, final int pMaxAnswer, final int pMinAnswer) {
         this.mCurrentElement = pCurrentElement;
@@ -26,12 +29,21 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
         this.mAnswers = pAnswers;
         this.mMaxAnswer = pMaxAnswer;
         this.mMinAnswer = pMinAnswer;
+        this.mMap = getBaseActivity().getMap();
 
         try {
             this.mCheckedItemsCount = getSelectedItems().size();
         } catch (Exception e) {
             this.mCheckedItemsCount = 0;
         }
+    }
+
+    public BaseActivity getBaseActivity() {
+        return (BaseActivity) mContext;
+    }
+
+    public HashMap<Integer, ElementModel> getMap() {
+        return mMap;
     }
 
     void setCheckedItemsCount(final int pCount) {

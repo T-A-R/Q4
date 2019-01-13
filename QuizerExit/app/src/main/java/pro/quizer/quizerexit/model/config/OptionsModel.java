@@ -3,6 +3,7 @@ package pro.quizer.quizerexit.model.config;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.OptionsOpenType;
@@ -162,6 +163,10 @@ public class OptionsModel implements Serializable {
 
     public String getText() {
         return text;
+    }
+
+    public boolean isCanShow(final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> mMap) {
+        return ConditionUtils.CAN_SHOW == ConditionUtils.evaluateCondition(getShowCondition(), mMap, pBaseActivity, true);
     }
 
     public String getJumpCondition() {

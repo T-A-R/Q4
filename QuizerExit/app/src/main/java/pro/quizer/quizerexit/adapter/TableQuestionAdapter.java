@@ -20,6 +20,7 @@ import com.vicmikhailau.maskededittext.MaskedEditText;
 import com.vicmikhailau.maskededittext.MaskedFormatter;
 import com.vicmikhailau.maskededittext.MaskedWatcher;
 
+import java.util.HashMap;
 import java.util.List;
 
 import pro.quizer.quizerexit.Constants;
@@ -48,11 +49,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private Runnable mRefreshRunnable;
     private ElementModel mCurrentElement;
     private boolean mIsFlipColsAndRows;
+    private BaseActivity mBaseActivity;
+    private HashMap<Integer, ElementModel> mMap;
 
     @Override
     public int processNext() throws Exception {
         for (final ElementModel question : mQuestions) {
-            if (question != null && question.getCountOfSelectedSubElements() == 0) {
+            if (question != null && question.getCountOfSelectedSubElements() == 0 && question.getOptions().isCanShow(mBaseActivity, mMap)) {
                 throw new Exception(mContext.getString(R.string.incorrect_select_min_answers_table));
             }
         }
@@ -81,6 +84,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         mHeaderHeight = res.getDimensionPixelSize(R.dimen.column_header_height);
         mHeaderWidth = res.getDimensionPixelSize(R.dimen.row_header_width);
         mIsFlipColsAndRows = pCurrentElement.getOptions().isFlipColsAndRows();
+        mBaseActivity = (BaseActivity) mContext;
+        mMap = mBaseActivity.getMap();
 
         mQuestions = pQuestions;
 
@@ -151,6 +156,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         if (currentElement != null) {
             vh.mTableItemCheckBox.setChecked(currentElement.isChecked());
+
+            if (currentElement.getOptions().isCanShow(mBaseActivity, mMap)) {
+                vh.mDisableFrame.setVisibility(View.GONE);
+            } else {
+                vh.mDisableFrame.setVisibility(View.VISIBLE);
+
+            }
         }
     }
 
@@ -175,7 +187,16 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     @Override
     public int getColumnWidth(final int column) {
-        return mColumnWidth;
+        if (mIsFlipColsAndRows) {
+            final ElementModel question = mQuestions.get(column);
+            if (!question.getOptions().isCanShow(mBaseActivity, mMap)) {
+                return 0;
+            } else {
+                return mColumnWidth;
+            }
+        } else {
+            return mColumnWidth;
+        }
     }
 
     @Override
@@ -185,7 +206,16 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     @Override
     public int getRowHeight(final int row) {
-        return mRowHeight;
+        if (!mIsFlipColsAndRows) {
+            final ElementModel question = mQuestions.get(row);
+            if (!question.getOptions().isCanShow(mBaseActivity, mMap)) {
+                return 0;
+            } else {
+                return mRowHeight;
+            }
+        } else {
+            return mRowHeight;
+        }
     }
 
     @Override
@@ -223,6 +253,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final ElementModel clickedElement = getElement(row, column);
 
         if (clickedElement == null) {
+            return;
+        }
+
+        if (!clickedElement.getOptions().isCanShow(mBaseActivity, mMap)) {
+            Toast.makeText(mContext, R.string.answer_not_available_table_question, Toast.LENGTH_LONG).show();
+
             return;
         }
         final boolean isElementChecked = clickedElement.isChecked();
@@ -361,10 +397,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private static class TableItemViewHolder extends ViewHolderImpl {
 
         CheckBox mTableItemCheckBox;
+        View mDisableFrame;
 
         private TableItemViewHolder(@NonNull final View itemView) {
             super(itemView);
             mTableItemCheckBox = itemView.findViewById(R.id.table_item_check_box);
+            mDisableFrame = itemView.findViewById(R.id.disable_frame);
         }
     }
 

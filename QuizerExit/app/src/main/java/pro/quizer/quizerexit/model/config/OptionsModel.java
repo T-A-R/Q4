@@ -142,7 +142,9 @@ public class OptionsModel implements Serializable {
     }
 
     public boolean isFlipColsAndRows() {
-        return flip_cols_and_rows;
+        // TODO: 1/14/2019 remove stub
+        return false;
+//        return flip_cols_and_rows;
     }
 
     public boolean isComplicatedCells() {
@@ -166,7 +168,7 @@ public class OptionsModel implements Serializable {
     }
 
     public boolean isCanShow(final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> mMap) {
-        return ConditionUtils.CAN_SHOW == ConditionUtils.evaluateCondition(getShowCondition(), mMap, pBaseActivity, true);
+        return ConditionUtils.CAN_SHOW == ConditionUtils.evaluateCondition(getShowCondition(), mMap, pBaseActivity);
     }
 
     public String getJumpCondition() {

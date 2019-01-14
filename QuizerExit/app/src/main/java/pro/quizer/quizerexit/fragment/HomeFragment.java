@@ -77,7 +77,7 @@ public class HomeFragment extends BaseFragment implements ICallback {
 //        hideProgressBar();
 
         if (isAdded()) {
-            showToast(getString(R.string.success_send_questionnaries));
+//            showToast(getString(R.string.success_send_questionnaries));
         }
     }
 

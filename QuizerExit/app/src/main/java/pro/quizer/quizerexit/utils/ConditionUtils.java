@@ -50,7 +50,7 @@ public final class ConditionUtils {
         return formatTitle(pBaseActivity, pTitle.replace(START_STRING + condition + END_STRING, replaceString), pModel);
     }
 
-    public static int evaluateCondition(final String pShowCondition, final HashMap<Integer, ElementModel> pModel, final BaseActivity pBaseActivity, final boolean pIsAnswer) {
+    public static int evaluateCondition(final String pShowCondition, final HashMap<Integer, ElementModel> pModel, final BaseActivity pBaseActivity) {
         if (StringUtils.isEmpty(pShowCondition)) {
             return CAN_SHOW;
         }
@@ -67,9 +67,7 @@ public final class ConditionUtils {
                     condition = condition.replace(LEFT_BRACKET + DisplayConditionType.SHOW + RIGHT_BRACKET, Constants.Strings.EMPTY);
                     final boolean isCanShow = TreeBooleanEvaluator.evaluateBoolean(evaluator, formatCondition(condition, pModel, pBaseActivity));
 
-                    if (pIsAnswer) {
-                        return isCanShow ? CAN_SHOW : CANT_SHOW;
-                    } else if (isCanShow) {
+                    if (isCanShow) {
                         return CAN_SHOW;
                     }
                 } else if (condition.contains(DisplayConditionType.JUMP)) {
@@ -85,9 +83,7 @@ public final class ConditionUtils {
                     condition = condition.replace(LEFT_BRACKET + DisplayConditionType.HIDE + RIGHT_BRACKET, Constants.Strings.EMPTY);
                     final boolean isCantShow = TreeBooleanEvaluator.evaluateBoolean(evaluator, formatCondition(condition, pModel, pBaseActivity));
 
-                    if (pIsAnswer) {
-                        return isCantShow ? CANT_SHOW : CAN_SHOW;
-                    } else if (isCantShow) {
+                    if (isCantShow) {
                         return CANT_SHOW;
                     }
                 }

@@ -63,6 +63,10 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
     }
 
     int getMaxAnswer() {
+        if (mMaxAnswer == 0) {
+            return 999999999;
+        }
+
         return mMaxAnswer;
     }
 

@@ -268,7 +268,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         }
 
         final OptionsModel options = nextElement.getOptions();
-        final int showValue = ConditionUtils.evaluateCondition(options.getShowCondition(), mMap, this, false);
+        final int showValue = ConditionUtils.evaluateCondition(options.getShowCondition(), mMap, this);
 
         if (showValue != ConditionUtils.CAN_SHOW) {
             showNextElement(showValue, true);

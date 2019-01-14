@@ -18,7 +18,7 @@ public final class StringUtils {
     public static String generateToken() {
         final String currentTimeMillis = String.valueOf(DateUtils.getCurrentTimeMillis());
         final String currentDate = DateUtils.getCurrentFormattedDate(PATTERN_TOKEN);
-        final String randomString = new RandomStringUtils(12).nextString();
+        final String randomString = new RandomStringUtils(14).nextString();
 
         return currentDate + currentTimeMillis + randomString;
     }

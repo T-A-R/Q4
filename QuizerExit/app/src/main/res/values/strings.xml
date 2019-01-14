@@ -111,4 +111,5 @@
     <string name="success_file_sending">Файлы успешно отправлены</string>
     <string name="sending">Идет отправка...</string>
     <string name="updating">Идет <обновление></обновление>...</string>
+    <string name="answer_not_available_table_question">Элемент не доступен для выбора</string>
 </resources>

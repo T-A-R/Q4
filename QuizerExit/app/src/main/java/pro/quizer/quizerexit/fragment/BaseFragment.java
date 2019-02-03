@@ -168,13 +168,13 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable, 
     }
 
     public void showProgressBar() {
-//        getBaseActivity().runOnUiThread(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                getProgressBar().setVisibility(View.VISIBLE);
-//            }
-//        });
+        getBaseActivity().runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                getProgressBar().setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override

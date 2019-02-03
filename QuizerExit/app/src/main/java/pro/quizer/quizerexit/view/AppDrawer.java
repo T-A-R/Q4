@@ -10,12 +10,14 @@ import java.io.Serializable;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.listener.QuotasClickListener;
 
 public class AppDrawer extends RelativeLayout implements Serializable {
 
     Button mHomeBtn;
     Button mSyncBtn;
     Button mSettingsBtn;
+    Button mQuotasBtn;
     Button mChangeUserBtn;
 
     public AppDrawer(final Context pContext) {
@@ -60,6 +62,7 @@ public class AppDrawer extends RelativeLayout implements Serializable {
         mHomeBtn = findViewById(R.id.home_btn);
         mSyncBtn = findViewById(R.id.sync_btn);
         mSettingsBtn = findViewById(R.id.settings_btn);
+        mQuotasBtn = findViewById(R.id.quotas_btn);
         mChangeUserBtn = findViewById(R.id.change_user_btn);
 
         mHomeBtn.setOnClickListener(new OnClickListener() {
@@ -83,6 +86,15 @@ public class AppDrawer extends RelativeLayout implements Serializable {
             public void onClick(View view) {
                 baseActivity.closeDrawer();
                 baseActivity.showSettingsFragment();
+            }
+        });
+
+        mQuotasBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                baseActivity.closeDrawer();
+
+                new QuotasClickListener((BaseActivity) context).onClick(view);
             }
         });
 

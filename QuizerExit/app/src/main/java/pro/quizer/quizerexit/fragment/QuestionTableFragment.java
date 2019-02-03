@@ -63,6 +63,7 @@ public class QuestionTableFragment extends AbstractQuestionFragment {
 
     @Override
     void updateAdapter() {
+        mAdapter.setIsUpdateActionPerformed(true);
 //        mAdapter.notifyDataSetChanged();
         UiUtils.hideKeyboard(getContext(), getView());
     }

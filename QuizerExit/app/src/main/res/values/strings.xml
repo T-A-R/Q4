@@ -40,7 +40,7 @@
     <string name="input_password">Введите пароль</string>
     <string name="incorrect_login_or_password">Неверный логин или пароль.</string>
     <string name="empty_login_or_password">Логин и пароль обязателен.</string>
-    <string name="error_max_users">Максимальное количество аккаунтов -  %1$s.</string>
+    <string name="error_max_users">Достигнуто максимальное количество пользователей на устройстве (%1$s)! Обратитесь к менеджеру!</string>
     <string name="short_login">Минимальная длина логина - 3 символа.</string>
     <string name="incorrect_select_min_answers_table">Выберите минимум 1 вариант ответа в каждов вопросе из таблицы.</string>
     <string name="incorrect_select_min_answers">Выберите минимум %1$s ответа.</string>
@@ -90,7 +90,7 @@
     <string name="sended_p_in_session_string">Отправлено фото в данном сеансе: %1$s</string>
     <string name="sms">SMS</string>
     <string name="home_title">Главный экран</string>
-    <string name="change_user">Сменить пользователя</string>
+    <string name="change_user">Выход</string>
     <string name="config_title">Конфигурация</string>
     <string name="settings_id_string">ID: %1$s</string>
     <string name="settings_date_string">Дата: %1$s</string>
@@ -100,8 +100,8 @@
     <string name="select_number_for_exit_pull">Выбор номера (для Экзит-Пулл)</string>
     <string name="change_user_body">Вы уверены, что хотите сменить пользователя?</string>
     <string name="please_send_q">Сначала отправьте анкеты</string>
-    <string name="hint_time">чч:мм:сс</string>
-    <string name="hint_date">гггг-мм-дд</string>
+    <string name="hint_time">Укажите время</string>
+    <string name="hint_date">Укажите дату</string>
     <string name="mask_time">##:##:##</string>
     <string name="mask_date">####.##.##</string>
     <string name="fill_input">Заполните текстовое поле в выбранных вариантах ответа.</string>
@@ -110,6 +110,20 @@
     <string name="force_gps_error_string">Работа без GPS координат невозможна в данном режиме работы! Спутники не инициализированы. Выйдите на отрытое пространство и дождитесь инициализации GPS.</string>
     <string name="success_file_sending">Файлы успешно отправлены</string>
     <string name="sending">Идет отправка...</string>
-    <string name="updating">Идет <обновление></обновление>...</string>
+    <string name="updating">Идет обновление...</string>
     <string name="answer_not_available_table_question">Элемент не доступен для выбора</string>
+    <string name="dialog_remove_user_body">Вы уверены, что хотите удалить данного пользователя?</string>
+    <string name="dialog_remove_user_title">Удаление пользователя</string>
+    <string name="dialog_error_remove_curernt_user_title">Ошибка удаления текущего пользователя</string>
+    <string name="dialog_error_remove_curernt_user_body">Перед удалением пользователя необходимо отправить все данные. Для для отправки всех данных перейдите в СИНХРОНИЗАЦИЮ.</string>
+    <string name="go_to">Перейти</string>
+    <string name="error_cannot_update_quotas">Не удалось загрузить квоты</string>
+    <string name="quotas_title">Квоты</string>
+    <string name="refresh_btn">Обновить</string>
+    <string name="x_from_y">\u0020(%1$s из %2$s)</string>
+    <string name="done_status">Выполнено</string>
+    <string name="not_done_status">Не выполнено</string>
+    <string name="more_then_done_status">Перевыполненно</string>
+    <string name="current_gps_string">Текущие GPS координаты:</string>
+    <string name="gps_is_turn_off">GPS не включен</string>
 </resources>

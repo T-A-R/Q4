@@ -22,20 +22,30 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
     private int mCheckedItemsCount;
     private ElementModel mCurrentElement;
     private HashMap<Integer, ElementModel> mMap;
+    private boolean mIsUpdateActionPerformed;
 
     AbstractQuestionAdapter(final ElementModel pCurrentElement, final Context pContext, final List<ElementModel> pAnswers, final int pMaxAnswer, final int pMinAnswer) {
-        this.mCurrentElement = pCurrentElement;
         this.mContext = pContext;
-        this.mAnswers = pAnswers;
+        this.mMap = getBaseActivity().getMap();
+        this.mCurrentElement = pCurrentElement;
+        this.mAnswers = getBaseActivity().getElementsByParentId(pCurrentElement.getRelativeID());
         this.mMaxAnswer = pMaxAnswer;
         this.mMinAnswer = pMinAnswer;
-        this.mMap = getBaseActivity().getMap();
+        this.mIsUpdateActionPerformed = false;
 
         try {
             this.mCheckedItemsCount = getSelectedItems().size();
         } catch (Exception e) {
             this.mCheckedItemsCount = 0;
         }
+    }
+
+    public void setIsUpdateActionPerformed(final boolean pIsUpdateActionPerformed) {
+        mIsUpdateActionPerformed = pIsUpdateActionPerformed;
+    }
+
+    public boolean isIsUpdateActionPerformed() {
+        return mIsUpdateActionPerformed;
     }
 
     public BaseActivity getBaseActivity() {

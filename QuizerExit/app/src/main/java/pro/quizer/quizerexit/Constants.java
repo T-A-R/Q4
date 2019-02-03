@@ -34,6 +34,7 @@ public final class Constants {
         String QUESTIONNAIRE = "questionnaire";
         String KEY_CLIENT = "key_client";
         String USER_LOGIN = "user_login";
+        String GET_QUOTA = "get_quota";
         String PHOTO_FILE = "photo_file";
         String AUDIO_FILE = "audio_file";
         String DOWNLOAD_UPDATE = "download_update";

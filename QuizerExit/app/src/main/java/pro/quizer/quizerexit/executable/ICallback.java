@@ -11,5 +11,4 @@ public interface ICallback extends Serializable, Parcelable {
     void onSuccess();
 
     void onError(final Exception pException);
-
 }

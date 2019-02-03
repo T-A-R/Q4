@@ -116,8 +116,6 @@ public abstract class AbstractQuestionFragment extends AbstractContentElementFra
         }
 
         createAdapter(mCurrentElement, subElements, minAnswers, maxAnswers, mRefreshRecyclerViewRunnable);
-
-        updateAdapter();
     }
 
     private void shuffleAnswers(final List<ElementModel> pList) {

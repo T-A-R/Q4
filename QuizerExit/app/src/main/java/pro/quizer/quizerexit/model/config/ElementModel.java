@@ -29,7 +29,10 @@ public class ElementModel implements Serializable {
     private List<ElementModel> elements;
 
     // @Ignore start
-    private boolean isShowing;
+    private boolean isScreenShowing;
+    private boolean isQuestionShowing;
+    private boolean isAnswerShowing;
+    private boolean isAnswerBackPressed;
     private boolean isChecked;
     private boolean isEnabled = true;
     private long startTime = 0;
@@ -122,12 +125,42 @@ public class ElementModel implements Serializable {
         return isEnabled;
     }
 
-    public void setShowing(boolean showing) {
-        isShowing = showing;
+    public void setScreenShowing(boolean screenShowing) {
+        isScreenShowing = screenShowing;
     }
 
-    public boolean isShowing() {
-        return isShowing;
+    public void setQuestionShowing(boolean questionShowing) {
+        isQuestionShowing = questionShowing;
+    }
+
+    public void setAnswerBackPressed(boolean answerBackPressed) {
+        isAnswerBackPressed = answerBackPressed;
+    }
+
+    public void setAnswerShowing(boolean answerShowing, boolean isUpdateActionPerformed) {
+        if (isAnswerShowing && answerShowing && !isUpdateActionPerformed) {
+            setAnswerBackPressed(true);
+        } else {
+            setAnswerBackPressed(false);
+        }
+
+        isAnswerShowing = answerShowing;
+    }
+
+    public boolean isScreenShowing() {
+        return isScreenShowing;
+    }
+
+    public boolean isQuestionShowing() {
+        return isQuestionShowing;
+    }
+
+    public boolean isAnswerShowing() {
+        return isAnswerShowing;
+    }
+
+    public boolean isAnswerBackPressed() {
+        return isAnswerBackPressed;
     }
 
     public void setStartTime(long start) {

@@ -3,17 +3,15 @@ package pro.quizer.quizerexit.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.Editable;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.vicmikhailau.maskededittext.MaskedEditText;
-import com.vicmikhailau.maskededittext.MaskedFormatter;
-import com.vicmikhailau.maskededittext.MaskedWatcher;
 
 import java.util.List;
 
@@ -66,8 +64,8 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
         pAnswerListViewHolder.onBind(getModel(pPosition), pPosition);
 
-        if (elementModel != null && !elementModel.getOptions().isCanShow(getBaseActivity(), getMap())) {
-            pAnswerListViewHolder.itemView.setLayoutParams(new ViewGroup.LayoutParams(0,0));
+        if (elementModel != null && !elementModel.getOptions().isCanShow(getBaseActivity(), getMap(), elementModel)) {
+            pAnswerListViewHolder.itemView.setLayoutParams(new ViewGroup.LayoutParams(0, 0));
         }
     }
 
@@ -75,49 +73,58 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
         TextView mAnswer;
         CompoundButton mCheckBox;
-        MaskedEditText mEditText;
 
         AnswerListViewHolder(final View itemView) {
             super(itemView);
             mAnswer = itemView.findViewById(R.id.answer_text);
             mCheckBox = itemView.findViewById(R.id.answer_checkbox);
-            mEditText = itemView.findViewById(R.id.answer_edit_text);
         }
 
         @SuppressLint("ClickableViewAccessibility")
         @Override
         public void onBind(final ElementModel pAnswer, final int pPosition) {
-            final OptionsModel attributes = pAnswer.getOptions();
+            pAnswer.setAnswerShowing(true, isIsUpdateActionPerformed());
 
-            final String openType = attributes.getOpenType();
+            final OptionsModel options = pAnswer.getOptions();
+
+            final String openType = options.getOpenType();
             final boolean isChecked = pAnswer.isChecked();
             final boolean isEnabled = pAnswer.isEnabled();
+            final boolean isEditTextEnabled = isChecked && isEnabled;
             final Context context = mEditText.getContext();
 
             if (!OptionsOpenType.CHECKBOX.equals(openType)) {
-                final String placeholder = attributes.getPlaceholder();
+                final String placeholder = options.getPlaceholder();
                 final String textAnswer = pAnswer.getTextAnswer();
+                final boolean isPicker = options.getOpenType().equals(OptionsOpenType.TIME) || options.getOpenType().equals(OptionsOpenType.DATE);
 
                 mEditText.setVisibility(View.VISIBLE);
                 mEditText.setHint(StringUtils.isEmpty(placeholder) ? mDefaultPlaceHolder : placeholder);
                 mEditText.setTag(pPosition);
                 mEditText.setText(textAnswer);
-                mEditText.addTextChangedListener(new ElementTextWatcher(pAnswer));
+                mEditText.setEnabled(isEditTextEnabled);
+                mEditText.addTextChangedListener(new ElementTextWatcher(pAnswer, mEditText, isPicker));
 
-                switch (attributes.getOpenType()) {
+                switch (options.getOpenType()) {
                     case OptionsOpenType.TIME:
-                        mEditText.setInputType(InputType.TYPE_CLASS_DATETIME);
+                        mEditText.setFocusableInTouchMode(false);
                         mEditText.setHint(R.string.hint_time);
-                        MaskedFormatter timeFormatter = new MaskedFormatter(context.getString(R.string.mask_time));
-                        mEditText.addTextChangedListener(new MaskedWatcher(timeFormatter, mEditText));
-
+                        mEditText.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                setTime(view);
+                            }
+                        });
                         break;
                     case OptionsOpenType.DATE:
-                        mEditText.setInputType(InputType.TYPE_CLASS_DATETIME);
+                        mEditText.setFocusableInTouchMode(false);
                         mEditText.setHint(R.string.hint_date);
-                        MaskedFormatter dateFormatter = new MaskedFormatter(context.getString(R.string.mask_date));
-                        mEditText.addTextChangedListener(new MaskedWatcher(dateFormatter, mEditText));
-
+                        mEditText.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                setDate(view);
+                            }
+                        });
                         break;
                     case OptionsOpenType.NUMBER:
                         mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -134,8 +141,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                 mEditText.setVisibility(View.GONE);
             }
 
-            mEditText.setEnabled(isChecked && isEnabled);
-            UiUtils.setTextOrHide(mAnswer, attributes.getTitle((BaseActivity) context));
+            UiUtils.setTextOrHide(mAnswer, options.getTitle((BaseActivity) context));
             mCheckBox.setChecked(isChecked);
             mCheckBox.setTag(pPosition);
             mCheckBox.setEnabled(isEnabled);
@@ -164,7 +170,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                         Toast.makeText(context,
                                 String.format(context.getString(R.string.incorrect_max_selected_answers), String.valueOf(maxAnswers)),
                                 Toast.LENGTH_LONG).show();
-                    } else if (attributes.isUnchecker()) {
+                    } else if (options.isUnchecker()) {
                         if (isChecked) {
                             setCheckedItemsCount(1);
                             unselectAll();
@@ -222,16 +228,28 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
     public static class ElementTextWatcher extends SimpleTextWatcher {
 
         private ElementModel mAnswer;
+        private EditText mEditText;
+        private boolean mIsPicker;
 
-        ElementTextWatcher(final ElementModel pAnswer) {
+        ElementTextWatcher(final ElementModel pAnswer, final EditText pEditText, final boolean pIsPicker) {
             mAnswer = pAnswer;
+            mEditText = pEditText;
+            mIsPicker = pIsPicker;
         }
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            super.onTextChanged(s, start, before, count);
+        public void afterTextChanged(Editable s) {
+            super.afterTextChanged(s);
 
-            mAnswer.setTextAnswer(s.toString());
+            final String answer = s.toString();
+            mAnswer.setTextAnswer(answer);
+
+            if (mEditText.isEnabled() && StringUtils.isEmpty(answer)) {
+                mEditText.setBackgroundResource(R.drawable.edit_text_red_border);
+            } else {
+                mEditText.setBackgroundResource(R.drawable.edit_text_transparent_border);
+            }
+
         }
     }
 }

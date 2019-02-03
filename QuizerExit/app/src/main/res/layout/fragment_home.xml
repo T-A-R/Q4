@@ -47,14 +47,31 @@
             android:visibility="gone"
             tools:text="Экзит пул agreement..." />
 
-        <Button
-            android:id="@+id/start"
-            style="@style/ButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+        <RelativeLayout
+            android:layout_gravity="center"
             android:layout_marginTop="24dp"
-            android:text="@string/start" />
+            android:layout_width="156dp"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/start"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/start" />
+
+            <Button
+                android:layout_below="@+id/start"
+                android:id="@+id/quotas"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:text="@string/quotas_title" />
+
+        </RelativeLayout>
 
     </LinearLayout>
 

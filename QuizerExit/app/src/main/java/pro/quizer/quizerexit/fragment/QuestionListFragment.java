@@ -57,10 +57,12 @@ public class QuestionListFragment extends AbstractQuestionFragment {
     void createAdapter(final ElementModel pCurrentElement, List<ElementModel> subElements, int minAnswers, int maxAnswers, Runnable refreshRecyclerViewRunnable) {
         mAdapter = new QuestionListAdapter(pCurrentElement, getContext(), subElements, maxAnswers, minAnswers, refreshRecyclerViewRunnable);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
     void updateAdapter() {
+        mAdapter.setIsUpdateActionPerformed(true);
         mRecyclerView.setAdapter(mAdapter);
         UiUtils.hideKeyboard(getContext(), getView());
     }

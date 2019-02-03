@@ -23,12 +23,16 @@ import com.google.gson.GsonBuilder;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import pro.quizer.quizerexit.BuildConfig;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.executable.RemoveUserExecutable;
 import pro.quizer.quizerexit.fragment.HomeFragment;
+import pro.quizer.quizerexit.fragment.QuotasFragment;
 import pro.quizer.quizerexit.fragment.SettingsFragment;
 import pro.quizer.quizerexit.fragment.SyncFragment;
 import pro.quizer.quizerexit.model.config.ConfigModel;
@@ -139,6 +143,21 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
         return mCurrentUser.getConfig().getProjectInfo().getElements();
     }
 
+    public List<ElementModel> getElementsByParentId(final int pRelativeId) {
+        final List<ElementModel> list = new ArrayList<>();
+
+        for (final Map.Entry<Integer, ElementModel> elementModel : mMap.entrySet()) {
+            final ElementModel element = elementModel.getValue();
+
+            if (element != null && element.getRelativeParentID() == pRelativeId) {
+                list.add(element);
+            }
+        }
+
+
+        return list;
+    }
+
     public HashMap<Integer, ElementModel> getMap() {
         if (mMap == null) {
             mMap = new HashMap<>();
@@ -188,6 +207,10 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
 
     public void showSettingsFragment() {
         showFragmentWithBackstack(SettingsFragment.newInstance());
+    }
+
+    public void showQuotasFragment() {
+        showFragmentWithBackstack(QuotasFragment.newInstance());
     }
 
     public boolean isActivated() {
@@ -387,6 +410,34 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
                     }
                 })
                 .setNegativeButton(R.string.no, null).show();
+    }
+
+    public void showRemoveUserDialog() {
+        new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle(R.string.dialog_remove_user_title)
+                .setMessage(R.string.dialog_remove_user_body)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(final DialogInterface dialog, final int which) {
+                        new RemoveUserExecutable(BaseActivity.this).execute();
+                    }
+                })
+                .setNegativeButton(R.string.no, null).show();
+    }
+
+    public void showErrorRemoveUserDialog() {
+        new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle(R.string.dialog_error_remove_curernt_user_title)
+                .setMessage(R.string.dialog_error_remove_curernt_user_body)
+                .setPositiveButton(R.string.go_to, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(final DialogInterface dialog, final int which) {
+                        showSyncFragment();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null).show();
     }
 
     public void showChangeAccountAlertDialog() {

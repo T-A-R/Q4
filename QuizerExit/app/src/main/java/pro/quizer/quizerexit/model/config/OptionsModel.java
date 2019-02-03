@@ -9,6 +9,7 @@ import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.OptionsOpenType;
 import pro.quizer.quizerexit.model.OptionsType;
 import pro.quizer.quizerexit.utils.ConditionUtils;
+import pro.quizer.quizerexit.utils.QuotasUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 
 import static pro.quizer.quizerexit.model.OptionsOpenType.CHECKBOX;
@@ -142,9 +143,7 @@ public class OptionsModel implements Serializable {
     }
 
     public boolean isFlipColsAndRows() {
-        // TODO: 1/14/2019 remove stub
-        return false;
-//        return flip_cols_and_rows;
+        return flip_cols_and_rows;
     }
 
     public boolean isComplicatedCells() {
@@ -167,8 +166,11 @@ public class OptionsModel implements Serializable {
         return text;
     }
 
-    public boolean isCanShow(final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> mMap) {
-        return ConditionUtils.CAN_SHOW == ConditionUtils.evaluateCondition(getShowCondition(), mMap, pBaseActivity);
+    public boolean isCanShow(final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel) {
+        final boolean showCondition = ConditionUtils.CAN_SHOW == ConditionUtils.evaluateCondition(getShowCondition(), mMap, pBaseActivity);
+        final boolean quotasCondition = QuotasUtils.isCanDisplayed(mMap, pElementModel, pBaseActivity);
+
+        return showCondition && quotasCondition;
     }
 
     public String getJumpCondition() {

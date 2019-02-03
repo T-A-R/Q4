@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.ICallback;
+import pro.quizer.quizerexit.executable.RemoveUserExecutable;
 import pro.quizer.quizerexit.executable.SettingViewModelExecutable;
 import pro.quizer.quizerexit.model.view.SettingsViewModel;
 import pro.quizer.quizerexit.utils.UiUtils;
@@ -19,6 +21,7 @@ public class SettingsFragment extends BaseFragment implements ICallback {
 
     private TextView mConfigDateView;
     private TextView mConfigIdView;
+    private View mDeleteUser;
     private String mConfigDateString;
     private String mConfigIdString;
 
@@ -50,6 +53,13 @@ public class SettingsFragment extends BaseFragment implements ICallback {
     private void initViews(final View pView) {
         mConfigDateView = pView.findViewById(R.id.settings_date);
         mConfigIdView = pView.findViewById(R.id.settings_id);
+        mDeleteUser = pView.findViewById(R.id.delete_user);
+        mDeleteUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((BaseActivity) view.getContext()).showRemoveUserDialog();
+            }
+        });
     }
 
     private void initStrings() {

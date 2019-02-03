@@ -11,8 +11,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.SendQuestionnairesByUserModelExecutable;
+import pro.quizer.quizerexit.listener.QuotasClickListener;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ProjectInfoModel;
 import pro.quizer.quizerexit.model.database.UserModel;
@@ -65,6 +67,9 @@ public class HomeFragment extends BaseFragment implements ICallback {
                 getBaseActivity().startQuestionActivity();
             }
         });
+
+        final Button quotasBtn = pView.findViewById(R.id.quotas);
+        quotasBtn.setOnClickListener(new QuotasClickListener((BaseActivity) getContext()));
     }
 
     @Override

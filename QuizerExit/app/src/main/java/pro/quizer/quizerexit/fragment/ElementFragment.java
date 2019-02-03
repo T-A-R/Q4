@@ -121,13 +121,16 @@ public class ElementFragment extends BaseFragment {
         UiUtils.setTextOrHide(mElementText, mAttributes.getTitle((BaseActivity) getContext()));
         UiUtils.setTextOrHide(mElementDescriptionText, mAttributes.getDescription());
 
-        mCurrentElement.setShowing(true);
         mCurrentElement.setStartTime(mStartTime);
 
         switch (mCurrentElement.getType()) {
             case ElementType.QUESTION:
+                mCurrentElement.setScreenShowing(true);
+
                 switch (mCurrentElement.getOptions().getType()) {
                     case OptionsType.LIST:
+                        mCurrentElement.setQuestionShowing(true);
+
                         mFragmentManger.beginTransaction()
                                 .add(R.id.content_element, QuestionListFragment.newInstance(mCurrentElement, mCallback))
                                 .commit();
@@ -147,6 +150,8 @@ public class ElementFragment extends BaseFragment {
 
                 break;
             case ElementType.INFO:
+                mCurrentElement.setScreenShowing(true);
+
                 mFragmentManger.beginTransaction()
                         .add(R.id.content_element, InfoFragment.newInstance(mCurrentElement, mCallback))
                         .commit();

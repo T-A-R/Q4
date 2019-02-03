@@ -3,7 +3,6 @@ package pro.quizer.quizerexit.model.config;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class ConfigModel implements Serializable {
 
@@ -94,11 +93,15 @@ public class ConfigModel implements Serializable {
     }
 
     public boolean isGps() {
-        return gps;
+        // TODO: 2/4/2019 stub
+        return true;
+//        return gps;
     }
 
     public boolean isForceGps() {
-        return force_gps;
+        // TODO: 2/4/2019 stub
+        return true;
+//        return force_gps;
     }
 
     public boolean isRecordFullQuestionnaire() {

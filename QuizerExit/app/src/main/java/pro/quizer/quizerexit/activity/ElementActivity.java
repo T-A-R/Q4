@@ -54,6 +54,7 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class ElementActivity extends BaseActivity implements NavigationCallback {
 
+    public static final int FIRST_ELEMENT = -1;
     UserModel mUserModel;
     ConfigModel mConfig;
     ProjectInfoModel mProjectInfo;
@@ -178,13 +179,18 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         if (mConfig.isGps()) {
             try {
                 mGps = GpsUtils.getCurrentGps(this, mConfig.isForceGps());
-                showToast("Current GPS = " + mGps);
+
+                if (!StringUtils.isEmpty(mGps)) {
+                    showToast(getString(R.string.current_gps_string) + mGps);
+                } else {
+                    showToast(getString(R.string.gps_is_turn_off));
+                }
 
                 initStartValues();
             } catch (final Exception e) {
-                showToast(e.toString());
-
                 if (mConfig.isForceGps()) {
+                    showToast(getString(R.string.force_gps_error_string));
+
                     finish();
                     startMainActivity();
                 } else {
@@ -251,7 +257,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     }
 
     private void showFirstElement() {
-        showNextElement(1, false);
+        showNextElement(FIRST_ELEMENT, false);
     }
 
     private void showNextElement(final int pNextRelativeId, final boolean pIsAddToBackStack) {
@@ -268,6 +274,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         }
 
         final OptionsModel options = nextElement.getOptions();
+        // TODO: 1/27/2019 implement isCanShow condition, because of QuotaUtils... into this method
         final int showValue = ConditionUtils.evaluateCondition(options.getShowCondition(), mMap, this);
 
         if (showValue != ConditionUtils.CAN_SHOW) {
@@ -289,6 +296,8 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     private ElementModel getElementByRelativeId(final int pRelativeId) {
         if (pRelativeId == 0) {
             return null;
+        } else if (pRelativeId == FIRST_ELEMENT) {
+            return mElements.get(0);
         }
 
         return mMap.get(pRelativeId);
@@ -370,9 +379,8 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         questionnaireDatabaseModel.gps = mGps;
         questionnaireDatabaseModel.date_interview = mStartDateInterview;
 
-        // TODO: 1/5/2019 как мы узнаем, что это был скрин?? ЗАМЕНИТЬ mElements на mMap
-        final int showingScreensCount = saveScreenElements(mElements);
-        final int answersCount = saveAnswersElements(mElements);
+        final int showingScreensCount = saveScreenElements();
+        final int answersCount = saveAnswersElements();
 
         questionnaireDatabaseModel.questions_passed = getCountOfShowingQuestions();
         questionnaireDatabaseModel.screens_passed = showingScreensCount;
@@ -382,11 +390,13 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         questionnaireDatabaseModel.save();
     }
 
-    private int saveScreenElements(final List<ElementModel> pScreenElements) {
+    private int saveScreenElements() {
         int count = 0;
 
-        for (final ElementModel element : pScreenElements) {
-            if (element != null && element.isShowing()) {
+        for (final Map.Entry<Integer, ElementModel> elementModel : mMap.entrySet()) {
+            final ElementModel element = elementModel.getValue();
+
+            if (element != null && element.isScreenShowing()) {
                 final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
                 elementDatabaseModel.token = mToken;
                 elementDatabaseModel.relative_id = element.getRelativeID();
@@ -401,20 +411,15 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         return count;
     }
 
-    private int saveAnswersElements(final List<ElementModel> pScreenElements) {
+    private int saveAnswersElements() {
         int count = 0;
 
-        for (final ElementModel screenElement : pScreenElements) {
-            for (final ElementModel element : screenElement.getElements()) {
-                if (element != null && ElementType.QUESTION.equals(element.getType())) {
-                    for (final ElementModel subElement : element.getElements()) {
-                        saveElement(subElement);
-                        count++;
-                    }
-                } else {
-                    saveElement(element);
-                    count++;
-                }
+        for (final Map.Entry<Integer, ElementModel> elementModel : mMap.entrySet()) {
+            final ElementModel element = elementModel.getValue();
+
+            if (element != null && ElementType.ANSWER.equals(element.getType()) && element.isFullySelected()) {
+                saveElement(element);
+                count++;
             }
         }
 
@@ -422,25 +427,22 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     }
 
     private void saveElement(final ElementModel element) {
-        if (element != null && ElementType.ANSWER.equals(element.getType()) && element.isFullySelected()) {
-            final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
-            elementDatabaseModel.token = mToken;
-            elementDatabaseModel.value = element.getTextAnswer();
-            elementDatabaseModel.relative_id = element.getRelativeID();
-            elementDatabaseModel.type = ElementDatabaseType.ELEMENT;
+        final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
+        elementDatabaseModel.token = mToken;
+        elementDatabaseModel.value = element.getTextAnswer();
+        elementDatabaseModel.relative_id = element.getRelativeID();
+        elementDatabaseModel.type = ElementDatabaseType.ELEMENT;
 
-            elementDatabaseModel.save();
-        }
+        elementDatabaseModel.save();
     }
 
-    // TODO: 10.12.2018 including questions in elements
     private int getCountOfShowingQuestions() {
         int count = 0;
 
         for (final Map.Entry<Integer, ElementModel> element : mMap.entrySet()) {
             final ElementModel elementModel = element.getValue();
 
-            if (elementModel != null && ElementType.QUESTION.equals(elementModel.getType()) && elementModel.isShowing()) {
+            if (elementModel != null && ElementType.QUESTION.equals(elementModel.getType()) && elementModel.isQuestionShowing()) {
                 count++;
             }
         }

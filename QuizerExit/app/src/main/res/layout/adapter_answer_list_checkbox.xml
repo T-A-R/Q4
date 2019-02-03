@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:mask="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -26,7 +25,7 @@
                 android:textSize="16sp"
                 tools:text="Name" />
 
-            <com.vicmikhailau.maskededittext.MaskedEditText
+            <EditText
                 android:id="@+id/answer_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -34,6 +33,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_toStartOf="@+id/answer_checkbox"
+                android:imeOptions="actionDone"
                 android:layout_toLeftOf="@+id/answer_checkbox"
                 android:textSize="16sp"
                 android:visibility="gone"

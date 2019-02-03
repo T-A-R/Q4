@@ -1,6 +1,9 @@
 package pro.quizer.quizerexit.adapter;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
@@ -10,16 +13,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.cleveroad.adaptivetablelayout.LinkedAdaptiveTableAdapter;
 import com.cleveroad.adaptivetablelayout.OnItemClickListener;
 import com.cleveroad.adaptivetablelayout.ViewHolderImpl;
-import com.vicmikhailau.maskededittext.MaskedEditText;
-import com.vicmikhailau.maskededittext.MaskedFormatter;
-import com.vicmikhailau.maskededittext.MaskedWatcher;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -51,11 +56,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private boolean mIsFlipColsAndRows;
     private BaseActivity mBaseActivity;
     private HashMap<Integer, ElementModel> mMap;
+    private boolean mIsUpdateActionPerformed;
 
     @Override
     public int processNext() throws Exception {
         for (final ElementModel question : mQuestions) {
-            if (question != null && question.getCountOfSelectedSubElements() == 0 && question.getOptions().isCanShow(mBaseActivity, mMap)) {
+            if (question != null && question.getCountOfSelectedSubElements() == 0 && question.getOptions().isCanShow(mBaseActivity, mMap, question)) {
                 throw new Exception(mContext.getString(R.string.incorrect_select_min_answers_table));
             }
         }
@@ -86,6 +92,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         mIsFlipColsAndRows = pCurrentElement.getOptions().isFlipColsAndRows();
         mBaseActivity = (BaseActivity) mContext;
         mMap = mBaseActivity.getMap();
+        this.mIsUpdateActionPerformed = false;
 
         mQuestions = pQuestions;
 
@@ -112,6 +119,14 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mTopSide = mAnswers;
             mLeftSide = mQuestions;
         }
+    }
+
+    public void setIsUpdateActionPerformed(final boolean pIsUpdateActionPerformed) {
+        mIsUpdateActionPerformed = pIsUpdateActionPerformed;
+    }
+
+    public boolean isIsUpdateActionPerformed() {
+        return mIsUpdateActionPerformed;
     }
 
     @Override
@@ -157,11 +172,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         if (currentElement != null) {
             vh.mTableItemCheckBox.setChecked(currentElement.isChecked());
 
-            if (currentElement.getOptions().isCanShow(mBaseActivity, mMap)) {
+            if (currentElement.getOptions().isCanShow(mBaseActivity, mMap, currentElement)) {
                 vh.mDisableFrame.setVisibility(View.GONE);
+                currentElement.setAnswerShowing(true, isIsUpdateActionPerformed());
             } else {
                 vh.mDisableFrame.setVisibility(View.VISIBLE);
-
+                currentElement.setAnswerShowing(false, isIsUpdateActionPerformed());
             }
         }
     }
@@ -189,9 +205,11 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     public int getColumnWidth(final int column) {
         if (mIsFlipColsAndRows) {
             final ElementModel question = mQuestions.get(column);
-            if (!question.getOptions().isCanShow(mBaseActivity, mMap)) {
+            if (!question.getOptions().isCanShow(mBaseActivity, mMap, question)) {
                 return 0;
             } else {
+                question.setQuestionShowing(true);
+
                 return mColumnWidth;
             }
         } else {
@@ -208,9 +226,11 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     public int getRowHeight(final int row) {
         if (!mIsFlipColsAndRows) {
             final ElementModel question = mQuestions.get(row);
-            if (!question.getOptions().isCanShow(mBaseActivity, mMap)) {
+            if (!question.getOptions().isCanShow(mBaseActivity, mMap, question)) {
                 return 0;
             } else {
+                question.setQuestionShowing(true);
+
                 return mRowHeight;
             }
         } else {
@@ -247,6 +267,53 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         }
     }
 
+    private Calendar mCalendar = Calendar.getInstance();
+
+    // отображаем диалоговое окно для выбора даты
+    public void setDate(final EditText pEditText) {
+        new DatePickerDialog(mContext, new DatePickerDialog.OnDateSetListener() {
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                mCalendar.set(Calendar.YEAR, year);
+                mCalendar.set(Calendar.MONTH, monthOfYear);
+                mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                setInitialDateTime(pEditText, true);
+            }
+        },
+                mCalendar.get(Calendar.YEAR),
+                mCalendar.get(Calendar.MONTH),
+                mCalendar.get(Calendar.DAY_OF_MONTH))
+                .show();
+    }
+
+    // отображаем диалоговое окно для выбора времени
+    public void setTime(final EditText pEditText) {
+        new TimePickerDialog(mContext, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                mCalendar.set(Calendar.MINUTE, minute);
+                setInitialDateTime(pEditText, false);
+            }
+        },
+                mCalendar.get(Calendar.HOUR_OF_DAY),
+                mCalendar.get(Calendar.MINUTE), true)
+                .show();
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private void setInitialDateTime(final EditText mEditText, final boolean pIsDate) {
+        SimpleDateFormat dateFormat;
+
+        if (pIsDate) {
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        } else {
+            dateFormat = new SimpleDateFormat("HH:mm");
+        }
+
+        dateFormat.setTimeZone(mCalendar.getTimeZone());
+        mEditText.setText(dateFormat.format(mCalendar.getTime()));
+    }
+
     @Override
     public void onItemClick(final int row, final int column) {
         Toast.makeText(mContext, "Строка: " + row + " столбец: " + column, Toast.LENGTH_LONG).show();
@@ -256,7 +323,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             return;
         }
 
-        if (!clickedElement.getOptions().isCanShow(mBaseActivity, mMap)) {
+        if (!clickedElement.getOptions().isCanShow(mBaseActivity, mMap, clickedElement)) {
             Toast.makeText(mContext, R.string.answer_not_available_table_question, Toast.LENGTH_LONG).show();
 
             return;
@@ -271,7 +338,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
             dialog.setView(mView);
 
-            final MaskedEditText mEditText = mView.findViewById(R.id.answer_edit_text);
+            final EditText mEditText = mView.findViewById(R.id.answer_edit_text);
 
             final String placeholder = options.getPlaceholder();
             final String textAnswer = clickedElement.getTextAnswer();
@@ -284,18 +351,24 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
             switch (options.getOpenType()) {
                 case OptionsOpenType.TIME:
-                    mEditText.setInputType(InputType.TYPE_CLASS_DATETIME);
+                    mEditText.setFocusableInTouchMode(false);
                     mEditText.setHint(R.string.hint_time);
-                    final MaskedFormatter timeFormatter = new MaskedFormatter(context.getString(R.string.mask_time));
-                    mEditText.addTextChangedListener(new MaskedWatcher(timeFormatter, mEditText));
-
+                    mEditText.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            setTime(mEditText);
+                        }
+                    });
                     break;
                 case OptionsOpenType.DATE:
-                    mEditText.setInputType(InputType.TYPE_CLASS_DATETIME);
+                    mEditText.setFocusableInTouchMode(false);
                     mEditText.setHint(R.string.hint_date);
-                    final MaskedFormatter dateFormatter = new MaskedFormatter(context.getString(R.string.mask_date));
-                    mEditText.addTextChangedListener(new MaskedWatcher(dateFormatter, mEditText));
-
+                    mEditText.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            setDate(mEditText);
+                        }
+                    });
                     break;
                 case OptionsOpenType.NUMBER:
                     mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -325,7 +398,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
                             clickedElement.setTextAnswer(answer);
                             clickedElement.setChecked(true);
-                            notifyDataSetChanged();
+                            notifyItemChanged(row, column, true);
                             mRefreshRunnable.run();
                         }
                     })
@@ -337,7 +410,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                                     clickedElement.setTextAnswer(Constants.Strings.EMPTY);
                                     clickedElement.setChecked(false);
                                     dialogBox.cancel();
-                                    notifyDataSetChanged();
+                                    notifyItemChanged(row, column, true);
                                     mRefreshRunnable.run();
                                 }
                             });
@@ -348,7 +421,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             clickedElement.setChecked(!isElementChecked);
         }
 
-        notifyDataSetChanged();
+        notifyItemChanged(row, column, true);
+    }
+
+    private void notifyItemChanged(final int row, final int column, final boolean mIsUpdateActionPerformed) {
+        setIsUpdateActionPerformed(true);
+        notifyItemChanged(row, column, mIsUpdateActionPerformed);
     }
 
     @Override

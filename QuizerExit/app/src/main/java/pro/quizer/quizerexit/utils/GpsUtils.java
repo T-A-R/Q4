@@ -2,6 +2,7 @@ package pro.quizer.quizerexit.utils;
 
 import android.content.Context;
 
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 
 public final class GpsUtils {
@@ -20,14 +21,16 @@ public final class GpsUtils {
                 lat = gps.getLatitude();
                 lon = gps.getLongitude();
             } catch (final Exception e) {
-                if (pIsForceGps) {
-                    throw new Exception(pContext.getString(R.string.force_gps_error_string));
-                }
+                throw new Exception();
             }
         } else {
             gps.showSettingsAlert();
         }
 
-        return String.format(GPS_FORMAT, lat, lon);
+        if (lon == DEFAULT_GPS_VALUE || lat == DEFAULT_GPS_VALUE) {
+            return Constants.Strings.EMPTY;
+        } else {
+            return String.format(GPS_FORMAT, lat, lon);
+        }
     }
 }

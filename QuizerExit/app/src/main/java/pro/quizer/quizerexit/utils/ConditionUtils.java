@@ -13,8 +13,8 @@ public final class ConditionUtils {
     public static final int CANT_SHOW = -2;
 
     private static final String ELEMENT_INDEX = "$e.";
-    private static final String START_STRING = "<# " + ELEMENT_INDEX;
-    private static final String END_STRING = " #>";
+    private static final String START_STRING = "<#";
+    private static final String END_STRING = "#>";
     private static final String FORMAT_DIVIDER_DOT = ".";
     private static final String DISPLAY_CONDITION_DIVIDER = "else";
     private static final String IF = "if";
@@ -34,7 +34,9 @@ public final class ConditionUtils {
         }
 
         final String condition = pTitle.substring(pTitle.indexOf(START_STRING) + START_STRING.length(), pTitle.indexOf(END_STRING));
-        final String[] array = getArrayElement(condition);
+        final String conditionWithoutSpaces = condition.replace(SPACE, Constants.Strings.EMPTY);
+        final String conditionWithoutElementIndex = conditionWithoutSpaces.replace(ELEMENT_INDEX, Constants.Strings.EMPTY);
+        final String[] array = getArrayElement(conditionWithoutElementIndex);
 
         final Integer index = Integer.parseInt(array[0]);
         final String field = array[1];

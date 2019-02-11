@@ -12,6 +12,8 @@ public final class Constants {
 
         String SHARED_PREFERENCES_INSTANCE = "SHARED_PREFERENCES_INSTANCE";
 
+        String ANSWER_MARGIN = "ANSWER_MARGIN";
+        String FONT_SIZE_POSITION = "FONT_SIZE_POSITION";
         String CURRENT_USED_ID = "CURRENT_USED_ID";
         String SENDED_Q_IN_SESSSION = "SENDED_Q_IN_SESSSION";
 

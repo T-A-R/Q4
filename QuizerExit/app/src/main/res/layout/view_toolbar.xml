@@ -31,10 +31,34 @@
                 android:minWidth="?attr/actionBarSize"
                 android:padding="12dp">
 
+                <ImageView
+                    android:id="@+id/icon"
+                    android:src="@drawable/ic_preloader"
+                    android:visibility="gone"
+                    android:tint="@android:color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
             </FrameLayout>
 
-            <ImageView
+            <pro.quizer.quizerexit.view.resizeble.textview.MediumResizableTextView
+                android:visibility="gone"
                 android:id="@+id/toolbar_view_title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:ellipsize="end"
+                android:textStyle="bold"
+                android:layout_toStartOf="@+id/toolbar_right_frame"
+                android:layout_toLeftOf="@+id/toolbar_right_frame"
+                android:layout_toEndOf="@+id/toolbar_left_frame"
+                android:layout_toRightOf="@+id/toolbar_left_frame"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                tools:text="Квоты" />
+
+            <ImageView
+                android:id="@+id/toolbar_view_logo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
@@ -44,8 +68,9 @@
                 android:layout_toRightOf="@+id/toolbar_left_frame"
                 android:gravity="center"
                 android:padding="8dp"
+                android:src="@drawable/ic_quizer"
                 android:tint="@android:color/white"
-                android:src="@drawable/ic_quizer" />
+                android:visibility="visible" />
 
             <LinearLayout
                 android:id="@+id/toolbar_right_frame"

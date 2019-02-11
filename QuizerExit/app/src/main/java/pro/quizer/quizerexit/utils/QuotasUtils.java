@@ -38,7 +38,7 @@ public final class QuotasUtils {
         // а также исходя из квот
 
         for (final ElementModel answer : pElementModel.getSubElementsByType(ElementType.ANSWER)) {
-            if (answer.getOptions().isCanShow(pBaseActivity, mMap, pElementModel)) {
+            if (answer.getOptions().isCanShow(pBaseActivity, mMap, answer)) {
                 return true;
             }
         }

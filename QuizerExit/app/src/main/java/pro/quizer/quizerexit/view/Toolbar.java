@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.io.Serializable;
 
@@ -12,7 +13,9 @@ import pro.quizer.quizerexit.R;
 
 public class Toolbar extends RelativeLayout implements Serializable {
 
-    private ImageView mTitle;
+    private ImageView mIcon;
+    private ImageView mLogo;
+    private TextView mTitle;
     private View mCloseView;
     private View mOptionsView;
 
@@ -31,6 +34,19 @@ public class Toolbar extends RelativeLayout implements Serializable {
         init();
     }
 
+    public void setTitle(final String pTitle) {
+        mIcon.setVisibility(View.VISIBLE);
+        mLogo.setVisibility(View.GONE);
+        mTitle.setVisibility(View.VISIBLE);
+        mTitle.setText(pTitle);
+    }
+
+    public void showLogo() {
+        mIcon.setVisibility(View.GONE);
+        mLogo.setVisibility(View.VISIBLE);
+        mTitle.setVisibility(View.GONE);
+    }
+
     private boolean containsFlag(final int flagSet, final int flag) {
         final int result = flagSet | flag;
 
@@ -40,6 +56,8 @@ public class Toolbar extends RelativeLayout implements Serializable {
     private void inflate() {
         inflate(getContext(), R.layout.view_toolbar, this);
 
+        mLogo = findViewById(R.id.toolbar_view_logo);
+        mIcon = findViewById(R.id.icon);
         mTitle = findViewById(R.id.toolbar_view_title);
         mCloseView = findViewById(R.id.toolbar_view_close);
         mOptionsView = findViewById(R.id.toolbar_view_options);

@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
                 android:id="@+id/thank_you_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
 
     </ScrollView>
 
-    <Button
+    <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
         android:id="@+id/end_btn"
         style="@style/ButtonStyle"
         android:layout_width="match_parent"

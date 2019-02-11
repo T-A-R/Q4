@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.InputType;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
@@ -83,8 +84,6 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
         @SuppressLint("ClickableViewAccessibility")
         @Override
         public void onBind(final ElementModel pAnswer, final int pPosition) {
-            pAnswer.setAnswerShowing(true, isIsUpdateActionPerformed());
-
             final OptionsModel options = pAnswer.getOptions();
 
             final String openType = options.getOpenType();
@@ -200,18 +199,6 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                     }
                 }
             });
-
-//            mEditText.setOnTouchListener(new View.OnTouchListener() {
-//                @Override
-//                public boolean onTouch(View v, MotionEvent event) {
-//                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//                        itemView.performClick();
-//                        mEditText.requestFocus();
-//                    }
-//
-//                    return false;
-//                }
-//            });
 
             itemView.setOnClickListener(new View.OnClickListener() {
 

@@ -7,16 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.quota.QuotaModel;
-import pro.quizer.quizerexit.model.quota.QuotaTimeLineModel;
 
 public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewHolder> {
 
@@ -59,8 +56,8 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
         final String done = String.valueOf(doneInt);
         final String limit = String.valueOf(limitInt);
 
-        final QuotasTimeLineAdapter mAdapter = new QuotasTimeLineAdapter(getModels(quotaModel.getSet()));
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mBaseActivity, LinearLayoutManager.HORIZONTAL, false);
+        final QuotasTimeLineAdapter mAdapter = new QuotasTimeLineAdapter(quotaModel.getStringSet(mBaseActivity, mMap));
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mBaseActivity, LinearLayoutManager.VERTICAL, false);
         holder.mRecyclerView.setLayoutManager(mLayoutManager);
         holder.mRecyclerView.setAdapter(mAdapter);
 
@@ -76,18 +73,13 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
         }
 
         holder.mCount.setText(count);
-    }
 
-    private List<QuotaTimeLineModel> getModels(final Set<Integer> pSet) {
-        final List<QuotaTimeLineModel> quotaTimeLineModels = new ArrayList<>();
-
-        for (final int relativeId : pSet) {
-            final ElementModel element = mMap.get(relativeId);
-
-            quotaTimeLineModels.add(new QuotaTimeLineModel(element.getOptions().getTitle(mBaseActivity)));
+        if (!quotaModel.isCanDisplayed()) {
+            final ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
+            layoutParams.height = 0;
+            holder.itemView.setLayoutParams(layoutParams);
+            holder.itemView.setVisibility(View.GONE);
         }
-
-        return quotaTimeLineModels;
     }
 
     @Override

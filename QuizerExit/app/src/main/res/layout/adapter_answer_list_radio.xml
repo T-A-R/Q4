@@ -4,7 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
+
+    <pro.quizer.quizerexit.view.resizeble.margin.MarginView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -14,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
                 android:id="@+id/answer_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -25,7 +30,7 @@
                 android:textSize="16sp"
                 tools:text="Name" />
 
-            <EditText
+            <pro.quizer.quizerexit.view.resizeble.edittext.ResizableEditText
                 android:id="@+id/answer_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -49,6 +54,18 @@
                 android:layout_alignParentRight="true" />
 
         </RelativeLayout>
+
+    </FrameLayout>
+
+    <pro.quizer.quizerexit.view.resizeble.margin.MarginView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/view_divider"/>
 
     </FrameLayout>
 

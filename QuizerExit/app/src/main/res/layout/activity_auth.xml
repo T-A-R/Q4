@@ -3,24 +3,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="56dp"
+        android:layout_marginRight="56dp"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_quizer" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="56dp"
+        android:layout_marginRight="56dp"
         android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_quizer" />
-
-        <TextView
+        <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
             android:id="@+id/users_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,7 +37,7 @@
             android:textSize="16sp"
             tools:text="@string/count_users_on_this_device" />
 
-        <com.reginald.editspinner.EditSpinner
+        <pro.quizer.quizerexit.view.resizeble.editspinner.ResizableEditSpinner
             android:id="@+id/login_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,27 +51,29 @@
             app:dropDownDrawableSpacing="15dp"
             app:dropDownDrawableWidth="25dp" />
 
-        <EditText
+        <pro.quizer.quizerexit.view.resizeble.edittext.ResizableEditText
             android:id="@+id/auth_password_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
             android:hint="@string/input_password"
             android:inputType="textPassword"
             android:maxLines="1"
             android:textSize="18sp" />
 
-        <Button
+        <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
             android:id="@+id/send_auth_button"
             style="@style/ButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
             android:text="@string/send" />
 
     </LinearLayout>
 
     <include layout="@layout/view_progress" />
 
-    <TextView
+    <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
         android:id="@+id/version_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

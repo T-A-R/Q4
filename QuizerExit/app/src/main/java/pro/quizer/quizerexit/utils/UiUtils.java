@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.text.Html;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
@@ -22,10 +23,10 @@ public class UiUtils {
     public static void setEnabled(final Context pContext, final View pView, final boolean pIsEnabled) {
         if (pIsEnabled) {
             pView.setEnabled(true);
-            pView.setBackgroundColor(ContextCompat.getColor(pContext, R.color.brand_color));
+            pView.setBackground(ContextCompat.getDrawable(pContext, R.drawable.button_background_green));
         } else {
             pView.setEnabled(false);
-            pView.setBackgroundColor(ContextCompat.getColor(pContext, R.color.gray));
+            pView.setBackground(ContextCompat.getDrawable(pContext, R.drawable.button_background_gray));
         }
     }
 
@@ -62,7 +63,7 @@ public class UiUtils {
     public static void setTextOrHide(final TextView pTextView, final String pString) {
         if (pTextView != null) {
             if (!StringUtils.isEmpty(pString)) {
-                pTextView.setText(pString);
+                pTextView.setText(Html.fromHtml(String.valueOf(pString)));
                 setVisibility(pTextView, View.VISIBLE);
             } else {
                 setVisibility(pTextView, View.GONE);

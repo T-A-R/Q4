@@ -164,6 +164,14 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_element);
 
+        final View optionsIcon = findViewById(R.id.ic_options);
+        optionsIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                openDrawer();
+            }
+        });
+
         mStart = findViewById(R.id.ibStart);
         mStop = findViewById(R.id.ibStop);
         mStatus = findViewById(R.id.tvState);
@@ -283,7 +291,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
 
         final FragmentTransaction fragmentTransaction = getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.element_content,
+                .replace(R.id.main_content,
                         ElementFragment.newInstance(nextElement, this, mToken, mLoginAdmin, mUserId, mUserLogin, mConfig.isPhotoQuestionnaire(), mProjectId));
 
         if (pIsAddToBackStack) {

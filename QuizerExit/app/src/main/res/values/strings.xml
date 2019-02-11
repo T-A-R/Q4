@@ -30,7 +30,7 @@
     <!-- end recording-->
 
     <string name="app_name">Quizer</string>
-    <string name="input_activation_key">Введите ключ активации</string>
+    <string name="input_activation_key">Введите ключ</string>
     <string name="send">Отправить</string>
     <string name="empty_activation_key">Ключ активации не может быть пустым.</string>
     <string name="internet_error_please_try_again">Не удалось подключиться к серверу. Проверьте подключение к интернету или повторите позже.</string>
@@ -49,6 +49,7 @@
     <string name="exit">Выход</string>
     <string name="cancel">Отмена</string>
     <string name="apply">Принять</string>
+    <string name="next">Вперед</string>
     <string name="ok">ОК</string>
     <string name="settings">Настройки</string>
     <string name="sync">Синхронизация</string>
@@ -90,12 +91,12 @@
     <string name="sended_p_in_session_string">Отправлено фото в данном сеансе: %1$s</string>
     <string name="sms">SMS</string>
     <string name="home_title">Главный экран</string>
-    <string name="change_user">Выход</string>
+    <string name="change_user">Выйти</string>
     <string name="config_title">Конфигурация</string>
     <string name="settings_id_string">ID: %1$s</string>
     <string name="settings_date_string">Дата: %1$s</string>
     <string name="settings_display_title">Настройки отображения</string>
-    <string name="font_size_in_q_string">Размер шрифта в вопросах: %1$s</string>
+    <string name="font_size_in_q_string">Размер шрифта в вопросах:</string>
     <string name="space_between_answers_string">Интервал между ответами: %1$s</string>
     <string name="select_number_for_exit_pull">Выбор номера (для Экзит-Пулл)</string>
     <string name="change_user_body">Вы уверены, что хотите сменить пользователя?</string>
@@ -126,4 +127,9 @@
     <string name="more_then_done_status">Перевыполненно</string>
     <string name="current_gps_string">Текущие GPS координаты:</string>
     <string name="gps_is_turn_off">GPS не включен</string>
+    <string name="search">Поиск</string>
+    <string name="no_quotas_by_query">Нет квот по введенному фильтру</string>
+    <string name="empty_quotas">Квоты пусты</string>
+    <string name="show_only_not_completed">Отобразить не выполненные</string>
+    <string name="choose_font_size">Выберите размер шрифта</string>
 </resources>

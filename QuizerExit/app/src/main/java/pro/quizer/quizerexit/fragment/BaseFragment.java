@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidhiddencamera.CameraConfig;
@@ -29,6 +30,7 @@ import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.utils.FileUtils;
+import pro.quizer.quizerexit.utils.UiUtils;
 
 public class BaseFragment extends HiddenCameraFragment implements Serializable, Parcelable {
 
@@ -157,6 +159,16 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable, 
         }
     }
 
+    public TextView getEmptyView() {
+        final View view = getView();
+
+        if (view != null) {
+            return view.findViewById(R.id.empty_text_label);
+        } else {
+            return null;
+        }
+    }
+
     public void hideProgressBar() {
         getBaseActivity().runOnUiThread(new Runnable() {
 
@@ -173,6 +185,26 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable, 
             @Override
             public void run() {
                 getProgressBar().setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    public void hideEmptyView() {
+        getBaseActivity().runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                getEmptyView().setVisibility(View.GONE);
+            }
+        });
+    }
+
+    public void showEmptyView(final String pError) {
+        getBaseActivity().runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                UiUtils.setTextOrHide(getEmptyView(), pError);
             }
         });
     }

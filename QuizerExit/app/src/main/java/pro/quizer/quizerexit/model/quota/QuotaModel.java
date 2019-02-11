@@ -3,8 +3,11 @@ package pro.quizer.quizerexit.model.quota;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
@@ -25,6 +28,9 @@ public class QuotaModel implements Serializable {
     private int done;
 
     private Integer mLocalCount = null;
+    private List<QuotaTimeLineModel> mStringList = null;
+    private Set<Integer> mSet = null;
+    private Integer[] mArray = null;
 
     public String getSequence() {
         return sequence;
@@ -50,33 +56,70 @@ public class QuotaModel implements Serializable {
         return mLocalCount;
     }
 
-    public Set<Integer> getSet() {
-        final String[] strings = sequence.split(SPLIT_SEQUENCE_SYMBOL);
-        final Integer[] integers = new Integer[strings.length];
+    public boolean containsString(final BaseActivity pBaseActivity, final Map<Integer, ElementModel> pMap, final String pString) {
+        final List<QuotaTimeLineModel> stringSet = getStringSet(pBaseActivity, pMap);
 
-        for (int i = 0; i < strings.length; i++) {
-            integers[i] = Integer.parseInt(strings[i]);
+        for (final QuotaTimeLineModel quotaTimeLineModel : stringSet) {
+            if (quotaTimeLineModel != null && quotaTimeLineModel.contains(pString)) {
+                return true;
+            }
         }
 
-        return new HashSet<>(Arrays.asList(integers));
+        return false;
+    }
+
+    public List<QuotaTimeLineModel> getStringSet(final BaseActivity mBaseActivity, final Map<Integer, ElementModel> mMap) {
+        if (mStringList == null) {
+            final Set<Integer> pSet = getSet();
+            final List<QuotaTimeLineModel> quotaTimeLineModels = new ArrayList<>();
+
+            for (final int relativeId : pSet) {
+                final ElementModel element = mMap.get(relativeId);
+
+                quotaTimeLineModels.add(new QuotaTimeLineModel(element.getOptions().getTitle(mBaseActivity)));
+            }
+
+            mStringList = quotaTimeLineModels;
+        }
+
+        return mStringList;
+    }
+
+    public Set<Integer> getSet() {
+        if (mSet == null) {
+            final String[] strings = sequence.split(SPLIT_SEQUENCE_SYMBOL);
+            final Integer[] integers = new Integer[strings.length];
+
+            for (int i = 0; i < strings.length; i++) {
+                integers[i] = Integer.parseInt(strings[i]);
+            }
+
+            mSet = new HashSet<>(Arrays.asList(integers));
+        }
+
+        return mSet;
     }
 
     public Integer[] getArray() {
-        final String[] strings = sequence.split(SPLIT_SEQUENCE_SYMBOL);
-        final Integer[] integers = new Integer[strings.length];
+        if (mArray == null) {
+            final String[] strings = sequence.split(SPLIT_SEQUENCE_SYMBOL);
+            final Integer[] integers = new Integer[strings.length];
 
-        for (int i = 0; i < strings.length; i++) {
-            integers[i] = Integer.parseInt(strings[i]);
+            for (int i = 0; i < strings.length; i++) {
+                integers[i] = Integer.parseInt(strings[i]);
+            }
+
+            mArray = integers;
         }
 
-        return integers;
+        return mArray;
     }
 
     public boolean isCompleted(final BaseActivity pBaseActivity) {
         return getDone(pBaseActivity) >= getLimit();
     }
 
-    public boolean isStartedElement(final ElementModel pElementModel) {
-        return getArray()[0] == pElementModel.getRelativeID();
+    public boolean isCanDisplayed() {
+        return getLimit() != 0;
     }
 }

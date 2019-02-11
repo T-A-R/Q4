@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.io.Serializable;
 
@@ -19,6 +20,16 @@ public class AppDrawer extends RelativeLayout implements Serializable {
     Button mSettingsBtn;
     Button mQuotasBtn;
     Button mChangeUserBtn;
+
+    private BaseActivity mBaseActivity;
+
+    final private View.OnClickListener mInternalClickListenerForToolbar = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            final String title = ((TextView) view).getText().toString();
+            mBaseActivity.setToolbarTitle(title);
+        }
+    };
 
     public AppDrawer(final Context pContext) {
         super(pContext);
@@ -55,6 +66,7 @@ public class AppDrawer extends RelativeLayout implements Serializable {
 
         if (context instanceof BaseActivity) {
             baseActivity = (BaseActivity) context;
+            mBaseActivity = baseActivity;
         } else {
             return;
         }
@@ -68,6 +80,7 @@ public class AppDrawer extends RelativeLayout implements Serializable {
         mHomeBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                mInternalClickListenerForToolbar.onClick(view);
                 baseActivity.closeDrawer();
                 baseActivity.showHomeFragment(true);
             }
@@ -76,6 +89,7 @@ public class AppDrawer extends RelativeLayout implements Serializable {
         mSyncBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                mInternalClickListenerForToolbar.onClick(view);
                 baseActivity.closeDrawer();
                 baseActivity.showSyncFragment();
             }
@@ -84,6 +98,7 @@ public class AppDrawer extends RelativeLayout implements Serializable {
         mSettingsBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                mInternalClickListenerForToolbar.onClick(view);
                 baseActivity.closeDrawer();
                 baseActivity.showSettingsFragment();
             }
@@ -92,8 +107,8 @@ public class AppDrawer extends RelativeLayout implements Serializable {
         mQuotasBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                mInternalClickListenerForToolbar.onClick(view);
                 baseActivity.closeDrawer();
-
                 new QuotasClickListener((BaseActivity) context).onClick(view);
             }
         });

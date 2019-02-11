@@ -15,17 +15,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="@string/sync_title"
-                android:textAllCaps="true"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
+            <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
                 android:id="@+id/user_name_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -38,7 +28,7 @@
 
             <include layout="@layout/view_divider"/>
 
-            <TextView
+            <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
                 android:layout_marginTop="12dp"
                 android:id="@+id/sended_q_from_this_device"
                 android:layout_width="match_parent"
@@ -48,7 +38,7 @@
                 android:textSize="16sp"
                 tools:text="ПУСТО" />
 
-            <TextView
+            <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
                 android:id="@+id/sended_q_in_session"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -57,7 +47,7 @@
                 android:textSize="16sp"
                 tools:text="ПУСТО" />
 
-            <TextView
+            <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
                 android:id="@+id/unsended_q"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -66,7 +56,7 @@
                 android:textSize="16sp"
                 tools:text="ПУСТО" />
 
-            <Button
+            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
                 android:layout_marginBottom="12dp"
                 android:id="@+id/send_q"
                 style="@style/ButtonStyle"
@@ -78,25 +68,7 @@
 
             <include layout="@layout/view_divider"/>
 
-            <!--<TextView-->
-                <!--android:id="@+id/sended_audio_from_this_device"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginBottom="4dp"-->
-                <!--android:textColor="@android:color/black"-->
-                <!--android:textSize="16sp"-->
-                <!--tools:text="ПУСТО" />-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/sended_audio_in_session"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginBottom="4dp"-->
-                <!--android:textColor="@android:color/black"-->
-                <!--android:textSize="16sp"-->
-                <!--tools:text="ПУСТО" />-->
-
-            <TextView
+            <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
                 android:layout_marginTop="12dp"
                 android:id="@+id/unsended_audio"
                 android:layout_width="match_parent"
@@ -106,7 +78,7 @@
                 android:textSize="16sp"
                 tools:text="ПУСТО" />
 
-            <Button
+            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
                 android:layout_marginBottom="12dp"
                 android:id="@+id/send_audio"
                 style="@style/ButtonStyle"
@@ -118,25 +90,7 @@
 
             <include layout="@layout/view_divider"/>
 
-            <!--<TextView-->
-                <!--android:id="@+id/sended_photo_from_this_device"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginBottom="4dp"-->
-                <!--android:textColor="@android:color/black"-->
-                <!--android:textSize="16sp"-->
-                <!--tools:text="ПУСТО" />-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/sended_photo_in_session"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginBottom="4dp"-->
-                <!--android:textColor="@android:color/black"-->
-                <!--android:textSize="16sp"-->
-                <!--tools:text="ПУСТО" />-->
-
-            <TextView
+            <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
                 android:layout_marginTop="12dp"
                 android:id="@+id/unsended_photo"
                 android:layout_width="match_parent"
@@ -146,7 +100,7 @@
                 android:textSize="16sp"
                 tools:text="ПУСТО" />
 
-            <Button
+            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
                 android:id="@+id/send_photo"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
@@ -155,7 +109,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/send_photo" />
 
-            <Button
+            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
                 android:id="@+id/sync_sms"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"

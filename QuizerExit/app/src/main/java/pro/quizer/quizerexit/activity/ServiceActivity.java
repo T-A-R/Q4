@@ -65,6 +65,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
         mUnsendedAudio = findViewById(R.id.unsended_audio_files_count);
         mUnsendePhoto = findViewById(R.id.unsended_photo_files_count);
         mToolbar = findViewById(R.id.toolbar);
+        mToolbar.setTitle(getString(R.string.service_title));
         mToolbar.showCloseView(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {

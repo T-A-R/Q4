@@ -21,18 +21,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:gravity="center_horizontal"
-                android:text="@string/service_title"
-                android:textAllCaps="true"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
+            <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
                 android:id="@+id/users_count"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -42,7 +31,7 @@
                 android:textStyle="bold"
                 tools:text="@string/count_users_on_this_device" />
 
-            <TextView
+            <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
                 android:id="@+id/unsended_questionnaires_count"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -51,7 +40,7 @@
                 android:textSize="16sp"
                 tools:text="@string/count_unsended_questionnaires" />
 
-            <TextView
+            <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
                 android:id="@+id/unsended_audio_files_count"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -60,7 +49,7 @@
                 android:textSize="16sp"
                 tools:text="@string/count_unsended_audio_files" />
 
-            <TextView
+            <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
                 android:id="@+id/unsended_photo_files_count"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -69,7 +58,7 @@
                 android:textSize="16sp"
                 tools:text="@string/count_unsended_audio_files" />
 
-            <Button
+            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
                 android:id="@+id/send_data"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
@@ -78,7 +67,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/send_data" />
 
-            <Button
+            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
                 android:id="@+id/send_audio"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
@@ -87,7 +76,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/send_audio" />
 
-            <Button
+            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
                 android:id="@+id/send_photo"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
@@ -96,7 +85,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/send_photo" />
 
-            <Button
+            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
                 android:id="@+id/upload_data"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
@@ -105,14 +94,13 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/upload_data" />
 
-            <Button
+            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
                 android:id="@+id/delete_users"
-                style="@style/ButtonStyle"
+                style="@style/ButtonRed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
-                android:background="@color/red"
                 android:text="@string/delete_users" />
 
         </LinearLayout>

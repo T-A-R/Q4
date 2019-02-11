@@ -7,7 +7,7 @@
               android:orientation="vertical"
               android:padding="16dp">
 
-    <TextView
+    <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -15,7 +15,7 @@
         android:textStyle="bold"
         tools:text="Заголовок"/>
 
-    <TextView
+    <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
         android:id="@+id/description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

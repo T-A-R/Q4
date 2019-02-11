@@ -17,6 +17,20 @@ public class SPUtils {
         editor.apply();
     }
 
+    public static void saveFontSizePosition(final Context pContext, final int pFontSizePosition) {
+        final SharedPreferences.Editor editor = getSharedPreferences(pContext).edit();
+
+        editor.putInt(Constants.SP.FONT_SIZE_POSITION, pFontSizePosition);
+        editor.apply();
+    }
+
+    public static void saveAnswerMargin(final Context pContext, final int pValue) {
+        final SharedPreferences.Editor editor = getSharedPreferences(pContext).edit();
+
+        editor.putInt(Constants.SP.ANSWER_MARGIN, pValue);
+        editor.apply();
+    }
+
     public static void addSendedQInSession(final Context pContext, final int pCount) {
         final SharedPreferences.Editor editor = getSharedPreferences(pContext).edit();
         final int savedSendedCount = getSendedQInSession(pContext);
@@ -36,16 +50,36 @@ public class SPUtils {
         return getCurrentUserId(getSharedPreferences(pContext));
     }
 
+    public static int getFontSizePosition(final Context pContext) {
+        return getFontSizePosition(getSharedPreferences(pContext));
+    }
+
+    public static int getAnswerMargin(final Context pContext) {
+        return getAnswerMargin(getSharedPreferences(pContext));
+    }
+
     public static int getSendedQInSession(final Context pContext) {
         return getSendedQInSession(getSharedPreferences(pContext));
     }
 
+    private static int getInt(final SharedPreferences pSharedPreferences, final String pKey, final int pDefValue) {
+        return pSharedPreferences.getInt(pKey, pDefValue);
+    }
+
     private static int getInt(final SharedPreferences pSharedPreferences, final String pKey) {
-        return pSharedPreferences.getInt(pKey, -1);
+        return getInt(pSharedPreferences, pKey, -1);
     }
 
     private static int getCurrentUserId(final SharedPreferences pSharedPreferences) {
         return getInt(pSharedPreferences, Constants.SP.CURRENT_USED_ID);
+    }
+
+    private static int getFontSizePosition(final SharedPreferences pSharedPreferences) {
+        return getInt(pSharedPreferences, Constants.SP.FONT_SIZE_POSITION, 2);
+    }
+
+    private static int getAnswerMargin(final SharedPreferences pSharedPreferences) {
+        return getInt(pSharedPreferences, Constants.SP.ANSWER_MARGIN, 0);
     }
 
     private static int getSendedQInSession(final SharedPreferences pSharedPreferences) {

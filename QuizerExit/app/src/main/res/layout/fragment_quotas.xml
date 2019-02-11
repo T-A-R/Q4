@@ -4,23 +4,64 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/search_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/brand_color"
+        android:padding="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/search_frame"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <pro.quizer.quizerexit.view.resizeble.edittext.ResizableEditText
+                    android:id="@+id/search_edit_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:hint="@string/search" />
+
+                <ImageView
+                    android:id="@+id/clear_search_icon"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center_vertical"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_close"
+                    android:tint="@color/brand_color" />
+
+            </LinearLayout>
+
+            <pro.quizer.quizerexit.view.resizeble.customswitch.ResizableSwitch
+                android:padding="4dp"
+                android:id="@+id/not_completed_only_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/show_only_not_completed"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/search_frame"
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@string/quotas_title"
-            android:textAllCaps="true"
-            android:textColor="@android:color/black"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <Button
+        <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
             android:id="@+id/refresh_quotas"
             style="@style/ButtonStyle"
             android:layout_width="match_parent"
@@ -30,10 +71,18 @@
             android:layout_marginBottom="8dp"
             android:text="@string/refresh_btn" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/quotas_recycler_view"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/quotas_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <include layout="@layout/view_empty_text" />
+
+        </FrameLayout>
 
     </LinearLayout>
 

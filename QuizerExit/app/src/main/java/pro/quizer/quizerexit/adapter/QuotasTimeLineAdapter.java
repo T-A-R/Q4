@@ -12,6 +12,7 @@ import java.util.List;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.model.quota.QuotaTimeLineModel;
+import pro.quizer.quizerexit.utils.UiUtils;
 
 public class QuotasTimeLineAdapter extends RecyclerView.Adapter<QuotasTimeLineAdapter.QuotaTimeLineViewHolder> {
 
@@ -21,13 +22,16 @@ public class QuotasTimeLineAdapter extends RecyclerView.Adapter<QuotasTimeLineAd
 
         TextView mMessage;
         TimelineView mTimeLineView;
+        TimelineView mTimeLineStubView;
 
         QuotaTimeLineViewHolder(final View pItemView, final int pViewType) {
             super(pItemView);
 
             mTimeLineView = pItemView.findViewById(R.id.timeline);
+            mTimeLineStubView = pItemView.findViewById(R.id.timeline_stub);
             mMessage = pItemView.findViewById(R.id.text_timeline_title);
             mTimeLineView.initLine(pViewType);
+            mTimeLineStubView.initLine(pViewType);
         }
     }
 
@@ -50,7 +54,7 @@ public class QuotasTimeLineAdapter extends RecyclerView.Adapter<QuotasTimeLineAd
     public void onBindViewHolder(QuotaTimeLineViewHolder holder, int position) {
         QuotaTimeLineModel model = mAnswers.get(position);
 
-        holder.mMessage.setText(model.getAnswer());
+        UiUtils.setTextOrHide(holder.mMessage, model.getAnswer());
 
     }
 

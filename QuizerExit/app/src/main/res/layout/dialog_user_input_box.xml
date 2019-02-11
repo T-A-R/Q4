@@ -6,13 +6,13 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
+    <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/default_placeholder"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <EditText
+    <pro.quizer.quizerexit.view.resizeble.edittext.ResizableEditText
         android:id="@+id/answer_edit_text"
         android:imeOptions="actionDone"
         android:layout_width="match_parent"

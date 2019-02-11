@@ -29,6 +29,7 @@ public class SettingViewModelExecutable extends BaseModelExecutable<SettingsView
 
             settingsViewModel.setmConfigDate(configModel.getConfigDate());
             settingsViewModel.setmConfigId(currentUser.config_id);
+            settingsViewModel.setmAnswerMargin(activity.getAnswerMargin());
 
             return settingsViewModel;
         } else {

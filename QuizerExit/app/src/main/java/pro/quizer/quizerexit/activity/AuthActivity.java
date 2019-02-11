@@ -84,7 +84,7 @@ public class AuthActivity extends BaseActivity {
         mSavedUserModels = getSavedUserModels();
         mSavedUsers = getSavedUserLogins();
 
-        final ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mSavedUsers);
+        final ListAdapter adapter = new ArrayAdapter<>(this, R.layout.adapter_spinner, mSavedUsers);
         mLoginSpinner.setAdapter(adapter);
 
         if (mSavedUserModels != null && !mSavedUserModels.isEmpty()) {

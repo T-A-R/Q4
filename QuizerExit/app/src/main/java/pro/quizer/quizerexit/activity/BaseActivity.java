@@ -44,6 +44,7 @@ import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.SPUtils;
+import pro.quizer.quizerexit.view.Toolbar;
 
 import static pro.quizer.quizerexit.utils.FileUtils.JPEG;
 import static pro.quizer.quizerexit.utils.FileUtils.MP3;
@@ -308,6 +309,22 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
         return SPUtils.getCurrentUserId(this);
     }
 
+    public int getFontSizePosition() {
+        return SPUtils.getFontSizePosition(this);
+    }
+
+    public int getAnswerMargin() {
+        return SPUtils.getAnswerMargin(this);
+    }
+
+    public void setFontSizePosition(final int pPosition) {
+        SPUtils.saveFontSizePosition(this, pPosition);
+    }
+
+    public void setAnswerMargin(final int pValue) {
+        SPUtils.saveAnswerMargin(this, pValue);
+    }
+
     public void saveUser(final String pLogin, final String pPassword, final AuthResponseModel pModel, final ConfigResponseModel pConfigResponseModel) throws Exception {
         new Delete().from(UserModel.class).where(UserModel.USER_ID + " = ?", pModel.getUserId()).execute();
 
@@ -357,6 +374,22 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
         return findViewById(R.id.progressBar);
     }
 
+    public Toolbar getToolbar() {
+        return findViewById(R.id.toolbar);
+    }
+
+    public void setToolbarTitle(final String pTitle) {
+        final Toolbar toolbar = getToolbar();
+        if (toolbar != null) {
+            toolbar.setTitle(pTitle);
+        }
+    }
+
+    public void showToolbarLogo() {
+        final Toolbar toolbar = getToolbar();
+        toolbar.showLogo();
+    }
+
     public void showProgressBar() {
         runOnUiThread(new Runnable() {
 
@@ -367,7 +400,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
         });
     }
 
-    private DrawerLayout getDrawerLayout() {
+    public DrawerLayout getDrawerLayout() {
         return findViewById(R.id.drawer_layout);
     }
 

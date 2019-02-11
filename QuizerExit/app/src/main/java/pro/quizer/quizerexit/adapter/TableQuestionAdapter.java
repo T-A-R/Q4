@@ -56,7 +56,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private boolean mIsFlipColsAndRows;
     private BaseActivity mBaseActivity;
     private HashMap<Integer, ElementModel> mMap;
-    private boolean mIsUpdateActionPerformed;
 
     @Override
     public int processNext() throws Exception {
@@ -92,7 +91,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         mIsFlipColsAndRows = pCurrentElement.getOptions().isFlipColsAndRows();
         mBaseActivity = (BaseActivity) mContext;
         mMap = mBaseActivity.getMap();
-        this.mIsUpdateActionPerformed = false;
 
         mQuestions = pQuestions;
 
@@ -119,14 +117,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mTopSide = mAnswers;
             mLeftSide = mQuestions;
         }
-    }
-
-    public void setIsUpdateActionPerformed(final boolean pIsUpdateActionPerformed) {
-        mIsUpdateActionPerformed = pIsUpdateActionPerformed;
-    }
-
-    public boolean isIsUpdateActionPerformed() {
-        return mIsUpdateActionPerformed;
     }
 
     @Override
@@ -174,10 +164,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
             if (currentElement.getOptions().isCanShow(mBaseActivity, mMap, currentElement)) {
                 vh.mDisableFrame.setVisibility(View.GONE);
-                currentElement.setAnswerShowing(true, isIsUpdateActionPerformed());
             } else {
                 vh.mDisableFrame.setVisibility(View.VISIBLE);
-                currentElement.setAnswerShowing(false, isIsUpdateActionPerformed());
             }
         }
     }
@@ -398,7 +386,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
                             clickedElement.setTextAnswer(answer);
                             clickedElement.setChecked(true);
-                            notifyItemChanged(row, column, true);
+                            notifyItemChanged(row, column);
                             mRefreshRunnable.run();
                         }
                     })
@@ -410,7 +398,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                                     clickedElement.setTextAnswer(Constants.Strings.EMPTY);
                                     clickedElement.setChecked(false);
                                     dialogBox.cancel();
-                                    notifyItemChanged(row, column, true);
+                                    notifyItemChanged(row, column);
                                     mRefreshRunnable.run();
                                 }
                             });
@@ -421,12 +409,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             clickedElement.setChecked(!isElementChecked);
         }
 
-        notifyItemChanged(row, column, true);
-    }
-
-    private void notifyItemChanged(final int row, final int column, final boolean mIsUpdateActionPerformed) {
-        setIsUpdateActionPerformed(true);
-        notifyItemChanged(row, column, mIsUpdateActionPerformed);
+        notifyItemChanged(row, column);
     }
 
     @Override

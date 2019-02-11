@@ -5,19 +5,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
+    <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
         android:id="@+id/home_btn"
-        style="@style/ButtonStyle"
+        style="@style/ButtonGray"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
-        android:background="@color/gray"
         android:text="@string/home_title" />
 
-    <Button
+    <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
         android:id="@+id/sync_btn"
         style="@style/ButtonStyle"
         android:layout_width="match_parent"
@@ -28,7 +27,7 @@
         android:layout_marginRight="16dp"
         android:text="@string/sync_title" />
 
-    <Button
+    <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
         android:id="@+id/settings_btn"
         style="@style/ButtonStyle"
         android:layout_width="match_parent"
@@ -39,7 +38,7 @@
         android:layout_marginRight="16dp"
         android:text="@string/settings" />
 
-    <Button
+    <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
         android:id="@+id/quotas_btn"
         style="@style/ButtonStyle"
         android:layout_width="match_parent"
@@ -51,16 +50,15 @@
         android:text="@string/quotas_title" />
 
 
-    <Button
+    <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
         android:id="@+id/change_user_btn"
-        style="@style/ButtonStyle"
+        style="@style/ButtonRed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
-        android:background="@color/red"
         android:text="@string/change_user" />
 
 

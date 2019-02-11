@@ -76,7 +76,7 @@ public class CryptoController {
 //
 //        RSAPrivateKeySpec privSpec = new RSAPrivateKeySpec(modules, d);
 //        PrivateKey privKey = factory.generatePrivate(privSpec);
-//        cipher.init(Cipher.DECRYPT_MODE, privKey);
+//        cipher.initTextSize(Cipher.DECRYPT_MODE, privKey);
 //        byte[] decrypted = cipher.doFinal(decodeBase64(s));
 //
 //        return new String(decrypted);

@@ -143,7 +143,9 @@ public class OptionsModel implements Serializable {
     }
 
     public boolean isFlipColsAndRows() {
-        return flip_cols_and_rows;
+        // TODO: 2/10/2019 stub
+        return true;
+//        return flip_cols_and_rows;
     }
 
     public boolean isComplicatedCells() {

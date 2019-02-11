@@ -11,9 +11,21 @@
     <style name="ButtonStyle">
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingRight">16dp</item>
-        <item name="android:background">@color/brand_color</item>
+        <item name="android:background">@drawable/button_background_green</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="ButtonGreen" parent="ButtonStyle">
+        <item name="android:background">@drawable/button_background_green</item>
+    </style>
+
+    <style name="ButtonRed" parent="ButtonStyle">
+        <item name="android:background">@drawable/button_background_red</item>
+    </style>
+
+    <style name="ButtonGray" parent="ButtonStyle">
+        <item name="android:background">@drawable/button_background_gray</item>
     </style>
 
 </resources>

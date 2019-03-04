@@ -1,10 +1,13 @@
 package pro.quizer.quizerexit.model.config;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class QuestionOptionsModel implements Serializable {
+public class QuestionOptionsModel implements Serializable, Parcelable {
 
     @SerializedName("polyanswer")
     private int polyanswer;
@@ -88,5 +91,15 @@ public class QuestionOptionsModel implements Serializable {
 
     public String getShowIf() {
         return show_if;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }

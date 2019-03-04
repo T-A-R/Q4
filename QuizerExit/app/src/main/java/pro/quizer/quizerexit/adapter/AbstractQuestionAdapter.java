@@ -28,7 +28,7 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
         this.mContext = pContext;
         this.mMap = getBaseActivity().getMap();
         this.mCurrentElement = pCurrentElement;
-        this.mAnswers = getBaseActivity().getElementsByParentId(pCurrentElement.getRelativeID());
+        this.mAnswers = pAnswers; // getBaseActivity().getElementsByParentId(pCurrentElement.getRelativeID());
         this.mMaxAnswer = pMaxAnswer;
         this.mMinAnswer = pMinAnswer;
         this.mIsUpdateActionPerformed = false;
@@ -58,6 +58,10 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
 
     void setCheckedItemsCount(final int pCount) {
         mCheckedItemsCount = pCount;
+    }
+
+    ElementModel getCurrentElement() {
+        return mCurrentElement;
     }
 
     int getCheckedItemsCount() {
@@ -91,13 +95,15 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
 
     void unselectAll() {
         for (final ElementModel item : mAnswers) {
-            item.setChecked(false);
+            if (item != null) {
+                item.setChecked(false);
+            }
         }
     }
 
     void disableOther(final int pId) {
         for (final ElementModel item : mAnswers) {
-            if (pId != item.getRelativeID()) {
+            if (item != null && pId != item.getRelativeID()) {
                 item.setEnabled(false);
             }
         }
@@ -105,7 +111,9 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
 
     void enableAll() {
         for (final ElementModel item : mAnswers) {
-            item.setEnabled(true);
+            if (item != null) {
+                item.setEnabled(true);
+            }
         }
     }
 
@@ -115,7 +123,7 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
         for (int i = 0; i < mAnswers.size(); i++) {
             final ElementModel itemModel = mAnswers.get(i);
 
-            if (itemModel.isCheckedAndTextIsEmptyForSpecialOpenTypes()) {
+            if (itemModel != null && itemModel.isCheckedAndTextIsEmptyForSpecialOpenTypes()) {
                 throw new Exception(mContext.getString(R.string.fill_input));
             }
 
@@ -142,7 +150,6 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
             final ElementModel model = selectedList.get(index);
 
             if (model != null && model.isFullySelected()) {
-                mCurrentElement.setEndTime(DateUtils.getCurrentTimeMillis());
                 return model.getOptions().getJump();
             }
         }

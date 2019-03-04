@@ -2,11 +2,11 @@ package pro.quizer.quizerexit.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.InputType;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.HashMap;
 import java.util.List;
 
 import pro.quizer.quizerexit.R;
@@ -33,6 +34,9 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
     private final boolean mIsPolyAnswers;
     private final String mDefaultPlaceHolder;
     private Runnable mRefreshRunnable;
+    private BaseActivity mBaseActivity;
+    private HashMap<Integer, ElementModel> mMap;
+    private ElementModel mCurrentElement;
 
     public QuestionListAdapter(final ElementModel pCurrentElement,
                                final Context pContext,
@@ -45,6 +49,10 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
         mRefreshRunnable = pRefreshRunnable;
         mDefaultPlaceHolder = pContext.getString(R.string.default_placeholder);
         mIsPolyAnswers = pMaxAnswer == 1 && pMinAnswer == 1;
+
+        mBaseActivity = getBaseActivity();
+        mMap = getMap();
+        mCurrentElement = getCurrentElement();
     }
 
     @NonNull
@@ -63,11 +71,23 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
     public void onBindViewHolder(@NonNull AnswerListViewHolder pAnswerListViewHolder, int pPosition) {
         final ElementModel elementModel = getModel(pPosition);
 
-        pAnswerListViewHolder.onBind(getModel(pPosition), pPosition);
+        if (elementModel != null) {
+            pAnswerListViewHolder.onBind(getModel(pPosition), pPosition);
+        }
 
-        if (elementModel != null && !elementModel.getOptions().isCanShow(getBaseActivity(), getMap(), elementModel)) {
+        if (elementModel == null || !elementModel.getOptions().isCanShow(getBaseActivity(), getMap(), elementModel)) {
             pAnswerListViewHolder.itemView.setLayoutParams(new ViewGroup.LayoutParams(0, 0));
         }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 
     class AnswerListViewHolder extends AbstractViewHolder {
@@ -88,7 +108,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
             final String openType = options.getOpenType();
             final boolean isChecked = pAnswer.isChecked();
-            final boolean isEnabled = pAnswer.isEnabled();
+            final boolean isEnabled = pAnswer.isEnabled(mBaseActivity, mMap, pAnswer);
             final boolean isEditTextEnabled = isChecked && isEnabled;
             final Context context = mEditText.getContext();
 

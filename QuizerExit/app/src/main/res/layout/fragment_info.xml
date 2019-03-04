@@ -5,12 +5,16 @@
     android:layout_height="match_parent"
     android:configChanges="orientation|keyboardHidden|screenLayout|screenSize">
 
+    <include
+        android:id="@+id/element_header"
+        layout="@layout/view_element_header" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/info_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/button_panel"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/element_header"
         tools:ignore="UnknownIdInLayout" />
 
     <include layout="@layout/view_question_buttons_panel" />

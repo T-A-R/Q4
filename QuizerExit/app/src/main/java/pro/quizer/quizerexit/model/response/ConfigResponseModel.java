@@ -1,12 +1,15 @@
 package pro.quizer.quizerexit.model.response;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 import pro.quizer.quizerexit.model.config.ConfigModel;
 
-public class ConfigResponseModel implements Serializable {
+public class ConfigResponseModel implements Serializable, Parcelable {
 
     @SerializedName("result")
     private int result;
@@ -30,5 +33,15 @@ public class ConfigResponseModel implements Serializable {
 
     public ConfigModel getConfig() {
         return config;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }

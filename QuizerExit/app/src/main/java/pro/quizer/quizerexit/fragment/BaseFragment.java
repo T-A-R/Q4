@@ -211,15 +211,15 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable, 
 
     @Override
     public void onImageCapture(@NonNull File pImageFile) {
-        showToast("Фото сделано");
+//        showToast("Фото сделано");
 
         if (FileUtils.renameFile(getContext(),
                 pImageFile,
                 mUserId,
                 FileUtils.generatePhotoFileName(mLoginAdmin, mProjectId, mUserLogin, mToken, mRelativeId))) {
-            showToast("Фото переименованно");
+//            showToast("Фото переименованно");
         } else {
-            showToast("Фото не переименованно");
+//            showToast("Фото не переименованно");
         }
     }
 
@@ -234,7 +234,7 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable, 
                 break;
             case CameraError.ERROR_IMAGE_WRITE_FAILED:
                 //Image write failed. Please check if you have provided WRITE_EXTERNAL_STORAGE permission
-                showToast("Не удается сохранить фото");
+//                showToast("Не удается сохранить фото");
 
                 break;
             case CameraError.ERROR_CAMERA_PERMISSION_NOT_AVAILABLE:
@@ -248,7 +248,7 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable, 
                 //permission for the app.
                 //                HiddenCameraUtils.openDrawOverPermissionSetting(this);
 
-                showToast("Нет возможности делать фото поверх приложений");
+//                showToast("Нет возможности делать фото поверх приложений");
 
                 break;
             case CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA:

@@ -11,7 +11,7 @@ import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.model.database.UserModel;
 
-import static pro.quizer.quizerexit.utils.OkHttpUtils.AUDIO_MP3;
+import static pro.quizer.quizerexit.utils.OkHttpUtils.AUDIO_AMR;
 
 public class AudiosSendingByUserModelExecutable extends AbstractFilesSendingByUserModelExecutable {
 
@@ -32,7 +32,7 @@ public class AudiosSendingByUserModelExecutable extends AbstractFilesSendingByUs
 
     @Override
     public String getMediaType() {
-        return AUDIO_MP3;
+        return AUDIO_AMR;
     }
 
     @Override

@@ -1,6 +1,8 @@
 package pro.quizer.quizerexit.view;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
@@ -13,7 +15,7 @@ import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.listener.QuotasClickListener;
 
-public class AppDrawer extends RelativeLayout implements Serializable {
+public class AppDrawer extends RelativeLayout implements Serializable, Parcelable {
 
     Button mHomeBtn;
     Button mSyncBtn;
@@ -50,6 +52,14 @@ public class AppDrawer extends RelativeLayout implements Serializable {
         inflate(getContext(), R.layout.view_drawer, this);
 
         initViews();
+    }
+
+    public void disableHome() {
+        mHomeBtn.setVisibility(View.GONE);
+    }
+
+    public void disableSync() {
+        mSyncBtn.setVisibility(View.GONE);
     }
 
     private void init() {
@@ -123,4 +133,13 @@ public class AppDrawer extends RelativeLayout implements Serializable {
 
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
+    }
 }

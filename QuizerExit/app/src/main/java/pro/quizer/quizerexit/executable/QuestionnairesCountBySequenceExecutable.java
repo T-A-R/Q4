@@ -30,7 +30,6 @@ public class QuestionnairesCountBySequenceExecutable extends BaseModelExecutable
 
         final UserModel currentUserModel = mBaseActivity.getCurrentUser();
 
-        // TODO: 1/26/2019 make NOT_SEND status
         final List<QuestionnaireDatabaseModel> sentQuestionnaires = new Select()
                 .from(QuestionnaireDatabaseModel.class)
                 .where(QuestionnaireDatabaseModel.STATUS + " =? AND " +

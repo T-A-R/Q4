@@ -178,6 +178,8 @@ public class AuthActivity extends BaseActivity {
                                 }
 
                                 if (authResponseModel != null) {
+                                    SPUtils.saveAuthTimeDifference(AuthActivity.this, authResponseModel.getServerTime());
+
                                     if (authResponseModel.getResult() != 0) {
                                         if (isNeedDownloadConfig(authResponseModel)) {
                                             downloadConfig(login, passwordMD5, authResponseModel);
@@ -321,6 +323,16 @@ public class AuthActivity extends BaseActivity {
         new UpdateQuotasExecutable(this, new ICallback() {
 
             @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            @Override
+            public void writeToParcel(Parcel parcel, int i) {
+
+            }
+
+            @Override
             public void onStarting() {
                 showProgressBar();
             }
@@ -337,16 +349,6 @@ public class AuthActivity extends BaseActivity {
                 hideProgressBar();
 
                 showToast(getString(R.string.error_cannot_update_quotas) + "\n" + pException.toString());
-            }
-
-            @Override
-            public int describeContents() {
-                return 0;
-            }
-
-            @Override
-            public void writeToParcel(Parcel parcel, int i) {
-
             }
         }).execute();
     }

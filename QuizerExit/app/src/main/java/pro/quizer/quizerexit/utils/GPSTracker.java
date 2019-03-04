@@ -25,6 +25,7 @@ public class GPSTracker extends Service implements LocationListener {
     Location location; // location
     double latitude; // latitude
     double longitude; // longitude
+    long gpstime; // longitude
     // The minimum distance to change Updates in meters
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
     // The minimum time between updates in milliseconds
@@ -63,6 +64,7 @@ public class GPSTracker extends Service implements LocationListener {
                         if (location != null) {
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
+                            gpstime = location.getTime();
                         }
                     }
                 }
@@ -77,6 +79,7 @@ public class GPSTracker extends Service implements LocationListener {
                             if (location != null) {
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
+                                gpstime = location.getTime();
                             }
                         }
                     }
@@ -106,6 +109,16 @@ public class GPSTracker extends Service implements LocationListener {
         longitude = location.getLongitude();
 
         return longitude;
+    }
+
+    public long getGpsTime() throws Exception {
+        if (location == null) {
+            throw new Exception("Не удается поулчить текущие координаты GPS");
+        }
+
+        gpstime = location.getTime();
+
+        return gpstime;
     }
 
     public boolean canGetLocation() {

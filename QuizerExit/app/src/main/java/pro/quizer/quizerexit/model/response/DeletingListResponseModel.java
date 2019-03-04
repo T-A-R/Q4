@@ -1,11 +1,14 @@
 package pro.quizer.quizerexit.model.response;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class DeletingListResponseModel implements Serializable {
+public class DeletingListResponseModel implements Serializable, Parcelable {
 
     @SerializedName("result")
     private int result;
@@ -13,9 +16,11 @@ public class DeletingListResponseModel implements Serializable {
     @SerializedName("error")
     private String error;
 
+    @SerializedName("server_time")
+    private Long server_time;
+
     @SerializedName("accepted")
     private List<String> accepted;
-
 
     public int getResult() {
         return result;
@@ -27,5 +32,19 @@ public class DeletingListResponseModel implements Serializable {
 
     public List<String> getAccepted() {
         return accepted;
+    }
+
+    public Long getServerTime() {
+        return server_time;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }

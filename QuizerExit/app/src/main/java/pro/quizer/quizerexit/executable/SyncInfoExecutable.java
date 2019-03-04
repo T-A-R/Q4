@@ -8,6 +8,9 @@ import java.util.List;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
+import pro.quizer.quizerexit.model.config.ConfigModel;
+import pro.quizer.quizerexit.model.config.ProjectInfoModel;
+import pro.quizer.quizerexit.model.config.ReserveChannelModel;
 import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.view.SyncViewModel;
@@ -31,6 +34,9 @@ public class SyncInfoExecutable extends BaseModelExecutable<SyncViewModel> {
             final UserModel userModel = activity.getCurrentUser();
             final int pUserId = userModel.user_id;
             final int pUserProjectId = userModel.user_project_id;
+            final ConfigModel configModel = userModel.getConfig();
+            final ProjectInfoModel projectInfoModel = configModel.getProjectInfo();
+            final ReserveChannelModel reserveChannelModel = projectInfoModel.getReserveChannel();
 
             final List<QuestionnaireDatabaseModel> notSentQDM = new Select()
                     .from(QuestionnaireDatabaseModel.class)
@@ -50,6 +56,7 @@ public class SyncInfoExecutable extends BaseModelExecutable<SyncViewModel> {
             syncViewModel.setNotSentQuestionnaireModels(notSentQDM);
             syncViewModel.setNotSendedPhoto(activity.getPhotosByUserId(pUserId));
             syncViewModel.setNotSendedAudio(activity.getAudioByUserId(pUserId));
+            syncViewModel.setHasReserveChannel(reserveChannelModel != null);
 
             return syncViewModel;
         } else {

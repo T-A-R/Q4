@@ -5,53 +5,10 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <LinearLayout
-        android:id="@+id/question_panel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:orientation="vertical">
-
-        <pro.quizer.quizerexit.view.resizeble.textview.MediumResizableTextView
-            android:id="@+id/element_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="8dp"
-            android:paddingTop="8dp"
-            android:paddingRight="8dp"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            tools:text="Отображение основного вопроса?" />
-
-        <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
-            android:id="@+id/element_description_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingBottom="8dp"
-            android:textColor="@android:color/black"
-            android:textSize="14sp"
-            tools:text="Отображение описания вопроса" />
-
-    </LinearLayout>
-
-
-    <FrameLayout
-        android:id="@+id/question_text_divider"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/question_panel">
-
-        <include layout="@layout/view_divider" />
-
-    </FrameLayout>
-
     <FrameLayout
         android:id="@+id/content_element"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/question_text_divider"
         tools:ignore="UnknownIdInLayout" />
 
 </RelativeLayout>

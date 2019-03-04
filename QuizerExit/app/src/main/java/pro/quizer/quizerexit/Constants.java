@@ -16,6 +16,9 @@ public final class Constants {
         String FONT_SIZE_POSITION = "FONT_SIZE_POSITION";
         String CURRENT_USED_ID = "CURRENT_USED_ID";
         String SENDED_Q_IN_SESSSION = "SENDED_Q_IN_SESSSION";
+        String AUTH_TIME_DIFFERENCE = "auth_time_difference";
+        String SEND_TIME_DIFFERENCE = "send_time_difference";
+        String QUOTA_TIME_DIFFERENCE = "quota_time_difference";
 
     }
 

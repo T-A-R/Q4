@@ -1,5 +1,8 @@
 package pro.quizer.quizerexit.model.config;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -7,17 +10,16 @@ import java.util.HashMap;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.OptionsOpenType;
-import pro.quizer.quizerexit.model.OptionsType;
 import pro.quizer.quizerexit.utils.ConditionUtils;
 import pro.quizer.quizerexit.utils.QuotasUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 
 import static pro.quizer.quizerexit.model.OptionsOpenType.CHECKBOX;
 
-public class OptionsModel implements Serializable {
+public class OptionsModel implements Serializable, Parcelable {
 
-    @SerializedName("show_condition")
-    private String show_condition;
+    @SerializedName("pre_condition")
+    private String pre_condition;
 
     @SerializedName("title")
     private String title;
@@ -67,10 +69,6 @@ public class OptionsModel implements Serializable {
     @SerializedName("jump")
     private int jump;
 
-    @OptionsType
-    @SerializedName("type")
-    private String type;
-
     @SerializedName("link")
     private String link;
 
@@ -90,8 +88,8 @@ public class OptionsModel implements Serializable {
     @SerializedName("unchecker")
     private boolean unchecker;
 
-    public String getShowCondition() {
-        return show_condition;
+    public String getPreCondition() {
+        return pre_condition;
     }
 
     public String getTitle(final BaseActivity pBaseActivity) {
@@ -144,8 +142,12 @@ public class OptionsModel implements Serializable {
 
     public boolean isFlipColsAndRows() {
         // TODO: 2/10/2019 stub
-        return true;
-//        return flip_cols_and_rows;
+//        return true;
+        return flip_cols_and_rows;
+    }
+
+    public void setJump(final int pJump) {
+        jump = pJump;
     }
 
     public boolean isComplicatedCells() {
@@ -156,10 +158,6 @@ public class OptionsModel implements Serializable {
         return jump;
     }
 
-    public String getType() {
-        return type;
-    }
-
     public String getLink() {
         return link;
     }
@@ -168,11 +166,13 @@ public class OptionsModel implements Serializable {
         return text;
     }
 
-    public boolean isCanShow(final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel) {
-        final boolean showCondition = ConditionUtils.CAN_SHOW == ConditionUtils.evaluateCondition(getShowCondition(), mMap, pBaseActivity);
-        final boolean quotasCondition = QuotasUtils.isCanDisplayed(mMap, pElementModel, pBaseActivity);
+    public boolean isEnabled(final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel) {
+        return QuotasUtils.isCanDisplayed(mMap, pElementModel, pBaseActivity);
 
-        return showCondition && quotasCondition;
+    }
+
+    public boolean isCanShow(final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel) {
+        return ConditionUtils.CAN_SHOW == ConditionUtils.evaluateCondition(getPreCondition(), mMap, pBaseActivity);
     }
 
     public String getJumpCondition() {
@@ -194,5 +194,15 @@ public class OptionsModel implements Serializable {
 
     public boolean isUnchecker() {
         return unchecker;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }

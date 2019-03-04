@@ -1,5 +1,8 @@
 package pro.quizer.quizerexit.model.database;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
@@ -7,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import pro.quizer.quizerexit.model.config.ConfigModel;
@@ -15,7 +19,7 @@ import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.model.response.QuotaResponseModel;
 
 @Table(name = "User")
-public class UserModel extends Model implements Serializable {
+public class UserModel extends Model implements Serializable, Parcelable {
 
     public static final String USER_ID = "user_id";
     public static final String LOGIN = "login";
@@ -62,6 +66,20 @@ public class UserModel extends Model implements Serializable {
     }
 
     public List<QuotaModel> getQuotas() {
-        return new Gson().fromJson(quotas, QuotaResponseModel.class).getQuotas();
+        try {
+            return new Gson().fromJson(quotas, QuotaResponseModel.class).getQuotas();
+        } catch (final Exception pE) {
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }

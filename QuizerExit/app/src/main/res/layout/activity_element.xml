@@ -22,6 +22,8 @@
 
     </LinearLayout>
 
+    <include layout="@layout/view_progress" />
+
     <android.support.design.widget.NavigationView
         android:id="@+id/navView"
         android:layout_width="260dp"

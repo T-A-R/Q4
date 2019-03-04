@@ -1,5 +1,8 @@
 package pro.quizer.quizerexit.model.quota;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -14,7 +17,7 @@ import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.QuestionnairesCountBySequenceExecutable;
 import pro.quizer.quizerexit.model.config.ElementModel;
 
-public class QuotaModel implements Serializable {
+public class QuotaModel implements Serializable, Parcelable {
 
     private static final String SPLIT_SEQUENCE_SYMBOL = ",";
 
@@ -121,5 +124,15 @@ public class QuotaModel implements Serializable {
 
     public boolean isCanDisplayed() {
         return getLimit() != 0;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }

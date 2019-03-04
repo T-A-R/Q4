@@ -12,7 +12,6 @@ import java.util.List;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.BaseExecutable;
 import pro.quizer.quizerexit.executable.ICallback;
-import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
 import pro.quizer.quizerexit.utils.FileUtils;
 
@@ -38,7 +37,7 @@ public class CleanUpFilesExecutable extends BaseExecutable {
             final List<File> files = new ArrayList<>();
 
             files.addAll(FileUtils.getFilesRecursion(FileUtils.JPEG, FileUtils.getPhotosStoragePath(mContext)));
-            files.addAll(FileUtils.getFilesRecursion(FileUtils.MP3, FileUtils.getAudioStoragePath(mContext)));
+            files.addAll(FileUtils.getFilesRecursion(FileUtils.AMR, FileUtils.getAudioStoragePath(mContext)));
 
             final List<QuestionnaireDatabaseModel> allQuestionnaires = new Select()
                     .from(QuestionnaireDatabaseModel.class)

@@ -19,6 +19,8 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.os.PowerManager;
 import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
@@ -57,7 +59,7 @@ import pro.quizer.quizerexit.utils.FileUtils;
 
 import static pro.quizer.quizerexit.utils.FileUtils.FOLDER_DIVIDER;
 
-public class AudioService extends MediaBrowserServiceCompat implements Serializable {
+public class AudioService extends MediaBrowserServiceCompat implements Serializable, Parcelable {
 
     public static final String SOURCE_NONE = "SOURCE_NONE";
     public static final String SOURCE_MIC = "SOURCE_MIC";
@@ -88,11 +90,20 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
     //private static final int VISUALIZER_SAMPLE_RATE = 4000; old
     private static final int VISUALIZER_SAMPLE_RATE = 8000;
     private static final int AMPLITUDE_CHK_RATE = 500;
-    public static final String AUDIO_FILE_NAME = "AUDIO_FILE_NAME";
     public static String mFileName = "unknown.m4a";
     //private static final int AMPLITUDE_CHK_RATE = 200; // test
 
     public File audioFilesPath;
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
+    }
 
     private enum ServiceState {
         Ready,
@@ -1300,8 +1311,8 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                 recorder = new MediaRecorder();
                 recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                 //TODO better and more reliable to use ogg / vorbis
-                recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                recorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC);
+                recorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_WB);
+                recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB);
                 isRecorderInitialized = true;
                 aTaskAmplitude = new RecAmplitudeChkAsyncTask();
                 // to run another AT (save data) at the same time

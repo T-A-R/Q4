@@ -11,8 +11,13 @@ import java.util.List;
 import pro.quizer.quizerexit.IAdapter;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
-import pro.quizer.quizerexit.model.config.OptionsModel;
+import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.config.ElementModel;
+import pro.quizer.quizerexit.model.config.OptionsModel;
+import pro.quizer.quizerexit.utils.CollectionUtils;
+
+import static pro.quizer.quizerexit.model.config.ElementModel.COMPARATOR;
+import static pro.quizer.quizerexit.utils.CollectionUtils.sortByOrder;
 
 public abstract class AbstractQuestionFragment extends AbstractContentElementFragment {
 
@@ -22,6 +27,7 @@ public abstract class AbstractQuestionFragment extends AbstractContentElementFra
     private ElementModel mCurrentElement;
     private OptionsModel mAttributes;
     private NavigationCallback mCallback;
+    private BaseActivity mBaseActivity;
 
     private Runnable mRefreshRecyclerViewRunnable = new Runnable() {
         @Override
@@ -68,13 +74,14 @@ public abstract class AbstractQuestionFragment extends AbstractContentElementFra
         final Bundle bundle = getArguments();
 
         if (bundle != null) {
+            mBaseActivity = getBaseActivity();
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
             mAttributes = mCurrentElement.getOptions();
 
-
             // current
-            initView(view);
+            initHeader(view);
+            initView();
         } else {
             showToast(getString(R.string.internal_app_error) + "1001");
         }
@@ -95,7 +102,12 @@ public abstract class AbstractQuestionFragment extends AbstractContentElementFra
         return mExitRunnable;
     }
 
-    private void initView(final View pView) {
+    @Override
+    protected OptionsModel getOptions() {
+        return mAttributes;
+    }
+
+    private void initView() {
         final List<ElementModel> subElements = mCurrentElement.getElements();
 
         final int minAnswers;
@@ -112,26 +124,9 @@ public abstract class AbstractQuestionFragment extends AbstractContentElementFra
 
         // рандомная сортировка дочерних элементов
         if (mAttributes.isRotation()) {
-            shuffleAnswers(subElements);
+            CollectionUtils.shuffleAnswers(mCurrentElement, subElements);
         }
 
         createAdapter(mCurrentElement, subElements, minAnswers, maxAnswers, mRefreshRecyclerViewRunnable);
-    }
-
-    private void shuffleAnswers(final List<ElementModel> pList) {
-        Collections.shuffle(pList);
-
-        for (int i = 0; i < pList.size(); i++) {
-            final ElementModel answer = pList.get(i);
-            final OptionsModel attributes = answer.getOptions();
-            final int realOrder = attributes.getOrder() - 1;
-
-            if (attributes.isFixedOrder() && realOrder != i) {
-                pList.remove(answer);
-                pList.add(attributes.getOrder() - 1, answer);
-
-                i = 0;
-            }
-        }
     }
 }

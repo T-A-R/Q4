@@ -56,14 +56,11 @@ public class QuestionTableFragment extends AbstractQuestionFragment {
     void createAdapter(final ElementModel pCurrentElement, List<ElementModel> subElements, int minAnswers, int maxAnswers, Runnable refreshRecyclerViewRunnable) {
         mAdapter = new TableQuestionAdapter(pCurrentElement, getContext(), subElements, refreshRecyclerViewRunnable);
         mTableLayout.setAdapter(mAdapter);
-
-//        mTableLayout.setHeaderFixed(true);
-//        mTableLayout.setSolidRowHeader(true);
+        mTableLayout.setDrawingCacheEnabled(true);
     }
 
     @Override
     void updateAdapter() {
-//        mAdapter.notifyDataSetChanged();
         UiUtils.hideKeyboard(getContext(), getView());
     }
 }

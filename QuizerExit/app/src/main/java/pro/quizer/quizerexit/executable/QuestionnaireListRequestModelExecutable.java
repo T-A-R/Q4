@@ -15,6 +15,7 @@ import pro.quizer.quizerexit.model.request.QuestionnaireRequestModel;
 
 public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable<QuestionnaireListRequestModel> {
 
+    private final int mUserId;
     private final String mLoginAdmin;
     private final String mLogin;
     private final String mPassword;
@@ -24,6 +25,7 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
 
         final ConfigModel configModel = pUserModel.getConfig();
 
+        mUserId = pUserModel.user_id;
         mLoginAdmin = configModel.getLoginAdmin();
         mLogin = pUserModel.login;
         mPassword = pUserModel.password;
@@ -35,16 +37,15 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
 
         final List<QuestionnaireDatabaseModel> questionnaires = new Select()
                 .from(QuestionnaireDatabaseModel.class)
-                .where(QuestionnaireDatabaseModel.LOGIN_ADMIN + " = ? AND " +
-                                QuestionnaireDatabaseModel.LOGIN + " =? AND " +
+                .where(QuestionnaireDatabaseModel.USER_ID + " = ? AND " +
                                 QuestionnaireDatabaseModel.STATUS + " =?",
-                        mLoginAdmin,
-                        mLogin,
+                        mUserId,
                         QuestionnaireStatus.NOT_SENT)
                 .execute();
 
         for (final QuestionnaireDatabaseModel questionnaireDatabaseModel : questionnaires) {
             final QuestionnaireRequestModel questionnaireRequestModel = new QuestionnaireRequestModel(
+                    questionnaireDatabaseModel.billing_questions,
                     questionnaireDatabaseModel.questionnaire_id,
                     questionnaireDatabaseModel.questions_passed,
                     questionnaireDatabaseModel.screens_passed,
@@ -54,7 +55,11 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
                     questionnaireDatabaseModel.duration_time_questionnaire,
                     questionnaireDatabaseModel.date_interview,
                     questionnaireDatabaseModel.gps,
-                    questionnaireDatabaseModel.token
+                    questionnaireDatabaseModel.gps_time,
+                    questionnaireDatabaseModel.token,
+                    questionnaireDatabaseModel.auth_time_difference,
+                    questionnaireDatabaseModel.send_time_difference,
+                    questionnaireDatabaseModel.quota_time_difference
             );
 
             final List<ElementDatabaseModel> elements = new Select()

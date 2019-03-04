@@ -1,10 +1,13 @@
 package pro.quizer.quizerexit.model.config;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class ConfigModel implements Serializable {
+public class ConfigModel implements Serializable, Parcelable {
 
     @SerializedName("server_url")
     private String server_url;
@@ -70,8 +73,8 @@ public class ConfigModel implements Serializable {
 
     public boolean isPhotoQuestionnaire() {
         // TODO: 1/5/2019 stub
-        return false;
-//        return photo_questionnaire;
+//        return false;
+        return photo_questionnaire;
     }
 
     public int getAutonomousLimitCountQuestionnare() {
@@ -88,20 +91,20 @@ public class ConfigModel implements Serializable {
 
     public boolean isAudio() {
         // TODO: 1/5/2019 stub
-        return false;
-//        return audio;
+//        return false;
+        return audio;
     }
 
     public boolean isGps() {
         // TODO: 2/4/2019 stub
-        return true;
-//        return gps;
+//        return true;
+        return gps;
     }
 
     public boolean isForceGps() {
         // TODO: 2/4/2019 stub
-        return true;
-//        return force_gps;
+//        return true;
+        return force_gps;
     }
 
     public boolean isRecordFullQuestionnaire() {
@@ -122,5 +125,15 @@ public class ConfigModel implements Serializable {
 
     public ProjectInfoModel getProjectInfo() {
         return project_info;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }

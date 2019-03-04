@@ -2,6 +2,7 @@ package pro.quizer.quizerexit.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,18 +11,18 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
+import java.util.List;
 
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
-import pro.quizer.quizerexit.activity.BaseActivity;
-import pro.quizer.quizerexit.model.OptionsType;
+import pro.quizer.quizerexit.model.ElementSubtype;
 import pro.quizer.quizerexit.model.ElementType;
-import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
+import pro.quizer.quizerexit.model.config.OptionsModel;
+import pro.quizer.quizerexit.utils.CollectionUtils;
 import pro.quizer.quizerexit.utils.DateUtils;
-import pro.quizer.quizerexit.utils.UiUtils;
 
 public class ElementFragment extends BaseFragment {
 
@@ -33,9 +34,8 @@ public class ElementFragment extends BaseFragment {
     public static final String BUNDLE_USER_LOGIN = "BUNDLE_USER_LOGIN";
     public static final String BUNDLE_IS_PHOTO_QUESTIONNAIRE = "BUNDLE_IS_PHOTO_QUESTIONNAIRE";
     public static final String BUNDLE_PROJECT_ID = "BUNDLE_PROJECT_ID";
+    public static final String BUNDLE_VIEW_ID = "BUNDLE_VIEW_ID";
 
-    TextView mElementText;
-    TextView mElementDescriptionText;
     private OptionsModel mAttributes;
     private ElementModel mCurrentElement;
     private FragmentManager mFragmentManger;
@@ -48,8 +48,54 @@ public class ElementFragment extends BaseFragment {
     private int mProjectId = 0;
     private int mUserId = 0;
     private boolean mIsPhotoQuestionnaire;
+    private int mViewId;
+
+    private NavigationCallback mNavigationCallback = new NavigationCallback() {
+
+        @Override
+        public void onForward(final int pNextRelativeId) {
+            mCurrentElement.setEndTime(DateUtils.getCurrentTimeMillis());
+
+            mCallback.onForward(pNextRelativeId);
+        }
+
+        @Override
+        public void onBack() {
+            mCurrentElement.setEndTime(DateUtils.getCurrentTimeMillis());
+
+            mCallback.onBack();
+        }
+
+        @Override
+        public void onExit() {
+            mCurrentElement.setEndTime(DateUtils.getCurrentTimeMillis());
+
+            mCallback.onExit();
+        }
+
+        @Override
+        public void onShowFragment(final ElementModel pCurrentElement) {
+            mCallback.onShowFragment(pCurrentElement);
+        }
+
+        @Override
+        public void onHideFragment(final ElementModel pCurrentElement) {
+            mCallback.onHideFragment(pCurrentElement);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int i) {
+
+        }
+    };
 
     public static Fragment newInstance(
+            final int pViewId,
             @NonNull final ElementModel pElement,
             final NavigationCallback pCallback,
             final String pToken,
@@ -69,6 +115,7 @@ public class ElementFragment extends BaseFragment {
         bundle.putString(BUNDLE_USER_LOGIN, pUserLogin);
         bundle.putBoolean(BUNDLE_IS_PHOTO_QUESTIONNAIRE, pIsPhotoQuestionnaire);
         bundle.putInt(BUNDLE_PROJECT_ID, pProjectId);
+        bundle.putInt(BUNDLE_VIEW_ID, pViewId);
         fragment.setArguments(bundle);
 
         return fragment;
@@ -99,46 +146,63 @@ public class ElementFragment extends BaseFragment {
             mIsPhotoQuestionnaire = bundle.getBoolean(BUNDLE_IS_PHOTO_QUESTIONNAIRE);
             mUserLogin = bundle.getString(BUNDLE_USER_LOGIN);
             mProjectId = bundle.getInt(BUNDLE_PROJECT_ID);
+            mViewId = bundle.getInt(BUNDLE_VIEW_ID);
             mLoginAdmin = bundle.getString(BUNDLE_LOGIN_ADMIN);
             mToken = bundle.getString(BUNDLE_TOKEN);
             mUserId = bundle.getInt(BUNDLE_USER_ID);
 
-            initView(view);
+            initView();
         } else {
             showToast(getString(R.string.internal_app_error) + "1001");
         }
     }
 
-    private void initView(final View pView) {
+    private boolean isScreenElement() {
+        final String type = mCurrentElement.getType();
+        final String subtype = mCurrentElement.getSubtype();
+
+        if (ElementType.QUESTION.equals(type) && !ElementSubtype.FUNNEL.equals(subtype)) {
+            return true;
+        }
+
+        if (ElementType.BOX.equals(type) && (ElementSubtype.ONESCREEN.equals(subtype) || ElementSubtype.TABLE.equals(subtype) || ElementSubtype.FUNNEL.equals(subtype))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private void initView() {
+        final List<ElementModel> subElements = mCurrentElement.getElements();
+        final String elementType = mCurrentElement.getType();
+
+        if (isScreenElement()) {
+            mCurrentElement.setScreenShowing(true);
+            mCurrentElement.setStartTime(mStartTime);
+        }
+
+        if (mCurrentElement.getOptions().isRotation()) {
+            // рандомная сортировка дочерних элементов
+            if (mAttributes.isRotation()) {
+                CollectionUtils.shuffleAnswers(mCurrentElement, subElements);
+            }
+
+        }
+
         mCallback.onShowFragment(mCurrentElement);
 
         if (mIsPhotoQuestionnaire && mCurrentElement.getOptions().isTakePhoto()) {
             shotPicture(mLoginAdmin, mToken, mCurrentElement.getRelativeID(), mUserId, mProjectId, mUserLogin);
         }
 
-        mElementText = pView.findViewById(R.id.element_text);
-        mElementDescriptionText = pView.findViewById(R.id.element_description_text);
-        UiUtils.setTextOrHide(mElementText, mAttributes.getTitle((BaseActivity) getContext()));
-        UiUtils.setTextOrHide(mElementDescriptionText, mAttributes.getDescription());
-
-        mCurrentElement.setStartTime(mStartTime);
-
-        switch (mCurrentElement.getType()) {
+        switch (elementType) {
             case ElementType.QUESTION:
-                mCurrentElement.setScreenShowing(true);
-
-                switch (mCurrentElement.getOptions().getType()) {
-                    case OptionsType.LIST:
+                switch (mCurrentElement.getSubtype()) {
+                    case ElementSubtype.LIST:
                         mCurrentElement.setQuestionShowing(true);
 
                         mFragmentManger.beginTransaction()
-                                .add(R.id.content_element, QuestionListFragment.newInstance(mCurrentElement, mCallback))
-                                .commit();
-
-                        break;
-                    case OptionsType.TABLE:
-                        mFragmentManger.beginTransaction()
-                                .add(R.id.content_element, QuestionTableFragment.newInstance(mCurrentElement, mCallback))
+                                .add(mViewId, QuestionListFragment.newInstance(mCurrentElement, mNavigationCallback))
                                 .commit();
 
                         break;
@@ -149,21 +213,31 @@ public class ElementFragment extends BaseFragment {
                 }
 
                 break;
-            case ElementType.INFO:
-                mCurrentElement.setScreenShowing(true);
-
-                mFragmentManger.beginTransaction()
-                        .add(R.id.content_element, InfoFragment.newInstance(mCurrentElement, mCallback))
-                        .commit();
-
-                break;
-
             case ElementType.BOX:
-                final ElementModel nestedElement = mCurrentElement.getElements().get(0);
+                switch (mCurrentElement.getSubtype()) {
+                    case ElementSubtype.TABLE:
+                        mFragmentManger.beginTransaction()
+                                .add(mViewId, QuestionTableFragment.newInstance(mCurrentElement, mNavigationCallback))
+                                .commit();
 
-                mFragmentManger.beginTransaction()
-                        .add(R.id.content_element, ElementFragment.newInstance(nestedElement, mCallback, mToken, mLoginAdmin, mUserId, mUserLogin, mIsPhotoQuestionnaire, mProjectId))
-                        .commit();
+                        break;
+                    case ElementSubtype.FUNNEL:
+                        showToast("Funnel еще не готов.");
+
+                        break;
+                    case ElementSubtype.ONESCREEN:
+                        mFragmentManger.beginTransaction()
+                                .add(mViewId, InfoFragment.newInstance(mCurrentElement, mNavigationCallback))
+                                .commit();
+
+                        break;
+                    default:
+                        mFragmentManger.beginTransaction()
+                                .add(mViewId, BoxFragment.newInstance(mCurrentElement, mNavigationCallback, mToken, mLoginAdmin, mUserId, mUserLogin, mIsPhotoQuestionnaire, mProjectId))
+                                .commit();
+
+                        break;
+                }
 
                 break;
             default:

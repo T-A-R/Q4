@@ -1,6 +1,8 @@
 package pro.quizer.quizerexit.view;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,7 +13,7 @@ import java.io.Serializable;
 
 import pro.quizer.quizerexit.R;
 
-public class Toolbar extends RelativeLayout implements Serializable {
+public class Toolbar extends RelativeLayout implements Serializable, Parcelable {
 
     private ImageView mIcon;
     private ImageView mLogo;
@@ -77,5 +79,15 @@ public class Toolbar extends RelativeLayout implements Serializable {
         mOptionsView.setVisibility(View.GONE);
         mCloseView.setVisibility(View.VISIBLE);
         mCloseView.setOnClickListener(pOnClickListener);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }

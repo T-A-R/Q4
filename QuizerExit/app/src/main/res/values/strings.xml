@@ -80,7 +80,7 @@
     <string name="exit_pool_body">Вы уверены, что хотите завершить анкету?</string>
     <string name="permission_error">Все запрашиваемые разрешения обязательны для продолжения работы</string>
     <string name="success_send_questionnaries">Отправка анкет успешна выполнена</string>
-    <string name="error_send_questionnaries">Возникла ошибка при отправке анкет</string>
+    <string name="error_send_questionnaries">Нет связи с сервером: анкета сохранена в устройстве.</string>
     <string name="empty_list_of_accepted_questionnairies">Пустой список принятых анкет</string>
     <string name="users_not_found_for_send_data">Пользователи не существуют для отправки</string>
     <string name="sended_q_from_this_device_string">Отправлено анкет в рамках проекта с данного устройства: %1$s</string>
@@ -132,4 +132,5 @@
     <string name="empty_quotas">Квоты пусты</string>
     <string name="show_only_not_completed">Отобразить не выполненные</string>
     <string name="choose_font_size">Выберите размер шрифта</string>
+    <string name="tree_dots">...</string>
 </resources>

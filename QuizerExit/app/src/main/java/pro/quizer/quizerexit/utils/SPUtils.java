@@ -24,6 +24,30 @@ public class SPUtils {
         editor.apply();
     }
 
+    private static void saveTimeDifference(final Context pContext, final Long pServerTime, final String pString) {
+        if (pServerTime == null) {
+            return;
+        }
+
+        final long difference = DateUtils.getCurrentTimeMillis() - pServerTime;
+        final SharedPreferences.Editor editor = getSharedPreferences(pContext).edit();
+
+        editor.putLong(pString, difference);
+        editor.apply();
+    }
+
+    public static void saveAuthTimeDifference(final Context pContext, final Long pServerTime) {
+        saveTimeDifference(pContext, pServerTime, Constants.SP.AUTH_TIME_DIFFERENCE);
+    }
+
+    public static void saveQuotaTimeDifference(final Context pContext, final Long pServerTime) {
+        saveTimeDifference(pContext, pServerTime, Constants.SP.QUOTA_TIME_DIFFERENCE);
+    }
+
+    public static void saveSendTimeDifference(final Context pContext, final Long pServerTime) {
+        saveTimeDifference(pContext, pServerTime, Constants.SP.SEND_TIME_DIFFERENCE);
+    }
+
     public static void saveAnswerMargin(final Context pContext, final int pValue) {
         final SharedPreferences.Editor editor = getSharedPreferences(pContext).edit();
 
@@ -50,6 +74,18 @@ public class SPUtils {
         return getCurrentUserId(getSharedPreferences(pContext));
     }
 
+    public static Long getAuthTimeDifference(final Context pContext) {
+        return getAuthTimeDifference(getSharedPreferences(pContext));
+    }
+
+    public static Long getQuotaTimeDifference(final Context pContext) {
+        return getQuotaTimeDifference(getSharedPreferences(pContext));
+    }
+
+    public static Long getSendTimeDifference(final Context pContext) {
+        return getSendTimeDifference(getSharedPreferences(pContext));
+    }
+
     public static int getFontSizePosition(final Context pContext) {
         return getFontSizePosition(getSharedPreferences(pContext));
     }
@@ -66,12 +102,34 @@ public class SPUtils {
         return pSharedPreferences.getInt(pKey, pDefValue);
     }
 
+    private static Long getLong(final SharedPreferences pSharedPreferences, final String pKey, final Long pDefValue) {
+        final long result = pSharedPreferences.getLong(pKey, Long.MAX_VALUE);
+
+        if (result == Long.MAX_VALUE) {
+            return pDefValue;
+        } else {
+            return result;
+        }
+    }
+
     private static int getInt(final SharedPreferences pSharedPreferences, final String pKey) {
         return getInt(pSharedPreferences, pKey, -1);
     }
 
     private static int getCurrentUserId(final SharedPreferences pSharedPreferences) {
         return getInt(pSharedPreferences, Constants.SP.CURRENT_USED_ID);
+    }
+
+    private static Long getAuthTimeDifference(final SharedPreferences pSharedPreferences) {
+        return getLong(pSharedPreferences, Constants.SP.AUTH_TIME_DIFFERENCE, null);
+    }
+
+    private static Long getQuotaTimeDifference(final SharedPreferences pSharedPreferences) {
+        return getLong(pSharedPreferences, Constants.SP.QUOTA_TIME_DIFFERENCE, null);
+    }
+
+    private static Long getSendTimeDifference(final SharedPreferences pSharedPreferences) {
+        return getLong(pSharedPreferences, Constants.SP.SEND_TIME_DIFFERENCE, null);
     }
 
     private static int getFontSizePosition(final SharedPreferences pSharedPreferences) {

@@ -1,11 +1,17 @@
 package pro.quizer.quizerexit.model.config;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class ProjectInfoModel implements Serializable {
+public class ProjectInfoModel implements Serializable, Parcelable {
+
+    @SerializedName("billing_questions")
+    private int billing_questions;
 
     @SerializedName("project_id")
     private int project_id;
@@ -42,6 +48,10 @@ public class ProjectInfoModel implements Serializable {
         return project_id;
     }
 
+    public int getBillingQuestions() {
+        return billing_questions;
+    }
+
     public int getQuestionnaireId() {
         return questionnaire_id;
     }
@@ -68,5 +78,15 @@ public class ProjectInfoModel implements Serializable {
 
     public ReserveChannelModel getReserveChannel() {
         return reserve_channel;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }

@@ -25,6 +25,7 @@
             android:gravity="center"
             android:textColor="@android:color/black"
             android:textSize="16sp"
+            android:textStyle="bold"
             tools:text="Экзит пул" />
 
         <pro.quizer.quizerexit.view.resizeble.textview.MediumResizableTextView

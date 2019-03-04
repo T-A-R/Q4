@@ -14,7 +14,7 @@ import pro.quizer.quizerexit.model.request.FileRequestModel;
 
 public class OkHttpUtils {
 
-    public static final String AUDIO_MP3 = "audio/mp3";
+    public static final String AUDIO_AMR = "audio/amr";
     public static final String IMAGE_JPEG = "image/jpeg";
     private static final String FILES = "files[%1$s]";
 

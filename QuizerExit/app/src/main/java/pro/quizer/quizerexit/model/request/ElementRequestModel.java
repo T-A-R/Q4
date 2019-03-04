@@ -1,8 +1,11 @@
 package pro.quizer.quizerexit.model.request;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
-public class ElementRequestModel implements Serializable {
+public class ElementRequestModel implements Serializable, Parcelable {
 
     private final Integer relative_id;
     private final Long duration;
@@ -16,5 +19,15 @@ public class ElementRequestModel implements Serializable {
         this.click_rank = click_rank;
         this.rank = rank;
         this.value = value;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }

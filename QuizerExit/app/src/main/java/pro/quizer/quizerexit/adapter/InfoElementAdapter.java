@@ -1,9 +1,9 @@
 package pro.quizer.quizerexit.adapter;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.halilibo.bettervideoplayer.BetterVideoCallback;
 import com.halilibo.bettervideoplayer.BetterVideoPlayer;
 import com.squareup.picasso.Picasso;
 
@@ -23,7 +22,7 @@ import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.IAdapter;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
-import pro.quizer.quizerexit.model.OptionsType;
+import pro.quizer.quizerexit.model.ElementSubtype;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.utils.FileUtils;
@@ -72,6 +71,16 @@ public class InfoElementAdapter extends RecyclerView.Adapter<InfoElementAdapter.
         return 0;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
+    }
+
     class InfoElementViewHolder extends AbstractViewHolder {
 
         TextView mText;
@@ -92,12 +101,12 @@ public class InfoElementAdapter extends RecyclerView.Adapter<InfoElementAdapter.
         public void onBind(final ElementModel pContent, final int pPosition) {
             final OptionsModel options = pContent.getOptions();
 
-            switch (options.getType()) {
-                case OptionsType.TEXT:
+            switch (pContent.getSubtype()) {
+                case ElementSubtype.TEXT:
                     UiUtils.setTextOrHide(mText, options.getText());
 
                     break;
-                case OptionsType.AUDIO:
+                case ElementSubtype.AUDIO:
                     final String fileAudioPath = getFilePath(options);
 
                     if (StringUtils.isEmpty(fileAudioPath)) {
@@ -109,7 +118,7 @@ public class InfoElementAdapter extends RecyclerView.Adapter<InfoElementAdapter.
                     mAudioPlayer.enableSwipeGestures(((BaseActivity) mContext).getWindow());
 
                     break;
-                case OptionsType.VIDEO:
+                case ElementSubtype.VIDEO:
                     final String fileVideoPath = getFilePath(options);
 
                     if (StringUtils.isEmpty(fileVideoPath)) {
@@ -124,7 +133,7 @@ public class InfoElementAdapter extends RecyclerView.Adapter<InfoElementAdapter.
                     mVideoPlayer.enableSwipeGestures(((BaseActivity) mContext).getWindow());
 
                     break;
-                case OptionsType.PHOTO:
+                case ElementSubtype.IMAGE:
                     final String filePhotooPath = getFilePath(options);
 
                     if (StringUtils.isEmpty(filePhotooPath)) {

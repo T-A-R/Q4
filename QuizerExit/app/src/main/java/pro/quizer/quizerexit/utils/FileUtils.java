@@ -17,9 +17,9 @@ public final class FileUtils {
 
     public static String FILE_NAME_DIVIDER = "^";
     private static final String PHOTO_NAME_JPEG_TEMPLATE = "%1$s" + FILE_NAME_DIVIDER + "%2$s" + FILE_NAME_DIVIDER + "%3$s" + FILE_NAME_DIVIDER + "%4$s" + FILE_NAME_DIVIDER + "%5$s.jpeg";
-    private static final String AUDIO_NAME_MP3_TEMPLATE = "%1$s/%2$s" + FILE_NAME_DIVIDER + "%3$s" + FILE_NAME_DIVIDER + "%4$s" + FILE_NAME_DIVIDER + "%5$s" + FILE_NAME_DIVIDER + "%6$s.mp3";
+    private static final String AUDIO_NAME_AMR_TEMPLATE = "%1$s/%2$s" + FILE_NAME_DIVIDER + "%3$s" + FILE_NAME_DIVIDER + "%4$s" + FILE_NAME_DIVIDER + "%5$s" + FILE_NAME_DIVIDER + "%6$s.amr";
 
-    public static final String MP3 = ".mp3";
+    public static final String AMR = ".amr";
     public static final String JPEG = ".jpeg";
 
     public static final String FOLDER_DIVIDER = "/";
@@ -232,6 +232,6 @@ public final class FileUtils {
 
         createFolderIfNotExist(pCurrentFilePath);
 
-        return String.format(AUDIO_NAME_MP3_TEMPLATE, pUserId, mLoginAdmin, mProjectId, mUserLogin, mToken, mRelativeId);
+        return String.format(AUDIO_NAME_AMR_TEMPLATE, pUserId, mLoginAdmin, mProjectId, mUserLogin, mToken, mRelativeId);
     }
 }

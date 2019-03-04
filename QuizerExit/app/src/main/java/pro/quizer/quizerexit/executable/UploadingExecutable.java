@@ -84,7 +84,7 @@ public class UploadingExecutable extends BaseExecutable {
         final List<File> files = new ArrayList<>();
 
         files.addAll(FileUtils.getFilesRecursion(FileUtils.JPEG, FileUtils.getPhotosStoragePath(mContext)));
-        files.addAll(FileUtils.getFilesRecursion(FileUtils.MP3, FileUtils.getAudioStoragePath(mContext)));
+        files.addAll(FileUtils.getFilesRecursion(FileUtils.AMR, FileUtils.getAudioStoragePath(mContext)));
 
         for (final File file : files) {
             moveFile(file, UPLOADING_PATH);

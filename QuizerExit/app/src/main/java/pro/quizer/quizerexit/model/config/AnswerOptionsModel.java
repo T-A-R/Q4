@@ -1,10 +1,13 @@
 package pro.quizer.quizerexit.model.config;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class AnswerOptionsModel implements Serializable {
+public class AnswerOptionsModel implements Serializable, Parcelable {
 
     @SerializedName("is_open")
     private int is_open;
@@ -56,5 +59,15 @@ public class AnswerOptionsModel implements Serializable {
 
     public String getGotoIf() {
         return goto_if;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }

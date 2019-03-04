@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Parcel;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -17,6 +19,7 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,9 +45,12 @@ import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.utils.ConditionUtils;
 import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.FileUtils;
+import pro.quizer.quizerexit.utils.GPSModel;
 import pro.quizer.quizerexit.utils.GpsUtils;
+import pro.quizer.quizerexit.utils.SPUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
+import pro.quizer.quizerexit.view.AppDrawer;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CAMERA;
@@ -52,25 +58,45 @@ import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class ElementActivity extends BaseActivity implements NavigationCallback {
+public class ElementActivity extends BaseActivity {
+
+//    public static final Parcelable.Creator<Class> CREATOR = new Parcelable.Creator<Class>() {
+//
+//        @Override
+//        public Class createFromParcel(Parcel in) {
+//            return null;
+//        }
+//
+//        @Override
+//        public Class[] newArray(int size) {
+//            return null;
+//        }
+//
+//    };
 
     public static final int FIRST_ELEMENT = -1;
+    public static final int ONE_SEC = 1000;
     UserModel mUserModel;
     ConfigModel mConfig;
     ProjectInfoModel mProjectInfo;
     List<ElementModel> mElements;
     HashMap<Integer, ElementModel> mMap;
+    CountDownTimer mCountDownTimer;
 
     private String mToken;
     private String mLoginAdmin;
     private String mLogin;
     private String mPassword;
+    private int mAudioRecordLimitTime;
     private int mQuestionnaireId;
     private int mProjectId;
+    private int mBillingQuestions;
     private int mUserProjectId;
     private int mUserId;
-    private String mGps;
+    private GPSModel mGPSModel;
     private String mUserLogin;
+    private String mGpsString;
+    private long mGpsTime;
     private long mStartDateInterview;
     private boolean mIsMediaConnected;
     private int mAudioRelativeId;
@@ -80,6 +106,51 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     private ImageView mStart;
     private ImageView mStop;
     private TextView mStatus;
+
+    private NavigationCallback mNavigationCallback = new NavigationCallback() {
+
+        @Override
+        public void onForward(final int pNextRelativeId) {
+            showNextElement(pNextRelativeId, true);
+        }
+
+        @Override
+        public void onBack() {
+            onBackPressed();
+        }
+
+        @Override
+        public void onExit() {
+            showExitPoolAlertDialog();
+        }
+
+        @Override
+        public void onShowFragment(final ElementModel pCurrentElement) {
+            mAudioRelativeId = pCurrentElement.getRelativeID();
+
+            if (isNeedRecordSeparateElement(pCurrentElement)) {
+                startRecording();
+            }
+        }
+
+        @Override
+        public void onHideFragment(final ElementModel pCurrentElement) {
+
+            if (isNeedRecordSeparateElement(pCurrentElement)) {
+                stopRecording();
+            }
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int i) {
+
+        }
+    };
 
     private static final int PERMISSION_REQUEST_CODE = 200;
 
@@ -119,7 +190,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
                     final boolean writeStorageAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED;
                     final boolean readStorageAccepted = grantResults[4] == PackageManager.PERMISSION_GRANTED;
 
-                    if ((mConfig.isForceGps() && !locationAccepted) || !cameraAccepted || !audioAccepted || !writeStorageAccepted || !readStorageAccepted) {
+                    if ((mConfig.isForceGps() && !locationAccepted) || !cameraAccepted || (mConfig.isAudio() && !audioAccepted) || !writeStorageAccepted || !readStorageAccepted) {
                         showToast(getString(R.string.permission_error));
 
                         finish();
@@ -144,6 +215,31 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     public void startRecording() {
         if (mIsMediaConnected && mStart != null && mStart.getVisibility() == View.VISIBLE) {
             mStart.performClick();
+
+            Log.d("Timer", "Limit: " + mAudioRecordLimitTime + " - tick: " + ONE_SEC);
+
+            mCountDownTimer = new CountDownTimer(mAudioRecordLimitTime, ONE_SEC) {
+
+                public void onTick(long millisUntilFinished) {
+                    Log.d("Timer", "onTick: " + String.valueOf(millisUntilFinished));
+                }
+
+                public void onFinish() {
+                    Log.d("Timer", "FINISH");
+                    stopRecording();
+                }
+            }.start();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (mCountDownTimer != null) {
+            Log.d("Timer", "Cancel");
+
+            mCountDownTimer.cancel();
         }
     }
 
@@ -164,6 +260,10 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_element);
 
+        final AppDrawer appDrawer = findViewById(R.id.main_drawer);
+        appDrawer.disableHome();
+        appDrawer.disableSync();
+
         final View optionsIcon = findViewById(R.id.ic_options);
         optionsIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,18 +278,21 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
 
         mUserModel = getCurrentUser();
         mConfig = mUserModel.getConfig();
+        mAudioRecordLimitTime = mConfig.getAudioRecordLimitTime() * 60 * 1000;
         mProjectInfo = mConfig.getProjectInfo();
         mElements = mProjectInfo.getElements();
         mMap = getMap();
     }
 
     private void startGps() {
-        if (mConfig.isGps()) {
+        if (mConfig.isGps() && mGPSModel == null) {
             try {
-                mGps = GpsUtils.getCurrentGps(this, mConfig.isForceGps());
+                mGPSModel = GpsUtils.getCurrentGps(this, mConfig.isForceGps());
+                mGpsString = mGPSModel.getGPS();
+                mGpsTime = mGPSModel.getTime();
 
-                if (!StringUtils.isEmpty(mGps)) {
-                    showToast(getString(R.string.current_gps_string) + mGps);
+                if (!StringUtils.isEmpty(mGpsString)) {
+                    showToast(getString(R.string.current_gps_string) + mGpsString);
                 } else {
                     showToast(getString(R.string.gps_is_turn_off));
                 }
@@ -213,6 +316,8 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     @SuppressLint("MissingPermission")
     private void initStartValues() {
         if (StringUtils.isEmpty(mToken)) {
+            mStartDateInterview = DateUtils.getCurrentTimeMillis();
+
             mStop.setVisibility(View.INVISIBLE);
             mStart.setVisibility(View.INVISIBLE);
 
@@ -229,10 +334,10 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
             mPassword = mUserModel.password;
             mQuestionnaireId = mProjectInfo.getQuestionnaireId();
             mProjectId = mProjectInfo.getProjectId();
+            mBillingQuestions = mProjectInfo.getBillingQuestions();
             mUserLogin = mUserModel.login;
             mUserProjectId = mUserModel.user_project_id;
             mUserId = mUserModel.user_id;
-            mStartDateInterview = DateUtils.getCurrentTimeMillis();
             mToken = StringUtils.generateToken();
 
             showFirstElement();
@@ -243,7 +348,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     protected void onPause() {
         super.onPause();
 
-        pauseRecording();
+//        pauseRecording();
     }
 
     @Override
@@ -261,7 +366,7 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     protected void onResume() {
         super.onResume();
 
-        resumeRecording();
+//        resumeRecording();
     }
 
     private void showFirstElement() {
@@ -283,16 +388,27 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
 
         final OptionsModel options = nextElement.getOptions();
         // TODO: 1/27/2019 implement isCanShow condition, because of QuotaUtils... into this method
-        final int showValue = ConditionUtils.evaluateCondition(options.getShowCondition(), mMap, this);
+        final int showValue = ConditionUtils.evaluateCondition(options.getPreCondition(), mMap, this);
 
         if (showValue != ConditionUtils.CAN_SHOW) {
             showNextElement(showValue, true);
+
+            return;
         }
 
         final FragmentTransaction fragmentTransaction = getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.main_content,
-                        ElementFragment.newInstance(nextElement, this, mToken, mLoginAdmin, mUserId, mUserLogin, mConfig.isPhotoQuestionnaire(), mProjectId));
+                        ElementFragment.newInstance(
+                                R.id.content_element,
+                                nextElement,
+                                mNavigationCallback,
+                                mToken,
+                                mLoginAdmin,
+                                mUserId,
+                                mUserLogin,
+                                mConfig.isPhotoQuestionnaire(),
+                                mProjectId));
 
         if (pIsAddToBackStack) {
             fragmentTransaction.addToBackStack(options.getTitle(this));
@@ -305,36 +421,10 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         if (pRelativeId == 0) {
             return null;
         } else if (pRelativeId == FIRST_ELEMENT) {
-            return mElements.get(0);
+            return mMap.get(mElements.get(0).getRelativeID());
         }
 
         return mMap.get(pRelativeId);
-    }
-
-    @Override
-    public void onForward(final int pNextRelativeId) {
-        showNextElement(pNextRelativeId, true);
-    }
-
-    @Override
-    public void onBack() {
-        if (!getSupportFragmentManager().popBackStackImmediate()) {
-            onBackPressed();
-        }
-    }
-
-    @Override
-    public void onExit() {
-        onBackPressed();
-    }
-
-    @Override
-    public void onShowFragment(final ElementModel pCurrentElement) {
-        mAudioRelativeId = pCurrentElement.getRelativeID();
-
-        if (isNeedRecordSeparateElement(pCurrentElement)) {
-            startRecording();
-        }
     }
 
     private boolean isNeedRecordSeparateElement(final ElementModel pCurrentElement) {
@@ -342,19 +432,13 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
     }
 
     @Override
-    public void onHideFragment(final ElementModel pCurrentElement) {
-
-        if (isNeedRecordSeparateElement(pCurrentElement)) {
-            stopRecording();
+    public void onBackPressed() {
+        if (!getSupportFragmentManager().popBackStackImmediate()) {
+            showExitPoolAlertDialog();
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        exitPoolAlertDialog();
-    }
-
-    public void exitPoolAlertDialog() {
+    public void showExitPoolAlertDialog() {
         new AlertDialog.Builder(this)
                 .setCancelable(false)
                 .setTitle(R.string.exit_pool_header)
@@ -383,8 +467,10 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         questionnaireDatabaseModel.passw = mPassword;
         questionnaireDatabaseModel.questionnaire_id = mQuestionnaireId;
         questionnaireDatabaseModel.project_id = mProjectId;
+        questionnaireDatabaseModel.billing_questions = mBillingQuestions;
         questionnaireDatabaseModel.user_project_id = mUserProjectId;
-        questionnaireDatabaseModel.gps = mGps;
+        questionnaireDatabaseModel.gps = mGpsString;
+        questionnaireDatabaseModel.gps_time = mGpsTime;
         questionnaireDatabaseModel.date_interview = mStartDateInterview;
 
         final int showingScreensCount = saveScreenElements();
@@ -394,6 +480,9 @@ public class ElementActivity extends BaseActivity implements NavigationCallback 
         questionnaireDatabaseModel.screens_passed = showingScreensCount;
         questionnaireDatabaseModel.selected_questions = answersCount;
         questionnaireDatabaseModel.duration_time_questionnaire = (int) durationTimeQuestionnaire;
+        questionnaireDatabaseModel.auth_time_difference = SPUtils.getAuthTimeDifference(this);
+        questionnaireDatabaseModel.quota_time_difference = SPUtils.getQuotaTimeDifference(this);
+        questionnaireDatabaseModel.send_time_difference = SPUtils.getSendTimeDifference(this);
 
         questionnaireDatabaseModel.save();
     }

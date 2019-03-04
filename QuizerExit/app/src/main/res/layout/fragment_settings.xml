@@ -102,18 +102,40 @@
 
             <include layout="@layout/view_divider" />
 
-            <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
+            <LinearLayout
+                android:id="@+id/sms_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:gravity="center_horizontal"
-                android:text="@string/select_number_for_exit_pull"
-                android:textColor="@android:color/black"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:orientation="vertical">
 
-            <include layout="@layout/view_divider" />
+                <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/select_number_for_exit_pull"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/picker_border"
+                    android:padding="8dp">
+
+                    <Spinner
+                        android:id="@+id/sms_number_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </FrameLayout>
+
+                <include layout="@layout/view_divider" />
+
+            </LinearLayout>
 
             <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
                 android:id="@+id/delete_user"

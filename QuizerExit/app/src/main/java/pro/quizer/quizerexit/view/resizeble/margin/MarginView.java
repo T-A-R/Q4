@@ -1,33 +1,57 @@
 package pro.quizer.quizerexit.view.resizeble.margin;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
+import java.io.Serializable;
+
+import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.view.resizeble.ResizableViewUtils;
 
+public class MarginView extends RelativeLayout implements Serializable, Parcelable {
 
-public class MarginView extends ViewGroup {
+    public MarginView(final Context pContext) {
+        super(pContext);
+        init();
+    }
 
-    public MarginView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        ResizableViewUtils.initViewHeight(this, context);
+    public MarginView(final Context pContext, final AttributeSet pAttrs) {
+        super(pContext, pAttrs);
+        init();
+    }
+
+    public MarginView(final Context pContext, final AttributeSet pAttrs, final int pDefStyle) {
+        super(pContext, pAttrs, pDefStyle);
+        init();
+    }
+
+    private void inflate() {
+        inflate(getContext(), R.layout.view_margin, this);
+
+        initViews(getRootView());
+    }
+
+    private void init() {
+        inflate();
+    }
+
+    private void initViews(final View pView) {
+        final ViewGroup view = pView.findViewById(R.id.margin_view);
+        ResizableViewUtils.initViewHeight(view, getContext());
     }
 
     @Override
-    protected void onLayout(boolean b, int i, int i1, int i2, int i3) {
-
+    public int describeContents() {
+        return 0;
     }
 
-    public MarginView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        ResizableViewUtils.initViewHeight(this, context);
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
 
-    }
-
-    public MarginView(Context context) {
-        super(context);
-        ResizableViewUtils.initViewHeight(this, context);
     }
 }

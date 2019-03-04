@@ -1,70 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp">
+    android:orientation="vertical">
 
-    <pro.quizer.quizerexit.view.resizeble.margin.MarginView
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1">
+
+            <include layout="@layout/adapter_answer" />
+
+        </FrameLayout>
+
+        <CheckBox
+            android:id="@+id/answer_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical" />
+
+    </LinearLayout>
 
     <FrameLayout
+        android:id="@+id/answer_divider"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
-                android:id="@+id/answer_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_toStartOf="@+id/answer_checkbox"
-                android:layout_toLeftOf="@+id/answer_checkbox"
-                android:textSize="16sp"
-                tools:text="Namefsd;lfsdkfnklsdjfkosdnfosdjofsdjokfjsdgnodgnjdfnjpgsdnopa[msdglf'a,lsgnkd hsfml" />
-
-            <pro.quizer.quizerexit.view.resizeble.edittext.ResizableEditText
-                android:id="@+id/answer_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/answer_text"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_toStartOf="@+id/answer_checkbox"
-                android:layout_toLeftOf="@+id/answer_checkbox"
-                android:imeOptions="actionDone"
-                android:textSize="16sp"
-                android:visibility="gone"
-                tools:text="Name"
-                tools:visibility="visible" />
-
-            <CheckBox
-                android:id="@+id/answer_checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:gravity="center_vertical" />
-
-        </RelativeLayout>
-
-    </FrameLayout>
-
-    <pro.quizer.quizerexit.view.resizeble.margin.MarginView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp">
 
         <include layout="@layout/view_divider" />
 

@@ -7,6 +7,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -35,7 +37,6 @@ import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.OptionsOpenType;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
-import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 
@@ -69,7 +70,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             final ElementModel model = mAnswers.get(index);
 
             if (model != null && model.isFullySelected()) {
-                mCurrentElement.setEndTime(DateUtils.getCurrentTimeMillis());
                 return model.getOptions().getJump();
             }
         }
@@ -132,7 +132,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     @NonNull
     @Override
     public ViewHolderImpl onCreateItemViewHolder(@NonNull final ViewGroup parent) {
-        return new TableItemViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item, parent, false));
+        return new TableItemViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item_main, parent, false));
     }
 
     @NonNull
@@ -160,7 +160,15 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final ElementModel currentElement = getElement(row, column);
 
         if (currentElement != null) {
-            vh.mTableItemCheckBox.setChecked(currentElement.isChecked());
+            if (getQuestion(row, column).getOptions().isPolyanswer()) {
+                vh.mTableItemCheckBox.setVisibility(View.VISIBLE);
+                vh.mTableItemRadioButton.setVisibility(View.GONE);
+            } else {
+                vh.mTableItemCheckBox.setVisibility(View.GONE);
+                vh.mTableItemRadioButton.setVisibility(View.VISIBLE);
+            }
+
+            setChecked(vh, currentElement.isChecked());
 
             if (currentElement.getOptions().isCanShow(mBaseActivity, mMap, currentElement)) {
                 vh.mDisableFrame.setVisibility(View.GONE);
@@ -168,6 +176,11 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 vh.mDisableFrame.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    private void setChecked(final TableItemViewHolder vh, final boolean pIsChecked) {
+        vh.mTableItemCheckBox.setChecked(pIsChecked);
+        vh.mTableItemRadioButton.setChecked(pIsChecked);
     }
 
     @Override
@@ -255,6 +268,14 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         }
     }
 
+    private ElementModel getQuestion(final int row, final int column) {
+        if (mIsFlipColsAndRows) {
+            return mTopSide.get(column);
+        } else {
+            return mLeftSide.get(row);
+        }
+    }
+
     private Calendar mCalendar = Calendar.getInstance();
 
     // отображаем диалоговое окно для выбора даты
@@ -311,11 +332,15 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             return;
         }
 
+        final ElementModel clickedQuestion = getQuestion(row, column);
+        final boolean isPolyanswer = clickedQuestion.getOptions().isPolyanswer();
+
         if (!clickedElement.getOptions().isCanShow(mBaseActivity, mMap, clickedElement)) {
             Toast.makeText(mContext, R.string.answer_not_available_table_question, Toast.LENGTH_LONG).show();
 
             return;
         }
+
         final boolean isElementChecked = clickedElement.isChecked();
         final OptionsModel options = clickedElement.getOptions();
         final String openType = options.getOpenType();
@@ -409,7 +434,33 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             clickedElement.setChecked(!isElementChecked);
         }
 
+        if (!isPolyanswer && clickedElement.isFullySelected()) {
+            unselectOther(row, column, clickedQuestion, clickedElement);
+        }
+
         notifyItemChanged(row, column);
+    }
+
+    private void unselectOther(final int row, final int column, final ElementModel pQuestion, final ElementModel pClickedElement) {
+        final int clickedRelativeId = pClickedElement.getRelativeID();
+
+        for (final ElementModel answer : pQuestion.getElements()) {
+            if (answer != null && answer.getRelativeID() != clickedRelativeId) {
+                answer.setChecked(false);
+            }
+        }
+
+        final int answersSize = mAnswers.size();
+
+        if (mIsFlipColsAndRows) {
+            for (int i = 0; i < answersSize; i++) {
+                notifyItemChanged(i, column);
+            }
+        } else {
+            for (int i = 0; i < answersSize; i++) {
+                notifyItemChanged(row, i);
+            }
+        }
     }
 
     @Override
@@ -455,13 +506,25 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         alertDialog.show();
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
+    }
+
     private static class TableItemViewHolder extends ViewHolderImpl {
 
+        RadioButton mTableItemRadioButton;
         CheckBox mTableItemCheckBox;
         View mDisableFrame;
 
         private TableItemViewHolder(@NonNull final View itemView) {
             super(itemView);
+            mTableItemRadioButton = itemView.findViewById(R.id.table_item_radio_button);
             mTableItemCheckBox = itemView.findViewById(R.id.table_item_check_box);
             mDisableFrame = itemView.findViewById(R.id.disable_frame);
         }

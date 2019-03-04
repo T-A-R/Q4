@@ -24,6 +24,7 @@ import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.request.QuotaRequestModel;
 import pro.quizer.quizerexit.model.response.QuotaResponseModel;
+import pro.quizer.quizerexit.utils.SPUtils;
 
 public class UpdateQuotasExecutable extends BaseExecutable {
 
@@ -76,6 +77,8 @@ public class UpdateQuotasExecutable extends BaseExecutable {
                         }
 
                         if (quotaResponseModel != null) {
+                            SPUtils.saveQuotaTimeDifference(mContext, quotaResponseModel.getServerTime());
+
                             if (quotaResponseModel.getResult() != 0) {
                                 new Update(UserModel.class)
                                         .set(UserModel.QUOTAS + " = ?", responseJson)

@@ -10,6 +10,7 @@ import java.util.Set;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.ElementType;
 import pro.quizer.quizerexit.model.config.ElementModel;
+import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.model.quota.QuotaModel;
 
 public final class QuotasUtils {
@@ -34,11 +35,15 @@ public final class QuotasUtils {
 
     private static boolean isQuestionCanDisplayed(final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel, final BaseActivity pBaseActivity) {
         // вопрос может отоброзиться только если все внутренние элементы типа "answer" !getOptions().isCanShow(),
-        // в свою очередь isCanShow проверит то, что может ли отображаться данный ответ исходя из show_condition,
+        // в свою очередь isCanShow проверит то, что может ли отображаться данный ответ исходя из pre_condition,
         // а также исходя из квот
 
         for (final ElementModel answer : pElementModel.getSubElementsByType(ElementType.ANSWER)) {
-            if (answer.getOptions().isCanShow(pBaseActivity, mMap, answer)) {
+            final OptionsModel optionsModel = answer.getOptions();
+            final boolean isCanShow = optionsModel.isCanShow(pBaseActivity, mMap, answer);
+            final boolean isEnabled = optionsModel.isEnabled(pBaseActivity, mMap, answer);
+
+            if (isCanShow && isEnabled) {
                 return true;
             }
         }
@@ -63,7 +68,6 @@ public final class QuotasUtils {
         if (!isQuotedElement(mMap, pElementModel, pBaseActivity)) {
             return true;
         }
-
 
         final List<QuotaModel> notCompletedCurrentQuotas = getNotCompletedQuotasForCurrentQuestionnaire(mMap, pElementModel, pBaseActivity);
         final List<QuotaModel> allSelectedQuotasForCurrentQuestionnaire = getAllSelectedQuotasForCurrentQuestionnaire(mMap, pElementModel, pBaseActivity);

@@ -96,6 +96,20 @@ public class SyncFragment extends BaseFragment implements ICallback {
         mPUnsendedView = pView.findViewById(R.id.unsended_photo);
     }
 
+    private void hideSmsButton() {
+        mSyncSms.setVisibility(View.GONE);
+    }
+
+    private void showSmsButton() {
+        mSyncSms.setVisibility(View.VISIBLE);
+        mSyncSms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO: 2/18/2019 show sms activity
+            }
+        });
+    }
+
     private void initStrings() {
         mQSendedFromThisDeviceViewString = getString(R.string.sended_q_from_this_device_string);
         mQSendedInSessionViewString = getString(R.string.sended_q_in_session_string);
@@ -114,6 +128,7 @@ public class SyncFragment extends BaseFragment implements ICallback {
         final int mQUnsendedCount = pSyncViewModel.getmNotSentQuestionnaireModels().size();
         final int mAUnsendedCount = pSyncViewModel.getmNotSendedAudio().size();
         final int mPUnsendedCount = pSyncViewModel.getmNotSendedPhoto().size();
+        final boolean hasReserveChannel = pSyncViewModel.hasReserveChannel();
 
         final BaseActivity activity = getBaseActivity();
 
@@ -125,6 +140,11 @@ public class SyncFragment extends BaseFragment implements ICallback {
 
             @Override
             public void run() {
+                if (hasReserveChannel) {
+                    showSmsButton();
+                } else {
+                    hideSmsButton();
+                }
                 UiUtils.setTextOrHide(mQSendedFromThisDeviceView, (String.format(mQSendedFromThisDeviceViewString, mQSendedFromThisDeviceCount)));
                 UiUtils.setTextOrHide(mQSendedInSessionView, (String.format(mQSendedInSessionViewString, mQSendedInSessionCount)));
                 UiUtils.setTextOrHide(mQUnsendedView, (String.format(mQUnsendedViewString, mQUnsendedCount)));

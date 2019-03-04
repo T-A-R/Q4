@@ -56,6 +56,7 @@ public class InfoFragment extends AbstractContentElementFragment {
             mAttributes = mCurrentElement.getOptions();
 
             initView(view);
+            initView(view);
         } else {
             showToast(getString(R.string.internal_app_error) + "1002");
         }
@@ -99,6 +100,11 @@ public class InfoFragment extends AbstractContentElementFragment {
     @Override
     protected Runnable getExitRunnable() {
         return mExitRunnable;
+    }
+
+    @Override
+    protected OptionsModel getOptions() {
+        return mAttributes;
     }
 
     private void initView(final View pView) {

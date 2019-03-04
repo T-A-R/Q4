@@ -23,10 +23,8 @@ import com.google.gson.GsonBuilder;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import pro.quizer.quizerexit.BuildConfig;
 import pro.quizer.quizerexit.R;
@@ -47,7 +45,7 @@ import pro.quizer.quizerexit.utils.SPUtils;
 import pro.quizer.quizerexit.view.Toolbar;
 
 import static pro.quizer.quizerexit.utils.FileUtils.JPEG;
-import static pro.quizer.quizerexit.utils.FileUtils.MP3;
+import static pro.quizer.quizerexit.utils.FileUtils.AMR;
 
 @SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity implements Serializable, Parcelable {
@@ -112,11 +110,11 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
     }
 
     public List<File> getAllAudio() {
-        return FileUtils.getFilesRecursion(MP3, FileUtils.getAudioStoragePath(this));
+        return FileUtils.getFilesRecursion(AMR, FileUtils.getAudioStoragePath(this));
     }
 
     public List<File> getAudioByUserId(final int pUserId) {
-        return FileUtils.getFilesRecursion(MP3, FileUtils.getAudioStoragePath(this) + FileUtils.FOLDER_DIVIDER + pUserId);
+        return FileUtils.getFilesRecursion(AMR, FileUtils.getAudioStoragePath(this) + FileUtils.FOLDER_DIVIDER + pUserId);
     }
 
     public void showToast(final CharSequence pMessage) {
@@ -142,21 +140,6 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
 
     private List<ElementModel> getElements() {
         return mCurrentUser.getConfig().getProjectInfo().getElements();
-    }
-
-    public List<ElementModel> getElementsByParentId(final int pRelativeId) {
-        final List<ElementModel> list = new ArrayList<>();
-
-        for (final Map.Entry<Integer, ElementModel> elementModel : mMap.entrySet()) {
-            final ElementModel element = elementModel.getValue();
-
-            if (element != null && element.getRelativeParentID() == pRelativeId) {
-                list.add(element);
-            }
-        }
-
-
-        return list;
     }
 
     public HashMap<Integer, ElementModel> getMap() {

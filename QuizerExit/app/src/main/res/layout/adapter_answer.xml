@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="16dp"
+    android:paddingLeft="16dp">
+
+    <pro.quizer.quizerexit.view.resizeble.margin.MarginView
+        android:id="@+id/top_margin_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />
+
+    <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
+        android:id="@+id/answer_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/top_margin_view"
+        tools:text="Yes" />
+
+    <pro.quizer.quizerexit.view.resizeble.edittext.ResizableEditText
+        android:id="@+id/answer_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/answer_text"
+        android:imeOptions="actionDone"
+        android:visibility="gone"
+        tools:text="Name"
+        tools:visibility="gone" />
+
+    <pro.quizer.quizerexit.view.resizeble.margin.MarginView
+        android:id="@+id/bottom_margin_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/answer_edit_text" />
+
+</RelativeLayout>

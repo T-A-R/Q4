@@ -1,10 +1,13 @@
 package pro.quizer.quizerexit.model.config;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class QuestionsMatchesModel implements Serializable {
+public class QuestionsMatchesModel implements Serializable, Parcelable {
 
     @SerializedName("question_id")
     private String question_id;
@@ -21,5 +24,15 @@ public class QuestionsMatchesModel implements Serializable {
 
     public String getSmsNum() {
         return sms_num;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }

@@ -47,6 +47,7 @@ public class SettingsFragment extends BaseFragment implements ICallback {
     private String mConfigIdString;
     private Spinner mFontSizeSpinner;
     private AppCompatSeekBar mMarginSeekBar;
+    private View mSmsSection;
     private int answerMargin;
     private BaseActivity mBaseActivity;
 
@@ -83,6 +84,7 @@ public class SettingsFragment extends BaseFragment implements ICallback {
         mFontSizeSpinner = pView.findViewById(R.id.font_size_spinner);
         mAnswerMarginView = pView.findViewById(R.id.settings_space_between_answers);
         mMarginSeekBar = pView.findViewById(R.id.margin_seekbar);
+        mSmsSection = pView.findViewById(R.id.sms_section);
 
         answerMargin = mBaseActivity.getAnswerMargin();
         mMarginSeekBar.setProgress(answerMargin);
@@ -163,11 +165,27 @@ public class SettingsFragment extends BaseFragment implements ICallback {
         mConfigIdString = getString(R.string.settings_id_string);
     }
 
+    private void showSmsSection() {
+        mSmsSection.setVisibility(View.VISIBLE);
+    }
+
+    private void hideSmsSection() {
+        mSmsSection.setVisibility(View.GONE);
+    }
+
     private void updateData(final SettingsViewModel pSettingsViewModel) {
+        final boolean hasSmsSection = pSettingsViewModel.hasSmsSection();
+
         getBaseActivity().runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
+                if (hasSmsSection) {
+                    showSmsSection();
+                } else {
+                    hideSmsSection();
+                }
+
                 UiUtils.setTextOrHide(mConfigDateView, String.format(mConfigDateString, pSettingsViewModel.getConfigDate()));
                 UiUtils.setTextOrHide(mConfigIdView, String.format(mConfigIdString, pSettingsViewModel.getConfigId()));
                 updateAnswerMarginString(pSettingsViewModel.getAnswerMargin());

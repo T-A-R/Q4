@@ -1,11 +1,15 @@
 package pro.quizer.quizerexit.model.response;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class QuestionnaireListResponseModel implements Serializable {
+@Deprecated
+public class QuestionnaireListResponseModel implements Serializable, Parcelable {
 
     @SerializedName("result")
     private int result;
@@ -15,7 +19,6 @@ public class QuestionnaireListResponseModel implements Serializable {
 
     @SerializedName("accepted_tokens")
     private List<String> accepted_tokens;
-
 
     public int getResult() {
         return result;
@@ -27,5 +30,15 @@ public class QuestionnaireListResponseModel implements Serializable {
 
     public List<String> getAcceptedTokens() {
         return accepted_tokens;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }

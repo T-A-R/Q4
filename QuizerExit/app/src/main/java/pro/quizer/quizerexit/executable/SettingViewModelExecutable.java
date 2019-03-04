@@ -4,6 +4,8 @@ import android.content.Context;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.config.ConfigModel;
+import pro.quizer.quizerexit.model.config.ProjectInfoModel;
+import pro.quizer.quizerexit.model.config.ReserveChannelModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.view.SettingsViewModel;
 
@@ -26,10 +28,13 @@ public class SettingViewModelExecutable extends BaseModelExecutable<SettingsView
 
             final UserModel currentUser = activity.getCurrentUser();
             final ConfigModel configModel = currentUser.getConfig();
+            final ProjectInfoModel projectInfoModel = configModel.getProjectInfo();
+            final ReserveChannelModel reserveChannelModel = projectInfoModel.getReserveChannel();
 
             settingsViewModel.setmConfigDate(configModel.getConfigDate());
             settingsViewModel.setmConfigId(currentUser.config_id);
             settingsViewModel.setmAnswerMargin(activity.getAnswerMargin());
+            settingsViewModel.setSmsSection(reserveChannelModel != null);
 
             return settingsViewModel;
         } else {

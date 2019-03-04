@@ -1,5 +1,8 @@
 package pro.quizer.quizerexit.model.database;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
@@ -9,7 +12,7 @@ import java.io.Serializable;
 import pro.quizer.quizerexit.model.ElementDatabaseType;
 
 @Table(name = "ElementDatabaseModel")
-public class ElementDatabaseModel extends Model implements Serializable {
+public class ElementDatabaseModel extends Model implements Serializable, Parcelable {
 
     public static final String TOKEN = "token";
 
@@ -35,4 +38,14 @@ public class ElementDatabaseModel extends Model implements Serializable {
     @ElementDatabaseType
     @Column(name = "type")
     public String type;
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
+    }
 }

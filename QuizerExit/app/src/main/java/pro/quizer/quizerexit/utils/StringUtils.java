@@ -6,7 +6,7 @@ import static pro.quizer.quizerexit.utils.DateUtils.PATTERN_TOKEN;
 
 public final class StringUtils {
 
-    public static boolean isEmpty(final Object pString) {
+    public static boolean isEmpty(final String pString) {
         return (pString == null || Constants.Strings.EMPTY.equals(pString));
     }
 

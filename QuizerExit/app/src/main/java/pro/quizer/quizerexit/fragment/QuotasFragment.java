@@ -109,6 +109,16 @@ public class QuotasFragment extends BaseFragment implements ICallback {
         mRefreshBtn.setOnClickListener(new QuotasClickListener((BaseActivity) getContext(), new ICallback() {
 
             @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            @Override
+            public void writeToParcel(Parcel parcel, int i) {
+
+            }
+
+            @Override
             public void onStarting() {
                 showProgressBar();
             }
@@ -123,16 +133,6 @@ public class QuotasFragment extends BaseFragment implements ICallback {
             public void onError(Exception pException) {
                 hideProgressBar();
                 showToast(pException.toString());
-            }
-
-            @Override
-            public int describeContents() {
-                return 0;
-            }
-
-            @Override
-            public void writeToParcel(Parcel parcel, int i) {
-
             }
         }));
     }

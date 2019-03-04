@@ -88,6 +88,8 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable {
                         }
 
                         if (deletingListResponseModel != null) {
+                            SPUtils.saveSendTimeDifference(mContext, deletingListResponseModel.getServerTime());
+
                             if (deletingListResponseModel.getResult() != 0) {
                                 final List<String> tokensToRemove = deletingListResponseModel.getAccepted();
 

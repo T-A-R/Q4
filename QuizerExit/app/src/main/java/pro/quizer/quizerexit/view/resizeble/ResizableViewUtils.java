@@ -3,17 +3,20 @@ package pro.quizer.quizerexit.view.resizeble;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.fragment.SettingsFragment;
 import pro.quizer.quizerexit.model.FontSizeModel;
+import pro.quizer.quizerexit.utils.UiUtils;
 
 public class ResizableViewUtils {
 
-    public static int SMALL = 16;
-    public static int MEDIUM = 18;
-    public static int LARGE = 20;
+    public static int SMALL = 12;
+    public static int MEDIUM = 14;
+    public static int LARGE = 18;
 
     public static void initTextSize(final TextView pTextView, final Context pContext, final int pDefFontSize) {
         final FontSizeModel fontSizeModel = SettingsFragment.FONT_SIZE_MODELS.get(((BaseActivity) pContext).getFontSizePosition());
@@ -24,6 +27,6 @@ public class ResizableViewUtils {
     public static void initViewHeight(final ViewGroup pView, final Context pContext) {
         final int answerMargin = ((BaseActivity) pContext).getAnswerMargin();
 
-        pView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, answerMargin));
+        pView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, (int) UiUtils.dpToPx(pContext, answerMargin)));
     }
 }

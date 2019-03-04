@@ -1,6 +1,7 @@
 package pro.quizer.quizerexit.fragment;
 
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,7 +12,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import pro.quizer.quizerexit.R;
-import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizerexit.listener.QuotasClickListener;
@@ -59,17 +59,42 @@ public class HomeFragment extends BaseFragment implements ICallback {
         UiUtils.setTextOrHide(configAgreement, projectInfo.getAgreement());
 
         final Button startBtn = pView.findViewById(R.id.start);
-        startBtn.setOnClickListener(new View.OnClickListener() {
+        startBtn.setOnClickListener(new QuotasClickListener(getBaseActivity(), new ICallback() {
+            @Override
+            public int describeContents() {
+                return 0;
+            }
 
             @Override
-            public void onClick(final View pView) {
-                getBaseActivity().finish();
-                getBaseActivity().startQuestionActivity();
+            public void writeToParcel(Parcel parcel, int i) {
+
             }
-        });
+
+            @Override
+            public void onStarting() {
+                showProgressBar();
+            }
+
+            @Override
+            public void onSuccess() {
+                start();
+            }
+
+            @Override
+            public void onError(Exception pException) {
+                start();
+            }
+        }));
 
         final Button quotasBtn = pView.findViewById(R.id.quotas);
-        quotasBtn.setOnClickListener(new QuotasClickListener((BaseActivity) getContext()));
+        quotasBtn.setOnClickListener(new QuotasClickListener(getBaseActivity()));
+    }
+
+    private void start() {
+        hideProgressBar();
+
+        getBaseActivity().finish();
+        getBaseActivity().startQuestionActivity();
     }
 
     @Override

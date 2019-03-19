@@ -7,6 +7,7 @@ import java.io.Serializable;
 
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.utils.DateUtils;
+import pro.quizer.quizerexit.utils.DeviceUtils;
 
 public class QuotaRequestModel implements Serializable, Parcelable {
 
@@ -15,6 +16,7 @@ public class QuotaRequestModel implements Serializable, Parcelable {
     private final String passw;
     private final String login;
     private final long device_time;
+    private final String device_info;
 
     public QuotaRequestModel(final String pLoginAdmin, final String pPassword, final String pLogin) {
         name_form = Constants.NameForm.GET_QUOTA;
@@ -22,6 +24,7 @@ public class QuotaRequestModel implements Serializable, Parcelable {
         passw = pPassword;
         login = pLogin;
         device_time = DateUtils.getCurrentTimeMillis();
+        device_info = DeviceUtils.getDeviceInfo();
     }
 
     @Override

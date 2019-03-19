@@ -92,7 +92,7 @@ public abstract class AbstractEvaluator<T> {
 	 * <br>Homonym operators are operators with the same name (like the unary - and the binary - operators)
 	 * <br>This method is called when homonyms are passed to the constructor.
 	 * <br>This default implementation only allows the case where there's two operators, one binary and one unary.
-	 * Subclasses can override this method in order to accept others configurations. 
+	 * Subclasses can override this method in item_order to accept others configurations.
 	 * @param operators The operators to validate.
 	 * @throws IllegalArgumentException if the homonyms are not compatibles.
 	 * @see #guessOperator(Token, List)
@@ -190,8 +190,8 @@ public abstract class AbstractEvaluator<T> {
 	}
 	
 	private Iterator<T> getArguments(Deque<T> values, int nb) {
-		// Be aware that arguments are in reverse order on the values stack.
-		// Don't forget to reorder them in the original order (the one they appear in the evaluated formula)
+		// Be aware that arguments are in reverse item_order on the values stack.
+		// Don't forget to reorder them in the original item_order (the one they appear in the evaluated formula)
 		if (values.size()<nb) {
 			throw new IllegalArgumentException("Expected " + nb + " got " + values.size());
 		}

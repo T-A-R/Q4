@@ -8,6 +8,7 @@ public final class DateUtils {
 
     public static String PATTERN_TOKEN = "yyyyMMdd";
     public static String PATTERN_FULL = "yyyy-MM-dd HH:mm";
+    public static String PATTERN_FULL_SMS = "HH:mm dd.MM.yyyy";
 
     public static long getCurrentTimeMillis() {
         return System.currentTimeMillis() / 1000;

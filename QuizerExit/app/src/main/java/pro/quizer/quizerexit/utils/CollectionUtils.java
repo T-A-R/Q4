@@ -16,7 +16,24 @@ public class CollectionUtils {
         Collections.sort(pList, COMPARATOR);
     }
 
-    public static void shuffleAnswers(final ElementModel pParent, final List<ElementModel> pList) {
+    public static void shuffleTableAnswers(final ElementModel pParent, final List<ElementModel> pQuestions) {
+//        if (pParent.isShuffeled() || pQuestions == null || pQuestions.isEmpty()) {
+//            return;
+//        }
+//
+//        final ElementModel exampleQuestion = pQuestions.get(0);
+//        final List<ElementModel> exampleAnswers = exampleQuestion.getElements();
+//
+//        shuffleElements(exampleQuestion, exampleAnswers);
+//
+//        for (int i = 1; i < exampleAnswers.size(); i++) {
+//
+//        }
+//
+//        pParent.setShuffeled(true);
+    }
+
+    public static void shuffleElements(final ElementModel pParent, final List<ElementModel> pList) {
         if (pParent.isShuffeled()) {
             return;
         }
@@ -39,6 +56,8 @@ public class CollectionUtils {
         }
 
         if (ElementType.BOX.equals(pParent.getType()) && ElementSubtype.CONTAINER.equals(pParent.getSubtype())) {
+            pParent.setShuffeledIntoBox(true);
+
             final List<ElementModel> questions = pParent.getElements();
             final int questionsSize = questions.size();
 

@@ -138,7 +138,7 @@ public class QuotasFragment extends BaseFragment implements ICallback {
     }
 
     private void updateData(final QuotasViewModel pQuotasViewModel) {
-        getBaseActivity().runOnUiThread(new Runnable() {
+        mBaseActivity.runOnUiThread(new Runnable() {
 
             @Override
             public void run() {

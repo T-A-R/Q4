@@ -40,6 +40,7 @@ public class SyncFragment extends BaseFragment implements ICallback {
     private TextView mPUnsendedView;
 
     private UserModel mUserModel;
+    private BaseActivity mBaseActivity;
 
     private String mQSendedFromThisDeviceViewString;
     private String mQSendedInSessionViewString;
@@ -73,7 +74,13 @@ public class SyncFragment extends BaseFragment implements ICallback {
     }
 
     private void initViews(final View pView) {
-        mUserModel = getBaseActivity().getCurrentUser();
+        mBaseActivity = getBaseActivity();
+
+        if (mBaseActivity == null) {
+            return;
+        }
+
+        mUserModel = mBaseActivity.getCurrentUser();
 
         mUserNameTitle = pView.findViewById(R.id.user_name_title);
         UiUtils.setTextOrHide(mUserNameTitle, mUserModel.login);
@@ -105,7 +112,7 @@ public class SyncFragment extends BaseFragment implements ICallback {
         mSyncSms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: 2/18/2019 show sms activity
+                mBaseActivity.showSmsFragment();
             }
         });
     }
@@ -151,15 +158,15 @@ public class SyncFragment extends BaseFragment implements ICallback {
                 UiUtils.setTextOrHide(mAUnsendedView, (String.format(mAUnsendedViewString, mAUnsendedCount)));
                 UiUtils.setTextOrHide(mPUnsendedView, (String.format(mPUnsendedViewString, mPUnsendedCount)));
 
-                UiUtils.setEnabled(getContext(), mSendDataButton, mQUnsendedCount > 0);
+                UiUtils.setButtonEnabled(mSendDataButton, mQUnsendedCount > 0);
                 mSendDataButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(final View view) {
-                        new SendQuestionnairesByUserModelExecutable(getBaseActivity(), mUserModel, SyncFragment.this).execute();
+                        new SendQuestionnairesByUserModelExecutable(getBaseActivity(), mUserModel, SyncFragment.this, false).execute();
                     }
                 });
 
-                UiUtils.setEnabled(getContext(), mSendPhotoButton, mPUnsendedCount > 0);
+                UiUtils.setButtonEnabled(mSendPhotoButton, mPUnsendedCount > 0);
                 mSendPhotoButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(final View view) {
@@ -173,7 +180,7 @@ public class SyncFragment extends BaseFragment implements ICallback {
                     }
                 });
 
-                UiUtils.setEnabled(getContext(), mSendAudioButton, mAUnsendedCount > 0);
+                UiUtils.setButtonEnabled(mSendAudioButton, mAUnsendedCount > 0);
                 mSendAudioButton.setOnClickListener(new View.OnClickListener() {
 
                     @Override

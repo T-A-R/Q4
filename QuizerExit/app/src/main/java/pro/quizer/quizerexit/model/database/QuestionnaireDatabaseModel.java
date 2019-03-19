@@ -18,6 +18,7 @@ public class QuestionnaireDatabaseModel extends Model implements Serializable, P
     public final static String LOGIN = "login";
     public final static String LOGIN_ADMIN = "login_admin";
     public final static String USER_ID = "user_id";
+    public final static String DATE_INTERVIEW = "date_interview";
 
     // like id
     @Column(name = TOKEN)
@@ -47,7 +48,7 @@ public class QuestionnaireDatabaseModel extends Model implements Serializable, P
     @Column(name = USER_PROJECT_ID)
     public int user_project_id;
 
-    @Column(name = "date_interview")
+    @Column(name = DATE_INTERVIEW)
     public long date_interview;
 
     @Column(name = "gps")

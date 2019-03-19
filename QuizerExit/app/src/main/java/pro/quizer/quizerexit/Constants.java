@@ -24,6 +24,7 @@ public final class Constants {
 
     public interface Strings {
 
+        String SPACE = " ";
         String EMPTY = "";
         String UNKNOWN = "unknown";
 

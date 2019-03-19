@@ -49,26 +49,28 @@ public class UiUtils {
     }
 
     public static int getDisplayHeight(final Context pContext) {
-        if (sDisplayHeight == -1) {
+//        if (sDisplayHeight == -1) {
             initDisplayDimensions(pContext);
-        }
+//        }
         return sDisplayHeight;
     }
 
     public static int getDisplayWidth(final Context pContext) {
-        if (sDisplayWidth == -1) {
+//        if (sDisplayWidth == -1) {
             initDisplayDimensions(pContext);
-        }
+//        }
         return sDisplayWidth;
     }
 
-    public static void setEnabled(final Context pContext, final View pView, final boolean pIsEnabled) {
+    public static void setButtonEnabled(final View pView, final boolean pIsEnabled) {
+        final Context context = pView.getContext();
+
         if (pIsEnabled) {
             pView.setEnabled(true);
-            pView.setBackground(ContextCompat.getDrawable(pContext, R.drawable.button_background_green));
+            pView.setBackground(ContextCompat.getDrawable(context, R.drawable.button_background_green));
         } else {
             pView.setEnabled(false);
-            pView.setBackground(ContextCompat.getDrawable(pContext, R.drawable.button_background_gray));
+            pView.setBackground(ContextCompat.getDrawable(context, R.drawable.button_background_gray));
         }
     }
 

@@ -7,16 +7,19 @@ import java.io.Serializable;
 
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.utils.DateUtils;
+import pro.quizer.quizerexit.utils.DeviceUtils;
 import pro.quizer.quizerexit.utils.MD5Utils;
 
 public class FileRequestModel implements Serializable, Parcelable {
 
     private final String name_form;
     private final long device_time;
+    private final String device_info;
 
     public FileRequestModel(final String pNameForm) {
         name_form = pNameForm;
         device_time = DateUtils.getCurrentTimeMillis();
+        device_info = DeviceUtils.getDeviceInfo();
     }
 
     @Override

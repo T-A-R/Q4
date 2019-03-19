@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <CheckBox
+    <pro.quizer.quizerexit.view.CustomCheckBox
         android:id="@+id/answer_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

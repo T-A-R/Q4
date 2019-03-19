@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class QuestionsMatchesModel implements Serializable, Parcelable {
 
     @SerializedName("question_id")
-    private String question_id;
+    private int question_id;
 
     @SerializedName("sms_num")
     private String sms_num;
@@ -18,7 +18,7 @@ public class QuestionsMatchesModel implements Serializable, Parcelable {
     public QuestionsMatchesModel() {
     }
 
-    public String getQuestionId() {
+    public int getQuestionId() {
         return question_id;
     }
 

@@ -235,12 +235,6 @@ public class ElementActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-
-        if (mCountDownTimer != null) {
-            Log.d("Timer", "Cancel");
-
-            mCountDownTimer.cancel();
-        }
     }
 
     public void pauseRecording() {
@@ -391,7 +385,11 @@ public class ElementActivity extends BaseActivity {
         final int showValue = ConditionUtils.evaluateCondition(options.getPreCondition(), mMap, this);
 
         if (showValue != ConditionUtils.CAN_SHOW) {
-            showNextElement(showValue, true);
+            if (nextElement.isShuffeledIntoBox()) {
+                showNextElement(options.getJump(), true);
+            } else {
+                showNextElement(showValue, true);
+            }
 
             return;
         }
@@ -497,6 +495,8 @@ public class ElementActivity extends BaseActivity {
                 final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
                 elementDatabaseModel.token = mToken;
                 elementDatabaseModel.relative_id = element.getRelativeID();
+                elementDatabaseModel.relative_parent_id = element.getRelativeParentID();
+                elementDatabaseModel.item_order = element.getOptions().getOrder();
                 elementDatabaseModel.duration = element.getDuration();
                 elementDatabaseModel.type = ElementDatabaseType.SCREEN;
 
@@ -525,9 +525,13 @@ public class ElementActivity extends BaseActivity {
 
     private void saveElement(final ElementModel element) {
         final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
+        final int parentId = element.getRelativeParentID();
+
         elementDatabaseModel.token = mToken;
         elementDatabaseModel.value = element.getTextAnswer();
         elementDatabaseModel.relative_id = element.getRelativeID();
+        elementDatabaseModel.relative_parent_id = parentId;
+        elementDatabaseModel.item_order = element.getOptions().getOrder();
         elementDatabaseModel.type = ElementDatabaseType.ELEMENT;
 
         elementDatabaseModel.save();
@@ -579,6 +583,12 @@ public class ElementActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        if (mCountDownTimer != null) {
+            Log.d("Timer", "Cancel");
+
+            mCountDownTimer.cancel();
+        }
 
         if (isRecordFullQuestionnaire()) {
             stopRecording();

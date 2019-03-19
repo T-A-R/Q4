@@ -6,10 +6,11 @@ import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
+import pro.quizer.quizerexit.view.CustomCheckableButton;
 
 public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAdapter.AnswerListViewHolder> {
 
@@ -93,7 +95,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
     class AnswerListViewHolder extends AbstractViewHolder {
 
         TextView mAnswer;
-        CompoundButton mCheckBox;
+        CustomCheckableButton mCheckBox;
 
         AnswerListViewHolder(final View itemView) {
             super(itemView);
@@ -160,7 +162,16 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                 mEditText.setVisibility(View.GONE);
             }
 
-            UiUtils.setTextOrHide(mAnswer, options.getTitle((BaseActivity) context));
+            final String title = options.getTitle((BaseActivity) context);
+            final String description = options.getDescription();
+
+            if (StringUtils.isNotEmpty(description)) {
+                final String titleAndDescription = title + " <span style='color:gray'><i>" + description + "</i></span>";
+                UiUtils.setTextOrHide(mAnswer, titleAndDescription);
+            } else {
+                UiUtils.setTextOrHide(mAnswer, title);
+            }
+
             mCheckBox.setChecked(isChecked);
             mCheckBox.setTag(pPosition);
             mCheckBox.setEnabled(isEnabled);
@@ -169,7 +180,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                 @Override
                 public void onClick(final View view) {
                     final Context context = view.getContext();
-                    final CompoundButton checkBox = (CompoundButton) view;
+                    final CustomCheckableButton checkBox = (CustomCheckableButton) view;
                     final boolean isChecked = checkBox.isChecked();
                     final int minAnswers = getMinAnswer();
                     final int maxAnswers = getMaxAnswer();

@@ -23,6 +23,10 @@ import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.SettingViewModelExecutable;
 import pro.quizer.quizerexit.model.FontSizeModel;
+import pro.quizer.quizerexit.model.config.ConfigModel;
+import pro.quizer.quizerexit.model.config.PhoneModel;
+import pro.quizer.quizerexit.model.config.ReserveChannelModel;
+import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.view.SettingsViewModel;
 import pro.quizer.quizerexit.utils.UiUtils;
 
@@ -46,6 +50,7 @@ public class SettingsFragment extends BaseFragment implements ICallback {
     private String mAnswerMarginString;
     private String mConfigIdString;
     private Spinner mFontSizeSpinner;
+    private Spinner mSmsNumberSpinner;
     private AppCompatSeekBar mMarginSeekBar;
     private View mSmsSection;
     private int answerMargin;
@@ -82,6 +87,7 @@ public class SettingsFragment extends BaseFragment implements ICallback {
     private void initViews(final View pView) {
         mBaseActivity = (BaseActivity) pView.getContext();
         mFontSizeSpinner = pView.findViewById(R.id.font_size_spinner);
+        mSmsNumberSpinner = pView.findViewById(R.id.sms_number_spinner);
         mAnswerMarginView = pView.findViewById(R.id.settings_space_between_answers);
         mMarginSeekBar = pView.findViewById(R.id.margin_seekbar);
         mSmsSection = pView.findViewById(R.id.sms_section);
@@ -118,10 +124,10 @@ public class SettingsFragment extends BaseFragment implements ICallback {
             fontString.add(fontSizeModel.getName());
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.adapter_spinner, fontString);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> fontSizeAdapter = new ArrayAdapter<>(getContext(), R.layout.adapter_spinner, fontString);
+        fontSizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        mFontSizeSpinner.setAdapter(adapter);
+        mFontSizeSpinner.setAdapter(fontSizeAdapter);
         mFontSizeSpinner.setSelection(selectedPosition);
         mFontSizeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -139,6 +145,49 @@ public class SettingsFragment extends BaseFragment implements ICallback {
             }
         });
 
+        final UserModel currentUser = mBaseActivity.getCurrentUser();
+        final ConfigModel configModel = currentUser.getConfig();
+        final ReserveChannelModel reserveChannelModel = configModel.getProjectInfo().getReserveChannel();
+
+        if (reserveChannelModel != null) {
+            showSmsSection();
+
+            final List<String> smsNumbers = new ArrayList<>();
+            final List<PhoneModel> phoneModels = reserveChannelModel.getPhones();
+
+            int number = 0;
+
+            for (int i = 0; i < phoneModels.size(); i++) {
+                final PhoneModel phoneModel = phoneModels.get(i);
+
+                if (phoneModel.isSelected()) {
+                    number = i;
+                }
+
+                smsNumbers.add(i, phoneModel.getNumber());
+            }
+
+            ArrayAdapter<String> smsNumberAdapter = new ArrayAdapter<>(getContext(), R.layout.adapter_spinner, smsNumbers);
+            smsNumberAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            mSmsNumberSpinner.setAdapter(smsNumberAdapter);
+            mSmsNumberSpinner.setSelection(number);
+            mSmsNumberSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    reserveChannelModel.selectPhone(position);
+
+                    mBaseActivity.updateConfig(currentUser, configModel);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> arg0) {
+
+                }
+            });
+        } else {
+            hideSmsSection();
+        }
 
         mConfigDateView = pView.findViewById(R.id.settings_date);
         mConfigIdView = pView.findViewById(R.id.settings_id);
@@ -174,18 +223,10 @@ public class SettingsFragment extends BaseFragment implements ICallback {
     }
 
     private void updateData(final SettingsViewModel pSettingsViewModel) {
-        final boolean hasSmsSection = pSettingsViewModel.hasSmsSection();
-
         getBaseActivity().runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
-                if (hasSmsSection) {
-                    showSmsSection();
-                } else {
-                    hideSmsSection();
-                }
-
                 UiUtils.setTextOrHide(mConfigDateView, String.format(mConfigDateString, pSettingsViewModel.getConfigDate()));
                 UiUtils.setTextOrHide(mConfigIdView, String.format(mConfigIdString, pSettingsViewModel.getConfigId()));
                 updateAnswerMarginString(pSettingsViewModel.getAnswerMargin());

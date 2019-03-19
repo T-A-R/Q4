@@ -13,6 +13,8 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 
+import pro.quizer.quizerexit.R;
+
 public class GPSTracker extends Service implements LocationListener {
 
     private final Context mContext;
@@ -128,9 +130,9 @@ public class GPSTracker extends Service implements LocationListener {
     public void showSettingsAlert() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
         alertDialog.setCancelable(false);
-        alertDialog.setTitle("Включите GPS");
-        alertDialog.setMessage("Для прохождения анкеты необходимо включить GPS");
-        alertDialog.setPositiveButton("Включить", new DialogInterface.OnClickListener() {
+        alertDialog.setTitle(R.string.please_turn_on_gps);
+        alertDialog.setMessage(R.string.you_need_to_turn_on_gps);
+        alertDialog.setPositiveButton(R.string.turn_on, new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);

@@ -32,24 +32,26 @@ import pro.quizer.quizerexit.executable.RemoveUserExecutable;
 import pro.quizer.quizerexit.fragment.HomeFragment;
 import pro.quizer.quizerexit.fragment.QuotasFragment;
 import pro.quizer.quizerexit.fragment.SettingsFragment;
+import pro.quizer.quizerexit.fragment.SmsFragment;
 import pro.quizer.quizerexit.fragment.SyncFragment;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
+import pro.quizer.quizerexit.model.config.ReserveChannelModel;
 import pro.quizer.quizerexit.model.database.ActivationModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
-import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.SPUtils;
 import pro.quizer.quizerexit.view.Toolbar;
 
-import static pro.quizer.quizerexit.utils.FileUtils.JPEG;
 import static pro.quizer.quizerexit.utils.FileUtils.AMR;
+import static pro.quizer.quizerexit.utils.FileUtils.JPEG;
 
 @SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity implements Serializable, Parcelable {
 
+    private HashMap<Integer, ElementModel> mTempMap;
     private HashMap<Integer, ElementModel> mMap;
     private UserModel mCurrentUser;
 
@@ -138,8 +140,28 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
         }
     }
 
+    private void generateTempMap(final List<ElementModel> elements) {
+        for (final ElementModel element : elements) {
+            mTempMap.put(element.getRelativeID(), element);
+
+            final List<ElementModel> nestedList = element.getElements();
+            if (nestedList != null && !nestedList.isEmpty()) {
+                generateTempMap(nestedList);
+            }
+        }
+    }
+
     private List<ElementModel> getElements() {
         return mCurrentUser.getConfig().getProjectInfo().getElements();
+    }
+
+    // not singleton
+    public HashMap<Integer, ElementModel> createNewMap(final List<ElementModel> elements) {
+        mTempMap = new HashMap<>();
+
+        generateTempMap(elements);
+
+        return mTempMap;
     }
 
     public HashMap<Integer, ElementModel> getMap() {
@@ -187,6 +209,10 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
 
     public void showSyncFragment() {
         showFragmentWithBackstack(SyncFragment.newInstance());
+    }
+
+    public void showSmsFragment() {
+        showFragmentWithBackstack(SmsFragment.newInstance());
     }
 
     public void showSettingsFragment() {
@@ -279,6 +305,13 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
         ).where(UserModel.USER_ID + " = ?", pUserId).execute();
     }
 
+    public void updateConfig(final UserModel pUserModel, final ConfigModel pConfigModel) {
+        new Update(UserModel.class).set(UserModel.CONFIG + " = ?",
+                new GsonBuilder().create().toJson(pConfigModel)
+        ).where(UserModel.USER_ID + " = ? AND " + UserModel.USER_PROJECT_ID + " = ?",
+                pUserModel.user_id, pUserModel.user_project_id).execute();
+    }
+
     public void saveCurrentUserId(final int pUserId) {
         SPUtils.saveCurrentUserId(this, pUserId);
     }
@@ -308,24 +341,23 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
         SPUtils.saveAnswerMargin(this, pValue);
     }
 
-    public void saveUser(final String pLogin, final String pPassword, final AuthResponseModel pModel, final ConfigResponseModel pConfigResponseModel) throws Exception {
+    public void saveUser(final String pLogin, final String pPassword, final AuthResponseModel pModel, final ConfigModel pConfigModel) throws Exception {
         new Delete().from(UserModel.class).where(UserModel.USER_ID + " = ?", pModel.getUserId()).execute();
 
-        final UserModel userModel = new UserModel();
-//        final ParseServerModel parseServerModel = CryptoController.parseServer(pConfigResponseModel.getConfig().getServer());
-//        final String serverUrl = parseServerModel.getServerUrl();
-//        final String loginAdmin = parseServerModel.getLoginAdmin();
-//
-//        pConfigResponseModel.getConfig().setLoginAdmin(loginAdmin);
-//        pConfigResponseModel.getConfig().setServerUrl(serverUrl);
+        final ReserveChannelModel reserveChannelModel = pConfigModel.getProjectInfo().getReserveChannel();
 
+        if (reserveChannelModel != null) {
+            reserveChannelModel.selectPhone(0);
+        }
+
+        final UserModel userModel = new UserModel();
         userModel.login = pLogin;
         userModel.password = pPassword;
         userModel.config_id = pModel.getConfigId();
         userModel.role_id = pModel.getRoleId();
         userModel.user_id = pModel.getUserId();
         userModel.user_project_id = pModel.getUserProjectId();
-        userModel.config = new GsonBuilder().create().toJson(pConfigResponseModel);
+        userModel.config = new GsonBuilder().create().toJson(pConfigModel);
         userModel.save();
     }
 

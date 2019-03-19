@@ -9,6 +9,7 @@ import java.util.List;
 
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.utils.DateUtils;
+import pro.quizer.quizerexit.utils.DeviceUtils;
 
 public class QuestionnaireListRequestModel implements Serializable, Parcelable {
 
@@ -18,6 +19,7 @@ public class QuestionnaireListRequestModel implements Serializable, Parcelable {
     private final String passw;
     private final List<QuestionnaireRequestModel> questionnairies;
     private final long device_time;
+    private final String device_info;
 
     public QuestionnaireListRequestModel(String login_admin, String login, String passw) {
         this.name_form = Constants.NameForm.QUESTIONNAIRE;
@@ -26,6 +28,7 @@ public class QuestionnaireListRequestModel implements Serializable, Parcelable {
         this.passw = passw;
         this.questionnairies = new ArrayList<>();
         this.device_time = DateUtils.getCurrentTimeMillis();
+        this.device_info = DeviceUtils.getDeviceInfo();
     }
 
     public void addQuestionnaire(final QuestionnaireRequestModel pModel) {

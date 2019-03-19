@@ -1,0 +1,143 @@
+package pro.quizer.quizerexit.adapter;
+
+import android.content.DialogInterface;
+import android.os.Parcel;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+import java.util.Collections;
+import java.util.List;
+
+import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.executable.ICallback;
+import pro.quizer.quizerexit.model.sms.SmsStage;
+import pro.quizer.quizerexit.utils.DateUtils;
+import pro.quizer.quizerexit.utils.SmsUtils;
+import pro.quizer.quizerexit.utils.SystemUtils;
+import pro.quizer.quizerexit.utils.UiUtils;
+
+public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
+
+    private List<SmsStage> mSmsStages;
+    private BaseActivity mBaseActivity;
+
+    class SmsViewHolder extends RecyclerView.ViewHolder {
+
+        TextView mTimeInterval;
+        TextView mSmsText;
+        TextView mSmsStatus;
+        View mCopySms;
+        Button mRetryButton;
+
+        SmsViewHolder(View view) {
+            super(view);
+
+            mSmsText = view.findViewById(R.id.sms_text);
+            mTimeInterval = view.findViewById(R.id.sms_time_interval);
+            mSmsStatus = view.findViewById(R.id.sms_status);
+            mCopySms = view.findViewById(R.id.sms_copy);
+            mRetryButton = view.findViewById(R.id.sms_retry);
+        }
+    }
+
+
+    public SmsAdapter(final BaseActivity pBaseActivity, List<SmsStage> pQuotasList) {
+        mBaseActivity = pBaseActivity;
+        mSmsStages = pQuotasList;
+    }
+
+    @Override
+    public SmsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_sms_stage, parent, false);
+        return new SmsViewHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(SmsViewHolder holder, final int position) {
+        final SmsStage smsStage = mSmsStages.get(position);
+        final long timeFrom = smsStage.getTimeFrom() * 1000L;
+        final long timeTo = smsStage.getTimeTo() * 1000L;
+        final long currentTime = DateUtils.getCurrentTimeMillis() * 1000L;
+
+        final String timeFromString = DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, timeFrom);
+        final String timeToString = DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, timeTo);
+        final String timeInterval = String.format(mBaseActivity.getString(R.string.time_interval), timeFromString, timeToString);
+        final String smsText = smsStage.toString();
+        final String smsStatus = smsStage.getStatus();
+
+        holder.mSmsStatus.setText(smsStatus);
+        holder.mTimeInterval.setText(timeInterval);
+        holder.mSmsText.setText(smsText);
+
+        final boolean availableToSend = currentTime > timeFrom;
+
+        UiUtils.setButtonEnabled(holder.mRetryButton, availableToSend);
+
+        holder.mRetryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(mBaseActivity);
+                alertDialog.setCancelable(false);
+                alertDialog.setTitle(R.string.sms_sending);
+                alertDialog.setMessage(mBaseActivity.getString(R.string.sms_sending_confirmation) + timeInterval + "?");
+                alertDialog.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        SmsUtils.sendSms(mBaseActivity, new ICallback() {
+                            @Override
+                            public void onStarting() {
+
+                            }
+
+                            @Override
+                            public void onSuccess() {
+                                notifyItemChanged(position);
+                            }
+
+                            @Override
+                            public void onError(Exception pException) {
+
+                            }
+
+                            @Override
+                            public int describeContents() {
+                                return 0;
+                            }
+
+                            @Override
+                            public void writeToParcel(Parcel dest, int flags) {
+
+                            }
+                        }, Collections.singletonList(smsStage));
+                    }
+                });
+                alertDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                alertDialog.show();
+            }
+        });
+
+        holder.mCopySms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SystemUtils.copyText(SmsUtils.formatSmsPrefix(smsText, mBaseActivity), mBaseActivity);
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return mSmsStages.size();
+    }
+}

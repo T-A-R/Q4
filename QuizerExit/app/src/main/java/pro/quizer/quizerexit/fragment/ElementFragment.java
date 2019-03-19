@@ -179,21 +179,17 @@ public class ElementFragment extends BaseFragment {
         if (isScreenElement()) {
             mCurrentElement.setScreenShowing(true);
             mCurrentElement.setStartTime(mStartTime);
+
+            if (mIsPhotoQuestionnaire && mCurrentElement.getOptions().isTakePhoto()) {
+                shotPicture(mLoginAdmin, mToken, mCurrentElement.getRelativeID(), mUserId, mProjectId, mUserLogin);
+            }
         }
 
-        if (mCurrentElement.getOptions().isRotation()) {
-            // рандомная сортировка дочерних элементов
-            if (mAttributes.isRotation()) {
-                CollectionUtils.shuffleAnswers(mCurrentElement, subElements);
-            }
-
+        if (mAttributes.isRotation()) {
+            CollectionUtils.shuffleElements(mCurrentElement, subElements);
         }
 
         mCallback.onShowFragment(mCurrentElement);
-
-        if (mIsPhotoQuestionnaire && mCurrentElement.getOptions().isTakePhoto()) {
-            shotPicture(mLoginAdmin, mToken, mCurrentElement.getRelativeID(), mUserId, mProjectId, mUserLogin);
-        }
 
         switch (elementType) {
             case ElementType.QUESTION:

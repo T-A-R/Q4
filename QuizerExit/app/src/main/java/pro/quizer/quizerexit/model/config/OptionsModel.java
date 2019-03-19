@@ -36,6 +36,9 @@ public class OptionsModel implements Serializable, Parcelable {
     @SerializedName("rotation")
     private boolean rotation;
 
+    @SerializedName("rotationAnswers")
+    private boolean rotationAnswers;
+
     @SerializedName("fixed_order")
     private boolean fixed_order;
 
@@ -102,6 +105,9 @@ public class OptionsModel implements Serializable, Parcelable {
 
     public boolean isRotation() {
         return rotation;
+    }
+    public boolean isRotationAnswers() {
+        return rotationAnswers;
     }
 
     public boolean isFixedOrder() {

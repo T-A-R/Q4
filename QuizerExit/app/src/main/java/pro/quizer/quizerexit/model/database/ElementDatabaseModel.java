@@ -23,6 +23,12 @@ public class ElementDatabaseModel extends Model implements Serializable, Parcela
     @Column(name = "relative_id")
     public Integer relative_id;
 
+    @Column(name = "relative_parent_id")
+    public Integer relative_parent_id;
+
+    @Column(name = "item_order")
+    public Integer item_order;
+
     @Column(name = "duration")
     public Long duration;
 

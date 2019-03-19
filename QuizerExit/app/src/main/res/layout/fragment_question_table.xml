@@ -9,18 +9,24 @@
         android:id="@+id/element_header"
         layout="@layout/view_element_header" />
 
-    <com.cleveroad.adaptivetablelayout.AdaptiveTableLayout
-        android:id="@+id/table_question_layout"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/element_header"
         android:layout_above="@+id/button_panel"
-        app:cellMargin="1dp"
-        tools:ignore="UnknownIdInLayout" />
+        android:layout_below="@+id/element_header">
+
+        <com.cleveroad.adaptivetablelayout.AdaptiveTableLayout
+            android:id="@+id/table_question_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cellMargin="1dp"
+            tools:ignore="UnknownIdInLayout" />
+
+    </FrameLayout>
 
     <!--app:dragAndDropEnable//d="true"-->
-        <!--app:fixedHeaders="true"-->
-        <!--app:solidRowHeaders="true"-->
+    <!--app:fixedHeaders="true"-->
+    <!--app:solidRowHeaders="true"-->
 
     <include layout="@layout/view_question_buttons_panel" />
 

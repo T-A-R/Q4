@@ -21,6 +21,7 @@ import pro.quizer.quizerexit.model.response.QuotaResponseModel;
 @Table(name = "User")
 public class UserModel extends Model implements Serializable, Parcelable {
 
+    public static final String CONFIG = "config";
     public static final String USER_ID = "user_id";
     public static final String LOGIN = "login";
     public static final String PASSWORD = "password";
@@ -53,8 +54,8 @@ public class UserModel extends Model implements Serializable, Parcelable {
     @SerializedName(USER_PROJECT_ID)
     public int user_project_id;
 
-    @Column(name = "config")
-    @SerializedName("config")
+    @Column(name = CONFIG)
+    @SerializedName(CONFIG)
     public String config;
 
     @Column(name = QUOTAS)
@@ -62,7 +63,7 @@ public class UserModel extends Model implements Serializable, Parcelable {
     public String quotas;
 
     public ConfigModel getConfig() {
-        return new Gson().fromJson(config, ConfigResponseModel.class).getConfig();
+        return new Gson().fromJson(config, ConfigModel.class);
     }
 
     public List<QuotaModel> getQuotas() {

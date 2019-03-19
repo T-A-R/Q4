@@ -8,6 +8,10 @@ public abstract class BaseExecutable implements IExecute {
         mCallback = pCallback;
     }
 
+    public ICallback getCallback() {
+        return mCallback;
+    }
+
     public void onStarting() {
         if (mCallback != null) {
             mCallback.onStarting();

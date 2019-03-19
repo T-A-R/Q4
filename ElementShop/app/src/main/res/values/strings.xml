@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">ELEMENT</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="register">Регистрация</string>
+    <string name="sign_in_message">Войдите в систему</string>
+    <string name="sign_in">Войти</string>
+    <string name="please_input_email_and_password">Пожалуйста, введите email и пароль</string>
+    <string name="sign_in_error">Ошибка авторизации:</string>
+    <string name="register_error">Ошибка регистрации:</string>
+    <string name="input_email">Введите email</string>
+    <string name="input_password">Введите пароль</string>
+    <string name="repeat_password">Повторите пароль</string>
+    <string name="registration_passwrod_not_equals">Пароли не совпадают</string>
+    <string name="action_exit">Выйти</string>
+    <string name="action_share">Поделиться</string>
+</resources>

@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import java.util.Collections;
 import java.util.List;
 
 import pro.quizer.quizerexit.IAdapter;
@@ -15,9 +14,6 @@ import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.utils.CollectionUtils;
-
-import static pro.quizer.quizerexit.model.config.ElementModel.COMPARATOR;
-import static pro.quizer.quizerexit.utils.CollectionUtils.sortByOrder;
 
 public abstract class AbstractQuestionFragment extends AbstractContentElementFragment {
 
@@ -107,7 +103,7 @@ public abstract class AbstractQuestionFragment extends AbstractContentElementFra
         return mAttributes;
     }
 
-    private void initView() {
+    public void initView() {
         final List<ElementModel> subElements = mCurrentElement.getElements();
 
         final int minAnswers;
@@ -124,7 +120,7 @@ public abstract class AbstractQuestionFragment extends AbstractContentElementFra
 
         // рандомная сортировка дочерних элементов
         if (mAttributes.isRotation()) {
-            CollectionUtils.shuffleAnswers(mCurrentElement, subElements);
+            CollectionUtils.shuffleElements(mCurrentElement, subElements);
         }
 
         createAdapter(mCurrentElement, subElements, minAnswers, maxAnswers, mRefreshRecyclerViewRunnable);

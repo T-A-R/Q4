@@ -16,6 +16,7 @@
     <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
         android:id="@+id/answer_text"
         android:layout_width="match_parent"
+        android:textColor="@android:color/black"
         android:layout_height="wrap_content"
         android:layout_below="@+id/top_margin_view"
         tools:text="Yes" />
@@ -25,6 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/answer_text"
+        android:textColor="@android:color/black"
         android:imeOptions="actionDone"
         android:visibility="gone"
         tools:text="Name"

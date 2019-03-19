@@ -13,10 +13,8 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -37,11 +35,15 @@ import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.OptionsOpenType;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
+import pro.quizer.quizerexit.utils.CollectionUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
+import pro.quizer.quizerexit.view.CustomCheckableButton;
 
 public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderImpl> implements OnItemClickListener, IAdapter {
 
+    private static final int HALF = 2;
+    private static final int CELL_COUNT = 3;
     private final LayoutInflater mLayoutInflater;
     private final int mColumnWidth;
     private final int mRowHeight;
@@ -84,15 +86,20 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         mContext = context;
         mLayoutInflater = LayoutInflater.from(context);
         final Resources res = context.getResources();
-        mColumnWidth = res.getDimensionPixelSize(R.dimen.column_width);
-        mRowHeight = res.getDimensionPixelSize(R.dimen.row_height);
-        mHeaderHeight = res.getDimensionPixelSize(R.dimen.column_header_height);
-        mHeaderWidth = res.getDimensionPixelSize(R.dimen.row_header_width);
-        mIsFlipColsAndRows = pCurrentElement.getOptions().isFlipColsAndRows();
+        final OptionsModel optionsModel = pCurrentElement.getOptions();
+        mIsFlipColsAndRows = optionsModel.isFlipColsAndRows();
         mBaseActivity = (BaseActivity) mContext;
         mMap = mBaseActivity.getMap();
 
         mQuestions = pQuestions;
+
+        if (optionsModel.isRotation()) {
+            CollectionUtils.shuffleElements(mCurrentElement, mQuestions);
+        }
+
+        if (optionsModel.isRotationAnswers()) {
+            CollectionUtils.shuffleTableAnswers(mCurrentElement, mQuestions);
+        }
 
         if (mQuestions.get(0) != null) {
             mQuestions.add(0, null);
@@ -117,6 +124,14 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mTopSide = mAnswers;
             mLeftSide = mQuestions;
         }
+
+        mRowHeight = res.getDimensionPixelSize(R.dimen.row_height);
+
+        mHeaderHeight = res.getDimensionPixelSize(R.dimen.column_header_height);
+
+        final int widthIndex = mTopSide.size() >= CELL_COUNT ? CELL_COUNT : HALF;
+        mHeaderWidth = UiUtils.getDisplayWidth(mContext) / widthIndex;
+        mColumnWidth = UiUtils.getDisplayWidth(mContext) / widthIndex;
     }
 
     @Override
@@ -186,20 +201,26 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     @Override
     public void onBindHeaderColumnViewHolder(@NonNull final ViewHolderImpl viewHolder, final int column) {
         final TableHeaderColumnViewHolder vh = (TableHeaderColumnViewHolder) viewHolder;
-        UiUtils.setTextOrHide(vh.mHeaderColumnTextView, mTopSide.get(column).getOptions().getTitle((BaseActivity) mContext));
+        final OptionsModel optionsModel = mTopSide.get(column).getOptions();
+
+        UiUtils.setTextOrHide(vh.mHeaderColumnTextView, optionsModel.getTitle((BaseActivity) mContext));
+        UiUtils.setTextOrHide(vh.mHeaderColumnDescriptionTextView, optionsModel.getDescription());
     }
 
     @Override
     public void onBindHeaderRowViewHolder(@NonNull final ViewHolderImpl viewHolder, final int row) {
         final TableHeaderRowViewHolder vh = (TableHeaderRowViewHolder) viewHolder;
-        UiUtils.setTextOrHide(vh.mHeaderRowTextView, mLeftSide.get(row).getOptions().getTitle((BaseActivity) mContext));
+        final OptionsModel optionsModel = mLeftSide.get(row).getOptions();
+
+        UiUtils.setTextOrHide(vh.mHeaderRowTextView, optionsModel.getTitle((BaseActivity) mContext));
+        UiUtils.setTextOrHide(vh.mHeaderRowDescriptionTextView, optionsModel.getDescription());
 
     }
 
     @Override
     public void onBindLeftTopHeaderViewHolder(@NonNull final ViewHolderImpl viewHolder) {
         final TableHeaderLeftTopViewHolder vh = (TableHeaderLeftTopViewHolder) viewHolder;
-        UiUtils.setTextOrHide(vh.mHeaderLeftTopTextView, "Вопрос/ответ");
+        UiUtils.setTextOrHide(vh.mHeaderLeftTopTextView, mContext.getString(R.string.question_answer_table_label));
     }
 
     @Override
@@ -518,8 +539,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     private static class TableItemViewHolder extends ViewHolderImpl {
 
-        RadioButton mTableItemRadioButton;
-        CheckBox mTableItemCheckBox;
+        CustomCheckableButton mTableItemRadioButton;
+        CustomCheckableButton mTableItemCheckBox;
         View mDisableFrame;
 
         private TableItemViewHolder(@NonNull final View itemView) {
@@ -533,20 +554,24 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private static class TableHeaderColumnViewHolder extends ViewHolderImpl {
 
         TextView mHeaderColumnTextView;
+        TextView mHeaderColumnDescriptionTextView;
 
         private TableHeaderColumnViewHolder(@NonNull final View itemView) {
             super(itemView);
             mHeaderColumnTextView = itemView.findViewById(R.id.table_header_column_text_view);
+            mHeaderColumnDescriptionTextView = itemView.findViewById(R.id.table_header_column_description_text_view);
         }
     }
 
     private static class TableHeaderRowViewHolder extends ViewHolderImpl {
 
         TextView mHeaderRowTextView;
+        TextView mHeaderRowDescriptionTextView;
 
         TableHeaderRowViewHolder(@NonNull final View itemView) {
             super(itemView);
             mHeaderRowTextView = itemView.findViewById(R.id.table_header_row_text_view);
+            mHeaderRowDescriptionTextView = itemView.findViewById(R.id.table_header_row_description_text_view);
         }
     }
 

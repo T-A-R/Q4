@@ -11,10 +11,10 @@ import java.util.List;
 public class StagesModel implements Serializable, Parcelable {
 
     @SerializedName("time_from")
-    private String time_from;
+    private int time_from;
 
     @SerializedName("time_to")
-    private String time_to;
+    private int time_to;
 
     @SerializedName("questions_matches")
     private List<QuestionsMatchesModel> questions_matches;
@@ -22,11 +22,11 @@ public class StagesModel implements Serializable, Parcelable {
     public StagesModel() {
     }
 
-    public String getTimeFrom() {
+    public int getTimeFrom() {
         return time_from;
     }
 
-    public String getTimeTo() {
+    public int getTimeTo() {
         return time_to;
     }
 

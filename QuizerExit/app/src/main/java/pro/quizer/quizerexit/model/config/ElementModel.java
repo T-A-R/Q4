@@ -45,6 +45,7 @@ public class ElementModel implements Serializable, Parcelable {
     private boolean isQuestionShowing;
     private boolean isChecked;
     private boolean isShuffeled;
+    private boolean isShuffeledIntoBox;
     private boolean isEnabled = true;
     private long startTime = 0;
     private long endTime = 0;
@@ -110,6 +111,20 @@ public class ElementModel implements Serializable, Parcelable {
         return elements;
     }
 
+    public int getNotNullableSubElementsCount() {
+        int count = 0;
+
+        if (elements != null) {
+            for (final ElementModel element : elements) {
+                if (element != null) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
     public OptionsModel getOptions() {
         return options;
     }
@@ -122,6 +137,10 @@ public class ElementModel implements Serializable, Parcelable {
 
     public boolean isShuffeled() {
         return isShuffeled;
+    }
+
+    public boolean isShuffeledIntoBox() {
+        return isShuffeledIntoBox;
     }
 
     public boolean isFullySelected() {
@@ -151,8 +170,13 @@ public class ElementModel implements Serializable, Parcelable {
     public void setChecked(final boolean pIsChecked) {
         isChecked = pIsChecked;
     }
+
     public void setShuffeled(final boolean pIsShuffeled) {
         isShuffeled = pIsShuffeled;
+    }
+
+    public void setShuffeledIntoBox(final boolean pIsShuffeledIntoBox) {
+        isShuffeledIntoBox = pIsShuffeledIntoBox;
     }
 
     public boolean isEnabled(final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel) {

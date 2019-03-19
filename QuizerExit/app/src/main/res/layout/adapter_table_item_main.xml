@@ -16,13 +16,13 @@
         android:layout_alignParentBottom="true"
         android:background="@color/gray" />
 
-    <CheckBox
+    <pro.quizer.quizerexit.view.CustomCheckBox
         android:id="@+id/table_item_check_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
 
-    <RadioButton
+    <pro.quizer.quizerexit.view.CustomRadioButton
         android:id="@+id/table_item_radio_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -31,7 +31,8 @@
 
     <string name="app_name">Quizer</string>
     <string name="input_activation_key">Введите ключ</string>
-    <string name="send">Отправить</string>
+    <string name="status_sent">Отправлено</string>
+    <string name="status_not_sent">Не отправлено</string>
     <string name="empty_activation_key">Ключ активации не может быть пустым.</string>
     <string name="internet_error_please_try_again">Не удалось подключиться к серверу. Проверьте подключение к интернету или повторите позже.</string>
     <string name="server_error">Ошибка сервера.</string>
@@ -91,6 +92,7 @@
     <string name="sended_p_in_session_string">Отправлено фото в данном сеансе: %1$s</string>
     <string name="sms">SMS</string>
     <string name="home_title">Главный экран</string>
+    <string name="time_interval">%1$s - %2$s</string>
     <string name="change_user">Выйти</string>
     <string name="config_title">Конфигурация</string>
     <string name="settings_id_string">ID: %1$s</string>
@@ -130,7 +132,23 @@
     <string name="search">Поиск</string>
     <string name="no_quotas_by_query">Нет квот по введенному фильтру</string>
     <string name="empty_quotas">Квоты пусты</string>
+    <string name="empty_sms">Смс волны пусты</string>
     <string name="show_only_not_completed">Отобразить не выполненные</string>
     <string name="choose_font_size">Выберите размер шрифта</string>
     <string name="tree_dots">...</string>
+    <string name="question_answer_table_label">ВОПРОС&lt;br /&gt;ОТВЕТ</string>
+    <string name="send_all_stages">Отправить все волны</string>
+    <string name="retry_stage_sending">Отправить</string>
+    <string name="cannot_sent_sms_because_of_wave_isnt_started">Отправка не возможна, так как волна еще не началась.</string>
+    <string name="sms_is_copied">Сообщение скопированно</string>
+    <string name="sending_error_no_connection">Отправка не осуществлена по причине отсутствия интернета</string>
+    <string name="cancel_sms_sending">Отправка через СМС отменена</string>
+    <string name="sending_waves_via_sms">Отправка волн через СМС</string>
+    <string name="sending_waves_via_sms_confirmation">Вы уверены, что хотите отправить волны для пользователя</string>
+    <string name="send">Отправить</string>
+    <string name="please_turn_on_gps">Включите GPS</string>
+    <string name="you_need_to_turn_on_gps">Для прохождения анкеты необходимо включить GPS</string>
+    <string name="turn_on">Включить</string>
+    <string name="sms_sending">Отправка смс</string>
+    <string name="sms_sending_confirmation">Вы уверены, что хотите отправить волну за период</string>
 </resources>

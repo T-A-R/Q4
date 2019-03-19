@@ -44,7 +44,7 @@ public class HomeFragment extends BaseFragment implements ICallback {
 
         final UserModel userModel = getBaseActivity().getUserByUserId(getBaseActivity().getCurrentUserId());
 
-        new SendQuestionnairesByUserModelExecutable(getBaseActivity(), userModel, this).execute();
+        new SendQuestionnairesByUserModelExecutable(getBaseActivity(), userModel, this, false).execute();
     }
 
     private void initView(final View pView) {

@@ -1,5 +1,6 @@
 package pro.quizer.quizerexit.fragment;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,6 +24,11 @@ public class QuestionTableFragment extends AbstractQuestionFragment {
 
     TableQuestionAdapter mAdapter;
     AdaptiveTableLayout mTableLayout;
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
 
     public static Fragment newInstance(@NonNull final ElementModel pElement, final NavigationCallback pCallback) {
         final Fragment fragment = new QuestionTableFragment();

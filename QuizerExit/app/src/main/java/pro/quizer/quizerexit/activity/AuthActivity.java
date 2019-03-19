@@ -362,7 +362,7 @@ public class AuthActivity extends BaseActivity {
                                   final int pRoleId,
                                   final int pUserProjectId) {
         try {
-            saveUser(pLogin, pPassword, pAuthResponseModel, pConfigResponseModel);
+            saveUser(pLogin, pPassword, pAuthResponseModel, pConfigResponseModel.getConfig());
             saveCurrentUserId(pUserId);
         } catch (final Exception e) {
             showToast(getString(R.string.server_error) + "\n" + e);

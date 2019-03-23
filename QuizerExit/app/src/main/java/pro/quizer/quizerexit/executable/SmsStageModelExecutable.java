@@ -60,7 +60,6 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
 
     private void load(@QuestionnaireStatus final String pStatus, final Map<String, SmsAnswer> result) {
         final List<ElementDatabaseModel> allElements = new ArrayList<>();
-        final List<String> tokens = new ArrayList<>();
 
         final List<QuestionnaireDatabaseModel> questionnaires = new Select()
                 .from(QuestionnaireDatabaseModel.class)

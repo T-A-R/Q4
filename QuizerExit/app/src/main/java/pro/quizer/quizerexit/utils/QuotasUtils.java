@@ -15,25 +15,29 @@ import pro.quizer.quizerexit.model.quota.QuotaModel;
 
 public final class QuotasUtils {
 
-    public static boolean isCanDisplayed(final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel, final BaseActivity pBaseActivity) {
-        final List<QuotaModel> quotas = pBaseActivity.getCurrentUser().getQuotas();
-
+    public static boolean isCanDisplayed(final List<QuotaModel> quotas, final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel, final BaseActivity pBaseActivity) {
         if (quotas == null || quotas.isEmpty()) {
             return true;
         }
 
-        final String type = pElementModel.getType();
+        LogUtils.startAction("isCanDisplayed");
 
+        final String type = pElementModel.getType();
+        final boolean isCanDisplayed;
         if (ElementType.ANSWER.equals(type)) {
-            return isAnswerCanDisplayed(mMap, pElementModel, pBaseActivity);
+            isCanDisplayed = isAnswerCanDisplayed(quotas, mMap, pElementModel, pBaseActivity);
         } else if (ElementType.QUESTION.equals(type)) {
-            return isQuestionCanDisplayed(mMap, pElementModel, pBaseActivity);
+            isCanDisplayed = isQuestionCanDisplayed(quotas, mMap, pElementModel, pBaseActivity);
         } else {
-            return true;
+            isCanDisplayed = true;
         }
+
+        LogUtils.endAction("isCanDisplayed");
+
+        return isCanDisplayed;
     }
 
-    private static boolean isQuestionCanDisplayed(final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel, final BaseActivity pBaseActivity) {
+    private static boolean isQuestionCanDisplayed(final List<QuotaModel> quotas, final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel, final BaseActivity pBaseActivity) {
         // вопрос может отоброзиться только если все внутренние элементы типа "answer" !getOptions().isCanShow(),
         // в свою очередь isCanShow проверит то, что может ли отображаться данный ответ исходя из pre_condition,
         // а также исходя из квот
@@ -41,7 +45,7 @@ public final class QuotasUtils {
         for (final ElementModel answer : pElementModel.getSubElementsByType(ElementType.ANSWER)) {
             final OptionsModel optionsModel = answer.getOptions();
             final boolean isCanShow = optionsModel.isCanShow(pBaseActivity, mMap, answer);
-            final boolean isEnabled = optionsModel.isEnabled(pBaseActivity, mMap, answer);
+            final boolean isEnabled = optionsModel.isEnabled(quotas, pBaseActivity, mMap, answer);
 
             if (isCanShow && isEnabled) {
                 return true;
@@ -51,7 +55,7 @@ public final class QuotasUtils {
         return false;
     }
 
-    private static boolean isAnswerCanDisplayed(final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel, final BaseActivity pBaseActivity) {
+    private static boolean isAnswerCanDisplayed(final List<QuotaModel> quotas, final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel, final BaseActivity pBaseActivity) {
         // если сиквенс содержит pElementModel делаем магию, иначе return TRUE;
 
 
@@ -62,30 +66,30 @@ public final class QuotasUtils {
         // (а что если done уже будет возвращать + localDone) = СДЕЛАНО!!!!!!
 
         // если это середина сиквенса getSet().contains(id)
-        // 
+        //
         //
 
-        if (!isQuotedElement(mMap, pElementModel, pBaseActivity)) {
+        if (!isQuotedElement(quotas, pElementModel)) {
             return true;
         }
 
-        final List<QuotaModel> notCompletedCurrentQuotas = getNotCompletedQuotasForCurrentQuestionnaire(mMap, pElementModel, pBaseActivity);
-        final List<QuotaModel> allSelectedQuotasForCurrentQuestionnaire = getAllSelectedQuotasForCurrentQuestionnaire(mMap, pElementModel, pBaseActivity);
+        final List<QuotaModel> notCompletedCurrentQuotas = getNotCompletedQuotasForCurrentQuestionnaire(quotas, mMap, pElementModel, pBaseActivity);
+        final List<QuotaModel> allSelectedQuotasForCurrentQuestionnaire = getAllSelectedQuotasForCurrentQuestionnaire(quotas, mMap, pElementModel);
 
         if ((notCompletedCurrentQuotas != null && !notCompletedCurrentQuotas.isEmpty())
-                || isNextQuestionContainsNotQuotedAnswer(allSelectedQuotasForCurrentQuestionnaire, mMap, pElementModel, pBaseActivity)
-                || isCurrentAnswerIsNotQuotedInQuotasForCurrentQuestionnaire(allSelectedQuotasForCurrentQuestionnaire, mMap, pElementModel, pBaseActivity)) {
+                || isNextQuestionContainsNotQuotedAnswer(allSelectedQuotasForCurrentQuestionnaire, mMap, pElementModel)
+                || isCurrentAnswerIsNotQuotedInQuotasForCurrentQuestionnaire(allSelectedQuotasForCurrentQuestionnaire)) {
             return true;
         }
 
         return false;
     }
 
-    private static boolean isCurrentAnswerIsNotQuotedInQuotasForCurrentQuestionnaire(final List<QuotaModel> pCurrentQuotas,
-                                                                                     final HashMap<Integer, ElementModel> mMap,
-                                                                                     final ElementModel pElementModel,
-                                                                                     final BaseActivity pBaseActivity) {
+    private static boolean isCurrentAnswerIsNotQuotedInQuotasForCurrentQuestionnaire(final List<QuotaModel> pCurrentQuotas) {
+        LogUtils.startAction("isCurrentAnswerIsNotQuotedInQuotasForCurrentQuestionnaire");
+
         if (pCurrentQuotas == null || pCurrentQuotas.isEmpty()) {
+            LogUtils.endAction("isCurrentAnswerIsNotQuotedInQuotasForCurrentQuestionnaire");
             return true;
         } else {
             return false;
@@ -101,8 +105,7 @@ public final class QuotasUtils {
 //        return false;
     }
 
-    private static boolean isQuotedElement(final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel, final BaseActivity pBaseActivity) {
-        final List<QuotaModel> allQuotas = pBaseActivity.getCurrentUser().getQuotas();
+    private static boolean isQuotedElement(final List<QuotaModel> allQuotas, final ElementModel pElementModel) {
         final int id = pElementModel.getRelativeID();
 
         for (final QuotaModel quotaModel : allQuotas) {
@@ -114,15 +117,15 @@ public final class QuotasUtils {
         return false;
     }
 
-    private static List<QuotaModel> getNotCompletedQuotasForCurrentQuestionnaire(final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel, final BaseActivity pBaseActivity) {
+    private static List<QuotaModel> getNotCompletedQuotasForCurrentQuestionnaire(final List<QuotaModel> quotas, final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel, final BaseActivity pBaseActivity) {
         final List<QuotaModel> result = new ArrayList<>();
-        final List<QuotaModel> quotas = pBaseActivity.getCurrentUser().getQuotas();
         final int elementId = pElementModel.getRelativeID();
 
         for (final QuotaModel quota : quotas) {
             if (quota.contains(elementId)) {
 
-                if (!quota.isCompleted(pBaseActivity) && isPreviousQuotasSelected(mMap, pElementModel, pBaseActivity, quota)) {
+//                if (!quota.isCompleted(pBaseActivity) && isPreviousQuotasSelected(mMap, pElementModel, quota)) {
+                if (isPreviousQuotasSelected(mMap, pElementModel, quota) && !quota.isCompleted(pBaseActivity)) {
                     result.add(quota);
                 }
             }
@@ -131,12 +134,11 @@ public final class QuotasUtils {
         return result;
     }
 
-    private static List<QuotaModel> getAllSelectedQuotasForCurrentQuestionnaire(final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel, final BaseActivity pBaseActivity) {
+    private static List<QuotaModel> getAllSelectedQuotasForCurrentQuestionnaire(final List<QuotaModel> quotas, final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel) {
         final List<QuotaModel> result = new ArrayList<>();
-        final List<QuotaModel> quotas = pBaseActivity.getCurrentUser().getQuotas();
 
         for (final QuotaModel quota : quotas) {
-            if (quota.contains(pElementModel.getRelativeID()) && isPreviousQuotasSelected(mMap, pElementModel, pBaseActivity, quota)) {
+            if (quota.contains(pElementModel.getRelativeID()) && isPreviousQuotasSelected(mMap, pElementModel, quota)) {
                 result.add(quota);
             }
         }
@@ -144,25 +146,28 @@ public final class QuotasUtils {
         return result;
     }
 
-    private static List<QuotaModel> getAllQuotasForCurrentQuestionnaire(final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel, final BaseActivity pBaseActivity) {
-        final List<QuotaModel> result = new ArrayList<>();
-        final List<QuotaModel> quotas = pBaseActivity.getCurrentUser().getQuotas();
-
-        for (final QuotaModel quota : quotas) {
-            if (quota.contains(pElementModel.getRelativeID())) {
-                result.add(quota);
-            }
-        }
-
-        return result;
-    }
+//    private static List<QuotaModel> getAllQuotasForCurrentQuestionnaire(final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel, final BaseActivity pBaseActivity) {
+//        final List<QuotaModel> result = new ArrayList<>();
+//        final List<QuotaModel> quotas = pBaseActivity.getCurrentUser().getQuotas();
+//
+//        for (final QuotaModel quota : quotas) {
+//            if (quota.contains(pElementModel.getRelativeID())) {
+//                result.add(quota);
+//            }
+//        }
+//
+//        return result;
+//    }
 
     private static boolean isNextQuestionContainsNotQuotedAnswer(final List<QuotaModel> pCurrentQuotas,
                                                                  final HashMap<Integer, ElementModel> mMap,
-                                                                 final ElementModel pElementModel,
-                                                                 final BaseActivity pBaseActivity) {
+                                                                 final ElementModel pElementModel) {
+        LogUtils.startAction("isNextQuestionContainsNotQuotedAnswer");
+
+        boolean result = false;
+
         if (pCurrentQuotas == null) {
-            return true;
+            result = true;
         }
 
         final Set<Integer> nextElementIds = new HashSet<>();
@@ -181,7 +186,7 @@ public final class QuotasUtils {
         }
 
         if (nextElementIds.size() == 0) {
-            return false;
+            result = false;
         }
 
         final Set<ElementModel> nextElements = new HashSet<>();
@@ -210,11 +215,13 @@ public final class QuotasUtils {
 
         for (final int childrenId : nextChildrens) {
             if (!nextElementIds.contains(childrenId)) {
-                return true;
+                result = true;
             }
         }
 
-        return false;
+        LogUtils.endAction("isNextQuestionContainsNotQuotedAnswer");
+
+        return result;
     }
 
     private static ElementModel getParentElement(final int id, final HashMap<Integer, ElementModel> mMap) {
@@ -229,24 +236,26 @@ public final class QuotasUtils {
         return null;
     }
 
-    private static boolean isPreviousQuotasSelected(final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel, final BaseActivity pBaseActivity, final QuotaModel pQuota) {
+    private static boolean isPreviousQuotasSelected(final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel, final QuotaModel pQuota) {
+        boolean result = true;
+
         final int currentRelativeId = pElementModel.getRelativeID();
         for (final int id : pQuota.getArray()) {
             if (currentRelativeId == id) {
-                return true;
+                result = true;
             }
 
             final ElementModel tmpElement = mMap.get(id);
 
             if (tmpElement == null) {
-                return true;
+                result = true;
             }
 
             if (!tmpElement.isFullySelected()) {
-                return false;
+                result = false;
             }
         }
 
-        return true;
+        return result;
     }
 }

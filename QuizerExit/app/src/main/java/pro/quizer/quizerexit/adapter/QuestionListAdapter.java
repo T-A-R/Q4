@@ -6,14 +6,11 @@ import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.InputType;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +21,9 @@ import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.OptionsOpenType;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
+import pro.quizer.quizerexit.model.database.UserModel;
+import pro.quizer.quizerexit.model.quota.QuotaModel;
+import pro.quizer.quizerexit.utils.LogUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 import pro.quizer.quizerexit.view.CustomCheckableButton;
@@ -37,6 +37,8 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
     private final String mDefaultPlaceHolder;
     private Runnable mRefreshRunnable;
     private BaseActivity mBaseActivity;
+    private UserModel mUser;
+    private List<QuotaModel> mQuotas;
     private HashMap<Integer, ElementModel> mMap;
     private ElementModel mCurrentElement;
 
@@ -53,6 +55,8 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
         mIsPolyAnswers = pMaxAnswer == 1 && pMinAnswer == 1;
 
         mBaseActivity = getBaseActivity();
+        mUser = mBaseActivity.getCurrentUser();
+        mQuotas = mUser.getQuotas();
         mMap = getMap();
         mCurrentElement = getCurrentElement();
     }
@@ -107,10 +111,9 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
         @Override
         public void onBind(final ElementModel pAnswer, final int pPosition) {
             final OptionsModel options = pAnswer.getOptions();
-
             final String openType = options.getOpenType();
             final boolean isChecked = pAnswer.isChecked();
-            final boolean isEnabled = pAnswer.isEnabled(mBaseActivity, mMap, pAnswer);
+            final boolean isEnabled = pAnswer.isEnabled(mQuotas, mBaseActivity, mMap, pAnswer);
             final boolean isEditTextEnabled = isChecked && isEnabled;
             final Context context = mEditText.getContext();
 
@@ -191,15 +194,11 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
                         pAnswer.setChecked(true);
 
-                        if (mRefreshRunnable != null) {
-                            mRefreshRunnable.run();
-                        }
+                        refresh();
                     } else if (isChecked && maxAnswers != EMPTY_COUNT_ANSWER && checkedItemsCount >= maxAnswers) {
                         checkBox.setChecked(false);
 
-                        Toast.makeText(context,
-                                String.format(context.getString(R.string.incorrect_max_selected_answers), String.valueOf(maxAnswers)),
-                                Toast.LENGTH_LONG).show();
+                        mBaseActivity.showToast(String.format(context.getString(R.string.incorrect_max_selected_answers), String.valueOf(maxAnswers)));
                     } else if (options.isUnchecker()) {
                         if (isChecked) {
                             setCheckedItemsCount(1);
@@ -212,9 +211,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
                         pAnswer.setChecked(isChecked);
 
-                        if (mRefreshRunnable != null) {
-                            mRefreshRunnable.run();
-                        }
+                        refresh();
                     } else {
                         if (isChecked) {
                             setCheckedItemsCount(checkedItemsCount + 1);
@@ -224,9 +221,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
                         pAnswer.setChecked(isChecked);
 
-                        if (mRefreshRunnable != null) {
-                            mRefreshRunnable.run();
-                        }
+                        refresh();
                     }
                 }
             });
@@ -240,6 +235,12 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                     }
                 }
             });
+        }
+    }
+
+    private void refresh() {
+        if (mRefreshRunnable != null) {
+            mRefreshRunnable.run();
         }
     }
 

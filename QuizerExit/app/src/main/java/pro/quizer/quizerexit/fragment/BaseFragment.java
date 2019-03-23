@@ -47,7 +47,7 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable, 
     private int mUserId = -1;
     private int mProjectId = -1;
 
-    @Nullable
+    @NonNull
     public BaseActivity getBaseActivity() {
         return mBaseActivity;
     }

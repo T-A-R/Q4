@@ -28,13 +28,11 @@ public class SettingViewModelExecutable extends BaseModelExecutable<SettingsView
 
             final UserModel currentUser = activity.getCurrentUser();
             final ConfigModel configModel = currentUser.getConfig();
-            final ProjectInfoModel projectInfoModel = configModel.getProjectInfo();
-            final ReserveChannelModel reserveChannelModel = projectInfoModel.getReserveChannel();
 
             settingsViewModel.setmConfigDate(configModel.getConfigDate());
             settingsViewModel.setmConfigId(currentUser.config_id);
             settingsViewModel.setmAnswerMargin(activity.getAnswerMargin());
-            settingsViewModel.setSmsSection(reserveChannelModel != null);
+            settingsViewModel.setSmsSection(configModel.hasReserveChannels());
 
             return settingsViewModel;
         } else {

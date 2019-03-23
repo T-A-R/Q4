@@ -2,12 +2,13 @@ package pro.quizer.quizerexit.executable.files;
 
 import android.content.Context;
 
+import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.model.database.UserModel;
 
 public class AllAudiosSendingExecutable extends AbstractAllFilesSendingExecutable {
 
-    public AllAudiosSendingExecutable(final Context pContext, final ICallback pCallback) {
+    public AllAudiosSendingExecutable(final BaseActivity pContext, final ICallback pCallback) {
         super(pContext, pCallback);
     }
 

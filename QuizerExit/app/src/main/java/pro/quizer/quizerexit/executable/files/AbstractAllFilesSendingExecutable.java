@@ -8,17 +8,18 @@ import com.activeandroid.query.Select;
 import java.util.List;
 
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.BaseExecutable;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.model.database.UserModel;
 
 public abstract class AbstractAllFilesSendingExecutable extends BaseExecutable {
 
-    private final Context mContext;
+    private final BaseActivity mContext;
     private final ICallback mCallback;
     private List<UserModel> mUsers;
 
-    public AbstractAllFilesSendingExecutable(final Context pContext, final ICallback pCallback) {
+    public AbstractAllFilesSendingExecutable(final BaseActivity pContext, final ICallback pCallback) {
         super(pCallback);
 
         mContext = pContext;
@@ -42,7 +43,7 @@ public abstract class AbstractAllFilesSendingExecutable extends BaseExecutable {
         }
     }
 
-    public Context getContext() {
+    public BaseActivity getContext() {
         return mContext;
     }
 

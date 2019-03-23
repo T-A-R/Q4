@@ -16,6 +16,7 @@ import java.util.Set;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.QuestionnairesCountBySequenceExecutable;
 import pro.quizer.quizerexit.model.config.ElementModel;
+import pro.quizer.quizerexit.utils.LogUtils;
 
 public class QuotaModel implements Serializable, Parcelable {
 

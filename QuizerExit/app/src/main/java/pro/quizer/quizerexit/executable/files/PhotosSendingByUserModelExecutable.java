@@ -15,7 +15,7 @@ import static pro.quizer.quizerexit.utils.OkHttpUtils.IMAGE_JPEG;
 
 public class PhotosSendingByUserModelExecutable extends AbstractFilesSendingByUserModelExecutable {
 
-    public PhotosSendingByUserModelExecutable(final Context pContext, final UserModel pUserModel, final ICallback pCallback) {
+    public PhotosSendingByUserModelExecutable(final BaseActivity pContext, final UserModel pUserModel, final ICallback pCallback) {
         super(pContext, pUserModel, pCallback);
     }
 

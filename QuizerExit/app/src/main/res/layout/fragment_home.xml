@@ -2,79 +2,93 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginRight="16dp"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_quizer" />
-
-        <pro.quizer.quizerexit.view.resizeble.textview.MediumResizableTextView
-            android:id="@+id/config_name"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            tools:text="Экзит пул" />
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="48dp"
+            android:layout_marginRight="16dp"
+            android:orientation="vertical">
 
-        <pro.quizer.quizerexit.view.resizeble.textview.MediumResizableTextView
-            android:id="@+id/config_agreement"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center|top"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            tools:text="Экзит пул agreement..." />
-
-        <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
-            android:id="@+id/current_user"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:visibility="gone"
-            tools:text="Экзит пул agreement..." />
-
-        <RelativeLayout
-            android:layout_gravity="center"
-            android:layout_marginTop="24dp"
-            android:layout_width="156dp"
-            android:layout_height="wrap_content">
-
-            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
-                android:id="@+id/start"
-                style="@style/ButtonStyle"
+            <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/start" />
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_quizer" />
 
-            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
-                android:layout_below="@+id/start"
-                android:id="@+id/quotas"
-                style="@style/ButtonStyle"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"
-                android:text="@string/quotas_title" />
+                android:layout_height="match_parent"
+                android:layout_marginTop="48dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-        </RelativeLayout>
+                <pro.quizer.quizerexit.view.resizeble.textview.MediumResizableTextView
+                    android:id="@+id/config_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="Экзит пул" />
 
-    </LinearLayout>
+                <pro.quizer.quizerexit.view.resizeble.textview.MediumResizableTextView
+                    android:id="@+id/config_agreement"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center|top"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    tools:text="Экзит пул agreement..." />
+
+                <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
+                    android:id="@+id/current_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    tools:text="Экзит пул agreement..." />
+
+                <RelativeLayout
+                    android:layout_width="156dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="24dp">
+
+                    <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+                        android:id="@+id/start"
+                        style="@style/ButtonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="@string/start" />
+
+                    <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+                        android:id="@+id/quotas"
+                        style="@style/ButtonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/start"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/quotas_title" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
 
     <include layout="@layout/view_progress" />
 

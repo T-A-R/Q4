@@ -2,7 +2,6 @@
 
     <!--// recording-->
     <string name="text_preparing">Preparing..</string>
-    <string name="text_dots">..</string>
     <string name="text_ready">Ready</string>
     <string name="text_error">Error</string>
     <string name="text_recording">Recording..</string>
@@ -17,14 +16,10 @@
 
     <string name="text_vsl_data_written">Visualization data saved to JSON and XML at </string>
     <string name="text_service_conn_err">Can\'t connect to media service</string>
-    <string name="text_perm_record_required">Permission RECORD_AUDIO required to operate</string>
-    <string name="text_perm_write_required">Permission WRITE_EXTERNAL_STORAGE required to save audio files</string>
-    <string name="text_perm_required">Required permissions not granted</string>
 
     <string name="text_err_player_start">Can\'t start player</string>
     <string name="text_err_recorder_start">Can\'t start recorder</string>
     <string name="text_err_recorder_stop">No valid audio/video data has been received</string>
-    <string name="text_err_no_audio_player">No appropriate audio player installed</string>
     <string name="text_err_vsl_data">Visualization data not saved</string>
 
     <!-- end recording-->
@@ -39,7 +34,6 @@
     <string name="incorrect_server_response">Некорретный ответ сервера.</string>
     <string name="input_login">Введите логин</string>
     <string name="input_password">Введите пароль</string>
-    <string name="incorrect_login_or_password">Неверный логин или пароль.</string>
     <string name="empty_login_or_password">Логин и пароль обязателен.</string>
     <string name="error_max_users">Достигнуто максимальное количество пользователей на устройстве (%1$s)! Обратитесь к менеджеру!</string>
     <string name="short_login">Минимальная длина логина - 3 символа.</string>
@@ -53,9 +47,7 @@
     <string name="next">Вперед</string>
     <string name="ok">ОК</string>
     <string name="settings">Настройки</string>
-    <string name="sync">Синхронизация</string>
     <string name="start">Начать</string>
-    <string name="dot">.</string>
     <string name="internal_app_error">Внутренняя ошибка приложения. Error code: </string>
     <string name="app_version">Версия: %1$s</string>
     <string name="service_title">Сервисное обслуживание</string>
@@ -80,16 +72,11 @@
     <string name="exit_pool_header">Завершить анкету</string>
     <string name="exit_pool_body">Вы уверены, что хотите завершить анкету?</string>
     <string name="permission_error">Все запрашиваемые разрешения обязательны для продолжения работы</string>
-    <string name="success_send_questionnaries">Отправка анкет успешна выполнена</string>
     <string name="error_send_questionnaries">Нет связи с сервером: анкета сохранена в устройстве.</string>
     <string name="empty_list_of_accepted_questionnairies">Пустой список принятых анкет</string>
     <string name="users_not_found_for_send_data">Пользователи не существуют для отправки</string>
     <string name="sended_q_from_this_device_string">Отправлено анкет в рамках проекта с данного устройства: %1$s</string>
-    <string name="sended_a_from_this_device_string">Отправлено аудио в рамках проекта с данного устройства: %1$s</string>
-    <string name="sended_p_from_this_device_string">Отправлено фото в рамках проекта с данного устройства: %1$s</string>
     <string name="sended_q_in_session_string">Отправлено анкет в данном сеансе: %1$s</string>
-    <string name="sended_a_in_session_string">Отправлено аудио в данном сеансе: %1$s</string>
-    <string name="sended_p_in_session_string">Отправлено фото в данном сеансе: %1$s</string>
     <string name="sms">SMS</string>
     <string name="home_title">Главный экран</string>
     <string name="time_interval">%1$s - %2$s</string>
@@ -105,13 +92,10 @@
     <string name="please_send_q">Сначала отправьте анкеты</string>
     <string name="hint_time">Укажите время</string>
     <string name="hint_date">Укажите дату</string>
-    <string name="mask_time">##:##:##</string>
-    <string name="mask_date">####.##.##</string>
     <string name="fill_input">Заполните текстовое поле в выбранных вариантах ответа.</string>
     <string name="downloaded_count_files">Скачано %1$s файл(а)</string>
     <string name="downloading_files_error">Ошибка при загрузке медиа-файлов</string>
     <string name="force_gps_error_string">Работа без GPS координат невозможна в данном режиме работы! Спутники не инициализированы. Выйдите на отрытое пространство и дождитесь инициализации GPS.</string>
-    <string name="success_file_sending">Файлы успешно отправлены</string>
     <string name="sending">Идет отправка...</string>
     <string name="updating">Идет обновление...</string>
     <string name="answer_not_available_table_question">Элемент не доступен для выбора</string>
@@ -134,12 +118,9 @@
     <string name="empty_quotas">Квоты пусты</string>
     <string name="empty_sms">Смс волны пусты</string>
     <string name="show_only_not_completed">Отобразить не выполненные</string>
-    <string name="choose_font_size">Выберите размер шрифта</string>
     <string name="tree_dots">...</string>
     <string name="question_answer_table_label">ВОПРОС&lt;br /&gt;ОТВЕТ</string>
-    <string name="send_all_stages">Отправить все волны</string>
     <string name="retry_stage_sending">Отправить</string>
-    <string name="cannot_sent_sms_because_of_wave_isnt_started">Отправка не возможна, так как волна еще не началась.</string>
     <string name="sms_is_copied">Сообщение скопированно</string>
     <string name="sending_error_no_connection">Отправка не осуществлена по причине отсутствия интернета</string>
     <string name="cancel_sms_sending">Отправка через СМС отменена</string>
@@ -151,4 +132,12 @@
     <string name="turn_on">Включить</string>
     <string name="sms_sending">Отправка смс</string>
     <string name="sms_sending_confirmation">Вы уверены, что хотите отправить волну за период</string>
+    <string name="no_numbers_available">Нет номеров для отправки СМС</string>
+    <string name="sending_sms">Идет отправка СМС</string>
+    <string name="success_delivered_sms">Сообщение успешно доставлено</string>
+    <string name="unsuccess_delivered_sms">Сообщение не доставлено</string>
+    <string name="success_sent_sms">Сообщение успешно отправлено</string>
+    <string name="unsuccess_sent_sms">Сообщение не отправлено</string>
+    <string name="quiz_is_finished">Анкета завершена успешно</string>
+    <string name="sending_file_x_from_y">Идет отправка %1$s из %2$s</string>
 </resources>

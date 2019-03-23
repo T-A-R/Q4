@@ -14,6 +14,7 @@ import java.util.List;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.ElementSubtype;
 import pro.quizer.quizerexit.model.ElementType;
+import pro.quizer.quizerexit.model.quota.QuotaModel;
 import pro.quizer.quizerexit.utils.StringUtils;
 
 import static pro.quizer.quizerexit.model.OptionsOpenType.CHECKBOX;
@@ -61,7 +62,6 @@ public class ElementModel implements Serializable, Parcelable {
             return StudentName1 - StudentName2;
         }
     };
-
 
     public List<ElementModel> getSubElementsByType(@ElementType final String pType) {
         final List<ElementModel> list = new ArrayList<>();
@@ -179,8 +179,8 @@ public class ElementModel implements Serializable, Parcelable {
         isShuffeledIntoBox = pIsShuffeledIntoBox;
     }
 
-    public boolean isEnabled(final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel) {
-        return isEnabled && getOptions().isEnabled(pBaseActivity, mMap, pElementModel);
+    public boolean isEnabled(final List<QuotaModel> quotas, final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel) {
+        return isEnabled && getOptions().isEnabled(quotas, pBaseActivity, mMap, pElementModel);
     }
 
     public void setScreenShowing(boolean screenShowing) {

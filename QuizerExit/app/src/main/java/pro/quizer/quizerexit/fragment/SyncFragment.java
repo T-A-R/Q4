@@ -210,8 +210,6 @@ public class SyncFragment extends BaseFragment implements ICallback {
 //        hideProgressBar();
 //
         if (isAdded()) {
-            showToast(getString(R.string.success_file_sending));
-
             updateData(new SyncInfoExecutable(getContext()).execute());
         }
     }

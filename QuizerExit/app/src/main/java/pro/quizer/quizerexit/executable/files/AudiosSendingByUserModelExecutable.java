@@ -15,7 +15,7 @@ import static pro.quizer.quizerexit.utils.OkHttpUtils.AUDIO_AMR;
 
 public class AudiosSendingByUserModelExecutable extends AbstractFilesSendingByUserModelExecutable {
 
-    public AudiosSendingByUserModelExecutable(final Context pContext, final UserModel pUserModel, final ICallback pCallback) {
+    public AudiosSendingByUserModelExecutable(final BaseActivity pContext, final UserModel pUserModel, final ICallback pCallback) {
         super(pContext, pUserModel, pCallback);
     }
 

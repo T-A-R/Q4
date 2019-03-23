@@ -2,6 +2,7 @@ package pro.quizer.quizerexit.executable.files;
 
 import android.content.Context;
 
+import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.files.AbstractAllFilesSendingExecutable;
 import pro.quizer.quizerexit.executable.files.AbstractFilesSendingByUserModelExecutable;
@@ -10,7 +11,7 @@ import pro.quizer.quizerexit.model.database.UserModel;
 
 public class AllPhotosSendingExecutable extends AbstractAllFilesSendingExecutable {
 
-    public AllPhotosSendingExecutable(final Context pContext, final ICallback pCallback) {
+    public AllPhotosSendingExecutable(final BaseActivity pContext, final ICallback pCallback) {
         super(pContext, pCallback);
     }
 

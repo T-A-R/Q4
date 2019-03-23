@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <!--Функция отправки смс не используется для прохождения обычных опросов (при обычном опросе кнопка смс отсутствует в интерфейсе приложения). Смс отсылаются только в случае проведения Экзит-Пулов для обеспечения оперативной доставки до сервера результатов Экзит-Пула в случае сбоев с Интернетом.-->

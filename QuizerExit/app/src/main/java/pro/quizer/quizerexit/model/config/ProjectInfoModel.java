@@ -77,7 +77,8 @@ public class ProjectInfoModel implements Serializable, Parcelable {
     }
 
     public ReserveChannelModel getReserveChannel() {
-        return reserve_channel;
+        return null;
+//        return reserve_channel;
     }
 
     @Override

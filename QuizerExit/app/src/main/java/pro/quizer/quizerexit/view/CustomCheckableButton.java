@@ -23,10 +23,10 @@ public abstract class CustomCheckableButton extends RelativeLayout implements Se
     private View.OnClickListener mOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            setChecked(!isChecked());
-
-            if (mInternalOnClickListener != null) {
-                mInternalOnClickListener.onClick(CustomCheckableButton.this);
+            if (setChecked(!isChecked(), true)) {
+                if (mInternalOnClickListener != null) {
+                    mInternalOnClickListener.onClick(CustomCheckableButton.this);
+                }
             }
         }
     };
@@ -81,9 +81,19 @@ public abstract class CustomCheckableButton extends RelativeLayout implements Se
         mInternalOnClickListener = onClickListener;
     }
 
+    public abstract boolean isUnselectedWithTap();
+
     public void setChecked(final boolean pIsChecked) {
+        setChecked(pIsChecked, false);
+    }
+
+    public boolean setChecked(final boolean pIsChecked, final boolean pIsTouchAction) {
         if (!mIsEnabled) {
-            return;
+            return false;
+        }
+
+        if (!pIsChecked && pIsTouchAction && !isUnselectedWithTap()) {
+            return false;
         }
 
         mIsChecked = pIsChecked;
@@ -91,6 +101,8 @@ public abstract class CustomCheckableButton extends RelativeLayout implements Se
         setEnabled(true);
 
         mCheckBoxImage.setImageDrawable(pIsChecked ? getCheckedDrawable() : getUnCheckedDrawable());
+
+        return true;
     }
 
     public void setEnabled(final boolean pIsEnabled) {

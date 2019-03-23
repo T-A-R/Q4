@@ -49,7 +49,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private final int mRowHeight;
     private final int mHeaderHeight;
     private final int mHeaderWidth;
-    private Context mContext;
     private List<ElementModel> mLeftSide;
     private List<ElementModel> mTopSide;
     private List<ElementModel> mAnswers;
@@ -64,7 +63,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     public int processNext() throws Exception {
         for (final ElementModel question : mQuestions) {
             if (question != null && question.getCountOfSelectedSubElements() == 0 && question.getOptions().isCanShow(mBaseActivity, mMap, question)) {
-                throw new Exception(mContext.getString(R.string.incorrect_select_min_answers_table));
+                throw new Exception(mBaseActivity.getString(R.string.incorrect_select_min_answers_table));
             }
         }
 
@@ -76,19 +75,18 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             }
         }
 
-        throw new Exception(mContext.getString(R.string.error_counting_next_element));
+        throw new Exception(mBaseActivity.getString(R.string.error_counting_next_element));
     }
 
     public TableQuestionAdapter(final ElementModel pCurrentElement, final Context context, final List<ElementModel> pQuestions, final Runnable pRefreshRunnable) {
         mCurrentElement = pCurrentElement;
         setOnItemClickListener(this);
         mRefreshRunnable = pRefreshRunnable;
-        mContext = context;
         mLayoutInflater = LayoutInflater.from(context);
         final Resources res = context.getResources();
         final OptionsModel optionsModel = pCurrentElement.getOptions();
         mIsFlipColsAndRows = optionsModel.isFlipColsAndRows();
-        mBaseActivity = (BaseActivity) mContext;
+        mBaseActivity = (BaseActivity) context;
         mMap = mBaseActivity.getMap();
 
         mQuestions = pQuestions;
@@ -130,8 +128,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         mHeaderHeight = res.getDimensionPixelSize(R.dimen.column_header_height);
 
         final int widthIndex = mTopSide.size() >= CELL_COUNT ? CELL_COUNT : HALF;
-        mHeaderWidth = UiUtils.getDisplayWidth(mContext) / widthIndex;
-        mColumnWidth = UiUtils.getDisplayWidth(mContext) / widthIndex;
+        mHeaderWidth = UiUtils.getDisplayWidth(mBaseActivity) / widthIndex;
+        mColumnWidth = UiUtils.getDisplayWidth(mBaseActivity) / widthIndex;
     }
 
     @Override
@@ -203,7 +201,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final TableHeaderColumnViewHolder vh = (TableHeaderColumnViewHolder) viewHolder;
         final OptionsModel optionsModel = mTopSide.get(column).getOptions();
 
-        UiUtils.setTextOrHide(vh.mHeaderColumnTextView, optionsModel.getTitle((BaseActivity) mContext));
+        UiUtils.setTextOrHide(vh.mHeaderColumnTextView, optionsModel.getTitle(mBaseActivity));
         UiUtils.setTextOrHide(vh.mHeaderColumnDescriptionTextView, optionsModel.getDescription());
     }
 
@@ -212,7 +210,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final TableHeaderRowViewHolder vh = (TableHeaderRowViewHolder) viewHolder;
         final OptionsModel optionsModel = mLeftSide.get(row).getOptions();
 
-        UiUtils.setTextOrHide(vh.mHeaderRowTextView, optionsModel.getTitle((BaseActivity) mContext));
+        UiUtils.setTextOrHide(vh.mHeaderRowTextView, optionsModel.getTitle(mBaseActivity));
         UiUtils.setTextOrHide(vh.mHeaderRowDescriptionTextView, optionsModel.getDescription());
 
     }
@@ -220,7 +218,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     @Override
     public void onBindLeftTopHeaderViewHolder(@NonNull final ViewHolderImpl viewHolder) {
         final TableHeaderLeftTopViewHolder vh = (TableHeaderLeftTopViewHolder) viewHolder;
-        UiUtils.setTextOrHide(vh.mHeaderLeftTopTextView, mContext.getString(R.string.question_answer_table_label));
+        UiUtils.setTextOrHide(vh.mHeaderLeftTopTextView, mBaseActivity.getString(R.string.question_answer_table_label));
     }
 
     @Override
@@ -301,7 +299,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     // отображаем диалоговое окно для выбора даты
     public void setDate(final EditText pEditText) {
-        new DatePickerDialog(mContext, new DatePickerDialog.OnDateSetListener() {
+        new DatePickerDialog(mBaseActivity, new DatePickerDialog.OnDateSetListener() {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 mCalendar.set(Calendar.YEAR, year);
                 mCalendar.set(Calendar.MONTH, monthOfYear);
@@ -317,7 +315,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     // отображаем диалоговое окно для выбора времени
     public void setTime(final EditText pEditText) {
-        new TimePickerDialog(mContext, new TimePickerDialog.OnTimeSetListener() {
+        new TimePickerDialog(mBaseActivity, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
@@ -346,7 +344,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     @Override
     public void onItemClick(final int row, final int column) {
-        Toast.makeText(mContext, "Строка: " + row + " столбец: " + column, Toast.LENGTH_LONG).show();
         final ElementModel clickedElement = getElement(row, column);
 
         if (clickedElement == null) {
@@ -357,7 +354,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final boolean isPolyanswer = clickedQuestion.getOptions().isPolyanswer();
 
         if (!clickedElement.getOptions().isCanShow(mBaseActivity, mMap, clickedElement)) {
-            Toast.makeText(mContext, R.string.answer_not_available_table_question, Toast.LENGTH_LONG).show();
+            mBaseActivity.showToast(mBaseActivity.getString(R.string.answer_not_available_table_question));
 
             return;
         }
@@ -367,9 +364,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final String openType = options.getOpenType();
 
         if (!OptionsOpenType.CHECKBOX.equals(openType)) {
-            final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mContext);
+            final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mBaseActivity);
             final View mView = layoutInflaterAndroid.inflate(R.layout.dialog_user_input_box, null);
-            final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(mBaseActivity);
             dialog.setView(mView);
 
             final EditText mEditText = mView.findViewById(R.id.answer_edit_text);
@@ -378,10 +375,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             final String textAnswer = clickedElement.getTextAnswer();
 
             mEditText.setVisibility(View.VISIBLE);
-            mEditText.setHint(StringUtils.isEmpty(placeholder) ? mContext.getString(R.string.default_placeholder) : placeholder);
+            mEditText.setHint(StringUtils.isEmpty(placeholder) ? mBaseActivity.getString(R.string.default_placeholder) : placeholder);
             mEditText.setText(textAnswer);
-
-            final Context context = mEditText.getContext();
 
             switch (options.getOpenType()) {
                 case OptionsOpenType.TIME:
@@ -423,9 +418,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                             final String answer = mEditText.getText().toString();
 
                             if (StringUtils.isEmpty(answer)) {
-                                if (mContext instanceof BaseActivity) {
-                                    ((BaseActivity) mContext).showToast(mContext.getString(R.string.fill_input));
-                                }
+                                mBaseActivity.showToast(mBaseActivity.getString(R.string.fill_input));
 
                                 return;
                             }
@@ -486,15 +479,11 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     @Override
     public void onRowHeaderClick(final int row) {
-        Toast.makeText(mContext, "row " + row, Toast.LENGTH_LONG).show();
-
         showAdditionalInfoDialog(mLeftSide.get(row).getOptions());
     }
 
     @Override
     public void onColumnHeaderClick(final int column) {
-        Toast.makeText(mContext, "column " + column, Toast.LENGTH_LONG).show();
-
         showAdditionalInfoDialog(mTopSide.get(column).getOptions());
     }
 
@@ -504,15 +493,15 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     private void showAdditionalInfoDialog(final OptionsModel pOptionsModel) {
-        final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mContext);
+        final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mBaseActivity);
         final View mView = layoutInflaterAndroid.inflate(R.layout.dialog_table_question_additional_info, null);
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(mBaseActivity);
         dialog.setView(mView);
 
         final TextView title = mView.findViewById(R.id.title);
         final TextView description = mView.findViewById(R.id.description);
 
-        UiUtils.setTextOrHide(title, pOptionsModel.getTitle((BaseActivity) mContext));
+        UiUtils.setTextOrHide(title, pOptionsModel.getTitle(mBaseActivity));
         UiUtils.setTextOrHide(description, pOptionsModel.getDescription());
 
         dialog.setCancelable(false)

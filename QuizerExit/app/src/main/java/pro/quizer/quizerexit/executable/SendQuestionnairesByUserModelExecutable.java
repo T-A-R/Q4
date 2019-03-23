@@ -60,7 +60,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable {
 
         if (NetworkUtils.hasConnection()) {
             sendViaInternet();
-        } else if (mUserModel.getConfig().getProjectInfo().getReserveChannel() != null) {
+        } else if (mUserModel.getConfig().hasReserveChannels()) {
             sendViaSms(mBaseActivity.createNewMap(mUserModel.getConfig().getProjectInfo().getElements()), mBaseActivity);
         } else {
             onError(new Exception(mBaseActivity.getString(R.string.sending_error_no_connection)));

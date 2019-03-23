@@ -39,4 +39,9 @@ public class CustomRadioButton extends CustomCheckableButton {
     Drawable getUnCheckedDrawable() {
         return mUnchecked;
     }
+
+    @Override
+    public boolean isUnselectedWithTap() {
+        return false;
+    }
 }

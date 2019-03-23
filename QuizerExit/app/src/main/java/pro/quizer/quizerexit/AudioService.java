@@ -930,7 +930,6 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                                 @Override
                                 public void run() {
                                     Log.d(LOG_TAG, "Visualization result runnable " + isUiMsg());
-                                    Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
                                 }
                             });
                         }
@@ -1009,14 +1008,12 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
             Log.d(LOG_TAG, "SaveVslDataATask.onPostExecute() ");
-            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
         }
 
         @Override
         protected void onCancelled(Integer integer) {
             super.onCancelled(integer);
             Log.d(LOG_TAG, "SaveVslDataATask.onCancelled() " + msg);
-            //Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show(); // not needed
         }
     }
 

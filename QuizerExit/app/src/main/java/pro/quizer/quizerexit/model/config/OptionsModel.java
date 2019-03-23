@@ -7,9 +7,11 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.OptionsOpenType;
+import pro.quizer.quizerexit.model.quota.QuotaModel;
 import pro.quizer.quizerexit.utils.ConditionUtils;
 import pro.quizer.quizerexit.utils.QuotasUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
@@ -172,9 +174,8 @@ public class OptionsModel implements Serializable, Parcelable {
         return text;
     }
 
-    public boolean isEnabled(final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel) {
-        return QuotasUtils.isCanDisplayed(mMap, pElementModel, pBaseActivity);
-
+    public boolean isEnabled(final List<QuotaModel> quotas, final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel) {
+        return QuotasUtils.isCanDisplayed(quotas, mMap, pElementModel, pBaseActivity);
     }
 
     public boolean isCanShow(final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel) {

@@ -22,6 +22,8 @@ import pro.quizer.quizerexit.utils.UiUtils;
 
 public class HomeFragment extends BaseFragment implements ICallback {
 
+    private UserModel mUserModel;
+
     public static Fragment newInstance() {
         final HomeFragment fragment = new HomeFragment();
 
@@ -42,14 +44,12 @@ public class HomeFragment extends BaseFragment implements ICallback {
 
         initView(view);
 
-        final UserModel userModel = getBaseActivity().getUserByUserId(getBaseActivity().getCurrentUserId());
-
-        new SendQuestionnairesByUserModelExecutable(getBaseActivity(), userModel, this, false).execute();
+        new SendQuestionnairesByUserModelExecutable(getBaseActivity(), mUserModel, this, false).execute();
     }
 
     private void initView(final View pView) {
-        final UserModel userModel = getBaseActivity().getUserByUserId(getBaseActivity().getCurrentUserId());
-        final ConfigModel config = userModel.getConfig();
+        mUserModel = getBaseActivity().getUserByUserId(getBaseActivity().getCurrentUserId());
+        final ConfigModel config = mUserModel.getConfig();
         final ProjectInfoModel projectInfo = config.getProjectInfo();
 
         final TextView configAgreement = pView.findViewById(R.id.config_agreement);

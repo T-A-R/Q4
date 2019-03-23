@@ -77,6 +77,10 @@ public class ConfigModel implements Serializable, Parcelable {
         return photo_questionnaire;
     }
 
+    public boolean hasReserveChannels() {
+        return getProjectInfo().getReserveChannel() != null;
+    }
+
     public int getAutonomousLimitCountQuestionnare() {
         return autonomous_limit_count_questionnare;
     }

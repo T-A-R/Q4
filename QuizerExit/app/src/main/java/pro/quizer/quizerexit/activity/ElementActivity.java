@@ -56,6 +56,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.SEND_SMS;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class ElementActivity extends BaseActivity {
@@ -158,12 +159,14 @@ public class ElementActivity extends BaseActivity {
         final int location = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
         final int camera = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
         final int audio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
+        final int sms = ContextCompat.checkSelfPermission(getApplicationContext(), SEND_SMS);
         final int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
         final int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
 
         return (location == PackageManager.PERMISSION_GRANTED || !mConfig.isGps()) &&
                 camera == PackageManager.PERMISSION_GRANTED &&
                 audio == PackageManager.PERMISSION_GRANTED &&
+                (sms == PackageManager.PERMISSION_GRANTED || !mConfig.hasReserveChannels()) &&
                 writeStorage == PackageManager.PERMISSION_GRANTED &&
                 readStorage == PackageManager.PERMISSION_GRANTED;
     }
@@ -174,7 +177,8 @@ public class ElementActivity extends BaseActivity {
                 CAMERA,
                 RECORD_AUDIO,
                 WRITE_EXTERNAL_STORAGE,
-                READ_EXTERNAL_STORAGE
+                READ_EXTERNAL_STORAGE,
+                SEND_SMS
         }, PERMISSION_REQUEST_CODE);
     }
 
@@ -189,8 +193,13 @@ public class ElementActivity extends BaseActivity {
                     final boolean audioAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
                     final boolean writeStorageAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED;
                     final boolean readStorageAccepted = grantResults[4] == PackageManager.PERMISSION_GRANTED;
+                    final boolean sendSms = grantResults[5] == PackageManager.PERMISSION_GRANTED;
 
-                    if ((mConfig.isForceGps() && !locationAccepted) || !cameraAccepted || (mConfig.isAudio() && !audioAccepted) || !writeStorageAccepted || !readStorageAccepted) {
+                    if ((mConfig.isForceGps() && !locationAccepted)
+                            || !cameraAccepted
+                            || (mConfig.isAudio() && !audioAccepted)
+                            || !writeStorageAccepted || !readStorageAccepted
+                            || (mConfig.hasReserveChannels() && !sendSms)) {
                         showToast(getString(R.string.permission_error));
 
                         finish();
@@ -373,6 +382,7 @@ public class ElementActivity extends BaseActivity {
         if (nextElement == null) {
             // it was last element
             saveQuestionnaireToDatabase();
+            showToast(getString(R.string.quiz_is_finished));
 
             finish();
             startMainActivity();

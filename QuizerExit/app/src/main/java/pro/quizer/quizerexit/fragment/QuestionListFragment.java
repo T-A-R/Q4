@@ -63,6 +63,7 @@ public class QuestionListFragment extends AbstractQuestionFragment {
     @Override
     void updateAdapter() {
         mAdapter.setIsUpdateActionPerformed(true);
+//        mAdapter.notifyDataSetChanged();
         mRecyclerView.setAdapter(mAdapter);
         UiUtils.hideKeyboard(getContext(), getView());
     }

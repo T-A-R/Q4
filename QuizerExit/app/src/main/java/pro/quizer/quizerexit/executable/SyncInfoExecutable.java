@@ -36,7 +36,6 @@ public class SyncInfoExecutable extends BaseModelExecutable<SyncViewModel> {
             final int pUserProjectId = userModel.user_project_id;
             final ConfigModel configModel = userModel.getConfig();
             final ProjectInfoModel projectInfoModel = configModel.getProjectInfo();
-            final ReserveChannelModel reserveChannelModel = projectInfoModel.getReserveChannel();
 
             final List<QuestionnaireDatabaseModel> notSentQDM = new Select()
                     .from(QuestionnaireDatabaseModel.class)
@@ -56,7 +55,7 @@ public class SyncInfoExecutable extends BaseModelExecutable<SyncViewModel> {
             syncViewModel.setNotSentQuestionnaireModels(notSentQDM);
             syncViewModel.setNotSendedPhoto(activity.getPhotosByUserId(pUserId));
             syncViewModel.setNotSendedAudio(activity.getAudioByUserId(pUserId));
-            syncViewModel.setHasReserveChannel(reserveChannelModel != null);
+            syncViewModel.setHasReserveChannel(configModel.hasReserveChannels());
 
             return syncViewModel;
         } else {

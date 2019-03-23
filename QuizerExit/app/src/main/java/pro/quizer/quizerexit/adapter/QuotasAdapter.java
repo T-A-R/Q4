@@ -15,6 +15,8 @@ import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.quota.QuotaModel;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
 public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewHolder> {
 
     private List<QuotaModel> mQuotasList;
@@ -74,11 +76,16 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
 
         holder.mCount.setText(count);
 
+        final ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
+
         if (!quotaModel.isCanDisplayed()) {
-            final ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
             layoutParams.height = 0;
             holder.itemView.setLayoutParams(layoutParams);
             holder.itemView.setVisibility(View.GONE);
+        } else {
+            layoutParams.height = WRAP_CONTENT;
+            holder.itemView.setLayoutParams(layoutParams);
+            holder.itemView.setVisibility(View.VISIBLE);
         }
     }
 

@@ -9,7 +9,7 @@
     <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/default_placeholder"
+        android:text="@string/TEXT_HINT_DEFAULT_PLACEHOLDER"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <pro.quizer.quizerexit.view.resizeble.edittext.ResizableEditText

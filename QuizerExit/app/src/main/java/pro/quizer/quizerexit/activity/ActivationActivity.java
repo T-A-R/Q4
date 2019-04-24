@@ -46,7 +46,7 @@ public class ActivationActivity extends BaseActivity {
                 final String key = mActivationEditText.getText().toString();
 
                 if (StringUtils.isEmpty(key)) {
-                    showToast(getString(R.string.empty_activation_key));
+                    showToast(getString(R.string.NOTIFICATION_EMPTY_ACTIVATION_KEY));
 
                     hideProgressBar();
 
@@ -63,7 +63,7 @@ public class ActivationActivity extends BaseActivity {
                             @Override
                             public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
                                 hideProgressBar();
-                                showToast(getString(R.string.internet_error_please_try_again));
+                                showToast(getString(R.string.NOTIFICATION_INTERNET_CONNECTION_ERROR));
                             }
 
                             @Override
@@ -73,7 +73,7 @@ public class ActivationActivity extends BaseActivity {
                                 final ResponseBody responseBody = response.body();
 
                                 if (responseBody == null) {
-                                    showToast(getString(R.string.incorrect_server_response));
+                                    showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR));
 
                                     return;
                                 }
@@ -95,7 +95,7 @@ public class ActivationActivity extends BaseActivity {
                                         showToast(activationModel.getError());
                                     }
                                 } else {
-                                    showToast(getString(R.string.server_error));
+                                    showToast(getString(R.string.NOTIFICATION_SERVER_ERROR));
                                 }
                             }
                         });

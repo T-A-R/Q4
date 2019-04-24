@@ -5,7 +5,6 @@ import android.view.View;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.executable.ICallback;
-import pro.quizer.quizerexit.view.AppDrawer;
 import pro.quizer.quizerexit.view.Toolbar;
 
 public class MainActivity extends BaseActivity implements ICallback {
@@ -27,8 +26,19 @@ public class MainActivity extends BaseActivity implements ICallback {
             }
         });
 
-        showHomeFragment(false);
-        mToolbar.setTitle(getString(R.string.home_title));
+        boolean isAfterAuth = false;
+        final Bundle bundle = getIntent().getExtras();
+
+        if (bundle != null) {
+            isAfterAuth = bundle.getBoolean(IS_AFTER_AUTH);
+
+            if (isAfterAuth) {
+                bundle.putBoolean(IS_AFTER_AUTH, false);
+            }
+        }
+
+        showHomeFragment(false, isAfterAuth);
+        mToolbar.setTitle(getString(R.string.VIEW_HOME_TITLE));
     }
 
     @Override

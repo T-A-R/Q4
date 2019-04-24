@@ -75,6 +75,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
-        android:text="@string/retry_stage_sending" />
+        android:text="@string/VIEW_BUTTON_SEND" />
 
 </LinearLayout>

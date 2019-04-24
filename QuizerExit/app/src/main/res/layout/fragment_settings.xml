@@ -20,7 +20,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:gravity="center_horizontal"
-                android:text="@string/config_title"
+                android:text="@string/VIEW_CONFIG_TITLE"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -32,14 +32,14 @@
                 android:layout_marginBottom="4dp"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                tools:text="@string/settings_id_string" />
+                tools:text="@string/VIEW_ID" />
 
             <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
                 android:id="@+id/settings_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:text="@string/settings_date_string"
+                android:text="@string/VIEW_DATE"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
@@ -51,7 +51,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:gravity="center_horizontal"
-                android:text="@string/settings_display_title"
+                android:text="@string/VIEW_SETTINGS_DISPLAY_TITLE"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -60,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="@string/font_size_in_q_string"
+                android:text="@string/VIEW_SETTINGS_FONT_SIZE"
                 android:textColor="@android:color/black" />
 
             <FrameLayout
@@ -82,7 +82,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="@string/space_between_answers_string"
+                android:text="@string/VIEW_SETTINGS_SPACING"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
@@ -114,7 +114,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp"
                     android:gravity="center_horizontal"
-                    android:text="@string/select_number_for_exit_pull"
+                    android:text="@string/VIEW_SETTINGS_EXIT_POLL_TITLE"
                     android:textColor="@android:color/black"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -144,7 +144,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
-                android:text="@string/delete_user" />
+                android:text="@string/VIEW_DELETE_USER" />
 
         </LinearLayout>
 

@@ -11,7 +11,6 @@ import pro.quizer.quizerexit.IAdapter;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.config.ElementModel;
-import pro.quizer.quizerexit.utils.DateUtils;
 
 public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<T> implements IAdapter {
 
@@ -124,7 +123,7 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
             final ElementModel itemModel = mAnswers.get(i);
 
             if (itemModel != null && itemModel.isCheckedAndTextIsEmptyForSpecialOpenTypes()) {
-                throw new Exception(mContext.getString(R.string.fill_input));
+                throw new Exception(mContext.getString(R.string.NOTIFICATION_FILL_INPUT));
             }
 
             if (itemModel != null && itemModel.isFullySelected()) {
@@ -142,7 +141,7 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
 
         if (size < mMinAnswer) {
             if (!(size == 1 && selectedList.get(0).getOptions().isUnchecker())) {
-                throw new Exception(String.format(mContext.getString(R.string.incorrect_select_min_answers), String.valueOf(mMinAnswer)));
+                throw new Exception(String.format(mContext.getString(R.string.NOTIFICATION_MIN_ANSWERS), String.valueOf(mMinAnswer)));
             }
         }
 
@@ -154,6 +153,6 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
             }
         }
 
-        throw new Exception(mContext.getString(R.string.error_counting_next_element));
+        throw new Exception(mContext.getString(R.string.NOTIFICATION_NEXT_ELEMENT_CALCULATION_ERROR));
     }
 }

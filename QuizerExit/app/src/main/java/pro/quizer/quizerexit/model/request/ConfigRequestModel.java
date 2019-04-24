@@ -17,6 +17,7 @@ public class ConfigRequestModel implements Serializable, Parcelable {
     private final String passw;
     private final String config_id;
     private final long device_time;
+    private final String app_version;
     private final String device_info;
 
     public ConfigRequestModel(final String pLogin_admin, final String pLogin, final String pPassw, final String pConfig_id) {
@@ -27,6 +28,7 @@ public class ConfigRequestModel implements Serializable, Parcelable {
         config_id = pConfig_id;
         device_time = DateUtils.getCurrentTimeMillis();
         device_info = DeviceUtils.getDeviceInfo();
+        this.app_version = DeviceUtils.getAppVersion();
     }
 
     @Override

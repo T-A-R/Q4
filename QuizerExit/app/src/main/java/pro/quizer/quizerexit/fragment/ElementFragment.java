@@ -153,7 +153,7 @@ public class ElementFragment extends BaseFragment {
 
             initView();
         } else {
-            showToast(getString(R.string.internal_app_error) + "1001");
+            showToast(getString(R.string.NOTIFICATION_INTERNAL_APP_ERROR) + "1001");
         }
     }
 

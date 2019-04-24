@@ -92,7 +92,7 @@ public class AppDrawer extends RelativeLayout implements Serializable, Parcelabl
             public void onClick(View view) {
                 mInternalClickListenerForToolbar.onClick(view);
                 baseActivity.closeDrawer();
-                baseActivity.showHomeFragment(true);
+                baseActivity.showHomeFragment(true, false);
             }
         });
 

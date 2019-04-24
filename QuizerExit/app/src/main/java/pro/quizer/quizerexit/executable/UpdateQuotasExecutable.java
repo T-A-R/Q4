@@ -62,7 +62,7 @@ public class UpdateQuotasExecutable extends BaseExecutable {
                         final ResponseBody responseBody = response.body();
 
                         if (responseBody == null) {
-                            onFailure(call, new IOException(mContext.getString(R.string.incorrect_server_response)));
+                            onFailure(call, new IOException(mContext.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR)));
 
                             return;
                         }
@@ -90,7 +90,7 @@ public class UpdateQuotasExecutable extends BaseExecutable {
                                 onFailure(call, new IOException(quotaResponseModel.getError()));
                             }
                         } else {
-                            onFailure(call, new IOException(mContext.getString(R.string.server_error)));
+                            onFailure(call, new IOException(mContext.getString(R.string.NOTIFICATION_SERVER_ERROR)));
                         }
                     }
                 });

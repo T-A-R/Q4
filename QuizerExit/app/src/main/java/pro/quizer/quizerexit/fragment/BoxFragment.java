@@ -94,7 +94,7 @@ public class BoxFragment extends AbstractContentElementFragment {
             initHeader(view);
             initView();
         } else {
-            showToast(getString(R.string.internal_app_error) + "1001");
+            showToast(getString(R.string.NOTIFICATION_INTERNAL_APP_ERROR) + "1001");
         }
     }
 
@@ -116,6 +116,11 @@ public class BoxFragment extends AbstractContentElementFragment {
     @Override
     protected OptionsModel getOptions() {
         return mAttributes;
+    }
+
+    @Override
+    protected ElementModel getElementModel() {
+        return mCurrentElement;
     }
 
     private void initView() {

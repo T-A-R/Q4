@@ -12,6 +12,7 @@ import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.executable.DeleteUsersExecutable;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.UploadingExecutable;
+import pro.quizer.quizerexit.executable.UploadingFTPExecutable;
 import pro.quizer.quizerexit.executable.files.AllAudiosSendingExecutable;
 import pro.quizer.quizerexit.executable.files.AllPhotosSendingExecutable;
 import pro.quizer.quizerexit.executable.SendAllQuestionnairesExecutable;
@@ -30,6 +31,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
     private Button mSendPhotoButton;
     private Button mDeleteUsersButton;
     private Button mUploadDataButton;
+    private Button mUploadFTPDataButton;
 
     private TextView mUsersCount;
     private String mUsersCountString;
@@ -59,13 +61,14 @@ public class ServiceActivity extends BaseActivity implements ICallback {
         mSendPhotoButton = findViewById(R.id.send_photo);
         mDeleteUsersButton = findViewById(R.id.delete_users);
         mUploadDataButton = findViewById(R.id.upload_data);
+        mUploadFTPDataButton = findViewById(R.id.upload_ftp_data);
 
         mUsersCount = findViewById(R.id.users_count);
         mUnsendedQuestionaires = findViewById(R.id.unsended_questionnaires_count);
         mUnsendedAudio = findViewById(R.id.unsended_audio_files_count);
         mUnsendePhoto = findViewById(R.id.unsended_photo_files_count);
         mToolbar = findViewById(R.id.toolbar);
-        mToolbar.setTitle(getString(R.string.service_title));
+        mToolbar.setTitle(getString(R.string.VIEW_SERVICE_TITLE));
         mToolbar.showCloseView(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -75,10 +78,10 @@ public class ServiceActivity extends BaseActivity implements ICallback {
     }
 
     private void initStrings() {
-        mUsersCountString = getString(R.string.count_users_on_this_device);
-        mUnsendedQuestionairesString = getString(R.string.count_unsended_questionnaires);
-        mUnsendedAudioString = getString(R.string.count_unsended_audio_files);
-        mUnsendedPhotoString = getString(R.string.count_unsended_photo_files);
+        mUsersCountString = getString(R.string.VIEW_USERS_COUNT_ON_DEVICE);
+        mUnsendedQuestionairesString = getString(R.string.VIEW_UNSENT_COUNT_QUIZ);
+        mUnsendedAudioString = getString(R.string.VIEW_UNSENT_COUNT_AUDIO);
+        mUnsendedPhotoString = getString(R.string.VIEW_UNSENT_COUNT_PHOTO);
     }
 
     private void updateData(final ServiceViewModel pServiceViewModel) {
@@ -127,7 +130,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
             @Override
             public void onClick(final View view) {
                 if (notSentQuestionnairesCount > 0) {
-                    showToast(getString(R.string.please_send_q));
+                    showToast(getString(R.string.NOTIFICATION_PLEASE_SEND_QUIZ));
 
                     return;
                 }
@@ -140,7 +143,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
             @Override
             public void onClick(final View view) {
                 if (notSentQuestionnairesCount > 0) {
-                    showToast(getString(R.string.please_send_q));
+                    showToast(getString(R.string.NOTIFICATION_PLEASE_SEND_QUIZ));
 
                     return;
                 }
@@ -162,13 +165,20 @@ public class ServiceActivity extends BaseActivity implements ICallback {
                 new UploadingExecutable(ServiceActivity.this, ServiceActivity.this).execute();
             }
         });
+
+        mUploadFTPDataButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                new UploadingFTPExecutable(ServiceActivity.this, ServiceActivity.this).execute();
+            }
+        });
     }
 
     @Override
     public void onStarting() {
 //        showProgressBar();
         if (!isFinishing()) {
-            showToast(getString(R.string.sending));
+            showToast(getString(R.string.NOTIFICATION_SENDING));
         }
     }
 

@@ -19,6 +19,7 @@ public final class FileUtils {
     private static final String PHOTO_NAME_JPEG_TEMPLATE = "%1$s" + FILE_NAME_DIVIDER + "%2$s" + FILE_NAME_DIVIDER + "%3$s" + FILE_NAME_DIVIDER + "%4$s" + FILE_NAME_DIVIDER + "%5$s.jpeg";
     private static final String AUDIO_NAME_AMR_TEMPLATE = "%1$s/%2$s" + FILE_NAME_DIVIDER + "%3$s" + FILE_NAME_DIVIDER + "%4$s" + FILE_NAME_DIVIDER + "%5$s" + FILE_NAME_DIVIDER + "%6$s.amr";
 
+    public static final String JSON = ".json";
     public static final String AMR = ".amr";
     public static final String JPEG = ".jpeg";
 
@@ -125,6 +126,10 @@ public final class FileUtils {
 
         return pFile.renameTo(newFile);
     }
+
+//    public static boolean removeFile(final Context pContext, final File pOldFile, final int pUserId, final String pNewNameName) {
+//
+//    }
 
     public static boolean renameFile(final Context pContext, final File pOldFile, final int pUserId, final String pNewNameName) {
         final String pCurrentFilePath = getPhotosStoragePath(pContext) + FOLDER_DIVIDER + pUserId + FOLDER_DIVIDER;

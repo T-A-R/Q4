@@ -23,7 +23,7 @@
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:visibility="gone"
-                tools:text="@string/count_unsended_audio_files"
+                tools:text="@string/VIEW_UNSENT_COUNT_AUDIO"
                 tools:visibility="visible" />
 
             <ImageView
@@ -47,6 +47,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_gravity="center_horizontal"
-        android:text="@string/end" />
+        android:text="@string/VIEW_FINISH_QUIZ" />
 
 </RelativeLayout>

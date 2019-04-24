@@ -25,9 +25,9 @@ import static pro.quizer.quizerexit.utils.FileUtils.moveFile;
 
 public class UploadingExecutable extends BaseExecutable {
 
-    private final String UPLOADING_QUESTIONNAIRE_FILE_NAME = "data_%1$s_%2$s.json";
-    private final String UPLOADING_FOLDER_NAME = "data_quizer";
-    private final String UPLOADING_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + FOLDER_DIVIDER + UPLOADING_FOLDER_NAME + FOLDER_DIVIDER;
+    private final String UPLOADING_QUESTIONNAIRE_FILE_NAME = "data_%1$s_%2$s" + FileUtils.JSON;
+    public static final String UPLOADING_FOLDER_NAME = "data_quizer";
+    public static final String UPLOADING_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + FOLDER_DIVIDER + UPLOADING_FOLDER_NAME + FOLDER_DIVIDER;
 
     private final Context mContext;
 
@@ -53,7 +53,7 @@ public class UploadingExecutable extends BaseExecutable {
         final List<UserModel> users = new Select().from(UserModel.class).execute();
 
         if (users == null || users.isEmpty()) {
-            onError(new Exception(mContext.getString(R.string.users_not_found_for_send_data)));
+            onError(new Exception(mContext.getString(R.string.NOTIFICATION_SENDING_ERROR_EMPTY_USERS_LIST)));
 
             return;
         }

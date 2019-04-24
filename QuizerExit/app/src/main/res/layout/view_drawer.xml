@@ -14,7 +14,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
-        android:text="@string/home_title" />
+        android:text="@string/VIEW_HOME_TITLE" />
 
     <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
         android:id="@+id/sync_btn"
@@ -25,7 +25,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
-        android:text="@string/sync_title" />
+        android:text="@string/VIEW_SYNC_TITLE" />
 
     <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
         android:id="@+id/settings_btn"
@@ -36,7 +36,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
-        android:text="@string/settings" />
+        android:text="@string/VIEW_SETTINGS" />
 
     <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
         android:id="@+id/quotas_btn"
@@ -47,7 +47,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
-        android:text="@string/quotas_title" />
+        android:text="@string/VIEW_QUOTAS_TITLE" />
 
 
     <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
@@ -59,7 +59,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
-        android:text="@string/change_user" />
+        android:text="@string/VIEW_EXIT" />
 
 
 </LinearLayout>

@@ -140,7 +140,7 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
 
                 final String number = String.valueOf(position + 1);
                 final String listSize = String.valueOf(mNotSendFiles.size());
-                final String header = String.format(mBaseActivity.getString(R.string.sending_file_x_from_y), number, listSize);
+                final String header = String.format(mBaseActivity.getString(R.string.DIALOG_SENDING_FILE_X_FROM_Y), number, listSize);
                 final String message = getFileNameByPosition(position);
 
                 mAlertDialog.setTitle(header);
@@ -178,7 +178,7 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
 
                         if (responseBody == null) {
                             pSendingFileCallback.onError(position);
-                            onError(new Exception(mBaseActivity.getString(R.string.incorrect_server_response)));
+                            onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR)));
 
                             return;
                         }
@@ -198,7 +198,7 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
 
                                 if (tokensToRemove == null || tokensToRemove.isEmpty()) {
                                     pSendingFileCallback.onError(position);
-                                    onError(new Exception(mBaseActivity.getString(R.string.empty_list_of_accepted_questionnairies)));
+                                    onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SENDING_ERROR_EMPTY_TOKENS_LIST)));
                                 } else {
                                     for (final String token : tokensToRemove) {
                                         final String path = FileUtils.getFullPathByFileName(file, token);
@@ -219,7 +219,7 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
                             }
                         } else {
                             pSendingFileCallback.onError(position);
-                            onError(new Exception(mBaseActivity.getString(R.string.server_error)));
+                            onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_ERROR)));
                         }
                     }
                 });

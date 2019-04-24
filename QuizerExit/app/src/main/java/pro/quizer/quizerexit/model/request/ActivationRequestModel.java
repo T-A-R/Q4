@@ -14,6 +14,7 @@ public class ActivationRequestModel implements Serializable, Parcelable {
     private final String name_form;
     private final String key;
     private final long device_time;
+    private final String app_version;
     private final String device_info;
 
     public ActivationRequestModel(final String pKey) {
@@ -21,6 +22,7 @@ public class ActivationRequestModel implements Serializable, Parcelable {
         key = pKey;
         device_time = DateUtils.getCurrentTimeMillis();
         device_info = DeviceUtils.getDeviceInfo();
+        app_version = DeviceUtils.getAppVersion();
     }
 
     @Override

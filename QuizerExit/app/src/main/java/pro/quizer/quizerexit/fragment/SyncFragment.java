@@ -118,15 +118,15 @@ public class SyncFragment extends BaseFragment implements ICallback {
     }
 
     private void initStrings() {
-        mQSendedFromThisDeviceViewString = getString(R.string.sended_q_from_this_device_string);
-        mQSendedInSessionViewString = getString(R.string.sended_q_in_session_string);
-        mQUnsendedViewString = getString(R.string.count_unsended_questionnaires);
+        mQSendedFromThisDeviceViewString = getString(R.string.VIEW_SENT_COUNT_QUIZ_FROM_THIS_DEVICE);
+        mQSendedInSessionViewString = getString(R.string.VIEW_SENT_COUNT_QUIZ_THIS_SESSION);
+        mQUnsendedViewString = getString(R.string.VIEW_UNSENT_COUNT_QUIZ);
 //        mASendedFromThisDeviceViewString = getString(R.string.sended_a_from_this_device_string);
 //        mASendedInSessionViewString = getString(R.string.sended_a_in_session_string);
-        mAUnsendedViewString = getString(R.string.count_unsended_audio_files);
+        mAUnsendedViewString = getString(R.string.VIEW_UNSENT_COUNT_AUDIO);
 //        mPSendedFromThisDeviceViewString = getString(R.string.sended_p_from_this_device_string);
 //        mPSendedInSessionViewString = getString(R.string.sended_p_in_session_string);
-        mPUnsendedViewString = getString(R.string.count_unsended_photo_files);
+        mPUnsendedViewString = getString(R.string.VIEW_UNSENT_COUNT_PHOTO);
     }
 
     private void updateData(final SyncViewModel pSyncViewModel) {
@@ -171,7 +171,7 @@ public class SyncFragment extends BaseFragment implements ICallback {
                     @Override
                     public void onClick(final View view) {
                         if (mQUnsendedCount > 0) {
-                            showToast(getString(R.string.please_send_q));
+                            showToast(getString(R.string.NOTIFICATION_PLEASE_SEND_QUIZ));
 
                             return;
                         }
@@ -186,7 +186,7 @@ public class SyncFragment extends BaseFragment implements ICallback {
                     @Override
                     public void onClick(final View view) {
                         if (mQUnsendedCount > 0) {
-                            showToast(getString(R.string.please_send_q));
+                            showToast(getString(R.string.NOTIFICATION_PLEASE_SEND_QUIZ));
 
                             return;
                         }
@@ -200,7 +200,7 @@ public class SyncFragment extends BaseFragment implements ICallback {
     @Override
     public void onStarting() {
         if (isAdded()) {
-            showToast(getString(R.string.sending));
+            showToast(getString(R.string.NOTIFICATION_SENDING));
         }
 //        showProgressBar();
     }

@@ -63,7 +63,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable {
         } else if (mUserModel.getConfig().hasReserveChannels()) {
             sendViaSms(mBaseActivity.createNewMap(mUserModel.getConfig().getProjectInfo().getElements()), mBaseActivity);
         } else {
-            onError(new Exception(mBaseActivity.getString(R.string.sending_error_no_connection)));
+            onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SENDING_ERROR_NO_CONNECTION)));
         }
     }
 
@@ -75,18 +75,18 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable {
             if (mIsShowAlertDialog) {
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(mBaseActivity);
                 alertDialog.setCancelable(false);
-                alertDialog.setTitle(R.string.sending_waves_via_sms);
-                alertDialog.setMessage(pBaseActivity.getString(R.string.sending_waves_via_sms_confirmation) + mUserModel.login + " через СМС?");
-                alertDialog.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
+                alertDialog.setTitle(R.string.DIALOG_SENDING_WAVES_VIA_SMS);
+                alertDialog.setMessage(pBaseActivity.getString(R.string.DIALOG_SENDING_WAVES_VIA_SMS_CONFIRMATION) + mUserModel.login + " через СМС?");
+                alertDialog.setPositiveButton(R.string.VIEW_BUTTON_SEND, new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
                         SmsUtils.sendSms(mBaseActivity, getCallback(), readyToSendStages);
                     }
                 });
-                alertDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                alertDialog.setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
-                        onError(new Exception(pBaseActivity.getString(R.string.cancel_sms_sending)));
+                        onError(new Exception(pBaseActivity.getString(R.string.NOTIFICATION_CANCEL_SMS_SENDING)));
                     }
                 });
 
@@ -125,7 +125,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable {
                         final ResponseBody responseBody = response.body();
 
                         if (responseBody == null) {
-                            onError(new Exception(mBaseActivity.getString(R.string.incorrect_server_response)));
+                            onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR)));
 
                             return;
                         }
@@ -146,7 +146,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable {
                                 final List<String> tokensToRemove = deletingListResponseModel.getAccepted();
 
                                 if (tokensToRemove == null || tokensToRemove.isEmpty()) {
-                                    onError(new Exception(mBaseActivity.getString(R.string.empty_list_of_accepted_questionnairies)));
+                                    onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SENDING_ERROR_EMPTY_TOKENS_LIST)));
                                 } else {
                                     SPUtils.addSendedQInSession(mBaseActivity, tokensToRemove.size());
 
@@ -163,7 +163,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable {
                                 onError(new Exception(deletingListResponseModel.getError()));
                             }
                         } else {
-                            onError(new Exception(mBaseActivity.getString(R.string.server_error)));
+                            onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_ERROR)));
                         }
                     }
                 });

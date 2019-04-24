@@ -38,7 +38,6 @@ import android.text.TextUtils;
 import android.util.JsonWriter;
 import android.util.Log;
 import android.util.Xml;
-import android.widget.Toast;
 
 import org.xmlpull.v1.XmlSerializer;
 
@@ -666,7 +665,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                         new MediaBrowserCompat.MediaItem(new MediaDescriptionCompat.Builder()
                                 .setMediaId(SOURCE_AUDIO)
                                 .setTitle(getString(R.string.app_name))
-                                .setSubtitle(getString(R.string.text_playing))
+                                .setSubtitle(getString(R.string.RECORD_AUDIO_PLAYING))
                                 .setDescription(file.getAbsolutePath())
                                 .setIconBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_mic))
                                 //.setMediaUri(Uri.fromFile(file)) // wrong pattern
@@ -791,12 +790,12 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
 
         if (!SOURCE_MIC.equals(description.getMediaId()) || isPauseRecordingSupported()) {
             notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_PAUSE,
-                    getString(R.string.text_pause),
+                    getString(R.string.RECORD_AUDIO_PAUSE),
                     MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
                             PlaybackStateCompat.ACTION_PAUSE)));
         }
         notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_STOP,
-                getString(R.string.text_stop),
+                getString(R.string.RECORD_AUDIO_STOP),
                 MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
                         PlaybackStateCompat.ACTION_STOP)));
         startForeground(SERVICE_ID, notifBuilder.build());
@@ -810,22 +809,22 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
             Log.w(LOG_TAG, "Exception @ pauseSession : can't unregister receiver ", iae);
         }
         if (notifBuilder != null) {
-            notifBuilder.setContentText(getString(R.string.text_paused));
+            notifBuilder.setContentText(getString(R.string.RECORD_AUDIO_PAUSED));
             notifBuilder.mActions.clear();
             String mediaId = mediaSes.getController().getMetadata().getDescription().getMediaId();
             if (SOURCE_AUDIO.equals(mediaId)) {
                 notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_PLAY,
-                        getString(R.string.text_play),
+                        getString(R.string.RECORD_AUDIO_PLAY),
                         MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
                                 PlaybackStateCompat.ACTION_PLAY)));
             } else if (SOURCE_MIC.equals(mediaId)) {
                 notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_RECORD,
-                        getString(R.string.text_record),
+                        getString(R.string.RECORD_AUDIO_RECORD),
                         MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
                                 PlaybackStateCompat.ACTION_PLAY)));
             }
             notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_STOP,
-                    getString(R.string.text_stop),
+                    getString(R.string.RECORD_AUDIO_STOP),
                     MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
                             PlaybackStateCompat.ACTION_STOP)));
 
@@ -989,16 +988,16 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                         return 1;
                     }
                     final String filesPath = "" + getExternalFilesDir(null);
-                    msg.append(getString(R.string.text_vsl_data_written)).append(filesPath);
+                    msg.append(getString(R.string.RECORD_AUDIO_VSL_DATA_WRITTEN)).append(filesPath);
                     Log.i(LOG_TAG, "Visualization data written to JSON and XML : "
                             + filesPath);
                 } else {
                     Log.w(LOG_TAG, "visualization data isn't ready to write ");
-                    msg.append(getString(R.string.text_err_vsl_data));
+                    msg.append(getString(R.string.RECORD_AUDIO_ERROR_VSL_DATA));
                 }
             } catch (IllegalStateException | IllegalArgumentException | IOException e) {
                 Log.e(LOG_TAG, "writing virtualization data exception ", e);
-                msg.append(getString(R.string.text_err_vsl_data));
+                msg.append(getString(R.string.RECORD_AUDIO_ERROR_VSL_DATA));
                 return 2;
             }
             return 0;
@@ -1154,7 +1153,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
             setMetaAndPBState(metadataBuilder
                             .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, SOURCE_AUDIO)
                             .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, getString(R.string.app_name))
-                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, getString(R.string.text_playing))
+                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, getString(R.string.RECORD_AUDIO_PLAYING))
                             .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, metaDescr)
                             .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON,
                                     BitmapFactory.decodeResource(getResources(), R.drawable.ic_mic))
@@ -1214,7 +1213,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                             Log.e(LOG_TAG, "MediaPlayer.OnErrorListener : " + what + "; " + extra);
                             setPBState(PlaybackStateCompat.STATE_ERROR,
                                     PlaybackStateCompat.ERROR_CODE_UNKNOWN_ERROR,
-                                    getString(R.string.text_err_player_start), null);
+                                    getString(R.string.RECORD_AUDIO_ERROR_PLAYER_START), null);
                             mp.reset(); // should be initialized then
                             mp.release();
                             actionSetReady();
@@ -1239,7 +1238,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                 actionStopPlaying();
                 setPBState(PlaybackStateCompat.STATE_ERROR,
                         PlaybackStateCompat.ERROR_CODE_UNKNOWN_ERROR,
-                        getString(R.string.text_err_player_start), null);
+                        getString(R.string.RECORD_AUDIO_ERROR_PLAYER_START), null);
             }
         }
     }
@@ -1289,7 +1288,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
         setMetaAndPBState(metadataBuilder
                         .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, SOURCE_MIC)
                         .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, getString(R.string.app_name))
-                        .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, getString(R.string.text_recording))
+                        .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, getString(R.string.RECORD_AUDIO_RECORDING))
                         .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, recFilePath)
                         .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON,
                                 BitmapFactory.decodeResource(getResources(), R.drawable.ic_mic))
@@ -1340,7 +1339,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
             actionStopRecording();
             setPBState(PlaybackStateCompat.STATE_ERROR,
                     PlaybackStateCompat.ERROR_CODE_UNKNOWN_ERROR,
-                    getString(R.string.text_err_recorder_start), null);
+                    getString(R.string.RECORD_AUDIO_ERROR_RECORDER_START), null);
         }
     }
 
@@ -1379,7 +1378,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                             "(could be no valid audio/video data has been received) ", stopFailed);
                     setPBState(PlaybackStateCompat.STATE_ERROR,
                             PlaybackStateCompat.ERROR_CODE_NOT_SUPPORTED,
-                            getString(R.string.text_err_recorder_stop), null);
+                            getString(R.string.RECORD_AUDIO_ERROR_RECORDER_STOP), null);
                     if (recFilePath != null) {
                         File file = new File(recFilePath);
                         if (file.exists()) {

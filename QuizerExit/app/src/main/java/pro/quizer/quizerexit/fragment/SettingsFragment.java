@@ -209,9 +209,9 @@ public class SettingsFragment extends BaseFragment implements ICallback {
     }
 
     private void initStrings() {
-        mAnswerMarginString = getString(R.string.space_between_answers_string);
-        mConfigDateString = getString(R.string.settings_date_string);
-        mConfigIdString = getString(R.string.settings_id_string);
+        mAnswerMarginString = getString(R.string.VIEW_SETTINGS_SPACING);
+        mConfigDateString = getString(R.string.VIEW_DATE);
+        mConfigIdString = getString(R.string.VIEW_ID);
     }
 
     private void showSmsSection() {
@@ -237,7 +237,7 @@ public class SettingsFragment extends BaseFragment implements ICallback {
     @Override
     public void onStarting() {
         if (isAdded()) {
-            showToast(getString(R.string.updating));
+            showToast(getString(R.string.NOTIFICATION_UPDATING));
         }
 
 //        showProgressBar();

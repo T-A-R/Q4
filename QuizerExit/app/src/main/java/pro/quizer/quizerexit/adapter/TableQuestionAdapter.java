@@ -17,7 +17,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.cleveroad.adaptivetablelayout.LinkedAdaptiveTableAdapter;
 import com.cleveroad.adaptivetablelayout.OnItemClickListener;
@@ -63,7 +62,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     public int processNext() throws Exception {
         for (final ElementModel question : mQuestions) {
             if (question != null && question.getCountOfSelectedSubElements() == 0 && question.getOptions().isCanShow(mBaseActivity, mMap, question)) {
-                throw new Exception(mBaseActivity.getString(R.string.incorrect_select_min_answers_table));
+                throw new Exception(mBaseActivity.getString(R.string.NOTIFICATION_MIN_ANSWERS_TABLE));
             }
         }
 
@@ -75,7 +74,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             }
         }
 
-        throw new Exception(mBaseActivity.getString(R.string.error_counting_next_element));
+        throw new Exception(mBaseActivity.getString(R.string.NOTIFICATION_NEXT_ELEMENT_CALCULATION_ERROR));
     }
 
     public TableQuestionAdapter(final ElementModel pCurrentElement, final Context context, final List<ElementModel> pQuestions, final Runnable pRefreshRunnable) {
@@ -218,7 +217,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     @Override
     public void onBindLeftTopHeaderViewHolder(@NonNull final ViewHolderImpl viewHolder) {
         final TableHeaderLeftTopViewHolder vh = (TableHeaderLeftTopViewHolder) viewHolder;
-        UiUtils.setTextOrHide(vh.mHeaderLeftTopTextView, mBaseActivity.getString(R.string.question_answer_table_label));
+        UiUtils.setTextOrHide(vh.mHeaderLeftTopTextView, mBaseActivity.getString(R.string.VIEW_QUESTION_ANSWER_TABLE_LABEL));
     }
 
     @Override
@@ -354,7 +353,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final boolean isPolyanswer = clickedQuestion.getOptions().isPolyanswer();
 
         if (!clickedElement.getOptions().isCanShow(mBaseActivity, mMap, clickedElement)) {
-            mBaseActivity.showToast(mBaseActivity.getString(R.string.answer_not_available_table_question));
+            mBaseActivity.showToast(mBaseActivity.getString(R.string.NOTIFICATION_ANSWER_NOT_AVAILABLE_TABLE_QUESTION));
 
             return;
         }
@@ -375,13 +374,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             final String textAnswer = clickedElement.getTextAnswer();
 
             mEditText.setVisibility(View.VISIBLE);
-            mEditText.setHint(StringUtils.isEmpty(placeholder) ? mBaseActivity.getString(R.string.default_placeholder) : placeholder);
+            mEditText.setHint(StringUtils.isEmpty(placeholder) ? mBaseActivity.getString(R.string.TEXT_HINT_DEFAULT_PLACEHOLDER) : placeholder);
             mEditText.setText(textAnswer);
 
             switch (options.getOpenType()) {
                 case OptionsOpenType.TIME:
                     mEditText.setFocusableInTouchMode(false);
-                    mEditText.setHint(R.string.hint_time);
+                    mEditText.setHint(R.string.TEXT_HINT_TIME);
                     mEditText.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -391,7 +390,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                     break;
                 case OptionsOpenType.DATE:
                     mEditText.setFocusableInTouchMode(false);
-                    mEditText.setHint(R.string.hint_date);
+                    mEditText.setHint(R.string.TEXT_HINT_DATE);
                     mEditText.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -412,13 +411,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             }
 
             dialog.setCancelable(false)
-                    .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.VIEW_APPLY, new DialogInterface.OnClickListener() {
 
                         public void onClick(final DialogInterface dialogBox, final int id) {
                             final String answer = mEditText.getText().toString();
 
                             if (StringUtils.isEmpty(answer)) {
-                                mBaseActivity.showToast(mBaseActivity.getString(R.string.fill_input));
+                                mBaseActivity.showToast(mBaseActivity.getString(R.string.NOTIFICATION_FILL_INPUT));
 
                                 return;
                             }
@@ -430,7 +429,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                         }
                     })
 
-                    .setNegativeButton(R.string.cancel,
+                    .setNegativeButton(R.string.VIEW_CANCEL,
                             new DialogInterface.OnClickListener() {
 
                                 public void onClick(final DialogInterface dialogBox, final int id) {
@@ -505,7 +504,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         UiUtils.setTextOrHide(description, pOptionsModel.getDescription());
 
         dialog.setCancelable(false)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.VIEW_OK, new DialogInterface.OnClickListener() {
 
                     public void onClick(final DialogInterface dialogBox, final int id) {
                         dialogBox.cancel();

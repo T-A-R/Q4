@@ -2,6 +2,13 @@ package pro.quizer.quizerexit;
 
 public final class Constants {
 
+    public interface FTP {
+        String server = "new.quizer.pro";
+        int port = 21199;
+        String user = "ftpchannel";
+        String password = "Fj39Qp30!j*41";
+    }
+
     public interface Default {
 
         String ACTIVATION_URL = "http://head.quizer.pro/wheretoredirrect_json.php";

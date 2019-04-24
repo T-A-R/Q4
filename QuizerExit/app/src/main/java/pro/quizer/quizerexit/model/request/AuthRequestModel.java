@@ -17,6 +17,7 @@ public class AuthRequestModel implements Serializable, Parcelable {
     private final String passw;
     private final String login;
     private final long device_time;
+    private final String app_version;
     private final String device_info;
 
     public AuthRequestModel(final String pLoginAdmin, final String pPassword, final String pLogin) {
@@ -26,6 +27,7 @@ public class AuthRequestModel implements Serializable, Parcelable {
         login = pLogin;
         device_time = DateUtils.getCurrentTimeMillis();
         device_info = DeviceUtils.getDeviceInfo();
+        this.app_version = DeviceUtils.getAppVersion();
     }
 
     @Override

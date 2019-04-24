@@ -38,8 +38,14 @@ public class ElementModel implements Serializable, Parcelable {
     @SerializedName("options")
     private OptionsModel options;
 
+    @SerializedName("data")
+    private String data;
+
     @SerializedName("elements")
     private List<ElementModel> elements;
+
+    @SerializedName("contents")
+    private List<ElementModel> contents;
 
     // @Ignore start
     private boolean isScreenShowing;
@@ -105,6 +111,14 @@ public class ElementModel implements Serializable, Parcelable {
         }
 
         return count;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public List<ElementModel> getContents() {
+        return contents;
     }
 
     public List<ElementModel> getElements() {

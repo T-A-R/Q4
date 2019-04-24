@@ -74,9 +74,6 @@ public class OptionsModel implements Serializable, Parcelable {
     @SerializedName("jump")
     private int jump;
 
-    @SerializedName("link")
-    private String link;
-
     @SerializedName("text")
     private String text;
 
@@ -92,6 +89,9 @@ public class OptionsModel implements Serializable, Parcelable {
 
     @SerializedName("unchecker")
     private boolean unchecker;
+
+    @SerializedName("is_media")
+    private boolean is_media;
 
     public String getPreCondition() {
         return pre_condition;
@@ -149,8 +149,6 @@ public class OptionsModel implements Serializable, Parcelable {
     }
 
     public boolean isFlipColsAndRows() {
-        // TODO: 2/10/2019 stub
-//        return true;
         return flip_cols_and_rows;
     }
 
@@ -164,10 +162,6 @@ public class OptionsModel implements Serializable, Parcelable {
 
     public int getJump() {
         return jump;
-    }
-
-    public String getLink() {
-        return link;
     }
 
     public String getText() {
@@ -211,5 +205,9 @@ public class OptionsModel implements Serializable, Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
 
+    }
+
+    public boolean isMedia() {
+        return is_media;
     }
 }

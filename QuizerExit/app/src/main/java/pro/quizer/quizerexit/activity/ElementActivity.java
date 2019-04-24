@@ -47,6 +47,7 @@ import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.GPSModel;
 import pro.quizer.quizerexit.utils.GpsUtils;
+import pro.quizer.quizerexit.utils.LogUtils;
 import pro.quizer.quizerexit.utils.SPUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
@@ -200,7 +201,7 @@ public class ElementActivity extends BaseActivity {
                             || (mConfig.isAudio() && !audioAccepted)
                             || !writeStorageAccepted || !readStorageAccepted
                             || (mConfig.hasReserveChannels() && !sendSms)) {
-                        showToast(getString(R.string.permission_error));
+                        showToast(getString(R.string.NOTIFICATION_PERMISSION_ERROR));
 
                         finish();
                         startMainActivity();
@@ -295,15 +296,15 @@ public class ElementActivity extends BaseActivity {
                 mGpsTime = mGPSModel.getTime();
 
                 if (!StringUtils.isEmpty(mGpsString)) {
-                    showToast(getString(R.string.current_gps_string) + mGpsString);
+                    showToast(getString(R.string.NOTIFICATION_CURRENT_GPS) + mGpsString);
                 } else {
-                    showToast(getString(R.string.gps_is_turn_off));
+                    showToast(getString(R.string.NOTIFICATION_GPS_IS_TURN_OFF));
                 }
 
                 initStartValues();
             } catch (final Exception e) {
                 if (mConfig.isForceGps()) {
-                    showToast(getString(R.string.force_gps_error_string));
+                    showToast(getString(R.string.NOTIFICATION_FORCE_GPS_ERROR));
 
                     finish();
                     startMainActivity();
@@ -382,7 +383,7 @@ public class ElementActivity extends BaseActivity {
         if (nextElement == null) {
             // it was last element
             saveQuestionnaireToDatabase();
-            showToast(getString(R.string.quiz_is_finished));
+            showToast(getString(R.string.NOTIFICATION_QUIZ_IS_FINISHED));
 
             finish();
             startMainActivity();
@@ -449,9 +450,9 @@ public class ElementActivity extends BaseActivity {
     public void showExitPoolAlertDialog() {
         new AlertDialog.Builder(this)
                 .setCancelable(false)
-                .setTitle(R.string.exit_pool_header)
-                .setMessage(R.string.exit_pool_body)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                .setTitle(R.string.VIEW_EXIT_QUIZ_HEADER)
+                .setMessage(R.string.VIEW_EXIT_QUIZ_BODY)
+                .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(final DialogInterface dialog, final int which) {
@@ -459,7 +460,7 @@ public class ElementActivity extends BaseActivity {
                         startMainActivity();
                     }
                 })
-                .setNegativeButton(R.string.no, null).show();
+                .setNegativeButton(R.string.VIEW_NO, null).show();
     }
 
     private void saveQuestionnaireToDatabase() {
@@ -510,6 +511,8 @@ public class ElementActivity extends BaseActivity {
                 elementDatabaseModel.duration = element.getDuration();
                 elementDatabaseModel.type = ElementDatabaseType.SCREEN;
 
+                LogUtils.logAction("saveScreenElement " + element.getRelativeID());
+
                 elementDatabaseModel.save();
                 count++;
             }
@@ -543,6 +546,8 @@ public class ElementActivity extends BaseActivity {
         elementDatabaseModel.relative_parent_id = parentId;
         elementDatabaseModel.item_order = element.getOptions().getOrder();
         elementDatabaseModel.type = ElementDatabaseType.ELEMENT;
+
+        LogUtils.logAction("saveElement " + element.getRelativeID());
 
         elementDatabaseModel.save();
     }
@@ -670,14 +675,14 @@ public class ElementActivity extends BaseActivity {
             final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(ElementActivity.this);
             if (mediaCntrlr == null) {
                 setLocalStateError();
-                UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
+                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
                 return;
             }
 
             final String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
             if (mediaID == null) {
                 setLocalStateError();
-                UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
+                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
                 return;
             }
 
@@ -763,7 +768,7 @@ public class ElementActivity extends BaseActivity {
     }
 
     private void setLocalStatePlaying() {
-        UiUtils.setTextOrHide(mStatus, getString(R.string.text_playing));
+        UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_PLAYING));
         mStart.setOnClickListener(mIbPlayOCL);
         mStart.setImageResource(R.drawable.ic_pause);
         mStart.setVisibility(View.VISIBLE);
@@ -773,7 +778,7 @@ public class ElementActivity extends BaseActivity {
     }
 
     private void setLocalStateRecording() {
-        UiUtils.setTextOrHide(mStatus, getString(R.string.text_recording));
+        UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_RECORDING));
         mStart.setOnClickListener(mIbRecordOCL);
         if (AudioService.isPauseRecordingSupported()) {
             mStart.setImageResource(R.drawable.ic_pause);
@@ -786,7 +791,7 @@ public class ElementActivity extends BaseActivity {
     }
 
     private void setLocalStatePausedPlaying() {
-        UiUtils.setTextOrHide(mStatus, getString(R.string.text_paused_play));
+        UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_PAUSED_PLAY));
         mStart.setOnClickListener(mIbPlayOCL);
         mStart.setImageResource(R.drawable.ic_play);
         mStart.setEnabled(true);
@@ -796,7 +801,7 @@ public class ElementActivity extends BaseActivity {
     }
 
     private void setLocalStatePausedRecording() {
-        UiUtils.setTextOrHide(mStatus, getString(R.string.text_paused_rec));
+        UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_PAUSED_REC));
         mStart.setOnClickListener(mIbRecordOCL);
         mStart.setImageResource(R.drawable.ic_mic);
         mStart.setEnabled(true);
@@ -806,7 +811,7 @@ public class ElementActivity extends BaseActivity {
     }
 
     private void setLocalStateStoppedReady() {
-        UiUtils.setTextOrHide(mStatus, getString(R.string.text_ready));
+        UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_READY));
         mStart.setOnClickListener(mIbRecordOCL);
         mStart.setImageResource(R.drawable.ic_mic);
         mStart.setEnabled(true);
@@ -816,7 +821,7 @@ public class ElementActivity extends BaseActivity {
     }
 
     private void setLocalStateError() {
-        UiUtils.setTextOrHide(mStatus, getString(R.string.text_error));
+        UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_ERROR));
         mStart.setOnClickListener(mIbRecordOCL);
         mStart.setImageResource(R.drawable.ic_mic);
         mStart.setEnabled(true);
@@ -829,7 +834,7 @@ public class ElementActivity extends BaseActivity {
         final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
 
         if (mediaCntrlr == null) {
-            UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
+            UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
 
             return;
         }
@@ -837,7 +842,7 @@ public class ElementActivity extends BaseActivity {
 
         final String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
         if (mediaID == null) {
-            UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
+            UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
             return;
         }
 
@@ -887,7 +892,7 @@ public class ElementActivity extends BaseActivity {
                 }
                 break;
             default:
-                UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
+                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
         }
     }
 
@@ -898,12 +903,12 @@ public class ElementActivity extends BaseActivity {
         public void onClick(final View v) {
             final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(ElementActivity.this);
             if (mediaCntrlr == null) {
-                UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
+                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
                 return;
             }
             final String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
             if (mediaID == null) {
-                UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
+                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
                 return;
             }
             final int pbState = mediaCntrlr.getPlaybackState().getState();
@@ -947,7 +952,7 @@ public class ElementActivity extends BaseActivity {
                     }
                     break;
                 default:
-                    UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
+                    UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
                     break;
             }
         }
@@ -960,12 +965,12 @@ public class ElementActivity extends BaseActivity {
         public void onClick(final View v) {
             final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(ElementActivity.this);
             if (mediaCntrlr == null) {
-                UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
+                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
                 return;
             }
             final String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
             if (mediaID == null) {
-                UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
+                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
                 return;
             }
             final int pbState = mediaCntrlr.getPlaybackState().getState();
@@ -993,7 +998,7 @@ public class ElementActivity extends BaseActivity {
                     break;
                 case AudioService.SOURCE_MIC:
                 default:
-                    UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
+                    UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
                     break;
             }
         }
@@ -1006,12 +1011,12 @@ public class ElementActivity extends BaseActivity {
         public void onClick(final View v) {
             final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(ElementActivity.this);
             if (mediaCntrlr == null) {
-                UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
+                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
                 return;
             }
             final String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
             if (mediaID == null) {
-                UiUtils.setTextOrHide(mStatus, getString(R.string.text_service_conn_err));
+                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
                 return;
             }
             final int pbState = mediaCntrlr.getPlaybackState().getState();

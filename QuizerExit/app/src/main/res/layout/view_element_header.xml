@@ -15,8 +15,22 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:paddingTop="8dp"
             android:layout_weight="1"
             android:orientation="vertical">
+
+            <pro.quizer.quizerexit.view.resizeble.textview.MediumResizableTextView
+                android:id="@+id/dots_line"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:paddingStart="8dp"
+                android:paddingLeft="8dp"
+                android:text="@string/VIEW_TREE_DOTS"
+                android:textColor="@android:color/black"
+                android:visibility="gone"
+                tools:ignore="RtlSymmetry" />
 
             <pro.quizer.quizerexit.view.SizeLimitScrollView
                 android:id="@+id/question_panel"
@@ -30,24 +44,10 @@
                     android:orientation="vertical">
 
                     <pro.quizer.quizerexit.view.resizeble.textview.MediumResizableTextView
-                        android:id="@+id/dots_line"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="center_vertical"
-                        android:paddingStart="8dp"
-                        android:paddingLeft="8dp"
-                        android:text="@string/tree_dots"
-                        android:textColor="@android:color/black"
-                        android:visibility="gone"
-                        tools:ignore="RtlSymmetry" />
-
-                    <pro.quizer.quizerexit.view.resizeble.textview.MediumResizableTextView
                         android:id="@+id/element_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingLeft="8dp"
-                        android:paddingTop="8dp"
                         android:paddingRight="8dp"
                         android:textColor="@android:color/black"
                         android:textSize="16sp"
@@ -62,6 +62,11 @@
                         android:textColor="@color/gray_shadow"
                         android:textStyle="italic"
                         tools:text="Отображение описания вопроса" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/contents_recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
 
                 </LinearLayout>
 

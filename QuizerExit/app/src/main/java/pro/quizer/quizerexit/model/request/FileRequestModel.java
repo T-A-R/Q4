@@ -14,12 +14,14 @@ public class FileRequestModel implements Serializable, Parcelable {
 
     private final String name_form;
     private final long device_time;
+    private final String app_version;
     private final String device_info;
 
     public FileRequestModel(final String pNameForm) {
         name_form = pNameForm;
         device_time = DateUtils.getCurrentTimeMillis();
         device_info = DeviceUtils.getDeviceInfo();
+        this.app_version = DeviceUtils.getAppVersion();
     }
 
     @Override

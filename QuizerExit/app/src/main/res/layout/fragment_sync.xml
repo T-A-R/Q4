@@ -64,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
-                android:text="@string/send_data" />
+                android:text="@string/VIEW_SEND_QUIZ" />
 
             <include layout="@layout/view_divider"/>
 
@@ -86,7 +86,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
-                android:text="@string/send_audio" />
+                android:text="@string/VIEW_SEND_AUDIO" />
 
             <include layout="@layout/view_divider"/>
 
@@ -107,7 +107,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
-                android:text="@string/send_photo" />
+                android:text="@string/VIEW_SEND_PHOTO" />
 
             <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
                 android:id="@+id/sync_sms"
@@ -116,7 +116,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
-                android:text="@string/sms" />
+                android:text="@string/VIEW_SMS" />
 
         </LinearLayout>
 

@@ -62,11 +62,11 @@ public class AuthActivity extends BaseActivity {
         setContentView(R.layout.activity_auth);
 
         final TextView usersCount = findViewById(R.id.users_count);
-        UiUtils.setTextOrHide(usersCount, String.format(getString(R.string.count_users_on_this_device), (getUsersCount() + "/" + MAX_USERS)));
+        UiUtils.setTextOrHide(usersCount, String.format(getString(R.string.VIEW_USERS_COUNT_ON_DEVICE), (getUsersCount() + "/" + MAX_USERS)));
         mPasswordEditText = findViewById(R.id.auth_password_edit_text);
         mLoginSpinner = findViewById(R.id.login_spinner);
         mVersionView = findViewById(R.id.version_view);
-        UiUtils.setTextOrHide(mVersionView, String.format(getString(R.string.app_version), getAppVersionName()));
+        UiUtils.setTextOrHide(mVersionView, String.format(getString(R.string.VIEW_APP_VERSION), getAppVersionName()));
         mVersionView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -110,7 +110,7 @@ public class AuthActivity extends BaseActivity {
                 final String password = mPasswordEditText.getText().toString();
 
                 if (StringUtils.isEmpty(login) || StringUtils.isEmpty(password)) {
-                    showToast(getString(R.string.empty_login_or_password));
+                    showToast(getString(R.string.NOTIFICATION_EMPTY_LOGIN_OR_PASSWORD));
 
                     hideProgressBar();
 
@@ -118,7 +118,7 @@ public class AuthActivity extends BaseActivity {
                 }
 
                 if (login.length() < 3) {
-                    showToast(getString(R.string.short_login));
+                    showToast(getString(R.string.NOTIFICATION_SHORT_LOGIN_ERROR));
 
                     hideProgressBar();
 
@@ -126,7 +126,7 @@ public class AuthActivity extends BaseActivity {
                 }
 
                 if (mSavedUsers != null && mSavedUsers.size() >= MAX_USERS && !mSavedUsers.contains(login)) {
-                    showToast(String.format(getString(R.string.error_max_users), String.valueOf(MAX_USERS)));
+                    showToast(String.format(getString(R.string.NOTIFICATION_MAX_USER_COUNT), String.valueOf(MAX_USERS)));
 
                     hideProgressBar();
 
@@ -151,7 +151,7 @@ public class AuthActivity extends BaseActivity {
                                     showToast("Удалось войти под сохраненными локальными данными.");
                                     onLoggedInWithoutUpdateLocalData(savedUserModel.user_id);
                                 } else {
-                                    showToast(getString(R.string.internet_error_please_try_again));
+                                    showToast(getString(R.string.NOTIFICATION_INTERNET_CONNECTION_ERROR));
                                 }
                             }
 
@@ -162,7 +162,7 @@ public class AuthActivity extends BaseActivity {
                                 final ResponseBody responseBody = response.body();
 
                                 if (responseBody == null) {
-                                    showToast(getString(R.string.incorrect_server_response));
+                                    showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR));
                                     onFailure(call, null);
 
                                     return;
@@ -195,7 +195,7 @@ public class AuthActivity extends BaseActivity {
                                         showToast(authResponseModel.getError());
                                     }
                                 } else {
-                                    showToast(getString(R.string.server_error));
+                                    showToast(getString(R.string.NOTIFICATION_SERVER_ERROR));
                                     onFailure(call, null);
                                 }
                             }
@@ -208,7 +208,7 @@ public class AuthActivity extends BaseActivity {
     private void onLoggedInWithoutUpdateLocalData(final int pUserId) {
         saveCurrentUserId(pUserId);
         finish();
-        startMainActivity();
+        startMainActivity(true);
     }
 
     private void onLoggedIn(final String pLogin,
@@ -272,7 +272,7 @@ public class AuthActivity extends BaseActivity {
                              @Override
                              public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
                                  hideProgressBar();
-                                 showToast(getString(R.string.internet_error_please_try_again));
+                                 showToast(getString(R.string.NOTIFICATION_INTERNET_CONNECTION_ERROR));
                              }
 
                              @Override
@@ -282,7 +282,7 @@ public class AuthActivity extends BaseActivity {
                                  final ResponseBody responseBody = response.body();
 
                                  if (responseBody == null) {
-                                     showToast(getString(R.string.incorrect_server_response));
+                                     showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR));
 
                                      return;
                                  }
@@ -304,7 +304,7 @@ public class AuthActivity extends BaseActivity {
                                          showToast(configResponseModel.getError());
                                      }
                                  } else {
-                                     showToast(getString(R.string.server_error));
+                                     showToast(getString(R.string.NOTIFICATION_SERVER_ERROR));
                                  }
                              }
                          }
@@ -348,7 +348,7 @@ public class AuthActivity extends BaseActivity {
             public void onError(Exception pException) {
                 hideProgressBar();
 
-                showToast(getString(R.string.error_cannot_update_quotas) + "\n" + pException.toString());
+                showToast(getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + "\n" + pException.toString());
             }
         }).execute();
     }
@@ -365,7 +365,7 @@ public class AuthActivity extends BaseActivity {
             saveUser(pLogin, pPassword, pAuthResponseModel, pConfigResponseModel.getConfig());
             saveCurrentUserId(pUserId);
         } catch (final Exception e) {
-            showToast(getString(R.string.server_error) + "\n" + e);
+            showToast(getString(R.string.NOTIFICATION_SERVER_ERROR) + "\n" + e);
 
             return;
         }
@@ -399,13 +399,13 @@ public class AuthActivity extends BaseActivity {
                                 saveUserAndLogin(pConfigResponseModel, pAuthResponseModel, pLogin, pPassword, pConfigId, pUserId, pRoleId, pUserProjectId);
                             }
 
-                            showToast(String.format(getString(R.string.downloaded_count_files), String.valueOf(progress)));
+                            showToast(String.format(getString(R.string.NOTIFICATION_DOWNLOADED_COUNT_FILES), String.valueOf(progress)));
                         }
 
                         @Override
                         public void onError(final Exception e, final int progress) {
                             super.onError(e, progress);
-                            showToast(getString(R.string.downloading_files_error));
+                            showToast(getString(R.string.NOTIFICATION_DOWNLOADING_FILES_ERROR));
                             hideProgressBar();
                         }
                     }).loadMultiple(fileUris);

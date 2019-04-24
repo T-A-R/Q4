@@ -67,7 +67,7 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
 
         final String timeFromString = DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, timeFrom);
         final String timeToString = DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, timeTo);
-        final String timeInterval = String.format(mBaseActivity.getString(R.string.time_interval), timeFromString, timeToString);
+        final String timeInterval = String.format(mBaseActivity.getString(R.string.VIEW_SMS_TIME_INTERVAL), timeFromString, timeToString);
         final String smsText = smsStage.toString();
         final String smsStatus = smsStage.getStatus();
 
@@ -84,9 +84,9 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
             public void onClick(View v) {
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(mBaseActivity);
                 alertDialog.setCancelable(false);
-                alertDialog.setTitle(R.string.sms_sending);
-                alertDialog.setMessage(mBaseActivity.getString(R.string.sms_sending_confirmation) + timeInterval + "?");
-                alertDialog.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
+                alertDialog.setTitle(R.string.DIALOG_SMS_SENDING);
+                alertDialog.setMessage(String.format(mBaseActivity.getString(R.string.DIALOG_SMS_SENDING_CONFIRMATION), timeInterval));
+                alertDialog.setPositiveButton(R.string.VIEW_BUTTON_SEND, new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
                         SmsUtils.sendSms(mBaseActivity, new ICallback() {
@@ -117,7 +117,7 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
                         }, Collections.singletonList(smsStage));
                     }
                 });
-                alertDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                alertDialog.setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();

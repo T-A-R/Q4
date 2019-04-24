@@ -235,7 +235,6 @@ public final class QuotasUtils {
 
         return null;
     }
-
     private static boolean isPreviousQuotasSelected(final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel, final QuotaModel pQuota) {
         boolean result = true;
 

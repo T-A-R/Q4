@@ -37,14 +37,14 @@ public final class SmsUtils {
         final String phoneNumber = getPhoneNumber(pBaseActivity);
 
         if (StringUtils.isEmpty(phoneNumber)) {
-            pBaseActivity.showToast(pBaseActivity.getString(R.string.no_numbers_available));
+            pBaseActivity.showToast(pBaseActivity.getString(R.string.NOTIFICATION_NO_NUMBERS_AVAILABLE));
 
             return;
         }
 
         final String smsWithPreffix = formatSmsPrefix(sms.toString(), pBaseActivity);
 
-        pBaseActivity.showToast(pBaseActivity.getString(R.string.sending_sms));
+        pBaseActivity.showToast(pBaseActivity.getString(R.string.NOTIFICATION_SENDING_SMS));
 
         //---when the SMS has been sent---
         pBaseActivity.registerReceiver(new BroadcastReceiver() {
@@ -61,7 +61,7 @@ public final class SmsUtils {
                             pCallback.onSuccess();
                         }
 
-                        pBaseActivity.showToast(arg0.getString(R.string.success_sent_sms));
+                        pBaseActivity.showToast(arg0.getString(R.string.NOTIFICATION_SUCCESS_SENT_SMS));
 
                         break;
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
@@ -69,10 +69,10 @@ public final class SmsUtils {
                     case SmsManager.RESULT_ERROR_NULL_PDU:
                     case SmsManager.RESULT_ERROR_RADIO_OFF:
                         if (pCallback != null) {
-                            pCallback.onError(new Exception(arg0.getString(R.string.unsuccess_sent_sms)));
+                            pCallback.onError(new Exception(arg0.getString(R.string.NOTIFICATION_UNSUCCESS_SENT_SMS)));
                         }
 
-                        pBaseActivity.showToast(arg0.getString(R.string.unsuccess_sent_sms));
+                        pBaseActivity.showToast(arg0.getString(R.string.NOTIFICATION_UNSUCCESS_SENT_SMS));
 
                         break;
                 }
@@ -86,11 +86,11 @@ public final class SmsUtils {
             public void onReceive(final Context arg0, final Intent arg1) {
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
-                        pBaseActivity.showToast(arg0.getString(R.string.success_delivered_sms));
+                        pBaseActivity.showToast(arg0.getString(R.string.NOTIFICATION_SUCCESS_DELIVERED_SMS));
 
                         break;
                     case Activity.RESULT_CANCELED:
-                        pBaseActivity.showToast(arg0.getString(R.string.unsuccess_delivered_sms));
+                        pBaseActivity.showToast(arg0.getString(R.string.NOTIFICATION_UNSUCCESS_DELIVERED_SMS));
 
                         break;
                 }

@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import java.util.List;
 import java.util.Map;
@@ -70,7 +69,7 @@ public class SmsFragment extends BaseFragment implements ICallback {
                 final List<SmsStage> smsStages = pSmsViewModel.getSmsStages();
 
                 if (smsStages == null || smsStages.isEmpty()) {
-                    showEmptyView(getString(R.string.empty_sms));
+                    showEmptyView(getString(R.string.VIEW_EMPTY_SMS));
 
                     return;
                 }
@@ -88,7 +87,7 @@ public class SmsFragment extends BaseFragment implements ICallback {
     @Override
     public void onStarting() {
         if (isAdded()) {
-            showToast(getString(R.string.updating));
+            showToast(getString(R.string.NOTIFICATION_UPDATING));
         }
 
 //        showProgressBar();

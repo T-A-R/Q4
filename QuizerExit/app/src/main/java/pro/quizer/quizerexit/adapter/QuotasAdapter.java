@@ -63,15 +63,14 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
         holder.mRecyclerView.setLayoutManager(mLayoutManager);
         holder.mRecyclerView.setAdapter(mAdapter);
 
-        String count = String.format(mBaseActivity.getString(R.string.x_from_y), done, limit);
+        String count = String.format(mBaseActivity.getString(R.string.VIEW_X_FROM_Y), done, limit);
 
-        // TODO: 1/26/2019 use quotaModel.isCompleted и дулаить more_then_done_status ??????????????
         if (doneInt == limitInt) {
-            count = mBaseActivity.getString(R.string.done_status) + count;
+            count = mBaseActivity.getString(R.string.VIEW_STATUS_DONE) + count;
         } else if (doneInt < limitInt) {
-            count = mBaseActivity.getString(R.string.not_done_status) + count;
+            count = mBaseActivity.getString(R.string.VIEW_STATUS_NOT_DONE) + count;
         } else {
-            count = mBaseActivity.getString(R.string.more_then_done_status) + count;
+            count = mBaseActivity.getString(R.string.VIEW_STATUS_MORE_THAN_DONE) + count;
         }
 
         holder.mCount.setText(count);

@@ -51,6 +51,7 @@ import static pro.quizer.quizerexit.utils.FileUtils.JPEG;
 @SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity implements Serializable, Parcelable {
 
+    public static final String IS_AFTER_AUTH = "IS_AFTER_AUTH";
     private HashMap<Integer, ElementModel> mTempMap;
     private HashMap<Integer, ElementModel> mMap;
     private UserModel mCurrentUser;
@@ -199,11 +200,11 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
         addFragment(pFragment, false);
     }
 
-    public void showHomeFragment(final boolean pIsAddToBackstack) {
+    public void showHomeFragment(final boolean pIsAddToBackstack, final boolean pIsCanShowUpdateDialog) {
         if (pIsAddToBackstack) {
-            showFragmentWithBackstack(HomeFragment.newInstance());
+            showFragmentWithBackstack(HomeFragment.newInstance(pIsCanShowUpdateDialog));
         } else {
-            showFragmentWithoutBackstack(HomeFragment.newInstance());
+            showFragmentWithoutBackstack(HomeFragment.newInstance(pIsCanShowUpdateDialog));
         }
     }
 
@@ -377,8 +378,14 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
         startActivity(new Intent(this, ServiceActivity.class));
     }
 
+    public void startMainActivity(final boolean pIsAfterAuth) {
+        final Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(IS_AFTER_AUTH, pIsAfterAuth);
+        startActivity(intent);
+    }
+
     public void startMainActivity() {
-        startActivity(new Intent(this, MainActivity.class));
+        startMainActivity(false);
     }
 
     public void startThankYouActivity() {
@@ -449,58 +456,58 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
     public void showExitAlertDialog() {
         new AlertDialog.Builder(this)
                 .setCancelable(false)
-                .setTitle(R.string.exit_app_header)
-                .setMessage(R.string.exit_app_body)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                .setTitle(R.string.VIEW_CLOSE_APP_HEADER)
+                .setMessage(R.string.VIEW_CLOSE_APP_BODY)
+                .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialog, final int which) {
                         finish();
                     }
                 })
-                .setNegativeButton(R.string.no, null).show();
+                .setNegativeButton(R.string.VIEW_NO, null).show();
     }
 
     public void showRemoveUserDialog() {
         new AlertDialog.Builder(this)
                 .setCancelable(false)
-                .setTitle(R.string.dialog_remove_user_title)
-                .setMessage(R.string.dialog_remove_user_body)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                .setTitle(R.string.DIALOG_REMOVE_USER_TITLE)
+                .setMessage(R.string.DIALOG_REMOVE_USER_BODY)
+                .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialog, final int which) {
                         new RemoveUserExecutable(BaseActivity.this).execute();
                     }
                 })
-                .setNegativeButton(R.string.no, null).show();
+                .setNegativeButton(R.string.VIEW_NO, null).show();
     }
 
     public void showErrorRemoveUserDialog() {
         new AlertDialog.Builder(this)
                 .setCancelable(false)
-                .setTitle(R.string.dialog_error_remove_curernt_user_title)
-                .setMessage(R.string.dialog_error_remove_curernt_user_body)
-                .setPositiveButton(R.string.go_to, new DialogInterface.OnClickListener() {
+                .setTitle(R.string.DIALOG_ERROR_REMOVE_CURRENT_USER_TITLE)
+                .setMessage(R.string.DIALOG_ERROR_REMOVE_CURRENT_USER_BODY)
+                .setPositiveButton(R.string.DIALOG_GO_TO, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialog, final int which) {
                         showSyncFragment();
                     }
                 })
-                .setNegativeButton(R.string.cancel, null).show();
+                .setNegativeButton(R.string.VIEW_CANCEL, null).show();
     }
 
     public void showChangeAccountAlertDialog() {
         new AlertDialog.Builder(this)
                 .setCancelable(false)
-                .setTitle(R.string.change_user)
-                .setMessage(R.string.change_user_body)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                .setTitle(R.string.VIEW_EXIT)
+                .setMessage(R.string.DIALOG_CHANGE_USER_BODY)
+                .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialog, final int which) {
                         finish();
                         startAuthActivity();
                     }
                 })
-                .setNegativeButton(R.string.no, null).show();
+                .setNegativeButton(R.string.VIEW_NO, null).show();
     }
 
     @Override

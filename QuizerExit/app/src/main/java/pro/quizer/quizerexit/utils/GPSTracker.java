@@ -130,9 +130,9 @@ public class GPSTracker extends Service implements LocationListener {
     public void showSettingsAlert() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
         alertDialog.setCancelable(false);
-        alertDialog.setTitle(R.string.please_turn_on_gps);
-        alertDialog.setMessage(R.string.you_need_to_turn_on_gps);
-        alertDialog.setPositiveButton(R.string.turn_on, new DialogInterface.OnClickListener() {
+        alertDialog.setTitle(R.string.DIALOG_PLEASE_TURN_ON_GPS);
+        alertDialog.setMessage(R.string.DIALOG_YOU_NEED_TO_TURN_ON_GPS);
+        alertDialog.setPositiveButton(R.string.DIALOG_TURN_ON, new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);

@@ -71,7 +71,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:text="@string/start" />
+                        android:text="@string/VIEW_START" />
 
                     <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
                         android:id="@+id/quotas"
@@ -81,7 +81,7 @@
                         android:layout_below="@+id/start"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="8dp"
-                        android:text="@string/quotas_title" />
+                        android:text="@string/VIEW_QUOTAS_TITLE" />
 
                 </RelativeLayout>
 

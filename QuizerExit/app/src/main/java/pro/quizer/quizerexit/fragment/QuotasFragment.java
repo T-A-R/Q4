@@ -146,9 +146,9 @@ public class QuotasFragment extends BaseFragment implements ICallback {
 
                 if (quotas == null || quotas.isEmpty()) {
                     if (StringUtils.isNotEmpty(pQuotasViewModel.getQuery())) {
-                        showEmptyView(getString(R.string.no_quotas_by_query));
+                        showEmptyView(getString(R.string.VIEW_NO_QUOTAS_BY_QUERY));
                     } else {
-                        showEmptyView(getString(R.string.empty_quotas));
+                        showEmptyView(getString(R.string.VIEW_EMPTY_QUOTAS));
                     }
 
                     return;
@@ -168,7 +168,7 @@ public class QuotasFragment extends BaseFragment implements ICallback {
     @Override
     public void onStarting() {
         if (isAdded()) {
-            showToast(getString(R.string.updating));
+            showToast(getString(R.string.NOTIFICATION_UPDATING));
         }
 
 //        showProgressBar();

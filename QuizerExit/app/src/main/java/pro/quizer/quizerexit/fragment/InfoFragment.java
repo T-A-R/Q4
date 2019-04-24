@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
-import pro.quizer.quizerexit.adapter.InfoElementAdapter;
+import pro.quizer.quizerexit.adapter.ContentElementsAdapter;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
 
@@ -24,9 +24,6 @@ public class InfoFragment extends AbstractContentElementFragment {
     private ElementModel mCurrentElement;
     private OptionsModel mAttributes;
     private NavigationCallback mCallback;
-
-    private RecyclerView mRecyclerView;
-    private InfoElementAdapter mAdapter;
 
     public static Fragment newInstance(@NonNull final ElementModel pElement, final NavigationCallback pCallback) {
         final Fragment fragment = new InfoFragment();
@@ -58,7 +55,7 @@ public class InfoFragment extends AbstractContentElementFragment {
             initView(view);
             initView(view);
         } else {
-            showToast(getString(R.string.internal_app_error) + "1002");
+            showToast(getString(R.string.NOTIFICATION_INTERNAL_APP_ERROR) + "1002");
         }
     }
 
@@ -107,8 +104,13 @@ public class InfoFragment extends AbstractContentElementFragment {
         return mAttributes;
     }
 
+    @Override
+    protected ElementModel getElementModel() {
+        return mCurrentElement;
+    }
+
     private void initView(final View pView) {
-        mRecyclerView = pView.findViewById(R.id.info_recycler_view);
+        RecyclerView mRecyclerView = pView.findViewById(R.id.info_recycler_view);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setHasFixedSize(true);
@@ -117,7 +119,7 @@ public class InfoFragment extends AbstractContentElementFragment {
 //        mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 //        mRecyclerView.getRecycledViewPool().setMaxRecycledViews(0, 100);
 
-        mAdapter = new InfoElementAdapter(getContext(), mCurrentElement.getElements());
+        ContentElementsAdapter mAdapter = new ContentElementsAdapter(getContext(), mCurrentElement.getElements());
         mRecyclerView.setAdapter(mAdapter);
     }
 }

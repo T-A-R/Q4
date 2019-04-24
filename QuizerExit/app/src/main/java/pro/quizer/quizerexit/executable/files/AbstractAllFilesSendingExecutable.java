@@ -1,6 +1,5 @@
 package pro.quizer.quizerexit.executable.files;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.activeandroid.query.Select;
@@ -33,7 +32,7 @@ public abstract class AbstractAllFilesSendingExecutable extends BaseExecutable {
         mUsers = new Select().from(UserModel.class).execute();
 
         if (mUsers == null || mUsers.isEmpty()) {
-            onError(new Exception(mContext.getString(R.string.users_not_found_for_send_data)));
+            onError(new Exception(mContext.getString(R.string.NOTIFICATION_SENDING_ERROR_EMPTY_USERS_LIST)));
 
             return;
         }

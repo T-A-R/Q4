@@ -29,12 +29,12 @@ import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 
-public class InfoElementAdapter extends RecyclerView.Adapter<InfoElementAdapter.InfoElementViewHolder> implements IAdapter {
+public class ContentElementsAdapter extends RecyclerView.Adapter<ContentElementsAdapter.InfoElementViewHolder> implements IAdapter {
 
     private final Context mContext;
     private final List<ElementModel> mContents;
 
-    public InfoElementAdapter(final Context pContext, final List<ElementModel> pContents) {
+    public ContentElementsAdapter(final Context pContext, final List<ElementModel> pContents) {
         this.mContext = pContext;
         this.mContents = pContents;
     }
@@ -100,14 +100,15 @@ public class InfoElementAdapter extends RecyclerView.Adapter<InfoElementAdapter.
         @Override
         public void onBind(final ElementModel pContent, final int pPosition) {
             final OptionsModel options = pContent.getOptions();
+            final String data = pContent.getData();
 
-            switch (pContent.getSubtype()) {
+            switch (pContent.getType()) {
                 case ElementSubtype.TEXT:
                     UiUtils.setTextOrHide(mText, options.getText());
 
                     break;
                 case ElementSubtype.AUDIO:
-                    final String fileAudioPath = getFilePath(options);
+                    final String fileAudioPath = getFilePath(data);
 
                     if (StringUtils.isEmpty(fileAudioPath)) {
                         return;
@@ -119,7 +120,7 @@ public class InfoElementAdapter extends RecyclerView.Adapter<InfoElementAdapter.
 
                     break;
                 case ElementSubtype.VIDEO:
-                    final String fileVideoPath = getFilePath(options);
+                    final String fileVideoPath = getFilePath(data);
 
                     if (StringUtils.isEmpty(fileVideoPath)) {
                         return;
@@ -134,7 +135,7 @@ public class InfoElementAdapter extends RecyclerView.Adapter<InfoElementAdapter.
 
                     break;
                 case ElementSubtype.IMAGE:
-                    final String filePhotooPath = getFilePath(options);
+                    final String filePhotooPath = getFilePath(data);
 
                     if (StringUtils.isEmpty(filePhotooPath)) {
                         return;
@@ -155,9 +156,9 @@ public class InfoElementAdapter extends RecyclerView.Adapter<InfoElementAdapter.
         }
     }
 
-    private String getFilePath(final OptionsModel pOptions) {
+    private String getFilePath(final String data) {
         final String path = FileUtils.getFilesStoragePath(mContext);
-        final String url = pOptions.getLink();
+        final String url = data;
 
         if (StringUtils.isEmpty(url)) {
             return Constants.Strings.EMPTY;

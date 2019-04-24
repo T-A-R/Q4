@@ -52,7 +52,7 @@ public class SmsStage implements Serializable, Parcelable {
 
     @QuestionnaireStatus
     public String getStatus() {
-        return mContext.getString(mStatus != null && mStatus.equals(QuestionnaireStatus.SENT) ? R.string.status_sent : R.string.status_not_sent);
+        return mContext.getString(mStatus != null && mStatus.equals(QuestionnaireStatus.SENT) ? R.string.STATUS_SENT : R.string.STATUS_NOT_SENT);
     }
 
     public void setStatus(@QuestionnaireStatus final String pStatus) {

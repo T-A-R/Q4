@@ -1,7 +1,5 @@
 package pro.quizer.quizerexit.executable;
 
-import android.content.Context;
-
 import com.activeandroid.query.Select;
 
 import java.util.List;
@@ -29,7 +27,7 @@ public class SendAllQuestionnairesExecutable extends BaseExecutable {
         final List<UserModel> users = new Select().from(UserModel.class).execute();
 
         if (users == null || users.isEmpty()) {
-            onError(new Exception(mContext.getString(R.string.users_not_found_for_send_data)));
+            onError(new Exception(mContext.getString(R.string.NOTIFICATION_SENDING_ERROR_EMPTY_USERS_LIST)));
 
             return;
         }

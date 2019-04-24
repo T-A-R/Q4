@@ -19,10 +19,11 @@
             android:layout_height="wrap_content"
             android:visibility="gone" />
 
-        <ImageView
+        <pro.quizer.quizerexit.view.SquareImageView
             android:id="@+id/info_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
             android:visibility="gone" />
 
         <com.halilibo.bettervideoplayer.BetterVideoPlayer
@@ -51,7 +52,5 @@
             bvp:bvp_title="Видео файл" />
 
     </LinearLayout>
-
-    <include layout="@layout/view_divider" />
 
 </LinearLayout>

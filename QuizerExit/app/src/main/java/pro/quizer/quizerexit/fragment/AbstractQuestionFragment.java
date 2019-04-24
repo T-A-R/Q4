@@ -79,7 +79,7 @@ public abstract class AbstractQuestionFragment extends AbstractContentElementFra
             initHeader(view);
             initView();
         } else {
-            showToast(getString(R.string.internal_app_error) + "1001");
+            showToast(getString(R.string.NOTIFICATION_INTERNAL_APP_ERROR) + "1001");
         }
     }
 
@@ -101,6 +101,11 @@ public abstract class AbstractQuestionFragment extends AbstractContentElementFra
     @Override
     protected OptionsModel getOptions() {
         return mAttributes;
+    }
+
+    @Override
+    protected ElementModel getElementModel() {
+        return mCurrentElement;
     }
 
     public void initView() {

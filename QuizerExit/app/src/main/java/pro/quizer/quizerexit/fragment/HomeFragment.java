@@ -1,16 +1,20 @@
 package pro.quizer.quizerexit.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import pro.quizer.quizerexit.BuildConfig;
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.SendQuestionnairesByUserModelExecutable;
@@ -18,16 +22,20 @@ import pro.quizer.quizerexit.listener.QuotasClickListener;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ProjectInfoModel;
 import pro.quizer.quizerexit.model.database.UserModel;
+import pro.quizer.quizerexit.utils.SystemUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
+
+import static pro.quizer.quizerexit.activity.BaseActivity.IS_AFTER_AUTH;
 
 public class HomeFragment extends BaseFragment implements ICallback {
 
     private UserModel mUserModel;
 
-    public static Fragment newInstance() {
+    public static Fragment newInstance(final boolean pIsCanShowUpdateDialog) {
         final HomeFragment fragment = new HomeFragment();
 
         final Bundle bundle = new Bundle();
+        bundle.putBoolean(IS_AFTER_AUTH, pIsCanShowUpdateDialog);
         fragment.setArguments(bundle);
 
         return fragment;
@@ -44,7 +52,57 @@ public class HomeFragment extends BaseFragment implements ICallback {
 
         initView(view);
 
+        final Bundle bundle = getArguments();
+
+        if (bundle != null && bundle.getBoolean(IS_AFTER_AUTH)) {
+            checkUpdates(bundle, mUserModel.getConfig());
+        }
+
         new SendQuestionnairesByUserModelExecutable(getBaseActivity(), mUserModel, this, false).execute();
+    }
+
+    private void checkUpdates(final Bundle bundle, final ConfigModel configModel) {
+        final boolean isHasUpdate = configModel.getLastAppVersionCode() > BuildConfig.VERSION_CODE;
+
+        if (!isHasUpdate) {
+            return;
+        }
+
+        final boolean isCriticalUpdate = configModel.isIsCriticalUpdate();
+        final String newAppVersion = configModel.getLastAppVersion();
+        final String apkUrl = configModel.getApkUrl();
+
+        final String header = getString(R.string.DIALOG_NEW_APP_VERSION_IS_AVAILABLE) + Constants.Strings.SPACE + newAppVersion;
+        final String message = isCriticalUpdate ?
+                getString(R.string.DIALOG_CRITICAL_UPDATE_TITLE)
+                :
+                getString(R.string.DIALOG_UPDATE_TITLE);
+
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setTitle(header);
+        alertDialogBuilder.setMessage(message);
+        alertDialogBuilder.setPositiveButton(getString(R.string.DIALOG_BUTTON_UPDATE), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                SystemUtils.openBrowser(getContext(), apkUrl);
+            }
+        });
+
+        if (!isCriticalUpdate) {
+            alertDialogBuilder.setNegativeButton(getString(R.string.VIEW_CANCEL), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+        }
+
+        alertDialogBuilder.show();
+
+        if (!isCriticalUpdate) {
+            bundle.putBoolean(IS_AFTER_AUTH, false);
+        }
     }
 
     private void initView(final View pView) {
@@ -116,7 +174,7 @@ public class HomeFragment extends BaseFragment implements ICallback {
 //        hideProgressBar();
 
         if (isAdded()) {
-            showToast(getString(R.string.error_send_questionnaries) + "\n" + pException);
+            showToast(getString(R.string.NOTIFICATION_NO_CONNECTION_SAVING_QUIZ) + "\n" + pException);
         }
     }
 }

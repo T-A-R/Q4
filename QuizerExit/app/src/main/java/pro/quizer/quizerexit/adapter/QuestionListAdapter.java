@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -23,7 +25,6 @@ import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.quota.QuotaModel;
-import pro.quizer.quizerexit.utils.LogUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 import pro.quizer.quizerexit.view.CustomCheckableButton;
@@ -51,7 +52,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
         super(pCurrentElement, pContext, pAnswers, pMaxAnswer, pMinAnswer);
 
         mRefreshRunnable = pRefreshRunnable;
-        mDefaultPlaceHolder = pContext.getString(R.string.default_placeholder);
+        mDefaultPlaceHolder = pContext.getString(R.string.TEXT_HINT_DEFAULT_PLACEHOLDER);
         mIsPolyAnswers = pMaxAnswer == 1 && pMinAnswer == 1;
 
         mBaseActivity = getBaseActivity();
@@ -100,11 +101,13 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
         TextView mAnswer;
         CustomCheckableButton mCheckBox;
+        RecyclerView mContentsRecyclerView;
 
         AnswerListViewHolder(final View itemView) {
             super(itemView);
             mAnswer = itemView.findViewById(R.id.answer_text);
             mCheckBox = itemView.findViewById(R.id.answer_checkbox);
+            mContentsRecyclerView = itemView.findViewById(R.id.contents_recycler_view);
         }
 
         @SuppressLint("ClickableViewAccessibility")
@@ -132,7 +135,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                 switch (options.getOpenType()) {
                     case OptionsOpenType.TIME:
                         mEditText.setFocusableInTouchMode(false);
-                        mEditText.setHint(R.string.hint_time);
+                        mEditText.setHint(R.string.TEXT_HINT_TIME);
                         mEditText.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -142,7 +145,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                         break;
                     case OptionsOpenType.DATE:
                         mEditText.setFocusableInTouchMode(false);
-                        mEditText.setHint(R.string.hint_date);
+                        mEditText.setHint(R.string.TEXT_HINT_DATE);
                         mEditText.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -175,6 +178,18 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                 UiUtils.setTextOrHide(mAnswer, title);
             }
 
+            final List<ElementModel> contents = pAnswer.getContents();
+
+            if (contents != null && !contents.isEmpty()) {
+                mContentsRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+                mContentsRecyclerView.setHasFixedSize(true);
+                ContentElementsAdapter mAdapter = new ContentElementsAdapter(mContext, contents);
+                mContentsRecyclerView.setAdapter(mAdapter);
+                mContentsRecyclerView.setVisibility(View.VISIBLE);
+            } else {
+                mContentsRecyclerView.setVisibility(View.GONE);
+            }
+
             mCheckBox.setChecked(isChecked);
             mCheckBox.setTag(pPosition);
             mCheckBox.setEnabled(isEnabled);
@@ -198,7 +213,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                     } else if (isChecked && maxAnswers != EMPTY_COUNT_ANSWER && checkedItemsCount >= maxAnswers) {
                         checkBox.setChecked(false);
 
-                        mBaseActivity.showToast(String.format(context.getString(R.string.incorrect_max_selected_answers), String.valueOf(maxAnswers)));
+                        mBaseActivity.showToast(String.format(context.getString(R.string.NOTIFICATION_MAX_ANSWERS), String.valueOf(maxAnswers)));
                     } else if (options.isUnchecker()) {
                         if (isChecked) {
                             setCheckedItemsCount(1);

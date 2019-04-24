@@ -19,6 +19,7 @@ public class QuestionnaireListRequestModel implements Serializable, Parcelable {
     private final String passw;
     private final List<QuestionnaireRequestModel> questionnairies;
     private final long device_time;
+    private final String app_version;
     private final String device_info;
 
     public QuestionnaireListRequestModel(String login_admin, String login, String passw) {
@@ -29,6 +30,7 @@ public class QuestionnaireListRequestModel implements Serializable, Parcelable {
         this.questionnairies = new ArrayList<>();
         this.device_time = DateUtils.getCurrentTimeMillis();
         this.device_info = DeviceUtils.getDeviceInfo();
+        this.app_version = DeviceUtils.getAppVersion();
     }
 
     public void addQuestionnaire(final QuestionnaireRequestModel pModel) {

@@ -42,8 +42,20 @@ public class ConfigModel implements Serializable, Parcelable {
     @SerializedName("audio_record_all")
     private boolean audio_record_all;
 
+    @SerializedName("is_critical_update")
+    private boolean is_critical_update;
+
     @SerializedName("audio_record_limit_time")
     private int audio_record_limit_time;
+
+    @SerializedName("apk_url")
+    private String apk_url;
+
+    @SerializedName("last_app_version")
+    private String last_app_version;
+
+    @SerializedName("last_app_version_code")
+    private int last_app_version_code;
 
     @SerializedName("delete_data_password")
     private String delete_data_password;
@@ -72,8 +84,6 @@ public class ConfigModel implements Serializable, Parcelable {
     }
 
     public boolean isPhotoQuestionnaire() {
-        // TODO: 1/5/2019 stub
-//        return false;
         return photo_questionnaire;
     }
 
@@ -94,21 +104,32 @@ public class ConfigModel implements Serializable, Parcelable {
     }
 
     public boolean isAudio() {
-        // TODO: 1/5/2019 stub
-//        return false;
         return audio;
     }
 
     public boolean isGps() {
-        // TODO: 2/4/2019 stub
-//        return true;
         return gps;
     }
 
     public boolean isForceGps() {
-        // TODO: 2/4/2019 stub
-//        return true;
         return force_gps;
+    }
+
+    public boolean isIsCriticalUpdate() {
+        return false;
+//        return is_critical_update;
+    }
+
+    public int getLastAppVersionCode() {
+        return last_app_version_code;
+    }
+
+    public String getApkUrl() {
+        return apk_url;
+    }
+
+    public String getLastAppVersion() {
+        return last_app_version;
     }
 
     public boolean isRecordFullQuestionnaire() {

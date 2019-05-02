@@ -236,25 +236,23 @@ public final class QuotasUtils {
         return null;
     }
     private static boolean isPreviousQuotasSelected(final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel, final QuotaModel pQuota) {
-        boolean result = true;
-
         final int currentRelativeId = pElementModel.getRelativeID();
         for (final int id : pQuota.getArray()) {
             if (currentRelativeId == id) {
-                result = true;
+                return true;
             }
 
             final ElementModel tmpElement = mMap.get(id);
 
             if (tmpElement == null) {
-                result = true;
+                return true;
             }
 
             if (!tmpElement.isFullySelected()) {
-                result = false;
+                return false;
             }
         }
 
-        return result;
+        return true;
     }
 }

@@ -39,6 +39,7 @@ import pro.quizer.quizerexit.model.request.AuthRequestModel;
 import pro.quizer.quizerexit.model.request.ConfigRequestModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
+import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.MD5Utils;
 import pro.quizer.quizerexit.utils.SPUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
@@ -393,6 +394,8 @@ public class AuthActivity extends BaseActivity {
                     .progressListener(new MultiFileDownloadListener() {
                         @Override
                         public void onProgress(final File downloadedFile, final int progress, final int totalFiles) {
+                            FileUtils.renameFile(downloadedFile, FileUtils.getFileName(fileUris[progress - 1]));
+
                             if (progress == totalFiles) {
                                 hideProgressBar();
 

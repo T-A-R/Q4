@@ -164,9 +164,9 @@ public class ContentElementsAdapter extends RecyclerView.Adapter<ContentElements
             return Constants.Strings.EMPTY;
         }
 
-        final String fileName = url.substring(url.lastIndexOf(FileUtils.FOLDER_DIVIDER), url.length());
+        final String fileName = FileUtils.getFileName(url);
 
-        return path + fileName;
+        return path + FileUtils.FOLDER_DIVIDER + fileName;
     }
 
 }

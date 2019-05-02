@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Queue;
 
 import pro.quizer.quizerexit.Constants;
+import pro.quizer.quizerexit.utils.Evaluator.Constant;
 
 public final class FileUtils {
 
@@ -28,6 +29,12 @@ public final class FileUtils {
     private static final String FOLDER_AUDIO = "audios";
     private static final String MEDIA_FILES = "media_files";
     private static final String CACHE = "cache";
+
+    public static String getFileName(final String url) {
+        final int end = url.length();
+        final int start = url.lastIndexOf(FileUtils.FOLDER_DIVIDER);
+        return url.substring(start + 1, end);
+    }
 
     public static void createTxtFile(final String pFilePath, final String pFileName, final CharSequence pBody) throws IOException {
         final File root = new File(pFilePath);
@@ -130,6 +137,21 @@ public final class FileUtils {
 //    public static boolean removeFile(final Context pContext, final File pOldFile, final int pUserId, final String pNewNameName) {
 //
 //    }
+
+    public static boolean renameFile(final File pOldFile, final String pNewName) {
+        final String path = pOldFile.getPath();
+        final String pCurrentFilePath = path.replace(pOldFile.getName(), Constants.Strings.EMPTY);
+
+        if (!createFolderIfNotExist(pCurrentFilePath)) {
+            return false;
+        }
+
+        final String pNewFilePath = pCurrentFilePath + pNewName;
+
+        final File file2 = new File(pNewFilePath);
+
+        return pOldFile.renameTo(file2);
+    }
 
     public static boolean renameFile(final Context pContext, final File pOldFile, final int pUserId, final String pNewNameName) {
         final String pCurrentFilePath = getPhotosStoragePath(pContext) + FOLDER_DIVIDER + pUserId + FOLDER_DIVIDER;

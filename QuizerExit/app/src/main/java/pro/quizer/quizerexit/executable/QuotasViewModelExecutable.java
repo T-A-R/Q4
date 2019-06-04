@@ -42,7 +42,7 @@ public class QuotasViewModelExecutable extends BaseModelExecutable<QuotasViewMod
             return quotasViewModel;
         }
 
-        quotas = getFilteredQuotasByDone(mBaseActivity, quotas, mIsNotCompletedOnly);
+        quotas = getFilteredQuotasByDone(quotas, mIsNotCompletedOnly);
 
         if (quotas == null || quotas.isEmpty()) {
             return quotasViewModel;
@@ -57,12 +57,12 @@ public class QuotasViewModelExecutable extends BaseModelExecutable<QuotasViewMod
         }
     }
 
-    private List<QuotaModel> getFilteredQuotasByDone(final BaseActivity pBaseActivity, final List<QuotaModel> pQuotas, final boolean pIsNotCompletedOnly) {
+    private List<QuotaModel> getFilteredQuotasByDone(final List<QuotaModel> pQuotas, final boolean pIsNotCompletedOnly) {
         if (pIsNotCompletedOnly) {
             final List<QuotaModel> quotas = new ArrayList<>();
 
             for (final QuotaModel quotaModel : pQuotas) {
-                if (!quotaModel.isCompleted(pBaseActivity)) {
+                if (!quotaModel.isCompleted()) {
                     quotas.add(quotaModel);
                 }
             }

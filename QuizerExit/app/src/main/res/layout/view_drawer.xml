@@ -49,6 +49,16 @@
         android:layout_marginRight="16dp"
         android:text="@string/VIEW_QUOTAS_TITLE" />
 
+    <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+        android:id="@+id/about_btn"
+        style="@style/ButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/VIEW_ABOUT_TITLE" />
 
     <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
         android:id="@+id/change_user_btn"

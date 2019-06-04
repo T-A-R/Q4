@@ -89,8 +89,6 @@ public class UploadingFTPExecutable extends BaseExecutable {
 //                    mFTPClient.enterLocalPassiveMode();
 //                }
 
-                mFTPClient.makeDirectory("testdirectory");
-
                 for (final File file : lists[0]) {
                     FileInputStream srcFileStream = new FileInputStream(file);
 

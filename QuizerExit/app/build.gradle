@@ -13,9 +13,10 @@ android {
         applicationId "pro.quizer.quizerexit"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 4
-        versionName "2.0.4"
+        versionCode 12
+        versionName "2.0.12"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        project.ext.set("archivesBaseName", "Quizer_ " + defaultConfig.versionName)
     }
     buildTypes {
         release {

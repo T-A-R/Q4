@@ -11,12 +11,12 @@ import java.util.List;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.executable.DeleteUsersExecutable;
 import pro.quizer.quizerexit.executable.ICallback;
+import pro.quizer.quizerexit.executable.SendAllQuestionnairesExecutable;
+import pro.quizer.quizerexit.executable.ServiceInfoExecutable;
 import pro.quizer.quizerexit.executable.UploadingExecutable;
 import pro.quizer.quizerexit.executable.UploadingFTPExecutable;
 import pro.quizer.quizerexit.executable.files.AllAudiosSendingExecutable;
 import pro.quizer.quizerexit.executable.files.AllPhotosSendingExecutable;
-import pro.quizer.quizerexit.executable.SendAllQuestionnairesExecutable;
-import pro.quizer.quizerexit.executable.ServiceInfoExecutable;
 import pro.quizer.quizerexit.executable.files.CleanUpFilesExecutable;
 import pro.quizer.quizerexit.model.view.ServiceViewModel;
 import pro.quizer.quizerexit.utils.UiUtils;
@@ -101,21 +101,11 @@ public class ServiceActivity extends BaseActivity implements ICallback {
                 UiUtils.setTextOrHide(mUnsendedAudio, String.format(mUnsendedAudioString, notSentAudioCount));
                 UiUtils.setTextOrHide(mUnsendePhoto, String.format(mUnsendedPhotoString, notSentPhotoCount));
 
-                mSendDataButton.setVisibility(notSentQuestionnairesCount > 0 ? View.VISIBLE : View.GONE);
-                mSendAudioButton.setVisibility(notSentAudioCount > 0 ? View.VISIBLE : View.GONE);
-                mSendPhotoButton.setVisibility(notSentPhotoCount > 0 ? View.VISIBLE : View.GONE);
-
-                if (usersCount > 0 && notSentQuestionnairesCount <= 0 && notSentAudioCount <= 0 && notSentPhotoCount <= 0) {
-                    mDeleteUsersButton.setVisibility(View.VISIBLE);
-                } else {
-                    mDeleteUsersButton.setVisibility(View.GONE);
-                }
-
-                if (notSentQuestionnairesCount > 0 || notSentAudioCount > 0 || notSentPhotoCount > 0) {
-                    mUploadDataButton.setVisibility(View.VISIBLE);
-                } else {
-                    mUploadDataButton.setVisibility(View.GONE);
-                }
+                UiUtils.setButtonEnabled(mSendDataButton, notSentQuestionnairesCount > 0);
+                UiUtils.setButtonEnabled(mSendAudioButton, notSentAudioCount > 0);
+                UiUtils.setButtonEnabled(mSendPhotoButton, notSentPhotoCount > 0);
+                UiUtils.setButtonEnabled(mDeleteUsersButton, usersCount > 0 && notSentQuestionnairesCount <= 0 && notSentAudioCount <= 0 && notSentPhotoCount <= 0);
+                UiUtils.setButtonEnabled(mUploadDataButton, notSentQuestionnairesCount > 0 || notSentAudioCount > 0 || notSentPhotoCount > 0);
             }
         });
 

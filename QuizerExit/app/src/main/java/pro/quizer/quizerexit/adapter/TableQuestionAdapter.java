@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -23,6 +24,7 @@ import com.cleveroad.adaptivetablelayout.OnItemClickListener;
 import com.cleveroad.adaptivetablelayout.ViewHolderImpl;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -60,14 +62,26 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     @Override
     public int processNext() throws Exception {
+        final List<ElementModel> availableQuestions = new ArrayList<>();
+
         for (final ElementModel question : mQuestions) {
-            if (question != null && question.getCountOfSelectedSubElements() == 0 && question.getOptions().isCanShow(mBaseActivity, mMap, question)) {
-                throw new Exception(mBaseActivity.getString(R.string.NOTIFICATION_MIN_ANSWERS_TABLE));
+            if (question != null && question.getOptions().isCanShow(mBaseActivity, mMap, question)) {
+                availableQuestions.add(question);
+
+                if (question.getCountOfSelectedSubElements() == 0) {
+                    throw new Exception(mBaseActivity.getString(R.string.NOTIFICATION_MIN_ANSWERS_TABLE));
+                }
             }
         }
 
-        for (int index = 0; index < mAnswers.size(); index++) {
-            final ElementModel model = mAnswers.get(index);
+        if (availableQuestions.isEmpty()) {
+            throw new Exception(mBaseActivity.getString(R.string.NOTIFICATION_EMPTY_TABLE));
+        }
+
+        final List<ElementModel> firstAvailableQuestionAnswers = availableQuestions.get(0).getElements();
+
+        for (int index = 0; index < firstAvailableQuestionAnswers.size(); index++) {
+            final ElementModel model = firstAvailableQuestionAnswers.get(index);
 
             if (model != null && model.isFullySelected()) {
                 return model.getOptions().getJump();
@@ -172,6 +186,14 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final ElementModel currentElement = getElement(row, column);
 
         if (currentElement != null) {
+            final OptionsModel optionsModel = currentElement.getOptions();
+
+            if (!OptionsOpenType.CHECKBOX.equals(optionsModel.getOpenType())) {
+                vh.mOpenAnswerFrame.setVisibility(View.VISIBLE);
+            } else {
+                vh.mOpenAnswerFrame.setVisibility(View.GONE);
+            }
+
             if (getQuestion(row, column).getOptions().isPolyanswer()) {
                 vh.mTableItemCheckBox.setVisibility(View.VISIBLE);
                 vh.mTableItemRadioButton.setVisibility(View.GONE);
@@ -193,6 +215,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private void setChecked(final TableItemViewHolder vh, final boolean pIsChecked) {
         vh.mTableItemCheckBox.setChecked(pIsChecked);
         vh.mTableItemRadioButton.setChecked(pIsChecked);
+        vh.mOpenAnswerEditText.setText(pIsChecked ? "✓" : "");
     }
 
     @Override
@@ -527,12 +550,16 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     private static class TableItemViewHolder extends ViewHolderImpl {
 
+        FrameLayout mOpenAnswerFrame;
+        EditText mOpenAnswerEditText;
         CustomCheckableButton mTableItemRadioButton;
         CustomCheckableButton mTableItemCheckBox;
         View mDisableFrame;
 
         private TableItemViewHolder(@NonNull final View itemView) {
             super(itemView);
+            mOpenAnswerFrame = itemView.findViewById(R.id.open_answer_frame);
+            mOpenAnswerEditText = itemView.findViewById(R.id.open_answer_edittext);
             mTableItemRadioButton = itemView.findViewById(R.id.table_item_radio_button);
             mTableItemCheckBox = itemView.findViewById(R.id.table_item_check_box);
             mDisableFrame = itemView.findViewById(R.id.disable_frame);

@@ -125,7 +125,7 @@ public final class QuotasUtils {
             if (quota.contains(elementId)) {
 
 //                if (!quota.isCompleted(pBaseActivity) && isPreviousQuotasSelected(mMap, pElementModel, quota)) {
-                if (isPreviousQuotasSelected(mMap, pElementModel, quota) && !quota.isCompleted(pBaseActivity)) {
+                if (isPreviousQuotasSelected(mMap, pElementModel, quota) && !quota.isCompleted()) {
                     result.add(quota);
                 }
             }

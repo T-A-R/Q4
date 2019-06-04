@@ -29,6 +29,7 @@ import java.util.List;
 import pro.quizer.quizerexit.BuildConfig;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.executable.RemoveUserExecutable;
+import pro.quizer.quizerexit.fragment.AboutFragment;
 import pro.quizer.quizerexit.fragment.HomeFragment;
 import pro.quizer.quizerexit.fragment.QuotasFragment;
 import pro.quizer.quizerexit.fragment.SettingsFragment;
@@ -218,6 +219,10 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
 
     public void showSettingsFragment() {
         showFragmentWithBackstack(SettingsFragment.newInstance());
+    }
+
+    public void showAboutFragment() {
+        showFragmentWithBackstack(AboutFragment.newInstance());
     }
 
     public void showQuotasFragment() {
@@ -417,7 +422,9 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
 
             @Override
             public void run() {
-                getProgressBar().setVisibility(View.VISIBLE);
+                if (getProgressBar() != null){
+                    getProgressBar().setVisibility(View.VISIBLE);
+                }
             }
         });
     }
@@ -448,7 +455,9 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
 
             @Override
             public void run() {
-                getProgressBar().setVisibility(View.GONE);
+                if (getProgressBar() != null) {
+                    getProgressBar().setVisibility(View.GONE);
+                }
             }
         });
     }

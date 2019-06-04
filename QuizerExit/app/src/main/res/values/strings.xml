@@ -66,6 +66,7 @@
     <string name="VIEW_SETTINGS_SPACING">Интервал между ответами: %1$s</string>
     <string name="VIEW_SETTINGS_EXIT_POLL_TITLE">Выбор номера (для Экзит-Пулл)</string>
     <string name="VIEW_QUOTAS_TITLE">Квоты</string>
+    <string name="VIEW_ABOUT_TITLE">О нас</string>
     <string name="VIEW_BUTTON_REFRESH">Обновить</string>
     <string name="VIEW_X_FROM_Y">\u0020(%1$s из %2$s)</string>
     <string name="VIEW_STATUS_DONE">Выполнено</string>
@@ -98,10 +99,11 @@
     <string name="NOTIFICATION_MAX_USER_COUNT">Достигнуто максимальное количество пользователей на устройстве (%1$s)! Обратитесь к менеджеру!</string>
     <string name="NOTIFICATION_SHORT_LOGIN_ERROR">Минимальная длина логина - 3 символа. Пожалуйста, введите логин и повторите попытку входа.</string>
     <string name="NOTIFICATION_MIN_ANSWERS_TABLE">Выберите минимум 1 вариант ответа в каждом вопросе из таблицы.</string>
+    <string name="NOTIFICATION_EMPTY_TABLE">В таблице нет доступных вопросов.</string>
     <string name="NOTIFICATION_MIN_ANSWERS">Выберите минимум %1$s ответ(а).</string>
     <string name="NOTIFICATION_MAX_ANSWERS">Вы можете выбрать максимум %1$s ответ(а).</string>
     <string name="NOTIFICATION_INTERNAL_APP_ERROR">Внутренняя ошибка приложения. Error code: </string>
-    <string name="NOTIFICATION_NEXT_ELEMENT_CALCULATION_ERROR">Ошбка при подсчете следующего элемента.</string>
+    <string name="NOTIFICATION_NEXT_ELEMENT_CALCULATION_ERROR">Ошибка при подсчете следующего элемента.</string>
     <string name="NOTIFICATION_PERMISSION_ERROR">Вы не можете продолжить, так как все запрашиваемые разрешения обязательны для продолжения работы.</string>
     <string name="NOTIFICATION_NO_CONNECTION_SAVING_QUIZ">Ошибка при соединении с сервером. Анкета сохранена в устройстве.</string>
     <string name="NOTIFICATION_SENDING_ERROR_EMPTY_TOKENS_LIST">Сервер не принял отправленные данные.</string>
@@ -146,4 +148,6 @@
     <string name="DIALOG_CRITICAL_UPDATE_TITLE">Новая версия приложения обязательна к обновлению. Это может быть связано с критическими ошибками предыдущей версии.</string>
     <string name="DIALOG_UPDATE_TITLE">Желаете обновить?</string>
     <string name="DIALOG_BUTTON_UPDATE">Обновить</string>
+    <string name="e_mail_sales_quizer_pro">e-mail: sales@quizer.pro</string>
+    <string name="_7_909_214_48_33">тел.: +7 909 214 48 33</string>
 </resources>

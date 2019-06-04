@@ -35,6 +35,16 @@ public class QuotaModel implements Serializable, Parcelable {
     private List<QuotaTimeLineModel> mStringList = null;
     private Set<Integer> mSet = null;
     private Integer[] mArray = null;
+    private int userId;
+    private int userProjectId;
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public void setUserProjectId(int userProjectId) {
+        this.userProjectId = userProjectId;
+    }
 
     public String getSequence() {
         return sequence;
@@ -48,13 +58,13 @@ public class QuotaModel implements Serializable, Parcelable {
         return limit;
     }
 
-    public int getDone(final BaseActivity pBaseActivity) {
-        return done + getLocalCount(pBaseActivity);
+    public int getDone() {
+        return done + getLocalCount();
     }
 
-    private int getLocalCount(final BaseActivity pBaseActivity) {
+    private int getLocalCount() {
         if (mLocalCount == null) {
-            mLocalCount = new QuestionnairesCountBySequenceExecutable(pBaseActivity, getSet()).execute();
+            mLocalCount = new QuestionnairesCountBySequenceExecutable(userId, userProjectId, getSet()).execute();
         }
 
         return mLocalCount;
@@ -119,8 +129,8 @@ public class QuotaModel implements Serializable, Parcelable {
         return mArray;
     }
 
-    public boolean isCompleted(final BaseActivity pBaseActivity) {
-        return getDone(pBaseActivity) >= getLimit();
+    public boolean isCompleted() {
+        return getDone() >= getLimit();
     }
 
     public boolean isCanDisplayed() {

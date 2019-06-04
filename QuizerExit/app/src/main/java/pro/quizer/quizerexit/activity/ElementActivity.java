@@ -76,7 +76,7 @@ public class ElementActivity extends BaseActivity {
 //
 //    };
 
-    public static final int FIRST_ELEMENT = -1;
+    public static final int FIRST_ELEMENT = Integer.MIN_VALUE;
     public static final int ONE_SEC = 1000;
     UserModel mUserModel;
     ConfigModel mConfig;
@@ -378,6 +378,14 @@ public class ElementActivity extends BaseActivity {
     }
 
     private void showNextElement(final int pNextRelativeId, final boolean pIsAddToBackStack) {
+        if (pNextRelativeId == -1) {
+
+            finish();
+            startMainActivity();
+
+            return;
+        }
+
         final ElementModel nextElement = getElementByRelativeId(pNextRelativeId);
 
         if (nextElement == null) {

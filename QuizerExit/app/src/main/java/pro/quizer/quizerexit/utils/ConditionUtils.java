@@ -9,8 +9,8 @@ import pro.quizer.quizerexit.utils.Evaluator.TreeBooleanEvaluator;
 
 public final class ConditionUtils {
 
-    public static final int CAN_SHOW = -1;
-    public static final int CANT_SHOW = -2;
+    public static final int CAN_SHOW = Integer.MIN_VALUE;
+    public static final int CANT_SHOW = Integer.MAX_VALUE;
 
     private static final String ELEMENT_INDEX = "$e.";
     private static final String START_STRING = "<#";

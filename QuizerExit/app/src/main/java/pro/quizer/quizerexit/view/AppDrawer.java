@@ -20,6 +20,7 @@ public class AppDrawer extends RelativeLayout implements Serializable, Parcelabl
     Button mHomeBtn;
     Button mSyncBtn;
     Button mSettingsBtn;
+    Button mAboutBtn;
     Button mQuotasBtn;
     Button mChangeUserBtn;
 
@@ -84,6 +85,7 @@ public class AppDrawer extends RelativeLayout implements Serializable, Parcelabl
         mHomeBtn = findViewById(R.id.home_btn);
         mSyncBtn = findViewById(R.id.sync_btn);
         mSettingsBtn = findViewById(R.id.settings_btn);
+        mAboutBtn = findViewById(R.id.about_btn);
         mQuotasBtn = findViewById(R.id.quotas_btn);
         mChangeUserBtn = findViewById(R.id.change_user_btn);
 
@@ -111,6 +113,15 @@ public class AppDrawer extends RelativeLayout implements Serializable, Parcelabl
                 mInternalClickListenerForToolbar.onClick(view);
                 baseActivity.closeDrawer();
                 baseActivity.showSettingsFragment();
+            }
+        });
+
+        mAboutBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mInternalClickListenerForToolbar.onClick(view);
+                baseActivity.closeDrawer();
+                baseActivity.showAboutFragment();
             }
         });
 

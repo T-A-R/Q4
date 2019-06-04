@@ -53,7 +53,7 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
     public void onBindViewHolder(QuotaViewHolder holder, int position) {
         QuotaModel quotaModel = mQuotasList.get(position);
 
-        final int doneInt = quotaModel.getDone(mBaseActivity);
+        final int doneInt = quotaModel.getDone();
         final int limitInt = quotaModel.getLimit();
         final String done = String.valueOf(doneInt);
         final String limit = String.valueOf(limitInt);

@@ -14,13 +14,16 @@ import pro.quizer.quizerexit.model.database.UserModel;
 
 public class QuestionnairesCountBySequenceExecutable extends BaseModelExecutable<Integer> {
 
-    private final BaseActivity mBaseActivity;
     private final Set<Integer> mSet;
+    private final int userId;
+    private final int userProjectId;
 
-    public QuestionnairesCountBySequenceExecutable(final BaseActivity pBaseActivity, final Set<Integer> pSet) {
+
+    public QuestionnairesCountBySequenceExecutable(final int userId, final int userProjectId, final Set<Integer> pSet) {
         super();
 
-        mBaseActivity = pBaseActivity;
+        this.userId = userId;
+        this.userProjectId = userProjectId;
         mSet = pSet;
     }
 
@@ -28,14 +31,12 @@ public class QuestionnairesCountBySequenceExecutable extends BaseModelExecutable
     public Integer execute() {
         int count = 0;
 
-        final UserModel currentUserModel = mBaseActivity.getCurrentUser();
-
         final List<QuestionnaireDatabaseModel> sentQuestionnaires = new Select()
                 .from(QuestionnaireDatabaseModel.class)
                 .where(QuestionnaireDatabaseModel.STATUS + " =? AND " +
                                 QuestionnaireDatabaseModel.USER_ID + " =? AND " +
                                 QuestionnaireDatabaseModel.USER_PROJECT_ID + " =?",
-                        QuestionnaireStatus.NOT_SENT, currentUserModel.user_id, currentUserModel.user_project_id)
+                        QuestionnaireStatus.NOT_SENT, userId, userProjectId)
                 .execute();
 
         for (final QuestionnaireDatabaseModel questionnaireDatabaseModel : sentQuestionnaires) {

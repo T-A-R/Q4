@@ -84,6 +84,8 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
         if (elementModel == null || !elementModel.getOptions().isCanShow(getBaseActivity(), getMap(), elementModel)) {
             pAnswerListViewHolder.itemView.setLayoutParams(new ViewGroup.LayoutParams(0, 0));
+        } else {
+            pAnswerListViewHolder.itemView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }
     }
 
@@ -193,6 +195,12 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
             mCheckBox.setChecked(isChecked);
             mCheckBox.setTag(pPosition);
             mCheckBox.setEnabled(isEnabled);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mCheckBox.callOnClick();
+                }
+            });
             mCheckBox.setOnClickListener(new View.OnClickListener() {
 
                 @Override
@@ -254,9 +262,10 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
     }
 
     private void refresh() {
-        if (mRefreshRunnable != null) {
-            mRefreshRunnable.run();
-        }
+        notifyDataSetChanged();
+//        if (mRefreshRunnable != null) {
+//            mRefreshRunnable.run();
+//        }
     }
 
     public static class ElementTextWatcher extends SimpleTextWatcher {

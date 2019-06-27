@@ -16,11 +16,13 @@ import java.util.Calendar;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.model.config.ElementModel;
+import pro.quizer.quizerexit.view.ExtendedEditText;
+import pro.quizer.quizerexit.view.resizeble.edittext.ResizableEditText;
 
 public abstract class AbstractViewHolder extends RecyclerView.ViewHolder {
 
     final Context mContext;
-    final EditText mEditText;
+    final ResizableEditText mEditText;
     private Calendar mCalendar = Calendar.getInstance();
 
     AbstractViewHolder(@NonNull View itemView) {

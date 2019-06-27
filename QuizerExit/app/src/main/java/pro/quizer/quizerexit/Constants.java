@@ -11,7 +11,7 @@ public final class Constants {
 
     public interface Default {
 
-        String ACTIVATION_URL = "http://head.quizer.pro/wheretoredirrect_json.php";
+        String ACTIVATION_URL = "http://188.225.11.47/wheretoredirrect_json.php";
 
     }
 

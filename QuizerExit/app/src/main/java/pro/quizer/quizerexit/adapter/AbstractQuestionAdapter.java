@@ -1,6 +1,5 @@
 package pro.quizer.quizerexit.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import pro.quizer.quizerexit.model.config.ElementModel;
 
 public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<T> implements IAdapter {
 
-    private final Context mContext;
+    public final BaseActivity mBaseActivity;
     private final int mMaxAnswer;
     private final int mMinAnswer;
     private final List<ElementModel> mAnswers;
@@ -23,9 +22,9 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
     private HashMap<Integer, ElementModel> mMap;
     private boolean mIsUpdateActionPerformed;
 
-    AbstractQuestionAdapter(final ElementModel pCurrentElement, final Context pContext, final List<ElementModel> pAnswers, final int pMaxAnswer, final int pMinAnswer) {
-        this.mContext = pContext;
-        this.mMap = getBaseActivity().getMap();
+    AbstractQuestionAdapter(final ElementModel pCurrentElement, final BaseActivity pContext, final List<ElementModel> pAnswers, final int pMaxAnswer, final int pMinAnswer) {
+        this.mBaseActivity = pContext;
+        this.mMap = mBaseActivity.getMap();
         this.mCurrentElement = pCurrentElement;
         this.mAnswers = pAnswers; // getBaseActivity().getElementsByParentId(pCurrentElement.getRelativeID());
         this.mMaxAnswer = pMaxAnswer;
@@ -45,10 +44,6 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
 
     public boolean isIsUpdateActionPerformed() {
         return mIsUpdateActionPerformed;
-    }
-
-    public BaseActivity getBaseActivity() {
-        return (BaseActivity) mContext;
     }
 
     public HashMap<Integer, ElementModel> getMap() {
@@ -123,7 +118,7 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
             final ElementModel itemModel = mAnswers.get(i);
 
             if (itemModel != null && itemModel.isCheckedAndTextIsEmptyForSpecialOpenTypes()) {
-                throw new Exception(mContext.getString(R.string.NOTIFICATION_FILL_INPUT));
+                throw new Exception(mBaseActivity.getString(R.string.NOTIFICATION_FILL_INPUT));
             }
 
             if (itemModel != null && itemModel.isFullySelected()) {
@@ -141,7 +136,7 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
 
         if (size < mMinAnswer) {
             if (!(size == 1 && selectedList.get(0).getOptions().isUnchecker())) {
-                throw new Exception(String.format(mContext.getString(R.string.NOTIFICATION_MIN_ANSWERS), String.valueOf(mMinAnswer)));
+                throw new Exception(String.format(mBaseActivity.getString(R.string.NOTIFICATION_MIN_ANSWERS), String.valueOf(mMinAnswer)));
             }
         }
 
@@ -153,6 +148,6 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
             }
         }
 
-        throw new Exception(mContext.getString(R.string.NOTIFICATION_NEXT_ELEMENT_CALCULATION_ERROR));
+        throw new Exception(mBaseActivity.getString(R.string.NOTIFICATION_NEXT_ELEMENT_CALCULATION_ERROR));
     }
 }

@@ -4,10 +4,11 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
+import pro.quizer.quizerexit.view.ExtendedEditText;
 import pro.quizer.quizerexit.view.resizeble.ResizableViewUtils;
 
 
-public abstract class AbstractResizableEditText extends EditText {
+public abstract class AbstractResizableEditText extends ExtendedEditText {
 
     public AbstractResizableEditText(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);

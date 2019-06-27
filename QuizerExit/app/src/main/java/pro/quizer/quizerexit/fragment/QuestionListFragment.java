@@ -17,6 +17,7 @@ import java.util.List;
 import pro.quizer.quizerexit.IAdapter;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.adapter.AbstractQuestionAdapter;
 import pro.quizer.quizerexit.adapter.QuestionListAdapter;
 import pro.quizer.quizerexit.model.config.ElementModel;
@@ -57,7 +58,7 @@ public class QuestionListFragment extends AbstractQuestionFragment {
 
     @Override
     void createAdapter(final ElementModel pCurrentElement, List<ElementModel> subElements, int minAnswers, int maxAnswers, Runnable refreshRecyclerViewRunnable) {
-        mAdapter = new QuestionListAdapter(pCurrentElement, getContext(), subElements, maxAnswers, minAnswers, refreshRecyclerViewRunnable);
+        mAdapter = new QuestionListAdapter(pCurrentElement, (BaseActivity) getContext(), subElements, maxAnswers, minAnswers);
 
         if (pCurrentElement.getOptions().isMedia()) {
             mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
@@ -65,6 +66,8 @@ public class QuestionListFragment extends AbstractQuestionFragment {
         } else {
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         }
+        mRecyclerView.setItemViewCacheSize(0);
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
     }
 

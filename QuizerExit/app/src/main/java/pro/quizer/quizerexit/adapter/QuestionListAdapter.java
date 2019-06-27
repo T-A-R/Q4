@@ -1,7 +1,6 @@
 package pro.quizer.quizerexit.adapter;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,40 +35,32 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
     private final boolean mIsPolyAnswers;
     private final String mDefaultPlaceHolder;
-    private Runnable mRefreshRunnable;
-    private BaseActivity mBaseActivity;
-    private UserModel mUser;
     private List<QuotaModel> mQuotas;
     private HashMap<Integer, ElementModel> mMap;
-    private ElementModel mCurrentElement;
 
     public QuestionListAdapter(final ElementModel pCurrentElement,
-                               final Context pContext,
+                               final BaseActivity pBaseActivity,
                                final List<ElementModel> pAnswers,
                                final int pMaxAnswer,
-                               final int pMinAnswer,
-                               final Runnable pRefreshRunnable) {
-        super(pCurrentElement, pContext, pAnswers, pMaxAnswer, pMinAnswer);
+                               final int pMinAnswer) {
+        super(pCurrentElement, pBaseActivity, pAnswers, pMaxAnswer, pMinAnswer);
 
-        mRefreshRunnable = pRefreshRunnable;
-        mDefaultPlaceHolder = pContext.getString(R.string.TEXT_HINT_DEFAULT_PLACEHOLDER);
+        mDefaultPlaceHolder = pBaseActivity.getString(R.string.TEXT_HINT_DEFAULT_PLACEHOLDER);
         mIsPolyAnswers = pMaxAnswer == 1 && pMinAnswer == 1;
 
-        mBaseActivity = getBaseActivity();
-        mUser = mBaseActivity.getCurrentUser();
+        UserModel mUser = mBaseActivity.getCurrentUser();
         mQuotas = mUser.getQuotas();
         mMap = getMap();
-        mCurrentElement = getCurrentElement();
     }
 
     @NonNull
     @Override
     public AnswerListViewHolder onCreateViewHolder(@NonNull final ViewGroup pViewGroup, final int pPosition) {
         if (mIsPolyAnswers) {
-            final View itemView = LayoutInflater.from(pViewGroup.getContext()).inflate(R.layout.adapter_answer_list_radio, pViewGroup, false);
+            final View itemView = LayoutInflater.from(mBaseActivity).inflate(R.layout.adapter_answer_list_radio, pViewGroup, false);
             return new AnswerListViewHolder(itemView);
         } else {
-            final View itemView = LayoutInflater.from(pViewGroup.getContext()).inflate(R.layout.adapter_answer_list_checkbox, pViewGroup, false);
+            final View itemView = LayoutInflater.from(mBaseActivity).inflate(R.layout.adapter_answer_list_checkbox, pViewGroup, false);
             return new AnswerListViewHolder(itemView);
         }
     }
@@ -82,7 +73,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
             pAnswerListViewHolder.onBind(getModel(pPosition), pPosition);
         }
 
-        if (elementModel == null || !elementModel.getOptions().isCanShow(getBaseActivity(), getMap(), elementModel)) {
+        if (elementModel == null || !elementModel.getOptions().isCanShow(mBaseActivity, getMap(), elementModel)) {
             pAnswerListViewHolder.itemView.setLayoutParams(new ViewGroup.LayoutParams(0, 0));
         } else {
             pAnswerListViewHolder.itemView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -120,19 +111,18 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
             final boolean isChecked = pAnswer.isChecked();
             final boolean isEnabled = pAnswer.isEnabled(mQuotas, mBaseActivity, mMap, pAnswer);
             final boolean isEditTextEnabled = isChecked && isEnabled;
-            final Context context = mEditText.getContext();
 
             if (!OptionsOpenType.CHECKBOX.equals(openType)) {
                 final String placeholder = options.getPlaceholder();
                 final String textAnswer = pAnswer.getTextAnswer();
-                final boolean isPicker = options.getOpenType().equals(OptionsOpenType.TIME) || options.getOpenType().equals(OptionsOpenType.DATE);
 
                 mEditText.setVisibility(View.VISIBLE);
                 mEditText.setHint(StringUtils.isEmpty(placeholder) ? mDefaultPlaceHolder : placeholder);
                 mEditText.setTag(pPosition);
-                mEditText.setText(textAnswer);
                 mEditText.setEnabled(isEditTextEnabled);
-                mEditText.addTextChangedListener(new ElementTextWatcher(pAnswer, mEditText, isPicker));
+                mEditText.clearTextChangedListeners();
+                mEditText.addTextChangedListener(new ElementTextWatcher(getModel(pPosition), mEditText));
+                mEditText.setText(textAnswer);
 
                 switch (options.getOpenType()) {
                     case OptionsOpenType.TIME:
@@ -170,7 +160,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                 mEditText.setVisibility(View.GONE);
             }
 
-            final String title = options.getTitle((BaseActivity) context);
+            final String title = options.getTitle(mBaseActivity);
             final String description = options.getDescription();
 
             if (StringUtils.isNotEmpty(description)) {
@@ -183,9 +173,9 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
             final List<ElementModel> contents = pAnswer.getContents();
 
             if (contents != null && !contents.isEmpty()) {
-                mContentsRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+                mContentsRecyclerView.setLayoutManager(new LinearLayoutManager(mBaseActivity));
                 mContentsRecyclerView.setHasFixedSize(true);
-                ContentElementsAdapter mAdapter = new ContentElementsAdapter(mContext, contents);
+                ContentElementsAdapter mAdapter = new ContentElementsAdapter(mBaseActivity, contents);
                 mContentsRecyclerView.setAdapter(mAdapter);
                 mContentsRecyclerView.setVisibility(View.VISIBLE);
             } else {
@@ -193,19 +183,13 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
             }
 
             mCheckBox.setChecked(isChecked);
-            mCheckBox.setTag(pPosition);
             mCheckBox.setEnabled(isEnabled);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mCheckBox.callOnClick();
-                }
-            });
+            mCheckBox.setChecked(isChecked);
+            mCheckBox.setTag(pPosition);
             mCheckBox.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(final View view) {
-                    final Context context = view.getContext();
                     final CustomCheckableButton checkBox = (CustomCheckableButton) view;
                     final boolean isChecked = checkBox.isChecked();
                     final int minAnswers = getMinAnswer();
@@ -221,7 +205,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                     } else if (isChecked && maxAnswers != EMPTY_COUNT_ANSWER && checkedItemsCount >= maxAnswers) {
                         checkBox.setChecked(false);
 
-                        mBaseActivity.showToast(String.format(context.getString(R.string.NOTIFICATION_MAX_ANSWERS), String.valueOf(maxAnswers)));
+                        mBaseActivity.showToast(String.format(mBaseActivity.getString(R.string.NOTIFICATION_MAX_ANSWERS), String.valueOf(maxAnswers)));
                     } else if (options.isUnchecker()) {
                         if (isChecked) {
                             setCheckedItemsCount(1);
@@ -268,16 +252,14 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 //        }
     }
 
-    public static class ElementTextWatcher extends SimpleTextWatcher {
+    public class ElementTextWatcher extends SimpleTextWatcher {
 
         private ElementModel mAnswer;
         private EditText mEditText;
-        private boolean mIsPicker;
 
-        ElementTextWatcher(final ElementModel pAnswer, final EditText pEditText, final boolean pIsPicker) {
+        ElementTextWatcher(final ElementModel pAnswer, final EditText pEditText) {
             mAnswer = pAnswer;
             mEditText = pEditText;
-            mIsPicker = pIsPicker;
         }
 
         @Override

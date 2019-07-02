@@ -9,7 +9,7 @@ import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.DeviceUtils;
 
-public class ActivationRequestModel implements Serializable, Parcelable {
+public class ActivationRequestModel implements Serializable {
 
     private final String name_form;
     private final String key;
@@ -25,13 +25,4 @@ public class ActivationRequestModel implements Serializable, Parcelable {
         app_version = DeviceUtils.getAppVersion();
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

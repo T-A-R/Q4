@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
-public class DeletingListResponseModel implements Serializable, Parcelable {
+public class DeletingListResponseModel implements Serializable {
 
     @SerializedName("result")
     private int result;
@@ -38,13 +38,4 @@ public class DeletingListResponseModel implements Serializable, Parcelable {
         return server_time;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

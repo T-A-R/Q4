@@ -50,6 +50,7 @@ public class UploadingExecutable extends BaseExecutable {
     }
 
     private void moveQuestionnaires() {
+        // GOOD select
         final List<UserModel> users = new Select().from(UserModel.class).execute();
 
         if (users == null || users.isEmpty()) {

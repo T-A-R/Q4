@@ -11,7 +11,7 @@ import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.DeviceUtils;
 
-public class QuestionnaireListRequestModel implements Serializable, Parcelable {
+public class QuestionnaireListRequestModel implements Serializable {
 
     private final String login_admin;
     private final String name_form;
@@ -41,13 +41,4 @@ public class QuestionnaireListRequestModel implements Serializable, Parcelable {
         return !questionnairies.isEmpty();
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

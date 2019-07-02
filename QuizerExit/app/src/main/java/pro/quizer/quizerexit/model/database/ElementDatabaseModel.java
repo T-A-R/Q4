@@ -12,7 +12,7 @@ import java.io.Serializable;
 import pro.quizer.quizerexit.model.ElementDatabaseType;
 
 @Table(name = "ElementDatabaseModel")
-public class ElementDatabaseModel extends Model implements Serializable, Parcelable {
+public class ElementDatabaseModel extends Model implements Serializable {
 
     public static final String TOKEN = "token";
 
@@ -45,13 +45,4 @@ public class ElementDatabaseModel extends Model implements Serializable, Parcela
     @Column(name = "type")
     public String type;
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

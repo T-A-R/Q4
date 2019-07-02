@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/button_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="48dp"
+        android:paddingRight="48dp"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+            android:id="@+id/back_btn"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="@string/VIEW_BACK"
+            android:visibility="gone" />
+
+        <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+            android:id="@+id/exit_btn"
+            android:visibility="invisible"
+            style="@style/ButtonRed"
+            android:layout_width="224dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="@string/VIEW_EXIT_QUIZ"
+            android:textColor="#fff" />
+
+        <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+            android:id="@+id/forward_btn"
+            style="@style/ButtonStyle"
+            android:layout_width="224dp"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="8dp"
+            android:text="@string/VIEW_FINISH" />
+
+    </RelativeLayout>
+
+</merge>

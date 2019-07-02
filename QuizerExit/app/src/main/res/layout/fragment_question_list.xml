@@ -8,13 +8,31 @@
         android:id="@+id/element_header"
         layout="@layout/view_element_header" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/question_recycler_view"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/button_panel"
-        android:layout_below="@+id/element_header"
-        tools:ignore="UnknownIdInLayout" />
+        android:layout_below="@+id/element_header">
+
+        <pro.quizer.quizerexit.view.resizeble.edittext.ResizableEditText
+            android:id="@+id/search_edittext_alert"
+            android:inputType="text"
+            android:imeOptions="actionDone"
+            android:maxLines="1"
+            android:lines="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:hint="Поиск" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/question_recycler_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="UnknownIdInLayout" />
+
+    </LinearLayout>
 
     <include layout="@layout/view_question_buttons_panel" />
 

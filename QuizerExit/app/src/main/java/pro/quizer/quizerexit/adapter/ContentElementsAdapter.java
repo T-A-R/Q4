@@ -1,7 +1,6 @@
 package pro.quizer.quizerexit.adapter;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
@@ -31,12 +30,16 @@ import pro.quizer.quizerexit.utils.UiUtils;
 
 public class ContentElementsAdapter extends RecyclerView.Adapter<ContentElementsAdapter.InfoElementViewHolder> implements IAdapter {
 
-    private final Context mContext;
+    private final BaseActivity mBaseActivity;
     private final List<ElementModel> mContents;
+    private final ElementModel mParentElement;
+    private final ElementModel mParentQuestion;
 
-    public ContentElementsAdapter(final Context pContext, final List<ElementModel> pContents) {
-        this.mContext = pContext;
+    public ContentElementsAdapter(final ElementModel pParentQuestion, final ElementModel pParentElement, final BaseActivity pContext, final List<ElementModel> pContents) {
+        this.mBaseActivity = pContext;
         this.mContents = pContents;
+        mParentElement = pParentElement;
+        mParentQuestion = pParentQuestion;
     }
 
     @Override
@@ -57,8 +60,8 @@ public class ContentElementsAdapter extends RecyclerView.Adapter<ContentElements
     @NonNull
     @Override
     public InfoElementViewHolder onCreateViewHolder(@NonNull final ViewGroup pViewGroup, final int pPosition) {
-        final View itemView = LayoutInflater.from(pViewGroup.getContext()).inflate(R.layout.adapter_info_element, pViewGroup, false);
-        return new InfoElementViewHolder(itemView);
+        final View itemView = LayoutInflater.from(mBaseActivity).inflate(R.layout.adapter_info_element, pViewGroup, false);
+        return new InfoElementViewHolder(itemView, mBaseActivity);
     }
 
     @Override
@@ -71,26 +74,18 @@ public class ContentElementsAdapter extends RecyclerView.Adapter<ContentElements
         return 0;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
-
     class InfoElementViewHolder extends AbstractViewHolder {
 
         TextView mText;
         ImageView mImageView;
+        ImageView mIconView;
         BetterVideoPlayer mVideoPlayer;
         BetterVideoPlayer mAudioPlayer;
 
-        InfoElementViewHolder(final View itemView) {
-            super(itemView);
+        InfoElementViewHolder(final View itemView, final BaseActivity pBaseActivity) {
+            super(itemView, pBaseActivity);
             mText = itemView.findViewById(R.id.info_text);
+            mIconView = itemView.findViewById(R.id.info_icon);
             mImageView = itemView.findViewById(R.id.info_image);
             mVideoPlayer = itemView.findViewById(R.id.info_video_player);
             mAudioPlayer = itemView.findViewById(R.id.info_audio_player);
@@ -101,9 +96,11 @@ public class ContentElementsAdapter extends RecyclerView.Adapter<ContentElements
         public void onBind(final ElementModel pContent, final int pPosition) {
             final OptionsModel options = pContent.getOptions();
             final String data = pContent.getData();
+            final String dataOn = pContent.getDataOn();
+            final String dataOff = pContent.getDataOff();
 
             switch (pContent.getType()) {
-                case ElementSubtype.TEXT:
+                case ElementSubtype.HTML:
                     UiUtils.setTextOrHide(mText, options.getText());
 
                     break;
@@ -116,7 +113,7 @@ public class ContentElementsAdapter extends RecyclerView.Adapter<ContentElements
 
                     mAudioPlayer.setVisibility(View.VISIBLE);
                     mAudioPlayer.setSource(Uri.fromFile(new File(fileAudioPath)));
-                    mAudioPlayer.enableSwipeGestures(((BaseActivity) mContext).getWindow());
+                    mAudioPlayer.enableSwipeGestures(((BaseActivity) mBaseActivity).getWindow());
 
                     break;
                 case ElementSubtype.VIDEO:
@@ -131,7 +128,7 @@ public class ContentElementsAdapter extends RecyclerView.Adapter<ContentElements
 
                     mVideoPlayer.setHideControlsOnPlay(true);
 
-                    mVideoPlayer.enableSwipeGestures(((BaseActivity) mContext).getWindow());
+                    mVideoPlayer.enableSwipeGestures(((BaseActivity) mBaseActivity).getWindow());
 
                     break;
                 case ElementSubtype.IMAGE:
@@ -143,11 +140,31 @@ public class ContentElementsAdapter extends RecyclerView.Adapter<ContentElements
 
                     mImageView.setVisibility(View.VISIBLE);
 
-                    Picasso.with(mContext)
+                    Picasso.with(mBaseActivity)
                             .load(new File(filePhotooPath))
                             .into(mImageView);
 
 
+                    break;
+                case ElementSubtype.STATUS_IMAGE:
+                    final String statusImage;
+                    if (!mParentQuestion.isAnyChecked()) {
+                        statusImage = getFilePath(data);
+                    } else if (mParentElement.isFullySelected()) {
+                        statusImage = getFilePath(dataOn);
+                    } else {
+                        statusImage = getFilePath(dataOff);
+                    }
+
+                    if (StringUtils.isEmpty(statusImage)) {
+                        return;
+                    }
+
+                    mIconView.setVisibility(View.VISIBLE);
+
+                    Picasso.with(mBaseActivity)
+                            .load(new File(statusImage))
+                            .into(mIconView);
                     break;
                 default:
 
@@ -157,7 +174,7 @@ public class ContentElementsAdapter extends RecyclerView.Adapter<ContentElements
     }
 
     private String getFilePath(final String data) {
-        final String path = FileUtils.getFilesStoragePath(mContext);
+        final String path = FileUtils.getFilesStoragePath(mBaseActivity);
         final String url = data;
 
         if (StringUtils.isEmpty(url)) {
@@ -168,5 +185,4 @@ public class ContentElementsAdapter extends RecyclerView.Adapter<ContentElements
 
         return path + FileUtils.FOLDER_DIVIDER + fileName;
     }
-
 }

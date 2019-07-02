@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
 
+import java.util.HashMap;
 import java.util.List;
 
 import pro.quizer.quizerexit.IAdapter;
@@ -18,6 +19,7 @@ import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.adapter.TableQuestionAdapter;
 import pro.quizer.quizerexit.model.config.ElementModel;
+import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.utils.UiUtils;
 
 public class QuestionTableFragment extends AbstractQuestionFragment {
@@ -30,13 +32,10 @@ public class QuestionTableFragment extends AbstractQuestionFragment {
         super.onConfigurationChanged(newConfig);
     }
 
-    public static Fragment newInstance(@NonNull final ElementModel pElement, final NavigationCallback pCallback) {
+    public static Fragment newInstance(final boolean pIsFromDialog, final boolean pIsVisibleButton, final UserModel user, @NonNull final ElementModel pElement, final NavigationCallback pCallback, final HashMap<Integer, ElementModel> pMap) {
         final Fragment fragment = new QuestionTableFragment();
 
-        final Bundle bundle = new Bundle();
-        bundle.putSerializable(BUNDLE_CURRENT_QUESTION, pElement);
-        bundle.putSerializable(BUNDLE_CALLBACK, pCallback);
-        fragment.setArguments(bundle);
+        fragment.setArguments(getBundle(pIsFromDialog, pIsVisibleButton, user, pElement, pCallback, pMap));
 
         return fragment;
     }
@@ -51,6 +50,18 @@ public class QuestionTableFragment extends AbstractQuestionFragment {
         mTableLayout = pView.findViewById(R.id.table_question_layout);
 
         super.onViewCreated(pView, savedInstanceState);
+
+        handleButtonsVisibility();
+    }
+
+    @Override
+    protected boolean isFromDialog() {
+        return false;
+    }
+
+    @Override
+    protected boolean isButtonVisible() {
+        return getArguments().getBoolean(BUNDLE_IS_BUTTON_VISIBLE);
     }
 
     @Override
@@ -59,8 +70,8 @@ public class QuestionTableFragment extends AbstractQuestionFragment {
     }
 
     @Override
-    void createAdapter(final ElementModel pCurrentElement, List<ElementModel> subElements, int minAnswers, int maxAnswers, Runnable refreshRecyclerViewRunnable) {
-        mAdapter = new TableQuestionAdapter(pCurrentElement, getContext(), subElements, refreshRecyclerViewRunnable);
+    void createAdapter(final HashMap<Integer, ElementModel> pMap, final ElementModel pCurrentElement, List<ElementModel> subElements, int minAnswers, int maxAnswers, Runnable refreshRecyclerViewRunnable) {
+        mAdapter = new TableQuestionAdapter(pCurrentElement, getContext(), subElements, refreshRecyclerViewRunnable, pMap);
         mTableLayout.setAdapter(mAdapter);
         mTableLayout.setDrawingCacheEnabled(true);
     }

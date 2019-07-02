@@ -10,7 +10,7 @@ import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.DeviceUtils;
 import pro.quizer.quizerexit.utils.MD5Utils;
 
-public class FileRequestModel implements Serializable, Parcelable {
+public class FileRequestModel implements Serializable {
 
     private final String name_form;
     private final long device_time;
@@ -24,13 +24,4 @@ public class FileRequestModel implements Serializable, Parcelable {
         this.app_version = DeviceUtils.getAppVersion();
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

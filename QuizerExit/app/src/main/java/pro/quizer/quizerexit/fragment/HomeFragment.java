@@ -2,7 +2,6 @@ package pro.quizer.quizerexit.fragment;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,12 +15,15 @@ import android.widget.TextView;
 import pro.quizer.quizerexit.BuildConfig;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.SendQuestionnairesByUserModelExecutable;
+import pro.quizer.quizerexit.executable.SyncInfoExecutable;
 import pro.quizer.quizerexit.listener.QuotasClickListener;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ProjectInfoModel;
 import pro.quizer.quizerexit.model.database.UserModel;
+import pro.quizer.quizerexit.model.view.SyncViewModel;
 import pro.quizer.quizerexit.utils.SystemUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 
@@ -30,6 +32,7 @@ import static pro.quizer.quizerexit.activity.BaseActivity.IS_AFTER_AUTH;
 public class HomeFragment extends BaseFragment implements ICallback {
 
     private UserModel mUserModel;
+    private BaseActivity mBaseActivity;
 
     public static Fragment newInstance(final boolean pIsCanShowUpdateDialog) {
         final HomeFragment fragment = new HomeFragment();
@@ -78,7 +81,7 @@ public class HomeFragment extends BaseFragment implements ICallback {
                 :
                 getString(R.string.DIALOG_UPDATE_TITLE);
 
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
         alertDialogBuilder.setCancelable(false);
         alertDialogBuilder.setTitle(header);
         alertDialogBuilder.setMessage(message);
@@ -98,7 +101,9 @@ public class HomeFragment extends BaseFragment implements ICallback {
             });
         }
 
-        alertDialogBuilder.show();
+        if (!getActivity().isFinishing()) {
+            alertDialogBuilder.show();
+        }
 
         if (!isCriticalUpdate) {
             bundle.putBoolean(IS_AFTER_AUTH, false);
@@ -106,27 +111,26 @@ public class HomeFragment extends BaseFragment implements ICallback {
     }
 
     private void initView(final View pView) {
-        mUserModel = getBaseActivity().getUserByUserId(getBaseActivity().getCurrentUserId());
+        mBaseActivity = getBaseActivity();
+
+        if (mBaseActivity == null) {
+            return;
+        }
+
+        mUserModel = mBaseActivity.getCurrentUser();
         final ConfigModel config = mUserModel.getConfig();
         final ProjectInfoModel projectInfo = config.getProjectInfo();
 
         final TextView configAgreement = pView.findViewById(R.id.config_agreement);
         final TextView configName = pView.findViewById(R.id.config_name);
 
-        UiUtils.setTextOrHide(configName, projectInfo.getName());
-        UiUtils.setTextOrHide(configAgreement, projectInfo.getAgreement());
+        initSyncInfoViews();
+
+        configName.setText(projectInfo.getName());
+        configAgreement.setText(projectInfo.getAgreement());
 
         final Button startBtn = pView.findViewById(R.id.start);
         startBtn.setOnClickListener(new QuotasClickListener(getBaseActivity(), new ICallback() {
-            @Override
-            public int describeContents() {
-                return 0;
-            }
-
-            @Override
-            public void writeToParcel(Parcel parcel, int i) {
-
-            }
 
             @Override
             public void onStarting() {
@@ -143,9 +147,45 @@ public class HomeFragment extends BaseFragment implements ICallback {
                 start();
             }
         }));
+        final Button exitBtn = pView.findViewById(R.id.exit_btn);
+        if (exitBtn != null) {
+            exitBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getBaseActivity().showExitAlertDialog();
+                }
+            });
+        }
 
         final Button quotasBtn = pView.findViewById(R.id.quotas);
         quotasBtn.setOnClickListener(new QuotasClickListener(getBaseActivity()));
+    }
+
+    private void initSyncInfoViews() {
+        mBaseActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                final View pView = getView();
+
+                if (pView == null) {
+                    return;
+                }
+
+                final TextView count_all = pView.findViewById(R.id.count_all);
+                final TextView count_sent = pView.findViewById(R.id.count_sent);
+
+                final SyncViewModel syncViewModel = new SyncInfoExecutable(getContext()).execute();
+
+                UiUtils.setTextOrHide(count_all, (String
+                        .format(mBaseActivity.getString(R.string.VIEW_ALL_COUNT_QUIZ),
+                                String.valueOf(syncViewModel.getmAllQuestionnaireModels().size()))));
+                UiUtils.setTextOrHide(count_sent, (String
+                        .format(mBaseActivity.getString(R.string.VIEW_SENT_COUNT_QUIZ_FROM_THIS_DEVICE),
+                                String.valueOf(syncViewModel.getmSentQuestionnaireModelsFromThisDevice().size()))));
+
+            }
+        });
     }
 
     private void start() {
@@ -162,6 +202,7 @@ public class HomeFragment extends BaseFragment implements ICallback {
 
     @Override
     public void onSuccess() {
+        initSyncInfoViews();
 //        hideProgressBar();
 
         if (isAdded()) {
@@ -174,7 +215,7 @@ public class HomeFragment extends BaseFragment implements ICallback {
 //        hideProgressBar();
 
         if (isAdded()) {
-            showToast(getString(R.string.NOTIFICATION_NO_CONNECTION_SAVING_QUIZ) + "\n" + pException);
+//            showToast(getString(R.string.NOTIFICATION_NO_CONNECTION_SAVING_QUIZ));
         }
     }
 }

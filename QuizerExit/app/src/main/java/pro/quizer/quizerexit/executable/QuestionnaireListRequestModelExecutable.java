@@ -35,6 +35,7 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
     public QuestionnaireListRequestModel execute() {
         final QuestionnaireListRequestModel requestModel = new QuestionnaireListRequestModel(mLoginAdmin, mLogin, mPassword);
 
+        // GOOD select
         final List<QuestionnaireDatabaseModel> questionnaires = new Select()
                 .from(QuestionnaireDatabaseModel.class)
                 .where(QuestionnaireDatabaseModel.USER_ID + " = ? AND " +
@@ -62,6 +63,7 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
                     questionnaireDatabaseModel.quota_time_difference
             );
 
+            // GOOD select
             final List<ElementDatabaseModel> elements = new Select()
                     .from(ElementDatabaseModel.class)
                     .where(ElementDatabaseModel.TOKEN + " =?", questionnaireDatabaseModel.token)

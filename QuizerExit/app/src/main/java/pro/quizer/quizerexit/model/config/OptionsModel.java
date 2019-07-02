@@ -18,7 +18,7 @@ import pro.quizer.quizerexit.utils.StringUtils;
 
 import static pro.quizer.quizerexit.model.OptionsOpenType.CHECKBOX;
 
-public class OptionsModel implements Serializable, Parcelable {
+public class OptionsModel implements Serializable {
 
     @SerializedName("pre_condition")
     private String pre_condition;
@@ -26,8 +26,17 @@ public class OptionsModel implements Serializable, Parcelable {
     @SerializedName("title")
     private String title;
 
+    @SerializedName("search")
+    private boolean search;
+
     @SerializedName("description")
     private String description;
+
+    @SerializedName("status_image")
+        private ElementModel status_image;
+
+    @SerializedName("data")
+    private String data;
 
     @SerializedName("order")
     private int order;
@@ -93,12 +102,24 @@ public class OptionsModel implements Serializable, Parcelable {
     @SerializedName("is_media")
     private boolean is_media;
 
+    public String getData() {
+        return data;
+    }
+
+    public ElementModel getStatusImage() {
+        return status_image;
+    }
+
     public String getPreCondition() {
         return pre_condition;
     }
 
-    public String getTitle(final BaseActivity pBaseActivity) {
-        return ConditionUtils.formatTitle(pBaseActivity, title, pBaseActivity.getMap());
+    public String getTitle(final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> pMap) {
+        return ConditionUtils.formatTitle(pBaseActivity, title, pMap);
+    }
+
+    public boolean isSearch() {
+        return search;
     }
 
     public int getOrder() {
@@ -195,16 +216,6 @@ public class OptionsModel implements Serializable, Parcelable {
 
     public boolean isUnchecker() {
         return unchecker;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
     }
 
     public boolean isMedia() {

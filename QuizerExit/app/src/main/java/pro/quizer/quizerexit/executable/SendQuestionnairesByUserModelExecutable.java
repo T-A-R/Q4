@@ -73,7 +73,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable {
 
         if (readyToSendStages != null && !readyToSendStages.isEmpty()) {
             if (mIsShowAlertDialog) {
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(mBaseActivity);
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(mBaseActivity, R.style.AlertDialogTheme);
                 alertDialog.setCancelable(false);
                 alertDialog.setTitle(R.string.DIALOG_SENDING_WAVES_VIA_SMS);
                 alertDialog.setMessage(pBaseActivity.getString(R.string.DIALOG_SENDING_WAVES_VIA_SMS_CONFIRMATION) + mUserModel.login + " через СМС?");
@@ -90,7 +90,9 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable {
                     }
                 });
 
-                alertDialog.show();
+                if (!mBaseActivity.isFinishing()) {
+                    alertDialog.show();
+                }
             } else {
                 SmsUtils.sendSms(mBaseActivity, getCallback(), readyToSendStages);
             }

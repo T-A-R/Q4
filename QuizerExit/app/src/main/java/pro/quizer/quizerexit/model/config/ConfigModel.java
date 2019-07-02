@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class ConfigModel implements Serializable, Parcelable {
+public class ConfigModel implements Serializable {
 
     @SerializedName("server_url")
     private String server_url;
@@ -152,13 +152,4 @@ public class ConfigModel implements Serializable, Parcelable {
         return project_info;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

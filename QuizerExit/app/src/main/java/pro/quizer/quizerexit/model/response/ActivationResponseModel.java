@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class ActivationResponseModel implements Serializable, Parcelable {
+public class ActivationResponseModel implements Serializable {
 
     @SerializedName("result")
     private int result;
@@ -37,13 +37,4 @@ public class ActivationResponseModel implements Serializable, Parcelable {
         return error;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

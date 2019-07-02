@@ -39,6 +39,7 @@ public class CleanUpFilesExecutable extends BaseExecutable {
             files.addAll(FileUtils.getFilesRecursion(FileUtils.JPEG, FileUtils.getPhotosStoragePath(mContext)));
             files.addAll(FileUtils.getFilesRecursion(FileUtils.AMR, FileUtils.getAudioStoragePath(mContext)));
 
+            // GOOD select
             final List<QuestionnaireDatabaseModel> allQuestionnaires = new Select()
                     .from(QuestionnaireDatabaseModel.class)
                     .execute();

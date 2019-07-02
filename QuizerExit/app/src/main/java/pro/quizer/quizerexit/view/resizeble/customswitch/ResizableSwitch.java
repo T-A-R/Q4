@@ -5,6 +5,9 @@ import android.util.AttributeSet;
 
 import pro.quizer.quizerexit.view.resizeble.ResizableViewUtils;
 
+import static pro.quizer.quizerexit.view.resizable.ResizableConstants.SMALL;
+import static pro.quizer.quizerexit.view.resizable.ResizableConstants.SMALL;
+
 public class ResizableSwitch extends AbstractResizableSwitch {
 
     public ResizableSwitch(Context context, AttributeSet attrs, int defStyle) {
@@ -21,6 +24,6 @@ public class ResizableSwitch extends AbstractResizableSwitch {
 
     @Override
     public int getDefaultFontSize() {
-        return ResizableViewUtils.SMALL;
+        return SMALL;
     }
 }

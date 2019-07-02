@@ -63,7 +63,9 @@ public class AuthActivity extends BaseActivity {
         setContentView(R.layout.activity_auth);
 
         final TextView usersCount = findViewById(R.id.users_count);
-        UiUtils.setTextOrHide(usersCount, String.format(getString(R.string.VIEW_USERS_COUNT_ON_DEVICE), (getUsersCount() + "/" + MAX_USERS)));
+        // GOOD select
+        final int usersCountValue = new Select().from(UserModel.class).count();
+        usersCount.setText(String.format(getString(R.string.VIEW_USERS_COUNT_ON_DEVICE), (usersCountValue + "/" + MAX_USERS)));
         mPasswordEditText = findViewById(R.id.auth_password_edit_text);
         mLoginSpinner = findViewById(R.id.login_spinner);
         mVersionView = findViewById(R.id.version_view);
@@ -225,6 +227,7 @@ public class AuthActivity extends BaseActivity {
     }
 
     private boolean isNeedDownloadConfig(final AuthResponseModel pAuthResponseModel) {
+        // GOOD usage of getUserByUserId
         final UserModel userModel = getUserByUserId(pAuthResponseModel.getUserId());
 
         if (userModel == null) {
@@ -245,14 +248,13 @@ public class AuthActivity extends BaseActivity {
     }
 
     private List<UserModel> getSavedUserModels() {
+        // GOOD select
         final List<UserModel> userModels = new Select().from(UserModel.class).execute();
 
         return (userModels == null) ? new ArrayList<UserModel>() : userModels;
     }
 
     public void downloadConfig(final String pLogin, final String pPassword, final AuthResponseModel pModel) {
-        showToast("Downloading config...");
-
         showProgressBar();
 
         final Dictionary<String, String> mConfigDictionary = new Hashtable();
@@ -322,16 +324,6 @@ public class AuthActivity extends BaseActivity {
                                 final int pRoleId,
                                 final int pUserProjectId) {
         new UpdateQuotasExecutable(this, new ICallback() {
-
-            @Override
-            public int describeContents() {
-                return 0;
-            }
-
-            @Override
-            public void writeToParcel(Parcel parcel, int i) {
-
-            }
 
             @Override
             public void onStarting() {

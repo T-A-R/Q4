@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import java.io.Serializable;
 
-public class ElementRequestModel implements Serializable, Parcelable {
+public class ElementRequestModel implements Serializable {
 
     private final Integer relative_id;
     private final Long duration;
@@ -21,13 +21,4 @@ public class ElementRequestModel implements Serializable, Parcelable {
         this.value = value;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

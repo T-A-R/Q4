@@ -19,6 +19,7 @@ public class ServiceInfoExecutable extends BaseModelExecutable<ServiceViewModel>
     public ServiceViewModel execute() {
         final ServiceViewModel serviceViewModel = new ServiceViewModel();
 
+        // GOOD select
         final List<QuestionnaireDatabaseModel> notSentQDM = new Select()
                 .from(QuestionnaireDatabaseModel.class)
                 .where(QuestionnaireDatabaseModel.STATUS + " =?", QuestionnaireStatus.NOT_SENT)
@@ -26,9 +27,8 @@ public class ServiceInfoExecutable extends BaseModelExecutable<ServiceViewModel>
 
         serviceViewModel.setNotSentQuestionnaireModels(notSentQDM);
 
-        final List<UserModel> users = new Select()
-                .from(UserModel.class)
-                .execute();
+        // GOOD select
+        final List<UserModel> users = new Select().from(UserModel.class).execute();
 
         serviceViewModel.setUserModels(users);
 

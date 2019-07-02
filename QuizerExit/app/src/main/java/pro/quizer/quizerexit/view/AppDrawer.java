@@ -15,7 +15,7 @@ import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.listener.QuotasClickListener;
 
-public class AppDrawer extends RelativeLayout implements Serializable, Parcelable {
+public class AppDrawer extends RelativeLayout implements Serializable {
 
     Button mHomeBtn;
     Button mSyncBtn;
@@ -144,13 +144,4 @@ public class AppDrawer extends RelativeLayout implements Serializable, Parcelabl
 
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

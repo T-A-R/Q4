@@ -37,15 +37,15 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
     }
 
 
-    public QuotasAdapter(final BaseActivity pBaseActivity, List<QuotaModel> pQuotasList) {
+    public QuotasAdapter(final BaseActivity pBaseActivity, List<QuotaModel> pQuotasList, HashMap<Integer, ElementModel> pMap) {
         mBaseActivity = pBaseActivity;
         mQuotasList = pQuotasList;
-        mMap = mBaseActivity.getMap();
+        mMap = pMap;
     }
 
     @Override
     public QuotaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_quota, parent, false);
+        View itemView = LayoutInflater.from(mBaseActivity).inflate(R.layout.adapter_quota, parent, false);
         return new QuotaViewHolder(itemView);
     }
 
@@ -58,7 +58,7 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
         final String done = String.valueOf(doneInt);
         final String limit = String.valueOf(limitInt);
 
-        final QuotasTimeLineAdapter mAdapter = new QuotasTimeLineAdapter(quotaModel.getStringSet(mBaseActivity, mMap));
+        final QuotasTimeLineAdapter mAdapter = new QuotasTimeLineAdapter(quotaModel.getStringSet(mBaseActivity, mMap), mBaseActivity);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mBaseActivity, LinearLayoutManager.VERTICAL, false);
         holder.mRecyclerView.setLayoutManager(mLayoutManager);
         holder.mRecyclerView.setAdapter(mAdapter);

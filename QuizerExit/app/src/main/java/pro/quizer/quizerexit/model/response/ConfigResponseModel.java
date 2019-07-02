@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 import pro.quizer.quizerexit.model.config.ConfigModel;
 
-public class ConfigResponseModel implements Serializable, Parcelable {
+public class ConfigResponseModel implements Serializable {
 
     @SerializedName("result")
     private int result;
@@ -35,13 +35,4 @@ public class ConfigResponseModel implements Serializable, Parcelable {
         return config;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

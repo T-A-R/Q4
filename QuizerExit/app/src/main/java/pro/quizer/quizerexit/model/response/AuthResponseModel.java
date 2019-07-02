@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class AuthResponseModel implements Serializable, Parcelable {
+public class AuthResponseModel implements Serializable {
 
     @SerializedName("result")
     private int result;
@@ -61,13 +61,4 @@ public class AuthResponseModel implements Serializable, Parcelable {
         return server_time;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

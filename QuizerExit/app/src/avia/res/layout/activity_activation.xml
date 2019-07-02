@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/brand_color"
+    android:orientation="vertical"
+    android:paddingLeft="56dp"
+    android:paddingRight="56dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="112dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:orientation="vertical"
+            android:src="@drawable/ic_rossya" />
+
+        <pro.quizer.quizerexit.view.resizeble.edittext.ResizableEditText
+            android:id="@+id/activation_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:hint="@string/TEXT_HINT_INPUT_ACTIVATION_KEY"
+            android:inputType="textVisiblePassword"
+            android:maxLines="1"
+            android:textColor="@android:color/white"
+            android:textColorHint="@color/gray"
+            android:textSize="18sp" />
+
+        <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+            android:id="@+id/send_activation_button"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/VIEW_BUTTON_SEND" />
+
+    </LinearLayout>
+
+    <include layout="@layout/view_progress" />
+
+</FrameLayout>

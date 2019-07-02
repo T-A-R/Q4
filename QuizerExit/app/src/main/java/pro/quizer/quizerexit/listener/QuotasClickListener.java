@@ -21,16 +21,6 @@ public class QuotasClickListener implements View.OnClickListener {
         this(pBaseActivity, new ICallback() {
 
             @Override
-            public int describeContents() {
-                return 0;
-            }
-
-            @Override
-            public void writeToParcel(Parcel parcel, int i) {
-
-            }
-
-            @Override
             public void onStarting() {
                 pBaseActivity.showProgressBar();
             }
@@ -45,7 +35,7 @@ public class QuotasClickListener implements View.OnClickListener {
             @Override
             public void onError(Exception pException) {
                 pBaseActivity.hideProgressBar();
-                pBaseActivity.showToast(pException.toString());
+//                pBaseActivity.showToast(pException.toString());
                 pBaseActivity.showQuotasFragment();
             }
         });

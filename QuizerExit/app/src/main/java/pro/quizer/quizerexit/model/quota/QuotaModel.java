@@ -8,6 +8,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ import pro.quizer.quizerexit.executable.QuestionnairesCountBySequenceExecutable;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.utils.LogUtils;
 
-public class QuotaModel implements Serializable, Parcelable {
+public class QuotaModel implements Serializable {
 
     private static final String SPLIT_SEQUENCE_SYMBOL = ",";
 
@@ -70,7 +71,7 @@ public class QuotaModel implements Serializable, Parcelable {
         return mLocalCount;
     }
 
-    public boolean containsString(final BaseActivity pBaseActivity, final Map<Integer, ElementModel> pMap, final String pString) {
+    public boolean containsString(final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> pMap, final String pString) {
         final List<QuotaTimeLineModel> stringSet = getStringSet(pBaseActivity, pMap);
 
         for (final QuotaTimeLineModel quotaTimeLineModel : stringSet) {
@@ -82,7 +83,7 @@ public class QuotaModel implements Serializable, Parcelable {
         return false;
     }
 
-    public List<QuotaTimeLineModel> getStringSet(final BaseActivity mBaseActivity, final Map<Integer, ElementModel> mMap) {
+    public List<QuotaTimeLineModel> getStringSet(final BaseActivity mBaseActivity, final HashMap<Integer, ElementModel> mMap) {
         if (mStringList == null) {
             final Set<Integer> pSet = getSet();
             final List<QuotaTimeLineModel> quotaTimeLineModels = new ArrayList<>();
@@ -90,7 +91,7 @@ public class QuotaModel implements Serializable, Parcelable {
             for (final int relativeId : pSet) {
                 final ElementModel element = mMap.get(relativeId);
 
-                quotaTimeLineModels.add(new QuotaTimeLineModel(element.getOptions().getTitle(mBaseActivity)));
+                quotaTimeLineModels.add(new QuotaTimeLineModel(element.getOptions().getTitle(mBaseActivity, mMap)));
             }
 
             mStringList = quotaTimeLineModels;
@@ -137,13 +138,4 @@ public class QuotaModel implements Serializable, Parcelable {
         return getLimit() != 0;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

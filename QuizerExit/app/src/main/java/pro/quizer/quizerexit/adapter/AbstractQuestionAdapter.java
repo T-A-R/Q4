@@ -1,6 +1,7 @@
 package pro.quizer.quizerexit.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,11 +23,11 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
     private HashMap<Integer, ElementModel> mMap;
     private boolean mIsUpdateActionPerformed;
 
-    AbstractQuestionAdapter(final ElementModel pCurrentElement, final BaseActivity pContext, final List<ElementModel> pAnswers, final int pMaxAnswer, final int pMinAnswer) {
-        this.mBaseActivity = pContext;
-        this.mMap = mBaseActivity.getMap();
+    AbstractQuestionAdapter(final HashMap<Integer, ElementModel> pMap, final ElementModel pCurrentElement, final BaseActivity baseActivity, final List<ElementModel> pAnswers, final int pMaxAnswer, final int pMinAnswer) {
+        this.mBaseActivity = baseActivity;
+        this.mMap = pMap;
         this.mCurrentElement = pCurrentElement;
-        this.mAnswers = pAnswers; // getBaseActivity().getElementsByParentId(pCurrentElement.getRelativeID());
+        this.mAnswers = pAnswers;
         this.mMaxAnswer = pMaxAnswer;
         this.mMinAnswer = pMinAnswer;
         this.mIsUpdateActionPerformed = false;
@@ -40,6 +41,20 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
 
     public void setIsUpdateActionPerformed(final boolean pIsUpdateActionPerformed) {
         mIsUpdateActionPerformed = pIsUpdateActionPerformed;
+    }
+
+    public void sortByString(final String string) {
+        for (ElementModel answer : mAnswers) {
+            final String answerTitle = answer.getOptions().getTitle(mBaseActivity, mMap);
+
+            if (answerTitle != null && answerTitle.contains(string)) {
+                answer.setQueryVisibility(View.VISIBLE);
+            } else {
+                answer.setQueryVisibility(View.GONE);
+            }
+        }
+
+        notifyDataSetChanged();
     }
 
     public boolean isIsUpdateActionPerformed() {

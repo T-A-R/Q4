@@ -9,7 +9,7 @@ import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.DeviceUtils;
 
-public class QuotaRequestModel implements Serializable, Parcelable {
+public class QuotaRequestModel implements Serializable {
 
     private final String name_form;
     private final String login_admin;
@@ -29,13 +29,4 @@ public class QuotaRequestModel implements Serializable, Parcelable {
         this.app_version = DeviceUtils.getAppVersion();
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

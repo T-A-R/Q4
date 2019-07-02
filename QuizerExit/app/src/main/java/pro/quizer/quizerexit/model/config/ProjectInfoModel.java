@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
-public class ProjectInfoModel implements Serializable, Parcelable {
+public class ProjectInfoModel implements Serializable {
 
     @SerializedName("billing_questions")
     private int billing_questions;
@@ -81,13 +81,4 @@ public class ProjectInfoModel implements Serializable, Parcelable {
 //        return reserve_channel;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

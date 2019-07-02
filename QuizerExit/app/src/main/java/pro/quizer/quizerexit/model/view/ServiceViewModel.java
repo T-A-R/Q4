@@ -10,7 +10,7 @@ import java.util.List;
 import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 
-public class ServiceViewModel implements Serializable, Parcelable {
+public class ServiceViewModel implements Serializable {
 
     private List<QuestionnaireDatabaseModel> mNotSentQuestionnaireModels;
     private List<UserModel> mUserModels;
@@ -36,13 +36,4 @@ public class ServiceViewModel implements Serializable, Parcelable {
         return mUserModels;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

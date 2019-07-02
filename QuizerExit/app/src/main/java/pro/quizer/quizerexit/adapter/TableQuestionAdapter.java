@@ -91,7 +91,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         throw new Exception(mBaseActivity.getString(R.string.NOTIFICATION_NEXT_ELEMENT_CALCULATION_ERROR));
     }
 
-    public TableQuestionAdapter(final ElementModel pCurrentElement, final Context context, final List<ElementModel> pQuestions, final Runnable pRefreshRunnable) {
+    public TableQuestionAdapter(final ElementModel pCurrentElement, final Context context, final List<ElementModel> pQuestions, final Runnable pRefreshRunnable, final HashMap<Integer, ElementModel> pMap) {
         mCurrentElement = pCurrentElement;
         setOnItemClickListener(this);
         mRefreshRunnable = pRefreshRunnable;
@@ -100,7 +100,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final OptionsModel optionsModel = pCurrentElement.getOptions();
         mIsFlipColsAndRows = optionsModel.isFlipColsAndRows();
         mBaseActivity = (BaseActivity) context;
-        mMap = mBaseActivity.getMap();
+        mMap = pMap;
 
         mQuestions = pQuestions;
 
@@ -223,7 +223,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final TableHeaderColumnViewHolder vh = (TableHeaderColumnViewHolder) viewHolder;
         final OptionsModel optionsModel = mTopSide.get(column).getOptions();
 
-        UiUtils.setTextOrHide(vh.mHeaderColumnTextView, optionsModel.getTitle(mBaseActivity));
+        UiUtils.setTextOrHide(vh.mHeaderColumnTextView, optionsModel.getTitle(mBaseActivity, mMap));
         UiUtils.setTextOrHide(vh.mHeaderColumnDescriptionTextView, optionsModel.getDescription());
     }
 
@@ -232,7 +232,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final TableHeaderRowViewHolder vh = (TableHeaderRowViewHolder) viewHolder;
         final OptionsModel optionsModel = mLeftSide.get(row).getOptions();
 
-        UiUtils.setTextOrHide(vh.mHeaderRowTextView, optionsModel.getTitle(mBaseActivity));
+        UiUtils.setTextOrHide(vh.mHeaderRowTextView, optionsModel.getTitle(mBaseActivity, mMap));
         UiUtils.setTextOrHide(vh.mHeaderRowDescriptionTextView, optionsModel.getDescription());
 
     }
@@ -321,33 +321,37 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     // отображаем диалоговое окно для выбора даты
     public void setDate(final EditText pEditText) {
-        new DatePickerDialog(mBaseActivity, new DatePickerDialog.OnDateSetListener() {
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                mCalendar.set(Calendar.YEAR, year);
-                mCalendar.set(Calendar.MONTH, monthOfYear);
-                mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                setInitialDateTime(pEditText, true);
-            }
-        },
-                mCalendar.get(Calendar.YEAR),
-                mCalendar.get(Calendar.MONTH),
-                mCalendar.get(Calendar.DAY_OF_MONTH))
-                .show();
+        if (!mBaseActivity.isFinishing()) {
+            new DatePickerDialog(mBaseActivity, new DatePickerDialog.OnDateSetListener() {
+                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                    mCalendar.set(Calendar.YEAR, year);
+                    mCalendar.set(Calendar.MONTH, monthOfYear);
+                    mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    setInitialDateTime(pEditText, true);
+                }
+            },
+                    mCalendar.get(Calendar.YEAR),
+                    mCalendar.get(Calendar.MONTH),
+                    mCalendar.get(Calendar.DAY_OF_MONTH))
+                    .show();
+        }
     }
 
     // отображаем диалоговое окно для выбора времени
     public void setTime(final EditText pEditText) {
-        new TimePickerDialog(mBaseActivity, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                mCalendar.set(Calendar.MINUTE, minute);
-                setInitialDateTime(pEditText, false);
-            }
-        },
-                mCalendar.get(Calendar.HOUR_OF_DAY),
-                mCalendar.get(Calendar.MINUTE), true)
-                .show();
+        if (!mBaseActivity.isFinishing()) {
+            new TimePickerDialog(mBaseActivity, new TimePickerDialog.OnTimeSetListener() {
+                @Override
+                public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                    mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    mCalendar.set(Calendar.MINUTE, minute);
+                    setInitialDateTime(pEditText, false);
+                }
+            },
+                    mCalendar.get(Calendar.HOUR_OF_DAY),
+                    mCalendar.get(Calendar.MINUTE), true)
+                    .show();
+        }
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -388,7 +392,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         if (!OptionsOpenType.CHECKBOX.equals(openType)) {
             final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mBaseActivity);
             final View mView = layoutInflaterAndroid.inflate(R.layout.dialog_user_input_box, null);
-            final AlertDialog.Builder dialog = new AlertDialog.Builder(mBaseActivity);
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(mBaseActivity, R.style.AlertDialogTheme);
             dialog.setView(mView);
 
             final EditText mEditText = mView.findViewById(R.id.answer_edit_text);
@@ -465,7 +469,10 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                             });
 
             final AlertDialog alertDialog = dialog.create();
-            alertDialog.show();
+
+            if (!mBaseActivity.isFinishing()) {
+                alertDialog.show();
+            }
         } else {
             clickedElement.setChecked(!isElementChecked);
         }
@@ -517,13 +524,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private void showAdditionalInfoDialog(final OptionsModel pOptionsModel) {
         final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mBaseActivity);
         final View mView = layoutInflaterAndroid.inflate(R.layout.dialog_table_question_additional_info, null);
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(mBaseActivity);
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(mBaseActivity, R.style.AlertDialogTheme);
         dialog.setView(mView);
 
         final TextView title = mView.findViewById(R.id.title);
         final TextView description = mView.findViewById(R.id.description);
 
-        UiUtils.setTextOrHide(title, pOptionsModel.getTitle(mBaseActivity));
+        UiUtils.setTextOrHide(title, pOptionsModel.getTitle(mBaseActivity, mMap));
         UiUtils.setTextOrHide(description, pOptionsModel.getDescription());
 
         dialog.setCancelable(false)
@@ -535,17 +542,10 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 });
 
         final AlertDialog alertDialog = dialog.create();
-        alertDialog.show();
-    }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
+        if (!mBaseActivity.isFinishing()) {
+            alertDialog.show();
+        }
     }
 
     private static class TableItemViewHolder extends ViewHolderImpl {

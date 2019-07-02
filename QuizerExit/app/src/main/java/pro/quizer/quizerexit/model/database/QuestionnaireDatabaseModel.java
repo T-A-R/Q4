@@ -10,7 +10,7 @@ import com.activeandroid.annotation.Table;
 import java.io.Serializable;
 
 @Table(name = "QuestionnaireDatabaseModel")
-public class QuestionnaireDatabaseModel extends Model implements Serializable, Parcelable {
+public class QuestionnaireDatabaseModel extends Model implements Serializable {
 
     public final static String USER_PROJECT_ID = "user_project_id";
     public final static String STATUS = "status";
@@ -81,13 +81,4 @@ public class QuestionnaireDatabaseModel extends Model implements Serializable, P
     @Column(name = STATUS)
     public String status;
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

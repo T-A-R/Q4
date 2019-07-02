@@ -1,8 +1,8 @@
 package pro.quizer.quizerexit.utils;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Service;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
@@ -17,7 +17,7 @@ import pro.quizer.quizerexit.R;
 
 public class GPSTracker extends Service implements LocationListener {
 
-    private final Context mContext;
+    private final Activity mActivity;
     // flag for GPS status
     boolean isGPSEnabled = false;
     // flag for network status
@@ -35,15 +35,15 @@ public class GPSTracker extends Service implements LocationListener {
     // Declaring a Location Manager
     protected LocationManager locationManager;
 
-    public GPSTracker(Context context) {
-        this.mContext = context;
+    public GPSTracker(Activity context) {
+        this.mActivity = context;
         getLocation();
     }
 
     @SuppressLint("MissingPermission")
     public Location getLocation() {
         try {
-            locationManager = (LocationManager) mContext
+            locationManager = (LocationManager) mActivity
                     .getSystemService(LOCATION_SERVICE);
 
             // getting GPS status
@@ -128,7 +128,7 @@ public class GPSTracker extends Service implements LocationListener {
     }
 
     public void showSettingsAlert() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity, R.style.AlertDialogTheme);
         alertDialog.setCancelable(false);
         alertDialog.setTitle(R.string.DIALOG_PLEASE_TURN_ON_GPS);
         alertDialog.setMessage(R.string.DIALOG_YOU_NEED_TO_TURN_ON_GPS);
@@ -136,11 +136,13 @@ public class GPSTracker extends Service implements LocationListener {
 
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                mContext.startActivity(intent);
+                mActivity.startActivity(intent);
             }
         });
 
-        alertDialog.show();
+        if (!mActivity.isFinishing()) {
+            alertDialog.show();
+        }
     }
 
     @Override

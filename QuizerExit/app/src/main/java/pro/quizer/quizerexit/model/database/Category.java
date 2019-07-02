@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Table(name = "Categories")
-public class Category extends Model implements Serializable, Parcelable {
+public class Category extends Model implements Serializable {
 
     @Column(name = "Name")
     public String name;
@@ -21,13 +21,4 @@ public class Category extends Model implements Serializable, Parcelable {
         return getMany(Item.class, "Category");
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

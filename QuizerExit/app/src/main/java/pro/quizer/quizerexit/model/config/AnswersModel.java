@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class AnswersModel implements Serializable, Parcelable {
+public class AnswersModel implements Serializable {
 
     @SerializedName("id")
     private int id;
@@ -74,13 +74,4 @@ public class AnswersModel implements Serializable, Parcelable {
         return options;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuestionnaireRequestModel implements Serializable, Parcelable {
+public class QuestionnaireRequestModel implements Serializable {
 
     private final int billing_questions;
     private final int questionnaire_id;
@@ -63,13 +63,4 @@ public class QuestionnaireRequestModel implements Serializable, Parcelable {
         elements.add(pElement);
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

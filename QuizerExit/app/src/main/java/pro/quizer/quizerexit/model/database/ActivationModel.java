@@ -11,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
 @Table(name = "ActivationModel")
-public class ActivationModel extends Model implements Serializable, Parcelable {
+public class ActivationModel extends Model implements Serializable {
 
     @Column(name = "server")
     @SerializedName("server")
@@ -21,13 +21,4 @@ public class ActivationModel extends Model implements Serializable, Parcelable {
     @SerializedName("login_admin")
     public String login_admin;
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

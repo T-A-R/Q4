@@ -13,7 +13,7 @@ import java.io.Serializable;
 
 import pro.quizer.quizerexit.R;
 
-public class Toolbar extends RelativeLayout implements Serializable, Parcelable {
+public class Toolbar extends RelativeLayout implements Serializable {
 
     private ImageView mIcon;
     private ImageView mLogo;
@@ -81,13 +81,4 @@ public class Toolbar extends RelativeLayout implements Serializable, Parcelable 
         mCloseView.setOnClickListener(pOnClickListener);
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

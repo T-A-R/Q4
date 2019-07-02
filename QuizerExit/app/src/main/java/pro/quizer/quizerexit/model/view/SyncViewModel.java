@@ -11,14 +11,18 @@ import java.util.List;
 import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
 import pro.quizer.quizerexit.utils.SPUtils;
 
-public class SyncViewModel implements Serializable, Parcelable {
+public class SyncViewModel implements Serializable {
 
     private boolean mHasReserveChannel;
     private List<File> mNotSendedAudio;
     private List<File> mNotSendedPhoto;
+    private List<QuestionnaireDatabaseModel> mAllQuestionnaireModels;
     private List<QuestionnaireDatabaseModel> mNotSentQuestionnaireModels;
     private List<QuestionnaireDatabaseModel> mSentQuestionnaireModelsFromThisDevice;
 
+    public List<QuestionnaireDatabaseModel> getmAllQuestionnaireModels() {
+        return mAllQuestionnaireModels;
+    }
     public List<QuestionnaireDatabaseModel> getmNotSentQuestionnaireModels() {
         return mNotSentQuestionnaireModels;
     }
@@ -37,6 +41,9 @@ public class SyncViewModel implements Serializable, Parcelable {
 
     public void setNotSentQuestionnaireModels(List<QuestionnaireDatabaseModel> mNotSentQuestionnaireModels) {
         this.mNotSentQuestionnaireModels = mNotSentQuestionnaireModels;
+    }
+    public void setAllQuestionnaireModels(List<QuestionnaireDatabaseModel> mAllQuestionnaireModels) {
+        this.mAllQuestionnaireModels = mAllQuestionnaireModels;
     }
 
     public void setNotSendedAudio(List<File> mNotSendedAudio) {
@@ -63,13 +70,4 @@ public class SyncViewModel implements Serializable, Parcelable {
         return mNotSendedPhoto;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

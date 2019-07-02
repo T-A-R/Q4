@@ -8,7 +8,7 @@ import java.util.Map;
 
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 
-public class SmsAnswer implements Serializable, Parcelable {
+public class SmsAnswer implements Serializable {
 
     private final String mSmsIndex;
     private final int[] mAnswers;
@@ -45,13 +45,4 @@ public class SmsAnswer implements Serializable, Parcelable {
         return result.toString();
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-
-    }
 }

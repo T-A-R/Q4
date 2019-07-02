@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
-public class StagesModel implements Serializable, Parcelable {
+public class StagesModel implements Serializable {
 
     @SerializedName("time_from")
     private int time_from;
@@ -34,13 +34,4 @@ public class StagesModel implements Serializable, Parcelable {
         return questions_matches;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

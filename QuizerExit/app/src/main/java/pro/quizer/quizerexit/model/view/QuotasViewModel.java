@@ -8,7 +8,7 @@ import java.util.List;
 
 import pro.quizer.quizerexit.model.quota.QuotaModel;
 
-public class QuotasViewModel implements Serializable, Parcelable {
+public class QuotasViewModel implements Serializable {
 
     private List<QuotaModel> mQuotas;
     private String mQuery;
@@ -29,13 +29,4 @@ public class QuotasViewModel implements Serializable, Parcelable {
         this.mQuotas = mQuotas;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

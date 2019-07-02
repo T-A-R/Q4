@@ -6,6 +6,8 @@ import android.util.AttributeSet;
 import pro.quizer.quizerexit.view.resizeble.ResizableViewUtils;
 import pro.quizer.quizerexit.view.resizeble.edittext.AbstractResizableEditText;
 
+import static pro.quizer.quizerexit.view.resizable.ResizableConstants.SMALL;
+
 public class ResizableEditSpinner extends AbstractResizableEditSpinner {
 
     public ResizableEditSpinner(Context context, AttributeSet attrs, int defStyle) {
@@ -22,6 +24,6 @@ public class ResizableEditSpinner extends AbstractResizableEditSpinner {
 
     @Override
     public int getDefaultFontSize() {
-        return ResizableViewUtils.SMALL;
+        return SMALL;
     }
 }

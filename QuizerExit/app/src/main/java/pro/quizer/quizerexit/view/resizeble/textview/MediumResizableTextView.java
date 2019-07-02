@@ -5,6 +5,8 @@ import android.util.AttributeSet;
 
 import pro.quizer.quizerexit.view.resizeble.ResizableViewUtils;
 
+import static pro.quizer.quizerexit.view.resizable.ResizableConstants.MEDIUM;
+
 public class MediumResizableTextView extends AbstractResizableTextView {
 
     public MediumResizableTextView(Context context, AttributeSet attrs, int defStyle) {
@@ -21,6 +23,6 @@ public class MediumResizableTextView extends AbstractResizableTextView {
 
     @Override
     public int getDefaultFontSize() {
-        return ResizableViewUtils.MEDIUM;
+        return MEDIUM;
     }
 }

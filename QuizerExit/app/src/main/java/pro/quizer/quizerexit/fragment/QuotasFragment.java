@@ -16,6 +16,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +41,7 @@ public class QuotasFragment extends BaseFragment implements ICallback {
     private Button mRefreshBtn;
     private RecyclerView mQuotasRecyclerView;
     private BaseActivity mBaseActivity;
-    private Map<Integer, ElementModel> mMap;
+    private HashMap<Integer, ElementModel> mMap;
     private boolean mIsNotCompletedOnly;
 
     public static Fragment newInstance() {
@@ -109,16 +110,6 @@ public class QuotasFragment extends BaseFragment implements ICallback {
         mRefreshBtn.setOnClickListener(new QuotasClickListener((BaseActivity) getContext(), new ICallback() {
 
             @Override
-            public int describeContents() {
-                return 0;
-            }
-
-            @Override
-            public void writeToParcel(Parcel parcel, int i) {
-
-            }
-
-            @Override
             public void onStarting() {
                 showProgressBar();
             }
@@ -157,7 +148,7 @@ public class QuotasFragment extends BaseFragment implements ICallback {
                 hideEmptyView();
 
                 final BaseActivity baseActivity = (BaseActivity) getContext();
-                final QuotasAdapter mAdapter = new QuotasAdapter(baseActivity, quotas);
+                final QuotasAdapter mAdapter = new QuotasAdapter(baseActivity, quotas, mMap);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(baseActivity);
                 mQuotasRecyclerView.setLayoutManager(mLayoutManager);
                 mQuotasRecyclerView.setAdapter(mAdapter);

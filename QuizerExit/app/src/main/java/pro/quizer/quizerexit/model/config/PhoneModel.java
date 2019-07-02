@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class PhoneModel implements Serializable, Parcelable {
+public class PhoneModel implements Serializable {
 
     @SerializedName("number")
     private String number;
@@ -36,13 +36,4 @@ public class PhoneModel implements Serializable, Parcelable {
         return preffix;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

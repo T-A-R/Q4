@@ -24,6 +24,7 @@ public class SendAllQuestionnairesExecutable extends BaseExecutable {
     public void execute() {
         onStarting();
 
+        // GOOD select
         final List<UserModel> users = new Select().from(UserModel.class).execute();
 
         if (users == null || users.isEmpty()) {

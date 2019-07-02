@@ -20,6 +20,10 @@ public abstract class CustomCheckableButton extends RelativeLayout implements Se
     private boolean mIsChecked = false;
     private boolean mIsEnabled = true;
 
+    public void performClickProgramatically() {
+        mOnClickListener.onClick(this);
+    }
+
     private View.OnClickListener mOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {

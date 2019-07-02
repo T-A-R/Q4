@@ -10,7 +10,7 @@ import java.util.List;
 
 import pro.quizer.quizerexit.model.quota.QuotaModel;
 
-public class QuotaResponseModel implements Serializable, Parcelable {
+public class QuotaResponseModel implements Serializable {
 
     @SerializedName("result")
     private int result;
@@ -43,13 +43,4 @@ public class QuotaResponseModel implements Serializable, Parcelable {
         return server_time;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

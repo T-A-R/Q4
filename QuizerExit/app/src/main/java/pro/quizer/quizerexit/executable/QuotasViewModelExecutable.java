@@ -1,6 +1,9 @@
 package pro.quizer.quizerexit.executable;
 
+import com.activeandroid.query.Select;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,12 +16,12 @@ import pro.quizer.quizerexit.utils.StringUtils;
 
 public class QuotasViewModelExecutable extends BaseModelExecutable<QuotasViewModel> {
 
-    final BaseActivity mBaseActivity;
-    final String mQuery;
-    final Map<Integer, ElementModel> mMap;
-    final boolean mIsNotCompletedOnly;
+    private final String mQuery;
+    private final BaseActivity mBaseActivity;
+    private final boolean mIsNotCompletedOnly;
+    private final HashMap<Integer, ElementModel> mMap;
 
-    public QuotasViewModelExecutable(final Map<Integer, ElementModel> pMap,
+    public QuotasViewModelExecutable(final HashMap<Integer, ElementModel> pMap,
                                      final BaseActivity pContext,
                                      final String pQuery,
                                      final boolean pIsNotCompletedOnly) {
@@ -35,7 +38,7 @@ public class QuotasViewModelExecutable extends BaseModelExecutable<QuotasViewMod
         final QuotasViewModel quotasViewModel = new QuotasViewModel();
         quotasViewModel.setQuery(mQuery);
 
-        final UserModel currentUser = mBaseActivity.getCurrentUser();
+        final UserModel currentUser = mBaseActivity.forceGetCurrentUser();
         List<QuotaModel> quotas = currentUser.getQuotas();
 
         if (quotas == null || quotas.isEmpty()) {
@@ -73,7 +76,7 @@ public class QuotasViewModelExecutable extends BaseModelExecutable<QuotasViewMod
         }
     }
 
-    private QuotasViewModel getFilteredQuotas(final Map<Integer, ElementModel> mMap, final QuotasViewModel quotasViewModel, final String pQuery) {
+    private QuotasViewModel getFilteredQuotas(final HashMap<Integer, ElementModel> mMap, final QuotasViewModel quotasViewModel, final String pQuery) {
         final List<QuotaModel> quotas = quotasViewModel.getQuotas();
         final List<QuotaModel> result = new ArrayList<>();
 

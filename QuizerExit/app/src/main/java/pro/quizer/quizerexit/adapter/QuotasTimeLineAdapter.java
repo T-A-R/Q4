@@ -11,12 +11,14 @@ import com.github.vipulasri.timelineview.TimelineView;
 import java.util.List;
 
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.quota.QuotaTimeLineModel;
 import pro.quizer.quizerexit.utils.UiUtils;
 
 public class QuotasTimeLineAdapter extends RecyclerView.Adapter<QuotasTimeLineAdapter.QuotaTimeLineViewHolder> {
 
     private List<QuotaTimeLineModel> mAnswers;
+    private BaseActivity baseActivity;
 
     class QuotaTimeLineViewHolder extends RecyclerView.ViewHolder {
 
@@ -40,13 +42,14 @@ public class QuotasTimeLineAdapter extends RecyclerView.Adapter<QuotasTimeLineAd
         return TimelineView.getTimeLineViewType(position, getItemCount());
     }
 
-    public QuotasTimeLineAdapter(final List<QuotaTimeLineModel> pAnswers) {
+    public QuotasTimeLineAdapter(final List<QuotaTimeLineModel> pAnswers, final BaseActivity activity) {
+        baseActivity = activity;
         mAnswers = pAnswers;
     }
 
     @Override
     public QuotaTimeLineViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_quota_time_line, parent, false);
+        View itemView = LayoutInflater.from(baseActivity).inflate(R.layout.adapter_quota_time_line, parent, false);
         return new QuotaTimeLineViewHolder(itemView, viewType);
     }
 

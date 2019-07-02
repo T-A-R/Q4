@@ -3,7 +3,7 @@ package pro.quizer.quizerexit.view.resizeble.textview;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import pro.quizer.quizerexit.view.resizeble.ResizableViewUtils;
+import static pro.quizer.quizerexit.view.resizable.ResizableConstants.LARGE;
 
 public class LargeResizableTextView extends AbstractResizableTextView {
 
@@ -21,6 +21,6 @@ public class LargeResizableTextView extends AbstractResizableTextView {
 
     @Override
     public int getDefaultFontSize() {
-        return ResizableViewUtils.LARGE;
+        return LARGE;
     }
 }

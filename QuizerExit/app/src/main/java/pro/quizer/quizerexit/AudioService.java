@@ -58,7 +58,7 @@ import pro.quizer.quizerexit.utils.FileUtils;
 
 import static pro.quizer.quizerexit.utils.FileUtils.FOLDER_DIVIDER;
 
-public class AudioService extends MediaBrowserServiceCompat implements Serializable, Parcelable {
+public class AudioService extends MediaBrowserServiceCompat implements Serializable {
 
     public static final String SOURCE_NONE = "SOURCE_NONE";
     public static final String SOURCE_MIC = "SOURCE_MIC";
@@ -94,15 +94,6 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
 
     public File audioFilesPath;
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 
     private enum ServiceState {
         Ready,
@@ -1277,12 +1268,6 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
     }
 
     private void actionRecord(final Bundle extras) {
-//        String fileName = genNewRecordName();
-//
-//        if (extras != null) {
-//            fileName = extras.getString(AUDIO_FILE_NAME, fileName);
-//        }
-//
         recFilePath = audioFilesPath.getAbsolutePath() + FOLDER_DIVIDER + mFileName;
 
         setMetaAndPBState(metadataBuilder
@@ -1334,7 +1319,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                 }
             }
 
-        } catch (IOException | IllegalArgumentException e) {
+        } catch (Exception e) {
             Log.e(LOG_TAG, "actionRecord() : can't start recorder ", e);
             actionStopRecording();
             setPBState(PlaybackStateCompat.STATE_ERROR,

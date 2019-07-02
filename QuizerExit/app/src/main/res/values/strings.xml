@@ -28,6 +28,7 @@
     <string name="VIEW_CANCEL">Отмена</string>
     <string name="VIEW_APPLY">Принять</string>
     <string name="VIEW_FORWARD">Вперед</string>
+    <string name="VIEW_FINISH">Завершить</string>
     <string name="VIEW_OK">ОК</string>
     <string name="VIEW_SETTINGS">Настройки</string>
     <string name="VIEW_START">Начать</string>
@@ -40,6 +41,7 @@
     <string name="VIEW_YES">Да</string>
     <string name="VIEW_NO">Нет</string>
     <string name="VIEW_USERS_COUNT_ON_DEVICE">Количество пользователей на данном устройстве: %1$s</string>
+    <string name="VIEW_ALL_COUNT_QUIZ">Количество собраных анкет: %1$s</string>
     <string name="VIEW_UNSENT_COUNT_QUIZ">Количество неотправленных анкет: %1$s</string>
     <string name="VIEW_UNSENT_COUNT_AUDIO">Количество неотправленных аудио файлов: %1$s</string>
     <string name="VIEW_UNSENT_COUNT_PHOTO">Количество неотправленных фото файлов: %1$s</string>
@@ -100,6 +102,7 @@
     <string name="NOTIFICATION_SHORT_LOGIN_ERROR">Минимальная длина логина - 3 символа. Пожалуйста, введите логин и повторите попытку входа.</string>
     <string name="NOTIFICATION_MIN_ANSWERS_TABLE">Выберите минимум 1 вариант ответа в каждом вопросе из таблицы.</string>
     <string name="NOTIFICATION_EMPTY_TABLE">В таблице нет доступных вопросов.</string>
+    <string name="NOTIFICATION_SELECT_ANY_ITEM">Необходимо выбрать вариант ответа в каждом вопросе.</string>
     <string name="NOTIFICATION_MIN_ANSWERS">Выберите минимум %1$s ответ(а).</string>
     <string name="NOTIFICATION_MAX_ANSWERS">Вы можете выбрать максимум %1$s ответ(а).</string>
     <string name="NOTIFICATION_INTERNAL_APP_ERROR">Внутренняя ошибка приложения. Error code: </string>
@@ -150,4 +153,7 @@
     <string name="DIALOG_BUTTON_UPDATE">Обновить</string>
     <string name="e_mail_sales_quizer_pro">e-mail: sales@quizer.pro</string>
     <string name="_7_909_214_48_33">тел.: +7 909 214 48 33</string>
+    <string name="REPLY">Ответить</string>
+    <string name="VIEW_BUTTON_LOGIN">Войти</string>
+    <string name="TOAST_CANNOT_EXIT_WITHOUT_INTERNET_CONNECTION">Подключение к интернету отсутствует, выход из аккаунта невозможен  Для выхода используйте кнопку Назад</string>
 </resources>

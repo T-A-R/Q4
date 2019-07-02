@@ -13,7 +13,7 @@ import java.io.Serializable;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.view.resizeble.ResizableViewUtils;
 
-public class MarginView extends RelativeLayout implements Serializable, Parcelable {
+public class MarginView extends RelativeLayout implements Serializable {
 
     public MarginView(final Context pContext) {
         super(pContext);
@@ -45,13 +45,4 @@ public class MarginView extends RelativeLayout implements Serializable, Parcelab
         ResizableViewUtils.initViewHeight(view, getContext());
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

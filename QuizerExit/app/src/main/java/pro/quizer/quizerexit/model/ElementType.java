@@ -15,6 +15,7 @@ import java.lang.annotation.RetentionPolicy;
         ElementType.ANSWER})
 public @interface ElementType {
 
+    String INFO = "info";
     String QUESTION = "question";
     String BOX = "box";
     String TABLE = "table";

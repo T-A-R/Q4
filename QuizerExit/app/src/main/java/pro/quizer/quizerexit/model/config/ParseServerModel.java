@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import java.io.Serializable;
 
-public class ParseServerModel implements Serializable, Parcelable {
+public class ParseServerModel implements Serializable {
 
     private String mServerUrl;
     private String mLoginAdmin;
@@ -23,13 +23,4 @@ public class ParseServerModel implements Serializable, Parcelable {
         return mLoginAdmin;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

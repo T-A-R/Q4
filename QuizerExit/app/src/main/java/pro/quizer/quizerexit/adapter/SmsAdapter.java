@@ -54,7 +54,7 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
 
     @Override
     public SmsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_sms_stage, parent, false);
+        View itemView = LayoutInflater.from(mBaseActivity).inflate(R.layout.adapter_sms_stage, parent, false);
         return new SmsViewHolder(itemView);
     }
 
@@ -82,7 +82,7 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
         holder.mRetryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(mBaseActivity);
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(mBaseActivity, R.style.AlertDialogTheme);
                 alertDialog.setCancelable(false);
                 alertDialog.setTitle(R.string.DIALOG_SMS_SENDING);
                 alertDialog.setMessage(String.format(mBaseActivity.getString(R.string.DIALOG_SMS_SENDING_CONFIRMATION), timeInterval));
@@ -104,16 +104,6 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
                             public void onError(Exception pException) {
 
                             }
-
-                            @Override
-                            public int describeContents() {
-                                return 0;
-                            }
-
-                            @Override
-                            public void writeToParcel(Parcel dest, int flags) {
-
-                            }
                         }, Collections.singletonList(smsStage));
                     }
                 });
@@ -124,7 +114,9 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
                     }
                 });
 
-                alertDialog.show();
+                if (!mBaseActivity.isFinishing()) {
+                    alertDialog.show();
+                }
             }
         });
 

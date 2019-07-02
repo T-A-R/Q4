@@ -29,6 +29,7 @@ public abstract class AbstractAllFilesSendingExecutable extends BaseExecutable {
     public void execute() {
         onStarting();
 
+        // GOOD select
         mUsers = new Select().from(UserModel.class).execute();
 
         if (mUsers == null || mUsers.isEmpty()) {

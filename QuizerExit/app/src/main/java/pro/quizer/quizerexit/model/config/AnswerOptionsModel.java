@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class AnswerOptionsModel implements Serializable, Parcelable {
+public class AnswerOptionsModel implements Serializable {
 
     @SerializedName("is_open")
     private int is_open;
@@ -61,13 +61,4 @@ public class AnswerOptionsModel implements Serializable, Parcelable {
         return goto_if;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

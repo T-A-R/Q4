@@ -61,6 +61,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
     private void load(@QuestionnaireStatus final String pStatus, final Map<String, SmsAnswer> result) {
         final List<ElementDatabaseModel> allElements = new ArrayList<>();
 
+        // GOOD select
         final List<QuestionnaireDatabaseModel> questionnaires = new Select()
                 .from(QuestionnaireDatabaseModel.class)
                 .where(QuestionnaireDatabaseModel.USER_ID + " = ? AND " +
@@ -78,6 +79,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
 
             mSmsStage.addToken(token);
 
+            // GOOD select
             final List<ElementDatabaseModel> elements = new Select()
                     .from(ElementDatabaseModel.class)
                     .where(ElementDatabaseModel.TOKEN + " =?", token)

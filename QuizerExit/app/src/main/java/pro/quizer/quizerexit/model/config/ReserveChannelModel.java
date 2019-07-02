@@ -10,7 +10,7 @@ import java.util.List;
 
 import androidx.annotation.Nullable;
 
-public class ReserveChannelModel implements Serializable, Parcelable {
+public class ReserveChannelModel implements Serializable {
 
     @SerializedName("phone")
     private List<PhoneModel> phones;
@@ -46,13 +46,4 @@ public class ReserveChannelModel implements Serializable, Parcelable {
         return stages;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

@@ -11,14 +11,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.HashMap;
+
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
+import pro.quizer.quizerexit.model.database.UserModel;
 
 public class BoxFragment extends AbstractContentElementFragment {
 
+    public static final String BUNDLE_USER = "BUNDLE_USER";
+    public static final String BUNDLE_MAP = "BUNDLE_MAP";
     public static final String BUNDLE_CURRENT_QUESTION = "BUNDLE_CURRENT_QUESTION";
     public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
     public static final String BUNDLE_LOGIN_ADMIN = "BUNDLE_LOGIN_ADMIN";
@@ -30,6 +35,8 @@ public class BoxFragment extends AbstractContentElementFragment {
 
     private OptionsModel mAttributes;
     private ElementModel mCurrentElement;
+    private UserModel mUser;
+    private HashMap<Integer, ElementModel> mMap;
     private FragmentManager mFragmentManger;
     private NavigationCallback mCallback;
     private String mUserLogin = Constants.Strings.UNKNOWN;
@@ -38,8 +45,10 @@ public class BoxFragment extends AbstractContentElementFragment {
     private int mProjectId = 0;
     private int mUserId = 0;
     private boolean mIsPhotoQuestionnaire;
+    private boolean mIsButtonsVisible;
 
     public static Fragment newInstance(
+            final boolean pIsButtonVisible,
             @NonNull final ElementModel pElement,
             final NavigationCallback pCallback,
             final String pToken,
@@ -47,14 +56,19 @@ public class BoxFragment extends AbstractContentElementFragment {
             final int pUserId,
             final String pUserLogin,
             final boolean pIsPhotoQuestionnaire,
-            final int pProjectId) {
-        final BoxFragment fragment = new BoxFragment();
+            final int pProjectId,
+            final UserModel user,
+            final HashMap<Integer, ElementModel> pMap) {
+        final Fragment fragment = new BoxFragment();
 
         final Bundle bundle = new Bundle();
+        bundle.putSerializable(BUNDLE_USER, user);
+        bundle.putSerializable(BUNDLE_MAP, pMap);
         bundle.putSerializable(BUNDLE_CURRENT_QUESTION, pElement);
         bundle.putSerializable(BUNDLE_CALLBACK, pCallback);
         bundle.putString(BUNDLE_TOKEN, pToken);
         bundle.putInt(BUNDLE_USER_ID, pUserId);
+        bundle.putBoolean(BUNDLE_IS_BUTTON_VISIBLE, pIsButtonVisible);
         bundle.putString(BUNDLE_LOGIN_ADMIN, pLoginAdmin);
         bundle.putString(BUNDLE_USER_LOGIN, pUserLogin);
         bundle.putBoolean(BUNDLE_IS_PHOTO_QUESTIONNAIRE, pIsPhotoQuestionnaire);
@@ -81,6 +95,8 @@ public class BoxFragment extends AbstractContentElementFragment {
         }
 
         if (bundle != null) {
+            mUser = (UserModel) bundle.getSerializable(BUNDLE_USER);
+            mMap = (HashMap<Integer, ElementModel>) bundle.getSerializable(BUNDLE_MAP);
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
             mAttributes = mCurrentElement.getOptions();
@@ -90,12 +106,23 @@ public class BoxFragment extends AbstractContentElementFragment {
             mLoginAdmin = bundle.getString(BUNDLE_LOGIN_ADMIN);
             mToken = bundle.getString(BUNDLE_TOKEN);
             mUserId = bundle.getInt(BUNDLE_USER_ID);
-
+            mIsButtonsVisible = bundle.getBoolean(BUNDLE_IS_BUTTON_VISIBLE);
             initHeader(view);
             initView();
+            handleButtonsVisibility();
         } else {
             showToast(getString(R.string.NOTIFICATION_INTERNAL_APP_ERROR) + "1001");
         }
+    }
+
+    @Override
+    protected boolean isFromDialog() {
+        return false;
+    }
+
+    @Override
+    protected boolean isButtonVisible() {
+        return mIsButtonsVisible;
     }
 
     @Override
@@ -119,6 +146,11 @@ public class BoxFragment extends AbstractContentElementFragment {
     }
 
     @Override
+    protected HashMap<Integer, ElementModel> getMap() {
+        return mMap;
+    }
+
+    @Override
     protected ElementModel getElementModel() {
         return mCurrentElement;
     }
@@ -127,6 +159,8 @@ public class BoxFragment extends AbstractContentElementFragment {
         mFragmentManger.beginTransaction()
                 .add(R.id.content_element_box,
                         ElementFragment.newInstance(
+                                false,
+                                mIsButtonsVisible,
                                 R.id.content_element_box,
                                 mCurrentElement.getElements().get(0),
                                 mCallback,
@@ -135,7 +169,9 @@ public class BoxFragment extends AbstractContentElementFragment {
                                 mUserId,
                                 mUserLogin,
                                 mIsPhotoQuestionnaire,
-                                mProjectId))
+                                mProjectId,
+                                mUser,
+                                mMap))
                 .commit();
     }
 }

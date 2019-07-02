@@ -1,13 +1,13 @@
 package pro.quizer.quizerexit.view;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatEditText;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.widget.EditText;
 
 import java.util.ArrayList;
 
-public class ExtendedEditText extends AppCompatEditText {
+public class ExtendedEditText extends EditText {
     private ArrayList<TextWatcher> mListeners = null;
 
     public ExtendedEditText(Context ctx) {

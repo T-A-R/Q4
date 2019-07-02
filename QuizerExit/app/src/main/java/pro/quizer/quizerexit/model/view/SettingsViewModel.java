@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import java.io.Serializable;
 
-public class SettingsViewModel implements Serializable, Parcelable {
+public class SettingsViewModel implements Serializable {
 
     private String mConfigId;
     private String mConfigDate;
@@ -44,13 +44,4 @@ public class SettingsViewModel implements Serializable, Parcelable {
         return mAnswerMargin;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

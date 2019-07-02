@@ -50,6 +50,24 @@
                     tools:text="Экзит пул agreement..." />
 
                 <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
+                    android:id="@+id/count_all"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    tools:text="Всего собрано: 10" />
+
+                <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
+                    android:id="@+id/count_sent"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@+id/count_all"
+                    android:textColor="@android:color/white"
+                    tools:text="Отправлено: 10" />
+
+                <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
                     android:id="@+id/current_user"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

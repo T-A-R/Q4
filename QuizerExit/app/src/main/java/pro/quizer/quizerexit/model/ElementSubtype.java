@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.SOURCE)
-@StringDef({ElementSubtype.TEXT,
+@StringDef({ElementSubtype.HTML,
         ElementSubtype.AUDIO,
         ElementSubtype.LIST,
         ElementSubtype.IMAGE,
@@ -14,17 +14,20 @@ import java.lang.annotation.RetentionPolicy;
         ElementSubtype.SLIDER})
 public @interface ElementSubtype {
 
+    String SELECT = "select";
     String CONTAINER = "container";
     String FUNNEL = "funnel";
+    String PAGE = "page";
     String TABLE = "table";
-    String ONESCREEN = "onescreen";
+    String INFO = "info";
     String LIST = "list";
     String SCALE = "scale";
     String RANK = "rank";
     String RANGE = "range";
-    String TEXT = "text";
+    String HTML = "html";
     String AUDIO = "audio";
     String IMAGE = "image";
+    String STATUS_IMAGE = "status_image";
     String VIDEO = "video";
     String SLIDER = "slider";
 }

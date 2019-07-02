@@ -28,7 +28,7 @@ public final class ConditionUtils {
         return pCondition.split("\\" + FORMAT_DIVIDER_DOT);
     }
 
-    public static String formatTitle(final BaseActivity pBaseActivity, final String pTitle, final HashMap<Integer, ElementModel> pModel) {
+    public static String formatTitle(final BaseActivity pBaseActivity, final String pTitle, final HashMap<Integer, ElementModel> pMap) {
         if (StringUtils.isEmpty(pTitle) || (StringUtils.isNotEmpty(pTitle) && !pTitle.contains(START_STRING))) {
             return pTitle;
         }
@@ -41,15 +41,15 @@ public final class ConditionUtils {
         final Integer index = Integer.parseInt(array[0]);
         final String field = array[1];
 
-        final ElementModel element = pModel.get(index);
+        final ElementModel element = pMap.get(index);
 
         if (element == null) {
             return pTitle;
         }
 
-        final String replaceString = getReplaceString(field, element, pBaseActivity);
+        final String replaceString = getReplaceString(field, element, pBaseActivity, pMap);
 
-        return formatTitle(pBaseActivity, pTitle.replace(START_STRING + condition + END_STRING, replaceString), pModel);
+        return formatTitle(pBaseActivity, pTitle.replace(START_STRING + condition + END_STRING, replaceString), pMap);
     }
 
     public static int evaluateCondition(final String pShowCondition, final HashMap<Integer, ElementModel> pModel, final BaseActivity pBaseActivity) {
@@ -117,7 +117,7 @@ public final class ConditionUtils {
         return condition;
     }
 
-    private static String formatCondition(final String pExpression, final HashMap<Integer, ElementModel> pModel, final BaseActivity pBaseActivity) {
+    private static String formatCondition(final String pExpression, final HashMap<Integer, ElementModel> pMap, final BaseActivity pBaseActivity) {
         if (StringUtils.isEmpty(pExpression) || (StringUtils.isNotEmpty(pExpression) && !pExpression.contains(ELEMENT_INDEX))) {
             return pExpression;
         }
@@ -128,21 +128,21 @@ public final class ConditionUtils {
         final Integer index = Integer.parseInt(array[0]);
         final String field = array[1];
 
-        final ElementModel element = pModel.get(index);
+        final ElementModel element = pMap.get(index);
 
         if (element == null) {
             return pExpression;
         }
 
-        final String replaceString = getReplaceString(field, element, pBaseActivity);
+        final String replaceString = getReplaceString(field, element, pBaseActivity, pMap);
 
-        return formatCondition(pExpression.replace(ELEMENT_INDEX + condition, replaceString), pModel, pBaseActivity);
+        return formatCondition(pExpression.replace(ELEMENT_INDEX + condition, replaceString), pMap, pBaseActivity);
     }
 
-    private static String getReplaceString(final String field, final ElementModel element, final BaseActivity pBaseActivity) {
+    private static String getReplaceString(final String field, final ElementModel element, final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> pMap) {
         switch (field) {
             case ConditionType.TITLE:
-                return element.getOptions().getTitle(pBaseActivity);
+                return element.getOptions().getTitle(pBaseActivity, pMap);
             case ConditionType.VALUE:
                 return element.isFullySelected() ? element.getTextAnswer() : Constants.Strings.EMPTY;
             case ConditionType.CHECKED:

@@ -8,7 +8,7 @@ import java.io.Serializable;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.utils.StringUtils;
 
-public class QuotaTimeLineModel implements Serializable, Parcelable {
+public class QuotaTimeLineModel implements Serializable {
 
     private String mAnswer;
     private String mAnswerLoweCase;
@@ -30,13 +30,4 @@ public class QuotaTimeLineModel implements Serializable, Parcelable {
         return mAnswerLoweCase.contains(pString);
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

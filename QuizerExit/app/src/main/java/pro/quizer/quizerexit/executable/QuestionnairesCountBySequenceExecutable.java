@@ -31,6 +31,7 @@ public class QuestionnairesCountBySequenceExecutable extends BaseModelExecutable
     public Integer execute() {
         int count = 0;
 
+        // GOOD select
         final List<QuestionnaireDatabaseModel> sentQuestionnaires = new Select()
                 .from(QuestionnaireDatabaseModel.class)
                 .where(QuestionnaireDatabaseModel.STATUS + " =? AND " +
@@ -40,6 +41,7 @@ public class QuestionnairesCountBySequenceExecutable extends BaseModelExecutable
                 .execute();
 
         for (final QuestionnaireDatabaseModel questionnaireDatabaseModel : sentQuestionnaires) {
+            // GOOD select
             final List<ElementDatabaseModel> elements = new Select()
                     .from(ElementDatabaseModel.class)
                     .where(ElementDatabaseModel.TOKEN + " =?", questionnaireDatabaseModel.token)

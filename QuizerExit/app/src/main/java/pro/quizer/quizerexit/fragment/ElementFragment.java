@@ -5,13 +5,13 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.HashMap;
 import java.util.List;
 
 import pro.quizer.quizerexit.Constants;
@@ -21,12 +21,17 @@ import pro.quizer.quizerexit.model.ElementSubtype;
 import pro.quizer.quizerexit.model.ElementType;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
+import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.utils.CollectionUtils;
 import pro.quizer.quizerexit.utils.DateUtils;
 
 public class ElementFragment extends BaseFragment {
 
+    public static final String BUNDLE_IS_FROM_DIALOG = "BUNDLE_IS_FROM_DIALOG";
+    public static final String BUNDLE_IS_BUTTON_VISIBLE = "BUNDLE_IS_BUTTON_VISIBLE";
+    public static final String BUNDLE_USER = "BUNDLE_USER";
     public static final String BUNDLE_CURRENT_QUESTION = "BUNDLE_CURRENT_QUESTION";
+    public static final String BUNDLE_MAP = "BUNDLE_MAP";
     public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
     public static final String BUNDLE_LOGIN_ADMIN = "BUNDLE_LOGIN_ADMIN";
     public static final String BUNDLE_TOKEN = "BUNDLE_TOKEN";
@@ -37,10 +42,14 @@ public class ElementFragment extends BaseFragment {
     public static final String BUNDLE_VIEW_ID = "BUNDLE_VIEW_ID";
 
     private OptionsModel mAttributes;
+    private HashMap<Integer, ElementModel> mMap;
     private ElementModel mCurrentElement;
     private FragmentManager mFragmentManger;
     private NavigationCallback mCallback;
+    private UserModel mUser;
+    private boolean mIsButtonsVisible = true;
     private long mStartTime;
+    private boolean mIsFromDialog = false;
 
     private String mUserLogin = Constants.Strings.UNKNOWN;
     private String mLoginAdmin = Constants.Strings.UNKNOWN;
@@ -53,10 +62,10 @@ public class ElementFragment extends BaseFragment {
     private NavigationCallback mNavigationCallback = new NavigationCallback() {
 
         @Override
-        public void onForward(final int pNextRelativeId) {
+        public void onForward(final int pNextRelativeId, final View forwardView) {
             mCurrentElement.setEndTime(DateUtils.getCurrentTimeMillis());
 
-            mCallback.onForward(pNextRelativeId);
+            mCallback.onForward(pNextRelativeId, forwardView);
         }
 
         @Override
@@ -83,18 +92,11 @@ public class ElementFragment extends BaseFragment {
             mCallback.onHideFragment(pCurrentElement);
         }
 
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel parcel, int i) {
-
-        }
     };
 
-    public static Fragment newInstance(
+    public static ElementFragment newInstance(
+            final boolean pIsFromDialog,
+            final boolean isButtonsVisible,
             final int pViewId,
             @NonNull final ElementModel pElement,
             final NavigationCallback pCallback,
@@ -103,11 +105,17 @@ public class ElementFragment extends BaseFragment {
             final int pUserId,
             final String pUserLogin,
             final boolean pIsPhotoQuestionnaire,
-            final int pProjectId) {
+            final int pProjectId,
+            final UserModel user,
+            final HashMap<Integer, ElementModel> pMap) {
         final ElementFragment fragment = new ElementFragment();
 
         final Bundle bundle = new Bundle();
+        bundle.putBoolean(BUNDLE_IS_FROM_DIALOG, pIsFromDialog);
+        bundle.putBoolean(BUNDLE_IS_BUTTON_VISIBLE, isButtonsVisible);
+        bundle.putSerializable(BUNDLE_USER, user);
         bundle.putSerializable(BUNDLE_CURRENT_QUESTION, pElement);
+        bundle.putSerializable(BUNDLE_MAP, pMap);
         bundle.putSerializable(BUNDLE_CALLBACK, pCallback);
         bundle.putString(BUNDLE_TOKEN, pToken);
         bundle.putInt(BUNDLE_USER_ID, pUserId);
@@ -140,7 +148,11 @@ public class ElementFragment extends BaseFragment {
         }
 
         if (bundle != null) {
+            mIsFromDialog = bundle.getBoolean(BUNDLE_IS_FROM_DIALOG, false);
+            mIsButtonsVisible = bundle.getBoolean(BUNDLE_IS_BUTTON_VISIBLE, true);
+            mUser = (UserModel) bundle.getSerializable(BUNDLE_USER);
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
+            mMap = (HashMap<Integer, ElementModel>) bundle.getSerializable(BUNDLE_MAP);
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
             mAttributes = mCurrentElement.getOptions();
             mIsPhotoQuestionnaire = bundle.getBoolean(BUNDLE_IS_PHOTO_QUESTIONNAIRE);
@@ -165,7 +177,7 @@ public class ElementFragment extends BaseFragment {
             return true;
         }
 
-        if (ElementType.BOX.equals(type) && (ElementSubtype.ONESCREEN.equals(subtype) || ElementSubtype.TABLE.equals(subtype) || ElementSubtype.FUNNEL.equals(subtype))) {
+        if (ElementType.BOX.equals(type) && (ElementSubtype.INFO.equals(subtype) || ElementSubtype.TABLE.equals(subtype) || ElementSubtype.FUNNEL.equals(subtype))) {
             return true;
         }
 
@@ -175,6 +187,7 @@ public class ElementFragment extends BaseFragment {
     private void initView() {
         final List<ElementModel> subElements = mCurrentElement.getElements();
         final String elementType = mCurrentElement.getType();
+        final String elementSubType = mCurrentElement.getSubtype();
 
         if (isScreenElement()) {
             mCurrentElement.setScreenShowing(true);
@@ -191,53 +204,98 @@ public class ElementFragment extends BaseFragment {
 
         mCallback.onShowFragment(mCurrentElement);
 
-        switch (elementType) {
-            case ElementType.QUESTION:
-                switch (mCurrentElement.getSubtype()) {
-                    case ElementSubtype.LIST:
-                        mCurrentElement.setQuestionShowing(true);
+        if (ElementType.QUESTION.equals(elementType)) {
+            if (ElementSubtype.SELECT.equals(elementSubType) && !mIsFromDialog) {
+                mCurrentElement.setQuestionShowing(true);
 
-                        mFragmentManger.beginTransaction()
-                                .add(mViewId, QuestionListFragment.newInstance(mCurrentElement, mNavigationCallback))
-                                .commit();
+                mFragmentManger.beginTransaction()
+                        .add(mViewId, QuestionSelectiveFragment.newInstance(
+                                mIsButtonsVisible,
+                                mCurrentElement,
+                                mNavigationCallback,
+                                mMap,
+                                mToken,
+                                mLoginAdmin,
+                                mUserId,
+                                mUserLogin,
+                                mIsPhotoQuestionnaire,
+                                mProjectId,
+                                mUser))
+                        .commit();
+            } else if (ElementSubtype.SCALE.equals(elementSubType)
+                    || ElementSubtype.LIST.equals(elementSubType)
+                    || (ElementSubtype.SELECT.equals(elementSubType) && mIsFromDialog)) {
+                mCurrentElement.setQuestionShowing(true);
 
-                        break;
-                    default:
-                        showToast("Неизвестный тип элемента");
-
-                        break;
-                }
-
-                break;
-            case ElementType.BOX:
-                switch (mCurrentElement.getSubtype()) {
-                    case ElementSubtype.TABLE:
-                        mFragmentManger.beginTransaction()
-                                .add(mViewId, QuestionTableFragment.newInstance(mCurrentElement, mNavigationCallback))
-                                .commit();
-
-                        break;
-                    case ElementSubtype.FUNNEL:
-                        showToast("Funnel еще не готов.");
-
-                        break;
-                    case ElementSubtype.ONESCREEN:
-                        mFragmentManger.beginTransaction()
-                                .add(mViewId, InfoFragment.newInstance(mCurrentElement, mNavigationCallback))
-                                .commit();
-
-                        break;
-                    default:
-                        mFragmentManger.beginTransaction()
-                                .add(mViewId, BoxFragment.newInstance(mCurrentElement, mNavigationCallback, mToken, mLoginAdmin, mUserId, mUserLogin, mIsPhotoQuestionnaire, mProjectId))
-                                .commit();
-
-                        break;
-                }
-
-                break;
-            default:
+                mFragmentManger.beginTransaction()
+                        .add(mViewId, QuestionListFragment.newInstance(mIsFromDialog, mIsButtonsVisible, mUser, mCurrentElement, mNavigationCallback, mMap))
+                        .commit();
+            } else {
                 showToast("Неизвестный тип элемента");
+            }
+        } else if (ElementType.INFO.equals(elementType)) {
+            mFragmentManger.beginTransaction()
+                    .add(mViewId, InfoFragment.newInstance(
+                            mIsButtonsVisible,
+                            mCurrentElement,
+                            mNavigationCallback,
+                            mMap))
+                    .commit();
+        } else if (ElementType.BOX.equals(elementType)) {
+            switch (elementSubType) {
+                case ElementSubtype.PAGE:
+                    mFragmentManger.beginTransaction()
+                            .add(mViewId, PageFragment.newInstance(
+                                    mIsButtonsVisible,
+                                    mCurrentElement,
+                                    mNavigationCallback,
+                                    mMap,
+                                    mToken,
+                                    mLoginAdmin,
+                                    mUserId,
+                                    mUserLogin,
+                                    mIsPhotoQuestionnaire,
+                                    mProjectId,
+                                    mUser))
+                            .commit();
+
+                    break;
+                case ElementSubtype.TABLE:
+                    mFragmentManger.beginTransaction()
+                            .add(mViewId, QuestionTableFragment.newInstance(
+                                    mIsFromDialog,
+                                    mIsButtonsVisible,
+                                    mUser,
+                                    mCurrentElement,
+                                    mNavigationCallback,
+                                    mMap))
+                            .commit();
+
+                    break;
+                case ElementSubtype.FUNNEL:
+                    showToast("Funnel еще не готов.");
+
+                    break;
+                default:
+                    mFragmentManger.beginTransaction()
+                            .add(mViewId, BoxFragment.newInstance(
+                                    mIsButtonsVisible,
+                                    mCurrentElement,
+                                    mNavigationCallback,
+                                    mToken,
+                                    mLoginAdmin,
+                                    mUserId,
+                                    mUserLogin,
+                                    mIsPhotoQuestionnaire,
+                                    mProjectId,
+                                    mUser,
+                                    mMap))
+                            .commit();
+
+                    break;
+            }
+        } else {
+            showToast("Неизвестный тип элемента");
         }
     }
 

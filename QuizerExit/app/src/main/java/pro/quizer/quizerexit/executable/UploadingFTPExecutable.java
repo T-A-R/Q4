@@ -45,16 +45,6 @@ public class UploadingFTPExecutable extends BaseExecutable {
             public void onError(Exception pException) {
 
             }
-
-            @Override
-            public int describeContents() {
-                return 0;
-            }
-
-            @Override
-            public void writeToParcel(Parcel dest, int flags) {
-
-            }
         }).execute();
     }
 

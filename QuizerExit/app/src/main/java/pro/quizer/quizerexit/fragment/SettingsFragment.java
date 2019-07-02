@@ -85,7 +85,7 @@ public class SettingsFragment extends BaseFragment implements ICallback {
     }
 
     private void initViews(final View pView) {
-        mBaseActivity = (BaseActivity) pView.getContext();
+        mBaseActivity = (BaseActivity) getContext();
         mFontSizeSpinner = pView.findViewById(R.id.font_size_spinner);
         mSmsNumberSpinner = pView.findViewById(R.id.sms_number_spinner);
         mAnswerMarginView = pView.findViewById(R.id.settings_space_between_answers);
@@ -195,7 +195,7 @@ public class SettingsFragment extends BaseFragment implements ICallback {
         mDeleteUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((BaseActivity) view.getContext()).showRemoveUserDialog();
+                mBaseActivity.showRemoveUserDialog();
             }
         });
     }

@@ -4,7 +4,7 @@ import android.os.Parcelable;
 
 import java.io.Serializable;
 
-public interface ICallback extends Serializable, Parcelable {
+public interface ICallback extends Serializable {
 
     void onStarting();
 

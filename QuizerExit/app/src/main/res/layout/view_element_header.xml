@@ -2,12 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/header_frame"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/header_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -43,6 +43,12 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
+                    <LinearLayout
+                        android:id="@+id/element_header"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
                     <pro.quizer.quizerexit.view.resizeble.textview.MediumResizableTextView
                         android:id="@+id/element_text"
                         android:layout_width="match_parent"
@@ -62,9 +68,13 @@
                         android:textColor="@color/gray_shadow"
                         android:textStyle="italic"
                         tools:text="Отображение описания вопроса" />
+                    </LinearLayout>
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/contents_recycler_view"
+                        android:clickable="true"
+
+                        android:focusable="true"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 

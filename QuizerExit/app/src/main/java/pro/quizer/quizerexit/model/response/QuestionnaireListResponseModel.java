@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Deprecated
-public class QuestionnaireListResponseModel implements Serializable, Parcelable {
+public class QuestionnaireListResponseModel implements Serializable {
 
     @SerializedName("result")
     private int result;
@@ -32,13 +32,4 @@ public class QuestionnaireListResponseModel implements Serializable, Parcelable 
         return accepted_tokens;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

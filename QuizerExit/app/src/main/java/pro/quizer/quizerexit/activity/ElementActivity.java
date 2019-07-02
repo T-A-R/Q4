@@ -78,7 +78,7 @@ public class ElementActivity extends BaseActivity {
 
     public static final int FIRST_ELEMENT = Integer.MIN_VALUE;
     public static final int ONE_SEC = 1000;
-    UserModel mUserModel;
+    UserModel mUser;
     ConfigModel mConfig;
     ProjectInfoModel mProjectInfo;
     List<ElementModel> mElements;
@@ -112,8 +112,8 @@ public class ElementActivity extends BaseActivity {
     private NavigationCallback mNavigationCallback = new NavigationCallback() {
 
         @Override
-        public void onForward(final int pNextRelativeId) {
-            showNextElement(pNextRelativeId, true);
+        public void onForward(final int pNextRelativeId, final View forwardView) {
+            showNextElement(pNextRelativeId, true, forwardView);
         }
 
         @Override
@@ -143,15 +143,6 @@ public class ElementActivity extends BaseActivity {
             }
         }
 
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel parcel, int i) {
-
-        }
     };
 
     private static final int PERMISSION_REQUEST_CODE = 200;
@@ -280,8 +271,9 @@ public class ElementActivity extends BaseActivity {
         mStop = findViewById(R.id.ibStop);
         mStatus = findViewById(R.id.tvState);
 
-        mUserModel = getCurrentUser();
-        mConfig = mUserModel.getConfig();
+        // GOOD
+        mUser = getCurrentUser();
+        mConfig = mUser.getConfig();
         mAudioRecordLimitTime = mConfig.getAudioRecordLimitTime() * 60 * 1000;
         mProjectInfo = mConfig.getProjectInfo();
         mElements = mProjectInfo.getElements();
@@ -296,9 +288,9 @@ public class ElementActivity extends BaseActivity {
                 mGpsTime = mGPSModel.getTime();
 
                 if (!StringUtils.isEmpty(mGpsString)) {
-                    showToast(getString(R.string.NOTIFICATION_CURRENT_GPS) + mGpsString);
+//                    showToast(getString(R.string.NOTIFICATION_CURRENT_GPS) + mGpsString);
                 } else {
-                    showToast(getString(R.string.NOTIFICATION_GPS_IS_TURN_OFF));
+//                    showToast(getString(R.string.NOTIFICATION_GPS_IS_TURN_OFF));
                 }
 
                 initStartValues();
@@ -334,14 +326,14 @@ public class ElementActivity extends BaseActivity {
             setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
             mLoginAdmin = mConfig.getLoginAdmin();
-            mLogin = mUserModel.login;
-            mPassword = mUserModel.password;
+            mLogin = mUser.login;
+            mPassword = mUser.password;
             mQuestionnaireId = mProjectInfo.getQuestionnaireId();
             mProjectId = mProjectInfo.getProjectId();
             mBillingQuestions = mProjectInfo.getBillingQuestions();
-            mUserLogin = mUserModel.login;
-            mUserProjectId = mUserModel.user_project_id;
-            mUserId = mUserModel.user_id;
+            mUserLogin = mUser.login;
+            mUserProjectId = mUser.user_project_id;
+            mUserId = mUser.user_id;
             mToken = StringUtils.generateToken();
 
             showFirstElement();
@@ -374,10 +366,10 @@ public class ElementActivity extends BaseActivity {
     }
 
     private void showFirstElement() {
-        showNextElement(FIRST_ELEMENT, false);
+        showNextElement(FIRST_ELEMENT, false, null);
     }
 
-    private void showNextElement(final int pNextRelativeId, final boolean pIsAddToBackStack) {
+    private void showNextElement(final int pNextRelativeId, final boolean pIsAddToBackStack, final View pForwardView) {
         if (pNextRelativeId == -1) {
 
             finish();
@@ -390,6 +382,11 @@ public class ElementActivity extends BaseActivity {
 
         if (nextElement == null) {
             // it was last element
+            Log.d("thecriser", "saveToDatabase");
+            if (pForwardView != null) {
+                UiUtils.setButtonEnabled(pForwardView, false);
+            }
+            showProgressBar();
             saveQuestionnaireToDatabase();
             showToast(getString(R.string.NOTIFICATION_QUIZ_IS_FINISHED));
 
@@ -405,9 +402,9 @@ public class ElementActivity extends BaseActivity {
 
         if (showValue != ConditionUtils.CAN_SHOW) {
             if (nextElement.isShuffeledIntoBox()) {
-                showNextElement(options.getJump(), true);
+                showNextElement(options.getJump(), true, pForwardView);
             } else {
-                showNextElement(showValue, true);
+                showNextElement(showValue, true, pForwardView);
             }
 
             return;
@@ -417,6 +414,8 @@ public class ElementActivity extends BaseActivity {
                 .beginTransaction()
                 .replace(R.id.main_content,
                         ElementFragment.newInstance(
+                                false,
+                                true,
                                 R.id.content_element,
                                 nextElement,
                                 mNavigationCallback,
@@ -425,10 +424,12 @@ public class ElementActivity extends BaseActivity {
                                 mUserId,
                                 mUserLogin,
                                 mConfig.isPhotoQuestionnaire(),
-                                mProjectId));
+                                mProjectId,
+                                mUser,
+                                mMap));
 
         if (pIsAddToBackStack) {
-            fragmentTransaction.addToBackStack(options.getTitle(this));
+            fragmentTransaction.addToBackStack(options.getTitle(this, mMap));
         }
 
         fragmentTransaction.commit();
@@ -456,19 +457,21 @@ public class ElementActivity extends BaseActivity {
     }
 
     public void showExitPoolAlertDialog() {
-        new AlertDialog.Builder(this)
-                .setCancelable(false)
-                .setTitle(R.string.VIEW_EXIT_QUIZ_HEADER)
-                .setMessage(R.string.VIEW_EXIT_QUIZ_BODY)
-                .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
+        if (!isFinishing()) {
+            new AlertDialog.Builder(this, R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.VIEW_EXIT_QUIZ_HEADER)
+                    .setMessage(R.string.VIEW_EXIT_QUIZ_BODY)
+                    .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(final DialogInterface dialog, final int which) {
-                        finish();
-                        startMainActivity();
-                    }
-                })
-                .setNegativeButton(R.string.VIEW_NO, null).show();
+                        @Override
+                        public void onClick(final DialogInterface dialog, final int which) {
+                            finish();
+                            startMainActivity();
+                        }
+                    })
+                    .setNegativeButton(R.string.VIEW_NO, null).show();
+        }
     }
 
     private void saveQuestionnaireToDatabase() {

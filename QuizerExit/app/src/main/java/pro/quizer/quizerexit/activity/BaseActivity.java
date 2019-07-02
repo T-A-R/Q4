@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -27,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import pro.quizer.quizerexit.BuildConfig;
+import pro.quizer.quizerexit.DrawerUtils;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.executable.RemoveUserExecutable;
 import pro.quizer.quizerexit.fragment.AboutFragment;
@@ -43,6 +45,7 @@ import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.utils.FileUtils;
+import pro.quizer.quizerexit.utils.Internet;
 import pro.quizer.quizerexit.utils.SPUtils;
 import pro.quizer.quizerexit.view.Toolbar;
 
@@ -50,59 +53,16 @@ import static pro.quizer.quizerexit.utils.FileUtils.AMR;
 import static pro.quizer.quizerexit.utils.FileUtils.JPEG;
 
 @SuppressLint("Registered")
-public class BaseActivity extends AppCompatActivity implements Serializable, Parcelable {
+public class BaseActivity extends AppCompatActivity implements Serializable {
 
     public static final String IS_AFTER_AUTH = "IS_AFTER_AUTH";
     private HashMap<Integer, ElementModel> mTempMap;
     private HashMap<Integer, ElementModel> mMap;
     private UserModel mCurrentUser;
 
-    @SuppressLint("MissingPermission")
-    @Override
-    protected void onCreate(final Bundle savedInstanceState) {
-        Log.d("ActivityLifeCycle", this + " - > onCreate()");
-
-        super.onCreate(savedInstanceState);
-    }
-
     @Override
     public void onPointerCaptureChanged(final boolean hasCapture) {
 
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.d("ActivityLifeCycle", this + " - > onDestroy()");
-
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onResume() {
-        Log.d("ActivityLifeCycle", this + " - > onResume()");
-
-        super.onResume();
-    }
-
-    @Override
-    protected void onStart() {
-        Log.d("ActivityLifeCycle", this + " - > onStart()");
-
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        Log.d("ActivityLifeCycle", this + " - > onStop()");
-
-        super.onStop();
-    }
-
-    @Override
-    protected void onPause() {
-        Log.d("ActivityLifeCycle", this + " - > onPause()");
-
-        super.onPause();
     }
 
     public List<File> getAllPhotos() {
@@ -122,13 +82,15 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
     }
 
     public void showToast(final CharSequence pMessage) {
-        runOnUiThread(new Runnable() {
+        if (!isFinishing()) {
+            runOnUiThread(new Runnable() {
 
-            @Override
-            public void run() {
-                Toast.makeText(BaseActivity.this, pMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void run() {
+                    Toast.makeText(BaseActivity.this, pMessage, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     private void generateMap(final List<ElementModel> elements) {
@@ -154,7 +116,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
     }
 
     private List<ElementModel> getElements() {
-        return mCurrentUser.getConfig().getProjectInfo().getElements();
+        // BAD
+        return getCurrentUser().getConfig().getProjectInfo().getElements();
     }
 
     // not singleton
@@ -255,11 +218,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
         activationModel.save();
     }
 
-    public int getUsersCount() {
-        return new Select().from(UserModel.class).count();
-    }
-
     public ActivationModel getActivationModel() {
+        // GOOD select
         final List<ActivationModel> list = new Select().from(ActivationModel.class).limit(1).execute();
 
         if (list != null && !list.isEmpty()) {
@@ -269,13 +229,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
         }
     }
 
-    public ConfigModel getConfigByUserId(final int pUserId) {
-        final UserModel userModel = getUserByUserId(pUserId);
-
-        return userModel.getConfig();
-    }
-
     public UserModel getLocalUserModel(final String pLogin, final String pPassword) {
+        // GOOD select
         final List<UserModel> list = new Select().from(UserModel.class).where(UserModel.LOGIN + " = ? AND " + UserModel.PASSWORD + " = ?", pLogin, pPassword).limit(1).execute();
 
         if (list != null && !list.isEmpty()) {
@@ -286,6 +241,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
     }
 
     public UserModel getUserByUserId(final int pUserId) {
+        // BAD select
         final List<UserModel> list = new Select().from(UserModel.class).where(UserModel.USER_ID + " = ?", pUserId).execute();
 
         if (list == null || list.isEmpty()) {
@@ -322,8 +278,17 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
         SPUtils.saveCurrentUserId(this, pUserId);
     }
 
-    public UserModel getCurrentUser() {
+    public UserModel forceGetCurrentUser() {
         mCurrentUser = getUserByUserId(getCurrentUserId());
+
+        return mCurrentUser;
+    }
+
+    public UserModel getCurrentUser() {
+        if (mCurrentUser == null) {
+            mCurrentUser = getUserByUserId(getCurrentUserId());
+        }
+
         return mCurrentUser;
     }
 
@@ -367,6 +332,20 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
         userModel.save();
     }
 
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!DrawerUtils.isDrawerEnabled()) {
+            disableDrawer();
+        }
+    }
+
     public void startAuthActivity() {
         startActivity(new Intent(this, AuthActivity.class));
     }
@@ -391,10 +370,6 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
 
     public void startMainActivity() {
         startMainActivity(false);
-    }
-
-    public void startThankYouActivity() {
-        startActivity(new Intent(this, ThankYouActivity.class));
     }
 
     public View getProgressBar() {
@@ -435,7 +410,11 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
 
 
     public void disableDrawer() {
-        getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        final DrawerLayout drawerLayout = getDrawerLayout();
+
+        if (drawerLayout != null) {
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        }
     }
 
     public void enableDrawer() {
@@ -463,60 +442,73 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
     }
 
     public void showExitAlertDialog() {
-        new AlertDialog.Builder(this)
-                .setCancelable(false)
-                .setTitle(R.string.VIEW_CLOSE_APP_HEADER)
-                .setMessage(R.string.VIEW_CLOSE_APP_BODY)
-                .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, final int which) {
-                        finish();
-                    }
-                })
-                .setNegativeButton(R.string.VIEW_NO, null).show();
+        if (!isFinishing()) {
+            if (!Internet.hasConnection(this)) {
+                showToast(getString(R.string.TOAST_CANNOT_EXIT_WITHOUT_INTERNET_CONNECTION));
+                return;
+            }
+
+            new AlertDialog.Builder(this, R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.VIEW_CLOSE_APP_HEADER)
+                    .setMessage(R.string.VIEW_CLOSE_APP_BODY)
+                    .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialog, final int which) {
+                            finish();
+                        }
+                    })
+                    .setNegativeButton(R.string.VIEW_NO, null).show();
+        }
     }
 
     public void showRemoveUserDialog() {
-        new AlertDialog.Builder(this)
-                .setCancelable(false)
-                .setTitle(R.string.DIALOG_REMOVE_USER_TITLE)
-                .setMessage(R.string.DIALOG_REMOVE_USER_BODY)
-                .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, final int which) {
-                        new RemoveUserExecutable(BaseActivity.this).execute();
-                    }
-                })
-                .setNegativeButton(R.string.VIEW_NO, null).show();
+        if (!isFinishing()) {
+            new AlertDialog.Builder(this, R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.DIALOG_REMOVE_USER_TITLE)
+                    .setMessage(R.string.DIALOG_REMOVE_USER_BODY)
+                    .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialog, final int which) {
+                            new RemoveUserExecutable(BaseActivity.this).execute();
+                        }
+                    })
+                    .setNegativeButton(R.string.VIEW_NO, null).show();
+        }
     }
 
     public void showErrorRemoveUserDialog() {
-        new AlertDialog.Builder(this)
-                .setCancelable(false)
-                .setTitle(R.string.DIALOG_ERROR_REMOVE_CURRENT_USER_TITLE)
-                .setMessage(R.string.DIALOG_ERROR_REMOVE_CURRENT_USER_BODY)
-                .setPositiveButton(R.string.DIALOG_GO_TO, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, final int which) {
-                        showSyncFragment();
-                    }
-                })
-                .setNegativeButton(R.string.VIEW_CANCEL, null).show();
+        if (!isFinishing()) {
+            new AlertDialog.Builder(this, R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.DIALOG_ERROR_REMOVE_CURRENT_USER_TITLE)
+                    .setMessage(R.string.DIALOG_ERROR_REMOVE_CURRENT_USER_BODY)
+                    .setPositiveButton(R.string.DIALOG_GO_TO, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialog, final int which) {
+                            showSyncFragment();
+                        }
+                    })
+                    .setNegativeButton(R.string.VIEW_CANCEL, null).show();
+        }
     }
 
     public void showChangeAccountAlertDialog() {
-        new AlertDialog.Builder(this)
-                .setCancelable(false)
-                .setTitle(R.string.VIEW_EXIT)
-                .setMessage(R.string.DIALOG_CHANGE_USER_BODY)
-                .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, final int which) {
-                        finish();
-                        startAuthActivity();
-                    }
-                })
-                .setNegativeButton(R.string.VIEW_NO, null).show();
+        if (!isFinishing()) {
+            new AlertDialog.Builder(this, R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.VIEW_EXIT)
+                    .setMessage(R.string.DIALOG_CHANGE_USER_BODY)
+                    .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialog, final int which) {
+                            finish();
+                            startAuthActivity();
+                        }
+                    })
+                    .setNegativeButton(R.string.VIEW_NO, null).show();
+        }
     }
 
     @Override
@@ -526,13 +518,4 @@ public class BaseActivity extends AppCompatActivity implements Serializable, Par
         }
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

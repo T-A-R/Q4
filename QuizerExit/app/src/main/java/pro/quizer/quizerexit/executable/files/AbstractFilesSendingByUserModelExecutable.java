@@ -135,7 +135,7 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
             @Override
             public void run() {
 
-                mDialogBuilder = new AlertDialog.Builder(mBaseActivity);
+                mDialogBuilder = new AlertDialog.Builder(mBaseActivity, R.style.AlertDialogTheme);
                 mAlertDialog = mDialogBuilder.create();
 
                 final String number = String.valueOf(position + 1);
@@ -146,7 +146,9 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
                 mAlertDialog.setTitle(header);
                 mAlertDialog.setMessage(message);
 
-                mAlertDialog.show();
+                if (!mBaseActivity.isFinishing()) {
+                    mAlertDialog.show();
+                }
             }
         });
     }

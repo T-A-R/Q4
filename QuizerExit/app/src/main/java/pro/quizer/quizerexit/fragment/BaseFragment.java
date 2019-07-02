@@ -32,7 +32,7 @@ import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 
-public class BaseFragment extends HiddenCameraFragment implements Serializable, Parcelable {
+public class BaseFragment extends HiddenCameraFragment implements Serializable {
 
     private BaseActivity mBaseActivity;
 
@@ -47,7 +47,7 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable, 
     private int mUserId = -1;
     private int mProjectId = -1;
 
-    @NonNull
+    @Nullable
     public BaseActivity getBaseActivity() {
         return mBaseActivity;
     }
@@ -141,14 +141,19 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable, 
     }
 
     public void showToast(final CharSequence message) {
-        getBaseActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
-            }
-        });
+        final BaseActivity baseActivity = getBaseActivity();
+
+        if (baseActivity != null) {
+            baseActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
+    @Nullable
     public View getProgressBar() {
         final View view = getView();
 
@@ -159,6 +164,7 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable, 
         }
     }
 
+    @Nullable
     public TextView getEmptyView() {
         final View view = getView();
 
@@ -170,37 +176,70 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable, 
     }
 
     public void hideProgressBar() {
-        getBaseActivity().runOnUiThread(new Runnable() {
+        final BaseActivity activity = getBaseActivity();
+
+        if (activity == null) {
+            return;
+        }
+
+        activity.runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
-                getProgressBar().setVisibility(View.GONE);
+                final View progressBar = getProgressBar();
+                if (progressBar != null) {
+                    progressBar.setVisibility(View.GONE);
+                }
             }
         });
     }
 
     public void showProgressBar() {
-        getBaseActivity().runOnUiThread(new Runnable() {
+        final BaseActivity activity = getBaseActivity();
+
+        if (activity == null) {
+            return;
+        }
+
+        activity.runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
-                getProgressBar().setVisibility(View.VISIBLE);
+                final View progressBar = getProgressBar();
+                if (progressBar != null) {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
             }
         });
     }
 
     public void hideEmptyView() {
-        getBaseActivity().runOnUiThread(new Runnable() {
+        final BaseActivity activity = getBaseActivity();
+
+        if (activity == null) {
+            return;
+        }
+
+        activity.runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
-                getEmptyView().setVisibility(View.GONE);
+                final View emptyView = getEmptyView();
+                if (emptyView != null) {
+                    emptyView.setVisibility(View.GONE);
+                }
             }
         });
     }
 
     public void showEmptyView(final String pError) {
-        getBaseActivity().runOnUiThread(new Runnable() {
+        final BaseActivity activity = getBaseActivity();
+
+        if (activity == null) {
+            return;
+        }
+
+        activity.runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
@@ -294,15 +333,5 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable, 
                 takePicture();
             }
         }, 1000);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
     }
 }

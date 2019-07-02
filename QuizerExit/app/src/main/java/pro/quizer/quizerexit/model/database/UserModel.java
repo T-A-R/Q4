@@ -19,7 +19,7 @@ import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.model.response.QuotaResponseModel;
 
 @Table(name = "User")
-public class UserModel extends Model implements Serializable, Parcelable {
+public class UserModel extends Model implements Serializable {
 
     public static final String CONFIG = "config";
     public static final String USER_ID = "user_id";
@@ -80,13 +80,4 @@ public class UserModel extends Model implements Serializable, Parcelable {
         }
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

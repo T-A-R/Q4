@@ -14,10 +14,6 @@ import pro.quizer.quizerexit.utils.UiUtils;
 
 public class ResizableViewUtils {
 
-    public static int SMALL = 12;
-    public static int MEDIUM = 14;
-    public static int LARGE = 18;
-
     public static void initTextSize(final TextView pTextView, final Context pContext, final int pDefFontSize) {
         final FontSizeModel fontSizeModel = SettingsFragment.FONT_SIZE_MODELS.get(((BaseActivity) pContext).getFontSizePosition());
 

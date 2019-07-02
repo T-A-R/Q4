@@ -11,7 +11,7 @@ import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.sms.SmsStage;
 import pro.quizer.quizerexit.utils.DateUtils;
 
-public class SmsViewModel implements Serializable, Parcelable {
+public class SmsViewModel implements Serializable {
 
     private List<SmsStage> mSmsStages;
 
@@ -37,13 +37,4 @@ public class SmsViewModel implements Serializable, Parcelable {
         return finishedStages;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

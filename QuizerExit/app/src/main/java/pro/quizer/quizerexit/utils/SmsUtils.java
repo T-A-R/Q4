@@ -108,6 +108,7 @@ public final class SmsUtils {
     }
 
     public static String formatSmsPrefix(final String pSms, final BaseActivity pBaseActivity) {
+        // BAD
         final ReserveChannelModel reserveChannelsModel = pBaseActivity.getCurrentUser().getConfig().getProjectInfo().getReserveChannel();
 
 

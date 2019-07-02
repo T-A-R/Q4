@@ -3,50 +3,52 @@ package pro.quizer.quizerexit.adapter;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.TimePicker;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.config.ElementModel;
-import pro.quizer.quizerexit.view.ExtendedEditText;
 import pro.quizer.quizerexit.view.resizeble.edittext.ResizableEditText;
 
 public abstract class AbstractViewHolder extends RecyclerView.ViewHolder {
 
-    final Context mContext;
+    final BaseActivity mBaseActivity;
     final ResizableEditText mEditText;
     private Calendar mCalendar = Calendar.getInstance();
 
-    AbstractViewHolder(@NonNull View itemView) {
+    AbstractViewHolder(@NonNull View itemView, final BaseActivity pBaseActivity) {
         super(itemView);
 
         mEditText = itemView.findViewById(R.id.answer_edit_text);
-        mContext = itemView.getContext();
+        mBaseActivity = pBaseActivity;
     }
 
     // отображаем диалоговое окно для выбора даты
     public void setDate(View v) {
-        new DatePickerDialog(mContext, d,
-                mCalendar.get(Calendar.YEAR),
-                mCalendar.get(Calendar.MONTH),
-                mCalendar.get(Calendar.DAY_OF_MONTH))
-                .show();
+        if (!mBaseActivity.isFinishing()) {
+            new DatePickerDialog(mBaseActivity, d,
+                    mCalendar.get(Calendar.YEAR),
+                    mCalendar.get(Calendar.MONTH),
+                    mCalendar.get(Calendar.DAY_OF_MONTH))
+                    .show();
+        }
     }
 
     // отображаем диалоговое окно для выбора времени
     public void setTime(View v) {
-        new TimePickerDialog(mContext, t,
-                mCalendar.get(Calendar.HOUR_OF_DAY),
-                mCalendar.get(Calendar.MINUTE), true)
-                .show();
+        if (!mBaseActivity.isFinishing()) {
+            new TimePickerDialog(mBaseActivity, t,
+                    mCalendar.get(Calendar.HOUR_OF_DAY),
+                    mCalendar.get(Calendar.MINUTE), true)
+                    .show();
+        }
     }
 
     @SuppressLint("SimpleDateFormat")

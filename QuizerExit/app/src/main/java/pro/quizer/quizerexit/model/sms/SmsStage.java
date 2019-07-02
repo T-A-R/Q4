@@ -19,7 +19,7 @@ import pro.quizer.quizerexit.model.config.QuestionsMatchesModel;
 import pro.quizer.quizerexit.model.config.StagesModel;
 import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
 
-public class SmsStage implements Serializable, Parcelable {
+public class SmsStage implements Serializable {
 
     private final List<String> mTokens = new ArrayList<>();
     private final StagesModel mStagesModel;
@@ -85,13 +85,4 @@ public class SmsStage implements Serializable, Parcelable {
         return mSmsAnswers;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-
-    }
 }

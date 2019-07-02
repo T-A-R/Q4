@@ -2,6 +2,7 @@ package pro.quizer.quizerexit.model.config;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.view.View;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -19,7 +20,7 @@ import pro.quizer.quizerexit.utils.StringUtils;
 
 import static pro.quizer.quizerexit.model.OptionsOpenType.CHECKBOX;
 
-public class ElementModel implements Serializable, Parcelable {
+public class ElementModel implements Serializable {
 
     @SerializedName("relative_id")
     private int relative_id;
@@ -41,6 +42,12 @@ public class ElementModel implements Serializable, Parcelable {
     @SerializedName("data")
     private String data;
 
+    @SerializedName("data_on")
+    private String data_on;
+
+    @SerializedName("data_off")
+    private String data_off;
+
     @SerializedName("elements")
     private List<ElementModel> elements;
 
@@ -51,6 +58,7 @@ public class ElementModel implements Serializable, Parcelable {
     private boolean isScreenShowing;
     private boolean isQuestionShowing;
     private boolean isChecked;
+    private int queryVisibility = View.VISIBLE;
     private boolean isShuffeled;
     private boolean isShuffeledIntoBox;
     private boolean isEnabled = true;
@@ -117,6 +125,14 @@ public class ElementModel implements Serializable, Parcelable {
         return data;
     }
 
+    public String getDataOn() {
+        return data_on;
+    }
+
+    public String getDataOff() {
+        return data_off;
+    }
+
     public List<ElementModel> getContents() {
         return contents;
     }
@@ -173,12 +189,30 @@ public class ElementModel implements Serializable, Parcelable {
         }
     }
 
+    public boolean isAnyChecked() {
+        for (final ElementModel elementModel : getElements()) {
+            if (elementModel.isFullySelected()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public String getTextAnswer() {
         return textAnswer;
     }
 
     public void setTextAnswer(final String textAnswer) {
         this.textAnswer = textAnswer;
+    }
+
+    public void setQueryVisibility(final int queryVisibility) {
+        this.queryVisibility = queryVisibility;
+    }
+
+    public int getQueryVisibility() {
+        return queryVisibility;
     }
 
     public void setChecked(final boolean pIsChecked) {
@@ -229,14 +263,5 @@ public class ElementModel implements Serializable, Parcelable {
         isEnabled = pIsEnabled;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
     // @Ignore end
 }

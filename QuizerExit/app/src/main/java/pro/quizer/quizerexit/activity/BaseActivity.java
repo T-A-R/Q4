@@ -56,6 +56,11 @@ import static pro.quizer.quizerexit.utils.FileUtils.JPEG;
 public class BaseActivity extends AppCompatActivity implements Serializable {
 
     public static final String IS_AFTER_AUTH = "IS_AFTER_AUTH";
+    public static String API_URL = "http://quizerplus.ru/";
+    static public String TAG = "QUIZERLOGS";
+
+    public static final boolean AVIA = false;
+
     private HashMap<Integer, ElementModel> mTempMap;
     private HashMap<Integer, ElementModel> mMap;
     private UserModel mCurrentUser;

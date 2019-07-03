@@ -8,6 +8,8 @@ import android.widget.Button;
 
 import pro.quizer.quizerexit.view.resizeble.ResizableViewUtils;
 
+import static pro.quizer.quizerexit.activity.BaseActivity.AVIA;
+
 
 public abstract class AbstractResizableButton extends Button {
 
@@ -33,10 +35,12 @@ public abstract class AbstractResizableButton extends Button {
     public abstract int getDefaultFontSize();
 
     private void setCustomFont(Context ctx) {
-//        try {
-//            setTypeface(Typeface.createFromAsset(ctx.getAssets(), "fonts/Heliosextc.otf"));
-//        } catch (Exception e) {
-//
-//        }
+        if(AVIA) {
+            try {
+                setTypeface(Typeface.createFromAsset(ctx.getAssets(), "fonts/Heliosextc.otf"));
+            } catch (Exception e) {
+
+            }
+        }
     }
 }

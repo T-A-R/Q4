@@ -16,6 +16,7 @@ import okhttp3.Request;
 import pro.quizer.quizerexit.API.RetrofitQuizerAPI;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 import static pro.quizer.quizerexit.activity.BaseActivity.API_URL;
 
@@ -30,18 +31,21 @@ public class CoreApplication extends Application {
 
         OkHttpClient client;
         client = new OkHttpClient.Builder()
-                .connectTimeout(200, TimeUnit.SECONDS)
-                .readTimeout(200, TimeUnit.SECONDS)
+//                .connectTimeout(200, TimeUnit.SECONDS)
+//                .readTimeout(200, TimeUnit.SECONDS)
                 .build();
 
         Gson gson = new GsonBuilder()
-                .serializeNulls()
+//                .serializeNulls()
+//                .setLenient()
                 .create();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .client(client)
                 .baseUrl(API_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
+//                .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+//                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
         retrofitQuizerAPI = retrofit.create(RetrofitQuizerAPI.class);

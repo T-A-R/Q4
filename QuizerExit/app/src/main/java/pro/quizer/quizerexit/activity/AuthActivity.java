@@ -3,6 +3,7 @@ package pro.quizer.quizerexit.activity;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -45,6 +47,7 @@ import pro.quizer.quizerexit.utils.MD5Utils;
 import pro.quizer.quizerexit.utils.SPUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
+import retrofit2.http.FieldMap;
 
 public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCallback {
 
@@ -57,6 +60,10 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
     private List<UserModel> mSavedUserModels;
     private TextView mVersionView;
     private int mVersionTapCount = 0;
+
+    String login;
+    String password;
+    String passwordMD5;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -95,7 +102,8 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         }
 
 
-        sendAuthButton.setOnClickListener(v -> onLoginClick());
+//        sendAuthButton.setOnClickListener(v -> onLoginClick());
+        sendAuthButton.setOnClickListener(v -> onLoginClickWithRetrofit());
         mVersionView.setOnClickListener(v -> onVersionClick());
     }
 
@@ -113,8 +121,8 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
     private void onLoginClick() {
         showProgressBar();
 
-        final String login = mLoginSpinner.getText().toString();
-        final String password = mPasswordEditText.getText().toString();
+        login = mLoginSpinner.getText().toString();
+        password = mPasswordEditText.getText().toString();
 
         if (StringUtils.isEmpty(login) || StringUtils.isEmpty(password)) {
             showToast(getString(R.string.NOTIFICATION_EMPTY_LOGIN_OR_PASSWORD));
@@ -140,7 +148,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             return;
         }
 
-        final String passwordMD5 = MD5Utils.formatPassword(login, password);
+        passwordMD5 = MD5Utils.formatPassword(login, password);
         final Dictionary<String, String> mDictionaryForRequest = new Hashtable();
         mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(new AuthRequestModel(getLoginAdmin(), passwordMD5, login)));
 
@@ -209,9 +217,44 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
                 });
     }
 
-    private void onLoginClickWithRetrofit() {
 
+    private void onLoginClickWithRetrofit() {
+        showProgressBar();
+
+        login = mLoginSpinner.getText().toString();
+        password = mPasswordEditText.getText().toString();
+
+        if (StringUtils.isEmpty(login) || StringUtils.isEmpty(password)) {
+            showToast(getString(R.string.NOTIFICATION_EMPTY_LOGIN_OR_PASSWORD));
+            hideProgressBar();
+            return;
+        }
+
+        if (login.length() < 3) {
+            showToast(getString(R.string.NOTIFICATION_SHORT_LOGIN_ERROR));
+            hideProgressBar();
+            return;
+        }
+
+        if (mSavedUsers != null && mSavedUsers.size() >= MAX_USERS && !mSavedUsers.contains(login)) {
+            showToast(String.format(getString(R.string.NOTIFICATION_MAX_USER_COUNT), String.valueOf(MAX_USERS)));
+            hideProgressBar();
+            return;
+        }
+
+        passwordMD5 = MD5Utils.formatPassword(login, password);
+//        final Dictionary<String, String> mDictionaryForRequest = new Hashtable();
+//        mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(new AuthRequestModel(getLoginAdmin(), passwordMD5, login)));
+
+//        QuizerAPI.authUser(new AuthRequestModel(getLoginAdmin(), passwordMD5, login), this);
+        AuthRequestModel post = new AuthRequestModel(getLoginAdmin(), passwordMD5, login);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(post);
+
+        QuizerAPI.authUser(json, this);
     }
+
 
     private void onLoggedInWithoutUpdateLocalData(final int pUserId) {
         saveCurrentUserId(pUserId);
@@ -414,11 +457,56 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
 
 
     @Override
-    public void onAuthUser(AuthResponseModel data) {
-        if(data == null) {
+    public void onAuthUser(ResponseBody responseBody) {
+        if (responseBody == null) {
+            hideProgressBar();
             showToast(getString(R.string.NOTIFICATION_INTERNET_CONNECTION_ERROR));
         } else {
-            
+
+//            final ResponseBody responseBody = response.body();
+
+            if (responseBody == null) {
+                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR));
+//                onFailure(call, null);
+
+                return;
+            }
+
+            String responseJson;
+            try {
+                responseJson = responseBody.string();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.d(TAG, "onAuthUser 1: " + e);
+                responseJson = null;
+            }
+
+            AuthResponseModel authResponseModel = null;
+            try {
+                authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
+            } catch (final Exception pE) {
+                Log.d(TAG, "onAuthUser 2: " + pE);
+            }
+
+            if (authResponseModel == null) return;
+
+            SPUtils.saveAuthTimeDifference(AuthActivity.this, authResponseModel.getServerTime());
+
+            if (authResponseModel.getResult() != 0) {
+                if (isNeedDownloadConfig(authResponseModel)) {
+                    downloadConfig(login, passwordMD5, authResponseModel);
+                } else {
+                    onLoggedIn(login,
+                            passwordMD5,
+                            authResponseModel.getConfigId(),
+                            authResponseModel.getUserId(),
+                            authResponseModel.getRoleId(),
+                            authResponseModel.getUserProjectId());
+                }
+            } else {
+                showToast(authResponseModel.getError());
+            }
+
         }
     }
 }

@@ -3,11 +3,22 @@ package pro.quizer.quizerexit.API;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import okhttp3.ResponseBody;
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.CoreApplication;
 import pro.quizer.quizerexit.activity.MainActivity;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.request.AuthRequestModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
+import pro.quizer.quizerexit.utils.DateUtils;
+import pro.quizer.quizerexit.utils.DeviceUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -26,6 +37,34 @@ public class QuizerAPI {
             this.name_form = name_form;
         }
     }
+
+    static public class GetAuthBody {
+        @SerializedName("name_form")
+        private final String name_form;
+        @SerializedName("login_admin")
+        private final String login_admin;
+        @SerializedName("passw")
+        private final String passw;
+        @SerializedName("login")
+        private final String login;
+        @SerializedName("device_time")
+        private final long device_time;
+        @SerializedName("app_version")
+        private final String app_version;
+        @SerializedName("device_info")
+        private final String device_info;
+
+        public GetAuthBody(final String pLoginAdmin, final String pPassword, final String pLogin) {
+            name_form = Constants.NameForm.USER_LOGIN;
+            login_admin = pLoginAdmin;
+            passw = pPassword;
+            login = pLogin;
+            device_time = DateUtils.getCurrentTimeMillis();
+            device_info = DeviceUtils.getDeviceInfo();
+            this.app_version = DeviceUtils.getAppVersion();
+        }
+    }
+
 
     static public class GetConfigBody {
         public final String login;
@@ -97,24 +136,41 @@ public class QuizerAPI {
         }
     }
 
-    static public void authUser(AuthRequestModel body, final AuthUserCallback listener) {
+    static public void authUser(String json, final AuthUserCallback listener) {
+//        GetAuthBody body = new GetAuthBody(admin, pass, login);
 
-            CoreApplication.getQuizerApi().authUser(body).enqueue(new Callback<AuthResponseModel>() {
-                @Override
-                public void onResponse(@NonNull Call<AuthResponseModel> call, @NonNull Response<AuthResponseModel> response) {
-                    listener.onAuthUser(response.body());
+
+        Log.d(TAG, "authUser: " + json);
+
+        //    Call<ResponseBody> authUser(@Query("login") String login, @Query("passw") String passw, @Query("name_form") String name_form, @Query("login_admin") String login_admin);
+        Map<String, String> fields = new HashMap<>();
+        fields.put("json_data", json);
+
+        CoreApplication.getQuizerApi().authUser(fields).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d(TAG, "QuizerAPI.onResponse() Message: " + response.message());
+                try {
+                    if (response.body() != null)
+                        Log.d(TAG, "QuizerAPI.onResponse() Body: " + response.body().string());
+                } catch (IOException e) {
+//                        e.printStackTrace();
+                    Log.d(TAG, "onResponse: ERROR " + e);
                 }
 
-                @Override
-                public void onFailure(@NonNull Call<AuthResponseModel> call, @NonNull Throwable t) {
-                    Log.d(TAG, "QuizerAPI.onFailure() " + t);
-                    listener.onAuthUser(null);
-                }
-            });
+                listener.onAuthUser(response.body());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d(TAG, "QuizerAPI.onFailure() " + t);
+                listener.onAuthUser(null);
+            }
+        });
 
     }
 
     public interface AuthUserCallback {
-        void onAuthUser(AuthResponseModel data);
+        void onAuthUser(ResponseBody data);
     }
 }

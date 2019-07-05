@@ -81,4 +81,7 @@ public class QuestionnaireDatabaseModel extends Model implements Serializable {
     @Column(name = STATUS)
     public String status;
 
+    @Column(name = "survey_status")
+    public String survey_status;
+
 }

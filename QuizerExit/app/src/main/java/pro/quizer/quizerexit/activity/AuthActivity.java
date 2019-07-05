@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -47,7 +46,6 @@ import pro.quizer.quizerexit.utils.MD5Utils;
 import pro.quizer.quizerexit.utils.SPUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
-import retrofit2.http.FieldMap;
 
 public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCallback {
 
@@ -102,8 +100,8 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         }
 
 
-//        sendAuthButton.setOnClickListener(v -> onLoginClick());
-        sendAuthButton.setOnClickListener(v -> onLoginClickWithRetrofit());
+        sendAuthButton.setOnClickListener(v -> onLoginClick());
+//        sendAuthButton.setOnClickListener(v -> onLoginClickWithRetrofit());
         mVersionView.setOnClickListener(v -> onVersionClick());
     }
 
@@ -248,6 +246,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
 
 //        QuizerAPI.authUser(new AuthRequestModel(getLoginAdmin(), passwordMD5, login), this);
         AuthRequestModel post = new AuthRequestModel(getLoginAdmin(), passwordMD5, login);
+
 
         Gson gson = new Gson();
         String json = gson.toJson(post);
@@ -458,8 +457,8 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
 
     @Override
     public void onAuthUser(ResponseBody responseBody) {
+        hideProgressBar();
         if (responseBody == null) {
-            hideProgressBar();
             showToast(getString(R.string.NOTIFICATION_INTERNET_CONNECTION_ERROR));
         } else {
 

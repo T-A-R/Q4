@@ -137,12 +137,9 @@ public class QuizerAPI {
     }
 
     static public void authUser(String json, final AuthUserCallback listener) {
-//        GetAuthBody body = new GetAuthBody(admin, pass, login);
-
 
         Log.d(TAG, "authUser: " + json);
 
-        //    Call<ResponseBody> authUser(@Query("login") String login, @Query("passw") String passw, @Query("name_form") String name_form, @Query("login_admin") String login_admin);
         Map<String, String> fields = new HashMap<>();
         fields.put("json_data", json);
 

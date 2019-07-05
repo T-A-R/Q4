@@ -95,6 +95,8 @@
 
     <string name="NOTIFICATION_EMPTY_ACTIVATION_KEY">Ключ активации пуст. Пожалуйста, введите ключ и повторите попытку.</string>
     <string name="NOTIFICATION_INTERNET_CONNECTION_ERROR">Ошибка подключения к серверу. Проверьте подключение к интернету и повторите снова.</string>
+    <string name="SAVED_DATA_LOGIN">Удалось войти под сохраненными локальными данными.</string>
+    <string name="WRONG_LOGIN">Неверный логин или пароль.</string>
     <string name="NOTIFICATION_SERVER_ERROR">Ошибка сервера.</string>
     <string name="NOTIFICATION_SERVER_RESPONSE_ERROR">Ошибка при ответе сервера.</string>
     <string name="NOTIFICATION_EMPTY_LOGIN_OR_PASSWORD">Логин или пароль пуст. Пожалуйста, введите логин и пароль, а затем повторите попытку входа.</string>

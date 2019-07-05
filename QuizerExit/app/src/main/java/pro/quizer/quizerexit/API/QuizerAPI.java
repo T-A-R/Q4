@@ -147,14 +147,6 @@ public class QuizerAPI {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 Log.d(TAG, "QuizerAPI.onResponse() Message: " + response.message());
-                try {
-                    if (response.body() != null)
-                        Log.d(TAG, "QuizerAPI.onResponse() Body: " + response.body().string());
-                } catch (IOException e) {
-//                        e.printStackTrace();
-                    Log.d(TAG, "onResponse: ERROR " + e);
-                }
-
                 listener.onAuthUser(response.body());
             }
 

@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.activeandroid.query.Select;
 import com.google.gson.Gson;
@@ -100,8 +101,8 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         }
 
 
-        sendAuthButton.setOnClickListener(v -> onLoginClick());
-//        sendAuthButton.setOnClickListener(v -> onLoginClickWithRetrofit());
+//        sendAuthButton.setOnClickListener(v -> onLoginClick());
+        sendAuthButton.setOnClickListener(v -> onLoginClickWithRetrofit());
         mVersionView.setOnClickListener(v -> onVersionClick());
     }
 
@@ -171,6 +172,8 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
                     @Override
                     public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
                         hideProgressBar();
+
+//                        Log.d(TAG, "OLD LOGIN RESPONSE: " + response.body().string());
 
                         final ResponseBody responseBody = response.body();
 
@@ -243,17 +246,14 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         passwordMD5 = MD5Utils.formatPassword(login, password);
 //        final Dictionary<String, String> mDictionaryForRequest = new Hashtable();
 //        mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(new AuthRequestModel(getLoginAdmin(), passwordMD5, login)));
-
 //        QuizerAPI.authUser(new AuthRequestModel(getLoginAdmin(), passwordMD5, login), this);
+
         AuthRequestModel post = new AuthRequestModel(getLoginAdmin(), passwordMD5, login);
-
-
         Gson gson = new Gson();
         String json = gson.toJson(post);
 
         QuizerAPI.authUser(json, this);
     }
-
 
     private void onLoggedInWithoutUpdateLocalData(final int pUserId) {
         saveCurrentUserId(pUserId);
@@ -458,54 +458,59 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
     @Override
     public void onAuthUser(ResponseBody responseBody) {
         hideProgressBar();
+
         if (responseBody == null) {
-            showToast(getString(R.string.NOTIFICATION_INTERNET_CONNECTION_ERROR));
-        } else {
+            final UserModel savedUserModel = getLocalUserModel(login, passwordMD5);
 
-//            final ResponseBody responseBody = response.body();
-
-            if (responseBody == null) {
-                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR));
-//                onFailure(call, null);
-
-                return;
-            }
-
-            String responseJson;
-            try {
-                responseJson = responseBody.string();
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.d(TAG, "onAuthUser 1: " + e);
-                responseJson = null;
-            }
-
-            AuthResponseModel authResponseModel = null;
-            try {
-                authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
-            } catch (final Exception pE) {
-                Log.d(TAG, "onAuthUser 2: " + pE);
-            }
-
-            if (authResponseModel == null) return;
-
-            SPUtils.saveAuthTimeDifference(AuthActivity.this, authResponseModel.getServerTime());
-
-            if (authResponseModel.getResult() != 0) {
-                if (isNeedDownloadConfig(authResponseModel)) {
-                    downloadConfig(login, passwordMD5, authResponseModel);
-                } else {
-                    onLoggedIn(login,
-                            passwordMD5,
-                            authResponseModel.getConfigId(),
-                            authResponseModel.getUserId(),
-                            authResponseModel.getRoleId(),
-                            authResponseModel.getUserProjectId());
-                }
+            if (savedUserModel != null) {
+                showToast(getString(R.string.SAVED_DATA_LOGIN));
+                onLoggedInWithoutUpdateLocalData(savedUserModel.user_id);
             } else {
-                showToast(authResponseModel.getError());
+                showToast(getString(R.string.WRONG_LOGIN));
             }
 
+            return;
+        }
+
+        String responseJson;
+        try {
+            Log.d(TAG, "onAuthUser 0: ");
+            responseJson = responseBody.string();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "onAuthUser 1: " + e);
+            responseJson = null;
+        }
+
+        AuthResponseModel authResponseModel = null;
+        try {
+            authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
+        } catch (final Exception pE) {
+            Log.d(TAG, "onAuthUser 2: " + pE);
+        }
+
+        if (authResponseModel != null)
+            Log.d(TAG, "onAuthUser 3: " + authResponseModel.getResult());
+        else
+            Log.d(TAG, "onAuthUser 3: NULL");
+
+        if (authResponseModel == null) return;
+
+        SPUtils.saveAuthTimeDifference(AuthActivity.this, authResponseModel.getServerTime());
+
+        if (authResponseModel.getResult() != 0) {
+            if (isNeedDownloadConfig(authResponseModel)) {
+                downloadConfig(login, passwordMD5, authResponseModel);
+            } else {
+                onLoggedIn(login,
+                        passwordMD5,
+                        authResponseModel.getConfigId(),
+                        authResponseModel.getUserId(),
+                        authResponseModel.getRoleId(),
+                        authResponseModel.getUserProjectId());
+            }
+        } else {
+            showToast(authResponseModel.getError());
         }
     }
 }

@@ -19,6 +19,7 @@ public class QuestionnaireDatabaseModel extends Model implements Serializable {
     public final static String LOGIN_ADMIN = "login_admin";
     public final static String USER_ID = "user_id";
     public final static String DATE_INTERVIEW = "date_interview";
+    public final static String SURVEY_STATUS = "survey_status";
 
     // like id
     @Column(name = TOKEN)
@@ -80,5 +81,8 @@ public class QuestionnaireDatabaseModel extends Model implements Serializable {
 
     @Column(name = STATUS)
     public String status;
+
+    @Column(name = SURVEY_STATUS)
+    public String survey_status;
 
 }

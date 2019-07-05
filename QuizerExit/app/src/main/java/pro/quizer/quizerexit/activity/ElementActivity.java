@@ -372,6 +372,12 @@ public class ElementActivity extends BaseActivity {
     private void showNextElement(final int pNextRelativeId, final boolean pIsAddToBackStack, final View pForwardView) {
         if (pNextRelativeId == -1) {
 
+            if (mConfig.isSaveAborted()) {
+                showToast("SAVED!");
+                showProgressBar();
+                saveQuestionnaireToDatabase(true);
+            }
+
             finish();
             startMainActivity();
 
@@ -387,7 +393,7 @@ public class ElementActivity extends BaseActivity {
                 UiUtils.setButtonEnabled(pForwardView, false);
             }
             showProgressBar();
-            saveQuestionnaireToDatabase();
+            saveQuestionnaireToDatabase(false);
             showToast(getString(R.string.NOTIFICATION_QUIZ_IS_FINISHED));
 
             finish();
@@ -466,6 +472,11 @@ public class ElementActivity extends BaseActivity {
 
                         @Override
                         public void onClick(final DialogInterface dialog, final int which) {
+                            if (mConfig.isSaveAborted()) {
+                                showToast("SAVED!");
+                                showProgressBar();
+                                saveQuestionnaireToDatabase(true);
+                            }
                             finish();
                             startMainActivity();
                         }
@@ -474,7 +485,7 @@ public class ElementActivity extends BaseActivity {
         }
     }
 
-    private void saveQuestionnaireToDatabase() {
+    private void saveQuestionnaireToDatabase(boolean aborted) {
         final long endTime = DateUtils.getCurrentTimeMillis();
         final long durationTimeQuestionnaire = endTime - mStartDateInterview;
 
@@ -492,6 +503,11 @@ public class ElementActivity extends BaseActivity {
         questionnaireDatabaseModel.gps = mGpsString;
         questionnaireDatabaseModel.gps_time = mGpsTime;
         questionnaireDatabaseModel.date_interview = mStartDateInterview;
+
+        if (aborted)
+            questionnaireDatabaseModel.survey_status = "aborted";
+        else
+            questionnaireDatabaseModel.survey_status = "complited";
 
         final int showingScreensCount = saveScreenElements();
         final int answersCount = saveAnswersElements();

@@ -56,6 +56,7 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
                     questionnaireDatabaseModel.duration_time_questionnaire,
                     questionnaireDatabaseModel.date_interview,
                     questionnaireDatabaseModel.gps,
+                    questionnaireDatabaseModel.survey_status,
                     questionnaireDatabaseModel.gps_time,
                     questionnaireDatabaseModel.token,
                     questionnaireDatabaseModel.auth_time_difference,

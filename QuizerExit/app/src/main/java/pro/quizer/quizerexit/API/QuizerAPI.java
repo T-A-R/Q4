@@ -146,13 +146,13 @@ public class QuizerAPI {
         CoreApplication.getQuizerApi().authUser(fields).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                Log.d(TAG, "QuizerAPI.onResponse() Message: " + response.message());
+                Log.d(TAG, "QuizerAPI.authUser.onResponse() Message: " + response.message());
                 listener.onAuthUser(response.body());
             }
 
             @Override
             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                Log.d(TAG, "QuizerAPI.onFailure() " + t);
+                Log.d(TAG, "QuizerAPI.authUser.onFailure() " + t);
                 listener.onAuthUser(null);
             }
         });
@@ -161,5 +161,32 @@ public class QuizerAPI {
 
     public interface AuthUserCallback {
         void onAuthUser(ResponseBody data);
+    }
+
+    static public void sendQuestionnaires(String json, final SendQuestionnairesCallback listener) {
+
+        Log.d(TAG, "sendQuestionnaires: " + json);
+
+        Map<String, String> fields = new HashMap<>();
+        fields.put("json_data", json);
+
+        CoreApplication.getQuizerApi().sendQuestionnaires(fields).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d(TAG, "QuizerAPI.sendQuestionnaires.onResponse() Message: " + response.message());
+                listener.onSendQuestionnaires(response.body());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d(TAG, "QuizerAPI.sendQuestionnaires.onFailure() " + t);
+                listener.onSendQuestionnaires(null);
+            }
+        });
+
+    }
+
+    public interface SendQuestionnairesCallback {
+        void onSendQuestionnaires(ResponseBody data);
     }
 }

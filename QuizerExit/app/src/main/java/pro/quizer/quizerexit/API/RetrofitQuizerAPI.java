@@ -20,18 +20,16 @@ public interface RetrofitQuizerAPI {
     @POST("/wheretoredirrect_json.php")
     Call<Void> submitKey(@Body() QuizerAPI.SubmitKeyBody body);
 
-    //    @Headers("Content-Type: application/json")
     @FormUrlEncoded
     @POST("/_query/send-data")
     Call<ResponseBody> authUser(@FieldMap Map<String, String> fields);
-//    Call<ResponseBody> authUser(@Query("login") String login, @Query("passw") String passw, @Query("name_form") String name_form, @Query("login_admin") String login_admin);
-//    Call<ResponseBody> authUser(@Body() QuizerAPI.GetAuthBody body);
 
     @POST("/_query/send-data")
     Call<Void> getConfig(@Body() QuizerAPI.GetConfigBody body);
 
+    @FormUrlEncoded
     @POST("/_query/send-data")
-    Call<Void> sendData(@Body() QuizerAPI.SendDataBody body);
+    Call<ResponseBody> sendQuestionnaires(@FieldMap Map<String, String> fields);
 
     @POST("/_query/send-data")
     Call<Void> sendPhoto(@Body() QuizerAPI.SendPhotoBody body);

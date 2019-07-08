@@ -14,6 +14,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 public interface RetrofitQuizerAPI {
 
@@ -28,8 +29,8 @@ public interface RetrofitQuizerAPI {
     Call<Void> getConfig(@Body() QuizerAPI.GetConfigBody body);
 
     @FormUrlEncoded
-    @POST("/_query/send-data")
-    Call<ResponseBody> sendQuestionnaires(@FieldMap Map<String, String> fields);
+    @POST()
+    Call<ResponseBody> sendQuestionnaires(@Url String apiname, @FieldMap Map<String, String> fields);
 
     @POST("/_query/send-data")
     Call<Void> sendPhoto(@Body() QuizerAPI.SendPhotoBody body);

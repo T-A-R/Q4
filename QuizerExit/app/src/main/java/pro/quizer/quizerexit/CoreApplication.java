@@ -23,6 +23,7 @@ import static pro.quizer.quizerexit.activity.BaseActivity.API_URL;
 public class CoreApplication extends Application {
 
     private static RetrofitQuizerAPI retrofitQuizerAPI;
+    private static String serverUrl = null;
 
     @Override
     public void onCreate() {
@@ -36,16 +37,12 @@ public class CoreApplication extends Application {
                 .build();
 
         Gson gson = new GsonBuilder()
-//                .serializeNulls()
-//                .setLenient()
                 .create();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .client(client)
                 .baseUrl(API_URL)
-//                .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
-//                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
         retrofitQuizerAPI = retrofit.create(RetrofitQuizerAPI.class);

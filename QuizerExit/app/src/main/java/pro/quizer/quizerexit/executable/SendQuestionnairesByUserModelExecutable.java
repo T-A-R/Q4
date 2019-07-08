@@ -185,7 +185,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
         Gson gson = new Gson();
         String json = gson.toJson(requestModel);
 
-        QuizerAPI.sendQuestionnaires(json, this);
+        QuizerAPI.sendQuestionnaires(mServerUrl,json, this);
     }
 
     @Override

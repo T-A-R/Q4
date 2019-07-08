@@ -163,14 +163,14 @@ public class QuizerAPI {
         void onAuthUser(ResponseBody data);
     }
 
-    static public void sendQuestionnaires(String json, final SendQuestionnairesCallback listener) {
+    static public void sendQuestionnaires(String url, String json, final SendQuestionnairesCallback listener) {
 
         Log.d(TAG, "sendQuestionnaires: " + json);
 
         Map<String, String> fields = new HashMap<>();
         fields.put("json_data", json);
 
-        CoreApplication.getQuizerApi().sendQuestionnaires(fields).enqueue(new Callback<ResponseBody>() {
+        CoreApplication.getQuizerApi().sendQuestionnaires(url, fields).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 Log.d(TAG, "QuizerAPI.sendQuestionnaires.onResponse() Message: " + response.message());

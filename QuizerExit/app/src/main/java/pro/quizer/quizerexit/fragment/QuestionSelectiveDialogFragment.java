@@ -88,7 +88,7 @@ public class QuestionSelectiveDialogFragment extends BaseFragment {
         bundle.putBoolean(BUNDLE_IS_BUTTON_VISIBLE, isButtonsVisible);
         bundle.putSerializable(BUNDLE_USER, user);
         bundle.putSerializable(BUNDLE_CURRENT_QUESTION, pElement);
-        bundle.putSerializable(BUNDLE_MAP, pMap);
+//        bundle.putSerializable(BUNDLE_MAP, pMap);
         bundle.putSerializable(BUNDLE_CALLBACK, pCallback);
         bundle.putSerializable(BUNDLE_DIALOG_CALLBACK, pDialogCallback);
         bundle.putString(BUNDLE_TOKEN, pToken);
@@ -119,7 +119,8 @@ public class QuestionSelectiveDialogFragment extends BaseFragment {
             mIsButtonsVisible = bundle.getBoolean(BUNDLE_IS_BUTTON_VISIBLE, true);
             mUser = (UserModel) bundle.getSerializable(BUNDLE_USER);
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
-            mMap = (HashMap<Integer, ElementModel>) bundle.getSerializable(BUNDLE_MAP);
+//            mMap = (HashMap<Integer, ElementModel>) bundle.getSerializable(BUNDLE_MAP);
+            mMap = getBaseActivity().getMap();
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
             mDialogCallback = (DialogCallback) bundle.getSerializable(BUNDLE_DIALOG_CALLBACK);
             mAttributes = mCurrentElement.getOptions();

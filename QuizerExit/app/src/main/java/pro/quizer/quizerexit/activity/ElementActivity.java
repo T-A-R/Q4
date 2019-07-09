@@ -112,6 +112,16 @@ public class ElementActivity extends BaseActivity {
     private NavigationCallback mNavigationCallback = new NavigationCallback() {
 
         @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int i) {
+
+        }
+
+        @Override
         public void onForward(final int pNextRelativeId, final View forwardView) {
             showNextElement(pNextRelativeId, true, forwardView);
         }

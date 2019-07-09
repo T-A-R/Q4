@@ -68,7 +68,7 @@ public class PageFragment extends AbstractContentElementFragment {
         final Bundle bundle = new Bundle();
         bundle.putSerializable(BUNDLE_CURRENT_QUESTION, pElement);
         bundle.putSerializable(BUNDLE_CALLBACK, pCallback);
-        bundle.putSerializable(BUNDLE_MAP, pMap);
+//        bundle.putSerializable(BUNDLE_MAP, pMap);
 
         bundle.putSerializable(BUNDLE_TOKEN, pToken);
         bundle.putSerializable(BUNDLE_LOGIN_ADMIN, pLoginAdmin);
@@ -102,7 +102,8 @@ public class PageFragment extends AbstractContentElementFragment {
 
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
-            mMap = (HashMap<Integer, ElementModel>) bundle.getSerializable(BUNDLE_MAP);
+            mMap = getBaseActivity().getMap();
+//            mMap = (HashMap<Integer, ElementModel>) bundle.getSerializable(BUNDLE_MAP);
             mAttributes = mCurrentElement.getOptions();
 
             mToken = (String) bundle.getSerializable(BUNDLE_TOKEN);

@@ -63,7 +63,7 @@ public class BoxFragment extends AbstractContentElementFragment {
 
         final Bundle bundle = new Bundle();
         bundle.putSerializable(BUNDLE_USER, user);
-        bundle.putSerializable(BUNDLE_MAP, pMap);
+//        bundle.putSerializable(BUNDLE_MAP, pMap);
         bundle.putSerializable(BUNDLE_CURRENT_QUESTION, pElement);
         bundle.putSerializable(BUNDLE_CALLBACK, pCallback);
         bundle.putString(BUNDLE_TOKEN, pToken);
@@ -96,7 +96,8 @@ public class BoxFragment extends AbstractContentElementFragment {
 
         if (bundle != null) {
             mUser = (UserModel) bundle.getSerializable(BUNDLE_USER);
-            mMap = (HashMap<Integer, ElementModel>) bundle.getSerializable(BUNDLE_MAP);
+            mMap = getBaseActivity().getMap();
+//            mMap = (HashMap<Integer, ElementModel>) bundle.getSerializable(BUNDLE_MAP);
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
             mAttributes = mCurrentElement.getOptions();

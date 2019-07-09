@@ -75,7 +75,7 @@ public class QuestionSelectiveFragment extends AbstractContentElementFragment {
         bundle.putSerializable(BUNDLE_CURRENT_QUESTION, pElement);
         bundle.putSerializable(BUNDLE_CALLBACK, pCallback);
         bundle.putBoolean(BUNDLE_IS_BUTTON_VISIBLE, isButtonVisible);
-        bundle.putSerializable(BUNDLE_MAP, pMap);
+//        bundle.putSerializable(BUNDLE_MAP, pMap);
         bundle.putSerializable(BUNDLE_TOKEN, pToken);
         bundle.putSerializable(BUNDLE_LOGIN_ADMIN, pLoginAdmin);
         bundle.putSerializable(BUNDLE_USER_ID, pUserId);
@@ -104,7 +104,8 @@ public class QuestionSelectiveFragment extends AbstractContentElementFragment {
             mFragmentManager = getFragmentManager();
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
-            mMap = (HashMap<Integer, ElementModel>) bundle.getSerializable(BUNDLE_MAP);
+//            mMap = (HashMap<Integer, ElementModel>) bundle.getSerializable(BUNDLE_MAP);
+            mMap = getBaseActivity().getMap();
             mAttributes = mCurrentElement.getOptions();
             baseActivity = (BaseActivity) getContext();
             mToken = (String) bundle.getSerializable(BUNDLE_TOKEN);

@@ -373,7 +373,6 @@ public class ElementActivity extends BaseActivity {
         if (pNextRelativeId == -1) {
 
             if (mConfig.isSaveAborted()) {
-                showToast("SAVED!");
                 showProgressBar();
                 saveQuestionnaireToDatabase(true);
             }

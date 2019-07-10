@@ -22,8 +22,6 @@ import pro.quizer.quizerexit.model.database.UserModel;
 
 public class BoxFragment extends AbstractContentElementFragment {
 
-    public static final String BUNDLE_USER = "BUNDLE_USER";
-    public static final String BUNDLE_MAP = "BUNDLE_MAP";
     public static final String BUNDLE_CURRENT_QUESTION = "BUNDLE_CURRENT_QUESTION";
     public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
     public static final String BUNDLE_LOGIN_ADMIN = "BUNDLE_LOGIN_ADMIN";
@@ -62,8 +60,6 @@ public class BoxFragment extends AbstractContentElementFragment {
         final Fragment fragment = new BoxFragment();
 
         final Bundle bundle = new Bundle();
-        bundle.putSerializable(BUNDLE_USER, user);
-//        bundle.putSerializable(BUNDLE_MAP, pMap);
         bundle.putSerializable(BUNDLE_CURRENT_QUESTION, pElement);
         bundle.putSerializable(BUNDLE_CALLBACK, pCallback);
         bundle.putString(BUNDLE_TOKEN, pToken);
@@ -95,9 +91,8 @@ public class BoxFragment extends AbstractContentElementFragment {
         }
 
         if (bundle != null) {
-            mUser = (UserModel) bundle.getSerializable(BUNDLE_USER);
+            mUser = getBaseActivity().getCurrentUser();
             mMap = getBaseActivity().getMap();
-//            mMap = (HashMap<Integer, ElementModel>) bundle.getSerializable(BUNDLE_MAP);
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
             mAttributes = mCurrentElement.getOptions();

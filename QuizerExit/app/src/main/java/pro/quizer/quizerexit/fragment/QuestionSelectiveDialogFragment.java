@@ -34,9 +34,7 @@ public class QuestionSelectiveDialogFragment extends BaseFragment {
 
     public static final String BUNDLE_IS_FROM_DIALOG = "BUNDLE_IS_FROM_DIALOG";
     public static final String BUNDLE_IS_BUTTON_VISIBLE = "BUNDLE_IS_BUTTON_VISIBLE";
-    public static final String BUNDLE_USER = "BUNDLE_USER";
     public static final String BUNDLE_CURRENT_QUESTION = "BUNDLE_CURRENT_QUESTION";
-    public static final String BUNDLE_MAP = "BUNDLE_MAP";
     public static final String BUNDLE_DIALOG_CALLBACK = "BUNDLE_DIALOG_CALLBACK";
     public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
     public static final String BUNDLE_LOGIN_ADMIN = "BUNDLE_LOGIN_ADMIN";
@@ -86,9 +84,7 @@ public class QuestionSelectiveDialogFragment extends BaseFragment {
         final Bundle bundle = new Bundle();
         bundle.putBoolean(BUNDLE_IS_FROM_DIALOG, pIsFromDialog);
         bundle.putBoolean(BUNDLE_IS_BUTTON_VISIBLE, isButtonsVisible);
-        bundle.putSerializable(BUNDLE_USER, user);
         bundle.putSerializable(BUNDLE_CURRENT_QUESTION, pElement);
-//        bundle.putSerializable(BUNDLE_MAP, pMap);
         bundle.putSerializable(BUNDLE_CALLBACK, pCallback);
         bundle.putSerializable(BUNDLE_DIALOG_CALLBACK, pDialogCallback);
         bundle.putString(BUNDLE_TOKEN, pToken);
@@ -117,9 +113,8 @@ public class QuestionSelectiveDialogFragment extends BaseFragment {
         if (bundle != null) {
             mIsFromDialog = bundle.getBoolean(BUNDLE_IS_FROM_DIALOG, false);
             mIsButtonsVisible = bundle.getBoolean(BUNDLE_IS_BUTTON_VISIBLE, true);
-            mUser = (UserModel) bundle.getSerializable(BUNDLE_USER);
+            mUser = getBaseActivity().getCurrentUser();
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
-//            mMap = (HashMap<Integer, ElementModel>) bundle.getSerializable(BUNDLE_MAP);
             mMap = getBaseActivity().getMap();
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
             mDialogCallback = (DialogCallback) bundle.getSerializable(BUNDLE_DIALOG_CALLBACK);

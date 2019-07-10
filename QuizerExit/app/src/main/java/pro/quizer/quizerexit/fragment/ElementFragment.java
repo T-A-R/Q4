@@ -29,9 +29,7 @@ public class ElementFragment extends BaseFragment {
 
     public static final String BUNDLE_IS_FROM_DIALOG = "BUNDLE_IS_FROM_DIALOG";
     public static final String BUNDLE_IS_BUTTON_VISIBLE = "BUNDLE_IS_BUTTON_VISIBLE";
-    public static final String BUNDLE_USER = "BUNDLE_USER";
     public static final String BUNDLE_CURRENT_QUESTION = "BUNDLE_CURRENT_QUESTION";
-    public static final String BUNDLE_MAP = "BUNDLE_MAP";
     public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
     public static final String BUNDLE_LOGIN_ADMIN = "BUNDLE_LOGIN_ADMIN";
     public static final String BUNDLE_TOKEN = "BUNDLE_TOKEN";
@@ -123,9 +121,7 @@ public class ElementFragment extends BaseFragment {
         final Bundle bundle = new Bundle();
         bundle.putBoolean(BUNDLE_IS_FROM_DIALOG, pIsFromDialog);
         bundle.putBoolean(BUNDLE_IS_BUTTON_VISIBLE, isButtonsVisible);
-        bundle.putSerializable(BUNDLE_USER, user);
         bundle.putSerializable(BUNDLE_CURRENT_QUESTION, pElement);
-//        bundle.putSerializable(BUNDLE_MAP, pMap);
         bundle.putSerializable(BUNDLE_CALLBACK, pCallback);
         bundle.putString(BUNDLE_TOKEN, pToken);
         bundle.putInt(BUNDLE_USER_ID, pUserId);
@@ -160,9 +156,8 @@ public class ElementFragment extends BaseFragment {
         if (bundle != null) {
             mIsFromDialog = bundle.getBoolean(BUNDLE_IS_FROM_DIALOG, false);
             mIsButtonsVisible = bundle.getBoolean(BUNDLE_IS_BUTTON_VISIBLE, true);
-            mUser = (UserModel) bundle.getSerializable(BUNDLE_USER);
+            mUser = getBaseActivity().getCurrentUser();
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
-//            mMap = (HashMap<Integer, ElementModel>) bundle.getSerializable(BUNDLE_MAP);
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
             mAttributes = mCurrentElement.getOptions();
             mIsPhotoQuestionnaire = bundle.getBoolean(BUNDLE_IS_PHOTO_QUESTIONNAIRE);
@@ -238,7 +233,13 @@ public class ElementFragment extends BaseFragment {
                 mCurrentElement.setQuestionShowing(true);
 
                 mFragmentManger.beginTransaction()
-                        .add(mViewId, QuestionListFragment.newInstance(mIsFromDialog, mIsButtonsVisible, mUser, mCurrentElement, mNavigationCallback, getBaseActivity().getMap()))
+                        .add(mViewId, QuestionListFragment.newInstance(
+                                mIsFromDialog,
+                                mIsButtonsVisible,
+                                mUser,
+                                mCurrentElement,
+                                mNavigationCallback,
+                                getBaseActivity().getMap()))
                         .commit();
             } else {
                 showToast("Неизвестный тип элемента");
@@ -277,8 +278,7 @@ public class ElementFragment extends BaseFragment {
                                     mIsButtonsVisible,
                                     mUser,
                                     mCurrentElement,
-                                    mNavigationCallback,
-                                    getBaseActivity().getMap()))
+                                    mNavigationCallback))
                             .commit();
 
                     break;
@@ -311,6 +311,7 @@ public class ElementFragment extends BaseFragment {
 
     @Override
     public void onDestroyView() {
+
         mCallback.onHideFragment(mCurrentElement);
         super.onDestroyView();
     }

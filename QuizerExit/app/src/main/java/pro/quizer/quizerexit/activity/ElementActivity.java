@@ -62,20 +62,6 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class ElementActivity extends BaseActivity {
 
-//    public static final Parcelable.Creator<Class> CREATOR = new Parcelable.Creator<Class>() {
-//
-//        @Override
-//        public Class createFromParcel(Parcel in) {
-//            return null;
-//        }
-//
-//        @Override
-//        public Class[] newArray(int size) {
-//            return null;
-//        }
-//
-//    };
-
     public static final int FIRST_ELEMENT = Integer.MIN_VALUE;
     public static final int ONE_SEC = 1000;
     UserModel mUser;

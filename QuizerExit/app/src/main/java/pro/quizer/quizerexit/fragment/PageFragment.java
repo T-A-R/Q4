@@ -25,7 +25,6 @@ public class PageFragment extends AbstractContentElementFragment {
 
     public static final String BUNDLE_CURRENT_QUESTION = "BUNDLE_CURRENT_QUESTION";
     public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
-    public static final String BUNDLE_MAP = "BUNDLE_MAP";
 
     public static final String BUNDLE_TOKEN = "BUNDLE_TOKEN";
     public static final String BUNDLE_LOGIN_ADMIN = "BUNDLE_LOGIN_ADMIN";
@@ -33,7 +32,6 @@ public class PageFragment extends AbstractContentElementFragment {
     public static final String BUNDLE_USER_LOGIN = "BUNDLE_USER_LOGIN";
     public static final String BUNDLE_IS_PHOTO_Q = "BUNDLE_IS_PHOTO_Q";
     public static final String BUNDLE_PROJECT_ID = "BUNDLE_PROJECT_ID";
-    public static final String BUNDLE_USER = "BUNDLE_USER";
 
     private ElementModel mCurrentElement;
     private OptionsModel mAttributes;
@@ -68,8 +66,6 @@ public class PageFragment extends AbstractContentElementFragment {
         final Bundle bundle = new Bundle();
         bundle.putSerializable(BUNDLE_CURRENT_QUESTION, pElement);
         bundle.putSerializable(BUNDLE_CALLBACK, pCallback);
-//        bundle.putSerializable(BUNDLE_MAP, pMap);
-
         bundle.putSerializable(BUNDLE_TOKEN, pToken);
         bundle.putSerializable(BUNDLE_LOGIN_ADMIN, pLoginAdmin);
         bundle.putSerializable(BUNDLE_USER_ID, pUserId);
@@ -77,8 +73,6 @@ public class PageFragment extends AbstractContentElementFragment {
         bundle.putSerializable(BUNDLE_IS_PHOTO_Q, pIsPhotoQuestionnaire);
         bundle.putSerializable(BUNDLE_PROJECT_ID, pProjectId);
         bundle.putBoolean(BUNDLE_IS_BUTTON_VISIBLE, isButtonVisible);
-        bundle.putSerializable(BUNDLE_USER, pUser);
-
 
         fragment.setArguments(bundle);
 
@@ -103,16 +97,14 @@ public class PageFragment extends AbstractContentElementFragment {
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
             mMap = getBaseActivity().getMap();
-//            mMap = (HashMap<Integer, ElementModel>) bundle.getSerializable(BUNDLE_MAP);
             mAttributes = mCurrentElement.getOptions();
-
             mToken = (String) bundle.getSerializable(BUNDLE_TOKEN);
             mLoginAdmin = (String) bundle.getSerializable(BUNDLE_LOGIN_ADMIN);
             mUserId = (int) bundle.getSerializable(BUNDLE_USER_ID);
             mUserLogin = (String) bundle.getSerializable(BUNDLE_USER_LOGIN);
             mIsPhotoQuestionnaire = (boolean) bundle.getSerializable(BUNDLE_IS_PHOTO_Q);
             mProjectId = (int) bundle.getSerializable(BUNDLE_PROJECT_ID);
-            mUser = (UserModel) bundle.getSerializable(BUNDLE_USER);
+            mUser = getBaseActivity().getCurrentUser();
             mIsButtonVisible = bundle.getBoolean(BUNDLE_IS_BUTTON_VISIBLE);
 
             initHeader(view);

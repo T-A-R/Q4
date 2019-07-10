@@ -1,18 +1,14 @@
 package pro.quizer.quizerexit.executable;
 
-import android.util.Log;
-
 import com.activeandroid.query.Select;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.database.ElementDatabaseModel;
 import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 
 public class QuestionnairesCountBySequenceExecutable extends BaseModelExecutable<Integer> {
 
@@ -39,14 +35,10 @@ public class QuestionnairesCountBySequenceExecutable extends BaseModelExecutable
                 .from(QuestionnaireDatabaseModel.class)
                 .where(QuestionnaireDatabaseModel.STATUS + " =? AND " +
                                 QuestionnaireDatabaseModel.USER_ID + " =? AND " +
-//                                QuestionnaireDatabaseModel.USER_PROJECT_ID + " =?",
-//                        QuestionnaireStatus.NOT_SENT, userId, userProjectId)
                                 QuestionnaireDatabaseModel.USER_PROJECT_ID + " =? AND " +
                                 QuestionnaireDatabaseModel.SURVEY_STATUS + " !=?",
                         QuestionnaireStatus.NOT_SENT, userId, userProjectId, "aborted")
                 .execute();
-
-//        Log.d("QUIZERLOGS", "Quotas counter 1: " + sentQuestionnaires.size());
 
         for (final QuestionnaireDatabaseModel questionnaireDatabaseModel : sentQuestionnaires) {
 

@@ -375,6 +375,7 @@ public class ElementActivity extends BaseActivity {
             if (mConfig.isSaveAborted()) {
                 showProgressBar();
                 saveQuestionnaireToDatabase(true);
+                showToast(getString(R.string.QUESTIONS_SAVED));
             }
 
             finish();
@@ -472,9 +473,9 @@ public class ElementActivity extends BaseActivity {
                         @Override
                         public void onClick(final DialogInterface dialog, final int which) {
                             if (mConfig.isSaveAborted()) {
-                                showToast("SAVED!");
                                 showProgressBar();
                                 saveQuestionnaireToDatabase(true);
+                                showToast(getString(R.string.QUESTIONS_SAVED));
                             }
                             finish();
                             startMainActivity();

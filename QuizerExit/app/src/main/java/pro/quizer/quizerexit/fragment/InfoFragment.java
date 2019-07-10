@@ -30,7 +30,6 @@ public class InfoFragment extends AbstractContentElementFragment {
 
     public static final String BUNDLE_CURRENT_QUESTION = "BUNDLE_CURRENT_QUESTION";
     public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
-    public static final String BUNDLE_MAP = "BUNDLE_MAP";
 
     private ElementModel mCurrentElement;
     private OptionsModel mAttributes;
@@ -45,7 +44,6 @@ public class InfoFragment extends AbstractContentElementFragment {
         bundle.putBoolean(BUNDLE_IS_BUTTON_VISIBLE, isButtonVisible);
         bundle.putSerializable(BUNDLE_CURRENT_QUESTION, pElement);
         bundle.putSerializable(BUNDLE_CALLBACK, pCallback);
-        bundle.putSerializable(BUNDLE_MAP, pMap);
         fragment.setArguments(bundle);
 
         return fragment;
@@ -65,7 +63,7 @@ public class InfoFragment extends AbstractContentElementFragment {
         if (bundle != null) {
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
-            mMap = (HashMap<Integer, ElementModel>) bundle.getSerializable(BUNDLE_MAP);
+            mMap = getBaseActivity().getMap();
             mAttributes = mCurrentElement.getOptions();
             mIsButtonVisible = bundle.getBoolean(BUNDLE_IS_BUTTON_VISIBLE);
 

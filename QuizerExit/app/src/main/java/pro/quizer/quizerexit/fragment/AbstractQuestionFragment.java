@@ -20,10 +20,8 @@ import pro.quizer.quizerexit.utils.CollectionUtils;
 
 public abstract class AbstractQuestionFragment extends AbstractContentElementFragment {
 
-    public static final String BUNDLE_MAP = "BUNDLE_MAP";
     public static final String BUNDLE_CURRENT_QUESTION = "BUNDLE_CURRENT_QUESTION";
     public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
-    public static final String BUNDLE_USER = "BUNDLE_USER";
 
     public UserModel mUser;
     public boolean mIsFromDialog;
@@ -33,13 +31,11 @@ public abstract class AbstractQuestionFragment extends AbstractContentElementFra
     private NavigationCallback mCallback;
     private BaseActivity mBaseActivity;
 
-    public static Bundle getBundle(final  boolean pIsFromDialog, final boolean pIsVisibleButton, final UserModel user, @NonNull final ElementModel pElement, final NavigationCallback pCallback, final HashMap<Integer, ElementModel> pMap) {
+    public static Bundle getBundle(final  boolean pIsFromDialog, final boolean pIsVisibleButton, @NonNull final ElementModel pElement, final NavigationCallback pCallback) {
         final Bundle bundle = new Bundle();
         bundle.putSerializable(BUNDLE_CURRENT_QUESTION, pElement);
-        bundle.putSerializable(BUNDLE_MAP, pMap);
         bundle.putSerializable(BUNDLE_CALLBACK, pCallback);
         bundle.putBoolean(BUNDLE_IS_BUTTON_VISIBLE, pIsVisibleButton);
-        bundle.putSerializable(BUNDLE_USER, user);
         bundle.putBoolean(BUNDLE_IS_FROM_DIALOG, pIsFromDialog);
 
         return bundle;
@@ -92,9 +88,9 @@ public abstract class AbstractQuestionFragment extends AbstractContentElementFra
         if (bundle != null) {
             mBaseActivity = getBaseActivity();
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
-            mMap = (HashMap<Integer, ElementModel>) bundle.getSerializable(BUNDLE_MAP);
+            mMap = getBaseActivity().getMap();
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
-            mUser = (UserModel) bundle.getSerializable(BUNDLE_USER);
+            mUser = getBaseActivity().getCurrentUser();
             mIsFromDialog = bundle.getBoolean(BUNDLE_IS_FROM_DIALOG);
             mAttributes = mCurrentElement.getOptions();
             initHeader(view);

@@ -102,6 +102,7 @@ public class InfoFragment extends AbstractContentElementFragment {
         @Override
         public void run() {
             try {
+                showToast("HERE!");
                 mCallback.onForward(mCurrentElement.getOptions().getJump(), getForwardButton());
             } catch (final Exception pE) {
                 showToast(pE.getMessage());

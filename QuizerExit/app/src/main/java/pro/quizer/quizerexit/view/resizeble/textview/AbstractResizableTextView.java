@@ -6,26 +6,31 @@ import android.util.AttributeSet;
 
 import pro.quizer.quizerexit.view.resizeble.ResizableViewUtils;
 
+import static pro.quizer.quizerexit.activity.BaseActivity.AVIA;
+
 
 public abstract class AbstractResizableTextView extends android.support.v7.widget.AppCompatTextView {
 
     public AbstractResizableTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         ResizableViewUtils.initTextSize(this, context, getDefaultFontSize());
-//        setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/arial.ttf"));
+        if (AVIA)
+            setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/arial.ttf"));
     }
 
     public AbstractResizableTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         ResizableViewUtils.initTextSize(this, context, getDefaultFontSize());
-//        setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/arial.ttf"));
+        if (AVIA)
+            setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/arial.ttf"));
 
     }
 
     public AbstractResizableTextView(Context context) {
         super(context);
         ResizableViewUtils.initTextSize(this, context, getDefaultFontSize());
-//        setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/arial.ttf"));
+        if (AVIA)
+            setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/arial.ttf"));
     }
 
     public abstract int getDefaultFontSize();

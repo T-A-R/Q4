@@ -16,6 +16,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import pro.quizer.quizerexit.API.QuizerAPI;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.DoRequest;
 import pro.quizer.quizerexit.R;
@@ -26,9 +27,13 @@ import pro.quizer.quizerexit.model.request.QuotaRequestModel;
 import pro.quizer.quizerexit.model.response.QuotaResponseModel;
 import pro.quizer.quizerexit.utils.SPUtils;
 
-public class UpdateQuotasExecutable extends BaseExecutable {
+public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.GetQuotasCallback {
 
     private final Context mContext;
+    private  BaseActivity baseActivity;
+    private  UserModel userModel;
+    private  ConfigModel configModel;
+    private  int userProjectId;
 
     public UpdateQuotasExecutable(final Context pContext, final ICallback pCallback) {
         super(pCallback);
@@ -40,59 +45,58 @@ public class UpdateQuotasExecutable extends BaseExecutable {
     public void execute() {
         onStarting();
 
-        final BaseActivity baseActivity = (BaseActivity) mContext;
-        final UserModel userModel = baseActivity.getCurrentUser();
-        final ConfigModel configModel = userModel.getConfig();
-        final int userProjectId = userModel.user_project_id;
+        baseActivity = (BaseActivity) mContext;
+        userModel = baseActivity.getCurrentUser();
+        configModel = userModel.getConfig();
+        userProjectId = userModel.user_project_id;
 
-        final Dictionary<String, String> mDictionaryForRequest = new Hashtable();
-        mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(new QuotaRequestModel(configModel.getLoginAdmin(), userModel.password, userModel.login)));
+        QuotaRequestModel requestModel = new QuotaRequestModel(configModel.getLoginAdmin(), userModel.password, userModel.login);
+        Gson gson = new Gson();
+        String json = gson.toJson(requestModel);
 
-        final Call.Factory client = new OkHttpClient();
-        client.newCall(new DoRequest().post(mDictionaryForRequest, configModel.getServerUrl()))
-                .enqueue(new Callback() {
+        String mServerUrl = configModel.getServerUrl();
+        QuizerAPI.getQuotas(mServerUrl, json, this);
+    }
 
-                    @Override
-                    public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
-                        onError(e);
-                    }
+    @Override
+    public void onGetQuotasCallback(ResponseBody responseBody) {
+        if (responseBody == null) {
+            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 01"));
+            return;
+        }
+        String responseJson;
+        try {
+            responseJson = responseBody.string();
+        } catch (IOException e) {
+            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 02"));
+            return;
+        }
+        QuotaResponseModel quotaResponseModel;
 
-                    @Override
-                    public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
-                        final ResponseBody responseBody = response.body();
+        try {
+            quotaResponseModel = new GsonBuilder().create().fromJson(responseJson, QuotaResponseModel.class);
+        } catch (final Exception pE) {
+            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 03"));
+            return;
+        }
 
-                        if (responseBody == null) {
-                            onFailure(call, new IOException(mContext.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR)));
+        if (quotaResponseModel != null) {
+            SPUtils.saveQuotaTimeDifference(mContext, quotaResponseModel.getServerTime());
 
-                            return;
-                        }
-
-                        final String responseJson = responseBody.string();
-                        QuotaResponseModel quotaResponseModel = null;
-
-                        try {
-                            quotaResponseModel = new GsonBuilder().create().fromJson(responseJson, QuotaResponseModel.class);
-                        } catch (final Exception pE) {
-                            // empty
-                        }
-
-                        if (quotaResponseModel != null) {
-                            SPUtils.saveQuotaTimeDifference(mContext, quotaResponseModel.getServerTime());
-
-                            if (quotaResponseModel.getResult() != 0) {
-                                new Update(UserModel.class)
-                                        .set(UserModel.QUOTAS + " = ?", responseJson)
-                                        .where(UserModel.USER_PROJECT_ID + " = ?", userProjectId).execute();
+            if (quotaResponseModel.getResult() != 0) {
+                new Update(UserModel.class)
+                        .set(UserModel.QUOTAS + " = ?", responseJson)
+                        .where(UserModel.USER_PROJECT_ID + " = ?", userProjectId).execute();
 
 
-                                onSuccess();
-                            } else {
-                                onFailure(call, new IOException(quotaResponseModel.getError()));
-                            }
-                        } else {
-                            onFailure(call, new IOException(mContext.getString(R.string.NOTIFICATION_SERVER_ERROR)));
-                        }
-                    }
-                });
+                onSuccess();
+            } else {
+                onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 04"));
+                return;
+            }
+        } else {
+            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 05"));
+            return;
+        }
     }
 }

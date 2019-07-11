@@ -102,7 +102,6 @@ public class InfoFragment extends AbstractContentElementFragment {
         @Override
         public void run() {
             try {
-                showToast("HERE!");
                 mCallback.onForward(mCurrentElement.getOptions().getJump(), getForwardButton());
             } catch (final Exception pE) {
                 showToast(pE.getMessage());
@@ -157,60 +156,11 @@ public class InfoFragment extends AbstractContentElementFragment {
         switch (mCurrentElement.getSubtype()) {
             case ElementSubtype.HTML:
                 UiUtils.setTextOrHide(mText, data);
-
                 break;
-//            case ElementSubtype.AUDIO:
-//                final String fileAudioPath = getFilePath(data);
-//
-//                if (StringUtils.isEmpty(fileAudioPath)) {
-//                    return;
-//                }
-//
-//                mAudioPlayer.setVisibility(View.VISIBLE);
-//                mAudioPlayer.setSource(Uri.fromFile(new File(fileAudioPath)));
-//                mAudioPlayer.enableSwipeGestures(((BaseActivity) mBaseActivity).getWindow());
-//
-//                break;
-//            case ElementSubtype.VIDEO:
-//                final String fileVideoPath = getFilePath(data);
-//
-//                if (StringUtils.isEmpty(fileVideoPath)) {
-//                    return;
-//                }
-//
-//                mVideoPlayer.setVisibility(View.VISIBLE);
-//                mVideoPlayer.setSource(Uri.fromFile(new File(fileVideoPath)));
-//
-//                mVideoPlayer.setHideControlsOnPlay(true);
-//
-//                mVideoPlayer.enableSwipeGestures(((BaseActivity) mBaseActivity).getWindow());
-//
-//                break;
-//            case ElementSubtype.IMAGE:
-//                final String filePhotooPath = getFilePath(data);
-//
-//                if (StringUtils.isEmpty(filePhotooPath)) {
-//                    return;
-//                }
-//
-//                mImageView.setVisibility(View.VISIBLE);
-//
-//                Picasso.with(mBaseActivity)
-//                        .load(new File(filePhotooPath))
-//                        .into(mImageView);
-//
-//
-//                break;
-            default:
 
+            default:
                 break;
         }
     }
-//        RecyclerView mRecyclerView = pView.findViewById(R.id.info_recycler_view);
-//
-//        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-//        mRecyclerView.setHasFixedSize(true);
-//        ContentElementsAdapter mAdapter = new ContentElementsAdapter((BaseActivity) getContext(), mCurrentElement.getElements());
-//        mRecyclerView.setAdapter(mAdapter);
-//    }
+
 }

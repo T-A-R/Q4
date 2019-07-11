@@ -37,9 +37,11 @@ import pro.quizer.quizerexit.DoRequest;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.UpdateQuotasExecutable;
+import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.request.AuthRequestModel;
 import pro.quizer.quizerexit.model.request.ConfigRequestModel;
+import pro.quizer.quizerexit.model.request.QuotaRequestModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.utils.FileUtils;
@@ -100,8 +102,6 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             }
         }
 
-
-//        sendAuthButton.setOnClickListener(v -> onLoginClick());
         sendAuthButton.setOnClickListener(v -> onLoginClickWithRetrofit());
         mVersionView.setOnClickListener(v -> onVersionClick());
     }
@@ -116,108 +116,6 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             mVersionTapCount = 0;
         }
     }
-
-//    private void onLoginClick() {
-//        showProgressBar();
-//
-//        login = mLoginSpinner.getText().toString();
-//        password = mPasswordEditText.getText().toString();
-//
-//        if (StringUtils.isEmpty(login) || StringUtils.isEmpty(password)) {
-//            showToast(getString(R.string.NOTIFICATION_EMPTY_LOGIN_OR_PASSWORD));
-//
-//            hideProgressBar();
-//
-//            return;
-//        }
-//
-//        if (login.length() < 3) {
-//            showToast(getString(R.string.NOTIFICATION_SHORT_LOGIN_ERROR));
-//
-//            hideProgressBar();
-//
-//            return;
-//        }
-//
-//        if (mSavedUsers != null && mSavedUsers.size() >= MAX_USERS && !mSavedUsers.contains(login)) {
-//            showToast(String.format(getString(R.string.NOTIFICATION_MAX_USER_COUNT), String.valueOf(MAX_USERS)));
-//
-//            hideProgressBar();
-//
-//            return;
-//        }
-//
-//        passwordMD5 = MD5Utils.formatPassword(login, password);
-//        final Dictionary<String, String> mDictionaryForRequest = new Hashtable();
-//        mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(new AuthRequestModel(getLoginAdmin(), passwordMD5, login)));
-//
-//        final Call.Factory client = new OkHttpClient();
-//        client.newCall(new DoRequest().post(mDictionaryForRequest, getServer()))
-//                .enqueue(new Callback() {
-//
-//                    @Override
-//                    public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
-//                        hideProgressBar();
-//
-//                        final UserModel savedUserModel = getLocalUserModel(login, passwordMD5);
-//
-//                        if (savedUserModel != null) {
-//                            showToast("Удалось войти под сохраненными локальными данными.");
-//                            onLoggedInWithoutUpdateLocalData(savedUserModel.user_id);
-//                        } else {
-//                            showToast(getString(R.string.NOTIFICATION_INTERNET_CONNECTION_ERROR));
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
-//                        hideProgressBar();
-//
-////                        Log.d(TAG, "OLD LOGIN RESPONSE: " + response.body().string());
-//
-//                        final ResponseBody responseBody = response.body();
-//
-//                        if (responseBody == null) {
-//                            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR));
-//                            onFailure(call, null);
-//
-//                            return;
-//                        }
-//
-//                        final String responseJson = responseBody.string();
-//                        AuthResponseModel authResponseModel = null;
-//
-//                        try {
-//                            authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
-//                        } catch (final Exception pE) {
-//                            // empty
-//                        }
-//
-//                        if (authResponseModel != null) {
-//                            SPUtils.saveAuthTimeDifference(AuthActivity.this, authResponseModel.getServerTime());
-//
-//                            if (authResponseModel.getResult() != 0) {
-//                                if (isNeedDownloadConfig(authResponseModel)) {
-//                                    downloadConfig(login, passwordMD5, authResponseModel);
-//                                } else {
-//                                    onLoggedIn(login,
-//                                            passwordMD5,
-//                                            authResponseModel.getConfigId(),
-//                                            authResponseModel.getUserId(),
-//                                            authResponseModel.getRoleId(),
-//                                            authResponseModel.getUserProjectId());
-//                                }
-//                            } else {
-//                                showToast(authResponseModel.getError());
-//                            }
-//                        } else {
-//                            showToast(getString(R.string.NOTIFICATION_SERVER_ERROR));
-//                            onFailure(call, null);
-//                        }
-//                    }
-//                });
-//    }
-
 
     private void onLoginClickWithRetrofit() {
         showProgressBar();
@@ -510,4 +408,6 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             showToast(authResponseModel.getError());
         }
     }
+
+
 }

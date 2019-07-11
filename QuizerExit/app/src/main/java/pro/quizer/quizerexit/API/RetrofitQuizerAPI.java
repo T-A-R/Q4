@@ -18,23 +18,30 @@ import retrofit2.http.Url;
 
 public interface RetrofitQuizerAPI {
 
-    @POST("/wheretoredirrect_json.php")
-    Call<Void> submitKey(@Body() QuizerAPI.SubmitKeyBody body);
-
     @FormUrlEncoded
     @POST("/_query/send-data")
     Call<ResponseBody> authUser(@FieldMap Map<String, String> fields);
-
-    @POST("/_query/send-data")
-    Call<Void> getConfig(@Body() QuizerAPI.GetConfigBody body);
 
     @FormUrlEncoded
     @POST()
     Call<ResponseBody> sendQuestionnaires(@Url String apiname, @FieldMap Map<String, String> fields);
 
-    @POST("/_query/send-data")
-    Call<Void> sendPhoto(@Body() QuizerAPI.SendPhotoBody body);
+    @FormUrlEncoded
+    @POST()
+    Call<ResponseBody> getQuotas(@Url String apiname, @FieldMap Map<String, String> fields);
 
-    @POST("/_query/send-data")
-    Call<Void> sendAudio(@Body() QuizerAPI.SendAudioBody body);
+    //TODO Перевести на ретрофит запросы ниже
+
+//    @POST("/_query/send-data")
+//    Call<Void> getConfig(@Body() QuizerAPI.GetConfigBody body);
+//
+//    @POST("/_query/send-data")
+//    Call<Void> sendPhoto(@Body() QuizerAPI.SendPhotoBody body);
+//
+//    @POST("/_query/send-data")
+//    Call<Void> sendAudio(@Body() QuizerAPI.SendAudioBody body);
+//
+//    @POST("/wheretoredirrect_json.php")
+//    Call<Void> submitKey(@Body() QuizerAPI.SubmitKeyBody body);
+
 }

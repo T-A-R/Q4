@@ -106,75 +106,6 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
         onSuccess();
     }
 
-//    private void sendViaInternet() {
-//        final QuestionnaireListRequestModel requestModel = new QuestionnaireListRequestModelExecutable(mUserModel).execute();
-//
-//        if (requestModel == null) {
-//            onSuccess();
-//            return;
-//        }
-//
-//        final Dictionary<String, String> mDictionaryForRequest = new Hashtable();
-//        mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(requestModel));
-//
-//        final Call.Factory client = new OkHttpClient();
-//        client.newCall(new DoRequest().post(mDictionaryForRequest, mServerUrl))
-//                .enqueue(new Callback() {
-//
-//                    @Override
-//                    public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
-//                        onError(e);
-//                    }
-//
-//                    @Override
-//                    public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
-//                        final ResponseBody responseBody = response.body();
-//
-//                        if (responseBody == null) {
-//                            onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR)));
-//
-//                            return;
-//                        }
-//
-//                        final String responseJson = responseBody.string();
-//                        DeletingListResponseModel deletingListResponseModel = null;
-//
-//                        try {
-//                            deletingListResponseModel = new GsonBuilder().create().fromJson(responseJson, DeletingListResponseModel.class);
-//                        } catch (Exception pE) {
-//                            // empty
-//                        }
-//
-//                        if (deletingListResponseModel != null) {
-//                            SPUtils.saveSendTimeDifference(mBaseActivity, deletingListResponseModel.getServerTime());
-//
-//                            if (deletingListResponseModel.getResult() != 0) {
-//                                final List<String> tokensToRemove = deletingListResponseModel.getAccepted();
-//
-//                                if (tokensToRemove == null || tokensToRemove.isEmpty()) {
-//                                    onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SENDING_ERROR_EMPTY_TOKENS_LIST)));
-//                                } else {
-//                                    SPUtils.addSendedQInSession(mBaseActivity, tokensToRemove.size());
-//
-//                                    for (final String token : tokensToRemove) {
-//                                        new Update(QuestionnaireDatabaseModel.class)
-//                                                .set(QuestionnaireDatabaseModel.STATUS + " = ?", QuestionnaireStatus.SENT)
-//                                                .where(QuestionnaireDatabaseModel.TOKEN + " = ?", token)
-//                                                .execute();
-//                                    }
-//
-//                                    onSuccess();
-//                                }
-//                            } else {
-//                                onError(new Exception(deletingListResponseModel.getError()));
-//                            }
-//                        } else {
-//                            onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_ERROR)));
-//                        }
-//                    }
-//                });
-//    }
-
     private void sendViaInternetWithRetrofit() {
 
         QuestionnaireListRequestModel requestModel = new QuestionnaireListRequestModelExecutable(mUserModel).execute();
@@ -185,7 +116,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
         Gson gson = new Gson();
         String json = gson.toJson(requestModel);
 
-        QuizerAPI.sendQuestionnaires(mServerUrl,json, this);
+        QuizerAPI.sendQuestionnaires(mServerUrl, json, this);
     }
 
     @Override

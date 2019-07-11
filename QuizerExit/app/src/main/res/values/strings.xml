@@ -134,6 +134,7 @@
     <string name="NOTIFICATION_UPDATING">Идет обновление…</string>
     <string name="NOTIFICATION_ANSWER_NOT_AVAILABLE_TABLE_QUESTION">Невозможно выбрать данный элемент.</string>
     <string name="NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS">Не удалось загрузить список квот.</string>
+    <string name="NOTIFICATION_UPDATE_QUOTAS">Список квот обновлен.</string>
 
     <string name="DIALOG_CHANGE_USER_BODY">Вы уверены, что хотите сменить пользователя?</string>
     <string name="DIALOG_REMOVE_USER_BODY">Вы уверены, что хотите удалить данного пользователя?</string>

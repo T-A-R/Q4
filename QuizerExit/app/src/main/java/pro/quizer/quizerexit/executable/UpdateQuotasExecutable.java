@@ -61,14 +61,14 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
     @Override
     public void onGetQuotasCallback(ResponseBody responseBody) {
         if (responseBody == null) {
-            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 01"));
+            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 1.01"));
             return;
         }
         String responseJson;
         try {
             responseJson = responseBody.string();
         } catch (IOException e) {
-            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 02"));
+            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 1.02"));
             return;
         }
         QuotaResponseModel quotaResponseModel;
@@ -76,7 +76,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
         try {
             quotaResponseModel = new GsonBuilder().create().fromJson(responseJson, QuotaResponseModel.class);
         } catch (final Exception pE) {
-            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 03"));
+            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 1.03"));
             return;
         }
 
@@ -91,11 +91,11 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
 
                 onSuccess();
             } else {
-                onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 04"));
+                onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 1.04"));
                 return;
             }
         } else {
-            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 05"));
+            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 1.05"));
             return;
         }
     }

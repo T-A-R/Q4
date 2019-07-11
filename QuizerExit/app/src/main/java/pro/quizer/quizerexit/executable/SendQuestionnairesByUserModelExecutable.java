@@ -1,28 +1,20 @@
 package pro.quizer.quizerexit.executable;
 
 import android.content.DialogInterface;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.activeandroid.query.Update;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Response;
 import okhttp3.ResponseBody;
 import pro.quizer.quizerexit.API.QuizerAPI;
-import pro.quizer.quizerexit.Constants;
-import pro.quizer.quizerexit.DoRequest;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
@@ -30,7 +22,6 @@ import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
 import pro.quizer.quizerexit.model.database.UserModel;
-import pro.quizer.quizerexit.model.request.AuthRequestModel;
 import pro.quizer.quizerexit.model.request.QuestionnaireListRequestModel;
 import pro.quizer.quizerexit.model.response.DeletingListResponseModel;
 import pro.quizer.quizerexit.model.sms.SmsStage;
@@ -122,7 +113,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
     @Override
     public void onSendQuestionnaires(ResponseBody responseBody) {
         if (responseBody == null) {
-            onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR)));
+            onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 2.01"));
             Log.d(TAG, "onSendQuestionnaires: responseBody = null!");
             return;
         }
@@ -131,14 +122,16 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
         try {
             responseJson = responseBody.string();
         } catch (IOException e) {
-            Log.d(TAG, "onSendQuestionnaires: responseBody.string() error!");
+            onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 2.02"));
+            return;
         }
         DeletingListResponseModel deletingListResponseModel = null;
 
         try {
             deletingListResponseModel = new GsonBuilder().create().fromJson(responseJson, DeletingListResponseModel.class);
         } catch (Exception pE) {
-            Log.d(TAG, "onSendQuestionnaires: deletingListResponseModel error!");
+            onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 2.03"));
+            return;
         }
 
         if (deletingListResponseModel != null) {
@@ -148,7 +141,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                 final List<String> tokensToRemove = deletingListResponseModel.getAccepted();
 
                 if (tokensToRemove == null || tokensToRemove.isEmpty()) {
-                    onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SENDING_ERROR_EMPTY_TOKENS_LIST)));
+                    onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SENDING_ERROR_EMPTY_TOKENS_LIST) + " Ошибка: 2.04"));
                 } else {
                     SPUtils.addSendedQInSession(mBaseActivity, tokensToRemove.size());
 
@@ -159,13 +152,31 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                                 .execute();
                     }
 
+                    new UpdateQuotasExecutable(mBaseActivity, new ICallback() {
+
+                        @Override
+                        public void onStarting() {
+
+                        }
+
+                        @Override
+                        public void onSuccess() {
+                            Toast.makeText(mBaseActivity, R.string.NOTIFICATION_UPDATE_QUOTAS, Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onError(Exception pException) {
+                            Toast.makeText(mBaseActivity, R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS + " Ошибка: 2.07", Toast.LENGTH_SHORT).show();
+                        }
+                    }).execute();
+
                     onSuccess();
                 }
             } else {
-                onError(new Exception(deletingListResponseModel.getError()));
+                onError(new Exception(deletingListResponseModel.getError() + " Ошибка: 2.05"));
             }
         } else {
-            onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_ERROR)));
+            onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_ERROR) + " Ошибка: 2.06"));
         }
     }
 }

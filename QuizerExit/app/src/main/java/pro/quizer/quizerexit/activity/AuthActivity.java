@@ -3,12 +3,14 @@ package pro.quizer.quizerexit.activity;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.activeandroid.query.Select;
 import com.google.gson.Gson;
@@ -29,14 +31,17 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import pro.quizer.quizerexit.API.QuizerAPI;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.DoRequest;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.UpdateQuotasExecutable;
+import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.request.AuthRequestModel;
 import pro.quizer.quizerexit.model.request.ConfigRequestModel;
+import pro.quizer.quizerexit.model.request.QuotaRequestModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.utils.FileUtils;
@@ -45,7 +50,7 @@ import pro.quizer.quizerexit.utils.SPUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 
-public class AuthActivity extends BaseActivity {
+public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCallback {
 
     private static int MAX_USERS = 5;
     private static int MAX_VERSION_TAP_COUNT = 5;
@@ -57,32 +62,27 @@ public class AuthActivity extends BaseActivity {
     private TextView mVersionView;
     private int mVersionTapCount = 0;
 
+    String login;
+    String password;
+    String passwordMD5;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
 
-        final TextView usersCount = findViewById(R.id.users_count);
-        // GOOD select
-        final int usersCountValue = new Select().from(UserModel.class).count();
-        usersCount.setText(String.format(getString(R.string.VIEW_USERS_COUNT_ON_DEVICE), (usersCountValue + "/" + MAX_USERS)));
         mPasswordEditText = findViewById(R.id.auth_password_edit_text);
         mLoginSpinner = findViewById(R.id.login_spinner);
         mVersionView = findViewById(R.id.version_view);
+        final Button sendAuthButton = findViewById(R.id.send_auth_button);
+        final TextView usersCount = findViewById(R.id.users_count);
+
+        //TODO refactor DB!!!
+
+        // GOOD select
+        final int usersCountValue = new Select().from(UserModel.class).count();
+        usersCount.setText(String.format(getString(R.string.VIEW_USERS_COUNT_ON_DEVICE), (usersCountValue + "/" + MAX_USERS)));
         UiUtils.setTextOrHide(mVersionView, String.format(getString(R.string.VIEW_APP_VERSION), getAppVersionName()));
-        mVersionView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                mVersionTapCount++;
-
-                if (mVersionTapCount == MAX_VERSION_TAP_COUNT) {
-                    finish();
-                    startServiceActivity();
-
-                    mVersionTapCount = 0;
-                }
-            }
-        });
 
         mSavedUserModels = getSavedUserModels();
         mSavedUsers = getSavedUserLogins();
@@ -102,110 +102,52 @@ public class AuthActivity extends BaseActivity {
             }
         }
 
-        final Button sendAuthButton = findViewById(R.id.send_auth_button);
-        sendAuthButton.setOnClickListener(new View.OnClickListener() {
+        sendAuthButton.setOnClickListener(v -> onLoginClickWithRetrofit());
+        mVersionView.setOnClickListener(v -> onVersionClick());
+    }
 
-            @Override
-            public void onClick(final View v) {
-                showProgressBar();
+    private void onVersionClick() {
+        mVersionTapCount++;
 
-                final String login = mLoginSpinner.getText().toString();
-                final String password = mPasswordEditText.getText().toString();
+        if (mVersionTapCount == MAX_VERSION_TAP_COUNT) {
+            finish();
+            startServiceActivity();
 
-                if (StringUtils.isEmpty(login) || StringUtils.isEmpty(password)) {
-                    showToast(getString(R.string.NOTIFICATION_EMPTY_LOGIN_OR_PASSWORD));
+            mVersionTapCount = 0;
+        }
+    }
 
-                    hideProgressBar();
+    private void onLoginClickWithRetrofit() {
+        showProgressBar();
 
-                    return;
-                }
+        login = mLoginSpinner.getText().toString();
+        password = mPasswordEditText.getText().toString();
 
-                if (login.length() < 3) {
-                    showToast(getString(R.string.NOTIFICATION_SHORT_LOGIN_ERROR));
+        if (StringUtils.isEmpty(login) || StringUtils.isEmpty(password)) {
+            showToast(getString(R.string.NOTIFICATION_EMPTY_LOGIN_OR_PASSWORD));
+            hideProgressBar();
+            return;
+        }
 
-                    hideProgressBar();
+        if (login.length() < 3) {
+            showToast(getString(R.string.NOTIFICATION_SHORT_LOGIN_ERROR));
+            hideProgressBar();
+            return;
+        }
 
-                    return;
-                }
+        if (mSavedUsers != null && mSavedUsers.size() >= MAX_USERS && !mSavedUsers.contains(login)) {
+            showToast(String.format(getString(R.string.NOTIFICATION_MAX_USER_COUNT), String.valueOf(MAX_USERS)));
+            hideProgressBar();
+            return;
+        }
 
-                if (mSavedUsers != null && mSavedUsers.size() >= MAX_USERS && !mSavedUsers.contains(login)) {
-                    showToast(String.format(getString(R.string.NOTIFICATION_MAX_USER_COUNT), String.valueOf(MAX_USERS)));
+        passwordMD5 = MD5Utils.formatPassword(login, password);
 
-                    hideProgressBar();
+        AuthRequestModel post = new AuthRequestModel(getLoginAdmin(), passwordMD5, login);
+        Gson gson = new Gson();
+        String json = gson.toJson(post);
 
-                    return;
-                }
-
-                final String passwordMD5 = MD5Utils.formatPassword(login, password);
-                final Dictionary<String, String> mDictionaryForRequest = new Hashtable();
-                mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(new AuthRequestModel(getLoginAdmin(), passwordMD5, login)));
-
-                final Call.Factory client = new OkHttpClient();
-                client.newCall(new DoRequest().post(mDictionaryForRequest, getServer()))
-                        .enqueue(new Callback() {
-
-                            @Override
-                            public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
-                                hideProgressBar();
-
-                                final UserModel savedUserModel = getLocalUserModel(login, passwordMD5);
-
-                                if (savedUserModel != null) {
-                                    showToast("Удалось войти под сохраненными локальными данными.");
-                                    onLoggedInWithoutUpdateLocalData(savedUserModel.user_id);
-                                } else {
-                                    showToast(getString(R.string.NOTIFICATION_INTERNET_CONNECTION_ERROR));
-                                }
-                            }
-
-                            @Override
-                            public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
-                                hideProgressBar();
-
-                                final ResponseBody responseBody = response.body();
-
-                                if (responseBody == null) {
-                                    showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR));
-                                    onFailure(call, null);
-
-                                    return;
-                                }
-
-                                final String responseJson = responseBody.string();
-                                AuthResponseModel authResponseModel = null;
-
-                                try {
-                                    authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
-                                } catch (final Exception pE) {
-                                    // empty
-                                }
-
-                                if (authResponseModel != null) {
-                                    SPUtils.saveAuthTimeDifference(AuthActivity.this, authResponseModel.getServerTime());
-
-                                    if (authResponseModel.getResult() != 0) {
-                                        if (isNeedDownloadConfig(authResponseModel)) {
-                                            downloadConfig(login, passwordMD5, authResponseModel);
-                                        } else {
-                                            onLoggedIn(login,
-                                                    passwordMD5,
-                                                    authResponseModel.getConfigId(),
-                                                    authResponseModel.getUserId(),
-                                                    authResponseModel.getRoleId(),
-                                                    authResponseModel.getUserProjectId());
-                                        }
-                                    } else {
-                                        showToast(authResponseModel.getError());
-                                    }
-                                } else {
-                                    showToast(getString(R.string.NOTIFICATION_SERVER_ERROR));
-                                    onFailure(call, null);
-                                }
-                            }
-                        });
-
-            }
-        });
+        QuizerAPI.authUser(getServer(), json, this);
     }
 
     private void onLoggedInWithoutUpdateLocalData(final int pUserId) {
@@ -406,4 +348,66 @@ public class AuthActivity extends BaseActivity {
                     }).loadMultiple(fileUris);
         }
     }
+
+
+    @Override
+    public void onAuthUser(ResponseBody responseBody) {
+        hideProgressBar();
+
+        if (responseBody == null) {
+            final UserModel savedUserModel = getLocalUserModel(login, passwordMD5);
+
+            if (savedUserModel != null) {
+                showToast(getString(R.string.SAVED_DATA_LOGIN));
+                onLoggedInWithoutUpdateLocalData(savedUserModel.user_id);
+            } else {
+                showToast(getString(R.string.WRONG_LOGIN));
+            }
+
+            return;
+        }
+
+        String responseJson;
+        try {
+            Log.d(TAG, "onAuthUser 0: ");
+            responseJson = responseBody.string();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "onAuthUser 1: " + e);
+            responseJson = null;
+        }
+
+        AuthResponseModel authResponseModel = null;
+        try {
+            authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
+        } catch (final Exception pE) {
+            Log.d(TAG, "onAuthUser 2: " + pE);
+        }
+
+        if (authResponseModel != null)
+            Log.d(TAG, "onAuthUser 3: " + authResponseModel.getResult());
+        else
+            Log.d(TAG, "onAuthUser 3: NULL");
+
+        if (authResponseModel == null) return;
+
+        SPUtils.saveAuthTimeDifference(AuthActivity.this, authResponseModel.getServerTime());
+
+        if (authResponseModel.getResult() != 0) {
+            if (isNeedDownloadConfig(authResponseModel)) {
+                downloadConfig(login, passwordMD5, authResponseModel);
+            } else {
+                onLoggedIn(login,
+                        passwordMD5,
+                        authResponseModel.getConfigId(),
+                        authResponseModel.getUserId(),
+                        authResponseModel.getRoleId(),
+                        authResponseModel.getUserProjectId());
+            }
+        } else {
+            showToast(authResponseModel.getError());
+        }
+    }
+
+
 }

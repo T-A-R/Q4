@@ -1,13 +1,13 @@
 package pro.quizer.quizerexit.view.resizeble.button;
 
-import android.content.Context;
-import android.util.AttributeSet;
+        import android.content.Context;
+        import android.util.AttributeSet;
 
-import pro.quizer.quizerexit.view.resizeble.ResizableViewUtils;
+        import pro.quizer.quizerexit.view.resizeble.ResizableViewUtils;
 
-import static pro.quizer.quizerexit.view.resizable.ResizableConstants.LARGE;
-import static pro.quizer.quizerexit.view.resizable.ResizableConstants.MEDIUM;
-import static pro.quizer.quizerexit.view.resizable.ResizableConstants.SMALL;
+        import static pro.quizer.quizerexit.view.resizable.ResizableConstants.LARGE;
+        import static pro.quizer.quizerexit.view.resizable.ResizableConstants.MEDIUM;
+        import static pro.quizer.quizerexit.view.resizable.ResizableConstants.SMALL;
 
 public class ResizableButton extends AbstractResizableButton {
 

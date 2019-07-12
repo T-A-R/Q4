@@ -147,7 +147,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         Gson gson = new Gson();
         String json = gson.toJson(post);
 
-        QuizerAPI.authUser(json, this);
+        QuizerAPI.authUser(getServer(), json, this);
     }
 
     private void onLoggedInWithoutUpdateLocalData(final int pUserId) {

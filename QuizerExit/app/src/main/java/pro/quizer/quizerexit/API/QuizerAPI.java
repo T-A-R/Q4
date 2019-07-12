@@ -59,14 +59,14 @@ public class QuizerAPI {
 
 //  ================================== Авторизация ==================================
 
-    static public void authUser(String json, final AuthUserCallback listener) {
+    static public void authUser(String url, String json, final AuthUserCallback listener) {
 
         Log.d(TAG, "authUser: " + json);
 
         Map<String, String> fields = new HashMap<>();
         fields.put("json_data", json);
 
-        CoreApplication.getQuizerApi().authUser(fields).enqueue(new Callback<ResponseBody>() {
+        CoreApplication.getQuizerApi().authUser(url, fields).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 Log.d(TAG, "QuizerAPI.authUser.onResponse() Message: " + response.message());

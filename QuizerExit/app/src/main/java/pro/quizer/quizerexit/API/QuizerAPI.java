@@ -57,7 +57,13 @@ public class QuizerAPI {
 //    }
 
 
-//  ================================== Авторизация ==================================
+    /**
+     * Авторизация
+     *
+     * @param url
+     * @param json
+     * @param listener
+     */
 
     static public void authUser(String url, String json, final AuthUserCallback listener) {
 
@@ -85,7 +91,14 @@ public class QuizerAPI {
         void onAuthUser(ResponseBody data);
     }
 
-//    ================================== Отправка анкет ==================================
+
+    /**
+     * Отправка анкет
+     *
+     * @param url
+     * @param json
+     * @param listener
+     */
 
     static public void sendQuestionnaires(String url, String json, final SendQuestionnairesCallback listener) {
 
@@ -113,7 +126,14 @@ public class QuizerAPI {
         void onSendQuestionnaires(ResponseBody data);
     }
 
-//    ================================== Получение квот ==================================
+
+    /**
+     * Получение квот
+     *
+     * @param url
+     * @param json
+     * @param listener
+     */
 
     static public void getQuotas(String url, String json, final GetQuotasCallback listener) {
 

@@ -6,24 +6,14 @@ import com.activeandroid.ActiveAndroid;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.util.concurrent.TimeUnit;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import pro.quizer.quizerexit.API.RetrofitQuizerAPI;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
-
-import static pro.quizer.quizerexit.activity.BaseActivity.API_URL;
 
 public class CoreApplication extends Application {
 
     private static RetrofitQuizerAPI retrofitQuizerAPI;
-    private static String serverUrl = null;
 
     @Override
     public void onCreate() {
@@ -41,7 +31,7 @@ public class CoreApplication extends Application {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .client(client)
-                .baseUrl(API_URL)
+                .baseUrl(Constants.Default.API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

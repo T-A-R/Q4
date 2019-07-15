@@ -19,6 +19,10 @@ public interface RetrofitQuizerAPI {
 
     @FormUrlEncoded
     @POST()
+    Call<ResponseBody> sendKey(@Url String apiname, @FieldMap Map<String, String> fields);
+
+    @FormUrlEncoded
+    @POST()
     Call<ResponseBody> authUser(@Url String apiname, @FieldMap Map<String, String> fields);
 
     @FormUrlEncoded

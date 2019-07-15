@@ -98,6 +98,7 @@
     <string name="SAVED_DATA_LOGIN">Удалось войти под сохраненными локальными данными.</string>
     <string name="WRONG_LOGIN">Неверный логин или пароль.</string>
     <string name="NOTIFICATION_SERVER_ERROR">Ошибка сервера.</string>
+    <string name="NOTIFICATION_SERVER_CONNECTION_ERROR">Нет связи с сервером.</string>
     <string name="NOTIFICATION_SERVER_RESPONSE_ERROR">Ошибка при ответе сервера.</string>
     <string name="NOTIFICATION_EMPTY_LOGIN_OR_PASSWORD">Логин или пароль пуст. Пожалуйста, введите логин и пароль, а затем повторите попытку входа.</string>
     <string name="NOTIFICATION_MAX_USER_COUNT">Достигнуто максимальное количество пользователей на устройстве (%1$s)! Обратитесь к менеджеру!</string>

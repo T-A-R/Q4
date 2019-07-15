@@ -81,7 +81,7 @@ public class QuizerAPI {
         Log.d(TAG, "authUser: " + json);
 
         Map<String, String> fields = new HashMap<>();
-        fields.put("json_data", json);
+        fields.put(Constants.ServerFields.JSON_DATA, json);
 
         CoreApplication.getQuizerApi().authUser(url, fields).enqueue(new Callback<ResponseBody>() {
             @Override
@@ -116,7 +116,7 @@ public class QuizerAPI {
         Log.d(TAG, "sendQuestionnaires: " + json);
 
         Map<String, String> fields = new HashMap<>();
-        fields.put("json_data", json);
+        fields.put(Constants.ServerFields.JSON_DATA, json);
 
         CoreApplication.getQuizerApi().sendQuestionnaires(url, fields).enqueue(new Callback<ResponseBody>() {
             @Override
@@ -151,7 +151,7 @@ public class QuizerAPI {
         Log.d(TAG, "getQuotas: " + json);
 
         Map<String, String> fields = new HashMap<>();
-        fields.put("json_data", json);
+        fields.put(Constants.ServerFields.JSON_DATA, json);
 
         CoreApplication.getQuizerApi().getQuotas(url, fields).enqueue(new Callback<ResponseBody>() {
             @Override
@@ -215,6 +215,39 @@ public class QuizerAPI {
 
     public interface SendAudioCallback {
         void onSendAudioCallback(ResponseBody data);
+    }
+
+    /**
+     * Отправка ключа.
+     *
+     * @param url
+     * @param json
+     * @param listener
+     */
+    static public void sendKey(String url, String json, final SendKeyCallback listener) {
+
+        Log.d(TAG, "authUser: " + json);
+
+        Map<String, String> fields = new HashMap<>();
+        fields.put(Constants.ServerFields.JSON_DATA, json);
+
+        CoreApplication.getQuizerApi().sendKey(url, fields).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d(TAG, "QuizerAPI.sendKey.onResponse() Message: " + response.message());
+                listener.onSendKey(response.body());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d(TAG, "QuizerAPI.sendKey.onFailure() " + t);
+                listener.onSendKey(null);
+            }
+        });
+    }
+
+    public interface SendKeyCallback {
+        void onSendKey(ResponseBody data);
     }
 
 }

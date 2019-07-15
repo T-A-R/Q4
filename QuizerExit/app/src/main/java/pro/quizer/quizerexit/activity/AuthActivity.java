@@ -355,6 +355,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         hideProgressBar();
 
         if (responseBody == null) {
+            showToast(getString(R.string.NOTIFICATION_SERVER_CONNECTION_ERROR) + " Ошибка: 4.01");
             final UserModel savedUserModel = getLocalUserModel(login, passwordMD5);
 
             if (savedUserModel != null) {
@@ -369,11 +370,10 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
 
         String responseJson;
         try {
-            Log.d(TAG, "onAuthUser 0: ");
             responseJson = responseBody.string();
         } catch (IOException e) {
             e.printStackTrace();
-            Log.d(TAG, "onAuthUser 1: " + e);
+            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 4.02");
             responseJson = null;
         }
 
@@ -381,17 +381,17 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         try {
             authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
         } catch (final Exception pE) {
-            Log.d(TAG, "onAuthUser 2: " + pE);
+            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 4.03");
         }
-
-        if (authResponseModel != null)
-            Log.d(TAG, "onAuthUser 3: " + authResponseModel.getResult());
-        else
-            Log.d(TAG, "onAuthUser 3: NULL");
 
         if (authResponseModel == null) return;
 
-        SPUtils.saveAuthTimeDifference(AuthActivity.this, authResponseModel.getServerTime());
+        if (authResponseModel.getServerTime() != null) {
+            SPUtils.saveAuthTimeDifference(AuthActivity.this, authResponseModel.getServerTime());
+        } else {
+            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 4.04");
+        }
+
 
         if (authResponseModel.getResult() != 0) {
             if (isNeedDownloadConfig(authResponseModel)) {
@@ -405,7 +405,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
                         authResponseModel.getUserProjectId());
             }
         } else {
-            showToast(authResponseModel.getError());
+            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 4.05");
         }
     }
 

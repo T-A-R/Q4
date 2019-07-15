@@ -226,7 +226,7 @@ public class QuizerAPI {
      */
     static public void sendKey(String url, String json, final SendKeyCallback listener) {
 
-        Log.d(TAG, "authUser: " + json);
+        Log.d(TAG, "sendKey: " + json);
 
         Map<String, String> fields = new HashMap<>();
         fields.put(Constants.ServerFields.JSON_DATA, json);

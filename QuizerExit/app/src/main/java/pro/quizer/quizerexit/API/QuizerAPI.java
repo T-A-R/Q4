@@ -250,4 +250,37 @@ public class QuizerAPI {
         void onSendKey(ResponseBody data);
     }
 
+    /**
+     * Запрос конфига
+     *
+     * @param url
+     * @param json
+     * @param listener
+     */
+    static public void getConfig(String url, String json, final GetConfigCallback listener) {
+
+        Log.d(TAG, "getConfig: " + json);
+
+        Map<String, String> fields = new HashMap<>();
+        fields.put(Constants.ServerFields.JSON_DATA, json);
+
+        CoreApplication.getQuizerApi().getConfig(url, fields).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d(TAG, "QuizerAPI.getConfig.onResponse() Message: " + response.message());
+                listener.onGetConfig(response.body());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d(TAG, "QuizerAPI.getConfig.onFailure() " + t);
+                listener.onGetConfig(null);
+            }
+        });
+    }
+
+    public interface GetConfigCallback {
+        void onGetConfig(ResponseBody data);
+    }
+
 }

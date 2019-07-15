@@ -208,53 +208,43 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
                 pModel.getConfigId()
         );
 
-        mConfigDictionary.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(configRequestModel));
+        Gson gson = new Gson();
+        String json = gson.toJson(configRequestModel);
 
-        final Call.Factory client = new OkHttpClient();
-        client.newCall(new DoRequest().post(mConfigDictionary, getServer()))
-                .enqueue(new Callback() {
+        QuizerAPI.getConfig(getServer(), json, responseBody -> {
 
-                             @Override
-                             public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
-                                 hideProgressBar();
-                                 showToast(getString(R.string.NOTIFICATION_INTERNET_CONNECTION_ERROR));
-                             }
+            hideProgressBar();
 
-                             @Override
-                             public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
-                                 hideProgressBar();
+            if (responseBody == null) {
+                showToast(getString(R.string.NOTIFICATION_SERVER_CONNECTION_ERROR) + " Ошибка: 6.01");
+                return;
+            }
 
-                                 final ResponseBody responseBody = response.body();
+            String responseJson = null;
+            try {
+                responseJson = responseBody.string();
+            } catch (IOException e) {
+                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 6.02");
+            }
+            final GsonBuilder gsonBuilder = new GsonBuilder();
+            ConfigResponseModel configResponseModel = null;
 
-                                 if (responseBody == null) {
-                                     showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR));
+            try {
+                configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
+            } catch (final Exception pE) {
+                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 6.03");
+            }
 
-                                     return;
-                                 }
-
-                                 final String responseJson = responseBody.string();
-                                 final GsonBuilder gsonBuilder = new GsonBuilder();
-                                 ConfigResponseModel configResponseModel = null;
-
-                                 try {
-                                     configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
-                                 } catch (final Exception pE) {
-                                     // empty
-                                 }
-
-                                 if (configResponseModel != null) {
-                                     if (configResponseModel.getResult() != 0) {
-                                         downloadFiles(configResponseModel, pModel, pLogin, pPassword, pModel.getConfigId(), pModel.getUserId(), pModel.getRoleId(), pModel.getUserProjectId());
-                                     } else {
-                                         showToast(configResponseModel.getError());
-                                     }
-                                 } else {
-                                     showToast(getString(R.string.NOTIFICATION_SERVER_ERROR));
-                                 }
-                             }
-                         }
-
-                );
+            if (configResponseModel != null) {
+                if (configResponseModel.getResult() != 0) {
+                    downloadFiles(configResponseModel, pModel, pLogin, pPassword, pModel.getConfigId(), pModel.getUserId(), pModel.getRoleId(), pModel.getUserProjectId());
+                } else {
+                    showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 6.05");
+                }
+            } else {
+                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 6.06");
+            }
+        });
     }
 
     private void downloadQuotas(final ConfigResponseModel pConfigResponseModel,
@@ -408,6 +398,4 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 4.05");
         }
     }
-
-
 }

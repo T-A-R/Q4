@@ -27,6 +27,10 @@ public interface RetrofitQuizerAPI {
 
     @FormUrlEncoded
     @POST()
+    Call<ResponseBody> getConfig(@Url String apiname, @FieldMap Map<String, String> fields);
+
+    @FormUrlEncoded
+    @POST()
     Call<ResponseBody> sendQuestionnaires(@Url String apiname, @FieldMap Map<String, String> fields);
 
     @FormUrlEncoded
@@ -47,8 +51,5 @@ public interface RetrofitQuizerAPI {
 //
 //    @POST("/_query/send-data")
 //    Call<Void> sendPhoto(@Body() QuizerAPI.SendPhotoBody body);
-//
-//    @POST("/wheretoredirrect_json.php")
-//    Call<Void> submitKey(@Body() QuizerAPI.SubmitKeyBody body);
 
 }

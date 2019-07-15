@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,6 +31,8 @@ import pro.quizer.quizerexit.model.quota.QuotaModel;
 import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 import pro.quizer.quizerexit.view.CustomCheckableButton;
+
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
 public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAdapter.AnswerListViewHolder> {
 
@@ -124,7 +127,6 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
             if (!OptionsOpenType.CHECKBOX.equals(openType)) {
                 final String placeholder = options.getPlaceholder();
                 final String textAnswer = pAnswer.getTextAnswer();
-
                 mEditText.setVisibility(View.VISIBLE);
                 mEditText.setHint(StringUtils.isEmpty(placeholder) ? mDefaultPlaceHolder : placeholder);
                 mEditText.setTag(pPosition);
@@ -296,9 +298,6 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
     private void refresh() {
         notifyDataSetChanged();
-//        if (mRefreshRunnable != null) {
-//            mRefreshRunnable.run();
-//        }
     }
 
     public class ElementTextWatcher extends SimpleTextWatcher {
@@ -317,6 +316,12 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
             final String answer = s.toString();
             mAnswer.setTextAnswer(answer);
+
+            if(mEditText.isEnabled()) {
+                mEditText.setFocusable(true);
+                mEditText.setFocusableInTouchMode(true);
+                mEditText.requestFocus();
+            }
 
             if (mEditText.isEnabled() && StringUtils.isEmpty(answer)) {
                 mEditText.setBackgroundResource(R.drawable.edit_text_red_border);

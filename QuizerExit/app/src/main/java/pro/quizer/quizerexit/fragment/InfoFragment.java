@@ -30,7 +30,6 @@ public class InfoFragment extends AbstractContentElementFragment {
 
     public static final String BUNDLE_CURRENT_QUESTION = "BUNDLE_CURRENT_QUESTION";
     public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
-    public static final String BUNDLE_MAP = "BUNDLE_MAP";
 
     private ElementModel mCurrentElement;
     private OptionsModel mAttributes;
@@ -45,7 +44,6 @@ public class InfoFragment extends AbstractContentElementFragment {
         bundle.putBoolean(BUNDLE_IS_BUTTON_VISIBLE, isButtonVisible);
         bundle.putSerializable(BUNDLE_CURRENT_QUESTION, pElement);
         bundle.putSerializable(BUNDLE_CALLBACK, pCallback);
-        bundle.putSerializable(BUNDLE_MAP, pMap);
         fragment.setArguments(bundle);
 
         return fragment;
@@ -65,7 +63,7 @@ public class InfoFragment extends AbstractContentElementFragment {
         if (bundle != null) {
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
-            mMap = (HashMap<Integer, ElementModel>) bundle.getSerializable(BUNDLE_MAP);
+            mMap = getBaseActivity().getMap();
             mAttributes = mCurrentElement.getOptions();
             mIsButtonVisible = bundle.getBoolean(BUNDLE_IS_BUTTON_VISIBLE);
 
@@ -158,60 +156,11 @@ public class InfoFragment extends AbstractContentElementFragment {
         switch (mCurrentElement.getSubtype()) {
             case ElementSubtype.HTML:
                 UiUtils.setTextOrHide(mText, data);
-
                 break;
-//            case ElementSubtype.AUDIO:
-//                final String fileAudioPath = getFilePath(data);
-//
-//                if (StringUtils.isEmpty(fileAudioPath)) {
-//                    return;
-//                }
-//
-//                mAudioPlayer.setVisibility(View.VISIBLE);
-//                mAudioPlayer.setSource(Uri.fromFile(new File(fileAudioPath)));
-//                mAudioPlayer.enableSwipeGestures(((BaseActivity) mBaseActivity).getWindow());
-//
-//                break;
-//            case ElementSubtype.VIDEO:
-//                final String fileVideoPath = getFilePath(data);
-//
-//                if (StringUtils.isEmpty(fileVideoPath)) {
-//                    return;
-//                }
-//
-//                mVideoPlayer.setVisibility(View.VISIBLE);
-//                mVideoPlayer.setSource(Uri.fromFile(new File(fileVideoPath)));
-//
-//                mVideoPlayer.setHideControlsOnPlay(true);
-//
-//                mVideoPlayer.enableSwipeGestures(((BaseActivity) mBaseActivity).getWindow());
-//
-//                break;
-//            case ElementSubtype.IMAGE:
-//                final String filePhotooPath = getFilePath(data);
-//
-//                if (StringUtils.isEmpty(filePhotooPath)) {
-//                    return;
-//                }
-//
-//                mImageView.setVisibility(View.VISIBLE);
-//
-//                Picasso.with(mBaseActivity)
-//                        .load(new File(filePhotooPath))
-//                        .into(mImageView);
-//
-//
-//                break;
-            default:
 
+            default:
                 break;
         }
     }
-//        RecyclerView mRecyclerView = pView.findViewById(R.id.info_recycler_view);
-//
-//        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-//        mRecyclerView.setHasFixedSize(true);
-//        ContentElementsAdapter mAdapter = new ContentElementsAdapter((BaseActivity) getContext(), mCurrentElement.getElements());
-//        mRecyclerView.setAdapter(mAdapter);
-//    }
+
 }

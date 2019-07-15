@@ -13,8 +13,8 @@ android {
         applicationId "pro.quizer.quizerexit"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 29
-        versionName "2.0.29"
+        versionCode 100
+        versionName "2.1.00"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         project.ext.set("archivesBaseName", "Quizer_ " + defaultConfig.versionName)
     }
@@ -33,6 +33,10 @@ android {
         quizer {
 //            applicationId 'pro.quizer.quizer'
         }
+    }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
     }
 }
 
@@ -69,4 +73,10 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
 }

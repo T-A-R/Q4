@@ -62,20 +62,6 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class ElementActivity extends BaseActivity {
 
-//    public static final Parcelable.Creator<Class> CREATOR = new Parcelable.Creator<Class>() {
-//
-//        @Override
-//        public Class createFromParcel(Parcel in) {
-//            return null;
-//        }
-//
-//        @Override
-//        public Class[] newArray(int size) {
-//            return null;
-//        }
-//
-//    };
-
     public static final int FIRST_ELEMENT = Integer.MIN_VALUE;
     public static final int ONE_SEC = 1000;
     UserModel mUser;
@@ -110,6 +96,16 @@ public class ElementActivity extends BaseActivity {
     private TextView mStatus;
 
     private NavigationCallback mNavigationCallback = new NavigationCallback() {
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int i) {
+
+        }
 
         @Override
         public void onForward(final int pNextRelativeId, final View forwardView) {
@@ -372,6 +368,12 @@ public class ElementActivity extends BaseActivity {
     private void showNextElement(final int pNextRelativeId, final boolean pIsAddToBackStack, final View pForwardView) {
         if (pNextRelativeId == -1) {
 
+            if (mConfig.isSaveAborted()) {
+                showProgressBar();
+                saveQuestionnaireToDatabase(true);
+                showToast(getString(R.string.QUESTIONS_SAVED));
+            }
+
             finish();
             startMainActivity();
 
@@ -387,7 +389,7 @@ public class ElementActivity extends BaseActivity {
                 UiUtils.setButtonEnabled(pForwardView, false);
             }
             showProgressBar();
-            saveQuestionnaireToDatabase();
+            saveQuestionnaireToDatabase(false);
             showToast(getString(R.string.NOTIFICATION_QUIZ_IS_FINISHED));
 
             finish();
@@ -466,6 +468,11 @@ public class ElementActivity extends BaseActivity {
 
                         @Override
                         public void onClick(final DialogInterface dialog, final int which) {
+                            if (mConfig.isSaveAborted()) {
+                                showProgressBar();
+                                saveQuestionnaireToDatabase(true);
+                                showToast(getString(R.string.QUESTIONS_SAVED));
+                            }
                             finish();
                             startMainActivity();
                         }
@@ -474,7 +481,7 @@ public class ElementActivity extends BaseActivity {
         }
     }
 
-    private void saveQuestionnaireToDatabase() {
+    private void saveQuestionnaireToDatabase(boolean aborted) {
         final long endTime = DateUtils.getCurrentTimeMillis();
         final long durationTimeQuestionnaire = endTime - mStartDateInterview;
 
@@ -492,6 +499,11 @@ public class ElementActivity extends BaseActivity {
         questionnaireDatabaseModel.gps = mGpsString;
         questionnaireDatabaseModel.gps_time = mGpsTime;
         questionnaireDatabaseModel.date_interview = mStartDateInterview;
+
+        if (aborted)
+            questionnaireDatabaseModel.survey_status = "aborted";
+        else
+            questionnaireDatabaseModel.survey_status = "complited";
 
         final int showingScreensCount = saveScreenElements();
         final int answersCount = saveAnswersElements();

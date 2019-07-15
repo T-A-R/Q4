@@ -32,10 +32,14 @@ public class QuestionTableFragment extends AbstractQuestionFragment {
         super.onConfigurationChanged(newConfig);
     }
 
-    public static Fragment newInstance(final boolean pIsFromDialog, final boolean pIsVisibleButton, final UserModel user, @NonNull final ElementModel pElement, final NavigationCallback pCallback, final HashMap<Integer, ElementModel> pMap) {
+    public static Fragment newInstance(final boolean pIsFromDialog,
+                                       final boolean pIsVisibleButton,
+                                       final UserModel user,
+                                       @NonNull final ElementModel pElement,
+                                       final NavigationCallback pCallback) {
         final Fragment fragment = new QuestionTableFragment();
 
-        fragment.setArguments(getBundle(pIsFromDialog, pIsVisibleButton, user, pElement, pCallback, pMap));
+        fragment.setArguments(getBundle(pIsFromDialog, pIsVisibleButton, pElement, pCallback));
 
         return fragment;
     }

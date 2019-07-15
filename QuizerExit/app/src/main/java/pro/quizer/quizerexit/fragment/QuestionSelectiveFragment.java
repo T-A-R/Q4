@@ -27,15 +27,12 @@ public class QuestionSelectiveFragment extends AbstractContentElementFragment {
 
     public static final String BUNDLE_CURRENT_QUESTION = "BUNDLE_CURRENT_QUESTION";
     public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
-    public static final String BUNDLE_MAP = "BUNDLE_MAP";
-
     public static final String BUNDLE_TOKEN = "BUNDLE_TOKEN";
     public static final String BUNDLE_LOGIN_ADMIN = "BUNDLE_LOGIN_ADMIN";
     public static final String BUNDLE_USER_ID = "BUNDLE_USER_ID";
     public static final String BUNDLE_USER_LOGIN = "BUNDLE_USER_LOGIN";
     public static final String BUNDLE_IS_PHOTO_QUESTIONNAIRE = "BUNDLE_IS_PHOTO_QUESTIONNAIRE";
     public static final String BUNDLE_PROJECT_ID = "BUNDLE_PROJECT_ID";
-    public static final String BUNDLE_USER = "BUNDLE_USER";
 
     private FragmentManager mFragmentManager;
     private ElementModel mCurrentElement;
@@ -75,14 +72,12 @@ public class QuestionSelectiveFragment extends AbstractContentElementFragment {
         bundle.putSerializable(BUNDLE_CURRENT_QUESTION, pElement);
         bundle.putSerializable(BUNDLE_CALLBACK, pCallback);
         bundle.putBoolean(BUNDLE_IS_BUTTON_VISIBLE, isButtonVisible);
-        bundle.putSerializable(BUNDLE_MAP, pMap);
         bundle.putSerializable(BUNDLE_TOKEN, pToken);
         bundle.putSerializable(BUNDLE_LOGIN_ADMIN, pLoginAdmin);
         bundle.putSerializable(BUNDLE_USER_ID, pUserId);
         bundle.putSerializable(BUNDLE_USER_LOGIN, pUserLogin);
         bundle.putSerializable(BUNDLE_IS_PHOTO_QUESTIONNAIRE, pIsPhotoQuestionnaire);
         bundle.putSerializable(BUNDLE_PROJECT_ID, pProjectId);
-        bundle.putSerializable(BUNDLE_USER, pUser);
 
         fragment.setArguments(bundle);
 
@@ -104,7 +99,7 @@ public class QuestionSelectiveFragment extends AbstractContentElementFragment {
             mFragmentManager = getFragmentManager();
             mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
             mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
-            mMap = (HashMap<Integer, ElementModel>) bundle.getSerializable(BUNDLE_MAP);
+            mMap = getBaseActivity().getMap();
             mAttributes = mCurrentElement.getOptions();
             baseActivity = (BaseActivity) getContext();
             mToken = (String) bundle.getSerializable(BUNDLE_TOKEN);
@@ -113,7 +108,7 @@ public class QuestionSelectiveFragment extends AbstractContentElementFragment {
             mUserLogin = (String) bundle.getSerializable(BUNDLE_USER_LOGIN);
             mIsPhotoQuestionnaire = (boolean) bundle.getSerializable(BUNDLE_IS_PHOTO_QUESTIONNAIRE);
             mProjectId = (int) bundle.getSerializable(BUNDLE_PROJECT_ID);
-            mUser = (UserModel) bundle.getSerializable(BUNDLE_USER);
+            mUser = getBaseActivity().getCurrentUser();
             mIsButtonVisible = bundle.getBoolean(BUNDLE_IS_BUTTON_VISIBLE);
 
             initView(view);
@@ -258,12 +253,5 @@ public class QuestionSelectiveFragment extends AbstractContentElementFragment {
                 fragmentTransaction.commit();
             }
         });
-//        new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme).setTitle("test").setMessage("sdafsdgsd").create().show();
-//        RecyclerView mRecyclerView = pView.findViewById(R.id.info_recycler_view);
-//
-//        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-//        mRecyclerView.setHasFixedSize(true);
-//        ContentElementsAdapter mAdapter = new ContentElementsAdapter((BaseActivity) getContext(), mCurrentElement.getElements());
-//        mRecyclerView.setAdapter(mAdapter);
     }
 }

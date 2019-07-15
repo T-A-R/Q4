@@ -6,11 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.database.ElementDatabaseModel;
 import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 
 public class QuestionnairesCountBySequenceExecutable extends BaseModelExecutable<Integer> {
 
@@ -32,15 +30,18 @@ public class QuestionnairesCountBySequenceExecutable extends BaseModelExecutable
         int count = 0;
 
         // GOOD select
+
         final List<QuestionnaireDatabaseModel> sentQuestionnaires = new Select()
                 .from(QuestionnaireDatabaseModel.class)
                 .where(QuestionnaireDatabaseModel.STATUS + " =? AND " +
                                 QuestionnaireDatabaseModel.USER_ID + " =? AND " +
-                                QuestionnaireDatabaseModel.USER_PROJECT_ID + " =?",
-                        QuestionnaireStatus.NOT_SENT, userId, userProjectId)
+                                QuestionnaireDatabaseModel.USER_PROJECT_ID + " =? AND " +
+                                QuestionnaireDatabaseModel.SURVEY_STATUS + " !=?",
+                        QuestionnaireStatus.NOT_SENT, userId, userProjectId, "aborted")
                 .execute();
 
         for (final QuestionnaireDatabaseModel questionnaireDatabaseModel : sentQuestionnaires) {
+
             // GOOD select
             final List<ElementDatabaseModel> elements = new Select()
                     .from(ElementDatabaseModel.class)

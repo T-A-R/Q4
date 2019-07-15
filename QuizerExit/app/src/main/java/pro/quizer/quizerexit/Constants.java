@@ -13,6 +13,8 @@ public final class Constants {
 
         String ACTIVATION_URL = "http://188.225.11.47/wheretoredirrect_json.php";
 
+        String API_URL = "http://188.225.11.47/";
+
     }
 
     public interface SP {

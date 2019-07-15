@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 import pro.quizer.quizerexit.model.config.ElementModel;
 
-public interface NavigationCallback extends Serializable {
+public interface NavigationCallback extends Serializable, Parcelable {
 
     void onForward(final int pNextRelativeId, final View forwardView);
 

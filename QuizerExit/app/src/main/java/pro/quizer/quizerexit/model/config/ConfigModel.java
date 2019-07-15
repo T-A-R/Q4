@@ -63,6 +63,9 @@ public class ConfigModel implements Serializable {
     @SerializedName("project_info")
     private ProjectInfoModel project_info;
 
+    @SerializedName("save_aborted")
+    private boolean save_aborted;
+
     public String getServerUrl() {
         return server_url;
     }
@@ -150,6 +153,10 @@ public class ConfigModel implements Serializable {
 
     public ProjectInfoModel getProjectInfo() {
         return project_info;
+    }
+
+    public boolean isSaveAborted() {
+        return save_aborted;
     }
 
 }

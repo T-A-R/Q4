@@ -39,7 +39,7 @@ public interface RetrofitQuizerAPI {
 
     @Multipart
     @POST()
-    Call<ResponseBody> sendAudio(
+    Call<ResponseBody> sendFiles(
             @Url String apiname,
             @Part(Constants.ServerFields.JSON_DATA) RequestBody description,
             @Part List<MultipartBody.Part> files);

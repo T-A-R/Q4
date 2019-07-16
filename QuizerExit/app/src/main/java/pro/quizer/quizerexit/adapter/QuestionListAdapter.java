@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,6 +102,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
     class AnswerListViewHolder extends AbstractViewHolder {
 
         TextView mAnswer;
+        EditText editText;
         View mAnswerFrame;
         CustomCheckableButton mCheckBox;
         RecyclerView mContentsRecyclerView;
@@ -109,6 +111,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
         AnswerListViewHolder(final View itemView, final BaseActivity pBaseActivity) {
             super(itemView, pBaseActivity);
             mAnswer = itemView.findViewById(R.id.answer_text);
+            editText = itemView.findViewById(R.id.answer_edit_text);
             mCheckBox = itemView.findViewById(R.id.answer_checkbox);
             mContentsRecyclerView = itemView.findViewById(R.id.contents_recycler_view);
             mAnswerFrame = itemView.findViewById(R.id.answer_frame);
@@ -133,6 +136,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                 mEditText.setEnabled(isEditTextEnabled);
                 mEditText.clearTextChangedListeners();
                 mEditText.addTextChangedListener(new ElementTextWatcher(getModel(pPosition), mEditText));
+
                 mEditText.setText(textAnswer);
 
                 switch (options.getOpenType()) {
@@ -162,7 +166,6 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                         break;
                     case OptionsOpenType.TEXT:
                         mEditText.setInputType(InputType.TYPE_CLASS_TEXT);
-
                         break;
                     default:
                         // неизвестный тип open_type
@@ -214,15 +217,17 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
             mCheckBox.setEnabled(isEnabled);
             mCheckBox.setChecked(isChecked);
             mCheckBox.setTag(pPosition);
-            mCheckBox.setOnClickListener(new View.OnClickListener() {
 
+            mCheckBox.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(final View view) {
+                public void onClick(View view) {
+
                     final CustomCheckableButton checkBox = (CustomCheckableButton) view;
                     final boolean isChecked = checkBox.isChecked();
                     final int minAnswers = getMinAnswer();
                     final int maxAnswers = getMaxAnswer();
                     final int checkedItemsCount = getCheckedItemsCount();
+
 
                     if (isChecked && minAnswers == DEFAULT_MIN_ANSWERS && minAnswers == maxAnswers) {
                         unselectAll();
@@ -256,8 +261,36 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
                         pAnswer.setChecked(isChecked);
 
-                        refresh();
+//                        refresh();
+
+                        if (mEditText.isEnabled() && mEditText.getText() == null) {
+                            mEditText.setBackgroundResource(R.drawable.edit_text_red_border);
+                            mEditText.requestFocus();
+                        } else {
+                            mEditText.setBackgroundResource(R.drawable.edit_text_transparent_border);
+                            mEditText.requestFocus();
+                        }
+
+                        Log.d(TAG, "onClick: " + pPosition + " checked: " + isChecked);
+                        if (isChecked) {
+                            mEditText.setEnabled(true);
+                            mEditText.setFocusable(true);
+                            mEditText.setFocusableInTouchMode(true);
+                            mEditText.requestFocus();
+
+                            if (mEditText.isEnabled() && mEditText.getText().toString().matches("")) {
+                                mEditText.setBackgroundResource(R.drawable.edit_text_red_border);
+                                mEditText.requestFocus();
+                            } else {
+                                mEditText.setBackgroundResource(R.drawable.edit_text_transparent_border);
+                                mEditText.requestFocus();
+                            }
+                        } else {
+                            mEditText.setEnabled(false);
+                        }
                     }
+
+
                 }
             });
 
@@ -303,11 +336,11 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
     public class ElementTextWatcher extends SimpleTextWatcher {
 
         private ElementModel mAnswer;
-        private EditText mEditText;
+        private EditText zmEditText;
 
         ElementTextWatcher(final ElementModel pAnswer, final EditText pEditText) {
             mAnswer = pAnswer;
-            mEditText = pEditText;
+            zmEditText = pEditText;
         }
 
         @Override
@@ -317,16 +350,12 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
             final String answer = s.toString();
             mAnswer.setTextAnswer(answer);
 
-            if(mEditText.isEnabled()) {
-                mEditText.setFocusable(true);
-                mEditText.setFocusableInTouchMode(true);
-                mEditText.requestFocus();
-            }
-
-            if (mEditText.isEnabled() && StringUtils.isEmpty(answer)) {
-                mEditText.setBackgroundResource(R.drawable.edit_text_red_border);
+            if (zmEditText.isEnabled() && StringUtils.isEmpty(answer)) {
+                zmEditText.setBackgroundResource(R.drawable.edit_text_red_border);
+                zmEditText.requestFocus();
             } else {
-                mEditText.setBackgroundResource(R.drawable.edit_text_transparent_border);
+                zmEditText.setBackgroundResource(R.drawable.edit_text_transparent_border);
+                zmEditText.requestFocus();
             }
 
         }

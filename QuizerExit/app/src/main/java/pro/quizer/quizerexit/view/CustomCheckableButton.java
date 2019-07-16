@@ -57,7 +57,6 @@ public abstract class CustomCheckableButton extends RelativeLayout implements Se
 
     private void inflate() {
         inflate(getContext(), R.layout.view_radio_button, this);
-        Log.d(TAG, "inflate: click");
         initViews();
     }
 

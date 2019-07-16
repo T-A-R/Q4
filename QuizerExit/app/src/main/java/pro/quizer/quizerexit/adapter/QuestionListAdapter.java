@@ -229,7 +229,6 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                     final int checkedItemsCount = getCheckedItemsCount();
 
 
-
                     if (isChecked && minAnswers == DEFAULT_MIN_ANSWERS && minAnswers == maxAnswers) {
                         unselectAll();
 
@@ -261,80 +260,39 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                         }
 
                         pAnswer.setChecked(isChecked);
-//
+
 //                        refresh();
+
+                        if (mEditText.isEnabled() && mEditText.getText() == null) {
+                            mEditText.setBackgroundResource(R.drawable.edit_text_red_border);
+                            mEditText.requestFocus();
+                        } else {
+                            mEditText.setBackgroundResource(R.drawable.edit_text_transparent_border);
+                            mEditText.requestFocus();
+                        }
+
+                        Log.d(TAG, "onClick: " + pPosition + " checked: " + isChecked);
+                        if (isChecked) {
+                            mEditText.setEnabled(true);
+                            mEditText.setFocusable(true);
+                            mEditText.setFocusableInTouchMode(true);
+                            mEditText.requestFocus();
+
+                            if (mEditText.isEnabled() && mEditText.getText().toString().matches("")) {
+                                mEditText.setBackgroundResource(R.drawable.edit_text_red_border);
+                                mEditText.requestFocus();
+                            } else {
+                                mEditText.setBackgroundResource(R.drawable.edit_text_transparent_border);
+                                mEditText.requestFocus();
+                            }
+                        } else {
+                            mEditText.setEnabled(false);
+                        }
                     }
 
-                    Log.d(TAG, "onClick: " + pPosition + " checked: " + isChecked);
-                    if(isChecked) {
-                        mEditText.setEnabled(true);
-                        mEditText.setFocusable(true);
-                        mEditText.setFocusableInTouchMode(true);
-                        mEditText.requestFocus();
-                    } else {
-                        mEditText.setEnabled(false);
-                    }
+
                 }
             });
-
-//            mCheckBox.setOnClickListener(new View.OnClickListener() {
-//
-//                @Override
-//                public void onClick(final View view) {
-//                    final CustomCheckableButton checkBox = (CustomCheckableButton) view;
-//                    final boolean isChecked = checkBox.isChecked();
-//                    final int minAnswers = getMinAnswer();
-//                    final int maxAnswers = getMaxAnswer();
-//                    final int checkedItemsCount = getCheckedItemsCount();
-//
-//                    if (isChecked && minAnswers == DEFAULT_MIN_ANSWERS && minAnswers == maxAnswers) {
-//                        unselectAll();
-//
-//                        pAnswer.setChecked(true);
-//
-//                        refresh();
-//                    } else if (isChecked && maxAnswers != EMPTY_COUNT_ANSWER && checkedItemsCount >= maxAnswers) {
-//                        checkBox.setChecked(false);
-//
-//                        QuestionListAdapter.this.mBaseActivity.showToast(String.format(QuestionListAdapter.this.mBaseActivity.getString(R.string.NOTIFICATION_MAX_ANSWERS), String.valueOf(maxAnswers)));
-//                    } else if (options.isUnchecker()) {
-//                        if (isChecked) {
-//                            setCheckedItemsCount(1);
-//                            unselectAll();
-//                            disableOther(pAnswer.getRelativeID());
-//                        } else {
-//                            setCheckedItemsCount(0);
-//                            enableAll();
-//                        }
-//
-//                        pAnswer.setChecked(isChecked);
-//
-//                        refresh();
-//                    } else {
-//                        if (isChecked) {
-//                            setCheckedItemsCount(checkedItemsCount + 1);
-//                        } else {
-//                            setCheckedItemsCount(checkedItemsCount - 1);
-//                        }
-//
-//                        pAnswer.setChecked(isChecked);
-//
-//                        refresh();
-//                    }
-//
-//                    Log.d(TAG, "onClick: isChecked " + isChecked + " position: " + pPosition);
-//                    if(!isChecked) {
-//
-////                        mEditText.setEnabled(true);
-////                        mEditText.setFocusable(true);
-////                        mEditText.setFocusableInTouchMode(true);
-////                        mEditText.requestFocus();
-//                    }
-//
-//                }
-//
-//
-//            });
 
             itemView.setOnClickListener(new View.OnClickListener() {
 
@@ -391,15 +349,6 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
             final String answer = s.toString();
             mAnswer.setTextAnswer(answer);
-
-            if(zmEditText.isEnabled()) {
-//                zmEditText.setFocusable(true);
-//                zmEditText.setFocusableInTouchMode(true);
-//                zmEditText.requestFocus();
-//                editText.setFocusable(true);
-//                editText.setFocusableInTouchMode(true);
-//                editText.requestFocus();
-            }
 
             if (zmEditText.isEnabled() && StringUtils.isEmpty(answer)) {
                 zmEditText.setBackgroundResource(R.drawable.edit_text_red_border);

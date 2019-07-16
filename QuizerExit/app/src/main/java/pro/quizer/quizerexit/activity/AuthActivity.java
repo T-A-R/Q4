@@ -221,7 +221,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
                 if (configResponseModel.getResult() != 0) {
                     downloadFiles(configResponseModel, pModel, pLogin, pPassword);
                 } else {
-                    showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 6.05");
+                    showToast(configResponseModel.getError());
                 }
             } else {
                 showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 6.06");
@@ -362,7 +362,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
                         authResponseModel);
             }
         } else {
-            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 4.05");
+            showToast(authResponseModel.getError());
         }
     }
 }

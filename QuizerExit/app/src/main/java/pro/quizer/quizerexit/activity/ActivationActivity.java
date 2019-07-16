@@ -41,55 +41,6 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
             }
 
             sendKeyWithRetrofit(key);
-
-
-//                final Dictionary<String, String> mDictionaryForRequest = new Hashtable();
-//                mDictionaryForRequest.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(new ActivationRequestModel(key)));
-//
-//                final Call.Factory client = new OkHttpClient();
-//                client.newCall(new DoRequest().post(mDictionaryForRequest, Constants.Default.ACTIVATION_URL))
-//                        .enqueue(new Callback() {
-//
-//                            @Override
-//                            public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
-//                                hideProgressBar();
-//                                showToast(getString(R.string.NOTIFICATION_INTERNET_CONNECTION_ERROR));
-//                            }
-//
-//                            @Override
-//                            public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
-//                                hideProgressBar();
-//
-//                                final ResponseBody responseBody = response.body();
-//
-//                                if (responseBody == null) {
-//                                    showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR));
-//
-//                                    return;
-//                                }
-//
-//                                final String responseJson = responseBody.string();
-//                                ActivationResponseModel activationModel = null;
-//
-//                                try {
-//                                    activationModel = new GsonBuilder().create().fromJson(responseJson, ActivationResponseModel.class);
-//                                } catch (Exception pE) {
-//                                    // empty
-//                                }
-//
-//                                if (activationModel != null) {
-//                                    if (activationModel.getResult() != 0) {
-//                                        saveActivationBundle(activationModel);
-//                                        startAuthActivity();
-//                                    } else {
-//                                        showToast(activationModel.getError());
-//                                    }
-//                                } else {
-//                                    showToast(getString(R.string.NOTIFICATION_SERVER_ERROR));
-//                                }
-//                            }
-//                        });
-
         });
     }
 
@@ -131,7 +82,7 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
                 saveActivationBundle(activationModel);
                 startAuthActivity();
             } else {
-                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 5.04");
+                showToast(activationModel.getError());
             }
         } else {
             showToast(getString(R.string.NOTIFICATION_SERVER_ERROR) + " Ошибка: 5.05");

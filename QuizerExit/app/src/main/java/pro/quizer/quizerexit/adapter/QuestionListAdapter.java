@@ -218,47 +218,17 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
             mCheckBox.setChecked(isChecked);
             mCheckBox.setTag(pPosition);
 
-//            mCheckBox.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//
-//                    final CustomCheckableButton checkBox = (CustomCheckableButton) view;
-//                    final boolean isChecked = checkBox.isChecked();
-//                    final int minAnswers = getMinAnswer();
-//                    final int maxAnswers = getMaxAnswer();
-//                    final int checkedItemsCount = getCheckedItemsCount();
-//
-//                    Log.d(TAG, "onClick: " + pPosition + " checked: " + isChecked);
-//                    if(!isChecked) {
-//                        mEditText.setEnabled(true);
-//                        mEditText.setFocusable(true);
-//                        mEditText.setFocusableInTouchMode(true);
-//                        mEditText.requestFocus();
-//                    }
-//
-//                    if (isChecked && minAnswers == DEFAULT_MIN_ANSWERS && minAnswers == maxAnswers) {
-//                        unselectAll();
-//
-//                        pAnswer.setChecked(true);
-//
-//                        refresh();
-//                    } else if (isChecked && maxAnswers != EMPTY_COUNT_ANSWER && checkedItemsCount >= maxAnswers) {
-//                        checkBox.setChecked(false);
-//
-//                        QuestionListAdapter.this.mBaseActivity.showToast(String.format(QuestionListAdapter.this.mBaseActivity.getString(R.string.NOTIFICATION_MAX_ANSWERS), String.valueOf(maxAnswers)));
-//                    }
-//                }
-//            });
-
             mCheckBox.setOnClickListener(new View.OnClickListener() {
-
                 @Override
-                public void onClick(final View view) {
+                public void onClick(View view) {
+
                     final CustomCheckableButton checkBox = (CustomCheckableButton) view;
                     final boolean isChecked = checkBox.isChecked();
                     final int minAnswers = getMinAnswer();
                     final int maxAnswers = getMaxAnswer();
                     final int checkedItemsCount = getCheckedItemsCount();
+
+
 
                     if (isChecked && minAnswers == DEFAULT_MIN_ANSWERS && minAnswers == maxAnswers) {
                         unselectAll();
@@ -286,32 +256,85 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                     } else {
                         if (isChecked) {
                             setCheckedItemsCount(checkedItemsCount + 1);
-                            mEditText.setEnabled(true);
-                            mEditText.setFocusable(true);
-                            mEditText.setFocusableInTouchMode(true);
-                            mEditText.requestFocus();
                         } else {
                             setCheckedItemsCount(checkedItemsCount - 1);
                         }
 
                         pAnswer.setChecked(isChecked);
-
-                        refresh();
+//
+//                        refresh();
                     }
 
-                    Log.d(TAG, "onClick: isChecked " + isChecked + " position: " + pPosition);
-                    if(!isChecked) {
-
-//                        mEditText.setEnabled(true);
-//                        mEditText.setFocusable(true);
-//                        mEditText.setFocusableInTouchMode(true);
-//                        mEditText.requestFocus();
+                    Log.d(TAG, "onClick: " + pPosition + " checked: " + isChecked);
+                    if(isChecked) {
+                        mEditText.setEnabled(true);
+                        mEditText.setFocusable(true);
+                        mEditText.setFocusableInTouchMode(true);
+                        mEditText.requestFocus();
+                    } else {
+                        mEditText.setEnabled(false);
                     }
-
                 }
-
-
             });
+
+//            mCheckBox.setOnClickListener(new View.OnClickListener() {
+//
+//                @Override
+//                public void onClick(final View view) {
+//                    final CustomCheckableButton checkBox = (CustomCheckableButton) view;
+//                    final boolean isChecked = checkBox.isChecked();
+//                    final int minAnswers = getMinAnswer();
+//                    final int maxAnswers = getMaxAnswer();
+//                    final int checkedItemsCount = getCheckedItemsCount();
+//
+//                    if (isChecked && minAnswers == DEFAULT_MIN_ANSWERS && minAnswers == maxAnswers) {
+//                        unselectAll();
+//
+//                        pAnswer.setChecked(true);
+//
+//                        refresh();
+//                    } else if (isChecked && maxAnswers != EMPTY_COUNT_ANSWER && checkedItemsCount >= maxAnswers) {
+//                        checkBox.setChecked(false);
+//
+//                        QuestionListAdapter.this.mBaseActivity.showToast(String.format(QuestionListAdapter.this.mBaseActivity.getString(R.string.NOTIFICATION_MAX_ANSWERS), String.valueOf(maxAnswers)));
+//                    } else if (options.isUnchecker()) {
+//                        if (isChecked) {
+//                            setCheckedItemsCount(1);
+//                            unselectAll();
+//                            disableOther(pAnswer.getRelativeID());
+//                        } else {
+//                            setCheckedItemsCount(0);
+//                            enableAll();
+//                        }
+//
+//                        pAnswer.setChecked(isChecked);
+//
+//                        refresh();
+//                    } else {
+//                        if (isChecked) {
+//                            setCheckedItemsCount(checkedItemsCount + 1);
+//                        } else {
+//                            setCheckedItemsCount(checkedItemsCount - 1);
+//                        }
+//
+//                        pAnswer.setChecked(isChecked);
+//
+//                        refresh();
+//                    }
+//
+//                    Log.d(TAG, "onClick: isChecked " + isChecked + " position: " + pPosition);
+//                    if(!isChecked) {
+//
+////                        mEditText.setEnabled(true);
+////                        mEditText.setFocusable(true);
+////                        mEditText.setFocusableInTouchMode(true);
+////                        mEditText.requestFocus();
+//                    }
+//
+//                }
+//
+//
+//            });
 
             itemView.setOnClickListener(new View.OnClickListener() {
 

@@ -47,6 +47,17 @@ public class CoreApplication extends Application {
         YandexMetrica.activate(getApplicationContext(), config);
         // Automatic tracking of user activity.
         YandexMetrica.enableActivityAutoTracking(this);
+
+//        // Creating an extended library configuration.
+//        YandexMetricaConfig config = YandexMetricaConfig.newConfigBuilder(API_key)
+//                .withLogs()
+//                .withCrashReporting(true)
+//                .build();
+//        // Initializing the AppMetrica SDK.
+//        YandexMetrica.activate(getApplicationContext(), config);
+//        // Automatic tracking of user activity.
+//        YandexMetrica.enableActivityAutoTracking(this);
+//        YandexMetrica.getReporter(this, API_key).reportEvent("Updates installed");
     }
 
     public static RetrofitQuizerAPI getQuizerApi() {

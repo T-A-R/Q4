@@ -6,12 +6,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 
 import java.io.Serializable;
 
 import pro.quizer.quizerexit.R;
+
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
 public abstract class CustomCheckableButton extends RelativeLayout implements Serializable {
 
@@ -54,7 +57,7 @@ public abstract class CustomCheckableButton extends RelativeLayout implements Se
 
     private void inflate() {
         inflate(getContext(), R.layout.view_radio_button, this);
-
+        Log.d(TAG, "inflate: click");
         initViews();
     }
 

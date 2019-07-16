@@ -41,21 +41,12 @@ public class CoreApplication extends Application {
 
         retrofitQuizerAPI = retrofit.create(RetrofitQuizerAPI.class);
 
-//        // Creating an extended library configuration.
-//        YandexMetricaConfig config = YandexMetricaConfig.newConfigBuilder(API_key).build();
-//        // Initializing the AppMetrica SDK.
-//        YandexMetrica.activate(getApplicationContext(), config);
-//        // Automatic tracking of user activity.
-//        YandexMetrica.enableActivityAutoTracking(this);
-
-        // Creating an extended library configuration.
         YandexMetricaConfig config = YandexMetricaConfig.newConfigBuilder(API_key)
                 .withLogs()
                 .withCrashReporting(true)
                 .build();
-        // Initializing the AppMetrica SDK.
+
         YandexMetrica.activate(getApplicationContext(), config);
-        // Automatic tracking of user activity.
         YandexMetrica.enableActivityAutoTracking(this);
         YandexMetrica.getReporter(this, API_key).reportEvent("Updates installed");
     }

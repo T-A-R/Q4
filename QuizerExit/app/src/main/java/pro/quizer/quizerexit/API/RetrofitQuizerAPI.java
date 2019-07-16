@@ -19,7 +19,15 @@ public interface RetrofitQuizerAPI {
 
     @FormUrlEncoded
     @POST()
+    Call<ResponseBody> sendKey(@Url String apiname, @FieldMap Map<String, String> fields);
+
+    @FormUrlEncoded
+    @POST()
     Call<ResponseBody> authUser(@Url String apiname, @FieldMap Map<String, String> fields);
+
+    @FormUrlEncoded
+    @POST()
+    Call<ResponseBody> getConfig(@Url String apiname, @FieldMap Map<String, String> fields);
 
     @FormUrlEncoded
     @POST()
@@ -31,7 +39,7 @@ public interface RetrofitQuizerAPI {
 
     @Multipart
     @POST()
-    Call<ResponseBody> sendAudio(
+    Call<ResponseBody> sendFiles(
             @Url String apiname,
             @Part(Constants.ServerFields.JSON_DATA) RequestBody description,
             @Part List<MultipartBody.Part> files);
@@ -43,8 +51,5 @@ public interface RetrofitQuizerAPI {
 //
 //    @POST("/_query/send-data")
 //    Call<Void> sendPhoto(@Body() QuizerAPI.SendPhotoBody body);
-//
-//    @POST("/wheretoredirrect_json.php")
-//    Call<Void> submitKey(@Body() QuizerAPI.SubmitKeyBody body);
 
 }

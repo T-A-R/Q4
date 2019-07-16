@@ -1,14 +1,9 @@
 package pro.quizer.quizerexit.API;
 
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
-import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,15 +16,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.CoreApplication;
-import pro.quizer.quizerexit.activity.MainActivity;
-import pro.quizer.quizerexit.model.database.UserModel;
-import pro.quizer.quizerexit.model.request.AuthRequestModel;
 import pro.quizer.quizerexit.model.request.FileRequestModel;
-import pro.quizer.quizerexit.model.response.AuthResponseModel;
-import pro.quizer.quizerexit.utils.DateUtils;
-import pro.quizer.quizerexit.utils.DeviceUtils;
-import pro.quizer.quizerexit.utils.FileUtils;
-import pro.quizer.quizerexit.utils.OkHttpUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,37 +26,74 @@ import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 @SuppressWarnings("WeakerAccess")
 public class QuizerAPI {
 
-//    TODO Заготовки для ретрофит. Не стирать!
+    /**
+     * Отправка ключа.
+     *
+     * @param url
+     * @param json
+     * @param listener
+     */
+    static public void sendKey(String url, String json, final SendKeyCallback listener) {
 
-//    static public class SubmitKeyBody {
-//        public final String key;
-//        public final String name_form;
-//
-//        public SubmitKeyBody(String key, String name_form) {
-//            this.key = key;
-//            this.name_form = name_form;
-//        }
-//    }
-//
-//    static public class GetConfigBody {
-//        public final String login;
-//        public final String passw;
-//        public final String name_form;
-//        public final String login_admin;
-//        public final String config_id;
-//
-//        public GetConfigBody(String login, String passw, String name_form, String login_admin, String config_id) {
-//            this.login = login;
-//            this.passw = passw;
-//            this.name_form = name_form;
-//            this.login_admin = login_admin;
-//            this.config_id = config_id;
-//        }
-//    }
+        Log.d(TAG, "sendKey: " + json);
 
+        Map<String, String> fields = new HashMap<>();
+        fields.put(Constants.ServerFields.JSON_DATA, json);
+
+        CoreApplication.getQuizerApi().sendKey(url, fields).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d(TAG, "QuizerAPI.sendKey.onResponse() Message: " + response.message());
+                listener.onSendKey(response.body());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d(TAG, "QuizerAPI.sendKey.onFailure() " + t);
+                listener.onSendKey(null);
+            }
+        });
+    }
+
+    public interface SendKeyCallback {
+        void onSendKey(ResponseBody data);
+    }
 
     /**
-     * Авторизация
+     * Запрос конфига.
+     *
+     * @param url
+     * @param json
+     * @param listener
+     */
+    static public void getConfig(String url, String json, final GetConfigCallback listener) {
+
+        Log.d(TAG, "getConfig: " + json);
+
+        Map<String, String> fields = new HashMap<>();
+        fields.put(Constants.ServerFields.JSON_DATA, json);
+
+        CoreApplication.getQuizerApi().getConfig(url, fields).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d(TAG, "QuizerAPI.getConfig.onResponse() Message: " + response.message());
+                listener.onGetConfig(response.body());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d(TAG, "QuizerAPI.getConfig.onFailure() " + t);
+                listener.onGetConfig(null);
+            }
+        });
+    }
+
+    public interface GetConfigCallback {
+        void onGetConfig(ResponseBody data);
+    }
+
+    /**
+     * Авторизация.
      *
      * @param url
      * @param json
@@ -81,7 +105,7 @@ public class QuizerAPI {
         Log.d(TAG, "authUser: " + json);
 
         Map<String, String> fields = new HashMap<>();
-        fields.put("json_data", json);
+        fields.put(Constants.ServerFields.JSON_DATA, json);
 
         CoreApplication.getQuizerApi().authUser(url, fields).enqueue(new Callback<ResponseBody>() {
             @Override
@@ -104,7 +128,7 @@ public class QuizerAPI {
 
 
     /**
-     * Отправка анкет
+     * Отправка анкет.
      *
      * @param url
      * @param json
@@ -116,7 +140,7 @@ public class QuizerAPI {
         Log.d(TAG, "sendQuestionnaires: " + json);
 
         Map<String, String> fields = new HashMap<>();
-        fields.put("json_data", json);
+        fields.put(Constants.ServerFields.JSON_DATA, json);
 
         CoreApplication.getQuizerApi().sendQuestionnaires(url, fields).enqueue(new Callback<ResponseBody>() {
             @Override
@@ -139,7 +163,7 @@ public class QuizerAPI {
 
 
     /**
-     * Получение квот
+     * Получение квот.
      *
      * @param url
      * @param json
@@ -151,7 +175,7 @@ public class QuizerAPI {
         Log.d(TAG, "getQuotas: " + json);
 
         Map<String, String> fields = new HashMap<>();
-        fields.put("json_data", json);
+        fields.put(Constants.ServerFields.JSON_DATA, json);
 
         CoreApplication.getQuizerApi().getQuotas(url, fields).enqueue(new Callback<ResponseBody>() {
             @Override
@@ -173,7 +197,7 @@ public class QuizerAPI {
     }
 
     /**
-     * Отправка аудио
+     * Отправка файлов (аудио и фото).
      *
      * @param url
      * @param files
@@ -181,7 +205,7 @@ public class QuizerAPI {
      * @param pMediaType
      * @param listener
      */
-    static public void sendAudio(String url, List<File> files, String pNameForm, String pMediaType, final SendAudioCallback listener) {
+    static public void sendFiles(String url, List<File> files, String pNameForm, String pMediaType, final SendFilesCallback listener) {
 
         String fileName = "files[%1$s]";
 
@@ -192,17 +216,17 @@ public class QuizerAPI {
             parts.add(prepareFilePart(String.format(fileName, i), files.get(i), pMediaType));
         }
 
-        CoreApplication.getQuizerApi().sendAudio(url, description, parts).enqueue(new Callback<ResponseBody>() {
+        CoreApplication.getQuizerApi().sendFiles(url, description, parts).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                Log.d(TAG, "QuizerAPI.sendAudio.onResponse() Message: " + response.message());
-                listener.onSendAudioCallback(response.body());
+                Log.d(TAG, "QuizerAPI.sendFiles.onResponse() Message: " + response.message());
+                listener.onSendFilesCallback(response.body());
             }
 
             @Override
             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                Log.d(TAG, "QuizerAPI.sendAudio.onFailure() " + t);
-                listener.onSendAudioCallback(null);
+                Log.d(TAG, "QuizerAPI.sendFiles.onFailure() " + t);
+                listener.onSendFilesCallback(null);
             }
         });
     }
@@ -213,8 +237,8 @@ public class QuizerAPI {
         return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
     }
 
-    public interface SendAudioCallback {
-        void onSendAudioCallback(ResponseBody data);
+    public interface SendFilesCallback {
+        void onSendFilesCallback(ResponseBody data);
     }
 
 }

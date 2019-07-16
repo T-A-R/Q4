@@ -1,16 +1,11 @@
 package pro.quizer.quizerexit.activity;
 
 import android.os.Bundle;
-import android.os.Parcel;
-import android.support.annotation.NonNull;
-import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.activeandroid.query.Select;
 import com.google.gson.Gson;
@@ -22,26 +17,17 @@ import com.reginald.editspinner.EditSpinner;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Response;
 import okhttp3.ResponseBody;
 import pro.quizer.quizerexit.API.QuizerAPI;
 import pro.quizer.quizerexit.Constants;
-import pro.quizer.quizerexit.DoRequest;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.UpdateQuotasExecutable;
-import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.request.AuthRequestModel;
 import pro.quizer.quizerexit.model.request.ConfigRequestModel;
-import pro.quizer.quizerexit.model.request.QuotaRequestModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.utils.FileUtils;
@@ -158,14 +144,12 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
 
     private void onLoggedIn(final String pLogin,
                             final String pPassword,
-                            final String pConfigId,
-                            final int pUserId,
-                            final int pRoleId,
-                            final int pUserProjectId) {
+                            final AuthResponseModel pAuthResponseModel) {
         SPUtils.resetSendedQInSession(this);
-        updateDatabaseUserByUserId(pLogin, pPassword, pConfigId, pUserId, pRoleId, pUserProjectId);
 
-        onLoggedInWithoutUpdateLocalData(pUserId);
+        updateDatabaseUserByUserId(pLogin, pPassword, pAuthResponseModel.getConfigId(), pAuthResponseModel.getUserId(), pAuthResponseModel.getRoleId(), pAuthResponseModel.getUserProjectId());
+
+        onLoggedInWithoutUpdateLocalData(pAuthResponseModel.getUserId());
     }
 
     private boolean isNeedDownloadConfig(final AuthResponseModel pAuthResponseModel) {
@@ -199,8 +183,6 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
     public void downloadConfig(final String pLogin, final String pPassword, final AuthResponseModel pModel) {
         showProgressBar();
 
-        final Dictionary<String, String> mConfigDictionary = new Hashtable();
-
         final ConfigRequestModel configRequestModel = new ConfigRequestModel(
                 getLoginAdmin(),
                 pLogin,
@@ -208,63 +190,48 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
                 pModel.getConfigId()
         );
 
-        mConfigDictionary.put(Constants.ServerFields.JSON_DATA, new Gson().toJson(configRequestModel));
+        Gson gson = new Gson();
+        String json = gson.toJson(configRequestModel);
 
-        final Call.Factory client = new OkHttpClient();
-        client.newCall(new DoRequest().post(mConfigDictionary, getServer()))
-                .enqueue(new Callback() {
+        QuizerAPI.getConfig(getServer(), json, responseBody -> {
 
-                             @Override
-                             public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
-                                 hideProgressBar();
-                                 showToast(getString(R.string.NOTIFICATION_INTERNET_CONNECTION_ERROR));
-                             }
+            hideProgressBar();
 
-                             @Override
-                             public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
-                                 hideProgressBar();
+            if (responseBody == null) {
+                showToast(getString(R.string.NOTIFICATION_SERVER_CONNECTION_ERROR) + " Ошибка: 6.01");
+                return;
+            }
 
-                                 final ResponseBody responseBody = response.body();
+            String responseJson = null;
+            try {
+                responseJson = responseBody.string();
+            } catch (IOException e) {
+                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 6.02");
+            }
+            final GsonBuilder gsonBuilder = new GsonBuilder();
+            ConfigResponseModel configResponseModel = null;
 
-                                 if (responseBody == null) {
-                                     showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR));
+            try {
+                configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
+            } catch (final Exception pE) {
+                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 6.03");
+            }
 
-                                     return;
-                                 }
-
-                                 final String responseJson = responseBody.string();
-                                 final GsonBuilder gsonBuilder = new GsonBuilder();
-                                 ConfigResponseModel configResponseModel = null;
-
-                                 try {
-                                     configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
-                                 } catch (final Exception pE) {
-                                     // empty
-                                 }
-
-                                 if (configResponseModel != null) {
-                                     if (configResponseModel.getResult() != 0) {
-                                         downloadFiles(configResponseModel, pModel, pLogin, pPassword, pModel.getConfigId(), pModel.getUserId(), pModel.getRoleId(), pModel.getUserProjectId());
-                                     } else {
-                                         showToast(configResponseModel.getError());
-                                     }
-                                 } else {
-                                     showToast(getString(R.string.NOTIFICATION_SERVER_ERROR));
-                                 }
-                             }
-                         }
-
-                );
+            if (configResponseModel != null) {
+                if (configResponseModel.getResult() != 0) {
+                    downloadFiles(configResponseModel, pModel, pLogin, pPassword);
+                } else {
+                    showToast(configResponseModel.getError());
+                }
+            } else {
+                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 6.06");
+            }
+        });
     }
 
-    private void downloadQuotas(final ConfigResponseModel pConfigResponseModel,
-                                final AuthResponseModel pAuthResponseModel,
+    private void downloadQuotas(final AuthResponseModel pAuthResponseModel,
                                 final String pLogin,
-                                final String pPassword,
-                                final String pConfigId,
-                                final int pUserId,
-                                final int pRoleId,
-                                final int pUserProjectId) {
+                                final String pPassword) {
         new UpdateQuotasExecutable(this, new ICallback() {
 
             @Override
@@ -276,7 +243,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             public void onSuccess() {
                 hideProgressBar();
 
-                onLoggedIn(pLogin, pPassword, pConfigId, pUserId, pRoleId, pUserProjectId);
+                onLoggedIn(pLogin, pPassword, pAuthResponseModel);
             }
 
             @Override
@@ -291,35 +258,28 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
     private void saveUserAndLogin(final ConfigResponseModel pConfigResponseModel,
                                   final AuthResponseModel pAuthResponseModel,
                                   final String pLogin,
-                                  final String pPassword,
-                                  final String pConfigId,
-                                  final int pUserId,
-                                  final int pRoleId,
-                                  final int pUserProjectId) {
+                                  final String pPassword) {
         try {
             saveUser(pLogin, pPassword, pAuthResponseModel, pConfigResponseModel.getConfig());
-            saveCurrentUserId(pUserId);
+            saveCurrentUserId(pAuthResponseModel.getUserId());
         } catch (final Exception e) {
             showToast(getString(R.string.NOTIFICATION_SERVER_ERROR) + "\n" + e);
 
             return;
         }
 
-        downloadQuotas(pConfigResponseModel, pAuthResponseModel, pLogin, pPassword, pConfigId, pUserId, pRoleId, pUserProjectId);
+        downloadQuotas(pAuthResponseModel, pLogin, pPassword);
     }
 
     private void downloadFiles(final ConfigResponseModel pConfigResponseModel,
                                final AuthResponseModel pAuthResponseModel,
                                final String pLogin,
-                               final String pPassword,
-                               final String pConfigId,
-                               final int pUserId,
-                               final int pRoleId,
-                               final int pUserProjectId) {
+                               final String pPassword) {
+
         final String[] fileUris = pConfigResponseModel.getConfig().getProjectInfo().getMediaFiles();
 
         if (fileUris == null || fileUris.length == 0) {
-            saveUserAndLogin(pConfigResponseModel, pAuthResponseModel, pLogin, pPassword, pConfigId, pUserId, pRoleId, pUserProjectId);
+            saveUserAndLogin(pConfigResponseModel, pAuthResponseModel, pLogin, pPassword);
         } else {
             showProgressBar();
 
@@ -333,7 +293,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
                             if (progress == totalFiles) {
                                 hideProgressBar();
 
-                                saveUserAndLogin(pConfigResponseModel, pAuthResponseModel, pLogin, pPassword, pConfigId, pUserId, pRoleId, pUserProjectId);
+                                saveUserAndLogin(pConfigResponseModel, pAuthResponseModel, pLogin, pPassword);
                             }
 
                             showToast(String.format(getString(R.string.NOTIFICATION_DOWNLOADED_COUNT_FILES), String.valueOf(progress)));
@@ -355,6 +315,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         hideProgressBar();
 
         if (responseBody == null) {
+            showToast(getString(R.string.NOTIFICATION_SERVER_CONNECTION_ERROR) + " Ошибка: 4.01");
             final UserModel savedUserModel = getLocalUserModel(login, passwordMD5);
 
             if (savedUserModel != null) {
@@ -369,11 +330,10 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
 
         String responseJson;
         try {
-            Log.d(TAG, "onAuthUser 0: ");
             responseJson = responseBody.string();
         } catch (IOException e) {
             e.printStackTrace();
-            Log.d(TAG, "onAuthUser 1: " + e);
+            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 4.02");
             responseJson = null;
         }
 
@@ -381,17 +341,17 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         try {
             authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
         } catch (final Exception pE) {
-            Log.d(TAG, "onAuthUser 2: " + pE);
+            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 4.03");
         }
-
-        if (authResponseModel != null)
-            Log.d(TAG, "onAuthUser 3: " + authResponseModel.getResult());
-        else
-            Log.d(TAG, "onAuthUser 3: NULL");
 
         if (authResponseModel == null) return;
 
-        SPUtils.saveAuthTimeDifference(AuthActivity.this, authResponseModel.getServerTime());
+        if (authResponseModel.getServerTime() != null) {
+            SPUtils.saveAuthTimeDifference(AuthActivity.this, authResponseModel.getServerTime());
+        } else {
+            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 4.04");
+        }
+
 
         if (authResponseModel.getResult() != 0) {
             if (isNeedDownloadConfig(authResponseModel)) {
@@ -399,15 +359,10 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             } else {
                 onLoggedIn(login,
                         passwordMD5,
-                        authResponseModel.getConfigId(),
-                        authResponseModel.getUserId(),
-                        authResponseModel.getRoleId(),
-                        authResponseModel.getUserProjectId());
+                        authResponseModel);
             }
         } else {
             showToast(authResponseModel.getError());
         }
     }
-
-
 }

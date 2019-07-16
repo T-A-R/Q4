@@ -5,11 +5,15 @@ import android.app.Application;
 import com.activeandroid.ActiveAndroid;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.yandex.metrica.YandexMetrica;
+import com.yandex.metrica.YandexMetricaConfig;
 
 import okhttp3.OkHttpClient;
 import pro.quizer.quizerexit.API.RetrofitQuizerAPI;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static pro.quizer.quizerexit.Constants.Default.API_key;
 
 public class CoreApplication extends Application {
 
@@ -36,6 +40,13 @@ public class CoreApplication extends Application {
                 .build();
 
         retrofitQuizerAPI = retrofit.create(RetrofitQuizerAPI.class);
+
+        // Creating an extended library configuration.
+        YandexMetricaConfig config = YandexMetricaConfig.newConfigBuilder(API_key).build();
+        // Initializing the AppMetrica SDK.
+        YandexMetrica.activate(getApplicationContext(), config);
+        // Automatic tracking of user activity.
+        YandexMetrica.enableActivityAutoTracking(this);
     }
 
     public static RetrofitQuizerAPI getQuizerApi() {

@@ -15,6 +15,8 @@ public final class Constants {
 
         String API_URL = "http://188.225.11.47/";
 
+        String API_key = "a1d64454-4597-4c28-a047-dee22d3c8cfd";
+
     }
 
     public interface SP {

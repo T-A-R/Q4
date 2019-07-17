@@ -165,59 +165,56 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
 
         final List<File> file = Collections.singletonList(mNotSendFiles.get(position));
 
-        QuizerAPI.sendAudio(mServerUrl, file, getNameForm(), getMediaType(), new QuizerAPI.SendAudioCallback() {
-            @Override
-            public void onSendAudioCallback(ResponseBody responseBody) {
-                if (responseBody == null) {
-                    pSendingFileCallback.onError(position);
-                    onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 3.01"));
-                    return;
-                }
+        QuizerAPI.sendFiles(mServerUrl, file, getNameForm(), getMediaType(), responseBody -> {
+            if (responseBody == null) {
+                pSendingFileCallback.onError(position);
+                onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 3.01"));
+                return;
+            }
 
-                String responseJson =null;
-                try {
-                    responseJson = responseBody.string();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 3.02"));
-                }
+            String responseJson =null;
+            try {
+                responseJson = responseBody.string();
+            } catch (IOException e) {
+                e.printStackTrace();
+                onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 3.02"));
+            }
 
-                DeletingListResponseModel deletingListResponseModel = null;
+            DeletingListResponseModel deletingListResponseModel = null;
 
-                try {
-                    deletingListResponseModel = new GsonBuilder().create().fromJson(responseJson, DeletingListResponseModel.class);
-                } catch (Exception pE) {
-                    onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 3.03"));
-                }
+            try {
+                deletingListResponseModel = new GsonBuilder().create().fromJson(responseJson, DeletingListResponseModel.class);
+            } catch (Exception pE) {
+                onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 3.03"));
+            }
 
-                if (deletingListResponseModel != null) {
-                    if (deletingListResponseModel.getResult() != 0) {
-                        final List<String> tokensToRemove = deletingListResponseModel.getAccepted();
+            if (deletingListResponseModel != null) {
+                if (deletingListResponseModel.getResult() != 0) {
+                    final List<String> tokensToRemove = deletingListResponseModel.getAccepted();
 
-                        if (tokensToRemove == null || tokensToRemove.isEmpty()) {
-                            pSendingFileCallback.onError(position);
-                            onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SENDING_ERROR_EMPTY_TOKENS_LIST) + " Ошибка: 3.04"));
-                        } else {
-                            for (final String token : tokensToRemove) {
-                                final String path = FileUtils.getFullPathByFileName(file, token);
-
-                                if (StringUtils.isNotEmpty(path)) {
-                                    final boolean isDeleted = new File(path).delete();
-                                    Log.d("Deleting audio", (isDeleted ? "NOT" : "") + " DELETED: " + path);
-                                }
-                            }
-
-                            pSendingFileCallback.onSuccess(position);
-                            onSuccess();
-                        }
-                    } else {
+                    if (tokensToRemove == null || tokensToRemove.isEmpty()) {
                         pSendingFileCallback.onError(position);
-                        onError(new Exception(deletingListResponseModel.getError()  + " Ошибка: 3.05"));
+                        onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SENDING_ERROR_EMPTY_TOKENS_LIST) + " Ошибка: 3.04"));
+                    } else {
+                        for (final String token : tokensToRemove) {
+                            final String path = FileUtils.getFullPathByFileName(file, token);
+
+                            if (StringUtils.isNotEmpty(path)) {
+                                final boolean isDeleted = new File(path).delete();
+                                Log.d("Deleting audio", (isDeleted ? "NOT" : "") + " DELETED: " + path);
+                            }
+                        }
+
+                        pSendingFileCallback.onSuccess(position);
+                        onSuccess();
                     }
                 } else {
                     pSendingFileCallback.onError(position);
-                    onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_ERROR)  + " Ошибка: 3.06"));
+                    onError(new Exception(deletingListResponseModel.getError()  + " Ошибка: 3.05"));
                 }
+            } else {
+                pSendingFileCallback.onError(position);
+                onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_ERROR)  + " Ошибка: 3.06"));
             }
         });
     }

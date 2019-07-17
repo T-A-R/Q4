@@ -24,6 +24,7 @@ public final class GpsUtils {
             }
         } else {
             gps.showSettingsAlert();
+            return null;
         }
 
         return new GPSModel(lon, lat, time);

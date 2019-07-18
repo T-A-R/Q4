@@ -280,19 +280,22 @@ public class ElementActivity extends BaseActivity {
         if (mConfig.isGps() && mGPSModel == null) {
             try {
                 mGPSModel = GpsUtils.getCurrentGps(this, mConfig.isForceGps());
-                mGpsString = mGPSModel.getGPS();
-                mGpsTime = mGPSModel.getTime();
+                if(mGPSModel != null) {
+                    mGpsString = mGPSModel.getGPS();
+                    mGpsTime = mGPSModel.getTime();
 
-                if (!StringUtils.isEmpty(mGpsString)) {
+                    if (!StringUtils.isEmpty(mGpsString)) {
 //                    showToast(getString(R.string.NOTIFICATION_CURRENT_GPS) + mGpsString);
-                } else {
+                    } else {
 //                    showToast(getString(R.string.NOTIFICATION_GPS_IS_TURN_OFF));
-                }
+                    }
 
-                initStartValues();
+                    initStartValues();
+                }
             } catch (final Exception e) {
+                Log.d(TAG, "startGps: " + e);
                 if (mConfig.isForceGps()) {
-                    showToast(getString(R.string.NOTIFICATION_FORCE_GPS_ERROR));
+//                    showToast(getString(R.string.NOTIFICATION_FORCE_GPS_ERROR));
 
                     finish();
                     startMainActivity();

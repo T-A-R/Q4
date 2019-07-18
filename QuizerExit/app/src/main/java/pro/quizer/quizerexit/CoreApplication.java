@@ -1,6 +1,7 @@
 package pro.quizer.quizerexit;
 
 import android.app.Application;
+import android.arch.persistence.room.Room;
 
 import com.activeandroid.ActiveAndroid;
 import com.google.gson.Gson;
@@ -10,14 +11,14 @@ import com.google.gson.GsonBuilder;
 
 import okhttp3.OkHttpClient;
 import pro.quizer.quizerexit.API.RetrofitQuizerAPI;
+import pro.quizer.quizerexit.database.QuizerDatabase;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import static pro.quizer.quizerexit.Constants.Default.API_key;
 
 public class CoreApplication extends Application {
 
     private static RetrofitQuizerAPI retrofitQuizerAPI;
+    private static QuizerDatabase quizerDatabase;
 
     @Override
     public void onCreate() {
@@ -41,6 +42,11 @@ public class CoreApplication extends Application {
 
         retrofitQuizerAPI = retrofit.create(RetrofitQuizerAPI.class);
 
+
+        quizerDatabase = Room.databaseBuilder(getApplicationContext(), QuizerDatabase.class, "quizer_database")
+                .allowMainThreadQueries()
+                .build();
+
 //        YandexMetricaConfig config = YandexMetricaConfig.newConfigBuilder(API_key)
 //                .withLogs()
 //                .withCrashReporting(true)
@@ -49,9 +55,13 @@ public class CoreApplication extends Application {
 //        YandexMetrica.activate(getApplicationContext(), config);
 //        YandexMetrica.enableActivityAutoTracking(this);
 //        YandexMetrica.getReporter(this, API_key).reportEvent("Updates installed");
-    }
+}
 
     public static RetrofitQuizerAPI getQuizerApi() {
         return retrofitQuizerAPI;
+    }
+
+    public static QuizerDatabase getQuizerDatabase() {
+        return quizerDatabase;
     }
 }

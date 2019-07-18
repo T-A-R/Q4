@@ -205,6 +205,7 @@ public class ElementActivity extends BaseActivity {
     }
 
     public void stopRecording() {
+        Log.d(TAG, "******************* stopRecording: **********************");
         if (mIsMediaConnected && mStop != null && mStop.getVisibility() == View.VISIBLE) {
             mStop.performClick();
         }
@@ -212,6 +213,7 @@ public class ElementActivity extends BaseActivity {
 
     public void startRecording() {
         if (mIsMediaConnected && mStart != null && mStart.getVisibility() == View.VISIBLE) {
+            Log.d(TAG, "******************* startRecording: **********************");
             mStart.performClick();
 
             Log.d("Timer", "Limit: " + mAudioRecordLimitTime + " - tick: " + ONE_SEC);

@@ -28,8 +28,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import pro.quizer.quizerexit.BuildConfig;
+import pro.quizer.quizerexit.CoreApplication;
 import pro.quizer.quizerexit.DrawerUtils;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.database.QuizerDao;
 import pro.quizer.quizerexit.executable.RemoveUserExecutable;
 import pro.quizer.quizerexit.fragment.AboutFragment;
 import pro.quizer.quizerexit.fragment.HomeFragment;
@@ -523,6 +525,10 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                     })
                     .setNegativeButton(R.string.VIEW_NO, null).show();
         }
+    }
+
+    public static QuizerDao getDao() {
+        return CoreApplication.getQuizerDatabase().getQuizerDao();
     }
 
     @Override

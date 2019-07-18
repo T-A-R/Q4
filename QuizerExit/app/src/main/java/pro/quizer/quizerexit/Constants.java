@@ -56,4 +56,11 @@ public final class Constants {
         String AUDIO_FILE = "audio_file";
         String DOWNLOAD_UPDATE = "download_update";
     }
+
+    public interface QuestionnaireStatuses {
+
+        String ABORTED = "aborted";
+        String COMPLITED = "complited";
+
+    }
 }

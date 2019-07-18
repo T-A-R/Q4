@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import pro.quizer.quizerexit.AudioService;
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.fragment.ElementFragment;
@@ -502,11 +503,14 @@ public class ElementActivity extends BaseActivity {
         questionnaireDatabaseModel.gps = mGpsString;
         questionnaireDatabaseModel.gps_time = mGpsTime;
         questionnaireDatabaseModel.date_interview = mStartDateInterview;
+        questionnaireDatabaseModel.has_photo = getHasPhoto();
 
         if (aborted)
-            questionnaireDatabaseModel.survey_status = "aborted";
+            questionnaireDatabaseModel.survey_status = Constants.QuestionnaireStatuses.ABORTED;
         else
-            questionnaireDatabaseModel.survey_status = "complited";
+            questionnaireDatabaseModel.survey_status = Constants.QuestionnaireStatuses.COMPLITED;
+
+
 
         final int showingScreensCount = saveScreenElements();
         final int answersCount = saveAnswersElements();

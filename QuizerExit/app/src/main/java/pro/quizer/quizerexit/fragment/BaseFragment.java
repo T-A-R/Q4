@@ -330,7 +330,13 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                takePicture();
+                try {
+                    takePicture();
+                    mBaseActivity.setHasPhoto("true");
+                } catch (Exception e) {
+                    onCameraError(CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA);
+                    mBaseActivity.setHasPhoto("false");
+                }
             }
         }, 1000);
     }

@@ -64,6 +64,16 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     private HashMap<Integer, ElementModel> mMap;
     private UserModel mCurrentUser;
 
+    private String hasPhoto = null;
+
+    public String getHasPhoto() {
+        return hasPhoto;
+    }
+
+    public void setHasPhoto(String hasPhoto) {
+        this.hasPhoto = hasPhoto;
+    }
+
     @Override
     public void onPointerCaptureChanged(final boolean hasCapture) {
 

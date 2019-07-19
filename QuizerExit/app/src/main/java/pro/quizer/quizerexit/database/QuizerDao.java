@@ -8,6 +8,7 @@ import android.arch.persistence.room.Query;
 
 import java.util.List;
 
+import pro.quizer.quizerexit.database.model.ActivationModelR;
 import pro.quizer.quizerexit.database.model.ItemR;
 import pro.quizer.quizerexit.model.database.Item;
 
@@ -15,11 +16,11 @@ import pro.quizer.quizerexit.model.database.Item;
 public interface QuizerDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertItem(List<Item> items);
+    void insertActivationModelR(ActivationModelR activationModelR);
 
-    @Query("SELECT * FROM ItemR WHERE id = :itemId")
-    List<Item> getItems(int itemId);
+    @Query("SELECT * FROM ActivationModelR")
+    List<ActivationModelR> getActivationModelR();
 
-    @Delete
-    void deleteItem(ItemR item);
+    @Query("DELETE FROM ActivationModelR")
+    void clearActivationModelR();
 }

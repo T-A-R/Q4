@@ -3,10 +3,14 @@ package pro.quizer.quizerexit.database;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 
+import pro.quizer.quizerexit.database.model.ActivationModelR;
 import pro.quizer.quizerexit.database.model.CategoryR;
+import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
 import pro.quizer.quizerexit.database.model.ItemR;
+import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
+import pro.quizer.quizerexit.database.model.UserModelR;
 
-@Database(entities = {ItemR.class, CategoryR.class}, version = 1)
+@Database(entities = {ActivationModelR.class, ElementDatabaseModelR.class, ItemR.class, CategoryR.class, QuestionnaireDatabaseModelR.class, UserModelR.class}, version = 1)
 public abstract class QuizerDatabase extends RoomDatabase {
     public abstract QuizerDao getQuizerDao();
 }

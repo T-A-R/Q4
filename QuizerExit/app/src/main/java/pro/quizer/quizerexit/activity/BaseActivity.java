@@ -32,6 +32,7 @@ import pro.quizer.quizerexit.CoreApplication;
 import pro.quizer.quizerexit.DrawerUtils;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.database.QuizerDao;
+import pro.quizer.quizerexit.database.model.ActivationModelR;
 import pro.quizer.quizerexit.executable.RemoveUserExecutable;
 import pro.quizer.quizerexit.fragment.AboutFragment;
 import pro.quizer.quizerexit.fragment.HomeFragment;
@@ -213,11 +214,11 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     public String getServer() {
-        return getActivationModel().server;
+        return getActivationModel().getServer();
     }
 
     public String getLoginAdmin() {
-        return getActivationModel().login_admin;
+        return getActivationModel().getLogin_admin();
     }
 
     public String getAppVersionName() {
@@ -225,18 +226,16 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     public void saveActivationBundle(final ActivationResponseModel pActivationModel) {
-        final ActivationModel activationModel = new ActivationModel();
-        activationModel.server = pActivationModel.getServer();
-        activationModel.login_admin = pActivationModel.getLoginAdmin();
 
-        new Delete().from(ActivationModel.class).execute();
-
-        activationModel.save();
+        final ActivationModelR activationModelR = new ActivationModelR(pActivationModel.getServer(),
+                pActivationModel.getLoginAdmin());
+        getDao().clearActivationModelR();
+        getDao().insertActivationModelR(activationModelR);
     }
 
-    public ActivationModel getActivationModel() {
-        // GOOD select
-        final List<ActivationModel> list = new Select().from(ActivationModel.class).limit(1).execute();
+    public ActivationModelR getActivationModel() {
+
+        final List<ActivationModelR> list = getDao().getActivationModelR();
 
         if (list != null && !list.isEmpty()) {
             return list.get(0);

@@ -3,6 +3,9 @@ package pro.quizer.quizerexit.database.model;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
+
+import pro.quizer.quizerexit.database.CategoryConverter;
 
 @Entity
 public class ItemR {
@@ -15,6 +18,7 @@ public class ItemR {
     private String name;
 
     @ColumnInfo(name = "Category")
+    @TypeConverters({CategoryConverter.class})
     private CategoryR category;
 
     public ItemR() { }

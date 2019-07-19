@@ -7,7 +7,7 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity
 public class ActivationModelR {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private int id;
 
@@ -19,8 +19,7 @@ public class ActivationModelR {
 
     public ActivationModelR() {}
 
-    public ActivationModelR(int id, String server, String login_admin) {
-        this.id = id;
+    public ActivationModelR(String server, String login_admin) {
         this.server = server;
         this.login_admin = login_admin;
     }

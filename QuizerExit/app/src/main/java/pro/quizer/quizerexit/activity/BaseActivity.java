@@ -1,6 +1,7 @@
 package pro.quizer.quizerexit.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -523,6 +524,10 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                     })
                     .setNegativeButton(R.string.VIEW_NO, null).show();
         }
+    }
+
+    public Context getContext() {
+        return this;
     }
 
     @Override

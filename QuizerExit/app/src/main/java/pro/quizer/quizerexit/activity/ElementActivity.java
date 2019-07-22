@@ -438,7 +438,8 @@ public class ElementActivity extends BaseActivity {
             fragmentTransaction.addToBackStack(options.getTitle(this, mMap));
         }
 
-        fragmentTransaction.commit();
+//        fragmentTransaction.commit();
+        fragmentTransaction.commitAllowingStateLoss();
     }
 
     private ElementModel getElementByRelativeId(final int pRelativeId) {

@@ -167,7 +167,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         }
 
         fragmentTransaction
-                .commit();
+                .commitAllowingStateLoss();
+//                .commit();
     }
 
     private void showFragmentWithBackstack(final Fragment pFragment) {
@@ -411,7 +412,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
             @Override
             public void run() {
-                if (getProgressBar() != null){
+                if (getProgressBar() != null) {
                     getProgressBar().setVisibility(View.VISIBLE);
                 }
             }

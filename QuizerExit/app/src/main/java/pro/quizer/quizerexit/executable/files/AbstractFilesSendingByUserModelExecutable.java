@@ -1,6 +1,7 @@
 package pro.quizer.quizerexit.executable.files;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -123,8 +124,14 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
     }
 
     private void cancelAlert() {
-        if (mAlertDialog != null) {
-            mAlertDialog.cancel();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            if (!mBaseActivity.isDestroyed() && mAlertDialog != null) {
+                mAlertDialog.cancel();
+            }
+        } else {
+            if (!mBaseActivity.isFinishing() && mAlertDialog != null) {
+                mAlertDialog.cancel();
+            }
         }
     }
 
@@ -218,4 +225,6 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
             }
         });
     }
+
+
 }

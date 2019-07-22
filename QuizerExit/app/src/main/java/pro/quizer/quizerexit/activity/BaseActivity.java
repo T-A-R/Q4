@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -157,19 +158,37 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     private void addFragment(final Fragment pFragment, final boolean pIsAddToBackstack) {
-        final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            if(!isDestroyed()) {
+                final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
-        fragmentTransaction
-                .replace(R.id.main_content, pFragment);
+                fragmentTransaction
+                        .replace(R.id.main_content, pFragment);
 
-        if (pIsAddToBackstack) {
-            fragmentTransaction
-                    .addToBackStack(pFragment.getClass().getSimpleName());
+                if (pIsAddToBackstack) {
+                    fragmentTransaction
+                            .addToBackStack(pFragment.getClass().getSimpleName());
+                }
+
+                fragmentTransaction
+                        .commitAllowingStateLoss();
+            }
+        } else {
+            if(!isFinishing()) {
+                final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+                fragmentTransaction
+                        .replace(R.id.main_content, pFragment);
+
+                if (pIsAddToBackstack) {
+                    fragmentTransaction
+                            .addToBackStack(pFragment.getClass().getSimpleName());
+                }
+
+                fragmentTransaction
+                        .commitAllowingStateLoss();
+            }
         }
-
-        fragmentTransaction
-                .commitAllowingStateLoss();
-//                .commit();
     }
 
     private void showFragmentWithBackstack(final Fragment pFragment) {

@@ -147,7 +147,8 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable {
             baseActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
                 }
             });
         }

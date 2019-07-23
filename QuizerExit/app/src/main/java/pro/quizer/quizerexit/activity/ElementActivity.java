@@ -417,61 +417,32 @@ public class ElementActivity extends BaseActivity {
             return;
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            if (!isDestroyed()) {
-                final FragmentTransaction fragmentTransaction = getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.main_content,
-                                ElementFragment.newInstance(
-                                        false,
-                                        true,
-                                        R.id.content_element,
-                                        nextElement,
-                                        mNavigationCallback,
-                                        mToken,
-                                        mLoginAdmin,
-                                        mUserId,
-                                        mUserLogin,
-                                        mConfig.isPhotoQuestionnaire(),
-                                        mProjectId,
-                                        mUser,
-                                        mMap));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 ? !isDestroyed() : !isFinishing()) {
 
-                if (pIsAddToBackStack) {
-                    fragmentTransaction.addToBackStack(options.getTitle(this, mMap));
-                }
+            final FragmentTransaction fragmentTransaction = getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main_content,
+                            ElementFragment.newInstance(
+                                    false,
+                                    true,
+                                    R.id.content_element,
+                                    nextElement,
+                                    mNavigationCallback,
+                                    mToken,
+                                    mLoginAdmin,
+                                    mUserId,
+                                    mUserLogin,
+                                    mConfig.isPhotoQuestionnaire(),
+                                    mProjectId,
+                                    mUser,
+                                    mMap));
 
-                fragmentTransaction.commitAllowingStateLoss();
+            if (pIsAddToBackStack) {
+                fragmentTransaction.addToBackStack(options.getTitle(this, mMap));
             }
-        } else {
-            if (!isFinishing()) {
-                final FragmentTransaction fragmentTransaction = getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.main_content,
-                                ElementFragment.newInstance(
-                                        false,
-                                        true,
-                                        R.id.content_element,
-                                        nextElement,
-                                        mNavigationCallback,
-                                        mToken,
-                                        mLoginAdmin,
-                                        mUserId,
-                                        mUserLogin,
-                                        mConfig.isPhotoQuestionnaire(),
-                                        mProjectId,
-                                        mUser,
-                                        mMap));
 
-                if (pIsAddToBackStack) {
-                    fragmentTransaction.addToBackStack(options.getTitle(this, mMap));
-                }
-
-                fragmentTransaction.commitAllowingStateLoss();
-            }
+            fragmentTransaction.commitAllowingStateLoss();
         }
-
-
     }
 
     private ElementModel getElementByRelativeId(final int pRelativeId) {

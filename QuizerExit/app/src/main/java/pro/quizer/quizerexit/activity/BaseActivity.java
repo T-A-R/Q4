@@ -158,36 +158,20 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     private void addFragment(final Fragment pFragment, final boolean pIsAddToBackstack) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            if(!isDestroyed()) {
-                final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 ? !isDestroyed() : !isFinishing()) {
+            final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+            fragmentTransaction
+                    .replace(R.id.main_content, pFragment);
+
+            if (pIsAddToBackstack) {
                 fragmentTransaction
-                        .replace(R.id.main_content, pFragment);
-
-                if (pIsAddToBackstack) {
-                    fragmentTransaction
-                            .addToBackStack(pFragment.getClass().getSimpleName());
-                }
-
-                fragmentTransaction
-                        .commitAllowingStateLoss();
+                        .addToBackStack(pFragment.getClass().getSimpleName());
             }
-        } else {
-            if(!isFinishing()) {
-                final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
-                fragmentTransaction
-                        .replace(R.id.main_content, pFragment);
-
-                if (pIsAddToBackstack) {
-                    fragmentTransaction
-                            .addToBackStack(pFragment.getClass().getSimpleName());
-                }
-
-                fragmentTransaction
-                        .commitAllowingStateLoss();
-            }
+            fragmentTransaction
+                    .commitAllowingStateLoss();
         }
     }
 

@@ -1295,14 +1295,15 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                 recorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_WB);
                 recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB);
                 isRecorderInitialized = true;
-                aTaskAmplitude = new RecAmplitudeChkAsyncTask();
-                // to run another AT (save data) at the same time
-                aTaskAmplitude.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
+                if (recorder != null) {
+                    aTaskAmplitude = new RecAmplitudeChkAsyncTask();
+                    // to run another AT (save data) at the same time
+                    aTaskAmplitude.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
 
-                if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-                    //noinspection ResultOfMethodCallIgnored
-                    audioFilesPath.mkdirs();
-                    recorder.setOutputFile(recFilePath);
+                    if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+                        //noinspection ResultOfMethodCallIgnored
+                        audioFilesPath.mkdirs();
+                        recorder.setOutputFile(recFilePath);
                     /* need to test
                     recorder.setAudioChannels(1);
                     recorder.setAudioSamplingRate(44100);
@@ -1310,12 +1311,13 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                     */
                     /* can set onInfo and onError listeners, in this case Recorder should be created
                     on threads with Looper (Like UI thread) */
-                    // IOE
-                    recorder.prepare();
-                    recorder.start();
-                } else {
-                    throw new IOException("Wrong External Storage State: "
-                            + Environment.getExternalStorageState());
+                        // IOE
+                        recorder.prepare();
+                        recorder.start();
+                    } else {
+                        throw new IOException("Wrong External Storage State: "
+                                + Environment.getExternalStorageState());
+                    }
                 }
             }
 

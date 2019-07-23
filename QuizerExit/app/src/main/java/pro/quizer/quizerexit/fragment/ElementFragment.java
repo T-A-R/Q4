@@ -17,6 +17,7 @@ import java.util.List;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.ElementSubtype;
 import pro.quizer.quizerexit.model.ElementType;
 import pro.quizer.quizerexit.model.config.ElementModel;
@@ -44,7 +45,8 @@ public class ElementFragment extends BaseFragment {
     private ElementModel mCurrentElement;
     private FragmentManager mFragmentManger;
     private NavigationCallback mCallback;
-    private UserModel mUser;
+//    private UserModel mUser;
+    private UserModelR mUser;
     private boolean mIsButtonsVisible = true;
     private long mStartTime;
     private boolean mIsFromDialog = false;
@@ -114,7 +116,8 @@ public class ElementFragment extends BaseFragment {
             final String pUserLogin,
             final boolean pIsPhotoQuestionnaire,
             final int pProjectId,
-            final UserModel user,
+//            final UserModel user,
+            final UserModelR user,
             final HashMap<Integer, ElementModel> pMap) {
         final ElementFragment fragment = new ElementFragment();
 
@@ -267,7 +270,7 @@ public class ElementFragment extends BaseFragment {
                                     mUserLogin,
                                     mIsPhotoQuestionnaire,
                                     mProjectId,
-                                    mUser))
+                                    mUser))   //TODO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Остановился здесь !!!
                             .commit();
 
                     break;

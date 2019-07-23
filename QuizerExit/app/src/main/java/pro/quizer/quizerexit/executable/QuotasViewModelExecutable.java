@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.quota.QuotaModel;
@@ -38,8 +39,10 @@ public class QuotasViewModelExecutable extends BaseModelExecutable<QuotasViewMod
         final QuotasViewModel quotasViewModel = new QuotasViewModel();
         quotasViewModel.setQuery(mQuery);
 
-        final UserModel currentUser = mBaseActivity.forceGetCurrentUser();
-        List<QuotaModel> quotas = currentUser.getQuotas();
+//        final UserModel currentUser = mBaseActivity.forceGetCurrentUser();
+        final UserModelR currentUser = mBaseActivity.forceGetCurrentUser();
+//        List<QuotaModel> quotas = currentUser.getQuotas();
+        List<QuotaModel> quotas = currentUser.getQuotasR();
 
         if (quotas == null || quotas.isEmpty()) {
             return quotasViewModel;

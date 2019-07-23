@@ -23,6 +23,7 @@ import okhttp3.ResponseBody;
 import pro.quizer.quizerexit.API.QuizerAPI;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.UpdateQuotasExecutable;
 import pro.quizer.quizerexit.model.database.UserModel;
@@ -154,12 +155,12 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
 
     private boolean isNeedDownloadConfig(final AuthResponseModel pAuthResponseModel) {
         // GOOD usage of getUserByUserId
-        final UserModel userModel = getUserByUserId(pAuthResponseModel.getUserId());
+        final UserModelR userModel = getUserByUserId(pAuthResponseModel.getUserId());
 
         if (userModel == null) {
             return true;
         } else {
-            return !pAuthResponseModel.getConfigId().equals(userModel.config_id);
+            return !pAuthResponseModel.getConfigId().equals(userModel.getConfig_id());
         }
     }
 
@@ -316,11 +317,11 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
 
         if (responseBody == null) {
             showToast(getString(R.string.NOTIFICATION_SERVER_CONNECTION_ERROR) + " Ошибка: 4.01");
-            final UserModel savedUserModel = getLocalUserModel(login, passwordMD5);
+            final UserModelR savedUserModel = getLocalUserModel(login, passwordMD5);
 
             if (savedUserModel != null) {
                 showToast(getString(R.string.SAVED_DATA_LOGIN));
-                onLoggedInWithoutUpdateLocalData(savedUserModel.user_id);
+                onLoggedInWithoutUpdateLocalData(savedUserModel.getUser_id());
             } else {
                 showToast(getString(R.string.WRONG_LOGIN));
             }

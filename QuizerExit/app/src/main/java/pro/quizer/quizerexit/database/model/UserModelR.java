@@ -16,7 +16,7 @@ import pro.quizer.quizerexit.model.response.QuotaResponseModel;
 @Entity
 public class UserModelR {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private int id;
 
@@ -47,8 +47,8 @@ public class UserModelR {
     public UserModelR() {
     }
 
-    public UserModelR(int id, String password, String login, String config_id, int user_id, int role_id, int user_project_id, String config, String quotas) {
-        this.id = id;
+    public UserModelR(String password, String login, String config_id, int user_id, int role_id, int user_project_id, String config, String quotas) {
+
         this.password = password;
         this.login = login;
         this.config_id = config_id;

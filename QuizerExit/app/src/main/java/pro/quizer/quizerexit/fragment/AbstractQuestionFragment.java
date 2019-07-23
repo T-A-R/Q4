@@ -13,6 +13,7 @@ import pro.quizer.quizerexit.IAdapter;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.model.database.UserModel;
@@ -23,7 +24,8 @@ public abstract class AbstractQuestionFragment extends AbstractContentElementFra
     public static final String BUNDLE_CURRENT_QUESTION = "BUNDLE_CURRENT_QUESTION";
     public static final String BUNDLE_CALLBACK = "BUNDLE_CALLBACK";
 
-    public UserModel mUser;
+//    public UserModel mUser;
+    public UserModelR mUser;
     public boolean mIsFromDialog;
     private HashMap<Integer, ElementModel> mMap;
     private ElementModel mCurrentElement;

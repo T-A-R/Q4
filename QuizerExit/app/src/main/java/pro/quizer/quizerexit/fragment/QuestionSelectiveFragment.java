@@ -17,6 +17,7 @@ import pro.quizer.quizerexit.DialogCallback;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.OptionsOpenType;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
@@ -53,7 +54,8 @@ public class QuestionSelectiveFragment extends AbstractContentElementFragment {
     private String mUserLogin;
     private boolean mIsPhotoQuestionnaire;
     private int mProjectId;
-    private UserModel mUser;
+//    private UserModel mUser;
+    private UserModelR mUser;
 
     public static Fragment newInstance(final boolean isButtonVisible,
                                        @NonNull final ElementModel pElement,
@@ -65,7 +67,9 @@ public class QuestionSelectiveFragment extends AbstractContentElementFragment {
                                        final String pUserLogin,
                                        final boolean pIsPhotoQuestionnaire,
                                        final int pProjectId,
-                                       final UserModel pUser) {
+//                                       final UserModel pUser
+                                       final UserModelR pUser
+    ) {
         final QuestionSelectiveFragment fragment = new QuestionSelectiveFragment();
 
         final Bundle bundle = new Bundle();

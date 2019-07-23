@@ -25,6 +25,7 @@ import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.adapter.AbstractQuestionAdapter;
 import pro.quizer.quizerexit.adapter.QuestionListAdapter;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.ElementSubtype;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.database.UserModel;
@@ -33,7 +34,8 @@ import pro.quizer.quizerexit.utils.UiUtils;
 public class QuestionListFragment extends AbstractQuestionFragment {
 
 
-    public static Fragment newInstance(final boolean pIsFromDialog, final boolean pIsVisibleButton, final UserModel user, @NonNull final ElementModel pElement, final NavigationCallback pCallback, final HashMap<Integer, ElementModel> pMap) {
+//    public static Fragment newInstance(final boolean pIsFromDialog, final boolean pIsVisibleButton, final UserModel user, @NonNull final ElementModel pElement, final NavigationCallback pCallback, final HashMap<Integer, ElementModel> pMap) {
+    public static Fragment newInstance(final boolean pIsFromDialog, final boolean pIsVisibleButton, final UserModelR user, @NonNull final ElementModel pElement, final NavigationCallback pCallback, final HashMap<Integer, ElementModel> pMap) {
         final Fragment fragment = new QuestionListFragment();
 
         fragment.setArguments(getBundle(pIsFromDialog, pIsVisibleButton, pElement, pCallback));

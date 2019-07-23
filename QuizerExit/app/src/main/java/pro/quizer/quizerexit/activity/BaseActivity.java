@@ -35,6 +35,7 @@ import pro.quizer.quizerexit.DrawerUtils;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.database.QuizerDao;
 import pro.quizer.quizerexit.database.model.ActivationModelR;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.RemoveUserExecutable;
 import pro.quizer.quizerexit.fragment.AboutFragment;
 import pro.quizer.quizerexit.fragment.HomeFragment;
@@ -67,7 +68,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     private HashMap<Integer, ElementModel> mTempMap;
     private HashMap<Integer, ElementModel> mMap;
-    private UserModel mCurrentUser;
+    //    private UserModel mCurrentUser;
+    private UserModelR mCurrentUser;
 
     private String hasPhoto = null;
 
@@ -136,7 +138,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     private List<ElementModel> getElements() {
         // BAD
-        return getCurrentUser().getConfig().getProjectInfo().getElements();
+//        return getCurrentUser().getConfig().getProjectInfo().getElements();
+        return getCurrentUser().getConfigR().getProjectInfo().getElements();
     }
 
     // not singleton
@@ -242,29 +245,37 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
         final List<ActivationModelR> list = getDao().getActivationModelR();
 
-        if (list != null && !list.isEmpty()) {
+        if (list != null && !list.isEmpty())
             return list.get(0);
-        } else {
+        else
             return null;
-        }
+
     }
 
-    //TODO Переделать !!!! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    public UserModel getLocalUserModel(final String pLogin, final String pPassword) {
-        // GOOD select
-        final List<UserModel> list = new Select().from(UserModel.class).where(UserModel.LOGIN + " = ? AND " + UserModel.PASSWORD + " = ?", pLogin, pPassword).limit(1).execute();
+    public UserModelR getLocalUserModel(final String pLogin, final String pPassword) {
 
-        if (list != null && !list.isEmpty()) {
+        final List<UserModelR> list = getDao().getLocalUserModel(pLogin, pPassword);
+
+        if (list != null && !list.isEmpty())
             return list.get(0);
-        } else {
+        else
             return null;
-        }
     }
 
-    //TODO Переделать !!!! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    public UserModel getUserByUserId(final int pUserId) {
-        // BAD select
-        final List<UserModel> list = new Select().from(UserModel.class).where(UserModel.USER_ID + " = ?", pUserId).execute();
+//    public UserModel getLocalUserModel(final String pLogin, final String pPassword) {
+//        // GOOD select
+//        final List<UserModel> list = new Select().from(UserModel.class).where(UserModel.LOGIN + " = ? AND " + UserModel.PASSWORD + " = ?", pLogin, pPassword).limit(1).execute();
+//
+//        if (list != null && !list.isEmpty()) {
+//            return list.get(0);
+//        } else {
+//            return null;
+//        }
+//    }
+
+    public UserModelR getUserByUserId(final int pUserId) {
+
+        final List<UserModelR> list = getDao().getUserByUserId(pUserId);
 
         if (list == null || list.isEmpty()) {
             return null;
@@ -273,46 +284,80 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         }
     }
 
+    //TODO Переделать !!!! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+//    public UserModel getUserByUserId(final int pUserId) {
+//        // BAD select
+//        final List<UserModel> list = new Select().from(UserModel.class).where(UserModel.USER_ID + " = ?", pUserId).execute();
+//
+//        if (list == null || list.isEmpty()) {
+//            return null;
+//        } else {
+//            return list.get(0);
+//        }
+//    }
+
     public void updateDatabaseUserByUserId(final String pLogin,
                                            final String pPassword,
                                            final String pConfigId,
                                            final int pUserId,
                                            final int pRoleId,
                                            final int pUserProjectId) {
-        new Update(UserModel.class).set(
-                UserModel.LOGIN + " = ? , " +
-                        UserModel.PASSWORD + " = ? , " +
-                        UserModel.CONFIG_ID + " = ? , " +
-                        UserModel.ROLE_ID + " = ? , " +
-                        UserModel.USER_PROJECT_ID + " = ?",
-                pLogin, pPassword, pConfigId, pRoleId, pUserProjectId
-        ).where(UserModel.USER_ID + " = ?", pUserId).execute();
+
+        getDao().updateUserModelR(pLogin, pPassword, pConfigId, pRoleId, pUserProjectId, pUserId);
+
+//        new Update(UserModel.class).set(
+//                UserModel.LOGIN + " = ? , " +
+//                        UserModel.PASSWORD + " = ? , " +
+//                        UserModel.CONFIG_ID + " = ? , " +
+//                        UserModel.ROLE_ID + " = ? , " +
+//                        UserModel.USER_PROJECT_ID + " = ?",
+//                pLogin, pPassword, pConfigId, pRoleId, pUserProjectId
+//        ).where(UserModel.USER_ID + " = ?", pUserId).execute();
     }
 
-    public void updateConfig(final UserModel pUserModel, final ConfigModel pConfigModel) {
-        new Update(UserModel.class).set(UserModel.CONFIG + " = ?",
-                new GsonBuilder().create().toJson(pConfigModel)
-        ).where(UserModel.USER_ID + " = ? AND " + UserModel.USER_PROJECT_ID + " = ?",
-                pUserModel.user_id, pUserModel.user_project_id).execute();
+    public void updateConfig(final UserModelR pUserModel, final ConfigModel pConfigModel) {
+
+        getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
     }
+
+//    public void updateConfig(final UserModel pUserModel, final ConfigModel pConfigModel) {
+//        new Update(UserModel.class).set(UserModel.CONFIG + " = ?",
+//                new GsonBuilder().create().toJson(pConfigModel)
+//        ).where(UserModel.USER_ID + " = ? AND " + UserModel.USER_PROJECT_ID + " = ?",
+//                pUserModel.user_id, pUserModel.user_project_id).execute();
+//    }
 
     public void saveCurrentUserId(final int pUserId) {
         SPUtils.saveCurrentUserId(this, pUserId);
     }
 
-    public UserModel forceGetCurrentUser() {
+    public UserModelR forceGetCurrentUser() {
         mCurrentUser = getUserByUserId(getCurrentUserId());
 
         return mCurrentUser;
     }
 
-    public UserModel getCurrentUser() {
+//    public UserModel forceGetCurrentUser() {
+//        mCurrentUser = getUserByUserId(getCurrentUserId());
+//
+//        return mCurrentUser;
+//    }
+
+    public UserModelR getCurrentUser() {
         if (mCurrentUser == null) {
             mCurrentUser = getUserByUserId(getCurrentUserId());
         }
 
         return mCurrentUser;
     }
+
+//    public UserModel getCurrentUser() {
+//        if (mCurrentUser == null) {
+//            mCurrentUser = getUserByUserId(getCurrentUserId());
+//        }
+//
+//        return mCurrentUser;
+//    }
 
     public int getCurrentUserId() {
         return SPUtils.getCurrentUserId(this);
@@ -535,8 +580,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     public Context getContext() {
         return this;
-        }
-        
+    }
+
     public static QuizerDao getDao() {
         return CoreApplication.getQuizerDatabase().getQuizerDao();
     }

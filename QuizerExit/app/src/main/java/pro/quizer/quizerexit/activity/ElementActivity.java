@@ -33,6 +33,7 @@ import pro.quizer.quizerexit.AudioService;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.fragment.ElementFragment;
 import pro.quizer.quizerexit.model.ElementDatabaseType;
 import pro.quizer.quizerexit.model.ElementType;
@@ -66,7 +67,8 @@ public class ElementActivity extends BaseActivity {
 
     public static final int FIRST_ELEMENT = Integer.MIN_VALUE;
     public static final int ONE_SEC = 1000;
-    UserModel mUser;
+//    UserModel mUser;
+    UserModelR mUser;
     ConfigModel mConfig;
     ProjectInfoModel mProjectInfo;
     List<ElementModel> mElements;
@@ -273,7 +275,8 @@ public class ElementActivity extends BaseActivity {
 
         // GOOD
         mUser = getCurrentUser();
-        mConfig = mUser.getConfig();
+//        mConfig = mUser.getConfig();
+        mConfig = mUser.getConfigR();
         mAudioRecordLimitTime = mConfig.getAudioRecordLimitTime() * 60 * 1000;
         mProjectInfo = mConfig.getProjectInfo();
         mElements = mProjectInfo.getElements();
@@ -329,14 +332,19 @@ public class ElementActivity extends BaseActivity {
             setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
             mLoginAdmin = mConfig.getLoginAdmin();
-            mLogin = mUser.login;
-            mPassword = mUser.password;
+//            mLogin = mUser.login;
+//            mPassword = mUser.password;
+            mLogin = mUser.getLogin();
+            mPassword = mUser.getPassword();
             mQuestionnaireId = mProjectInfo.getQuestionnaireId();
             mProjectId = mProjectInfo.getProjectId();
             mBillingQuestions = mProjectInfo.getBillingQuestions();
-            mUserLogin = mUser.login;
-            mUserProjectId = mUser.user_project_id;
-            mUserId = mUser.user_id;
+//            mUserLogin = mUser.login;
+//            mUserProjectId = mUser.user_project_id;
+//            mUserId = mUser.user_id;
+            mUserLogin = mUser.getLogin();
+            mUserProjectId = mUser.getUser_project_id();
+            mUserId = mUser.getUser_id();
             mToken = StringUtils.generateToken();
 
             showFirstElement();

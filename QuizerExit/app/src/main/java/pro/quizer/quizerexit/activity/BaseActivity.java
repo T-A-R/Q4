@@ -249,6 +249,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         }
     }
 
+    //TODO Переделать !!!! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     public UserModel getLocalUserModel(final String pLogin, final String pPassword) {
         // GOOD select
         final List<UserModel> list = new Select().from(UserModel.class).where(UserModel.LOGIN + " = ? AND " + UserModel.PASSWORD + " = ?", pLogin, pPassword).limit(1).execute();
@@ -260,6 +261,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         }
     }
 
+    //TODO Переделать !!!! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     public UserModel getUserByUserId(final int pUserId) {
         // BAD select
         final List<UserModel> list = new Select().from(UserModel.class).where(UserModel.USER_ID + " = ?", pUserId).execute();

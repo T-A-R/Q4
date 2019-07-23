@@ -23,4 +23,7 @@ public interface QuizerDao {
 
     @Query("DELETE FROM ActivationModelR")
     void clearActivationModelR();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertUserModelR(ActivationModelR activationModelR);
 }

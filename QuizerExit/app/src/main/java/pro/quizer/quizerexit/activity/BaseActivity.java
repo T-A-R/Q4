@@ -278,10 +278,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         final List<UserModelR> list = getDao().getUserByUserId(pUserId);
 
         if (list == null || list.isEmpty()) {
-            Log.d(TAG, "BaseActivity.getUserByUserId: null");
             return null;
         } else {
-            Log.d(TAG, "BaseActivity.getUserByUserId: " + list.get(0));
             return list.get(0);
         }
     }
@@ -408,6 +406,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         userModelR.setUser_id(pModel.getUserId());
         userModelR.setUser_project_id(pModel.getUserProjectId());
         userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
+        getDao().insertUser(userModelR);
     }
 
     @Override

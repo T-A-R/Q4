@@ -57,6 +57,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
         userProjectId = userModel.getUser_project_id();
 
         QuotaRequestModel requestModel = new QuotaRequestModel(configModel.getLoginAdmin(), userModel.getPassword(), userModel.getLogin());
+
         Gson gson = new Gson();
         String json = gson.toJson(requestModel);
 

@@ -1,6 +1,7 @@
 package pro.quizer.quizerexit.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -291,7 +292,6 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
                                final AuthResponseModel pAuthResponseModel,
                                final String pLogin,
                                final String pPassword) {
-
         final String[] fileUris = pConfigResponseModel.getConfig().getProjectInfo().getMediaFiles();
 
         if (fileUris == null || fileUris.length == 0) {

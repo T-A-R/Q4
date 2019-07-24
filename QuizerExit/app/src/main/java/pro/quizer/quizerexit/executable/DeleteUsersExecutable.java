@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.activeandroid.query.Delete;
 
+import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.database.UserModel;
 
 public class DeleteUsersExecutable extends BaseExecutable {
@@ -22,8 +23,8 @@ public class DeleteUsersExecutable extends BaseExecutable {
     public void execute() {
         onStarting();
 
-        new Delete().from(UserModel.class).execute();
-
+//        new Delete().from(UserModel.class).execute();
+        BaseActivity.getDao().clearUserModelR();
         onSuccess();
     }
 }

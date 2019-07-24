@@ -7,13 +7,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 
 public class ServiceViewModel implements Serializable {
 
     private List<QuestionnaireDatabaseModel> mNotSentQuestionnaireModels;
-    private List<UserModel> mUserModels;
+//    private List<UserModel> mUserModels;
+    private List<UserModelR> mUserModels;
 
     public ServiceViewModel() {
         this.mNotSentQuestionnaireModels = new ArrayList<>();
@@ -24,7 +26,11 @@ public class ServiceViewModel implements Serializable {
         this.mNotSentQuestionnaireModels = mNotSentQuestionnaireModels;
     }
 
-    public void setUserModels(List<UserModel> mUserModels) {
+//    public void setUserModels(List<UserModel> mUserModels) {
+//        this.mUserModels = mUserModels;
+//    }
+
+    public void setUserModels(List<UserModelR> mUserModels) {
         this.mUserModels = mUserModels;
     }
 
@@ -32,7 +38,11 @@ public class ServiceViewModel implements Serializable {
         return mNotSentQuestionnaireModels;
     }
 
-    public List<UserModel> getUserModels() {
+//    public List<UserModel> getUserModels() {
+//        return mUserModels;
+//    }
+
+    public List<UserModelR> getUserModels() {
         return mUserModels;
     }
 

@@ -31,11 +31,11 @@ import pro.quizer.quizerexit.utils.SPUtils;
 public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.GetQuotasCallback {
 
     private final Context mContext;
-    private  BaseActivity baseActivity;
-//    private  UserModel userModel;
+    private BaseActivity baseActivity;
+    //    private  UserModel userModel;
     private UserModelR userModel;
-    private  ConfigModel configModel;
-    private  int userProjectId;
+    private ConfigModel configModel;
+    private int userProjectId;
 
     public UpdateQuotasExecutable(final Context pContext, final ICallback pCallback) {
         super(pCallback);
@@ -90,10 +90,10 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
             SPUtils.saveQuotaTimeDifference(mContext, quotaResponseModel.getServerTime());
 
             if (quotaResponseModel.getResult() != 0) {
-                new Update(UserModel.class)
-                        .set(UserModel.QUOTAS + " = ?", responseJson)
-                        .where(UserModel.USER_PROJECT_ID + " = ?", userProjectId).execute();
-
+//                new Update(UserModel.class)
+//                        .set(UserModel.QUOTAS + " = ?", responseJson)
+//                        .where(UserModel.USER_PROJECT_ID + " = ?", userProjectId).execute();
+                BaseActivity.getDao().updateQuotas(responseJson, userProjectId);
 
                 onSuccess();
             } else {

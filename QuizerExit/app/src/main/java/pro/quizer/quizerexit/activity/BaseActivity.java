@@ -381,7 +381,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     public void saveUser(final String pLogin, final String pPassword, final AuthResponseModel pModel, final ConfigModel pConfigModel) throws Exception {
-        new Delete().from(UserModel.class).where(UserModel.USER_ID + " = ?", pModel.getUserId()).execute();
+//        new Delete().from(UserModel.class).where(UserModel.USER_ID + " = ?", pModel.getUserId()).execute();
+        getDao().deleteUserByUserId(pModel.getUserId());
 
         final ReserveChannelModel reserveChannelModel = pConfigModel.getProjectInfo().getReserveChannel();
 
@@ -389,15 +390,24 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
             reserveChannelModel.selectPhone(0);
         }
 
-        final UserModel userModel = new UserModel();
-        userModel.login = pLogin;
-        userModel.password = pPassword;
-        userModel.config_id = pModel.getConfigId();
-        userModel.role_id = pModel.getRoleId();
-        userModel.user_id = pModel.getUserId();
-        userModel.user_project_id = pModel.getUserProjectId();
-        userModel.config = new GsonBuilder().create().toJson(pConfigModel);
-        userModel.save();
+//        final UserModel userModel = new UserModel();
+//        userModel.login = pLogin;
+//        userModel.password = pPassword;
+//        userModel.config_id = pModel.getConfigId();
+//        userModel.role_id = pModel.getRoleId();
+//        userModel.user_id = pModel.getUserId();
+//        userModel.user_project_id = pModel.getUserProjectId();
+//        userModel.config = new GsonBuilder().create().toJson(pConfigModel);
+//        userModel.save();
+
+        final UserModelR userModelR = new UserModelR();
+        userModelR.setLogin(pLogin);
+        userModelR.setPassword(pPassword);
+        userModelR.setConfig_id(pModel.getConfigId());
+        userModelR.setRole_id(pModel.getRoleId());
+        userModelR.setUser_id(pModel.getUserId());
+        userModelR.setUser_project_id(pModel.getUserProjectId());
+        userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
     }
 
     @Override

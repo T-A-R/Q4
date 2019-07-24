@@ -45,7 +45,8 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
     private EditText mPasswordEditText;
     private EditSpinner mLoginSpinner;
     private List<String> mSavedUsers;
-    private List<UserModel> mSavedUserModels;
+    //    private List<UserModel> mSavedUserModels;
+    private List<UserModelR> mSavedUserModels;
     private TextView mVersionView;
     private int mVersionTapCount = 0;
 
@@ -67,7 +68,8 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         //TODO refactor DB!!!
 
         // GOOD select
-        final int usersCountValue = new Select().from(UserModel.class).count();
+//        final int usersCountValue = new Select().from(UserModel.class).count();
+        final int usersCountValue = getDao().getAllUsers().size();
         usersCount.setText(String.format(getString(R.string.VIEW_USERS_COUNT_ON_DEVICE), (usersCountValue + "/" + MAX_USERS)));
         UiUtils.setTextOrHide(mVersionView, String.format(getString(R.string.VIEW_APP_VERSION), getAppVersionName()));
 
@@ -81,9 +83,15 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             final int lastUserId = getCurrentUserId();
 
             if (lastUserId != -1) {
-                for (final UserModel userModel : mSavedUserModels) {
-                    if (userModel.user_id == lastUserId) {
-                        UiUtils.setTextOrHide(mLoginSpinner, userModel.login);
+//                for (final UserModel userModel : mSavedUserModels) {
+//                    if (userModel.user_id == lastUserId) {
+//                        UiUtils.setTextOrHide(mLoginSpinner, userModel.login);
+//                    }
+//                }
+
+                for (final UserModelR userModel : mSavedUserModels) {
+                    if (userModel.getUser_id() == lastUserId) {
+                        UiUtils.setTextOrHide(mLoginSpinner, userModel.getLogin());
                     }
                 }
             }
@@ -167,18 +175,25 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
     private List<String> getSavedUserLogins() {
         final List<String> users = new ArrayList<>();
 
-        for (final UserModel model : mSavedUserModels) {
-            users.add(model.login);
+//        for (final UserModel model : mSavedUserModels) {
+//            users.add(model.login);
+//        }
+
+        for (final UserModelR model : mSavedUserModels) {
+            users.add(model.getLogin());
         }
 
         return users;
     }
 
-    private List<UserModel> getSavedUserModels() {
+    private List<UserModelR> getSavedUserModels() {
+//    private List<UserModel> getSavedUserModels() {
         // GOOD select
-        final List<UserModel> userModels = new Select().from(UserModel.class).execute();
+//        final List<UserModel> userModels = new Select().from(UserModel.class).execute();
+        final List<UserModelR> userModels = getDao().getAllUsers();
 
-        return (userModels == null) ? new ArrayList<UserModel>() : userModels;
+//        return (userModels == null) ? new ArrayList<UserModel>() : userModels;
+        return (userModels == null) ? new ArrayList<UserModelR>() : userModels;
     }
 
     public void downloadConfig(final String pLogin, final String pPassword, final AuthResponseModel pModel) {

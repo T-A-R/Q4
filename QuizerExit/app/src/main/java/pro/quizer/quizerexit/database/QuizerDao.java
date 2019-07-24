@@ -25,11 +25,17 @@ public interface QuizerDao {
     @Query("DELETE FROM ActivationModelR")
     void clearActivationModelR();
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertUser(UserModelR userModelR);
+
     @Query("UPDATE UserModelR SET password = :password, login = :login, config_id = :configId, role_id = :roleId, user_project_id = :userProjectId WHERE user_id = :userId")
     void updateUserModelR(String login, String password, String configId, int roleId, int userProjectId, int userId);
 
     @Query("UPDATE UserModelR SET config = :config WHERE user_id = :userId AND user_project_id = :userProjectId")
     void updateConfig(String config, int userId, int userProjectId);
+
+    @Query("UPDATE UserModelR SET quotas = :quotas WHERE user_project_id = :userProjectId")
+    void updateQuotas(String quotas, int userProjectId);
 
     @Query("SELECT * FROM UserModelR")
     List<UserModelR> getAllUsers();
@@ -42,5 +48,8 @@ public interface QuizerDao {
 
     @Query("DELETE FROM UserModelR WHERE user_id = :userId")
     void deleteUserByUserId(int userId);
+
+    @Query("DELETE FROM UserModelR")
+    void clearUserModelR();
 
 }

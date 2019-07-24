@@ -31,11 +31,16 @@ public interface QuizerDao {
     @Query("UPDATE UserModelR SET config = :config WHERE user_id = :userId AND user_project_id = :userProjectId")
     void updateConfig(String config, int userId, int userProjectId);
 
+    @Query("SELECT * FROM UserModelR")
+    List<UserModelR> getAllUsers();
+
     @Query("SELECT * FROM UserModelR WHERE login = :login AND password = :password")
     List<UserModelR> getLocalUserModel(String login, String password);
 
     @Query("SELECT * FROM UserModelR WHERE user_id = :userId")
     List<UserModelR> getUserByUserId(int userId);
 
+    @Query("DELETE FROM UserModelR WHERE user_id = :userId")
+    void deleteUserByUserId(int userId);
 
 }

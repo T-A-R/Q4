@@ -16,6 +16,7 @@ import pro.quizer.quizerexit.BuildConfig;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizerexit.executable.SyncInfoExecutable;
@@ -31,7 +32,8 @@ import static pro.quizer.quizerexit.activity.BaseActivity.IS_AFTER_AUTH;
 
 public class HomeFragment extends BaseFragment implements ICallback {
 
-    private UserModel mUserModel;
+//    private UserModel mUserModel;
+    private UserModelR mUserModel;
     private BaseActivity mBaseActivity;
 
     public static Fragment newInstance(final boolean pIsCanShowUpdateDialog) {
@@ -58,7 +60,8 @@ public class HomeFragment extends BaseFragment implements ICallback {
         final Bundle bundle = getArguments();
 
         if (bundle != null && bundle.getBoolean(IS_AFTER_AUTH)) {
-            checkUpdates(bundle, mUserModel.getConfig());
+//            checkUpdates(bundle, mUserModel.getConfig());
+            checkUpdates(bundle, mUserModel.getConfigR());
         }
 
         new SendQuestionnairesByUserModelExecutable(getBaseActivity(), mUserModel, this, false).execute();
@@ -118,7 +121,8 @@ public class HomeFragment extends BaseFragment implements ICallback {
         }
 
         mUserModel = mBaseActivity.getCurrentUser();
-        final ConfigModel config = mUserModel.getConfig();
+//        final ConfigModel config = mUserModel.getConfig();
+        final ConfigModel config = mUserModel.getConfigR();
         final ProjectInfoModel projectInfo = config.getProjectInfo();
 
         final TextView configAgreement = pView.findViewById(R.id.config_agreement);

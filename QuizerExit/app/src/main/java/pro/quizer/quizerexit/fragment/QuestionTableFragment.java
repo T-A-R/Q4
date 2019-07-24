@@ -18,6 +18,7 @@ import pro.quizer.quizerexit.IAdapter;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.adapter.TableQuestionAdapter;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.utils.UiUtils;
@@ -34,7 +35,8 @@ public class QuestionTableFragment extends AbstractQuestionFragment {
 
     public static Fragment newInstance(final boolean pIsFromDialog,
                                        final boolean pIsVisibleButton,
-                                       final UserModel user,
+//                                       final UserModel user,
+                                       final UserModelR user,
                                        @NonNull final ElementModel pElement,
                                        final NavigationCallback pCallback) {
         final Fragment fragment = new QuestionTableFragment();

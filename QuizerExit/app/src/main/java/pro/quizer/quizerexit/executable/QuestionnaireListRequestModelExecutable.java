@@ -4,6 +4,7 @@ import com.activeandroid.query.Select;
 
 import java.util.List;
 
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.database.ElementDatabaseModel;
@@ -20,15 +21,22 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
     private final String mLogin;
     private final String mPassword;
 
-    public QuestionnaireListRequestModelExecutable(final UserModel pUserModel) {
+//    public QuestionnaireListRequestModelExecutable(final UserModel pUserModel) {
+    public QuestionnaireListRequestModelExecutable(final UserModelR pUserModel) {
         super();
 
-        final ConfigModel configModel = pUserModel.getConfig();
+//        final ConfigModel configModel = pUserModel.getConfig();
+        final ConfigModel configModel = pUserModel.getConfigR();
 
-        mUserId = pUserModel.user_id;
+        mUserId = pUserModel.getUser_id();
         mLoginAdmin = configModel.getLoginAdmin();
-        mLogin = pUserModel.login;
-        mPassword = pUserModel.password;
+        mLogin = pUserModel.getLogin();
+        mPassword = pUserModel.getPassword();
+
+//        mUserId = pUserModel.user_id;
+//        mLoginAdmin = configModel.getLoginAdmin();
+//        mLogin = pUserModel.login;
+//        mPassword = pUserModel.password;
     }
 
     @Override

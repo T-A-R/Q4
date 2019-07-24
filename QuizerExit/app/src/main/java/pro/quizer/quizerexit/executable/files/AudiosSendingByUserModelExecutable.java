@@ -8,6 +8,7 @@ import java.util.List;
 
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.model.database.UserModel;
 
@@ -15,7 +16,8 @@ import static pro.quizer.quizerexit.utils.OkHttpUtils.AUDIO_AMR;
 
 public class AudiosSendingByUserModelExecutable extends AbstractFilesSendingByUserModelExecutable {
 
-    public AudiosSendingByUserModelExecutable(final BaseActivity pContext, final UserModel pUserModel, final ICallback pCallback) {
+//    public AudiosSendingByUserModelExecutable(final BaseActivity pContext, final UserModel pUserModel, final ICallback pCallback) {
+    public AudiosSendingByUserModelExecutable(final BaseActivity pContext, final UserModelR pUserModel, final ICallback pCallback) {
         super(pContext, pUserModel, pCallback);
     }
 

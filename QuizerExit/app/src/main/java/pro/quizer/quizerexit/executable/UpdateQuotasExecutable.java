@@ -21,6 +21,7 @@ import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.DoRequest;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.request.QuotaRequestModel;
@@ -31,7 +32,8 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
 
     private final Context mContext;
     private  BaseActivity baseActivity;
-    private  UserModel userModel;
+//    private  UserModel userModel;
+    private UserModelR userModel;
     private  ConfigModel configModel;
     private  int userProjectId;
 
@@ -47,10 +49,14 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
 
         baseActivity = (BaseActivity) mContext;
         userModel = baseActivity.getCurrentUser();
-        configModel = userModel.getConfig();
-        userProjectId = userModel.user_project_id;
+//        configModel = userModel.getConfig();
+//        userProjectId = userModel.user_project_id;
+//
+//        QuotaRequestModel requestModel = new QuotaRequestModel(configModel.getLoginAdmin(), userModel.password, userModel.login);
+        configModel = userModel.getConfigR();
+        userProjectId = userModel.getUser_project_id();
 
-        QuotaRequestModel requestModel = new QuotaRequestModel(configModel.getLoginAdmin(), userModel.password, userModel.login);
+        QuotaRequestModel requestModel = new QuotaRequestModel(configModel.getLoginAdmin(), userModel.getPassword(), userModel.getLogin());
         Gson gson = new Gson();
         String json = gson.toJson(requestModel);
 

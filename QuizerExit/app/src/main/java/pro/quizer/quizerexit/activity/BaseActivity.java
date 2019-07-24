@@ -278,13 +278,14 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         final List<UserModelR> list = getDao().getUserByUserId(pUserId);
 
         if (list == null || list.isEmpty()) {
+            Log.d(TAG, "BaseActivity.getUserByUserId: null");
             return null;
         } else {
+            Log.d(TAG, "BaseActivity.getUserByUserId: " + list.get(0));
             return list.get(0);
         }
     }
 
-    //TODO Переделать !!!! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 //    public UserModel getUserByUserId(final int pUserId) {
 //        // BAD select
 //        final List<UserModel> list = new Select().from(UserModel.class).where(UserModel.USER_ID + " = ?", pUserId).execute();

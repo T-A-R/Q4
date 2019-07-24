@@ -23,6 +23,7 @@ import pro.quizer.quizerexit.API.QuizerAPI;
 import pro.quizer.quizerexit.CoreApplication;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.BaseExecutable;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.ISendingFileCallback;
@@ -59,18 +60,23 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
     };
 
 
-    public AbstractFilesSendingByUserModelExecutable(final BaseActivity pContext, final UserModel pUserModel, final ICallback pCallback) {
+//    public AbstractFilesSendingByUserModelExecutable(final BaseActivity pContext, final UserModel pUserModel, final ICallback pCallback) {
+    public AbstractFilesSendingByUserModelExecutable(final BaseActivity pContext, final UserModelR pUserModel, final ICallback pCallback) {
         super(pCallback);
 
-        final ConfigModel configModel = pUserModel.getConfig();
+//        final ConfigModel configModel = pUserModel.getConfig();
+        final ConfigModel configModel = pUserModel.getConfigR();
 
         mBaseActivity = pContext;
         mLoginAdmin = configModel.getLoginAdmin();
         mServerUrl = configModel.getServerUrl();
 
-        mUserId = pUserModel.user_id;
-        mLogin = pUserModel.login;
-        mPassword = pUserModel.password;
+//        mUserId = pUserModel.user_id;
+//        mLogin = pUserModel.login;
+//        mPassword = pUserModel.password;
+        mUserId = pUserModel.getUser_id();
+        mLogin = pUserModel.getLogin();
+        mPassword = pUserModel.getPassword();
     }
 
     public Context getContext() {

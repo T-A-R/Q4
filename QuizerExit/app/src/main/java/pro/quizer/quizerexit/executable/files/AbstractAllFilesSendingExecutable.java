@@ -8,6 +8,7 @@ import java.util.List;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.BaseExecutable;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.model.database.UserModel;
@@ -16,7 +17,8 @@ public abstract class AbstractAllFilesSendingExecutable extends BaseExecutable {
 
     private final BaseActivity mContext;
     private final ICallback mCallback;
-    private List<UserModel> mUsers;
+//    private List<UserModel> mUsers;
+    private List<UserModelR> mUsers;
 
     public AbstractAllFilesSendingExecutable(final BaseActivity pContext, final ICallback pCallback) {
         super(pCallback);
@@ -30,7 +32,8 @@ public abstract class AbstractAllFilesSendingExecutable extends BaseExecutable {
         onStarting();
 
         // GOOD select
-        mUsers = new Select().from(UserModel.class).execute();
+//        mUsers = new Select().from(UserModel.class).execute();
+        mUsers = BaseActivity.getDao().getAllUsers();
 
         if (mUsers == null || mUsers.isEmpty()) {
             onError(new Exception(mContext.getString(R.string.NOTIFICATION_SENDING_ERROR_EMPTY_USERS_LIST)));
@@ -47,10 +50,16 @@ public abstract class AbstractAllFilesSendingExecutable extends BaseExecutable {
         return mContext;
     }
 
+//    @NonNull
+//    public List<UserModel> getUsers() {
+//        return mUsers;
+//    }
+
     @NonNull
-    public List<UserModel> getUsers() {
+    public List<UserModelR> getUsers() {
         return mUsers;
     }
 
-    public abstract AbstractFilesSendingByUserModelExecutable getFilesExecutable(final UserModel pUserModel, final ICallback pCallback);
+//    public abstract AbstractFilesSendingByUserModelExecutable getFilesExecutable(final UserModel pUserModel, final ICallback pCallback);
+    public abstract AbstractFilesSendingByUserModelExecutable getFilesExecutable(final UserModelR pUserModel, final ICallback pCallback);
 }

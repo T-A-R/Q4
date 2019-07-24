@@ -146,7 +146,7 @@ public class SettingsFragment extends BaseFragment implements ICallback {
             }
         });
 
-        final UserModelR currentUser = mBaseActivity.getCurrentUserR();
+        final UserModelR currentUser = mBaseActivity.getCurrentUser();
         final ConfigModel configModel = currentUser.getConfigR();
         final ReserveChannelModel reserveChannelModel = configModel.getProjectInfo().getReserveChannel();
 

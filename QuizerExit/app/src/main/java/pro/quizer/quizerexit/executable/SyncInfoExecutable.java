@@ -7,6 +7,7 @@ import com.activeandroid.query.Select;
 import java.util.List;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ProjectInfoModel;
@@ -31,10 +32,14 @@ public class SyncInfoExecutable extends BaseModelExecutable<SyncViewModel> {
 
         if (mContext instanceof BaseActivity) {
             final BaseActivity activity = (BaseActivity) mContext;
-            final UserModel userModel = activity.getCurrentUser();
-            final int pUserId = userModel.user_id;
-            final int pUserProjectId = userModel.user_project_id;
-            final ConfigModel configModel = userModel.getConfig();
+//            final UserModel userModel = activity.getCurrentUser();
+//            final int pUserId = userModel.user_id;
+//            final int pUserProjectId = userModel.user_project_id;
+//            final ConfigModel configModel = userModel.getConfig();
+            final UserModelR userModel = activity.getCurrentUser();
+            final int pUserId = userModel.getUser_id();
+            final int pUserProjectId = userModel.getUser_project_id();
+            final ConfigModel configModel = userModel.getConfigR();
 
             // GOOD select
             final List<QuestionnaireDatabaseModel> notSentQDM = new Select()

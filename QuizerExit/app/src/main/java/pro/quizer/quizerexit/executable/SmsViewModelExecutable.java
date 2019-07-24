@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.ProjectInfoModel;
@@ -31,8 +32,10 @@ public class SmsViewModelExecutable extends BaseModelExecutable<SmsViewModel> {
     public SmsViewModel execute() {
         final SmsViewModel smsViewModel = new SmsViewModel();
 
-        final UserModel currentUser = mBaseActivity.getCurrentUser();
-        final ConfigModel configModel = currentUser.getConfig();
+//        final UserModel currentUser = mBaseActivity.getCurrentUser();
+        final UserModelR currentUser = mBaseActivity.getCurrentUser();
+//        final ConfigModel configModel = currentUser.getConfig();
+        final ConfigModel configModel = currentUser.getConfigR();
         final ProjectInfoModel projectInfoModel = configModel.getProjectInfo();
         final ReserveChannelModel reserveChannelModel = projectInfoModel.getReserveChannel();
 

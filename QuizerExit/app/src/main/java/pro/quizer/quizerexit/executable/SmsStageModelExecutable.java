@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.QuestionsMatchesModel;
@@ -25,13 +26,14 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
     private final StagesModel mStagesModel;
     private SmsStage mSmsStage;
 
-    public SmsStageModelExecutable(final BaseActivity pBaseActivity, final SmsStage pSmsStage, final UserModel pUserModel, final StagesModel pStageModel) {
+//    public SmsStageModelExecutable(final BaseActivity pBaseActivity, final SmsStage pSmsStage, final UserModel pUserModel, final StagesModel pStageModel) {
+    public SmsStageModelExecutable(final BaseActivity pBaseActivity, final SmsStage pSmsStage, final UserModelR pUserModel, final StagesModel pStageModel) {
         super();
 
-        final List<ElementModel> elements = pUserModel.getConfig().getProjectInfo().getElements();
+        final List<ElementModel> elements = pUserModel.getConfigR().getProjectInfo().getElements();
 
         mStagesModel = pStageModel;
-        mUserId = pUserModel.user_id;
+        mUserId = pUserModel.getUser_id();
         mSmsStage = pSmsStage;
         mMap = pBaseActivity.createNewMap(elements);
     }

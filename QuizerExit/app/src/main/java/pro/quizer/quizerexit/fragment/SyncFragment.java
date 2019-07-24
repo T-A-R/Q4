@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizerexit.executable.SyncInfoExecutable;
@@ -39,7 +40,8 @@ public class SyncFragment extends BaseFragment implements ICallback {
 
     private TextView mPUnsendedView;
 
-    private UserModel mUserModel;
+//    private UserModel mUserModel;
+    private UserModelR mUserModel;
     private BaseActivity mBaseActivity;
 
     private String mQSendedFromThisDeviceViewString;
@@ -83,7 +85,8 @@ public class SyncFragment extends BaseFragment implements ICallback {
         mUserModel = mBaseActivity.getCurrentUser();
 
         mUserNameTitle = pView.findViewById(R.id.user_name_title);
-        UiUtils.setTextOrHide(mUserNameTitle, mUserModel.login);
+//        UiUtils.setTextOrHide(mUserNameTitle, mUserModel.login);
+        UiUtils.setTextOrHide(mUserNameTitle, mUserModel.getLogin());
 
         mSendDataButton = pView.findViewById(R.id.send_q);
         mSendAudioButton = pView.findViewById(R.id.send_audio);

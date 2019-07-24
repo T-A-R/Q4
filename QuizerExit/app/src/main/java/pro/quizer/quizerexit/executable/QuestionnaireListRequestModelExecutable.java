@@ -4,6 +4,8 @@ import com.activeandroid.query.Select;
 
 import java.util.List;
 
+import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.ConfigModel;
@@ -73,18 +75,32 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
             );
 
             // GOOD select
-            final List<ElementDatabaseModel> elements = new Select()
-                    .from(ElementDatabaseModel.class)
-                    .where(ElementDatabaseModel.TOKEN + " =?", questionnaireDatabaseModel.token)
-                    .execute();
+//            final List<ElementDatabaseModel> elements = new Select()
+//                    .from(ElementDatabaseModel.class)
+//                    .where(ElementDatabaseModel.TOKEN + " =?", questionnaireDatabaseModel.token)
+//                    .execute();
 
-            for (final ElementDatabaseModel element : elements) {
+//            for (final ElementDatabaseModel element : elements) {
+//                final ElementRequestModel elementRequestModel = new ElementRequestModel(
+//                        element.relative_id,
+//                        element.duration,
+//                        element.click_rank,
+//                        element.rank,
+//                        element.value
+//                );
+//
+//                questionnaireRequestModel.addElement(elementRequestModel);
+//            }
+
+            final List<ElementDatabaseModelR> elements = BaseActivity.getDao().getElementByToken(questionnaireDatabaseModel.token);
+
+            for (final ElementDatabaseModelR element : elements) {
                 final ElementRequestModel elementRequestModel = new ElementRequestModel(
-                        element.relative_id,
-                        element.duration,
-                        element.click_rank,
-                        element.rank,
-                        element.value
+                        element.getRelative_id(),
+                        element.getDuration(),
+                        element.getClick_rank(),
+                        element.getRank(),
+                        element.getValue()
                 );
 
                 questionnaireRequestModel.addElement(elementRequestModel);

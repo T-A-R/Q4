@@ -33,6 +33,7 @@ import pro.quizer.quizerexit.AudioService;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.fragment.ElementFragment;
 import pro.quizer.quizerexit.model.ElementDatabaseType;
@@ -546,17 +547,26 @@ public class ElementActivity extends BaseActivity {
             final ElementModel element = elementModel.getValue();
 
             if (element != null && element.isScreenShowing()) {
-                final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
-                elementDatabaseModel.token = mToken;
-                elementDatabaseModel.relative_id = element.getRelativeID();
-                elementDatabaseModel.relative_parent_id = element.getRelativeParentID();
-                elementDatabaseModel.item_order = element.getOptions().getOrder();
-                elementDatabaseModel.duration = element.getDuration();
-                elementDatabaseModel.type = ElementDatabaseType.SCREEN;
+//                final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
+//                elementDatabaseModel.token = mToken;
+//                elementDatabaseModel.relative_id = element.getRelativeID();
+//                elementDatabaseModel.relative_parent_id = element.getRelativeParentID();
+//                elementDatabaseModel.item_order = element.getOptions().getOrder();
+//                elementDatabaseModel.duration = element.getDuration();
+//                elementDatabaseModel.type = ElementDatabaseType.SCREEN;
+
+                final ElementDatabaseModelR elementDatabaseModelR = new ElementDatabaseModelR();
+                elementDatabaseModelR.setToken(mToken);
+                elementDatabaseModelR.setRelative_id(element.getRelativeID());
+                elementDatabaseModelR.setRelative_parent_id(element.getRelativeParentID());
+                elementDatabaseModelR.setItem_order(element.getOptions().getOrder());
+                elementDatabaseModelR.setDuration(element.getDuration());
+                elementDatabaseModelR.setType(ElementDatabaseType.SCREEN);
 
                 LogUtils.logAction("saveScreenElement " + element.getRelativeID());
 
-                elementDatabaseModel.save();
+//                elementDatabaseModel.save();
+                getDao().insertElement(elementDatabaseModelR);
                 count++;
             }
         }
@@ -579,20 +589,37 @@ public class ElementActivity extends BaseActivity {
         return count;
     }
 
+//    private void saveElement(final ElementModel element) {
+//        final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
+//        final int parentId = element.getRelativeParentID();
+//
+//        elementDatabaseModel.token = mToken;
+//        elementDatabaseModel.value = element.getTextAnswer();
+//        elementDatabaseModel.relative_id = element.getRelativeID();
+//        elementDatabaseModel.relative_parent_id = parentId;
+//        elementDatabaseModel.item_order = element.getOptions().getOrder();
+//        elementDatabaseModel.type = ElementDatabaseType.ELEMENT;
+//
+//        LogUtils.logAction("saveElement " + element.getRelativeID());
+//
+//        elementDatabaseModel.save();
+//    }
+
     private void saveElement(final ElementModel element) {
-        final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
+        final ElementDatabaseModelR elementDatabaseModel = new ElementDatabaseModelR();
         final int parentId = element.getRelativeParentID();
 
-        elementDatabaseModel.token = mToken;
-        elementDatabaseModel.value = element.getTextAnswer();
-        elementDatabaseModel.relative_id = element.getRelativeID();
-        elementDatabaseModel.relative_parent_id = parentId;
-        elementDatabaseModel.item_order = element.getOptions().getOrder();
-        elementDatabaseModel.type = ElementDatabaseType.ELEMENT;
+        elementDatabaseModel.setToken(mToken);
+        elementDatabaseModel.setValue(element.getTextAnswer());
+        elementDatabaseModel.setRelative_id(element.getRelativeID());
+        elementDatabaseModel.setRelative_parent_id(parentId);
+        elementDatabaseModel.setItem_order(element.getOptions().getOrder());
+        elementDatabaseModel.setType(ElementDatabaseType.ELEMENT);
 
         LogUtils.logAction("saveElement " + element.getRelativeID());
 
-        elementDatabaseModel.save();
+//        elementDatabaseModel.save();
+        getDao().insertElement(elementDatabaseModel);
     }
 
     private int getCountOfShowingQuestions() {

@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.database.ElementDatabaseModel;
 import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
@@ -43,15 +45,23 @@ public class QuestionnairesCountBySequenceExecutable extends BaseModelExecutable
         for (final QuestionnaireDatabaseModel questionnaireDatabaseModel : sentQuestionnaires) {
 
             // GOOD select
-            final List<ElementDatabaseModel> elements = new Select()
-                    .from(ElementDatabaseModel.class)
-                    .where(ElementDatabaseModel.TOKEN + " =?", questionnaireDatabaseModel.token)
-                    .execute();
+//            final List<ElementDatabaseModel> elements = new Select()
+//                    .from(ElementDatabaseModel.class)
+//                    .where(ElementDatabaseModel.TOKEN + " =?", questionnaireDatabaseModel.token)
+//                    .execute();
+//
+//            final Set<Integer> set = new HashSet<>();
+//
+//            for (final ElementDatabaseModel elementDatabaseModel : elements) {
+//                set.add(elementDatabaseModel.relative_id);
+//            }
+
+            final List<ElementDatabaseModelR> elements = BaseActivity.getDao().getElementByToken(questionnaireDatabaseModel.token);
 
             final Set<Integer> set = new HashSet<>();
 
-            for (final ElementDatabaseModel elementDatabaseModel : elements) {
-                set.add(elementDatabaseModel.relative_id);
+            for (final ElementDatabaseModelR elementDatabaseModel : elements) {
+                set.add(elementDatabaseModel.getRelative_id());
             }
 
             int matchesCount = 0;

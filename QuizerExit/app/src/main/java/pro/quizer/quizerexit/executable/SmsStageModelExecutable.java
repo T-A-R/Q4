@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.ElementModel;
@@ -61,7 +62,8 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
     }
 
     private void load(@QuestionnaireStatus final String pStatus, final Map<String, SmsAnswer> result) {
-        final List<ElementDatabaseModel> allElements = new ArrayList<>();
+//        final List<ElementDatabaseModel> allElements = new ArrayList<>();
+        final List<ElementDatabaseModelR> allElements = new ArrayList<>();
 
         // GOOD select
         final List<QuestionnaireDatabaseModel> questionnaires = new Select()
@@ -82,10 +84,12 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
             mSmsStage.addToken(token);
 
             // GOOD select
-            final List<ElementDatabaseModel> elements = new Select()
-                    .from(ElementDatabaseModel.class)
-                    .where(ElementDatabaseModel.TOKEN + " =?", token)
-                    .execute();
+//            final List<ElementDatabaseModel> elements = new Select()
+//                    .from(ElementDatabaseModel.class)
+//                    .where(ElementDatabaseModel.TOKEN + " =?", token)
+//                    .execute();
+
+            final List<ElementDatabaseModelR> elements = BaseActivity.getDao().getElementByToken(token);
 
             allElements.addAll(elements);
         }
@@ -94,7 +98,8 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
 
         for (final QuestionsMatchesModel match : matches) {
             final String index = match.getSmsNum();
-            List<ElementDatabaseModel> elementsByQuestionId = getElementsByParentId(allElements, match.getQuestionId());
+//            List<ElementDatabaseModel> elementsByQuestionId = getElementsByParentId(allElements, match.getQuestionId());
+            List<ElementDatabaseModelR> elementsByQuestionId = getElementsByParentId(allElements, match.getQuestionId());
 
             if (elementsByQuestionId != null && !elementsByQuestionId.isEmpty()) {
                 final SmsAnswer smsAnswer = result.get(index);
@@ -111,11 +116,35 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
         }
     }
 
-    private List<ElementDatabaseModel> getElementsByParentId(final List<ElementDatabaseModel> pAllElements, final int pRelativeId) {
-        final List<ElementDatabaseModel> result = new ArrayList<>();
+//    private List<ElementDatabaseModel> getElementsByParentId(final List<ElementDatabaseModel> pAllElements, final int pRelativeId) {
+//        final List<ElementDatabaseModel> result = new ArrayList<>();
+//
+//        for (final ElementDatabaseModel elementDatabaseModel : pAllElements) {
+//            if (elementDatabaseModel.relative_parent_id == pRelativeId) {
+//                result.add(elementDatabaseModel);
+//            }
+//        }
+//
+//        return result;
+//    }
 
-        for (final ElementDatabaseModel elementDatabaseModel : pAllElements) {
-            if (elementDatabaseModel.relative_parent_id == pRelativeId) {
+//    private int getCountAnswersByOrder(final List<ElementDatabaseModel> pAllElements, final int pOrder) {
+//        int count = 0;
+//
+//        for (final ElementDatabaseModel elementDatabaseModel : pAllElements) {
+//            if (elementDatabaseModel.item_order == pOrder) {
+//                count++;
+//            }
+//        }
+//
+//        return count;
+//    }
+
+    private List<ElementDatabaseModelR> getElementsByParentId(final List<ElementDatabaseModelR> pAllElements, final int pRelativeId) {
+        final List<ElementDatabaseModelR> result = new ArrayList<>();
+
+        for (final ElementDatabaseModelR elementDatabaseModel : pAllElements) {
+            if (elementDatabaseModel.getRelative_parent_id() == pRelativeId) {
                 result.add(elementDatabaseModel);
             }
         }
@@ -123,11 +152,11 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
         return result;
     }
 
-    private int getCountAnswersByOrder(final List<ElementDatabaseModel> pAllElements, final int pOrder) {
+    private int getCountAnswersByOrder(final List<ElementDatabaseModelR> pAllElements, final int pOrder) {
         int count = 0;
 
-        for (final ElementDatabaseModel elementDatabaseModel : pAllElements) {
-            if (elementDatabaseModel.item_order == pOrder) {
+        for (final ElementDatabaseModelR elementDatabaseModel : pAllElements) {
+            if (elementDatabaseModel.getItem_order() == pOrder) {
                 count++;
             }
         }

@@ -2,6 +2,8 @@ package pro.quizer.quizerexit.executable;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.activeandroid.query.Update;
 import com.google.gson.Gson;
@@ -27,6 +29,8 @@ import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.request.QuotaRequestModel;
 import pro.quizer.quizerexit.model.response.QuotaResponseModel;
 import pro.quizer.quizerexit.utils.SPUtils;
+
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
 public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.GetQuotasCallback {
 
@@ -94,7 +98,11 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
 //                new Update(UserModel.class)
 //                        .set(UserModel.QUOTAS + " = ?", responseJson)
 //                        .where(UserModel.USER_PROJECT_ID + " = ?", userProjectId).execute();
-                BaseActivity.getDao().updateQuotas(responseJson, userProjectId);
+                try {
+                    BaseActivity.getDao().updateQuotas(responseJson, userProjectId);
+                } catch (Exception e) {
+                    Log.d(TAG, mContext.getString(R.string.DB_SAVE_ERROR));
+                }
 
                 onSuccess();
             } else {

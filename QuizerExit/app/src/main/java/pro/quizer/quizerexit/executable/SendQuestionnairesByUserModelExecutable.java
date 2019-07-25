@@ -157,7 +157,11 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
 //                                .set(QuestionnaireDatabaseModel.STATUS + " = ?", QuestionnaireStatus.SENT)
 //                                .where(QuestionnaireDatabaseModel.TOKEN + " = ?", token)
 //                                .execute();
-                        BaseActivity.getDao().setQuestionnaireStatus(QuestionnaireStatus.SENT, token);
+                        try {
+                            BaseActivity.getDao().setQuestionnaireStatus(QuestionnaireStatus.SENT, token);
+                        } catch (Exception e) {
+                            Log.d(TAG, "Ошибка записи в базу данных.");
+                        }
                     }
 
                     new UpdateQuotasExecutable(mBaseActivity, new ICallback() {

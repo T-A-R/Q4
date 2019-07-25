@@ -2,6 +2,7 @@ package pro.quizer.quizerexit.executable;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 import com.activeandroid.query.Select;
 import com.activeandroid.query.Update;
@@ -22,6 +23,7 @@ import pro.quizer.quizerexit.model.request.QuestionnaireListRequestModel;
 import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.FileUtils;
 
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 import static pro.quizer.quizerexit.utils.FileUtils.FOLDER_DIVIDER;
 import static pro.quizer.quizerexit.utils.FileUtils.moveFile;
 
@@ -86,7 +88,11 @@ public class UploadingExecutable extends BaseExecutable {
 //                .where(QuestionnaireDatabaseModel.USER_ID + " = ?", pUserModel.getUser_id())
 ////                .where(QuestionnaireDatabaseModel.USER_ID + " = ?", pUserModel.user_id)
 //                .execute();
-        BaseActivity.getDao().setQuestionnaireStatusByUserId(QuestionnaireStatus.SENT, pUserModel.getUser_id());
+        try {
+            BaseActivity.getDao().setQuestionnaireStatusByUserId(QuestionnaireStatus.SENT, pUserModel.getUser_id());
+        } catch (Exception e) {
+            Log.d(TAG, "Ошибка записи в базу данных.");
+        }
     }
 
     private void moveFiles() {

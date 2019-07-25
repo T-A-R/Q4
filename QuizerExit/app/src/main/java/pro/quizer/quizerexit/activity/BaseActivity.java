@@ -19,9 +19,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 
-import com.activeandroid.query.Delete;
-import com.activeandroid.query.Select;
-import com.activeandroid.query.Update;
 import com.google.gson.GsonBuilder;
 
 import java.io.File;
@@ -46,8 +43,6 @@ import pro.quizer.quizerexit.fragment.SyncFragment;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.ReserveChannelModel;
-import pro.quizer.quizerexit.model.database.ActivationModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.utils.FileUtils;
@@ -137,8 +132,6 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     private List<ElementModel> getElements() {
-        // BAD
-//        return getCurrentUser().getConfig().getProjectInfo().getElements();
         return getCurrentUser().getConfigR().getProjectInfo().getElements();
     }
 
@@ -237,7 +230,11 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
         final ActivationModelR activationModelR = new ActivationModelR(pActivationModel.getServer(),
                 pActivationModel.getLoginAdmin());
-        getDao().clearActivationModelR();
+        try {
+            getDao().clearActivationModelR();
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_CLEAR_ERROR));
+        }
 
         try {
             getDao().insertActivationModelR(activationModelR);
@@ -267,17 +264,6 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
             return null;
     }
 
-//    public UserModel getLocalUserModel(final String pLogin, final String pPassword) {
-//        // GOOD select
-//        final List<UserModel> list = new Select().from(UserModel.class).where(UserModel.LOGIN + " = ? AND " + UserModel.PASSWORD + " = ?", pLogin, pPassword).limit(1).execute();
-//
-//        if (list != null && !list.isEmpty()) {
-//            return list.get(0);
-//        } else {
-//            return null;
-//        }
-//    }
-
     public UserModelR getUserByUserId(final int pUserId) {
 
         final List<UserModelR> list = getDao().getUserByUserId(pUserId);
@@ -289,17 +275,6 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         }
     }
 
-//    public UserModel getUserByUserId(final int pUserId) {
-//        // BAD select
-//        final List<UserModel> list = new Select().from(UserModel.class).where(UserModel.USER_ID + " = ?", pUserId).execute();
-//
-//        if (list == null || list.isEmpty()) {
-//            return null;
-//        } else {
-//            return list.get(0);
-//        }
-//    }
-
     public void updateDatabaseUserByUserId(final String pLogin,
                                            final String pPassword,
                                            final String pConfigId,
@@ -307,21 +282,20 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                                            final int pRoleId,
                                            final int pUserProjectId) {
 
-        getDao().updateUserModelR(pLogin, pPassword, pConfigId, pRoleId, pUserProjectId, pUserId);
-
-//        new Update(UserModel.class).set(
-//                UserModel.LOGIN + " = ? , " +
-//                        UserModel.PASSWORD + " = ? , " +
-//                        UserModel.CONFIG_ID + " = ? , " +
-//                        UserModel.ROLE_ID + " = ? , " +
-//                        UserModel.USER_PROJECT_ID + " = ?",
-//                pLogin, pPassword, pConfigId, pRoleId, pUserProjectId
-//        ).where(UserModel.USER_ID + " = ?", pUserId).execute();
+        try {
+            getDao().updateUserModelR(pLogin, pPassword, pConfigId, pRoleId, pUserProjectId, pUserId);
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_SAVE_ERROR));
+        }
     }
 
     public void updateConfig(final UserModelR pUserModel, final ConfigModel pConfigModel) {
 
-        getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
+        try {
+            getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_SAVE_ERROR));
+        }
     }
 
 //    public void updateConfig(final UserModel pUserModel, final ConfigModel pConfigModel) {
@@ -385,7 +359,11 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     public void saveUser(final String pLogin, final String pPassword, final AuthResponseModel pModel, final ConfigModel pConfigModel) throws Exception {
 //        new Delete().from(UserModel.class).where(UserModel.USER_ID + " = ?", pModel.getUserId()).execute();
-        getDao().deleteUserByUserId(pModel.getUserId());
+        try {
+            getDao().deleteUserByUserId(pModel.getUserId());
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_CLEAR_ERROR));
+        }
 
         final ReserveChannelModel reserveChannelModel = pConfigModel.getProjectInfo().getReserveChannel();
 

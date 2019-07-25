@@ -1,13 +1,17 @@
 package pro.quizer.quizerexit.executable;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.activeandroid.query.Delete;
 
+import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.view.SyncViewModel;
+
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
 public class RemoveUserExecutable extends BaseExecutable {
 
@@ -37,7 +41,11 @@ public class RemoveUserExecutable extends BaseExecutable {
             } else {
 //                new Delete().from(UserModel.class).where(UserModel.USER_ID + " = ?", currentUser.user_id).execute();
 
-                BaseActivity.getDao().deleteUserByUserId(currentUser.getUser_id());
+                try {
+                    BaseActivity.getDao().deleteUserByUserId(currentUser.getUser_id());
+                } catch (Exception e) {
+                    Log.d(TAG, mContext.getString(R.string.DB_CLEAR_ERROR));
+                }
 
                 activity.finish();
                 activity.startAuthActivity();

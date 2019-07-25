@@ -153,10 +153,11 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                     SPUtils.addSendedQInSession(mBaseActivity, tokensToRemove.size());
 
                     for (final String token : tokensToRemove) {
-                        new Update(QuestionnaireDatabaseModel.class)
-                                .set(QuestionnaireDatabaseModel.STATUS + " = ?", QuestionnaireStatus.SENT)
-                                .where(QuestionnaireDatabaseModel.TOKEN + " = ?", token)
-                                .execute();
+//                        new Update(QuestionnaireDatabaseModel.class)
+//                                .set(QuestionnaireDatabaseModel.STATUS + " = ?", QuestionnaireStatus.SENT)
+//                                .where(QuestionnaireDatabaseModel.TOKEN + " = ?", token)
+//                                .execute();
+                        BaseActivity.getDao().setQuestionnaireStatus(QuestionnaireStatus.SENT, token);
                     }
 
                     new UpdateQuotasExecutable(mBaseActivity, new ICallback() {

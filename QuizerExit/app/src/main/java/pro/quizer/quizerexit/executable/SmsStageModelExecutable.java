@@ -9,6 +9,7 @@ import java.util.Map;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
+import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.ElementModel;
@@ -66,20 +67,28 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
         final List<ElementDatabaseModelR> allElements = new ArrayList<>();
 
         // GOOD select
-        final List<QuestionnaireDatabaseModel> questionnaires = new Select()
-                .from(QuestionnaireDatabaseModel.class)
-                .where(QuestionnaireDatabaseModel.USER_ID + " = ? AND " +
-                                QuestionnaireDatabaseModel.STATUS + " =? AND " +
-                                QuestionnaireDatabaseModel.DATE_INTERVIEW + " >=? AND " +
-                                QuestionnaireDatabaseModel.DATE_INTERVIEW + " <=?",
-                        mUserId,
-                        pStatus,
-                        mStagesModel.getTimeFrom(),
-                        mStagesModel.getTimeTo())
-                .execute();
+//        final List<QuestionnaireDatabaseModel> questionnaires = new Select()
+//                .from(QuestionnaireDatabaseModel.class)
+//                .where(QuestionnaireDatabaseModel.USER_ID + " = ? AND " +
+//                                QuestionnaireDatabaseModel.STATUS + " =? AND " +
+//                                QuestionnaireDatabaseModel.DATE_INTERVIEW + " >=? AND " +
+//                                QuestionnaireDatabaseModel.DATE_INTERVIEW + " <=?",
+//                        mUserId,
+//                        pStatus,
+//                        mStagesModel.getTimeFrom(),
+//                        mStagesModel.getTimeTo())
+//                .execute();
 
-        for (final QuestionnaireDatabaseModel questionnaireDatabaseModel : questionnaires) {
-            final String token = questionnaireDatabaseModel.token;
+        final List<QuestionnaireDatabaseModelR> questionnaires = BaseActivity.getDao().getQuestionnaireWithTime(
+                mUserId,
+                pStatus,
+                mStagesModel.getTimeFrom(),
+                mStagesModel.getTimeTo());
+
+//        for (final QuestionnaireDatabaseModel questionnaireDatabaseModel : questionnaires) {
+//            final String token = questionnaireDatabaseModel.token;
+        for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : questionnaires) {
+            final String token = questionnaireDatabaseModel.getToken();
 
             mSmsStage.addToken(token);
 

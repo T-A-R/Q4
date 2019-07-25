@@ -72,10 +72,12 @@ public class SmsStage implements Serializable {
 
     public void markAsSent() {
         for (final String token : mTokens) {
-            new Update(QuestionnaireDatabaseModel.class).set(
-                    QuestionnaireDatabaseModel.STATUS + " = ?",
-                    QuestionnaireStatus.SENT
-            ).where(QuestionnaireDatabaseModel.TOKEN + " = ?", token).execute();
+//            new Update(QuestionnaireDatabaseModel.class).set(
+//                    QuestionnaireDatabaseModel.STATUS + " = ?",
+//                    QuestionnaireStatus.SENT
+//            ).where(QuestionnaireDatabaseModel.TOKEN + " = ?", token).execute();
+
+            BaseActivity.getDao().setQuestionnaireStatus(QuestionnaireStatus.SENT, token);
         }
 
         setStatus(QuestionnaireStatus.SENT);

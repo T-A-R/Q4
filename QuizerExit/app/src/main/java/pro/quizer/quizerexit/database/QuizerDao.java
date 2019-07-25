@@ -9,6 +9,7 @@ import java.util.List;
 
 import pro.quizer.quizerexit.database.model.ActivationModelR;
 import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
+import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 
 @Dao
@@ -55,4 +56,35 @@ public interface QuizerDao {
 
     @Query("SELECT * FROM ElementDatabaseModelR WHERE token = :token")
     List<ElementDatabaseModelR> getElementByToken(String token);
+
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireByUserIdWithStatus(int userId, String status);
+
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status AND user_id = :userId AND project_id = :projectId AND survey_status != :surveyStatus")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireForQuotas(int userId, int projectId, String status, String surveyStatus);
+
+    //TODO RENAME TO setQuestionnaireStatusByToken
+    @Query("UPDATE QuestionnaireDatabaseModelR SET status = :status WHERE token = :token")
+    void setQuestionnaireStatus(String status, String token);
+
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireByStatus(String status);
+
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status AND date_interview >= :timeFrom AND date_interview <= :timeTo")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireWithTime(int userId, String status, long timeFrom, long timeTo);
+
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireByUserId(int userId);
+
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status AND user_id = :userId AND user_project_id = :userProjectId")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireByUserIdAndProjectIdWithStatus(int userId, int userProjectId, String status);
+
+    @Query("UPDATE QuestionnaireDatabaseModelR SET status = :status WHERE user_id = :userId")
+    void setQuestionnaireStatusByUserId(String status, int userId);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertQuestionnaire(QuestionnaireDatabaseModelR questionnaireDatabaseModelR);
+
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR")
+    List<QuestionnaireDatabaseModelR> getAllQuestionnaires();
 }

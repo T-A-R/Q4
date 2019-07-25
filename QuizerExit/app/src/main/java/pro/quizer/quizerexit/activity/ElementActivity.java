@@ -34,6 +34,7 @@ import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
+import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.fragment.ElementFragment;
 import pro.quizer.quizerexit.model.ElementDatabaseType;
@@ -500,44 +501,83 @@ public class ElementActivity extends BaseActivity {
         }
     }
 
+//    private void saveQuestionnaireToDatabase(boolean aborted) {
+//        final long endTime = DateUtils.getCurrentTimeMillis();
+//        final long durationTimeQuestionnaire = endTime - mStartDateInterview;
+//
+//        final QuestionnaireDatabaseModel questionnaireDatabaseModel = new QuestionnaireDatabaseModel();
+//        questionnaireDatabaseModel.status = QuestionnaireStatus.NOT_SENT;
+//        questionnaireDatabaseModel.token = mToken;
+//        questionnaireDatabaseModel.login_admin = mLoginAdmin;
+//        questionnaireDatabaseModel.login = mLogin;
+//        questionnaireDatabaseModel.user_id = mUserId;
+//        questionnaireDatabaseModel.passw = mPassword;
+//        questionnaireDatabaseModel.questionnaire_id = mQuestionnaireId;
+//        questionnaireDatabaseModel.project_id = mProjectId;
+//        questionnaireDatabaseModel.billing_questions = mBillingQuestions;
+//        questionnaireDatabaseModel.user_project_id = mUserProjectId;
+//        questionnaireDatabaseModel.gps = mGpsString;
+//        questionnaireDatabaseModel.gps_time = mGpsTime;
+//        questionnaireDatabaseModel.date_interview = mStartDateInterview;
+//        questionnaireDatabaseModel.has_photo = getHasPhoto();
+//
+//        if (aborted)
+//            questionnaireDatabaseModel.survey_status = Constants.QuestionnaireStatuses.ABORTED;
+//        else
+//            questionnaireDatabaseModel.survey_status = Constants.QuestionnaireStatuses.COMPLITED;
+//
+//
+//        final int showingScreensCount = saveScreenElements();
+//        final int answersCount = saveAnswersElements();
+//
+//        questionnaireDatabaseModel.questions_passed = getCountOfShowingQuestions();
+//        questionnaireDatabaseModel.screens_passed = showingScreensCount;
+//        questionnaireDatabaseModel.selected_questions = answersCount;
+//        questionnaireDatabaseModel.duration_time_questionnaire = (int) durationTimeQuestionnaire;
+//        questionnaireDatabaseModel.auth_time_difference = SPUtils.getAuthTimeDifference(this);
+//        questionnaireDatabaseModel.quota_time_difference = SPUtils.getQuotaTimeDifference(this);
+//        questionnaireDatabaseModel.send_time_difference = SPUtils.getSendTimeDifference(this);
+//
+//        questionnaireDatabaseModel.save();
+//    }
+
     private void saveQuestionnaireToDatabase(boolean aborted) {
         final long endTime = DateUtils.getCurrentTimeMillis();
         final long durationTimeQuestionnaire = endTime - mStartDateInterview;
 
-        final QuestionnaireDatabaseModel questionnaireDatabaseModel = new QuestionnaireDatabaseModel();
-        questionnaireDatabaseModel.status = QuestionnaireStatus.NOT_SENT;
-        questionnaireDatabaseModel.token = mToken;
-        questionnaireDatabaseModel.login_admin = mLoginAdmin;
-        questionnaireDatabaseModel.login = mLogin;
-        questionnaireDatabaseModel.user_id = mUserId;
-        questionnaireDatabaseModel.passw = mPassword;
-        questionnaireDatabaseModel.questionnaire_id = mQuestionnaireId;
-        questionnaireDatabaseModel.project_id = mProjectId;
-        questionnaireDatabaseModel.billing_questions = mBillingQuestions;
-        questionnaireDatabaseModel.user_project_id = mUserProjectId;
-        questionnaireDatabaseModel.gps = mGpsString;
-        questionnaireDatabaseModel.gps_time = mGpsTime;
-        questionnaireDatabaseModel.date_interview = mStartDateInterview;
-        questionnaireDatabaseModel.has_photo = getHasPhoto();
+        final QuestionnaireDatabaseModelR questionnaireDatabaseModel = new QuestionnaireDatabaseModelR();
+        questionnaireDatabaseModel.setStatus(QuestionnaireStatus.NOT_SENT);
+        questionnaireDatabaseModel.setToken(mToken);
+        questionnaireDatabaseModel.setLogin_admin(mLoginAdmin);
+        questionnaireDatabaseModel.setLogin(mLogin);
+        questionnaireDatabaseModel.setUser_id(mUserId);
+        questionnaireDatabaseModel.setPassw(mPassword);
+        questionnaireDatabaseModel.setQuestionnaire_id(mQuestionnaireId);
+        questionnaireDatabaseModel.setProject_id(mProjectId);
+        questionnaireDatabaseModel.setBilling_questions(mBillingQuestions);
+        questionnaireDatabaseModel.setUser_project_id(mUserProjectId);
+        questionnaireDatabaseModel.setGps(mGpsString);
+        questionnaireDatabaseModel.setGps_time(mGpsTime);
+        questionnaireDatabaseModel.setDate_interview(mStartDateInterview);
+        questionnaireDatabaseModel.setHas_photo(getHasPhoto());
 
         if (aborted)
-            questionnaireDatabaseModel.survey_status = Constants.QuestionnaireStatuses.ABORTED;
+            questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.ABORTED);
         else
-            questionnaireDatabaseModel.survey_status = Constants.QuestionnaireStatuses.COMPLITED;
-
+            questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.COMPLITED);
 
         final int showingScreensCount = saveScreenElements();
         final int answersCount = saveAnswersElements();
 
-        questionnaireDatabaseModel.questions_passed = getCountOfShowingQuestions();
-        questionnaireDatabaseModel.screens_passed = showingScreensCount;
-        questionnaireDatabaseModel.selected_questions = answersCount;
-        questionnaireDatabaseModel.duration_time_questionnaire = (int) durationTimeQuestionnaire;
-        questionnaireDatabaseModel.auth_time_difference = SPUtils.getAuthTimeDifference(this);
-        questionnaireDatabaseModel.quota_time_difference = SPUtils.getQuotaTimeDifference(this);
-        questionnaireDatabaseModel.send_time_difference = SPUtils.getSendTimeDifference(this);
+        questionnaireDatabaseModel.setQuestions_passed(getCountOfShowingQuestions());
+        questionnaireDatabaseModel.setScreens_passed(showingScreensCount);
+        questionnaireDatabaseModel.setSelected_questions(answersCount);
+        questionnaireDatabaseModel.setDuration_time_questionnaire((int) durationTimeQuestionnaire);
+        questionnaireDatabaseModel.setAuth_time_difference(SPUtils.getAuthTimeDifference(this));
+        questionnaireDatabaseModel.setQuota_time_difference(SPUtils.getQuotaTimeDifference(this));
+        questionnaireDatabaseModel.setSend_time_difference(SPUtils.getSendTimeDifference(this));
 
-        questionnaireDatabaseModel.save();
+        BaseActivity.getDao().insertQuestionnaire(questionnaireDatabaseModel);
     }
 
     private int saveScreenElements() {

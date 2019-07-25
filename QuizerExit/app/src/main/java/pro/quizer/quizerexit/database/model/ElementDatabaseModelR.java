@@ -7,7 +7,7 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity
 public class ElementDatabaseModelR {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private int id;
 
@@ -41,9 +41,9 @@ public class ElementDatabaseModelR {
     public ElementDatabaseModelR() {
     }
 
-    public ElementDatabaseModelR(int id, String token, Integer relative_id, Integer relative_parent_id,
+    public ElementDatabaseModelR(String token, Integer relative_id, Integer relative_parent_id,
                                  Integer item_order, Long duration, Integer click_rank, Integer rank, String value, String type) {
-        this.id = id;
+
         this.token = token;
         this.relative_id = relative_id;
         this.relative_parent_id = relative_parent_id;

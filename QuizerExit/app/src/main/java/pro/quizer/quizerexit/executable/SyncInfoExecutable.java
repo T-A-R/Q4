@@ -7,6 +7,7 @@ import com.activeandroid.query.Select;
 import java.util.List;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.ConfigModel;
@@ -42,26 +43,32 @@ public class SyncInfoExecutable extends BaseModelExecutable<SyncViewModel> {
             final ConfigModel configModel = userModel.getConfigR();
 
             // GOOD select
-            final List<QuestionnaireDatabaseModel> notSentQDM = new Select()
-                    .from(QuestionnaireDatabaseModel.class)
-                    .where(QuestionnaireDatabaseModel.STATUS + " =? AND " +
-                            QuestionnaireDatabaseModel.USER_ID + " =?", QuestionnaireStatus.NOT_SENT, pUserId)
-                    .execute();
+//            final List<QuestionnaireDatabaseModel> notSentQDM = new Select()
+//                    .from(QuestionnaireDatabaseModel.class)
+//                    .where(QuestionnaireDatabaseModel.STATUS + " =? AND " +
+//                            QuestionnaireDatabaseModel.USER_ID + " =?", QuestionnaireStatus.NOT_SENT, pUserId)
+//                    .execute();
+
+            final List<QuestionnaireDatabaseModelR> notSentQDM = BaseActivity.getDao().getQuestionnaireByUserIdWithStatus(pUserId, QuestionnaireStatus.NOT_SENT);
 
             // GOOD select
-            final List<QuestionnaireDatabaseModel> allQDM = new Select()
-                    .from(QuestionnaireDatabaseModel.class)
-                    .where(QuestionnaireDatabaseModel.USER_ID + " =?", pUserId)
-                    .execute();
+//            final List<QuestionnaireDatabaseModel> allQDM = new Select()
+//                    .from(QuestionnaireDatabaseModel.class)
+//                    .where(QuestionnaireDatabaseModel.USER_ID + " =?", pUserId)
+//                    .execute();
+
+            final List<QuestionnaireDatabaseModelR> allQDM = BaseActivity.getDao().getQuestionnaireByUserId(pUserId);
 
             // GOOD select
-            final List<QuestionnaireDatabaseModel> sendFromThisDevice = new Select()
-                    .from(QuestionnaireDatabaseModel.class)
-                    .where(QuestionnaireDatabaseModel.STATUS + " =? AND " +
-                                    QuestionnaireDatabaseModel.USER_ID + " =? AND " +
-                                    QuestionnaireDatabaseModel.USER_PROJECT_ID + " =?",
-                            QuestionnaireStatus.SENT, pUserId, pUserProjectId)
-                    .execute();
+//            final List<QuestionnaireDatabaseModel> sendFromThisDevice = new Select()
+//                    .from(QuestionnaireDatabaseModel.class)
+//                    .where(QuestionnaireDatabaseModel.STATUS + " =? AND " +
+//                                    QuestionnaireDatabaseModel.USER_ID + " =? AND " +
+//                                    QuestionnaireDatabaseModel.USER_PROJECT_ID + " =?",
+//                            QuestionnaireStatus.SENT, pUserId, pUserProjectId)
+//                    .execute();
+
+            final List<QuestionnaireDatabaseModelR> sendFromThisDevice = BaseActivity.getDao().getQuestionnaireByUserIdAndProjectIdWithStatus(pUserId, pUserProjectId,QuestionnaireStatus.SENT);
 
             syncViewModel.setmSentQuestionnaireModelsFromThisDevice(sendFromThisDevice);
             syncViewModel.setNotSentQuestionnaireModels(notSentQDM);

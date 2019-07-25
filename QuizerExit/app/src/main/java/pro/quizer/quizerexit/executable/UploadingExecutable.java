@@ -81,11 +81,12 @@ public class UploadingExecutable extends BaseExecutable {
 
 //    private void setSentStatusForUserQuestionnaires(final UserModel pUserModel) {
     private void setSentStatusForUserQuestionnaires(final UserModelR pUserModel) {
-        new Update(QuestionnaireDatabaseModel.class)
-                .set(QuestionnaireDatabaseModel.STATUS + " = ?", QuestionnaireStatus.SENT)
-                .where(QuestionnaireDatabaseModel.USER_ID + " = ?", pUserModel.getUser_id())
-//                .where(QuestionnaireDatabaseModel.USER_ID + " = ?", pUserModel.user_id)
-                .execute();
+//        new Update(QuestionnaireDatabaseModel.class)
+//                .set(QuestionnaireDatabaseModel.STATUS + " = ?", QuestionnaireStatus.SENT)
+//                .where(QuestionnaireDatabaseModel.USER_ID + " = ?", pUserModel.getUser_id())
+////                .where(QuestionnaireDatabaseModel.USER_ID + " = ?", pUserModel.user_id)
+//                .execute();
+        BaseActivity.getDao().setQuestionnaireStatusByUserId(QuestionnaireStatus.SENT, pUserModel.getUser_id());
     }
 
     private void moveFiles() {

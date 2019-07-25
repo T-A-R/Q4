@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.executable.BaseExecutable;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
@@ -40,14 +41,19 @@ public class CleanUpFilesExecutable extends BaseExecutable {
             files.addAll(FileUtils.getFilesRecursion(FileUtils.AMR, FileUtils.getAudioStoragePath(mContext)));
 
             // GOOD select
-            final List<QuestionnaireDatabaseModel> allQuestionnaires = new Select()
-                    .from(QuestionnaireDatabaseModel.class)
-                    .execute();
+//            final List<QuestionnaireDatabaseModel> allQuestionnaires = new Select()
+//                    .from(QuestionnaireDatabaseModel.class)
+//                    .execute();
+            final List<QuestionnaireDatabaseModelR> allQuestionnaires = BaseActivity.getDao().getAllQuestionnaires();
 
             final List<String> allTokens = new ArrayList<>();
 
-            for (final QuestionnaireDatabaseModel model : allQuestionnaires) {
-                allTokens.add(model.token);
+//            for (final QuestionnaireDatabaseModel model : allQuestionnaires) {
+//                allTokens.add(model.token);
+//            }
+
+            for (final QuestionnaireDatabaseModelR model : allQuestionnaires) {
+                allTokens.add(model.getToken());
             }
 
             for (final File file : files) {

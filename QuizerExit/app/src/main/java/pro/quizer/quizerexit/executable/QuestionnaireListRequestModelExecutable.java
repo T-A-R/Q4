@@ -6,6 +6,7 @@ import java.util.List;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
+import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.ConfigModel;
@@ -46,33 +47,33 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
         final QuestionnaireListRequestModel requestModel = new QuestionnaireListRequestModel(mLoginAdmin, mLogin, mPassword);
 
         // GOOD select
-        final List<QuestionnaireDatabaseModel> questionnaires = new Select()
-                .from(QuestionnaireDatabaseModel.class)
-                .where(QuestionnaireDatabaseModel.USER_ID + " = ? AND " +
-                                QuestionnaireDatabaseModel.STATUS + " =?",
-                        mUserId,
-                        QuestionnaireStatus.NOT_SENT)
-                .execute();
+//        final List<QuestionnaireDatabaseModel> questionnaires = new Select()
+//                .from(QuestionnaireDatabaseModel.class)
+//                .where(QuestionnaireDatabaseModel.USER_ID + " = ? AND " +
+//                                QuestionnaireDatabaseModel.STATUS + " =?",
+//                        mUserId,
+//                        QuestionnaireStatus.NOT_SENT)
+//                .execute();
 
-        for (final QuestionnaireDatabaseModel questionnaireDatabaseModel : questionnaires) {
-            final QuestionnaireRequestModel questionnaireRequestModel = new QuestionnaireRequestModel(
-                    questionnaireDatabaseModel.billing_questions,
-                    questionnaireDatabaseModel.questionnaire_id,
-                    questionnaireDatabaseModel.questions_passed,
-                    questionnaireDatabaseModel.screens_passed,
-                    questionnaireDatabaseModel.selected_questions,
-                    questionnaireDatabaseModel.project_id,
-                    questionnaireDatabaseModel.user_project_id,
-                    questionnaireDatabaseModel.duration_time_questionnaire,
-                    questionnaireDatabaseModel.date_interview,
-                    questionnaireDatabaseModel.gps,
-                    questionnaireDatabaseModel.survey_status,
-                    questionnaireDatabaseModel.gps_time,
-                    questionnaireDatabaseModel.token,
-                    questionnaireDatabaseModel.auth_time_difference,
-                    questionnaireDatabaseModel.send_time_difference,
-                    questionnaireDatabaseModel.quota_time_difference
-            );
+//        for (final QuestionnaireDatabaseModel questionnaireDatabaseModel : questionnaires) {
+//            final QuestionnaireRequestModel questionnaireRequestModel = new QuestionnaireRequestModel(
+//                    questionnaireDatabaseModel.billing_questions,
+//                    questionnaireDatabaseModel.questionnaire_id,
+//                    questionnaireDatabaseModel.questions_passed,
+//                    questionnaireDatabaseModel.screens_passed,
+//                    questionnaireDatabaseModel.selected_questions,
+//                    questionnaireDatabaseModel.project_id,
+//                    questionnaireDatabaseModel.user_project_id,
+//                    questionnaireDatabaseModel.duration_time_questionnaire,
+//                    questionnaireDatabaseModel.date_interview,
+//                    questionnaireDatabaseModel.gps,
+//                    questionnaireDatabaseModel.survey_status,
+//                    questionnaireDatabaseModel.gps_time,
+//                    questionnaireDatabaseModel.token,
+//                    questionnaireDatabaseModel.auth_time_difference,
+//                    questionnaireDatabaseModel.send_time_difference,
+//                    questionnaireDatabaseModel.quota_time_difference
+//            );
 
             // GOOD select
 //            final List<ElementDatabaseModel> elements = new Select()
@@ -92,7 +93,29 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
 //                questionnaireRequestModel.addElement(elementRequestModel);
 //            }
 
-            final List<ElementDatabaseModelR> elements = BaseActivity.getDao().getElementByToken(questionnaireDatabaseModel.token);
+        final List<QuestionnaireDatabaseModelR> questionnaires = BaseActivity.getDao().getQuestionnaireByUserIdWithStatus(mUserId, QuestionnaireStatus.NOT_SENT);
+
+        for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : questionnaires) {
+            final QuestionnaireRequestModel questionnaireRequestModel = new QuestionnaireRequestModel(
+                    questionnaireDatabaseModel.getBilling_questions(),
+                    questionnaireDatabaseModel.getQuestionnaire_id(),
+                    questionnaireDatabaseModel.getQuestions_passed(),
+                    questionnaireDatabaseModel.getScreens_passed(),
+                    questionnaireDatabaseModel.getSelected_questions(),
+                    questionnaireDatabaseModel.getProject_id(),
+                    questionnaireDatabaseModel.getUser_project_id(),
+                    questionnaireDatabaseModel.getDuration_time_questionnaire(),
+                    questionnaireDatabaseModel.getDate_interview(),
+                    questionnaireDatabaseModel.getGps(),
+                    questionnaireDatabaseModel.getSurvey_status(),
+                    questionnaireDatabaseModel.getGps_time(),
+                    questionnaireDatabaseModel.getToken(),
+                    questionnaireDatabaseModel.getAuth_time_difference(),
+                    questionnaireDatabaseModel.getSend_time_difference(),
+                    questionnaireDatabaseModel.getQuota_time_difference()
+            );
+
+            final List<ElementDatabaseModelR> elements = BaseActivity.getDao().getElementByToken(questionnaireDatabaseModel.getToken());
 
             for (final ElementDatabaseModelR element : elements) {
                 final ElementRequestModel elementRequestModel = new ElementRequestModel(

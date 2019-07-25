@@ -161,4 +161,5 @@
     <string name="VIEW_BUTTON_LOGIN">Войти</string>
     <string name="TOAST_CANNOT_EXIT_WITHOUT_INTERNET_CONNECTION">Подключение к интернету отсутствует, выход из аккаунта невозможен  Для выхода используйте кнопку Назад</string>
     <string name="QUESTIONS_SAVED">Анкета сохранена</string>
+    <string name="DB_SAVE_ERROR">Ошибка записи в базу данных.</string>
 </resources>

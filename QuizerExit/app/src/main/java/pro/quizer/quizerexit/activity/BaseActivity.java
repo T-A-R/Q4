@@ -238,7 +238,12 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         final ActivationModelR activationModelR = new ActivationModelR(pActivationModel.getServer(),
                 pActivationModel.getLoginAdmin());
         getDao().clearActivationModelR();
-        getDao().insertActivationModelR(activationModelR);
+
+        try {
+            getDao().insertActivationModelR(activationModelR);
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_SAVE_ERROR));
+        }
     }
 
     public ActivationModelR getActivationModel() {
@@ -406,7 +411,11 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         userModelR.setUser_id(pModel.getUserId());
         userModelR.setUser_project_id(pModel.getUserProjectId());
         userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
-        getDao().insertUser(userModelR);
+        try {
+            getDao().insertUser(userModelR);
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_SAVE_ERROR));
+        }
     }
 
     @Override

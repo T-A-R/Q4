@@ -577,7 +577,11 @@ public class ElementActivity extends BaseActivity {
         questionnaireDatabaseModel.setQuota_time_difference(SPUtils.getQuotaTimeDifference(this));
         questionnaireDatabaseModel.setSend_time_difference(SPUtils.getSendTimeDifference(this));
 
-        BaseActivity.getDao().insertQuestionnaire(questionnaireDatabaseModel);
+        try {
+            BaseActivity.getDao().insertQuestionnaire(questionnaireDatabaseModel);
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_SAVE_ERROR));
+        }
     }
 
     private int saveScreenElements() {
@@ -606,7 +610,11 @@ public class ElementActivity extends BaseActivity {
                 LogUtils.logAction("saveScreenElement " + element.getRelativeID());
 
 //                elementDatabaseModel.save();
-                getDao().insertElement(elementDatabaseModelR);
+                try {
+                    getDao().insertElement(elementDatabaseModelR);
+                } catch (Exception e) {
+                    showToast(getString(R.string.DB_SAVE_ERROR));
+                }
                 count++;
             }
         }
@@ -659,7 +667,11 @@ public class ElementActivity extends BaseActivity {
         LogUtils.logAction("saveElement " + element.getRelativeID());
 
 //        elementDatabaseModel.save();
-        getDao().insertElement(elementDatabaseModel);
+        try {
+            getDao().insertElement(elementDatabaseModel);
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_SAVE_ERROR));
+        }
     }
 
     private int getCountOfShowingQuestions() {

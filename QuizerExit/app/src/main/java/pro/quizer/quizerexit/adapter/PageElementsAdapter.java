@@ -19,7 +19,6 @@ import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.fragment.ElementFragment;
 import pro.quizer.quizerexit.model.config.ElementModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.utils.ViewIdGenerator;
 
 public class PageElementsAdapter extends RecyclerView.Adapter<PageElementsAdapter.PageElementViewHolder> implements IAdapter {
@@ -33,7 +32,6 @@ public class PageElementsAdapter extends RecyclerView.Adapter<PageElementsAdapte
     private String mUserLogin;
     private boolean mIsPhotoQuestionnaire;
     private int mProjectId;
-//    private UserModel mUser;
     private UserModelR mUser;
     private HashMap<Integer, ElementModel> mMap;
     private FragmentManager fragmentManager;
@@ -52,7 +50,6 @@ public class PageElementsAdapter extends RecyclerView.Adapter<PageElementsAdapte
             final String pUserLogin,
             final boolean pIsPhotoQuestionnaire,
             final int pProjectId,
-//            final UserModel pUser,
             final UserModelR pUser,
             final HashMap<Integer, ElementModel> pMap,
             final FragmentManager fragmentManager) {

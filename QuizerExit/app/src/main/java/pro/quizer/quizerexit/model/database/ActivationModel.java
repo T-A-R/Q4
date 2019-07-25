@@ -13,12 +13,12 @@ import java.io.Serializable;
 @Table(name = "ActivationModel")
 public class ActivationModel extends Model implements Serializable {
 
-    @Column(name = "server")
-    @SerializedName("server")
-    public String server;
-
-    @Column(name = "login_admin")
-    @SerializedName("login_admin")
-    public String login_admin;
+//    @Column(name = "server")
+//    @SerializedName("server")
+//    public String server;
+//
+//    @Column(name = "login_admin")
+//    @SerializedName("login_admin")
+//    public String login_admin;
 
 }

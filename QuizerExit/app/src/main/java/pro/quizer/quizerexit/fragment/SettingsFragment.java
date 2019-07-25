@@ -27,7 +27,6 @@ import pro.quizer.quizerexit.model.FontSizeModel;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.PhoneModel;
 import pro.quizer.quizerexit.model.config.ReserveChannelModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.view.SettingsViewModel;
 import pro.quizer.quizerexit.utils.UiUtils;
 

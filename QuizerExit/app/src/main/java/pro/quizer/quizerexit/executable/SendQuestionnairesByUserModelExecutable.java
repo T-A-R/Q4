@@ -21,8 +21,6 @@ import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
-import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.request.QuestionnaireListRequestModel;
 import pro.quizer.quizerexit.model.response.DeletingListResponseModel;
 import pro.quizer.quizerexit.model.sms.SmsStage;
@@ -37,15 +35,12 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
 
     private final String mServerUrl;
     private final BaseActivity mBaseActivity;
-//    private final UserModel mUserModel;
     private final UserModelR mUserModel;
     private final boolean mIsShowAlertDialog;
 
-//    public SendQuestionnairesByUserModelExecutable(final BaseActivity pBaseActivity, final UserModel pUserModel, final ICallback pCallback, final boolean pIsShowAlertDialog) {
     public SendQuestionnairesByUserModelExecutable(final BaseActivity pBaseActivity, final UserModelR pUserModel, final ICallback pCallback, final boolean pIsShowAlertDialog) {
         super(pCallback);
 
-//        final ConfigModel configModel = pUserModel.getConfig();
         final ConfigModel configModel = pUserModel.getConfigR();
 
         mBaseActivity = pBaseActivity;
@@ -60,9 +55,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
 
         if (NetworkUtils.hasConnection()) {
             sendViaInternetWithRetrofit();
-//        } else if (mUserModel.getConfig().hasReserveChannels()) {
         } else if (mUserModel.getConfigR().hasReserveChannels()) {
-//            sendViaSms(mBaseActivity.createNewMap(mUserModel.getConfig().getProjectInfo().getElements()), mBaseActivity);
             sendViaSms(mBaseActivity.createNewMap(mUserModel.getConfigR().getProjectInfo().getElements()), mBaseActivity);
         } else {
             onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SENDING_ERROR_NO_CONNECTION)));
@@ -78,7 +71,6 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(mBaseActivity, R.style.AlertDialogTheme);
                 alertDialog.setCancelable(false);
                 alertDialog.setTitle(R.string.DIALOG_SENDING_WAVES_VIA_SMS);
-//                alertDialog.setMessage(pBaseActivity.getString(R.string.DIALOG_SENDING_WAVES_VIA_SMS_CONFIRMATION) + mUserModel.login + " через СМС?");
                 alertDialog.setMessage(pBaseActivity.getString(R.string.DIALOG_SENDING_WAVES_VIA_SMS_CONFIRMATION) + mUserModel.getLogin() + " через СМС?");
                 alertDialog.setPositiveButton(R.string.VIEW_BUTTON_SEND, new DialogInterface.OnClickListener() {
 
@@ -153,10 +145,6 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                     SPUtils.addSendedQInSession(mBaseActivity, tokensToRemove.size());
 
                     for (final String token : tokensToRemove) {
-//                        new Update(QuestionnaireDatabaseModel.class)
-//                                .set(QuestionnaireDatabaseModel.STATUS + " = ?", QuestionnaireStatus.SENT)
-//                                .where(QuestionnaireDatabaseModel.TOKEN + " = ?", token)
-//                                .execute();
                         try {
                             BaseActivity.getDao().setQuestionnaireStatus(QuestionnaireStatus.SENT, token);
                         } catch (Exception e) {

@@ -28,7 +28,6 @@ import pro.quizer.quizerexit.model.ElementSubtype;
 import pro.quizer.quizerexit.model.OptionsOpenType;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.quota.QuotaModel;
 import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
@@ -43,7 +42,6 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
     private final boolean mIsPolyAnswers;
     private final String mDefaultPlaceHolder;
-//    private UserModel mUser;
     private UserModelR mUser;
     private List<QuotaModel> mQuotas;
     private HashMap<Integer, ElementModel> mMap;
@@ -54,7 +52,6 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                                final List<ElementModel> pAnswers,
                                final int pMaxAnswer,
                                final int pMinAnswer,
-//                               final UserModel pUser
                                final UserModelR pUser
     ) {
         super(pMap, pCurrentElement, pContext, pAnswers, pMaxAnswer, pMinAnswer);
@@ -63,7 +60,6 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
         mIsPolyAnswers = pMaxAnswer == 1 && pMinAnswer == 1;
 
         mUser = pUser;
-//        mQuotas = mUser.getQuotas();
         mQuotas = mUser.getQuotasR();
         mMap = getMap();
     }

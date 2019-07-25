@@ -27,7 +27,6 @@ import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.UpdateQuotasExecutable;
-import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.request.AuthRequestModel;
 import pro.quizer.quizerexit.model.request.ConfigRequestModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
@@ -46,7 +45,6 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
     private EditText mPasswordEditText;
     private EditSpinner mLoginSpinner;
     private List<String> mSavedUsers;
-    //    private List<UserModel> mSavedUserModels;
     private List<UserModelR> mSavedUserModels;
     private TextView mVersionView;
     private int mVersionTapCount = 0;
@@ -66,10 +64,6 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         final Button sendAuthButton = findViewById(R.id.send_auth_button);
         final TextView usersCount = findViewById(R.id.users_count);
 
-        //TODO refactor DB!!!
-
-        // GOOD select
-//        final int usersCountValue = new Select().from(UserModel.class).count();
         final int usersCountValue = getDao().getAllUsers().size();
         usersCount.setText(String.format(getString(R.string.VIEW_USERS_COUNT_ON_DEVICE), (usersCountValue + "/" + MAX_USERS)));
         UiUtils.setTextOrHide(mVersionView, String.format(getString(R.string.VIEW_APP_VERSION), getAppVersionName()));
@@ -84,12 +78,6 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             final int lastUserId = getCurrentUserId();
 
             if (lastUserId != -1) {
-//                for (final UserModel userModel : mSavedUserModels) {
-//                    if (userModel.user_id == lastUserId) {
-//                        UiUtils.setTextOrHide(mLoginSpinner, userModel.login);
-//                    }
-//                }
-
                 for (final UserModelR userModel : mSavedUserModels) {
                     if (userModel.getUser_id() == lastUserId) {
                         UiUtils.setTextOrHide(mLoginSpinner, userModel.getLogin());
@@ -163,7 +151,6 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
     }
 
     private boolean isNeedDownloadConfig(final AuthResponseModel pAuthResponseModel) {
-        // GOOD usage of getUserByUserId
         final UserModelR userModel = getUserByUserId(pAuthResponseModel.getUserId());
 
         if (userModel == null) {
@@ -176,10 +163,6 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
     private List<String> getSavedUserLogins() {
         final List<String> users = new ArrayList<>();
 
-//        for (final UserModel model : mSavedUserModels) {
-//            users.add(model.login);
-//        }
-
         for (final UserModelR model : mSavedUserModels) {
             users.add(model.getLogin());
         }
@@ -188,12 +171,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
     }
 
     private List<UserModelR> getSavedUserModels() {
-//    private List<UserModel> getSavedUserModels() {
-        // GOOD select
-//        final List<UserModel> userModels = new Select().from(UserModel.class).execute();
         final List<UserModelR> userModels = getDao().getAllUsers();
-
-//        return (userModels == null) ? new ArrayList<UserModel>() : userModels;
         return (userModels == null) ? new ArrayList<UserModelR>() : userModels;
     }
 
@@ -308,10 +286,8 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
 
                             if (progress == totalFiles) {
                                 hideProgressBar();
-
                                 saveUserAndLogin(pConfigResponseModel, pAuthResponseModel, pLogin, pPassword);
                             }
-
                             showToast(String.format(getString(R.string.NOTIFICATION_DOWNLOADED_COUNT_FILES), String.valueOf(progress)));
                         }
 

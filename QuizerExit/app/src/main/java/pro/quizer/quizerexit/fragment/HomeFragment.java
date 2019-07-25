@@ -23,7 +23,6 @@ import pro.quizer.quizerexit.executable.SyncInfoExecutable;
 import pro.quizer.quizerexit.listener.QuotasClickListener;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ProjectInfoModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.view.SyncViewModel;
 import pro.quizer.quizerexit.utils.SystemUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
@@ -32,7 +31,6 @@ import static pro.quizer.quizerexit.activity.BaseActivity.IS_AFTER_AUTH;
 
 public class HomeFragment extends BaseFragment implements ICallback {
 
-//    private UserModel mUserModel;
     private UserModelR mUserModel;
     private BaseActivity mBaseActivity;
 
@@ -60,7 +58,6 @@ public class HomeFragment extends BaseFragment implements ICallback {
         final Bundle bundle = getArguments();
 
         if (bundle != null && bundle.getBoolean(IS_AFTER_AUTH)) {
-//            checkUpdates(bundle, mUserModel.getConfig());
             checkUpdates(bundle, mUserModel.getConfigR());
         }
 
@@ -121,7 +118,6 @@ public class HomeFragment extends BaseFragment implements ICallback {
         }
 
         mUserModel = mBaseActivity.getCurrentUser();
-//        final ConfigModel config = mUserModel.getConfig();
         final ConfigModel config = mUserModel.getConfigR();
         final ProjectInfoModel projectInfo = config.getProjectInfo();
 

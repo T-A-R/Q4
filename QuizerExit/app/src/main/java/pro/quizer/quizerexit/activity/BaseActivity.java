@@ -63,7 +63,6 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     private HashMap<Integer, ElementModel> mTempMap;
     private HashMap<Integer, ElementModel> mMap;
-    //    private UserModel mCurrentUser;
     private UserModelR mCurrentUser;
 
     private String hasPhoto = null;
@@ -298,13 +297,6 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         }
     }
 
-//    public void updateConfig(final UserModel pUserModel, final ConfigModel pConfigModel) {
-//        new Update(UserModel.class).set(UserModel.CONFIG + " = ?",
-//                new GsonBuilder().create().toJson(pConfigModel)
-//        ).where(UserModel.USER_ID + " = ? AND " + UserModel.USER_PROJECT_ID + " = ?",
-//                pUserModel.user_id, pUserModel.user_project_id).execute();
-//    }
-
     public void saveCurrentUserId(final int pUserId) {
         SPUtils.saveCurrentUserId(this, pUserId);
     }
@@ -315,12 +307,6 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         return mCurrentUser;
     }
 
-//    public UserModel forceGetCurrentUser() {
-//        mCurrentUser = getUserByUserId(getCurrentUserId());
-//
-//        return mCurrentUser;
-//    }
-
     public UserModelR getCurrentUser() {
         if (mCurrentUser == null) {
             mCurrentUser = getUserByUserId(getCurrentUserId());
@@ -328,14 +314,6 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
         return mCurrentUser;
     }
-
-//    public UserModel getCurrentUser() {
-//        if (mCurrentUser == null) {
-//            mCurrentUser = getUserByUserId(getCurrentUserId());
-//        }
-//
-//        return mCurrentUser;
-//    }
 
     public int getCurrentUserId() {
         return SPUtils.getCurrentUserId(this);
@@ -358,7 +336,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     public void saveUser(final String pLogin, final String pPassword, final AuthResponseModel pModel, final ConfigModel pConfigModel) throws Exception {
-//        new Delete().from(UserModel.class).where(UserModel.USER_ID + " = ?", pModel.getUserId()).execute();
+
         try {
             getDao().deleteUserByUserId(pModel.getUserId());
         } catch (Exception e) {
@@ -370,16 +348,6 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         if (reserveChannelModel != null) {
             reserveChannelModel.selectPhone(0);
         }
-
-//        final UserModel userModel = new UserModel();
-//        userModel.login = pLogin;
-//        userModel.password = pPassword;
-//        userModel.config_id = pModel.getConfigId();
-//        userModel.role_id = pModel.getRoleId();
-//        userModel.user_id = pModel.getUserId();
-//        userModel.user_project_id = pModel.getUserProjectId();
-//        userModel.config = new GsonBuilder().create().toJson(pConfigModel);
-//        userModel.save();
 
         final UserModelR userModelR = new UserModelR();
         userModelR.setLogin(pLogin);
@@ -589,5 +557,4 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
             showExitAlertDialog();
         }
     }
-
 }

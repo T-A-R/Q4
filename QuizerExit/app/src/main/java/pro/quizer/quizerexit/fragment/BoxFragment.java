@@ -19,7 +19,6 @@ import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 
 public class BoxFragment extends AbstractContentElementFragment {
 
@@ -34,7 +33,6 @@ public class BoxFragment extends AbstractContentElementFragment {
 
     private OptionsModel mAttributes;
     private ElementModel mCurrentElement;
-//    private UserModel mUser;
     private UserModelR mUser;
     private HashMap<Integer, ElementModel> mMap;
     private FragmentManager mFragmentManger;
@@ -58,7 +56,6 @@ public class BoxFragment extends AbstractContentElementFragment {
             final boolean pIsPhotoQuestionnaire,
             final int pProjectId,
             final UserModelR user,
-//            final UserModel user,
             final HashMap<Integer, ElementModel> pMap) {
         final Fragment fragment = new BoxFragment();
 

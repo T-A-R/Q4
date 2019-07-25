@@ -1,13 +1,10 @@
 package pro.quizer.quizerexit.executable;
 
-import com.activeandroid.query.Select;
-
 import java.util.List;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.database.model.UserModelR;
-import pro.quizer.quizerexit.model.database.UserModel;
 
 public class SendAllQuestionnairesExecutable extends BaseExecutable {
 
@@ -25,13 +22,10 @@ public class SendAllQuestionnairesExecutable extends BaseExecutable {
     public void execute() {
         onStarting();
 
-        // GOOD select
-//        final List<UserModel> users = new Select().from(UserModel.class).execute();
         final List<UserModelR> users = BaseActivity.getDao().getAllUsers();
 
         if (users == null || users.isEmpty()) {
             onError(new Exception(mContext.getString(R.string.NOTIFICATION_SENDING_ERROR_EMPTY_USERS_LIST)));
-
             return;
         }
 

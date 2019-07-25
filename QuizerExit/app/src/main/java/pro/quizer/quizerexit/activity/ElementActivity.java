@@ -44,9 +44,6 @@ import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.model.config.ProjectInfoModel;
-import pro.quizer.quizerexit.model.database.ElementDatabaseModel;
-import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.utils.ConditionUtils;
 import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.FileUtils;
@@ -69,7 +66,6 @@ public class ElementActivity extends BaseActivity {
 
     public static final int FIRST_ELEMENT = Integer.MIN_VALUE;
     public static final int ONE_SEC = 1000;
-//    UserModel mUser;
     UserModelR mUser;
     ConfigModel mConfig;
     ProjectInfoModel mProjectInfo;
@@ -275,9 +271,7 @@ public class ElementActivity extends BaseActivity {
         mStop = findViewById(R.id.ibStop);
         mStatus = findViewById(R.id.tvState);
 
-        // GOOD
         mUser = getCurrentUser();
-//        mConfig = mUser.getConfig();
         mConfig = mUser.getConfigR();
         mAudioRecordLimitTime = mConfig.getAudioRecordLimitTime() * 60 * 1000;
         mProjectInfo = mConfig.getProjectInfo();
@@ -334,16 +328,11 @@ public class ElementActivity extends BaseActivity {
             setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
             mLoginAdmin = mConfig.getLoginAdmin();
-//            mLogin = mUser.login;
-//            mPassword = mUser.password;
             mLogin = mUser.getLogin();
             mPassword = mUser.getPassword();
             mQuestionnaireId = mProjectInfo.getQuestionnaireId();
             mProjectId = mProjectInfo.getProjectId();
             mBillingQuestions = mProjectInfo.getBillingQuestions();
-//            mUserLogin = mUser.login;
-//            mUserProjectId = mUser.user_project_id;
-//            mUserId = mUser.user_id;
             mUserLogin = mUser.getLogin();
             mUserProjectId = mUser.getUser_project_id();
             mUserId = mUser.getUser_id();
@@ -356,7 +345,6 @@ public class ElementActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
 //        pauseRecording();
     }
 
@@ -374,7 +362,6 @@ public class ElementActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
 //        resumeRecording();
     }
 
@@ -501,46 +488,6 @@ public class ElementActivity extends BaseActivity {
         }
     }
 
-//    private void saveQuestionnaireToDatabase(boolean aborted) {
-//        final long endTime = DateUtils.getCurrentTimeMillis();
-//        final long durationTimeQuestionnaire = endTime - mStartDateInterview;
-//
-//        final QuestionnaireDatabaseModel questionnaireDatabaseModel = new QuestionnaireDatabaseModel();
-//        questionnaireDatabaseModel.status = QuestionnaireStatus.NOT_SENT;
-//        questionnaireDatabaseModel.token = mToken;
-//        questionnaireDatabaseModel.login_admin = mLoginAdmin;
-//        questionnaireDatabaseModel.login = mLogin;
-//        questionnaireDatabaseModel.user_id = mUserId;
-//        questionnaireDatabaseModel.passw = mPassword;
-//        questionnaireDatabaseModel.questionnaire_id = mQuestionnaireId;
-//        questionnaireDatabaseModel.project_id = mProjectId;
-//        questionnaireDatabaseModel.billing_questions = mBillingQuestions;
-//        questionnaireDatabaseModel.user_project_id = mUserProjectId;
-//        questionnaireDatabaseModel.gps = mGpsString;
-//        questionnaireDatabaseModel.gps_time = mGpsTime;
-//        questionnaireDatabaseModel.date_interview = mStartDateInterview;
-//        questionnaireDatabaseModel.has_photo = getHasPhoto();
-//
-//        if (aborted)
-//            questionnaireDatabaseModel.survey_status = Constants.QuestionnaireStatuses.ABORTED;
-//        else
-//            questionnaireDatabaseModel.survey_status = Constants.QuestionnaireStatuses.COMPLITED;
-//
-//
-//        final int showingScreensCount = saveScreenElements();
-//        final int answersCount = saveAnswersElements();
-//
-//        questionnaireDatabaseModel.questions_passed = getCountOfShowingQuestions();
-//        questionnaireDatabaseModel.screens_passed = showingScreensCount;
-//        questionnaireDatabaseModel.selected_questions = answersCount;
-//        questionnaireDatabaseModel.duration_time_questionnaire = (int) durationTimeQuestionnaire;
-//        questionnaireDatabaseModel.auth_time_difference = SPUtils.getAuthTimeDifference(this);
-//        questionnaireDatabaseModel.quota_time_difference = SPUtils.getQuotaTimeDifference(this);
-//        questionnaireDatabaseModel.send_time_difference = SPUtils.getSendTimeDifference(this);
-//
-//        questionnaireDatabaseModel.save();
-//    }
-
     private void saveQuestionnaireToDatabase(boolean aborted) {
         final long endTime = DateUtils.getCurrentTimeMillis();
         final long durationTimeQuestionnaire = endTime - mStartDateInterview;
@@ -591,13 +538,6 @@ public class ElementActivity extends BaseActivity {
             final ElementModel element = elementModel.getValue();
 
             if (element != null && element.isScreenShowing()) {
-//                final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
-//                elementDatabaseModel.token = mToken;
-//                elementDatabaseModel.relative_id = element.getRelativeID();
-//                elementDatabaseModel.relative_parent_id = element.getRelativeParentID();
-//                elementDatabaseModel.item_order = element.getOptions().getOrder();
-//                elementDatabaseModel.duration = element.getDuration();
-//                elementDatabaseModel.type = ElementDatabaseType.SCREEN;
 
                 final ElementDatabaseModelR elementDatabaseModelR = new ElementDatabaseModelR();
                 elementDatabaseModelR.setToken(mToken);
@@ -609,7 +549,6 @@ public class ElementActivity extends BaseActivity {
 
                 LogUtils.logAction("saveScreenElement " + element.getRelativeID());
 
-//                elementDatabaseModel.save();
                 try {
                     getDao().insertElement(elementDatabaseModelR);
                 } catch (Exception e) {
@@ -637,22 +576,6 @@ public class ElementActivity extends BaseActivity {
         return count;
     }
 
-//    private void saveElement(final ElementModel element) {
-//        final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
-//        final int parentId = element.getRelativeParentID();
-//
-//        elementDatabaseModel.token = mToken;
-//        elementDatabaseModel.value = element.getTextAnswer();
-//        elementDatabaseModel.relative_id = element.getRelativeID();
-//        elementDatabaseModel.relative_parent_id = parentId;
-//        elementDatabaseModel.item_order = element.getOptions().getOrder();
-//        elementDatabaseModel.type = ElementDatabaseType.ELEMENT;
-//
-//        LogUtils.logAction("saveElement " + element.getRelativeID());
-//
-//        elementDatabaseModel.save();
-//    }
-
     private void saveElement(final ElementModel element) {
         final ElementDatabaseModelR elementDatabaseModel = new ElementDatabaseModelR();
         final int parentId = element.getRelativeParentID();
@@ -666,7 +589,6 @@ public class ElementActivity extends BaseActivity {
 
         LogUtils.logAction("saveElement " + element.getRelativeID());
 
-//        elementDatabaseModel.save();
         try {
             getDao().insertElement(elementDatabaseModel);
         } catch (Exception e) {

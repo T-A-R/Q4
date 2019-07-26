@@ -71,8 +71,11 @@
     <string name="VIEW_ABOUT_TITLE">О нас</string>
     <string name="VIEW_BUTTON_REFRESH">Обновить</string>
     <string name="VIEW_X_FROM_Y">\u0020(%1$s из %2$s)</string>
+    <string name="VIEW_X_FROM_Y_TWO">\u0020%1$s из %2$s</string>
     <string name="VIEW_STATUS_DONE">Выполнено</string>
+    <string name="VIEW_STATUS_DONE_TWO">Квота закрыта</string>
     <string name="VIEW_STATUS_NOT_DONE">Не выполнено</string>
+    <string name="VIEW_STATUS_NOT_DONE_TWO">Собрано</string>
     <string name="VIEW_STATUS_MORE_THAN_DONE">Перевыполненно</string>
     <string name="VIEW_NO_QUOTAS_BY_QUERY">Список квот по заданному фильтру пуст</string>
     <string name="VIEW_EMPTY_QUOTAS">Список квот пуст</string>

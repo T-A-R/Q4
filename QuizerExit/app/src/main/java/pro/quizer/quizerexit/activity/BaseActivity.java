@@ -19,9 +19,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 
-import com.activeandroid.query.Delete;
-import com.activeandroid.query.Select;
-import com.activeandroid.query.Update;
 import com.google.gson.GsonBuilder;
 
 import java.io.File;
@@ -30,8 +27,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import pro.quizer.quizerexit.BuildConfig;
+import pro.quizer.quizerexit.CoreApplication;
 import pro.quizer.quizerexit.DrawerUtils;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.database.QuizerDao;
+import pro.quizer.quizerexit.database.model.ActivationModelR;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.RemoveUserExecutable;
 import pro.quizer.quizerexit.fragment.AboutFragment;
 import pro.quizer.quizerexit.fragment.HomeFragment;
@@ -42,8 +43,6 @@ import pro.quizer.quizerexit.fragment.SyncFragment;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.ReserveChannelModel;
-import pro.quizer.quizerexit.model.database.ActivationModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.utils.FileUtils;
@@ -64,7 +63,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     private HashMap<Integer, ElementModel> mTempMap;
     private HashMap<Integer, ElementModel> mMap;
-    private UserModel mCurrentUser;
+    private UserModelR mCurrentUser;
 
     private String hasPhoto = null;
 
@@ -132,8 +131,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     private List<ElementModel> getElements() {
-        // BAD
-        return getCurrentUser().getConfig().getProjectInfo().getElements();
+        return getCurrentUser().getConfigR().getProjectInfo().getElements();
     }
 
     // not singleton
@@ -216,11 +214,11 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     public String getServer() {
-        return getActivationModel().server;
+        return getActivationModel().getServer();
     }
 
     public String getLoginAdmin() {
-        return getActivationModel().login_admin;
+        return getActivationModel().getLogin_admin();
     }
 
     public String getAppVersionName() {
@@ -228,40 +226,46 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     public void saveActivationBundle(final ActivationResponseModel pActivationModel) {
-        final ActivationModel activationModel = new ActivationModel();
-        activationModel.server = pActivationModel.getServer();
-        activationModel.login_admin = pActivationModel.getLoginAdmin();
 
-        new Delete().from(ActivationModel.class).execute();
+        final ActivationModelR activationModelR = new ActivationModelR(pActivationModel.getServer(),
+                pActivationModel.getLoginAdmin());
+        try {
+            getDao().clearActivationModelR();
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_CLEAR_ERROR));
+        }
 
-        activationModel.save();
-    }
-
-    public ActivationModel getActivationModel() {
-        // GOOD select
-        final List<ActivationModel> list = new Select().from(ActivationModel.class).limit(1).execute();
-
-        if (list != null && !list.isEmpty()) {
-            return list.get(0);
-        } else {
-            return null;
+        try {
+            getDao().insertActivationModelR(activationModelR);
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_SAVE_ERROR));
         }
     }
 
-    public UserModel getLocalUserModel(final String pLogin, final String pPassword) {
-        // GOOD select
-        final List<UserModel> list = new Select().from(UserModel.class).where(UserModel.LOGIN + " = ? AND " + UserModel.PASSWORD + " = ?", pLogin, pPassword).limit(1).execute();
+    public ActivationModelR getActivationModel() {
 
-        if (list != null && !list.isEmpty()) {
+        final List<ActivationModelR> list = getDao().getActivationModelR();
+
+        if (list != null && !list.isEmpty())
             return list.get(0);
-        } else {
+        else
             return null;
-        }
+
     }
 
-    public UserModel getUserByUserId(final int pUserId) {
-        // BAD select
-        final List<UserModel> list = new Select().from(UserModel.class).where(UserModel.USER_ID + " = ?", pUserId).execute();
+    public UserModelR getLocalUserModel(final String pLogin, final String pPassword) {
+
+        final List<UserModelR> list = getDao().getLocalUserModel(pLogin, pPassword);
+
+        if (list != null && !list.isEmpty())
+            return list.get(0);
+        else
+            return null;
+    }
+
+    public UserModelR getUserByUserId(final int pUserId) {
+
+        final List<UserModelR> list = getDao().getUserByUserId(pUserId);
 
         if (list == null || list.isEmpty()) {
             return null;
@@ -276,34 +280,34 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                                            final int pUserId,
                                            final int pRoleId,
                                            final int pUserProjectId) {
-        new Update(UserModel.class).set(
-                UserModel.LOGIN + " = ? , " +
-                        UserModel.PASSWORD + " = ? , " +
-                        UserModel.CONFIG_ID + " = ? , " +
-                        UserModel.ROLE_ID + " = ? , " +
-                        UserModel.USER_PROJECT_ID + " = ?",
-                pLogin, pPassword, pConfigId, pRoleId, pUserProjectId
-        ).where(UserModel.USER_ID + " = ?", pUserId).execute();
+
+        try {
+            getDao().updateUserModelR(pLogin, pPassword, pConfigId, pRoleId, pUserProjectId, pUserId);
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_SAVE_ERROR));
+        }
     }
 
-    public void updateConfig(final UserModel pUserModel, final ConfigModel pConfigModel) {
-        new Update(UserModel.class).set(UserModel.CONFIG + " = ?",
-                new GsonBuilder().create().toJson(pConfigModel)
-        ).where(UserModel.USER_ID + " = ? AND " + UserModel.USER_PROJECT_ID + " = ?",
-                pUserModel.user_id, pUserModel.user_project_id).execute();
+    public void updateConfig(final UserModelR pUserModel, final ConfigModel pConfigModel) {
+
+        try {
+            getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_SAVE_ERROR));
+        }
     }
 
     public void saveCurrentUserId(final int pUserId) {
         SPUtils.saveCurrentUserId(this, pUserId);
     }
 
-    public UserModel forceGetCurrentUser() {
+    public UserModelR forceGetCurrentUser() {
         mCurrentUser = getUserByUserId(getCurrentUserId());
 
         return mCurrentUser;
     }
 
-    public UserModel getCurrentUser() {
+    public UserModelR getCurrentUser() {
         if (mCurrentUser == null) {
             mCurrentUser = getUserByUserId(getCurrentUserId());
         }
@@ -332,7 +336,12 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     public void saveUser(final String pLogin, final String pPassword, final AuthResponseModel pModel, final ConfigModel pConfigModel) throws Exception {
-        new Delete().from(UserModel.class).where(UserModel.USER_ID + " = ?", pModel.getUserId()).execute();
+
+        try {
+            getDao().deleteUserByUserId(pModel.getUserId());
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_CLEAR_ERROR));
+        }
 
         final ReserveChannelModel reserveChannelModel = pConfigModel.getProjectInfo().getReserveChannel();
 
@@ -340,15 +349,19 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
             reserveChannelModel.selectPhone(0);
         }
 
-        final UserModel userModel = new UserModel();
-        userModel.login = pLogin;
-        userModel.password = pPassword;
-        userModel.config_id = pModel.getConfigId();
-        userModel.role_id = pModel.getRoleId();
-        userModel.user_id = pModel.getUserId();
-        userModel.user_project_id = pModel.getUserProjectId();
-        userModel.config = new GsonBuilder().create().toJson(pConfigModel);
-        userModel.save();
+        final UserModelR userModelR = new UserModelR();
+        userModelR.setLogin(pLogin);
+        userModelR.setPassword(pPassword);
+        userModelR.setConfig_id(pModel.getConfigId());
+        userModelR.setRole_id(pModel.getRoleId());
+        userModelR.setUser_id(pModel.getUserId());
+        userModelR.setUser_project_id(pModel.getUserProjectId());
+        userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
+        try {
+            getDao().insertUser(userModelR);
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_SAVE_ERROR));
+        }
     }
 
     @Override
@@ -534,11 +547,14 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         return this;
     }
 
+    public static QuizerDao getDao() {
+        return CoreApplication.getQuizerDatabase().getQuizerDao();
+    }
+
     @Override
     public void onBackPressed() {
         if (!getSupportFragmentManager().popBackStackImmediate()) {
             showExitAlertDialog();
         }
     }
-
 }

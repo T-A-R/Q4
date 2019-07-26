@@ -17,9 +17,9 @@ import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.adapter.PageElementsAdapter;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 
 public class PageFragment extends AbstractContentElementFragment {
 
@@ -44,7 +44,7 @@ public class PageFragment extends AbstractContentElementFragment {
     private String mUserLogin;
     private boolean mIsPhotoQuestionnaire;
     private int mProjectId;
-    private UserModel mUser;
+    private UserModelR mUser;
     private FragmentManager fragmentManager;
     private boolean mIsButtonVisible;
     private PageElementsAdapter mAdapter;
@@ -60,7 +60,8 @@ public class PageFragment extends AbstractContentElementFragment {
             final String pUserLogin,
             final boolean pIsPhotoQuestionnaire,
             final int pProjectId,
-            final UserModel pUser) {
+            final UserModelR pUser
+    ) {
         final Fragment fragment = new PageFragment();
 
         final Bundle bundle = new Bundle();

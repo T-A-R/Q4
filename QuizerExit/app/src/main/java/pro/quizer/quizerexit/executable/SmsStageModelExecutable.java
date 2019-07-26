@@ -1,20 +1,18 @@
 package pro.quizer.quizerexit.executable;
 
-import com.activeandroid.query.Select;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
+import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.QuestionsMatchesModel;
 import pro.quizer.quizerexit.model.config.StagesModel;
-import pro.quizer.quizerexit.model.database.ElementDatabaseModel;
-import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.sms.SmsAnswer;
 import pro.quizer.quizerexit.model.sms.SmsStage;
 
@@ -25,13 +23,13 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
     private final StagesModel mStagesModel;
     private SmsStage mSmsStage;
 
-    public SmsStageModelExecutable(final BaseActivity pBaseActivity, final SmsStage pSmsStage, final UserModel pUserModel, final StagesModel pStageModel) {
+    public SmsStageModelExecutable(final BaseActivity pBaseActivity, final SmsStage pSmsStage, final UserModelR pUserModel, final StagesModel pStageModel) {
         super();
 
-        final List<ElementModel> elements = pUserModel.getConfig().getProjectInfo().getElements();
+        final List<ElementModel> elements = pUserModel.getConfigR().getProjectInfo().getElements();
 
         mStagesModel = pStageModel;
-        mUserId = pUserModel.user_id;
+        mUserId = pUserModel.getUser_id();
         mSmsStage = pSmsStage;
         mMap = pBaseActivity.createNewMap(elements);
     }
@@ -59,32 +57,20 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
     }
 
     private void load(@QuestionnaireStatus final String pStatus, final Map<String, SmsAnswer> result) {
-        final List<ElementDatabaseModel> allElements = new ArrayList<>();
+        final List<ElementDatabaseModelR> allElements = new ArrayList<>();
 
-        // GOOD select
-        final List<QuestionnaireDatabaseModel> questionnaires = new Select()
-                .from(QuestionnaireDatabaseModel.class)
-                .where(QuestionnaireDatabaseModel.USER_ID + " = ? AND " +
-                                QuestionnaireDatabaseModel.STATUS + " =? AND " +
-                                QuestionnaireDatabaseModel.DATE_INTERVIEW + " >=? AND " +
-                                QuestionnaireDatabaseModel.DATE_INTERVIEW + " <=?",
-                        mUserId,
-                        pStatus,
-                        mStagesModel.getTimeFrom(),
-                        mStagesModel.getTimeTo())
-                .execute();
+        final List<QuestionnaireDatabaseModelR> questionnaires = BaseActivity.getDao().getQuestionnaireWithTime(
+                mUserId,
+                pStatus,
+                mStagesModel.getTimeFrom(),
+                mStagesModel.getTimeTo());
 
-        for (final QuestionnaireDatabaseModel questionnaireDatabaseModel : questionnaires) {
-            final String token = questionnaireDatabaseModel.token;
+        for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : questionnaires) {
+            final String token = questionnaireDatabaseModel.getToken();
 
             mSmsStage.addToken(token);
 
-            // GOOD select
-            final List<ElementDatabaseModel> elements = new Select()
-                    .from(ElementDatabaseModel.class)
-                    .where(ElementDatabaseModel.TOKEN + " =?", token)
-                    .execute();
-
+            final List<ElementDatabaseModelR> elements = BaseActivity.getDao().getElementByToken(token);
             allElements.addAll(elements);
         }
 
@@ -92,7 +78,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
 
         for (final QuestionsMatchesModel match : matches) {
             final String index = match.getSmsNum();
-            List<ElementDatabaseModel> elementsByQuestionId = getElementsByParentId(allElements, match.getQuestionId());
+            List<ElementDatabaseModelR> elementsByQuestionId = getElementsByParentId(allElements, match.getQuestionId());
 
             if (elementsByQuestionId != null && !elementsByQuestionId.isEmpty()) {
                 final SmsAnswer smsAnswer = result.get(index);
@@ -109,27 +95,25 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
         }
     }
 
-    private List<ElementDatabaseModel> getElementsByParentId(final List<ElementDatabaseModel> pAllElements, final int pRelativeId) {
-        final List<ElementDatabaseModel> result = new ArrayList<>();
+    private List<ElementDatabaseModelR> getElementsByParentId(final List<ElementDatabaseModelR> pAllElements, final int pRelativeId) {
+        final List<ElementDatabaseModelR> result = new ArrayList<>();
 
-        for (final ElementDatabaseModel elementDatabaseModel : pAllElements) {
-            if (elementDatabaseModel.relative_parent_id == pRelativeId) {
+        for (final ElementDatabaseModelR elementDatabaseModel : pAllElements) {
+            if (elementDatabaseModel.getRelative_parent_id() == pRelativeId) {
                 result.add(elementDatabaseModel);
             }
         }
-
         return result;
     }
 
-    private int getCountAnswersByOrder(final List<ElementDatabaseModel> pAllElements, final int pOrder) {
+    private int getCountAnswersByOrder(final List<ElementDatabaseModelR> pAllElements, final int pOrder) {
         int count = 0;
 
-        for (final ElementDatabaseModel elementDatabaseModel : pAllElements) {
-            if (elementDatabaseModel.item_order == pOrder) {
+        for (final ElementDatabaseModelR elementDatabaseModel : pAllElements) {
+            if (elementDatabaseModel.getItem_order() == pOrder) {
                 count++;
             }
         }
-
         return count;
     }
 }

@@ -102,14 +102,16 @@ public final class SmsUtils {
     }
 
     public static String getPhoneNumber(final BaseActivity pBaseActivity) {
-        final PhoneModel phoneModel = pBaseActivity.getCurrentUser().getConfig().getProjectInfo().getReserveChannel().getSelectedPhone();
+//        final PhoneModel phoneModel = pBaseActivity.getCurrentUser().getConfig().getProjectInfo().getReserveChannel().getSelectedPhone();
+        final PhoneModel phoneModel = pBaseActivity.getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getSelectedPhone();
 
         return phoneModel != null ? phoneModel.getNumber() : Constants.Strings.EMPTY;
     }
 
     public static String formatSmsPrefix(final String pSms, final BaseActivity pBaseActivity) {
         // BAD
-        final ReserveChannelModel reserveChannelsModel = pBaseActivity.getCurrentUser().getConfig().getProjectInfo().getReserveChannel();
+//        final ReserveChannelModel reserveChannelsModel = pBaseActivity.getCurrentUser().getConfig().getProjectInfo().getReserveChannel();
+        final ReserveChannelModel reserveChannelsModel = pBaseActivity.getCurrentUser().getConfigR().getProjectInfo().getReserveChannel();
 
 
         if (reserveChannelsModel != null) {

@@ -23,11 +23,11 @@ import java.util.List;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.SimpleTextWatcher;
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.ElementSubtype;
 import pro.quizer.quizerexit.model.OptionsOpenType;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.quota.QuotaModel;
 import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
@@ -42,7 +42,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
     private final boolean mIsPolyAnswers;
     private final String mDefaultPlaceHolder;
-    private UserModel mUser;
+    private UserModelR mUser;
     private List<QuotaModel> mQuotas;
     private HashMap<Integer, ElementModel> mMap;
 
@@ -52,14 +52,15 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                                final List<ElementModel> pAnswers,
                                final int pMaxAnswer,
                                final int pMinAnswer,
-                               final UserModel pUser) {
+                               final UserModelR pUser
+    ) {
         super(pMap, pCurrentElement, pContext, pAnswers, pMaxAnswer, pMinAnswer);
 
         mDefaultPlaceHolder = pContext.getString(R.string.TEXT_HINT_DEFAULT_PLACEHOLDER);
         mIsPolyAnswers = pMaxAnswer == 1 && pMinAnswer == 1;
 
         mUser = pUser;
-        mQuotas = mUser.getQuotas();
+        mQuotas = mUser.getQuotasR();
         mMap = getMap();
     }
 

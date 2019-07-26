@@ -1,10 +1,6 @@
 package pro.quizer.quizerexit.model.sms;
 
 import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.activeandroid.query.Update;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,7 +13,6 @@ import pro.quizer.quizerexit.executable.SmsStageModelExecutable;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.QuestionsMatchesModel;
 import pro.quizer.quizerexit.model.config.StagesModel;
-import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
 
 public class SmsStage implements Serializable {
 
@@ -72,10 +67,7 @@ public class SmsStage implements Serializable {
 
     public void markAsSent() {
         for (final String token : mTokens) {
-            new Update(QuestionnaireDatabaseModel.class).set(
-                    QuestionnaireDatabaseModel.STATUS + " = ?",
-                    QuestionnaireStatus.SENT
-            ).where(QuestionnaireDatabaseModel.TOKEN + " = ?", token).execute();
+            BaseActivity.getDao().setQuestionnaireStatus(QuestionnaireStatus.SENT, token);
         }
 
         setStatus(QuestionnaireStatus.SENT);
@@ -84,5 +76,4 @@ public class SmsStage implements Serializable {
     public Map<String, SmsAnswer> getSmsAnswers() {
         return mSmsAnswers;
     }
-
 }

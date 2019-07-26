@@ -11,9 +11,9 @@
         android:id="@+id/quotas_time_line_count"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="1dp"
         android:gravity="center"
-        android:paddingTop="8dp"
+        android:paddingTop="4dp"
         android:textColor="@android:color/black"
         android:textSize="18sp"
         tools:text="16 из 33" />

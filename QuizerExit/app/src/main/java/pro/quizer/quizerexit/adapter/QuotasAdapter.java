@@ -64,11 +64,12 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
         holder.mRecyclerView.setAdapter(mAdapter);
 
         String count = String.format(mBaseActivity.getString(R.string.VIEW_X_FROM_Y), done, limit);
+        String count2 = String.format(mBaseActivity.getString(R.string.VIEW_X_FROM_Y_TWO), done, limit);
 
         if (doneInt == limitInt) {
-            count = mBaseActivity.getString(R.string.VIEW_STATUS_DONE) + count;
+            count =  mBaseActivity.getString(R.string.VIEW_STATUS_DONE_TWO) + count;
         } else if (doneInt < limitInt) {
-            count = mBaseActivity.getString(R.string.VIEW_STATUS_NOT_DONE) + count;
+            count = mBaseActivity.getString(R.string.VIEW_STATUS_NOT_DONE_TWO) + count2;
         } else {
             count = mBaseActivity.getString(R.string.VIEW_STATUS_MORE_THAN_DONE) + count;
         }

@@ -147,7 +147,8 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable {
             baseActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                    if (getContext() != null)
+                        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
                 }
             });
         }
@@ -330,7 +331,13 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                takePicture();
+                try {
+                    takePicture();
+                    mBaseActivity.setHasPhoto("true");
+                } catch (Exception e) {
+                    onCameraError(CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA);
+                    mBaseActivity.setHasPhoto("false");
+                }
             }
         }, 1000);
     }

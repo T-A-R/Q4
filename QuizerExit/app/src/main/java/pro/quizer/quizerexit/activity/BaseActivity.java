@@ -1,8 +1,10 @@
 package pro.quizer.quizerexit.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -63,6 +65,16 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     private HashMap<Integer, ElementModel> mTempMap;
     private HashMap<Integer, ElementModel> mMap;
     private UserModel mCurrentUser;
+
+    private String hasPhoto = null;
+
+    public String getHasPhoto() {
+        return hasPhoto;
+    }
+
+    public void setHasPhoto(String hasPhoto) {
+        this.hasPhoto = hasPhoto;
+    }
 
     @Override
     public void onPointerCaptureChanged(final boolean hasCapture) {
@@ -146,18 +158,21 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     private void addFragment(final Fragment pFragment, final boolean pIsAddToBackstack) {
-        final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
-        fragmentTransaction
-                .replace(R.id.main_content, pFragment);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 ? !isDestroyed() : !isFinishing()) {
+            final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
-        if (pIsAddToBackstack) {
             fragmentTransaction
-                    .addToBackStack(pFragment.getClass().getSimpleName());
-        }
+                    .replace(R.id.main_content, pFragment);
 
-        fragmentTransaction
-                .commit();
+            if (pIsAddToBackstack) {
+                fragmentTransaction
+                        .addToBackStack(pFragment.getClass().getSimpleName());
+            }
+
+            fragmentTransaction
+                    .commitAllowingStateLoss();
+        }
     }
 
     private void showFragmentWithBackstack(final Fragment pFragment) {
@@ -401,7 +416,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
             @Override
             public void run() {
-                if (getProgressBar() != null){
+                if (getProgressBar() != null) {
                     getProgressBar().setVisibility(View.VISIBLE);
                 }
             }
@@ -513,6 +528,10 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                     })
                     .setNegativeButton(R.string.VIEW_NO, null).show();
         }
+    }
+
+    public Context getContext() {
+        return this;
     }
 
     @Override

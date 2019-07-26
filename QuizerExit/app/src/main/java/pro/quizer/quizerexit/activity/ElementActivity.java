@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Parcel;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import pro.quizer.quizerexit.AudioService;
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.fragment.ElementFragment;
@@ -280,19 +282,22 @@ public class ElementActivity extends BaseActivity {
         if (mConfig.isGps() && mGPSModel == null) {
             try {
                 mGPSModel = GpsUtils.getCurrentGps(this, mConfig.isForceGps());
-                mGpsString = mGPSModel.getGPS();
-                mGpsTime = mGPSModel.getTime();
+                if (mGPSModel != null) {
+                    mGpsString = mGPSModel.getGPS();
+                    mGpsTime = mGPSModel.getTime();
 
-                if (!StringUtils.isEmpty(mGpsString)) {
+                    if (!StringUtils.isEmpty(mGpsString)) {
 //                    showToast(getString(R.string.NOTIFICATION_CURRENT_GPS) + mGpsString);
-                } else {
+                    } else {
 //                    showToast(getString(R.string.NOTIFICATION_GPS_IS_TURN_OFF));
-                }
+                    }
 
-                initStartValues();
+                    initStartValues();
+                }
             } catch (final Exception e) {
+                Log.d(TAG, "startGps: " + e);
                 if (mConfig.isForceGps()) {
-                    showToast(getString(R.string.NOTIFICATION_FORCE_GPS_ERROR));
+//                    showToast(getString(R.string.NOTIFICATION_FORCE_GPS_ERROR));
 
                     finish();
                     startMainActivity();
@@ -412,29 +417,32 @@ public class ElementActivity extends BaseActivity {
             return;
         }
 
-        final FragmentTransaction fragmentTransaction = getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.main_content,
-                        ElementFragment.newInstance(
-                                false,
-                                true,
-                                R.id.content_element,
-                                nextElement,
-                                mNavigationCallback,
-                                mToken,
-                                mLoginAdmin,
-                                mUserId,
-                                mUserLogin,
-                                mConfig.isPhotoQuestionnaire(),
-                                mProjectId,
-                                mUser,
-                                mMap));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 ? !isDestroyed() : !isFinishing()) {
 
-        if (pIsAddToBackStack) {
-            fragmentTransaction.addToBackStack(options.getTitle(this, mMap));
+            final FragmentTransaction fragmentTransaction = getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main_content,
+                            ElementFragment.newInstance(
+                                    false,
+                                    true,
+                                    R.id.content_element,
+                                    nextElement,
+                                    mNavigationCallback,
+                                    mToken,
+                                    mLoginAdmin,
+                                    mUserId,
+                                    mUserLogin,
+                                    mConfig.isPhotoQuestionnaire(),
+                                    mProjectId,
+                                    mUser,
+                                    mMap));
+
+            if (pIsAddToBackStack) {
+                fragmentTransaction.addToBackStack(options.getTitle(this, mMap));
+            }
+
+            fragmentTransaction.commitAllowingStateLoss();
         }
-
-        fragmentTransaction.commit();
     }
 
     private ElementModel getElementByRelativeId(final int pRelativeId) {
@@ -499,11 +507,13 @@ public class ElementActivity extends BaseActivity {
         questionnaireDatabaseModel.gps = mGpsString;
         questionnaireDatabaseModel.gps_time = mGpsTime;
         questionnaireDatabaseModel.date_interview = mStartDateInterview;
+        questionnaireDatabaseModel.has_photo = getHasPhoto();
 
         if (aborted)
-            questionnaireDatabaseModel.survey_status = "aborted";
+            questionnaireDatabaseModel.survey_status = Constants.QuestionnaireStatuses.ABORTED;
         else
-            questionnaireDatabaseModel.survey_status = "complited";
+            questionnaireDatabaseModel.survey_status = Constants.QuestionnaireStatuses.COMPLITED;
+
 
         final int showingScreensCount = saveScreenElements();
         final int answersCount = saveAnswersElements();

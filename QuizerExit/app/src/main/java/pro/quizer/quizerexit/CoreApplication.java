@@ -5,8 +5,8 @@ import android.app.Application;
 import com.activeandroid.ActiveAndroid;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.yandex.metrica.YandexMetrica;
-import com.yandex.metrica.YandexMetricaConfig;
+//import com.yandex.metrica.YandexMetrica;
+//import com.yandex.metrica.YandexMetricaConfig;
 
 import okhttp3.OkHttpClient;
 import pro.quizer.quizerexit.API.RetrofitQuizerAPI;
@@ -41,14 +41,14 @@ public class CoreApplication extends Application {
 
         retrofitQuizerAPI = retrofit.create(RetrofitQuizerAPI.class);
 
-        YandexMetricaConfig config = YandexMetricaConfig.newConfigBuilder(API_key)
-                .withLogs()
-                .withCrashReporting(true)
-                .build();
-
-        YandexMetrica.activate(getApplicationContext(), config);
-        YandexMetrica.enableActivityAutoTracking(this);
-        YandexMetrica.getReporter(this, API_key).reportEvent("Updates installed");
+//        YandexMetricaConfig config = YandexMetricaConfig.newConfigBuilder(API_key)
+//                .withLogs()
+//                .withCrashReporting(true)
+//                .build();
+//
+//        YandexMetrica.activate(getApplicationContext(), config);
+//        YandexMetrica.enableActivityAutoTracking(this);
+//        YandexMetrica.getReporter(this, API_key).reportEvent("Updates installed");
     }
 
     public static RetrofitQuizerAPI getQuizerApi() {

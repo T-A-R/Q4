@@ -103,6 +103,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
     class AnswerListViewHolder extends AbstractViewHolder {
 
         TextView mAnswer;
+        TextView mEmptyButton;
         EditText editText;
         View mAnswerFrame;
         CustomCheckableButton mCheckBox;
@@ -112,6 +113,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
         AnswerListViewHolder(final View itemView, final BaseActivity pBaseActivity) {
             super(itemView, pBaseActivity);
             mAnswer = itemView.findViewById(R.id.answer_text);
+            mEmptyButton = itemView.findViewById(R.id.empty_button);
             editText = itemView.findViewById(R.id.answer_edit_text);
             mCheckBox = itemView.findViewById(R.id.answer_checkbox);
             mContentsRecyclerView = itemView.findViewById(R.id.contents_recycler_view);
@@ -307,6 +309,18 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
             if (mAnswerFrame != null) {
                 mAnswerFrame.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(final View pView) {
+                        if (mCheckBox.isEnabled()) {
+                            mCheckBox.performClickProgramatically();
+                        }
+                    }
+                });
+            }
+
+            if (mEmptyButton != null) {
+                mEmptyButton.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(final View pView) {

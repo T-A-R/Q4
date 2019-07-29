@@ -13,48 +13,48 @@
         android:layout_marginRight="8dp"
         android:orientation="vertical">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/contents_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/contents_recycler_view"
+        android:layout_width="match_parent"
+        android:clickable="true"
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+        android:focusable="true"
+        android:layout_height="wrap_content" />
 
-            <FrameLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1">
-
-                <include layout="@layout/adapter_answer" />
-
-            </FrameLayout>
-
-            <pro.quizer.quizerexit.view.CustomRadioButton
-                android:id="@+id/answer_checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical" />
-
-        </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <FrameLayout
-            android:id="@+id/answer_divider"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dp">
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1">
 
-            <include layout="@layout/view_divider" />
+            <include layout="@layout/adapter_answer" />
 
         </FrameLayout>
 
+        <pro.quizer.quizerexit.view.CustomRadioButton
+            android:id="@+id/answer_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical" />
+
     </LinearLayout>
 
+    <FrameLayout
+        android:id="@+id/answer_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp">
+
+        <include layout="@layout/view_divider" />
+
+    </FrameLayout>
+
+</LinearLayout>
     <TextView
         android:id="@+id/empty_button"
         android:layout_width="match_parent"

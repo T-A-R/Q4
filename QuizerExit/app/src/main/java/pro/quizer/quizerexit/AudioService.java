@@ -546,12 +546,14 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                         to get better results see http://stackoverflow.com/questions/10655703/what-does-androids-getmaxamplitude-function-for-the-mediarecorder-actually-gi
                      */
                     // integer value (unsigned 16 bit)
-                    double amplitude = recorder.getMaxAmplitude();
-                    // try to calculate dB using two approaches
-                    // very inaccurate
-                    //double dbApprox = 20 * Math.log10(amplitude / 0.1);
-                    double dbSki = 20 * Math.log10(amplitude / 51805.5336 / 0.0002);
-                    publishProgress(dbSki);
+                    if(recorder != null) {
+                        double amplitude = recorder.getMaxAmplitude();
+                        // try to calculate dB using two approaches
+                        // very inaccurate
+                        //double dbApprox = 20 * Math.log10(amplitude / 0.1);
+                        double dbSki = 20 * Math.log10(amplitude / 51805.5336 / 0.0002);
+                        publishProgress(dbSki);
+                    }
                 }
             }
             return null;

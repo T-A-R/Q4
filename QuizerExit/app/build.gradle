@@ -93,8 +93,13 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
     implementation "android.arch.persistence.room:runtime:1.1.1"
     annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
+    implementation 'com.google.firebase:firebase-crash:9.4.0'
+    implementation 'com.instabug.library:instabug:8.5.0'
+//    implementation 'com.splunk:mint-android-sdk:5.2.5'
 //    implementation 'com.yandex.android:mobmetricalib:3.6.4'
 //    implementation 'com.android.installreferrer:installreferrer:1.0'
 //    implementation 'com.yandex.android:mobmetricalib-ndk-crashes:1.1.0'
 
 }
+
+apply plugin: 'com.google.gms.google-services'

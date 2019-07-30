@@ -58,9 +58,31 @@ public final class Constants {
     }
 
     public interface QuestionnaireStatuses {
-
         String ABORTED = "aborted";
         String COMPLITED = "complited";
+    }
+
+    public interface LogStatus {
+        String SENT = "send";
+        String NOT_SENT = "complited";
+    }
+
+    public interface LogType {
+        String SERVER = "server";
+        String DATABASE = "database";
+        String BUTTON = "button";
+    }
+
+    public interface LogObject {
+        String FILE = "file";
+        String AUTH = "auth";
+        String QUOTA = "quota";
+        String KEY = "key";
+    }
+
+    public interface LogResult {
+        String SUCCESS = "success";
+        String ERROR = "error";
 
     }
 }

@@ -13,8 +13,11 @@ import okhttp3.ResponseBody;
 import pro.quizer.quizerexit.API.QuizerAPI;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.database.model.AppLogsR;
 import pro.quizer.quizerexit.model.request.ActivationRequestModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
+import pro.quizer.quizerexit.utils.DateUtils;
+import pro.quizer.quizerexit.utils.DeviceUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 
 public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKeyCallback {
@@ -49,6 +52,20 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
         Gson gson = new Gson();
         String json = gson.toJson(activationRequestModel);
 
+        AppLogsR appLogsR = new AppLogsR();
+        appLogsR.setLogin(null);
+        appLogsR.setDevice(DeviceUtils.getDeviceInfo());
+        appLogsR.setDevice(DeviceUtils.getAppVersion());
+        appLogsR.setAndroid(null);
+        appLogsR.setDate(String.valueOf(DateUtils.getCurrentTimeMillis()));
+        appLogsR.setType(Constants.LogType.SERVER);
+        appLogsR.setObject(Constants.LogObject.KEY);
+        appLogsR.setAction("Отправка ключа");
+        appLogsR.setResult(Constants.LogResult.ERROR);
+        appLogsR.setDescription("3.01");
+
+        getDao().insertAppLogsR(appLogsR);
+
         QuizerAPI.sendKey(Constants.Default.ACTIVATION_URL, json, this);
     }
 
@@ -56,8 +73,23 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
     public void onSendKey(ResponseBody responseBody) {
         hideProgressBar();
 
+        AppLogsR appLogsR = new AppLogsR();
+        appLogsR.setLogin(null);
+        appLogsR.setDevice(DeviceUtils.getDeviceInfo());
+        appLogsR.setDevice(DeviceUtils.getAppVersion());
+        appLogsR.setAndroid(null);
+        appLogsR.setDate(String.valueOf(DateUtils.getCurrentTimeMillis()));
+        appLogsR.setType(Constants.LogType.SERVER);
+        appLogsR.setObject(Constants.LogObject.KEY);
+        appLogsR.setAction("Отправка ключа");
+
         if (responseBody == null) {
             showToast(getString(R.string.NOTIFICATION_SERVER_CONNECTION_ERROR) + " Ошибка: 5.01");
+
+            appLogsR.setResult(Constants.LogResult.ERROR);
+            appLogsR.setDescription("3.01");
+
+            getDao().insertAppLogsR(appLogsR);
             return;
         }
 

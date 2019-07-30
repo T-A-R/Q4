@@ -17,6 +17,8 @@ public final class Constants {
 
         String API_key = "a1d64454-4597-4c28-a047-dee22d3c8cfd";
 
+        boolean DEBUG = true;
+
     }
 
     public interface SP {

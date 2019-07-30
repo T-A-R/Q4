@@ -2,6 +2,7 @@ package pro.quizer.quizerexit.activity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,6 +25,7 @@ import okhttp3.ResponseBody;
 import pro.quizer.quizerexit.API.QuizerAPI;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.database.model.AppLogsR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.UpdateQuotasExecutable;
@@ -31,6 +33,7 @@ import pro.quizer.quizerexit.model.request.AuthRequestModel;
 import pro.quizer.quizerexit.model.request.ConfigRequestModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
+import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.MD5Utils;
 import pro.quizer.quizerexit.utils.SPUtils;
@@ -47,6 +50,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
     private List<String> mSavedUsers;
     private List<UserModelR> mSavedUserModels;
     private TextView mVersionView;
+    private TextView mLogsView;
     private int mVersionTapCount = 0;
 
     String login;
@@ -61,8 +65,35 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         mPasswordEditText = findViewById(R.id.auth_password_edit_text);
         mLoginSpinner = findViewById(R.id.login_spinner);
         mVersionView = findViewById(R.id.version_view);
+        mLogsView = findViewById(R.id.logs);
         final Button sendAuthButton = findViewById(R.id.send_auth_button);
         final TextView usersCount = findViewById(R.id.users_count);
+
+        if (Constants.Default.DEBUG) {
+//            mLogsView.setVisibility(View.VISIBLE);
+
+            List<AppLogsR> logs = getDao().getAppLogsR();
+            Log.d(TAG, "LOGS: " + logs.size());
+            if (logs != null)
+                for (int i = 0; i < logs.size() && i < 10; i++) {
+                    String log = "login: " + logs.get(i).getLogin()
+//                            + " date: " + DateUtils.getFormattedDate(DateUtils.PATTERN_TOKEN, Long.getLong(logs.get(i).getDate()))
+                            + " date: " + logs.get(i).getDate()
+                            + " device: " + logs.get(i).getDevice()
+                            + " app: " + logs.get(i).getAppversion()
+                            + " android: " + logs.get(i).getAndroid()
+                            + " type: " + logs.get(i).getType()
+                            + " object: " + logs.get(i).getObject()
+                            + " action: " + logs.get(i).getAction()
+                            + " result: " + logs.get(i).getResult()
+                            + " desc: " + logs.get(i).getDescription()
+                            + " status: " + logs.get(i).getStatus();
+                    Log.d(TAG, log);
+                }
+
+        } else {
+            mLogsView.setVisibility(View.GONE);
+        }
 
         final int usersCountValue = getDao().getAllUsers().size();
         usersCount.setText(String.format(getString(R.string.VIEW_USERS_COUNT_ON_DEVICE), (usersCountValue + "/" + MAX_USERS)));

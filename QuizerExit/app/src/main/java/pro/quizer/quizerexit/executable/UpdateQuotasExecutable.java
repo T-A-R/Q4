@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import okhttp3.ResponseBody;
 import pro.quizer.quizerexit.API.QuizerAPI;
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.database.model.UserModelR;
@@ -49,6 +50,9 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
         String json = gson.toJson(requestModel);
 
         String mServerUrl = configModel.getServerUrl();
+
+        BaseActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, "Получение квот", Constants.LogResult.SENT, "Отправлен запрос на сервер");
+
         QuizerAPI.getQuotas(mServerUrl, json, this);
     }
 
@@ -79,9 +83,13 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
 
             if (quotaResponseModel.getResult() != 0) {
                 try {
+                    BaseActivity.addLog(userModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUOTA, "Сохранение квот", Constants.LogResult.SENT, "Сохранение квот в базе данных");
+
                     BaseActivity.getDao().updateQuotas(responseJson, userProjectId);
                 } catch (Exception e) {
                     Log.d(TAG, mContext.getString(R.string.DB_SAVE_ERROR));
+                    BaseActivity.addLog(userModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUOTA, "Сохранение квот", Constants.LogResult.ERROR, e.getMessage());
+
                 }
 
                 onSuccess();

@@ -286,18 +286,24 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                                            final int pUserProjectId) {
 
         try {
+            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, "Сохранение пользователя", Constants.LogResult.SENT, "Попытка сохранения в базу данных");
+
             getDao().updateUserModelR(pLogin, pPassword, pConfigId, pRoleId, pUserProjectId, pUserId);
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
+            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, "Сохранение пользователя", Constants.LogResult.ERROR, e.getMessage());
         }
     }
 
     public void updateConfig(final UserModelR pUserModel, final ConfigModel pConfigModel) {
 
         try {
+            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, "Сохранение конфига", Constants.LogResult.SENT, "Попытка сохранения в базу данных");
             getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
+            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, "Сохранение конфига", Constants.LogResult.ERROR, e.getMessage());
+
         }
     }
 
@@ -362,9 +368,12 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         userModelR.setUser_project_id(pModel.getUserProjectId());
         userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
         try {
+            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, "Сохранение пользователя", Constants.LogResult.SENT, "Сохранение в базу данных");
+
             getDao().insertUser(userModelR);
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
+            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, "Сохранение пользователя", Constants.LogResult.ERROR, getString(R.string.DB_SAVE_ERROR));
         }
     }
 

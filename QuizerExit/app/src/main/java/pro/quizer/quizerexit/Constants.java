@@ -78,13 +78,17 @@ public final class Constants {
     public interface LogObject {
         String FILE = "file";
         String AUTH = "auth";
+        String USER = "user";
         String QUOTA = "quota";
         String KEY = "key";
+        String CONFIG = "config";
+        String QUESTIONNAIRE = "questionnaire";
     }
 
     public interface LogResult {
         String SUCCESS = "success";
         String SENT = "sent";
+        String PRESSED = "pressed";
         String ERROR = "error";
 
     }

@@ -15,6 +15,7 @@ import java.util.Map;
 
 import okhttp3.ResponseBody;
 import pro.quizer.quizerexit.API.QuizerAPI;
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.database.model.UserModelR;
@@ -106,12 +107,15 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
         Gson gson = new Gson();
         String json = gson.toJson(requestModel);
 
+        BaseActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, "Отправка анкеты", Constants.LogResult.SENT, "Отправка на сервер");
+
         QuizerAPI.sendQuestionnaires(mServerUrl, json, this);
     }
 
     @Override
     public void onSendQuestionnaires(ResponseBody responseBody) {
         if (responseBody == null) {
+            BaseActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, "Отправка анкеты", Constants.LogResult.ERROR, "Ошибка 2.01 (Не получен или отрицательный ответ от сервера)");
             onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 2.01"));
             Log.d(TAG, "onSendQuestionnaires: responseBody = null!");
             return;
@@ -121,6 +125,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
         try {
             responseJson = responseBody.string();
         } catch (IOException e) {
+            BaseActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, "Отправка анкеты", Constants.LogResult.ERROR, "Ошибка 2.02 (Ошибка получения JSON из ответа сервера)");
             onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 2.02"));
             return;
         }
@@ -129,6 +134,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
         try {
             deletingListResponseModel = new GsonBuilder().create().fromJson(responseJson, DeletingListResponseModel.class);
         } catch (Exception pE) {
+            BaseActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, "Отправка анкеты", Constants.LogResult.ERROR, "Ошибка 2.03 (Ошибка парсинга JSON)");
             onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 2.03"));
             return;
         }
@@ -140,14 +146,17 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                 final List<String> tokensToRemove = deletingListResponseModel.getAccepted();
 
                 if (tokensToRemove == null || tokensToRemove.isEmpty()) {
+                    BaseActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, "Отправка анкеты", Constants.LogResult.ERROR, "Ошибка 2.04" + mBaseActivity.getString(R.string.NOTIFICATION_SENDING_ERROR_EMPTY_TOKENS_LIST));
                     onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SENDING_ERROR_EMPTY_TOKENS_LIST) + " Ошибка: 2.04"));
                 } else {
                     SPUtils.addSendedQInSession(mBaseActivity, tokensToRemove.size());
 
                     for (final String token : tokensToRemove) {
                         try {
+                            BaseActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, "Установка статуса SENT у анкеты", Constants.LogResult.SENT, "Запись в базу данных");
                             BaseActivity.getDao().setQuestionnaireStatus(QuestionnaireStatus.SENT, token);
                         } catch (Exception e) {
+                            BaseActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, "Установка статуса SENT у анкеты", Constants.LogResult.ERROR, "Ошибка записи а базу данных");
                             Log.d(TAG, "Ошибка записи в базу данных.");
                         }
                     }
@@ -162,11 +171,13 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                         @Override
                         public void onSuccess() {
                             Toast.makeText(mBaseActivity, R.string.NOTIFICATION_UPDATE_QUOTAS, Toast.LENGTH_SHORT).show();
+                            BaseActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, "Получение квот", Constants.LogResult.SUCCESS, "Список квот обновлен");
                         }
 
                         @Override
                         public void onError(Exception pException) {
                             Toast.makeText(mBaseActivity, R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS + " Ошибка: 2.07", Toast.LENGTH_SHORT).show();
+                            BaseActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, "Получение квот", Constants.LogResult.ERROR, R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS + " " + pException.toString());
                         }
                     }).execute();
 

@@ -130,6 +130,8 @@ public class QuizerAPI {
     /**
      * Отправка анкет.
      *
+     * Код ошибок 2.хх
+     *
      * @param url
      * @param json
      * @param listener

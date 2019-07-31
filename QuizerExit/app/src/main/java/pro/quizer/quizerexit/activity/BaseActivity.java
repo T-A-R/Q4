@@ -27,11 +27,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import pro.quizer.quizerexit.BuildConfig;
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.CoreApplication;
 import pro.quizer.quizerexit.DrawerUtils;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.database.QuizerDao;
 import pro.quizer.quizerexit.database.model.ActivationModelR;
+import pro.quizer.quizerexit.database.model.AppLogsR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.RemoveUserExecutable;
 import pro.quizer.quizerexit.fragment.AboutFragment;
@@ -45,6 +47,8 @@ import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.ReserveChannelModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
+import pro.quizer.quizerexit.utils.DateUtils;
+import pro.quizer.quizerexit.utils.DeviceUtils;
 import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.Internet;
 import pro.quizer.quizerexit.utils.SPUtils;
@@ -549,6 +553,27 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     public static QuizerDao getDao() {
         return CoreApplication.getQuizerDatabase().getQuizerDao();
+    }
+
+    public static void addLog (String login,
+                               String type,
+                               String object,
+                               String action,
+                               String result,
+                               String desc) {
+        AppLogsR appLogsR = new AppLogsR();
+        appLogsR.setLogin(login);
+        appLogsR.setDevice(DeviceUtils.getDeviceInfo());
+        appLogsR.setAppversion(DeviceUtils.getAppVersion());
+        appLogsR.setAndroid(DeviceUtils.getAndroidVersion());
+        appLogsR.setDate(String.valueOf(DateUtils.getCurrentTimeMillis()));
+        appLogsR.setType(type);
+        appLogsR.setObject(object);
+        appLogsR.setAction(action);
+        appLogsR.setResult(result);
+        appLogsR.setDescription(desc);
+
+        getDao().insertAppLogsR(appLogsR);
     }
 
     @Override

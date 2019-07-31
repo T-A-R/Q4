@@ -65,8 +65,8 @@ public final class Constants {
     }
 
     public interface LogStatus {
-        String SENT = "send";
-        String NOT_SENT = "complited";
+        String SENT = "sent";
+        String NOT_SENT = "not_sent";
     }
 
     public interface LogType {
@@ -84,6 +84,7 @@ public final class Constants {
 
     public interface LogResult {
         String SUCCESS = "success";
+        String SENT = "sent";
         String ERROR = "error";
 
     }

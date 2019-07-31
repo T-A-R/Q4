@@ -47,6 +47,7 @@ public class AppLogsR {
     private String status;
 
     public AppLogsR() {
+        this.status = Constants.LogStatus.NOT_SENT;
     }
 
     public AppLogsR(String login, String device, String appversion, String android, String date, String type, String object, String action, String result, String description) {

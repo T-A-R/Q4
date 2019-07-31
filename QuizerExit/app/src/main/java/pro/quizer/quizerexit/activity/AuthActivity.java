@@ -75,20 +75,21 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             List<AppLogsR> logs = getDao().getAppLogsR();
             Log.d(TAG, "LOGS: " + logs.size());
             if (logs != null)
-                for (int i = 0; i < logs.size() && i < 10; i++) {
+                for (int i = logs.size() >= 10 ? logs.size() - 10 : 0; i < logs.size(); i++) {
                     String log = "login: " + logs.get(i).getLogin()
-//                            + " date: " + DateUtils.getFormattedDate(DateUtils.PATTERN_TOKEN, Long.getLong(logs.get(i).getDate()))
-                            + " date: " + logs.get(i).getDate()
+                            + " date: " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, Long.parseLong(logs.get(i).getDate()) * 1000)
+//                            + " date: " + logs.get(i).getDate()
                             + " device: " + logs.get(i).getDevice()
                             + " app: " + logs.get(i).getAppversion()
-                            + " android: " + logs.get(i).getAndroid()
+                            + " android: " + logs.get(i).getAndroid() + "\n"
                             + " type: " + logs.get(i).getType()
                             + " object: " + logs.get(i).getObject()
                             + " action: " + logs.get(i).getAction()
                             + " result: " + logs.get(i).getResult()
                             + " desc: " + logs.get(i).getDescription()
-                            + " status: " + logs.get(i).getStatus();
+                            + " status: " + logs.get(i).getStatus() + "\n";
                     Log.d(TAG, log);
+                    Log.d(TAG, "____________________________________________________________");
                 }
 
         } else {
@@ -218,6 +219,8 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
 
         Gson gson = new Gson();
         String json = gson.toJson(configRequestModel);
+
+
 
         QuizerAPI.getConfig(getServer(), json, responseBody -> {
 

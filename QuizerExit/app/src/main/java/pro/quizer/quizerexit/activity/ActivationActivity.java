@@ -58,19 +58,7 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
             Gson gson = new Gson();
             String json = gson.toJson(activationRequestModel);
 
-            AppLogsR appLogsR = new AppLogsR();
-            appLogsR.setLogin(null);
-            appLogsR.setDevice(DeviceUtils.getDeviceInfo());
-            appLogsR.setAppversion(DeviceUtils.getAppVersion());
-            appLogsR.setAndroid(DeviceUtils.getAndroidVersion());
-            appLogsR.setDate(String.valueOf(DateUtils.getCurrentTimeMillis()));
-            appLogsR.setType(Constants.LogType.SERVER);
-            appLogsR.setObject(Constants.LogObject.KEY);
-            appLogsR.setAction("Отправка ключа");
-            appLogsR.setResult(null);
-            appLogsR.setDescription("Попытка отправки ключа");
-
-            getDao().insertAppLogsR(appLogsR);
+            addLog(null, Constants.LogType.SERVER, Constants.LogObject.KEY, "Отправка ключа", Constants.LogResult.SENT, "Попытка отправки ключа");
 
             QuizerAPI.sendKey(Constants.Default.ACTIVATION_URL, json, this);
         }
@@ -80,24 +68,10 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
     public void onSendKey(ResponseBody responseBody) {
         hideProgressBar();
         isKeyBtnPressed = false;
-        Log.d(TAG, "isKeyBtnPressed 2: " + isKeyBtnPressed);
-        AppLogsR appLogsR = new AppLogsR();
-        appLogsR.setLogin(null);
-        appLogsR.setDevice(DeviceUtils.getDeviceInfo());
-        appLogsR.setAppversion(DeviceUtils.getAppVersion());
-        appLogsR.setAndroid(DeviceUtils.getAndroidVersion());
-        appLogsR.setDate(String.valueOf(DateUtils.getCurrentTimeMillis()));
-        appLogsR.setType(Constants.LogType.SERVER);
-        appLogsR.setObject(Constants.LogObject.KEY);
-        appLogsR.setAction("Получение ответа от сервера на отправку ключа");
 
         if (responseBody == null) {
             showToast(getString(R.string.NOTIFICATION_SERVER_CONNECTION_ERROR) + " Ошибка: 5.01");
-
-            appLogsR.setResult(Constants.LogResult.ERROR);
-            appLogsR.setDescription("Ошибка 5.01 (Не получен или отрицательный ответ от сервера)");
-
-            getDao().insertAppLogsR(appLogsR);
+            addLog(null, Constants.LogType.SERVER, Constants.LogObject.KEY, "Получение ответа от сервера на отправку ключа", Constants.LogResult.ERROR, "Ошибка 5.01 (Не получен или отрицательный ответ от сервера)");
             return;
         }
 
@@ -107,10 +81,7 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
         } catch (IOException e) {
             e.printStackTrace();
             showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 5.02");
-            appLogsR.setResult(Constants.LogResult.ERROR);
-            appLogsR.setDescription("Ошибка 5.02 (Ошибка получения JSON из ответа сервера)");
-
-            getDao().insertAppLogsR(appLogsR);
+            addLog(null, Constants.LogType.SERVER, Constants.LogObject.KEY, "Получение ответа от сервера на отправку ключа", Constants.LogResult.ERROR, "Ошибка 5.02 (Ошибка получения JSON из ответа сервера)");
         }
         ActivationResponseModel activationModel = null;
 
@@ -119,27 +90,17 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
                 activationModel = new GsonBuilder().create().fromJson(responseJson, ActivationResponseModel.class);
             } catch (Exception pE) {
                 showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 5.03");
-                appLogsR.setResult(Constants.LogResult.ERROR);
-                appLogsR.setDescription("Ошибка 5.03 (Ошибка парсинга JSON)");
-
-                getDao().insertAppLogsR(appLogsR);
+                addLog(null, Constants.LogType.SERVER, Constants.LogObject.KEY, "Получение ответа от сервера на отправку ключа", Constants.LogResult.ERROR, "Ошибка 5.03 (Ошибка парсинга JSON)");
             }
 
         if (activationModel != null) {
             if (activationModel.getResult() != 0) {
                 saveActivationBundle(activationModel);
-
-                appLogsR.setResult(Constants.LogResult.SUCCESS);
-                appLogsR.setDescription("Успешная отправка ключа");
-
-                getDao().insertAppLogsR(appLogsR);
+                addLog(null, Constants.LogType.SERVER, Constants.LogObject.KEY, "Получение ответа от сервера на отправку ключа", Constants.LogResult.SUCCESS, "Успешная отправка ключа");
                 startAuthActivity();
             } else {
                 showToast(activationModel.getError());
-                appLogsR.setResult(Constants.LogResult.ERROR);
-                appLogsR.setDescription(activationModel.getError());
-
-                getDao().insertAppLogsR(appLogsR);
+                addLog(null, Constants.LogType.SERVER, Constants.LogObject.KEY, "Получение ответа от сервера на отправку ключа", Constants.LogResult.ERROR, activationModel.getError());
             }
         } else {
             showToast(getString(R.string.NOTIFICATION_SERVER_ERROR) + " Ошибка: 5.05");

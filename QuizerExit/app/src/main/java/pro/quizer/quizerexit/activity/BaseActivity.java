@@ -68,6 +68,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     private HashMap<Integer, ElementModel> mTempMap;
     private HashMap<Integer, ElementModel> mMap;
     private UserModelR mCurrentUser;
+    private String savedLogin = null;
 
     private String hasPhoto = null;
 
@@ -240,9 +241,12 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         }
 
         try {
+            addLog(Constants.LogUser.ANDROID, Constants.LogType.DATABASE, Constants.LogObject.CONFIG, "Сохранение данных сервера", Constants.LogResult.SENT, "Попытка сохранения в базу данных");
             getDao().insertActivationModelR(activationModelR);
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
+            addLog(Constants.LogUser.ANDROID, Constants.LogType.DATABASE, Constants.LogObject.CONFIG, "Сохранение данных сервера", Constants.LogResult.ERROR, getString(R.string.DB_SAVE_ERROR));
+
         }
     }
 
@@ -287,7 +291,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
         try {
             addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, "Сохранение пользователя", Constants.LogResult.SENT, "Попытка сохранения в базу данных");
-
+            savedLogin = pLogin;
             getDao().updateUserModelR(pLogin, pPassword, pConfigId, pRoleId, pUserProjectId, pUserId);
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));

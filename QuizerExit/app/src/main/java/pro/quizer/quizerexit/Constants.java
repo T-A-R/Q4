@@ -64,6 +64,10 @@ public final class Constants {
         String COMPLITED = "complited";
     }
 
+    public interface LogUser {
+        String ANDROID = "android";
+    }
+
     public interface LogStatus {
         String SENT = "sent";
         String NOT_SENT = "not_sent";
@@ -73,6 +77,7 @@ public final class Constants {
         String SERVER = "server";
         String DATABASE = "database";
         String BUTTON = "button";
+        String FILE = "file";
     }
 
     public interface LogObject {

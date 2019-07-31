@@ -201,6 +201,8 @@ public class QuizerAPI {
     /**
      * Отправка файлов (аудио и фото).
      *
+     * Код ошибок 3.хх
+     *
      * @param url
      * @param files
      * @param pNameForm

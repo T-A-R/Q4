@@ -13,9 +13,9 @@ android {
         applicationId "pro.quizer.quizerexit"
         minSdkVersion 16
         targetSdkVersion 26
-//        multiDexEnabled true
-        versionCode 117
-        versionName "2.1.17"
+        multiDexEnabled true
+        versionCode 118
+        versionName "2.1.18"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         project.ext.set("archivesBaseName", "Quizer_ " + defaultConfig.versionName)
     }

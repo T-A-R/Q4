@@ -61,7 +61,7 @@ public interface QuizerDao {
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status")
     List<QuestionnaireDatabaseModelR> getQuestionnaireByUserIdWithStatus(int userId, String status);
 
-    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status AND user_id = :userId AND project_id = :projectId AND survey_status != :surveyStatus")
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status AND user_id = :userId AND user_project_id = :projectId AND survey_status = :surveyStatus")
     List<QuestionnaireDatabaseModelR> getQuestionnaireForQuotas(int userId, int projectId, String status, String surveyStatus);
 
     //TODO RENAME TO setQuestionnaireStatusByToken

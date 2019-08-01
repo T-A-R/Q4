@@ -310,6 +310,11 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                             mEditText.requestFocus();
                         }
 
+                        if (mEditText.hasFocus()) {
+                            Log.d(TAG, "onClick: 78787878787878787878");
+                            showKeyboard();
+                        }
+
                         Log.d(TAG, "onClick: " + pPosition + " checked: " + isChecked);
                         if (isChecked) {
                             mEditText.setEnabled(true);
@@ -364,8 +369,11 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                     @Override
                     public void onClick(final View pView) {
                         if (mCheckBox.isEnabled()) {
-//                            if (mEditText.hasFocus())
+                            Log.d(TAG, "onClick: 999999999999999999999999999999999999999999999999");
+                            if (mEditText.hasFocus()) {
+                                Log.d(TAG, "onClick: 898989898989898989898989898989");
                                 showKeyboard();
+                            }
                             mEmptyButton.setVisibility(View.GONE); //TODO Обработать включение
                             mEditText.setEnabled(true);
                             mEditText.setFocusable(true);

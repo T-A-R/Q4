@@ -71,7 +71,7 @@ dependencies {
     implementation 'com.vicmikhailau:MaskedEditText:2.0.4'
     implementation 'com.github.kk121:File-Loader:1.2'
     implementation 'com.squareup.picasso:picasso:2.5.2'
-    implementation 'com.github.halilozercan:BetterVideoPlayer:1.2.alpha1'
+    implementation 'com.github.halilozercan:BetterVideoPlayer:1.1.0'
     implementation 'com.github.ybq:Android-SpinKit:1.2.0'
     implementation 'com.github.vipulasri:timelineview:1.1.0'
 //    implementation 'com.adeel:easyFTP:1.0'

@@ -103,7 +103,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
             pAnswerListViewHolder.mAnswer.performClick();
         }
-        if(pAnswerListViewHolder.mEmptyRadioButton != null)
+        if (pAnswerListViewHolder.mEmptyRadioButton != null)
             pAnswerListViewHolder.mEmptyRadioButton.setVisibility(View.VISIBLE);
 
 
@@ -249,16 +249,17 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                 @Override
                 public void onClick(View view) {
 
-                    if(mEmptyButton != null)
-                    mEmptyButton.setVisibility(View.VISIBLE);
-                    if(mEmptyRadioButton != null)
-                    mEmptyRadioButton.setVisibility(View.VISIBLE);
+                    if (mEmptyButton != null)
+                        mEmptyButton.setVisibility(View.VISIBLE);
+                    if (mEmptyRadioButton != null)
+                        mEmptyRadioButton.setVisibility(View.VISIBLE);
                     Log.d(TAG, "onClick: 555555555555555555555555555555555555555555555555555555");
                     final CustomCheckableButton checkBox = (CustomCheckableButton) view;
                     final boolean isChecked = checkBox.isChecked();
                     final int minAnswers = getMinAnswer();
                     final int maxAnswers = getMaxAnswer();
                     final int checkedItemsCount = getCheckedItemsCount();
+
 
                     if (isChecked && minAnswers == DEFAULT_MIN_ANSWERS && minAnswers == maxAnswers) {
                         Log.d(TAG, "onClick: 777777777777777777777777777777777777777777777777777");
@@ -363,6 +364,8 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                     @Override
                     public void onClick(final View pView) {
                         if (mCheckBox.isEnabled()) {
+//                            if (mEditText.hasFocus())
+                                showKeyboard();
                             mEmptyButton.setVisibility(View.GONE); //TODO Обработать включение
                             mEditText.setEnabled(true);
                             mEditText.setFocusable(true);
@@ -384,8 +387,12 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 //                        unselectAll();
 //                        mCheckBox.setEnabled(true);
 //                        refresh();
+//                        showKeyboard();
                         Log.d(TAG, "onClick: 3333333333333333333333333333333333333333333333333333333333");
+
                         if (mCheckBox.isEnabled()) {
+                            if (mEditText.hasFocus())
+                                showKeyboard();
                             mEmptyRadioButton.setVisibility(View.GONE);
                             mEditText.setEnabled(true);
                             mEditText.setFocusable(true);
@@ -443,6 +450,17 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
             }
 
         }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            super.beforeTextChanged(s, start, count, after);
+
+        }
     }
+
+    public void showKeyboard() {
+        ((InputMethodManager) mBaseActivity.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+    }
+
 
 }

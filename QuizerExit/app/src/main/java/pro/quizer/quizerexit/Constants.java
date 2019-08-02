@@ -57,6 +57,7 @@ public final class Constants {
         String PHOTO_FILE = "photo_file";
         String AUDIO_FILE = "audio_file";
         String DOWNLOAD_UPDATE = "download_update";
+        String CRASH = "crash";
     }
 
     public interface QuestionnaireStatuses {

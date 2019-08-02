@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.activeandroid.query.Select;
 import com.google.gson.Gson;
@@ -29,8 +30,10 @@ import pro.quizer.quizerexit.database.model.AppLogsR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.UpdateQuotasExecutable;
+import pro.quizer.quizerexit.model.logs.Crash;
 import pro.quizer.quizerexit.model.request.AuthRequestModel;
 import pro.quizer.quizerexit.model.request.ConfigRequestModel;
+import pro.quizer.quizerexit.model.request.CrashRequestModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.utils.DateUtils;
@@ -40,7 +43,7 @@ import pro.quizer.quizerexit.utils.SPUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 
-public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCallback {
+public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCallback, QuizerAPI.SendCrashCallback {
 
     private static int MAX_USERS = 5;
     private static int MAX_VERSION_TAP_COUNT = 5;
@@ -383,6 +386,16 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             return;
         }
 
+        Log.d(TAG, "Crash logs: " + BaseActivity.getDao().getCrashLogs().size());
+        if (BaseActivity.getDao().getCrashLogs().size() > 0) {
+            String crashLog = BaseActivity.getDao().getCrashLogs().get(BaseActivity.getDao().getCrashLogs().size() - 1).getLog();
+            Log.d(TAG, "Sending Crash Log: " + crashLog);
+            CrashRequestModel crashRequestModel = new CrashRequestModel(getLoginAdmin(), new Crash(login, crashLog));
+            Gson gson = new Gson();
+            String json = gson.toJson(crashRequestModel);
+            QuizerAPI.sendCrash(getServer(), json, this);
+        }
+
         String responseJson;
         try {
             responseJson = responseBody.string();
@@ -426,6 +439,22 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             showToast(authResponseModel.getError());
             addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, "Авторизация пользователя", Constants.LogResult.ERROR, authResponseModel.getError());
 
+        }
+    }
+
+    @Override
+    public void onSendCrash(boolean ok, String message) {
+        if (ok) {
+            try {
+                getDao().clearCrashLogs();
+                Log.d(TAG, "Crash Logs Cleared");
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.d(TAG, "Crash Logs Clear Error: " + e);
+            }
+        } else {
+//            Toast.makeText(this, "Краш-лог не отправлен: " + message, Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Краш-лог не отправлен: " + message);
         }
     }
 }

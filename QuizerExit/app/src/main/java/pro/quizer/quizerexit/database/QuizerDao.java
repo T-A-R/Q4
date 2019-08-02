@@ -90,7 +90,6 @@ public interface QuizerDao {
     @Query("SELECT * FROM QuestionnaireDatabaseModelR")
     List<QuestionnaireDatabaseModelR> getAllQuestionnaires();
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAppLogsR(AppLogsR appLogsR);
 
@@ -108,5 +107,5 @@ public interface QuizerDao {
 
     @Query("SELECT * FROM CrashLogs")
     List<CrashLogs> getCrashLogs();
->>>>>>> origin/1386.crash_reporter
+
 }

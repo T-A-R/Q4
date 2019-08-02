@@ -34,6 +34,8 @@ public class QuizerAPI {
     /**
      * Отправка ключа.
      *
+     * Код ошибок 5.хх
+     *
      * @param url
      * @param json
      * @param listener
@@ -67,6 +69,8 @@ public class QuizerAPI {
     /**
      * Запрос конфига.
      *
+     * Код ошибок 6.хх
+     *
      * @param url
      * @param json
      * @param listener
@@ -99,6 +103,8 @@ public class QuizerAPI {
 
     /**
      * Авторизация.
+     *
+     * Код ошибок 4.хх
      *
      * @param url
      * @param json
@@ -171,6 +177,8 @@ public class QuizerAPI {
 
     /**
      * Получение квот.
+     *
+     * Код ошибок 1.хх
      *
      * @param url
      * @param json

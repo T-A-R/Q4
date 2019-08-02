@@ -239,7 +239,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
 
             if (responseBody == null) {
                 showToast(getString(R.string.NOTIFICATION_SERVER_CONNECTION_ERROR) + " Ошибка: 6.01");
-                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, "Получение ответа от сервера на запрос конфига", Constants.LogResult.ERROR, "Ошибка 6.01 (Не получен или отрицательный ответ от сервера)");
+                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, "Получение ответа от сервера на запрос конфига", Constants.LogResult.ERROR, "Ошибка 6.01 (Нет ответа от сервера. Возможны проблемы с подключением к сети интеренет)");
 
                 return;
             }
@@ -259,7 +259,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
                 configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
             } catch (final Exception pE) {
                 showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 6.03");
-                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, "Получение ответа от сервера на запрос конфига", Constants.LogResult.ERROR, "Ошибка 6.02 (Ошибка получения JSON из ответа сервера)");
+                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, "Получение ответа от сервера на запрос конфига", Constants.LogResult.ERROR, "Ошибка 6.03 (Ошибка парсинга JSON. " + pE.getMessage() + ")");
 
             }
 
@@ -412,7 +412,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
         } catch (final Exception pE) {
             showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 4.03");
-            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, "Авторизация пользователя", Constants.LogResult.ERROR, "Ошибка 4.03 (Ошибка парсинга JSON)");
+            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, "Авторизация пользователя", Constants.LogResult.ERROR, "Ошибка 4.03 (Ошибка парсинга JSON. "+ pE.getMessage()  +")");
 
         }
 

@@ -44,12 +44,12 @@ public interface RetrofitQuizerAPI {
             @Part(Constants.ServerFields.JSON_DATA) RequestBody description,
             @Part List<MultipartBody.Part> files);
 
-    //TODO Перевести на ретрофит запросы ниже
+    @FormUrlEncoded
+    @POST()
+    Call<ResponseBody> sendCrash(@Url String apiname, @FieldMap Map<String, String> fields);
 
-//    @POST("/_query/send-data")
-//    Call<Void> getConfig(@Body() QuizerAPI.GetConfigBody body);
-//
-//    @POST("/_query/send-data")
-//    Call<Void> sendPhoto(@Body() QuizerAPI.SendPhotoBody body);
+    @FormUrlEncoded
+    @POST()
+    Call<ResponseBody> sendLogs(@Url String apiname, @FieldMap Map<String, String> fields);
 
 }

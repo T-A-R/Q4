@@ -12,6 +12,7 @@ import com.google.gson.GsonBuilder;
 import okhttp3.OkHttpClient;
 import pro.quizer.quizerexit.API.RetrofitQuizerAPI;
 import pro.quizer.quizerexit.database.QuizerDatabase;
+import pro.quizer.quizerexit.utils.TryMe;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -22,6 +23,7 @@ public class CoreApplication extends Application {
 
     @Override
     public void onCreate() {
+        Thread.setDefaultUncaughtExceptionHandler(new TryMe());
         super.onCreate();
         ActiveAndroid.initialize(this);
 

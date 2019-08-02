@@ -8,6 +8,7 @@ import android.arch.persistence.room.Query;
 import java.util.List;
 
 import pro.quizer.quizerexit.database.model.ActivationModelR;
+import pro.quizer.quizerexit.database.model.CrashLogs;
 import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
 import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.database.model.UserModelR;
@@ -87,4 +88,13 @@ public interface QuizerDao {
 
     @Query("SELECT * FROM QuestionnaireDatabaseModelR")
     List<QuestionnaireDatabaseModelR> getAllQuestionnaires();
+
+    @Query("DELETE FROM CrashLogs")
+    void clearCrashLogs();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertCrashLog(CrashLogs crashLogs);
+
+    @Query("SELECT * FROM CrashLogs")
+    List<CrashLogs> getCrashLogs();
 }

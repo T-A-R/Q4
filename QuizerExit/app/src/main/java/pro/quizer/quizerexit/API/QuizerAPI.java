@@ -241,4 +241,72 @@ public class QuizerAPI {
         void onSendFilesCallback(ResponseBody data);
     }
 
+    /**
+     * Отправка crash-логов.
+     *
+     * @param url
+     * @param json
+     * @param listener
+     */
+
+    static public void sendCrash(String url, String json, final SendCrashCallback listener) {
+
+        Log.d(TAG, "sendCrash: " + json);
+
+        Map<String, String> fields = new HashMap<>();
+        fields.put(Constants.ServerFields.JSON_DATA, json);
+
+        CoreApplication.getQuizerApi().sendCrash(url, fields).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d(TAG, "QuizerAPI.sendCrash.onResponse() Message: " + response.message());
+                listener.onSendCrash(response.body());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d(TAG, "QuizerAPI.sendCrash.onFailure() " + t);
+                listener.onSendCrash(null);
+            }
+        });
+    }
+
+    public interface SendCrashCallback {
+        void onSendCrash(ResponseBody data);
+    }
+
+    /**
+     * Отправка логов.
+     *
+     * @param url
+     * @param json
+     * @param listener
+     */
+
+    static public void sendLogs(String url, String json, final SendLogsCallback listener) {
+
+        Log.d(TAG, "sendCrash: " + json);
+
+        Map<String, String> fields = new HashMap<>();
+        fields.put(Constants.ServerFields.JSON_DATA, json);
+
+        CoreApplication.getQuizerApi().sendLogs(url, fields).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d(TAG, "QuizerAPI.sendLogs.onResponse() Message: " + response.message());
+                listener.onSendLogs(response.body());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d(TAG, "QuizerAPI.sendLogs.onFailure() " + t);
+                listener.onSendLogs(null);
+            }
+        });
+    }
+
+    public interface SendLogsCallback {
+        void onSendLogs(ResponseBody data);
+    }
+
 }

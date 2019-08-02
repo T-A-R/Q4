@@ -37,7 +37,7 @@ import pro.quizer.quizerexit.utils.SPUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 
-public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCallback {
+public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCallback, QuizerAPI.SendCrashCallback {
 
     private static int MAX_USERS = 5;
     private static int MAX_VERSION_TAP_COUNT = 5;
@@ -320,6 +320,13 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             return;
         }
 
+        if (BaseActivity.getDao().getCrashLogs().size() > 0)
+        {
+            Log.d(TAG, "================================= " + BaseActivity.getDao().getCrashLogs().get(BaseActivity.getDao().getCrashLogs().size()-1).getLog());
+            String crashLog = BaseActivity.getDao().getCrashLogs().get(BaseActivity.getDao().getCrashLogs().size()-1).getLog();
+            QuizerAPI.sendCrash(getServer(), crashLog, this);
+        }
+
         String responseJson;
         try {
             responseJson = responseBody.string();
@@ -356,5 +363,10 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         } else {
             showToast(authResponseModel.getError());
         }
+    }
+
+    @Override
+    public void onSendCrash(ResponseBody data) {
+
     }
 }

@@ -1,26 +1,26 @@
 package pro.quizer.quizerexit.utils;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.os.Build;
+//import android.content.pm.PackageInfo;
+//import android.content.pm.PackageManager;
+//import android.os.Build;
 import android.os.Environment;
-import android.util.Log;
+//import android.util.Log;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import pro.quizer.quizerexit.CoreApplication;
-import pro.quizer.quizerexit.database.QuizerDatabase;
+//import pro.quizer.quizerexit.database.QuizerDatabase;
 import pro.quizer.quizerexit.database.model.CrashLogs;
 
 public class TryMe implements Thread.UncaughtExceptionHandler {
 
     private final DateFormat formatter = new SimpleDateFormat("dd.MM.yy HH:mm");
-    private final DateFormat fileFormatter = new SimpleDateFormat("dd-MM-yy");
-    private String versionName = "0";
-    private int versionCode = 0;
+//    private final DateFormat fileFormatter = new SimpleDateFormat("dd-MM-yy");
+//    private String versionName = "0";
+//    private int versionCode = 0;
     private String stacktraceDir;
 //    private final Thread.UncaughtExceptionHandler previousHandler;
 
@@ -28,15 +28,15 @@ public class TryMe implements Thread.UncaughtExceptionHandler {
 
     private TryMe(Context context, boolean chained) {
 
-        PackageManager mPackManager = context.getPackageManager();
-        PackageInfo mPackInfo;
-        try {
-            mPackInfo = mPackManager.getPackageInfo(context.getPackageName(), 0);
-            versionName = mPackInfo.versionName;
-            versionCode = mPackInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            // ignore
-        }
+//        PackageManager mPackManager = context.getPackageManager();
+//        PackageInfo mPackInfo;
+//        try {
+//            mPackInfo = mPackManager.getPackageInfo(context.getPackageName(), 0);
+//            versionName = mPackInfo.versionName;
+//            versionCode = mPackInfo.versionCode;
+//        } catch (PackageManager.NameNotFoundException e) {
+//            // ignore
+//        }
         if (chained)
             oldHandler = Thread.getDefaultUncaughtExceptionHandler();
         else
@@ -65,15 +65,15 @@ public class TryMe implements Thread.UncaughtExceptionHandler {
 
         StringBuilder reportBuilder = new StringBuilder();
         reportBuilder
-                .append("\n")
+//                .append("\n")
                 .append(formatter.format(dumpDate)).append("\n")
-//                .append(String.format("Version: %s (%d)\n", versionName, versionCode))
+                .append(String.format("Version: %s \n", DeviceUtils.getAppVersion()))
+                .append(String.format("Device: %s \n", DeviceUtils.getDeviceInfo()))
                 .append(thread.toString()).append("\n");
         processThrowable(throwable, reportBuilder);
 
         String log = reportBuilder.toString();
 
-//        Log.d("TryMe", "Something wrong happened!" + "\n" + log);
         CoreApplication.getQuizerDatabase().getQuizerDao().insertCrashLog(new CrashLogs(log));
 
 

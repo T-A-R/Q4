@@ -56,8 +56,6 @@ public class HomeFragment extends BaseFragment implements ICallback {
         super.onViewCreated(view, savedInstanceState);
 
         initView(view);
-        if (BaseActivity.getDao().getCrashLogs().size() > 0)
-            Log.d(TAG, "================================= " + BaseActivity.getDao().getCrashLogs().get(BaseActivity.getDao().getCrashLogs().size()-1).getLog());
 
         final Bundle bundle = getArguments();
 

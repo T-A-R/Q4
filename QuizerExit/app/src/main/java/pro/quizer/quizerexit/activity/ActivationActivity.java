@@ -58,7 +58,7 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
             Gson gson = new Gson();
             String json = gson.toJson(activationRequestModel);
 
-            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, "Отправка ключа", Constants.LogResult.SENT, "Попытка отправки ключа");
+            addLogWithData(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, "Отправка ключа", Constants.LogResult.SENT, "Попытка отправки ключа", json);
 
             QuizerAPI.sendKey(Constants.Default.ACTIVATION_URL, json, this);
         }
@@ -90,17 +90,17 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
                 activationModel = new GsonBuilder().create().fromJson(responseJson, ActivationResponseModel.class);
             } catch (Exception pE) {
                 showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 5.03");
-                addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, "Получение ответа от сервера на отправку ключа", Constants.LogResult.ERROR, "Ошибка 5.03 (Ошибка парсинга JSON. " + pE.getMessage() + ")");
+                addLogWithData(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, "Получение ответа от сервера на отправку ключа", Constants.LogResult.ERROR, "Ошибка 5.03 (Ошибка парсинга JSON.)", responseJson);
             }
 
         if (activationModel != null) {
             if (activationModel.getResult() != 0) {
                 saveActivationBundle(activationModel);
-                addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, "Получение ответа от сервера на отправку ключа", Constants.LogResult.SUCCESS, "Успешная отправка ключа");
+                addLogWithData(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, "Получение ответа от сервера на отправку ключа", Constants.LogResult.SUCCESS, "Успешная отправка ключа", responseJson);
                 startAuthActivity();
             } else {
                 showToast(activationModel.getError());
-                addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, "Получение ответа от сервера на отправку ключа", Constants.LogResult.ERROR, activationModel.getError());
+                addLogWithData(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, "Получение ответа от сервера на отправку ключа", Constants.LogResult.ERROR, activationModel.getError(), responseJson);
             }
         } else {
             showToast(getString(R.string.NOTIFICATION_SERVER_ERROR) + " Ошибка: 5.05");

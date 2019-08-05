@@ -568,12 +568,12 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         return CoreApplication.getQuizerDatabase().getQuizerDao();
     }
 
-    public static void addLog (String login,
-                               String type,
-                               String object,
-                               String action,
-                               String result,
-                               String desc) {
+    public static void addLog(String login,
+                              String type,
+                              String object,
+                              String action,
+                              String result,
+                              String desc) {
         AppLogsR appLogsR = new AppLogsR();
         appLogsR.setLogin(login);
         appLogsR.setDevice(DeviceUtils.getDeviceInfo());
@@ -589,10 +589,38 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         getDao().insertAppLogsR(appLogsR);
     }
 
+    public static void addLogWithData(String login,
+                                      String type,
+                                      String object,
+                                      String action,
+                                      String result,
+                                      String desc,
+                                      String data) {
+        AppLogsR appLogsR = new AppLogsR();
+        appLogsR.setLogin(login);
+        appLogsR.setDevice(DeviceUtils.getDeviceInfo());
+        appLogsR.setAppversion(DeviceUtils.getAppVersion());
+        appLogsR.setAndroid(DeviceUtils.getAndroidVersion());
+        appLogsR.setDate(String.valueOf(DateUtils.getCurrentTimeMillis()));
+        appLogsR.setType(type);
+        appLogsR.setObject(object);
+        appLogsR.setAction(action);
+        appLogsR.setResult(result);
+        appLogsR.setDescription(desc);
+        if (data != null)
+            appLogsR.setData(data.substring(0, Math.min(data.length(), 5000)));
+
+        getDao().insertAppLogsR(appLogsR);
+    }
+
     @Override
     public void onBackPressed() {
         if (!getSupportFragmentManager().popBackStackImmediate()) {
             showExitAlertDialog();
         }
+    }
+
+    public static void makeCrash() {
+        throw new RuntimeException("This is a crash");
     }
 }

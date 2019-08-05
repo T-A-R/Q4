@@ -90,6 +90,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
         final int notSentAudioCount = notSentAudio.size();
         final int notSentPhotoCount = notSentPhoto.size();
         final int notSentQuestionnairesCount = pServiceViewModel.getQuestionnaireModels().size();
+        final int notSentCrashCount = getDao().getCrashLogs().size();
         final int usersCount = pServiceViewModel.getUserModels().size();
 
         runOnUiThread(new Runnable() {
@@ -105,7 +106,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
                 UiUtils.setButtonEnabled(mSendAudioButton, notSentAudioCount > 0);
                 UiUtils.setButtonEnabled(mSendPhotoButton, notSentPhotoCount > 0);
                 UiUtils.setButtonEnabled(mDeleteUsersButton, usersCount > 0 && notSentQuestionnairesCount <= 0 && notSentAudioCount <= 0 && notSentPhotoCount <= 0);
-                UiUtils.setButtonEnabled(mUploadDataButton, notSentQuestionnairesCount > 0 || notSentAudioCount > 0 || notSentPhotoCount > 0);
+                UiUtils.setButtonEnabled(mUploadDataButton, notSentQuestionnairesCount > 0 || notSentAudioCount > 0 || notSentPhotoCount > 0 || notSentCrashCount >0);
             }
         });
 

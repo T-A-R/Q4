@@ -557,4 +557,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
             showExitAlertDialog();
         }
     }
+
+    public static void makeCrash() {
+        throw new RuntimeException("This is a crash");
+    }
 }

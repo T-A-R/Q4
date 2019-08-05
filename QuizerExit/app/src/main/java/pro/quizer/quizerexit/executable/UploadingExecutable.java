@@ -29,7 +29,7 @@ import static pro.quizer.quizerexit.utils.FileUtils.moveFile;
 public class UploadingExecutable extends BaseExecutable {
 
     private final String UPLOADING_QUESTIONNAIRE_FILE_NAME = "data_%1$s_%2$s" + FileUtils.JSON;
-    private final String UPLOADING_CRASH_FILE_NAME = "crashlog_%1$s_%2$s" + FileUtils.JSON;
+    private final String UPLOADING_CRASH_FILE_NAME = "quizer_crashlog_%1$s_%2$s" + FileUtils.JSON;
     public static final String UPLOADING_FOLDER_NAME = "data_quizer";
     public static final String UPLOADING_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + FOLDER_DIVIDER + UPLOADING_FOLDER_NAME + FOLDER_DIVIDER;
 

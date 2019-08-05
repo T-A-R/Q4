@@ -558,6 +558,9 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         }
     }
 
+    /**
+     * Для тестов
+     */
     public static void makeCrash() {
         throw new RuntimeException("This is a crash");
     }

@@ -53,7 +53,7 @@
     <string name="VIEW_SEND_AUDIO">Отправить аудио</string>
     <string name="VIEW_SEND_PHOTO">Отправить фото</string>
     <string name="VIEW_EXIT_QUIZ_HEADER">Завершить анкету</string>
-    <string name="VIEW_EXIT_QUIZ_BODY">Вы уверены, что хотите завершить анкету?</string>
+    <string name="VIEW_EXIT_QUIZ_BODY">Вы уверены, что хотите принудительно прервать анкету? \nЕё содержимое будет потеряно.</string>
     <string name="VIEW_SENT_COUNT_QUIZ_FROM_THIS_DEVICE">Отправлено анкет в рамках проекта с данного устройства: %1$s</string>
     <string name="VIEW_SENT_COUNT_QUIZ_THIS_SESSION">Отправлено анкет в данном сеансе: %1$s</string>
     <string name="VIEW_SMS">СМС</string>

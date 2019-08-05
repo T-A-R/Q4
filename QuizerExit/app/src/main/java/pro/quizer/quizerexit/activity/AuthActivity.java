@@ -296,10 +296,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             @Override
             public void onError(Exception pException) {
                 hideProgressBar();
-
                 showToast(getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + "\n" + pException.toString());
-                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.QUOTA, "Получение квот", Constants.LogResult.ERROR, getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " " + pException.toString());
-
             }
         }).execute();
     }

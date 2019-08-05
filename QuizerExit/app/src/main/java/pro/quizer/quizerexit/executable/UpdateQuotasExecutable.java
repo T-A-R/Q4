@@ -51,7 +51,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
 
         String mServerUrl = configModel.getServerUrl();
 
-        BaseActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, "Получение квот", Constants.LogResult.SENT, "Отправлен запрос на сервер");
+        BaseActivity.addLogWithData(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, "Получение квот", Constants.LogResult.SENT, "Отправлен запрос на сервер", json);
 
         QuizerAPI.getQuotas(mServerUrl, json, this);
     }
@@ -59,6 +59,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
     @Override
     public void onGetQuotasCallback(ResponseBody responseBody) {
         if (responseBody == null) {
+            BaseActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, "Получение квот", Constants.LogResult.ERROR, "Ошибка 1.01 (Не получен или отрицательный ответ от сервера)");
             onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 1.01"));
             return;
         }
@@ -66,6 +67,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
         try {
             responseJson = responseBody.string();
         } catch (IOException e) {
+            BaseActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, "Получение квот", Constants.LogResult.ERROR, "Ошибка 1.02 (Ошибка получения JSON из ответа сервера)");
             onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 1.02"));
             return;
         }
@@ -74,6 +76,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
         try {
             quotaResponseModel = new GsonBuilder().create().fromJson(responseJson, QuotaResponseModel.class);
         } catch (final Exception pE) {
+            BaseActivity.addLogWithData(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, "Получение квот", Constants.LogResult.ERROR, "Ошибка 1.03 (Ошибка получения JSON из ответа сервера)", pE.getMessage());
             onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 1.03"));
             return;
         }
@@ -84,7 +87,6 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
             if (quotaResponseModel.getResult() != 0) {
                 try {
                     BaseActivity.addLog(userModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUOTA, "Сохранение квот", Constants.LogResult.SENT, "Сохранение квот в базе данных");
-
                     BaseActivity.getDao().updateQuotas(responseJson, userProjectId);
                 } catch (Exception e) {
                     Log.d(TAG, mContext.getString(R.string.DB_SAVE_ERROR));

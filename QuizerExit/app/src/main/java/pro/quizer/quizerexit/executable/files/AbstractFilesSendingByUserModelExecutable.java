@@ -173,7 +173,7 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
                 return;
             }
 
-            String responseJson =null;
+            String responseJson = null;
             try {
                 responseJson = responseBody.string();
             } catch (IOException e) {
@@ -187,7 +187,7 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
             try {
                 deletingListResponseModel = new GsonBuilder().create().fromJson(responseJson, DeletingListResponseModel.class);
             } catch (Exception pE) {
-                BaseActivity.addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, "Отправка " + getMediaType(), Constants.LogResult.ERROR, "Ошибка 3.03 (Ошибка парсинга JSON)");
+                BaseActivity.addLogWithData(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, "Отправка " + getMediaType(), Constants.LogResult.ERROR, "Ошибка 3.03 (Ошибка парсинга JSON)", responseJson);
                 onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 3.03"));
             }
 
@@ -197,7 +197,7 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
 
                     if (tokensToRemove == null || tokensToRemove.isEmpty()) {
                         pSendingFileCallback.onError(position);
-                        BaseActivity.addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, "Отправка " + getMediaType(), Constants.LogResult.ERROR, "Ошибка 3.04 (Сервер не принял отправленные данные)");
+                        BaseActivity.addLogWithData(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, "Отправка " + getMediaType(), Constants.LogResult.ERROR, "Ошибка 3.04 (Сервер не принял отправленные данные)", responseJson);
                         onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SENDING_ERROR_EMPTY_TOKENS_LIST) + " Ошибка: 3.04"));
                     } else {
                         for (final String token : tokensToRemove) {
@@ -215,12 +215,12 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
                     }
                 } else {
                     pSendingFileCallback.onError(position);
-                    BaseActivity.addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, "Отправка " + getMediaType(), Constants.LogResult.ERROR, "Ошибка 3.05 ("+ deletingListResponseModel.getError() +")");
-                    onError(new Exception(deletingListResponseModel.getError()  + " Ошибка: 3.05"));
+                    BaseActivity.addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, "Отправка " + getMediaType(), Constants.LogResult.ERROR, "Ошибка 3.05 (" + deletingListResponseModel.getError() + ")");
+                    onError(new Exception(deletingListResponseModel.getError() + " Ошибка: 3.05"));
                 }
             } else {
                 pSendingFileCallback.onError(position);
-                onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_ERROR)  + " Ошибка: 3.06"));
+                onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_ERROR) + " Ошибка: 3.06"));
             }
         });
     }

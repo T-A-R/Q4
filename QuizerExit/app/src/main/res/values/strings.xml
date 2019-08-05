@@ -50,6 +50,7 @@
     <string name="VIEW_UPLOAD_DATA">Выгрузить данные</string>
     <string name="VIEW_FTP_UPLOAD_DATA">Отправка через FTP</string>
     <string name="VIEW_SEND_QUIZ">Отправить анкеты</string>
+    <string name="VIEW_LOGS_BTN">Журнал событий</string>
     <string name="VIEW_SEND_AUDIO">Отправить аудио</string>
     <string name="VIEW_SEND_PHOTO">Отправить фото</string>
     <string name="VIEW_EXIT_QUIZ_HEADER">Завершить анкету</string>
@@ -166,4 +167,7 @@
     <string name="QUESTIONS_SAVED">Анкета сохранена</string>
     <string name="DB_SAVE_ERROR">Ошибка записи в базу данных.</string>
     <string name="DB_CLEAR_ERROR">Ошибка удаления данных из базы данных.</string>
+    <string name="NO_USERS">Нет сохранённых логинов</string>
+    <string name="SEND_LOGS_BTN">Отправить журнал на сервер</string>
+    <string name="CLEAR_LOGS_BTN">Очистить журнал логов</string>
 </resources>

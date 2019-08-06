@@ -74,6 +74,8 @@ public class UserLogActivity extends BaseActivity {
         btnClear.setOnClickListener(view -> {
             try {
                 BaseActivity.getDao().clearAppLogsByLogin(mLogin);
+                updateData();
+                initRecyclerView();
                 pAdapter.notifyDataSetChanged();
             } catch (Exception e) {
                 Log.d(TAG, "BaseActivity.getDao().clearAppLogsByLogin: " + e.getMessage());

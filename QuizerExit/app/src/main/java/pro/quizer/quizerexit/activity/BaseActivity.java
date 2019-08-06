@@ -243,7 +243,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         }
 
         try {
-            addLog(Constants.LogUser.ANDROID, Constants.LogType.DATABASE, Constants.LogObject.CONFIG, "Сохранение данных сервера", Constants.LogResult.SENT, "Попытка сохранения в базу данных");
+            addLog(Constants.LogUser.ANDROID, Constants.LogType.DATABASE, Constants.LogObject.CONFIG, "Сохранение данных сервера", Constants.LogResult.SENT, "Сохранение в базу данных");
             getDao().insertActivationModelR(activationModelR);
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
@@ -292,7 +292,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                                            final int pUserProjectId) {
 
         try {
-            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, "Сохранение пользователя", Constants.LogResult.SENT, "Попытка сохранения в базу данных");
+            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, "Сохранение пользователя", Constants.LogResult.SENT, "Сохранение в базу данных");
             savedLogin = pLogin;
             getDao().updateUserModelR(pLogin, pPassword, pConfigId, pRoleId, pUserProjectId, pUserId);
         } catch (Exception e) {
@@ -304,7 +304,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     public void updateConfig(final UserModelR pUserModel, final ConfigModel pConfigModel) {
 
         try {
-            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, "Сохранение конфига", Constants.LogResult.SENT, "Попытка сохранения в базу данных");
+            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, "Сохранение конфига", Constants.LogResult.SENT, "Сохранение в базу данных");
             getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));

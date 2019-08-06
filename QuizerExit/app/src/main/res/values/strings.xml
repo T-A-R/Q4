@@ -34,6 +34,7 @@
     <string name="VIEW_START">Начать</string>
     <string name="VIEW_APP_VERSION">Версия: %1$s</string>
     <string name="VIEW_SERVICE_TITLE">Сервисное обслуживание</string>
+    <string name="VIEW_LOGS_TITLE">Журнал событий</string>
     <string name="VIEW_SYNC_TITLE">Синхронизация</string>
     <string name="VIEW_FINISH_QUIZ">Завершить анкету</string>
     <string name="VIEW_CLOSE_APP_HEADER">Выход из приложения</string>
@@ -170,4 +171,6 @@
     <string name="NO_USERS">Нет сохранённых логинов</string>
     <string name="SEND_LOGS_BTN">Отправить журнал на сервер</string>
     <string name="CLEAR_LOGS_BTN">Очистить журнал логов</string>
+    <string name="LOG_EMPTY">Журнал событий пуст</string>
+    <string name="LOGIN_EMPTY">Ошибка загрузки данных. Перезапустите приложение</string>
 </resources>

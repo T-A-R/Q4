@@ -11,13 +11,14 @@ import android.widget.TextView;
 import java.util.List;
 
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.database.model.UserModelR;
 
 public class UsersBtnRecyclerAdapter extends RecyclerView.Adapter<UsersBtnRecyclerAdapter.ListObjectViewHolder> {
 
-    private List<Product> mItemList;
+    private List<UserModelR> mItemList;
     private OnUserClickListener mOnUserClickListener;
 
-    public UsersBtnRecyclerAdapter(List<Product> mItemList, OnUserClickListener onUserClickListener) {
+    public UsersBtnRecyclerAdapter(List<UserModelR> mItemList, OnUserClickListener onUserClickListener) {
         this.mItemList = mItemList;
         this.mOnUserClickListener = onUserClickListener;
 
@@ -59,8 +60,8 @@ public class UsersBtnRecyclerAdapter extends RecyclerView.Adapter<UsersBtnRecycl
             btn.setOnClickListener(this);
         }
 
-        public void bind(final Product item) {
-            btn.setText(item.getpName());
+        public void bind(final UserModelR item) {
+            btn.setText(item.getLogin());
         }
 
         @Override

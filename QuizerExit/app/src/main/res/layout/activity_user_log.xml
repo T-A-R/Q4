@@ -3,13 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
+
+    <pro.quizer.quizerexit.view.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_below="@+id/toolbar">
 
         <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
             android:id="@+id/send_logs_btn"
@@ -28,15 +34,14 @@
             android:layout_gravity="center_horizontal"
             android:text="@string/CLEAR_LOGS_BTN" />
 
-        <ListView
-            android:id="@+id/list"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/logs_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp">
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:visibility="visible">
 
-        </ListView>
-
-
+        </android.support.v7.widget.RecyclerView>
 
     </LinearLayout>
 

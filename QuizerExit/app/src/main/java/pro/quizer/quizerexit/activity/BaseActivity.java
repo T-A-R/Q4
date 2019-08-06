@@ -6,15 +6,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
@@ -38,6 +35,7 @@ import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.RemoveUserExecutable;
 import pro.quizer.quizerexit.fragment.AboutFragment;
 import pro.quizer.quizerexit.fragment.HomeFragment;
+import pro.quizer.quizerexit.fragment.LogsFragment;
 import pro.quizer.quizerexit.fragment.QuotasFragment;
 import pro.quizer.quizerexit.fragment.SettingsFragment;
 import pro.quizer.quizerexit.fragment.SmsFragment;
@@ -208,6 +206,10 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     public void showAboutFragment() {
         showFragmentWithBackstack(AboutFragment.newInstance());
+    }
+
+    public void showLogsFragment() {
+        showFragmentWithBackstack(LogsFragment.newInstance());
     }
 
     public void showQuotasFragment() {
@@ -414,6 +416,17 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     public void startMainActivity(final boolean pIsAfterAuth) {
         final Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(IS_AFTER_AUTH, pIsAfterAuth);
+        startActivity(intent);
+    }
+
+    public void startLogsActivity() {
+        final Intent intent = new Intent(this, LogsActivity.class);
+        startActivity(intent);
+    }
+
+    public void startUserLogActivity(final String login) {
+        final Intent intent = new Intent(this, UserLogActivity.class);
+        intent.putExtra("login", login);
         startActivity(intent);
     }
 

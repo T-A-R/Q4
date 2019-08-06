@@ -96,8 +96,14 @@ public interface QuizerDao {
     @Query("SELECT * FROM AppLogsR")
     List<AppLogsR> getAppLogsR();
 
+    @Query("SELECT * FROM AppLogsR WHERE login = :login")
+    List<AppLogsR> getAppLogsByLogin(String login);
+
     @Query("DELETE FROM AppLogsR")
     void clearAppLogsR();
+
+    @Query("DELETE FROM AppLogsR WHERE login = :login")
+    void clearAppLogsByLogin(String login);
 
     @Query("DELETE FROM CrashLogs")
     void clearCrashLogs();

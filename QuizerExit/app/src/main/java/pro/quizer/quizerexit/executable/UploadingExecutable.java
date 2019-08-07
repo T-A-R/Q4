@@ -51,6 +51,7 @@ public class UploadingExecutable extends BaseExecutable {
 
         FileUtils.createFolderIfNotExist(UPLOADING_PATH);
         moveCrashLogs();
+        moveLogs();
         moveFiles();
         moveQuestionnaires();
 
@@ -111,9 +112,10 @@ public class UploadingExecutable extends BaseExecutable {
             String json = gson.toJson(crashRequestModel);
 
             try {
-                Log.d(TAG, "moveCrashLogs: " + json);
+                Log.d(TAG, "moveLogs: " + json);
                 FileUtils.createTxtFile(UPLOADING_PATH, String.format(UPLOADING_LOGS_FILE_NAME, "android", DateUtils.getCurrentTimeMillis()), json);
-                BaseActivity.getDao().clearCrashLogs();
+//                BaseActivity.getDao().setLogsStatus(Constants.LogStatus.SENT);
+                BaseActivity.getDao().clearAppLogsR();
             } catch (final IOException pE) {
                 Log.d(TAG, "Не удалось сформировать файл журнала событий при ручной выгрузке\n" + pE.getMessage());
             }

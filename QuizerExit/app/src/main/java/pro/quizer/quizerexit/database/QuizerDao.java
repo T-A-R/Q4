@@ -108,6 +108,9 @@ public interface QuizerDao {
     @Query("UPDATE AppLogsR SET status = :status WHERE login = :login")
     void setLogsStatusByLogin(String login, String status);
 
+    @Query("UPDATE AppLogsR SET status = :status")
+    void setLogsStatus(String status);
+
     @Query("DELETE FROM AppLogsR")
     void clearAppLogsR();
 

@@ -68,7 +68,6 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         mPasswordEditText = findViewById(R.id.auth_password_edit_text);
         mLoginSpinner = findViewById(R.id.login_spinner);
         mVersionView = findViewById(R.id.version_view);
-//        mLogsView = findViewById(R.id.logs);
         final Button sendAuthButton = findViewById(R.id.send_auth_button);
         final TextView usersCount = findViewById(R.id.users_count);
 
@@ -120,11 +119,11 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         }
 
         sendAuthButton.setOnClickListener(v -> {
-            addLog(null, Constants.LogType.BUTTON, null, "Нажатие на кнопку", Constants.LogResult.PRESSED, "Отправить (Авторизация)");
+//            addLog(null, Constants.LogType.BUTTON, null, "Нажатие на кнопку", Constants.LogResult.PRESSED, "Отправить (Авторизация)");
             onLoginClickWithRetrofit();
         });
         mVersionView.setOnClickListener(v -> {
-            addLog(null, Constants.LogType.BUTTON, null, "Нажатие на кнопку", Constants.LogResult.PRESSED, "Версия приложения");
+//            addLog(null, Constants.LogType.BUTTON, null, "Нажатие на кнопку", Constants.LogResult.PRESSED, "Версия приложения");
             onVersionClick();
         });
     }

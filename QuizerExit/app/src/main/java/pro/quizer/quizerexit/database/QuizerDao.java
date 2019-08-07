@@ -99,6 +99,12 @@ public interface QuizerDao {
     @Query("SELECT * FROM AppLogsR WHERE login = :login")
     List<AppLogsR> getAppLogsByLogin(String login);
 
+    @Query("SELECT * FROM AppLogsR WHERE login = :login AND status = :status")
+    List<AppLogsR> getAppLogsByLoginWithStatus(String login, String status);
+
+    @Query("UPDATE AppLogsR SET status = :status WHERE login = :login")
+    void setLogsStatusByLogin(String login, String status);
+
     @Query("DELETE FROM AppLogsR")
     void clearAppLogsR();
 

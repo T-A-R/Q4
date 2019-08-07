@@ -200,6 +200,8 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
                         BaseActivity.addLogWithData(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, "Отправка " + getMediaType(), Constants.LogResult.ERROR, "Ошибка 3.04 (Сервер не принял отправленные данные)", responseJson);
                         onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SENDING_ERROR_EMPTY_TOKENS_LIST) + " Ошибка: 3.04"));
                     } else {
+                        BaseActivity.addLogWithData(mLogin, Constants.LogType.FILE, Constants.LogObject.FILE, "Удаление" + getMediaType(), Constants.LogResult.SENT, "Получен список на удаление файлов ", responseJson);
+
                         for (final String token : tokensToRemove) {
                             final String path = FileUtils.getFullPathByFileName(file, token);
 

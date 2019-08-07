@@ -177,7 +177,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                         @Override
                         public void onError(Exception pException) {
                             Toast.makeText(mBaseActivity, R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS + " Ошибка: 2.07", Toast.LENGTH_SHORT).show();
-                            BaseActivity.addLogWithData(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, "Получение квот", Constants.LogResult.ERROR, " Ошибка: 2.07" + R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS, pException.toString());
+                            BaseActivity.addLogWithData(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, "Получение квот", Constants.LogResult.ERROR, " Ошибка: 1.07" + R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS, pException.toString());
                         }
                     }).execute();
 
@@ -185,7 +185,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                 }
             } else {
                 onError(new Exception(deletingListResponseModel.getError() + " Ошибка: 2.05"));
-                BaseActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, "Получение квот", Constants.LogResult.ERROR, " Ошибка: 2.05" + deletingListResponseModel.getError());
+                BaseActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, "Отправка анкеты", Constants.LogResult.ERROR, " Ошибка: 2.05" + deletingListResponseModel.getError());
 
             }
         } else {

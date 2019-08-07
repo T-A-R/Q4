@@ -58,6 +58,7 @@ public final class Constants {
         String AUDIO_FILE = "audio_file";
         String DOWNLOAD_UPDATE = "download_update";
         String CRASH = "crash";
+        String LOGS = "log";
     }
 
     public interface QuestionnaireStatuses {

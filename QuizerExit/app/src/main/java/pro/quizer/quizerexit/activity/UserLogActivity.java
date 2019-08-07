@@ -10,13 +10,20 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.util.List;
 
+import okhttp3.ResponseBody;
+import pro.quizer.quizerexit.API.QuizerAPI;
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.adapter.UsersBtnRecyclerAdapter;
 import pro.quizer.quizerexit.adapter.UsersLogRecyclerAdapter;
 import pro.quizer.quizerexit.database.model.AppLogsR;
 import pro.quizer.quizerexit.database.model.UserModelR;
+import pro.quizer.quizerexit.model.request.CrashRequestModel;
+import pro.quizer.quizerexit.model.request.LogsRequestModel;
 import pro.quizer.quizerexit.view.Toolbar;
 
 public class UserLogActivity extends BaseActivity {
@@ -60,11 +67,33 @@ public class UserLogActivity extends BaseActivity {
         btnSend = (Button) findViewById(R.id.send_logs_btn);
         btnClear = (Button) findViewById(R.id.clear_logs_btn);
 
-        btnClear.setOnClickListener(new View.OnClickListener() {
+        btnClear.setVisibility(View.GONE);
+
+        btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
-                    BaseActivity.getDao().clearAppLogsByLogin(mLogin);
+                    List<AppLogsR> logs = BaseActivity.getDao().getAppLogsByLoginWithStatus(mLogin, Constants.LogStatus.NOT_SENT);
+                    if (logs.size() > 0) {
+
+                        LogsRequestModel crashRequestModel = new LogsRequestModel(getLoginAdmin(), logs);
+                        Gson gson = new Gson();
+                        String json = gson.toJson(crashRequestModel);
+                        QuizerAPI.sendLogs(getServer(), json, new QuizerAPI.SendLogsCallback() {
+                            @Override
+                            public void onSendLogs(ResponseBody data) {
+                                if(data == null) {
+                                    return;
+                                }
+
+                                try {
+                                    BaseActivity.getDao().setLogsStatusByLogin(mLogin, Constants.LogStatus.SENT);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
                 } catch (Exception e) {
                     Log.d(TAG, "BaseActivity.getDao().clearAppLogsByLogin: " + e.getMessage());
                 }
@@ -107,4 +136,5 @@ public class UserLogActivity extends BaseActivity {
     public void onBackPressed() {
         startLogsActivity();
     }
+
 }

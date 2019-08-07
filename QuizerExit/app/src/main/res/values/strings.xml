@@ -173,4 +173,7 @@
     <string name="CLEAR_LOGS_BTN">Очистить журнал логов</string>
     <string name="LOG_EMPTY">Журнал событий пуст</string>
     <string name="LOGIN_EMPTY">Ошибка загрузки данных. Перезапустите приложение</string>
+    <string name="SEND_LOGS_SUCCESS">Журнал событий отправлен на сервер</string>
+    <string name="SEND_LOGS_ERROR">Ошибка отправки журнала событий</string>
+    <string name="SEND_LOGS_EMPTY">Новых событий для отправки нет</string>
 </resources>

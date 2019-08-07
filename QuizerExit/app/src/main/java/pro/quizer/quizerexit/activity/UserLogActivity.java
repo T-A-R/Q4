@@ -7,22 +7,17 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 
 import java.util.List;
 
-import okhttp3.ResponseBody;
 import pro.quizer.quizerexit.API.QuizerAPI;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
-import pro.quizer.quizerexit.adapter.UsersBtnRecyclerAdapter;
 import pro.quizer.quizerexit.adapter.UsersLogRecyclerAdapter;
 import pro.quizer.quizerexit.database.model.AppLogsR;
-import pro.quizer.quizerexit.database.model.UserModelR;
-import pro.quizer.quizerexit.model.request.CrashRequestModel;
 import pro.quizer.quizerexit.model.request.LogsRequestModel;
 import pro.quizer.quizerexit.view.Toolbar;
 
@@ -81,18 +76,22 @@ public class UserLogActivity extends BaseActivity {
                         String json = gson.toJson(crashRequestModel);
                         QuizerAPI.sendLogs(getServer(), json, new QuizerAPI.SendLogsCallback() {
                             @Override
-                            public void onSendLogs(ResponseBody data) {
-                                if(data == null) {
+                            public void onSendLogs(boolean ok) {
+                                if(!ok) {
+                                    Toast.makeText(mBaseActivity, R.string.SEND_LOGS_ERROR, Toast.LENGTH_SHORT).show();
                                     return;
                                 }
 
                                 try {
                                     BaseActivity.getDao().setLogsStatusByLogin(mLogin, Constants.LogStatus.SENT);
+                                    Toast.makeText(mBaseActivity, R.string.SEND_LOGS_SUCCESS, Toast.LENGTH_SHORT).show();
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
                         });
+                    } else {
+                        Toast.makeText(mBaseActivity, R.string.SEND_LOGS_EMPTY, Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     Log.d(TAG, "BaseActivity.getDao().clearAppLogsByLogin: " + e.getMessage());

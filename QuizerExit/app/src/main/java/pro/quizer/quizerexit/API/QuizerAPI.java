@@ -33,7 +33,7 @@ public class QuizerAPI {
 
     /**
      * Отправка ключа.
-     *
+     * <p>
      * Код ошибок 5.хх
      *
      * @param url
@@ -68,7 +68,7 @@ public class QuizerAPI {
 
     /**
      * Запрос конфига.
-     *
+     * <p>
      * Код ошибок 6.хх
      *
      * @param url
@@ -103,7 +103,7 @@ public class QuizerAPI {
 
     /**
      * Авторизация.
-     *
+     * <p>
      * Код ошибок 4.хх
      *
      * @param url
@@ -140,7 +140,7 @@ public class QuizerAPI {
 
     /**
      * Отправка анкет.
-     *
+     * <p>
      * Код ошибок 2.хх
      *
      * @param url
@@ -177,7 +177,7 @@ public class QuizerAPI {
 
     /**
      * Получение квот.
-     *
+     * <p>
      * Код ошибок 1.хх
      *
      * @param url
@@ -213,7 +213,7 @@ public class QuizerAPI {
 
     /**
      * Отправка файлов (аудио и фото).
-     *
+     * <p>
      * Код ошибок 3.хх
      *
      * @param url
@@ -319,19 +319,22 @@ public class QuizerAPI {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 Log.d(TAG, "QuizerAPI.sendLogs.onResponse() Message: " + response.message());
-                listener.onSendLogs(response.body());
+                if (response.code() == 200)
+                    listener.onSendLogs(true);
+                else
+                    listener.onSendLogs(false);
             }
 
             @Override
             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                 Log.d(TAG, "QuizerAPI.sendLogs.onFailure() " + t);
-                listener.onSendLogs(null);
+                listener.onSendLogs(false);
             }
         });
     }
 
     public interface SendLogsCallback {
-        void onSendLogs(ResponseBody data);
+        void onSendLogs(boolean ok);
     }
 
     private static String getMessage(Response<ResponseBody> response) {

@@ -87,7 +87,8 @@ public class BoxFragment extends AbstractContentElementFragment {
         final Activity activity = getActivity();
 
         if (activity != null) {
-            mFragmentManger = ((FragmentActivity) activity).getSupportFragmentManager();
+//            mFragmentManger = ((FragmentActivity) activity).getSupportFragmentManager();
+            mFragmentManger = getChildFragmentManager();
         }
 
         if (bundle != null) {

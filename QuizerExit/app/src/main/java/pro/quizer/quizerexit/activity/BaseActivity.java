@@ -254,7 +254,13 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     public ActivationModelR getActivationModel() {
 
-        final List<ActivationModelR> list = getDao().getActivationModelR();
+        List<ActivationModelR> list = null;
+
+        try {
+            list = getDao().getActivationModelR();
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_LOAD_ERROR));
+        }
 
         if (list != null && !list.isEmpty())
             return list.get(0);
@@ -265,7 +271,12 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     public UserModelR getLocalUserModel(final String pLogin, final String pPassword) {
 
-        final List<UserModelR> list = getDao().getLocalUserModel(pLogin, pPassword);
+        List<UserModelR> list = null;
+        try {
+            list = getDao().getLocalUserModel(pLogin, pPassword);
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_LOAD_ERROR));
+        }
 
         if (list != null && !list.isEmpty())
             return list.get(0);
@@ -275,7 +286,12 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     public UserModelR getUserByUserId(final int pUserId) {
 
-        final List<UserModelR> list = getDao().getUserByUserId(pUserId);
+        List<UserModelR> list = null;
+        try {
+            list = getDao().getUserByUserId(pUserId);
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_LOAD_ERROR));
+        }
 
         if (list == null || list.isEmpty()) {
             return null;

@@ -278,14 +278,8 @@ public class QuizerAPI {
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
 
                 String message = getMessage(response);
+                listener.onSendCrash(response.code() == 200, message);
 
-                if (response.code() == 200) {
-                    Log.d(TAG, "QuizerAPI.sendCrash.onResponse() Status: OK!");
-                    listener.onSendCrash(true, message);
-                } else {
-                    Log.d(TAG, "QuizerAPI.sendCrash.error: " + message);
-                    listener.onSendCrash(false, message);
-                }
             }
 
             @Override
@@ -319,10 +313,8 @@ public class QuizerAPI {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 Log.d(TAG, "QuizerAPI.sendLogs.onResponse() Message: " + response.message());
-                if (response.code() == 200)
-                    listener.onSendLogs(true);
-                else
-                    listener.onSendLogs(false);
+                listener.onSendLogs(response.code() == 200);
+
             }
 
             @Override

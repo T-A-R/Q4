@@ -151,6 +151,7 @@ public class ElementFragment extends BaseFragment {
 
         if (activity != null) {
             mFragmentManger = ((FragmentActivity) activity).getSupportFragmentManager();
+//            mFragmentManger = getChildFragmentManager();
         }
 
         if (bundle != null) {

@@ -755,43 +755,43 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
         mediaSes.setActive(true);
         registerReceiver(bnReceiver, intentFilter);
 
-        // foreground notification
-        MediaControllerCompat controller = mediaSes.getController();
-        MediaMetadataCompat metadata = controller.getMetadata();
-        MediaDescriptionCompat description = metadata.getDescription();
-
-        notifBuilder = new NotificationCompat.Builder(getApplicationContext());
-        notifBuilder.setContentTitle(description.getTitle())
-                .setContentText(description.getSubtitle())
-                .setSubText(description.getDescription())
-                .setTicker(description.getSubtitle())
-                .setLargeIcon(description.getIconBitmap())
-                //.setContentIntent(controller.getSessionActivity()) // does not work
-                .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 1,
-                        new Intent(getApplicationContext(), ElementActivity.class),
-                        PendingIntent.FLAG_UPDATE_CURRENT))
-                .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(
-                        AudioService.this, PlaybackStateCompat.ACTION_STOP))
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setSmallIcon(R.drawable.ic_notif_record)
-                //.setColor(ContextCompat.getColor(AudioService.this, R.color.colorPrimaryDark)) // looks bad
-                .setStyle(new NotificationCompat.MediaStyle()
-                        .setMediaSession(mediaSes.getSessionToken())
-                        .setShowActionsInCompactView(0).setShowCancelButton(true)
-                        .setCancelButtonIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(
-                                AudioService.this, PlaybackStateCompat.ACTION_STOP)));
-
-        if (!SOURCE_MIC.equals(description.getMediaId()) || isPauseRecordingSupported()) {
-            notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_PAUSE,
-                    getString(R.string.RECORD_AUDIO_PAUSE),
-                    MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
-                            PlaybackStateCompat.ACTION_PAUSE)));
-        }
-        notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_STOP,
-                getString(R.string.RECORD_AUDIO_STOP),
-                MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
-                        PlaybackStateCompat.ACTION_STOP)));
-        startForeground(SERVICE_ID, notifBuilder.build());
+//        // foreground notification
+//        MediaControllerCompat controller = mediaSes.getController();
+//        MediaMetadataCompat metadata = controller.getMetadata();
+//        MediaDescriptionCompat description = metadata.getDescription();
+//
+//        notifBuilder = new NotificationCompat.Builder(getApplicationContext());
+//        notifBuilder.setContentTitle(description.getTitle())
+//                .setContentText(description.getSubtitle())
+//                .setSubText(description.getDescription())
+//                .setTicker(description.getSubtitle())
+//                .setLargeIcon(description.getIconBitmap())
+//                //.setContentIntent(controller.getSessionActivity()) // does not work
+//                .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 1,
+//                        new Intent(getApplicationContext(), ElementActivity.class),
+//                        PendingIntent.FLAG_UPDATE_CURRENT))
+//                .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(
+//                        AudioService.this, PlaybackStateCompat.ACTION_STOP))
+//                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+//                .setSmallIcon(R.drawable.ic_notif_record)
+//                //.setColor(ContextCompat.getColor(AudioService.this, R.color.colorPrimaryDark)) // looks bad
+//                .setStyle(new NotificationCompat.MediaStyle()
+//                        .setMediaSession(mediaSes.getSessionToken())
+//                        .setShowActionsInCompactView(0).setShowCancelButton(true)
+//                        .setCancelButtonIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(
+//                                AudioService.this, PlaybackStateCompat.ACTION_STOP)));
+//
+//        if (!SOURCE_MIC.equals(description.getMediaId()) || isPauseRecordingSupported()) {
+//            notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_PAUSE,
+//                    getString(R.string.RECORD_AUDIO_PAUSE),
+//                    MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
+//                            PlaybackStateCompat.ACTION_PAUSE)));
+//        }
+//        notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_STOP,
+//                getString(R.string.RECORD_AUDIO_STOP),
+//                MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
+//                        PlaybackStateCompat.ACTION_STOP)));
+//        startForeground(SERVICE_ID, notifBuilder.build());
     }
 
     private void pauseSession() {
@@ -1237,7 +1237,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
     }
 
     private void actionPausePlaying() {
-        pauseSession();
+//        pauseSession();
         pauseVisualizer();
         setPBState(PlaybackStateCompat.STATE_PAUSED);
         servState = ServiceState.PausedPlaying;
@@ -1333,7 +1333,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
     }
 
     private void actionPauseRecording() {
-        pauseSession();
+//        pauseSession();
         //pauseVisualizer();
         setPBState(PlaybackStateCompat.STATE_PAUSED);
         servState = ServiceState.PausedRecording;

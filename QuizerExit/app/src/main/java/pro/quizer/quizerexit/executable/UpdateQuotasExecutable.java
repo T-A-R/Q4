@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import okhttp3.ResponseBody;
 import pro.quizer.quizerexit.API.QuizerAPI;
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.database.model.UserModelR;
@@ -49,20 +50,25 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
         String json = gson.toJson(requestModel);
 
         String mServerUrl = configModel.getServerUrl();
+
+        BaseActivity.addLogWithData(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.GET_QUOTAS), Constants.LogResult.SENT, mContext.getString(R.string.SENDING_REQUEST), json);
+
         QuizerAPI.getQuotas(mServerUrl, json, this);
     }
 
     @Override
     public void onGetQuotasCallback(ResponseBody responseBody) {
         if (responseBody == null) {
-            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 1.01"));
+            BaseActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.GET_QUOTAS), Constants.LogResult.ERROR, mContext.getString(R.string.ERROR_101_DESC));
+            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " " + mContext.getString(R.string.ERROR_101)));
             return;
         }
         String responseJson;
         try {
             responseJson = responseBody.string();
         } catch (IOException e) {
-            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 1.02"));
+            BaseActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.GET_QUOTAS), Constants.LogResult.ERROR, mContext.getString(R.string.ERROR_102_DESC));
+            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " " + mContext.getString(R.string.ERROR_102)));
             return;
         }
         QuotaResponseModel quotaResponseModel;
@@ -70,7 +76,8 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
         try {
             quotaResponseModel = new GsonBuilder().create().fromJson(responseJson, QuotaResponseModel.class);
         } catch (final Exception pE) {
-            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 1.03"));
+            BaseActivity.addLogWithData(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.GET_QUOTAS), Constants.LogResult.ERROR, mContext.getString(R.string.ERROR_103_DESC), pE.getMessage());
+            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " " + mContext.getString(R.string.ERROR_103)));
             return;
         }
 
@@ -79,18 +86,21 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
 
             if (quotaResponseModel.getResult() != 0) {
                 try {
+                    BaseActivity.addLog(userModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUOTA, mContext.getString(R.string.SAVE_QUOTAS), Constants.LogResult.SENT, mContext.getString(R.string.SAVE_QUOTAS_TO_DB));
                     BaseActivity.getDao().updateQuotas(responseJson, userProjectId);
                 } catch (Exception e) {
                     Log.d(TAG, mContext.getString(R.string.DB_SAVE_ERROR));
-                }
+                    BaseActivity.addLog(userModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUOTA, mContext.getString(R.string.SAVE_QUOTAS), Constants.LogResult.ERROR, e.getMessage());
 
+                }
+                BaseActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.GET_QUOTAS), Constants.LogResult.SUCCESS, mContext.getString(R.string.QUOTAS_RENEW));
                 onSuccess();
             } else {
-                onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 1.04"));
+                onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " " + mContext.getString(R.string.ERROR_104)));
                 return;
             }
         } else {
-            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " Ошибка: 1.05"));
+            onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " " + mContext.getString(R.string.ERROR_105)));
             return;
         }
     }

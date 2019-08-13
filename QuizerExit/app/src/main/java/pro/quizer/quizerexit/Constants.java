@@ -17,6 +17,8 @@ public final class Constants {
 
         String API_key = "a1d64454-4597-4c28-a047-dee22d3c8cfd";
 
+        boolean DEBUG = true;
+
     }
 
     public interface SP {
@@ -56,12 +58,45 @@ public final class Constants {
         String AUDIO_FILE = "audio_file";
         String DOWNLOAD_UPDATE = "download_update";
         String CRASH = "crash";
+        String LOGS = "log";
     }
 
     public interface QuestionnaireStatuses {
-
         String ABORTED = "aborted";
         String COMPLITED = "complited";
+    }
+
+    public interface LogUser {
+        String ANDROID = "android";
+    }
+
+    public interface LogStatus {
+        String SENT = "sent";
+        String NOT_SENT = "not_sent";
+    }
+
+    public interface LogType {
+        String SERVER = "server";
+        String DATABASE = "database";
+        String BUTTON = "button";
+        String FILE = "file";
+    }
+
+    public interface LogObject {
+        String FILE = "file";
+        String AUTH = "auth";
+        String USER = "user";
+        String QUOTA = "quota";
+        String KEY = "key";
+        String CONFIG = "config";
+        String QUESTIONNAIRE = "questionnaire";
+    }
+
+    public interface LogResult {
+        String SUCCESS = "success";
+        String SENT = "sent";
+        String PRESSED = "pressed";
+        String ERROR = "error";
 
     }
 }

@@ -32,6 +32,7 @@ import pro.quizer.quizerexit.DrawerUtils;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.database.QuizerDao;
 import pro.quizer.quizerexit.database.model.ActivationModelR;
+import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.RemoveUserExecutable;
 import pro.quizer.quizerexit.fragment.AboutFragment;
@@ -383,6 +384,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        showQuestionnaireList();
     }
 
     @Override
@@ -579,5 +581,12 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
      */
     public static void makeCrash() {
         throw new RuntimeException("This is a crash");
+    }
+
+    public static void showQuestionnaireList() {
+        List<QuestionnaireDatabaseModelR> list = getDao().getAllQuestionnaires();
+        for(int i = 0; i < list.size(); i ++) {
+            Log.d(TAG, "showQuestionnaireList: " + list.get(i).getToken() + " " + list.get(i).getSurvey_status() + " " + list.get(i).getProject_id());
+        }
     }
 }

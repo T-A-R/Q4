@@ -29,7 +29,6 @@ public class SmsStage implements Serializable {
     public SmsStage(final BaseActivity pContext, final StagesModel pStageModel, final BaseActivity pBaseActivity) {
         this.mContext = pContext;
         this.mStagesModel = pStageModel;
-        Log.d(TAG, "222222222222222222222222222222222222222 SmsStage: " + pStageModel.getQuestionsMatches() + " " + pStageModel.getTimeFrom());
         this.mSmsAnswers = new SmsStageModelExecutable(pContext, this, pBaseActivity.getCurrentUser(), pStageModel).execute();
     }
 
@@ -70,6 +69,9 @@ public class SmsStage implements Serializable {
     }
 
     public void markAsSent() {
+
+        //TODO Переделать статусы. Выставляет не правильно!
+
         for (final String token : mTokens) {
             BaseActivity.getDao().setQuestionnaireStatus(QuestionnaireStatus.SENT, token);
         }

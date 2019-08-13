@@ -1,5 +1,7 @@
 package pro.quizer.quizerexit.executable;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,6 +17,8 @@ import pro.quizer.quizerexit.model.config.QuestionsMatchesModel;
 import pro.quizer.quizerexit.model.config.StagesModel;
 import pro.quizer.quizerexit.model.sms.SmsAnswer;
 import pro.quizer.quizerexit.model.sms.SmsStage;
+
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
 public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, SmsAnswer>> {
 
@@ -37,6 +41,8 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
     @Override
     public Map<String, SmsAnswer> execute() {
         final Map<String, SmsAnswer> result = new LinkedHashMap<>();
+
+        Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! execute: " + mStagesModel.getQuestionsMatches());
 
         for (final QuestionsMatchesModel questionMatch : mStagesModel.getQuestionsMatches()) {
             final String smsNum = questionMatch.getSmsNum();

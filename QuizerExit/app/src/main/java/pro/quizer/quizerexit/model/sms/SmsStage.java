@@ -1,6 +1,7 @@
 package pro.quizer.quizerexit.model.sms;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.QuestionsMatchesModel;
 import pro.quizer.quizerexit.model.config.StagesModel;
 
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
+
 public class SmsStage implements Serializable {
 
     private final List<String> mTokens = new ArrayList<>();
@@ -26,6 +29,7 @@ public class SmsStage implements Serializable {
     public SmsStage(final BaseActivity pContext, final StagesModel pStageModel, final BaseActivity pBaseActivity) {
         this.mContext = pContext;
         this.mStagesModel = pStageModel;
+        Log.d(TAG, "222222222222222222222222222222222222222 SmsStage: " + pStageModel.getQuestionsMatches() + " " + pStageModel.getTimeFrom());
         this.mSmsAnswers = new SmsStageModelExecutable(pContext, this, pBaseActivity.getCurrentUser(), pStageModel).execute();
     }
 

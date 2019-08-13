@@ -12,12 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pro.quizer.quizerexit.API.QuizerAPI;
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.AppLogsR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.logs.Crash;
 import pro.quizer.quizerexit.model.request.CrashRequestModel;
+import pro.quizer.quizerexit.model.request.LogsRequestModel;
 import pro.quizer.quizerexit.model.request.QuestionnaireListRequestModel;
 import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.FileUtils;
@@ -30,6 +33,7 @@ public class UploadingExecutable extends BaseExecutable {
 
     private final String UPLOADING_QUESTIONNAIRE_FILE_NAME = "data_%1$s_%2$s" + FileUtils.JSON;
     private final String UPLOADING_CRASH_FILE_NAME = "quizer_crashlog_%1$s_%2$s" + FileUtils.JSON;
+    private final String UPLOADING_LOGS_FILE_NAME = "quizer_applogs_%1$s_%2$s" + FileUtils.JSON;
     public static final String UPLOADING_FOLDER_NAME = "data_quizer";
     public static final String UPLOADING_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + FOLDER_DIVIDER + UPLOADING_FOLDER_NAME + FOLDER_DIVIDER;
 
@@ -47,6 +51,7 @@ public class UploadingExecutable extends BaseExecutable {
 
         FileUtils.createFolderIfNotExist(UPLOADING_PATH);
         moveCrashLogs();
+        moveLogs();
         moveFiles();
         moveQuestionnaires();
 
@@ -92,6 +97,27 @@ public class UploadingExecutable extends BaseExecutable {
                 BaseActivity.getDao().clearCrashLogs();
             } catch (final IOException pE) {
                 Log.d(TAG, "Не удалось сформировать файл краш-лога при ручной выгрузке\n" + pE.getMessage());
+            }
+        }
+    }
+
+    private void moveLogs() {
+
+        List<AppLogsR> logs = BaseActivity.getDao().getAllLogsWithStatus(Constants.LogStatus.NOT_SENT);
+
+        if (logs.size() > 0) {
+
+            LogsRequestModel crashRequestModel = new LogsRequestModel("android", logs);
+            Gson gson = new Gson();
+            String json = gson.toJson(crashRequestModel);
+
+            try {
+                Log.d(TAG, "moveLogs: " + json);
+                FileUtils.createTxtFile(UPLOADING_PATH, String.format(UPLOADING_LOGS_FILE_NAME, "android", DateUtils.getCurrentTimeMillis()), json);
+//                BaseActivity.getDao().setLogsStatus(Constants.LogStatus.SENT);
+                BaseActivity.getDao().clearAppLogsR();
+            } catch (final IOException pE) {
+                Log.d(TAG, "Не удалось сформировать файл журнала событий при ручной выгрузке\n" + pE.getMessage());
             }
         }
     }

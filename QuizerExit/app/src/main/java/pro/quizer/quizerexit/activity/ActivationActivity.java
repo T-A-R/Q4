@@ -1,6 +1,7 @@
 package pro.quizer.quizerexit.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -13,13 +14,17 @@ import okhttp3.ResponseBody;
 import pro.quizer.quizerexit.API.QuizerAPI;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.database.model.AppLogsR;
 import pro.quizer.quizerexit.model.request.ActivationRequestModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
+import pro.quizer.quizerexit.utils.DateUtils;
+import pro.quizer.quizerexit.utils.DeviceUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 
 public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKeyCallback {
 
     private EditText mActivationEditText;
+    private boolean isKeyBtnPressed = false;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -39,25 +44,33 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
                 hideProgressBar();
                 return;
             }
-
-            sendKeyWithRetrofit(key);
+            if (!isKeyBtnPressed) {
+                isKeyBtnPressed = true;
+                sendKeyWithRetrofit(key);
+            }
         });
     }
 
     private void sendKeyWithRetrofit(String key) {
-        ActivationRequestModel activationRequestModel = new ActivationRequestModel(key);
-        Gson gson = new Gson();
-        String json = gson.toJson(activationRequestModel);
+        if (isKeyBtnPressed) {
+            ActivationRequestModel activationRequestModel = new ActivationRequestModel(key);
+            Gson gson = new Gson();
+            String json = gson.toJson(activationRequestModel);
 
-        QuizerAPI.sendKey(Constants.Default.ACTIVATION_URL, json, this);
+            addLogWithData(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.SEND_KEY), Constants.LogResult.SENT, getString(R.string.TRY_TO_SEND_KEY), json);
+
+            QuizerAPI.sendKey(Constants.Default.ACTIVATION_URL, json, this);
+        }
     }
 
     @Override
     public void onSendKey(ResponseBody responseBody) {
         hideProgressBar();
+        isKeyBtnPressed = false;
 
         if (responseBody == null) {
-            showToast(getString(R.string.NOTIFICATION_SERVER_CONNECTION_ERROR) + " Ошибка: 5.01");
+            showToast(getString(R.string.NOTIFICATION_SERVER_CONNECTION_ERROR) + " " + getString(R.string.ERROR_501));
+            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.SEND_KEY), Constants.LogResult.ERROR, getString(R.string.ERROR_501_DESC));
             return;
         }
 
@@ -66,7 +79,8 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
             responseJson = responseBody.string();
         } catch (IOException e) {
             e.printStackTrace();
-            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 5.02");
+            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " " + getString(R.string.ERROR_502));
+            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.SEND_KEY), Constants.LogResult.ERROR, getString(R.string.ERROR_502_DESC));
         }
         ActivationResponseModel activationModel = null;
 
@@ -74,18 +88,21 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
             try {
                 activationModel = new GsonBuilder().create().fromJson(responseJson, ActivationResponseModel.class);
             } catch (Exception pE) {
-                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 5.03");
+                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " " + getString(R.string.ERROR_503));
+                addLogWithData(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.SEND_KEY), Constants.LogResult.ERROR, getString(R.string.ERROR_503_DESC), responseJson);
             }
 
         if (activationModel != null) {
             if (activationModel.getResult() != 0) {
                 saveActivationBundle(activationModel);
+                addLogWithData(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.SEND_KEY), Constants.LogResult.SUCCESS, getString(R.string.SEND_KEY_SUCCESS), responseJson);
                 startAuthActivity();
             } else {
                 showToast(activationModel.getError());
+                addLogWithData(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.SEND_KEY), Constants.LogResult.ERROR, activationModel.getError(), responseJson);
             }
         } else {
-            showToast(getString(R.string.NOTIFICATION_SERVER_ERROR) + " Ошибка: 5.05");
+            showToast(getString(R.string.NOTIFICATION_SERVER_ERROR) + " " + getString(R.string.ERROR_505));
         }
     }
 }

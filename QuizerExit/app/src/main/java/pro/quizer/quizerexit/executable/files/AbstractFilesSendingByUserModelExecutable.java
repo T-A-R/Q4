@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import pro.quizer.quizerexit.API.QuizerAPI;
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.database.model.UserModelR;
@@ -162,18 +163,22 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
 
         final List<File> file = Collections.singletonList(mNotSendFiles.get(position));
 
+        BaseActivity.addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, "Отправка " + getMediaType(), Constants.LogResult.SENT, "Попытка отправки " + getMediaType() + " на сервер");
+
         QuizerAPI.sendFiles(mServerUrl, file, getNameForm(), getMediaType(), responseBody -> {
             if (responseBody == null) {
                 pSendingFileCallback.onError(position);
+                BaseActivity.addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, "Отправка " + getMediaType(), Constants.LogResult.ERROR, "Ошибка 3.01 (Не получен или отрицательный ответ от сервера)");
                 onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 3.01"));
                 return;
             }
 
-            String responseJson =null;
+            String responseJson = null;
             try {
                 responseJson = responseBody.string();
             } catch (IOException e) {
                 e.printStackTrace();
+                BaseActivity.addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, "Отправка " + getMediaType(), Constants.LogResult.ERROR, "Ошибка 3.02 (Ошибка получения JSON из ответа сервера)");
                 onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 3.02"));
             }
 
@@ -182,6 +187,7 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
             try {
                 deletingListResponseModel = new GsonBuilder().create().fromJson(responseJson, DeletingListResponseModel.class);
             } catch (Exception pE) {
+                BaseActivity.addLogWithData(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, "Отправка " + getMediaType(), Constants.LogResult.ERROR, "Ошибка 3.03 (Ошибка парсинга JSON)", responseJson);
                 onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 3.03"));
             }
 
@@ -191,13 +197,17 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
 
                     if (tokensToRemove == null || tokensToRemove.isEmpty()) {
                         pSendingFileCallback.onError(position);
+                        BaseActivity.addLogWithData(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, "Отправка " + getMediaType(), Constants.LogResult.ERROR, "Ошибка 3.04 (Сервер не принял отправленные данные)", responseJson);
                         onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SENDING_ERROR_EMPTY_TOKENS_LIST) + " Ошибка: 3.04"));
                     } else {
+                        BaseActivity.addLogWithData(mLogin, Constants.LogType.FILE, Constants.LogObject.FILE, "Удаление" + getMediaType(), Constants.LogResult.SENT, "Получен список на удаление файлов ", responseJson);
+
                         for (final String token : tokensToRemove) {
                             final String path = FileUtils.getFullPathByFileName(file, token);
 
                             if (StringUtils.isNotEmpty(path)) {
                                 final boolean isDeleted = new File(path).delete();
+                                BaseActivity.addLog(mLogin, Constants.LogType.FILE, Constants.LogObject.FILE, "Удаление " + getMediaType(), Constants.LogResult.SENT, (isDeleted ? "NOT" : "") + " DELETED: " + path);
                                 Log.d("Deleting audio", (isDeleted ? "NOT" : "") + " DELETED: " + path);
                             }
                         }
@@ -207,11 +217,12 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
                     }
                 } else {
                     pSendingFileCallback.onError(position);
-                    onError(new Exception(deletingListResponseModel.getError()  + " Ошибка: 3.05"));
+                    BaseActivity.addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, "Отправка " + getMediaType(), Constants.LogResult.ERROR, "Ошибка 3.05 (" + deletingListResponseModel.getError() + ")");
+                    onError(new Exception(deletingListResponseModel.getError() + " Ошибка: 3.05"));
                 }
             } else {
                 pSendingFileCallback.onError(position);
-                onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_ERROR)  + " Ошибка: 3.06"));
+                onError(new Exception(mBaseActivity.getString(R.string.NOTIFICATION_SERVER_ERROR) + " Ошибка: 3.06"));
             }
         });
     }

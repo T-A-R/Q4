@@ -48,6 +48,12 @@
             android:name=".activity.ServiceActivity"
             android:noHistory="true" />
         <activity
+            android:name=".activity.LogsActivity"
+            android:noHistory="true" />
+        <activity
+            android:name=".activity.UserLogActivity"
+            android:noHistory="true" />
+        <activity
             android:name=".activity.ElementActivity"
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTop"

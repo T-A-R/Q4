@@ -159,7 +159,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
 
         if (mSavedUsers != null && mSavedUsers.size() >= MAX_USERS && !mSavedUsers.contains(login)) {
             showToast(String.format(getString(R.string.NOTIFICATION_MAX_USER_COUNT), String.valueOf(MAX_USERS)));
-            addLog(null, Constants.LogType.SERVER, Constants.LogObject.AUTH, "Авторизация пользователя", Constants.LogResult.ERROR, getString(R.string.NOTIFICATION_MAX_USER_COUNT));
+            addLog(null, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.USER_AUTH), Constants.LogResult.ERROR, getString(R.string.NOTIFICATION_MAX_USER_COUNT));
             hideProgressBar();
             return;
         }
@@ -170,7 +170,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         Gson gson = new Gson();
         String json = gson.toJson(post);
 
-        addLogWithData(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, "Авторизация пользователя", Constants.LogResult.SENT, "Отправка запроса на сервер", json);
+        addLogWithData(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.USER_AUTH), Constants.LogResult.SENT, getString(R.string.SENDING_REQUEST), json);
 
         QuizerAPI.authUser(getServer(), json, this);
     }
@@ -287,8 +287,6 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             @Override
             public void onSuccess() {
                 hideProgressBar();
-                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.QUOTA, "Получение квот", Constants.LogResult.SUCCESS, "Список квот обновлен");
-
                 onLoggedIn(pLogin, pPassword, pAuthResponseModel);
             }
 
@@ -320,7 +318,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
                                final AuthResponseModel pAuthResponseModel,
                                final String pLogin,
                                final String pPassword) {
-        addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, "Загрузка медиа файлов", Constants.LogResult.SENT, "Попытка загрузки медиафайлов");
+        addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.LOADING_FILES), Constants.LogResult.SENT, getString(R.string.TRY_TO_LOAD_MEDIA_FILES));
 
         final String[] fileUris = pConfigResponseModel.getConfig().getProjectInfo().getMediaFiles();
 
@@ -347,7 +345,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
                         public void onError(final Exception e, final int progress) {
                             super.onError(e, progress);
                             showToast(getString(R.string.NOTIFICATION_DOWNLOADING_FILES_ERROR));
-                            addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, "Загрузка медиа файлов", Constants.LogResult.ERROR, getString(R.string.NOTIFICATION_DOWNLOADING_FILES_ERROR));
+                            addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.LOADING_FILES), Constants.LogResult.ERROR, getString(R.string.NOTIFICATION_DOWNLOADING_FILES_ERROR));
                             hideProgressBar();
                         }
                     }).loadMultiple(fileUris);
@@ -362,18 +360,18 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
 //        makeCrash();
 
         if (responseBody == null) {
-            showToast(getString(R.string.NOTIFICATION_SERVER_CONNECTION_ERROR) + " Ошибка: 4.01");
-            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, "Авторизация пользователя", Constants.LogResult.ERROR, "Ошибка 4.01 (Не получен или отрицательный ответ от сервера)");
+            showToast(getString(R.string.NOTIFICATION_SERVER_CONNECTION_ERROR) + " " + getString(R.string.ERROR_401));
+            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.USER_AUTH), Constants.LogResult.ERROR, getString(R.string.ERROR_401_DESC));
 
             final UserModelR savedUserModel = getLocalUserModel(login, passwordMD5);
 
             if (savedUserModel != null) {
                 showToast(getString(R.string.SAVED_DATA_LOGIN));
-                addLog(savedUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.AUTH, "Авторизация пользователя", Constants.LogResult.SUCCESS, getString(R.string.SAVED_DATA_LOGIN));
+                addLog(savedUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.USER_AUTH), Constants.LogResult.SUCCESS, getString(R.string.SAVED_DATA_LOGIN));
                 onLoggedInWithoutUpdateLocalData(savedUserModel.getUser_id());
             } else {
                 showToast(getString(R.string.WRONG_LOGIN));
-                addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, "Авторизация пользователя", Constants.LogResult.ERROR, getString(R.string.WRONG_LOGIN));
+                addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.USER_AUTH), Constants.LogResult.ERROR, getString(R.string.WRONG_LOGIN));
 
             }
 
@@ -395,8 +393,8 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             responseJson = responseBody.string();
         } catch (IOException e) {
             e.printStackTrace();
-            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 4.02");
-            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, "Авторизация пользователя", Constants.LogResult.ERROR, "Ошибка 4.02 (Ошибка получения JSON из ответа сервера)");
+            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " " + getString(R.string.ERROR_402));
+            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.USER_AUTH), Constants.LogResult.ERROR, getString(R.string.ERROR_402_DESC));
 
             responseJson = null;
         }
@@ -405,8 +403,8 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         try {
             authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
         } catch (final Exception pE) {
-            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 4.03");
-            addLogWithData(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, "Авторизация пользователя", Constants.LogResult.ERROR, "Ошибка 4.03 (Ошибка парсинга JSON.)", responseJson);
+            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " " + getString(R.string.ERROR_403));
+            addLogWithData(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.USER_AUTH), Constants.LogResult.ERROR, getString(R.string.ERROR_403_DESC), responseJson);
 
         }
 
@@ -415,13 +413,13 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         if (authResponseModel.getServerTime() != null) {
             SPUtils.saveAuthTimeDifference(AuthActivity.this, authResponseModel.getServerTime());
         } else {
-            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 4.04");
-            addLogWithData(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, "Авторизация пользователя", Constants.LogResult.ERROR, "Ошибка 4.04 (Ошибка получения серверного времени)", responseJson);
+            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " " + getString(R.string.ERROR_404));
+            addLogWithData(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.USER_AUTH), Constants.LogResult.ERROR, getString(R.string.ERROR_404_DESC), responseJson);
         }
 
 
         if (authResponseModel.getResult() != 0) {
-            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, "Авторизация пользователя", Constants.LogResult.SUCCESS, "Удалось войти с введенными данными");
+            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.USER_AUTH), Constants.LogResult.SUCCESS, getString(R.string.USER_AUTH_SUCCESS));
 
             if (isNeedDownloadConfig(authResponseModel)) {
                 downloadConfig(login, passwordMD5, authResponseModel);
@@ -432,7 +430,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             }
         } else {
             showToast(authResponseModel.getError());
-            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, "Авторизация пользователя", Constants.LogResult.ERROR, authResponseModel.getError());
+            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.USER_AUTH), Constants.LogResult.ERROR, authResponseModel.getError());
 
         }
     }
@@ -449,7 +447,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             }
         } else {
 //            Toast.makeText(this, "Краш-лог не отправлен: " + message, Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "Краш-лог не отправлен: " + message);
+            Log.d(TAG, "Crash Logs Not Sent: " + message);
         }
     }
 }

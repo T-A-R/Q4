@@ -53,12 +53,11 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
 
     private void sendKeyWithRetrofit(String key) {
         if (isKeyBtnPressed) {
-            Log.d(TAG, "isKeyBtnPressed 1: " + isKeyBtnPressed);
             ActivationRequestModel activationRequestModel = new ActivationRequestModel(key);
             Gson gson = new Gson();
             String json = gson.toJson(activationRequestModel);
 
-            addLogWithData(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, "Отправка ключа", Constants.LogResult.SENT, "Попытка отправки ключа", json);
+            addLogWithData(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.SEND_KEY), Constants.LogResult.SENT, getString(R.string.TRY_TO_SEND_KEY), json);
 
             QuizerAPI.sendKey(Constants.Default.ACTIVATION_URL, json, this);
         }
@@ -70,8 +69,8 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
         isKeyBtnPressed = false;
 
         if (responseBody == null) {
-            showToast(getString(R.string.NOTIFICATION_SERVER_CONNECTION_ERROR) + " Ошибка: 5.01");
-            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, "Получение ответа от сервера на отправку ключа", Constants.LogResult.ERROR, "Ошибка 5.01 (Нет ответа от сервера. Возможны проблемы с подключением к сети интеренет)");
+            showToast(getString(R.string.NOTIFICATION_SERVER_CONNECTION_ERROR) + " " + getString(R.string.ERROR_501));
+            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.SEND_KEY), Constants.LogResult.ERROR, getString(R.string.ERROR_501_DESC));
             return;
         }
 
@@ -80,8 +79,8 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
             responseJson = responseBody.string();
         } catch (IOException e) {
             e.printStackTrace();
-            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 5.02");
-            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, "Получение ответа от сервера на отправку ключа", Constants.LogResult.ERROR, "Ошибка 5.02 (Ошибка получения JSON из ответа сервера)");
+            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " " + getString(R.string.ERROR_502));
+            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.SEND_KEY), Constants.LogResult.ERROR, getString(R.string.ERROR_502_DESC));
         }
         ActivationResponseModel activationModel = null;
 
@@ -89,21 +88,21 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
             try {
                 activationModel = new GsonBuilder().create().fromJson(responseJson, ActivationResponseModel.class);
             } catch (Exception pE) {
-                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 5.03");
-                addLogWithData(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, "Получение ответа от сервера на отправку ключа", Constants.LogResult.ERROR, "Ошибка 5.03 (Ошибка парсинга JSON.)", responseJson);
+                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " " + getString(R.string.ERROR_503));
+                addLogWithData(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.SEND_KEY), Constants.LogResult.ERROR, getString(R.string.ERROR_503_DESC), responseJson);
             }
 
         if (activationModel != null) {
             if (activationModel.getResult() != 0) {
                 saveActivationBundle(activationModel);
-                addLogWithData(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, "Получение ответа от сервера на отправку ключа", Constants.LogResult.SUCCESS, "Успешная отправка ключа", responseJson);
+                addLogWithData(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.SEND_KEY), Constants.LogResult.SUCCESS, getString(R.string.SEND_KEY_SUCCESS), responseJson);
                 startAuthActivity();
             } else {
                 showToast(activationModel.getError());
-                addLogWithData(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, "Получение ответа от сервера на отправку ключа", Constants.LogResult.ERROR, activationModel.getError(), responseJson);
+                addLogWithData(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.SEND_KEY), Constants.LogResult.ERROR, activationModel.getError(), responseJson);
             }
         } else {
-            showToast(getString(R.string.NOTIFICATION_SERVER_ERROR) + " Ошибка: 5.05");
+            showToast(getString(R.string.NOTIFICATION_SERVER_ERROR) + " " + getString(R.string.ERROR_505));
         }
     }
 }

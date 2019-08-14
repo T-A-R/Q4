@@ -1,6 +1,9 @@
 package pro.quizer.quizerexit.activity;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,17 +26,22 @@ import com.google.gson.GsonBuilder;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 
 import pro.quizer.quizerexit.BuildConfig;
 import pro.quizer.quizerexit.CoreApplication;
 import pro.quizer.quizerexit.DrawerUtils;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.broadcast.StartSmsReminder;
 import pro.quizer.quizerexit.database.QuizerDao;
 import pro.quizer.quizerexit.database.model.ActivationModelR;
 import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.database.model.UserModelR;
+import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.RemoveUserExecutable;
 import pro.quizer.quizerexit.fragment.AboutFragment;
 import pro.quizer.quizerexit.fragment.HomeFragment;
@@ -49,6 +57,7 @@ import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.Internet;
 import pro.quizer.quizerexit.utils.SPUtils;
+import pro.quizer.quizerexit.utils.SmsUtils;
 import pro.quizer.quizerexit.view.Toolbar;
 
 import static pro.quizer.quizerexit.utils.FileUtils.AMR;
@@ -61,7 +70,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     static public String TAG = "QUIZERLOGS";
 
     public static final boolean AVIA = false;
-    public static final boolean EXIT = false;
+    public static final boolean EXIT = true;
 
     private HashMap<Integer, ElementModel> mTempMap;
     private HashMap<Integer, ElementModel> mMap;
@@ -386,6 +395,18 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         showQuestionnaireList();
+
+        boolean fromNotificationClick = false;
+        Bundle extras = getIntent().getExtras();
+
+        if (null != extras)
+            fromNotificationClick = extras.getBoolean("fromNotificationClick");
+
+        if (fromNotificationClick) {
+            showAlertDialog();
+        }
+
+        startSMS();
     }
 
     @Override
@@ -586,8 +607,69 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     public static void showQuestionnaireList() {
         List<QuestionnaireDatabaseModelR> list = getDao().getAllQuestionnaires();
-        for(int i = 0; i < list.size(); i ++) {
+        for (int i = 0; i < list.size(); i++) {
             Log.d(TAG, "showQuestionnaireList: " + list.get(i).getToken() + " " + list.get(i).getSurvey_status() + " " + list.get(i).getProject_id());
         }
     }
+
+    public void startSMS() {
+
+        int startHourGmt = 14;
+        int startMinute = 14;
+
+        final Calendar calendar = Calendar.getInstance();
+
+        TimeZone mTimeZone = calendar.getTimeZone();
+        int mGMTOffset = mTimeZone.getRawOffset() / 3600000;
+        int startHour = startHourGmt + mGMTOffset;
+
+        Log.d(TAG, "GMT: " + mGMTOffset);
+
+        String timeInterval = "";
+
+        final AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(this, StartSmsReminder.class);
+        i.putExtra("timeInterval", timeInterval);
+        final PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, i, 0);
+
+        if (EXIT) {
+            calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),
+                    startHour, startMinute, 0);
+
+            Log.d(TAG, "onClick timePicker.getHour(): " + startHour);
+
+            am.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
+
+
+        } else {
+            pendingIntent.cancel();
+            if (am != null) {
+                am.cancel(pendingIntent);
+            }
+        }
+    }
+
+    public void showAlertDialog() {
+
+        String timeInterval = "";
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
+        alertDialog.setCancelable(false);
+        alertDialog.setTitle(R.string.DIALOG_SMS_SENDING);
+        alertDialog.setMessage(String.format(this.getString(R.string.DIALOG_SMS_SENDING_REQUEST), timeInterval));
+
+        alertDialog.setPositiveButton(R.string.VIEW_BUTTON_SEND, new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        alertDialog.setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+    }
+
 }

@@ -42,8 +42,6 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
     public Map<String, SmsAnswer> execute() {
         final Map<String, SmsAnswer> result = new LinkedHashMap<>();
 
-        Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! execute: " + mStagesModel.getQuestionsMatches());
-
         for (final QuestionsMatchesModel questionMatch : mStagesModel.getQuestionsMatches()) {
             final String smsNum = questionMatch.getSmsNum();
             final int questionId = questionMatch.getQuestionId();
@@ -55,7 +53,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
             result.put(smsNum, smsAnswer);
         }
 
-        load(QuestionnaireStatus.SENT, result);
+//        load(QuestionnaireStatus.SENT, result);
         load(QuestionnaireStatus.NOT_SENT, result);
 
 
@@ -63,6 +61,9 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
     }
 
     private void load(@QuestionnaireStatus final String pStatus, final Map<String, SmsAnswer> result) {
+
+        Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! execute: " + pStatus);
+
         final List<ElementDatabaseModelR> allElements = new ArrayList<>();
 
         final List<QuestionnaireDatabaseModelR> questionnaires = BaseActivity.getDao().getQuestionnaireWithTime(

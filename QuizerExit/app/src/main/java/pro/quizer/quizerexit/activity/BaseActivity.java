@@ -61,6 +61,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     static public String TAG = "QUIZERLOGS";
 
     public static final boolean AVIA = false;
+    public static final boolean EXIT = false;
 
     private HashMap<Integer, ElementModel> mTempMap;
     private HashMap<Integer, ElementModel> mMap;

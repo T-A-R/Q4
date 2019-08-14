@@ -73,7 +73,7 @@ public class SmsStage implements Serializable {
         //TODO Переделать статусы. Выставляет не правильно!
 
         for (final String token : mTokens) {
-            BaseActivity.getDao().setQuestionnaireStatus(QuestionnaireStatus.SENT, token);
+            BaseActivity.getDao().setQuestionnaireSendSms(true, token);
         }
 
         setStatus(QuestionnaireStatus.SENT);

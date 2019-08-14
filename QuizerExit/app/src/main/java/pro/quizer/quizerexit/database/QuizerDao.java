@@ -68,6 +68,9 @@ public interface QuizerDao {
     @Query("UPDATE QuestionnaireDatabaseModelR SET status = :status WHERE token = :token")
     void setQuestionnaireStatus(String status, String token);
 
+    @Query("UPDATE QuestionnaireDatabaseModelR SET send_sms = :send_sms WHERE token = :token")
+    void setQuestionnaireSendSms(boolean send_sms, String token);
+
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status")
     List<QuestionnaireDatabaseModelR> getQuestionnaireByStatus(String status);
 

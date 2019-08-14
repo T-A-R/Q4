@@ -77,6 +77,9 @@ public class QuestionnaireDatabaseModelR {
     @ColumnInfo(name = "has_photo")
     private String has_photo;
 
+    @ColumnInfo(name = "send_sms")
+    private boolean send_sms;
+
     public QuestionnaireDatabaseModelR() {
     }
 
@@ -104,6 +107,7 @@ public class QuestionnaireDatabaseModelR {
         this.status = status;
         this.survey_status = survey_status;
         this.has_photo = has_photo;
+        this.send_sms = false;
     }
 
     public int getId() {
@@ -288,5 +292,13 @@ public class QuestionnaireDatabaseModelR {
 
     public void setHas_photo(String has_photo) {
         this.has_photo = has_photo;
+    }
+
+    public boolean getSend_sms() {
+        return send_sms;
+    }
+
+    public void setSend_sms(boolean send_sms) {
+        this.send_sms = send_sms;
     }
 }

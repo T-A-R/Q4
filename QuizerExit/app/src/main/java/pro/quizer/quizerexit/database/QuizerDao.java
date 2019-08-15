@@ -8,6 +8,7 @@ import android.arch.persistence.room.Query;
 import java.util.List;
 
 import pro.quizer.quizerexit.database.model.ActivationModelR;
+import pro.quizer.quizerexit.database.model.AppLogsR;
 import pro.quizer.quizerexit.database.model.CrashLogs;
 import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
 import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
@@ -95,6 +96,33 @@ public interface QuizerDao {
     @Query("SELECT * FROM QuestionnaireDatabaseModelR")
     List<QuestionnaireDatabaseModelR> getAllQuestionnaires();
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAppLogsR(AppLogsR appLogsR);
+
+    @Query("SELECT * FROM AppLogsR")
+    List<AppLogsR> getAppLogsR();
+
+    @Query("SELECT * FROM AppLogsR WHERE login = :login")
+    List<AppLogsR> getAppLogsByLogin(String login);
+
+    @Query("SELECT * FROM AppLogsR WHERE login = :login AND status = :status")
+    List<AppLogsR> getAppLogsByLoginWithStatus(String login, String status);
+
+    @Query("SELECT * FROM AppLogsR WHERE status = :status")
+    List<AppLogsR> getAllLogsWithStatus(String status);
+
+    @Query("UPDATE AppLogsR SET status = :status WHERE login = :login")
+    void setLogsStatusByLogin(String login, String status);
+
+    @Query("UPDATE AppLogsR SET status = :status")
+    void setLogsStatus(String status);
+
+    @Query("DELETE FROM AppLogsR")
+    void clearAppLogsR();
+
+    @Query("DELETE FROM AppLogsR WHERE login = :login")
+    void clearAppLogsByLogin(String login);
+
     @Query("DELETE FROM CrashLogs")
     void clearCrashLogs();
 
@@ -103,4 +131,5 @@ public interface QuizerDao {
 
     @Query("SELECT * FROM CrashLogs")
     List<CrashLogs> getCrashLogs();
+
 }

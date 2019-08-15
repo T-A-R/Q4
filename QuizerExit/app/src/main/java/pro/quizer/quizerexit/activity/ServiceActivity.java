@@ -1,6 +1,8 @@
 package pro.quizer.quizerexit.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -8,6 +10,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.List;
 
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.executable.DeleteUsersExecutable;
 import pro.quizer.quizerexit.executable.ICallback;
@@ -32,6 +35,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
     private Button mDeleteUsersButton;
     private Button mUploadDataButton;
     private Button mUploadFTPDataButton;
+    private Button mLogsButton;
 
     private TextView mUsersCount;
     private String mUsersCountString;
@@ -62,6 +66,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
         mDeleteUsersButton = findViewById(R.id.delete_users);
         mUploadDataButton = findViewById(R.id.upload_data);
         mUploadFTPDataButton = findViewById(R.id.upload_ftp_data);
+        mLogsButton = findViewById(R.id.logs_btn);
 
         mUsersCount = findViewById(R.id.users_count);
         mUnsendedQuestionaires = findViewById(R.id.unsended_questionnaires_count);
@@ -91,6 +96,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
         final int notSentPhotoCount = notSentPhoto.size();
         final int notSentQuestionnairesCount = pServiceViewModel.getQuestionnaireModels().size();
         final int notSentCrashCount = getDao().getCrashLogs().size();
+        final int notSentLogsCount = getDao().getAllLogsWithStatus(Constants.LogStatus.NOT_SENT).size();
         final int usersCount = pServiceViewModel.getUserModels().size();
 
         runOnUiThread(new Runnable() {
@@ -106,7 +112,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
                 UiUtils.setButtonEnabled(mSendAudioButton, notSentAudioCount > 0);
                 UiUtils.setButtonEnabled(mSendPhotoButton, notSentPhotoCount > 0);
                 UiUtils.setButtonEnabled(mDeleteUsersButton, usersCount > 0 && notSentQuestionnairesCount <= 0 && notSentAudioCount <= 0 && notSentPhotoCount <= 0);
-                UiUtils.setButtonEnabled(mUploadDataButton, notSentQuestionnairesCount > 0 || notSentAudioCount > 0 || notSentPhotoCount > 0 || notSentCrashCount >0);
+                UiUtils.setButtonEnabled(mUploadDataButton, notSentQuestionnairesCount > 0 || notSentAudioCount > 0 || notSentPhotoCount > 0 || notSentCrashCount > 0 || notSentLogsCount > 0);
             }
         });
 
@@ -161,6 +167,13 @@ public class ServiceActivity extends BaseActivity implements ICallback {
             @Override
             public void onClick(final View view) {
                 new UploadingFTPExecutable(ServiceActivity.this, ServiceActivity.this).execute();
+            }
+        });
+
+        mLogsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                startLogsActivity();
             }
         });
     }

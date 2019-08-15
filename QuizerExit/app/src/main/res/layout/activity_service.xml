@@ -11,7 +11,7 @@
         android:layout_height="wrap_content" />
 
     <ScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar">
 
@@ -21,11 +21,24 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+                android:id="@+id/logs_btn"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/VIEW_LOGS_BTN" />
+
+            <include layout="@layout/view_divider" />
+
             <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
                 android:id="@+id/users_count"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
+                android:layout_marginTop="8dp"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"

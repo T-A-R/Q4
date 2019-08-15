@@ -6,15 +6,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
@@ -40,11 +37,13 @@ import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.database.QuizerDao;
 import pro.quizer.quizerexit.database.model.ActivationModelR;
 import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
+import pro.quizer.quizerexit.database.model.AppLogsR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.RemoveUserExecutable;
 import pro.quizer.quizerexit.fragment.AboutFragment;
 import pro.quizer.quizerexit.fragment.HomeFragment;
+import pro.quizer.quizerexit.fragment.LogsFragment;
 import pro.quizer.quizerexit.fragment.QuotasFragment;
 import pro.quizer.quizerexit.fragment.SettingsFragment;
 import pro.quizer.quizerexit.fragment.SmsFragment;
@@ -56,6 +55,8 @@ import pro.quizer.quizerexit.model.config.ReserveChannelModel;
 import pro.quizer.quizerexit.model.config.StagesModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
+import pro.quizer.quizerexit.utils.DateUtils;
+import pro.quizer.quizerexit.utils.DeviceUtils;
 import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.Internet;
 import pro.quizer.quizerexit.utils.SPUtils;
@@ -77,6 +78,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     private HashMap<Integer, ElementModel> mTempMap;
     private HashMap<Integer, ElementModel> mMap;
     private UserModelR mCurrentUser;
+    private String savedLogin = null;
     private String hasPhoto = null;
 
     private Timer mTimer;
@@ -224,6 +226,10 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         showFragmentWithBackstack(AboutFragment.newInstance());
     }
 
+    public void showLogsFragment() {
+        showFragmentWithBackstack(LogsFragment.newInstance());
+    }
+
     public void showQuotasFragment() {
         showFragmentWithBackstack(QuotasFragment.newInstance());
     }
@@ -255,9 +261,12 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         }
 
         try {
+            addLog(Constants.LogUser.ANDROID, Constants.LogType.DATABASE, Constants.LogObject.CONFIG, "Сохранение данных сервера", Constants.LogResult.SENT, "Сохранение в базу данных");
             getDao().insertActivationModelR(activationModelR);
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
+            addLog(Constants.LogUser.ANDROID, Constants.LogType.DATABASE, Constants.LogObject.CONFIG, "Сохранение данных сервера", Constants.LogResult.ERROR, getString(R.string.DB_SAVE_ERROR));
+
         }
     }
 
@@ -317,18 +326,24 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                                            final int pUserProjectId) {
 
         try {
+            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, "Сохранение пользователя", Constants.LogResult.SENT, "Сохранение в базу данных");
+            savedLogin = pLogin;
             getDao().updateUserModelR(pLogin, pPassword, pConfigId, pRoleId, pUserProjectId, pUserId);
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
+            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, "Сохранение пользователя", Constants.LogResult.ERROR, e.getMessage());
         }
     }
 
     public void updateConfig(final UserModelR pUserModel, final ConfigModel pConfigModel) {
 
         try {
+            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, "Сохранение конфига", Constants.LogResult.SENT, "Сохранение в базу данных");
             getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
+            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, "Сохранение конфига", Constants.LogResult.ERROR, e.getMessage());
+
         }
     }
 
@@ -393,9 +408,12 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         userModelR.setUser_project_id(pModel.getUserProjectId());
         userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
         try {
+            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, "Сохранение пользователя", Constants.LogResult.SENT, "Сохранение в базу данных");
+
             getDao().insertUser(userModelR);
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
+            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, "Сохранение пользователя", Constants.LogResult.ERROR, getString(R.string.DB_SAVE_ERROR));
         }
     }
 
@@ -433,6 +451,17 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     public void startMainActivity(final boolean pIsAfterAuth) {
         final Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(IS_AFTER_AUTH, pIsAfterAuth);
+        startActivity(intent);
+    }
+
+    public void startLogsActivity() {
+        final Intent intent = new Intent(this, LogsActivity.class);
+        startActivity(intent);
+    }
+
+    public void startUserLogActivity(final String login) {
+        final Intent intent = new Intent(this, UserLogActivity.class);
+        intent.putExtra("login", login);
         startActivity(intent);
     }
 
@@ -585,6 +614,51 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     public static QuizerDao getDao() {
         return CoreApplication.getQuizerDatabase().getQuizerDao();
+    }
+
+    public static void addLog(String login,
+                              String type,
+                              String object,
+                              String action,
+                              String result,
+                              String desc) {
+        AppLogsR appLogsR = new AppLogsR();
+        appLogsR.setLogin(login);
+        appLogsR.setDevice(DeviceUtils.getDeviceInfo());
+        appLogsR.setAppversion(DeviceUtils.getAppVersion());
+        appLogsR.setAndroid(DeviceUtils.getAndroidVersion());
+        appLogsR.setDate(String.valueOf(DateUtils.getCurrentTimeMillis()));
+        appLogsR.setType(type);
+        appLogsR.setObject(object);
+        appLogsR.setAction(action);
+        appLogsR.setResult(result);
+        appLogsR.setDescription(desc);
+
+        getDao().insertAppLogsR(appLogsR);
+    }
+
+    public static void addLogWithData(String login,
+                                      String type,
+                                      String object,
+                                      String action,
+                                      String result,
+                                      String desc,
+                                      String data) {
+        AppLogsR appLogsR = new AppLogsR();
+        appLogsR.setLogin(login);
+        appLogsR.setDevice(DeviceUtils.getDeviceInfo());
+        appLogsR.setAppversion(DeviceUtils.getAppVersion());
+        appLogsR.setAndroid(DeviceUtils.getAndroidVersion());
+        appLogsR.setDate(String.valueOf(DateUtils.getCurrentTimeMillis()));
+        appLogsR.setType(type);
+        appLogsR.setObject(object);
+        appLogsR.setAction(action);
+        appLogsR.setResult(result);
+        appLogsR.setDescription(desc);
+        if (data != null)
+            appLogsR.setData(data.substring(0, Math.min(data.length(), 5000)));
+
+        getDao().insertAppLogsR(appLogsR);
     }
 
     @Override

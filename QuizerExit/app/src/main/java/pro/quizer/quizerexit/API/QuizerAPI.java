@@ -33,6 +33,8 @@ public class QuizerAPI {
 
     /**
      * Отправка ключа.
+     * <p>
+     * Код ошибок 5.хх
      *
      * @param url
      * @param json
@@ -66,6 +68,8 @@ public class QuizerAPI {
 
     /**
      * Запрос конфига.
+     * <p>
+     * Код ошибок 6.хх
      *
      * @param url
      * @param json
@@ -99,6 +103,8 @@ public class QuizerAPI {
 
     /**
      * Авторизация.
+     * <p>
+     * Код ошибок 4.хх
      *
      * @param url
      * @param json
@@ -134,6 +140,8 @@ public class QuizerAPI {
 
     /**
      * Отправка анкет.
+     * <p>
+     * Код ошибок 2.хх
      *
      * @param url
      * @param json
@@ -169,6 +177,8 @@ public class QuizerAPI {
 
     /**
      * Получение квот.
+     * <p>
+     * Код ошибок 1.хх
      *
      * @param url
      * @param json
@@ -203,6 +213,8 @@ public class QuizerAPI {
 
     /**
      * Отправка файлов (аудио и фото).
+     * <p>
+     * Код ошибок 3.хх
      *
      * @param url
      * @param files
@@ -266,14 +278,8 @@ public class QuizerAPI {
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
 
                 String message = getMessage(response);
+                listener.onSendCrash(response.code() == 200, message);
 
-                if (response.code() == 200) {
-                    Log.d(TAG, "QuizerAPI.sendCrash.onResponse() Status: OK!");
-                    listener.onSendCrash(true, message);
-                } else {
-                    Log.d(TAG, "QuizerAPI.sendCrash.error: " + message);
-                    listener.onSendCrash(false, message);
-                }
             }
 
             @Override
@@ -307,19 +313,20 @@ public class QuizerAPI {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 Log.d(TAG, "QuizerAPI.sendLogs.onResponse() Message: " + response.message());
-                listener.onSendLogs(response.body());
+                listener.onSendLogs(response.code() == 200);
+
             }
 
             @Override
             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                 Log.d(TAG, "QuizerAPI.sendLogs.onFailure() " + t);
-                listener.onSendLogs(null);
+                listener.onSendLogs(false);
             }
         });
     }
 
     public interface SendLogsCallback {
-        void onSendLogs(ResponseBody data);
+        void onSendLogs(boolean ok);
     }
 
     private static String getMessage(Response<ResponseBody> response) {

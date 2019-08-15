@@ -1,9 +1,6 @@
 package pro.quizer.quizerexit.activity;
 
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,12 +23,12 @@ import com.google.gson.GsonBuilder;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -40,7 +37,6 @@ import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.CoreApplication;
 import pro.quizer.quizerexit.DrawerUtils;
 import pro.quizer.quizerexit.R;
-import pro.quizer.quizerexit.broadcast.StartSmsReminder;
 import pro.quizer.quizerexit.database.QuizerDao;
 import pro.quizer.quizerexit.database.model.ActivationModelR;
 import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
@@ -617,7 +613,17 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         @Override
         public void run() {
 
-            if (!isFinishing()) {
+            Log.d(TAG, "============= DIALOG SMS to send: " + getDao().getQuestionnaireForStage(
+                    getCurrentUserId(),
+                    QuestionnaireStatus.NOT_SENT,
+                    Constants.QuestionnaireStatuses.COMPLITED,
+                    false).size());
+
+            if (!isFinishing() && getDao().getQuestionnaireForStage(
+                    getCurrentUserId(),
+                    QuestionnaireStatus.NOT_SENT,
+                    Constants.QuestionnaireStatuses.COMPLITED,
+                    false).size() > 0) {
 
                 runOnUiThread(new Runnable() {
 
@@ -647,31 +653,29 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     public void activateExitReminder() {
-        if (EXIT && getReserveChannel() != null && getDao().getQuestionnaireForStage(
-                getCurrentUserId(),
-                QuestionnaireStatus.NOT_SENT,
-                Constants.QuestionnaireStatuses.COMPLITED,
-                false).size() > 0) {
+        if (EXIT && getReserveChannel() != null) {
 
             if (mTimer != null) {
                 mTimer.cancel();
             }
 
             List<StagesModel> stages = getReserveChannel().getStages();
-            List<Integer> datesList = null;
+            List<Integer> datesList = new ArrayList<>();
             Date startDate = null;
+
 
             if (stages != null) {
                 if (stages.size() > 0) {
 
                     for (int i = 0; i < stages.size(); i++) {
-                        datesList.add(stages.get(i).getTimeTo() * 1000);
+                        datesList.add(stages.get(i).getTimeTo());
                     }
                     Collections.sort(datesList);
 
                     for (int i = 0; i < datesList.size(); i++) {
-                        if (datesList.get(i) > System.currentTimeMillis()) {
-                            startDate = new Date(datesList.get(i));
+                        if (datesList.get(i) > System.currentTimeMillis() / 1000) {
+                            startDate = new Date(Long.valueOf(datesList.get(i)) * 1000);
+                            Log.d(TAG, "============= DIALOG: date got: " + startDate);
                             break;
                         }
                     }
@@ -679,7 +683,6 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                     if (startDate != null) {
                         mTimer = new Timer();
                         mAlertSmsTask = new AlertSmsTask();
-//                        Date date = new Date(System.currentTimeMillis() + 10000);
                         mTimer.schedule(mAlertSmsTask, startDate);
                     }
                 }

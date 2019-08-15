@@ -147,6 +147,7 @@
     <string name="DIALOG_ERROR_REMOVE_CURRENT_USER_BODY">Перед удалением пользователя необходимо отправить все данные. Для для отправки всех данных перейдите в СИНХРОНИЗАЦИЮ.</string>
     <string name="DIALOG_GO_TO">Перейти</string>
     <string name="DIALOG_SENDING_WAVES_VIA_SMS">Отправка волн через СМС</string>
+    <string name="DIALOG_SENDING_WAVES_REQUEST">У вас есть неотправленные анкеты. Вы хотите отправить волну сейчас через СМС?</string>
     <string name="DIALOG_SENDING_WAVES_VIA_SMS_CONFIRMATION">Вы уверены, что хотите отправить волны для пользователя через СМС?</string>
     <string name="DIALOG_PLEASE_TURN_ON_GPS">Пожалуйста, включите GPS для продолжения работы.</string>
     <string name="DIALOG_YOU_NEED_TO_TURN_ON_GPS">Для прохождения анкеты необходимо включить GPS.</string>

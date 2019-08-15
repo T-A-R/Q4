@@ -277,6 +277,8 @@ public class ElementActivity extends BaseActivity {
         mProjectInfo = mConfig.getProjectInfo();
         mElements = mProjectInfo.getElements();
         mMap = getMap();
+
+        activateExitReminder();
     }
 
     private void startGps() {

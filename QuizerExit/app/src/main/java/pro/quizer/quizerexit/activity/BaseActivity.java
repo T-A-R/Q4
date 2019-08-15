@@ -28,11 +28,15 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import pro.quizer.quizerexit.BuildConfig;
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.CoreApplication;
 import pro.quizer.quizerexit.DrawerUtils;
 import pro.quizer.quizerexit.R;
@@ -49,9 +53,11 @@ import pro.quizer.quizerexit.fragment.QuotasFragment;
 import pro.quizer.quizerexit.fragment.SettingsFragment;
 import pro.quizer.quizerexit.fragment.SmsFragment;
 import pro.quizer.quizerexit.fragment.SyncFragment;
+import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.ReserveChannelModel;
+import pro.quizer.quizerexit.model.config.StagesModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.utils.FileUtils;
@@ -75,8 +81,10 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     private HashMap<Integer, ElementModel> mTempMap;
     private HashMap<Integer, ElementModel> mMap;
     private UserModelR mCurrentUser;
-
     private String hasPhoto = null;
+
+    private Timer mTimer;
+    private AlertSmsTask mAlertSmsTask;
 
     public String getHasPhoto() {
         return hasPhoto;
@@ -143,6 +151,10 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     private List<ElementModel> getElements() {
         return getCurrentUser().getConfigR().getProjectInfo().getElements();
+    }
+
+    private ReserveChannelModel getReserveChannel() {
+        return getCurrentUser().getConfigR().getProjectInfo().getReserveChannel();
     }
 
     // not singleton
@@ -395,18 +407,6 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         showQuestionnaireList();
-
-        boolean fromNotificationClick = false;
-        Bundle extras = getIntent().getExtras();
-
-        if (null != extras)
-            fromNotificationClick = extras.getBoolean("fromNotificationClick");
-
-        if (fromNotificationClick) {
-            showAlertDialog();
-        }
-
-        startSMS();
     }
 
     @Override
@@ -612,64 +612,78 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         }
     }
 
-    public void startSMS() {
+    class AlertSmsTask extends TimerTask {
 
-        int startHourGmt = 14;
-        int startMinute = 14;
+        @Override
+        public void run() {
 
-        final Calendar calendar = Calendar.getInstance();
+            if (!isFinishing()) {
 
-        TimeZone mTimeZone = calendar.getTimeZone();
-        int mGMTOffset = mTimeZone.getRawOffset() / 3600000;
-        int startHour = startHourGmt + mGMTOffset;
+                runOnUiThread(new Runnable() {
 
-        Log.d(TAG, "GMT: " + mGMTOffset);
+                    @Override
+                    public void run() {
+                        new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
+                                .setCancelable(false)
+                                .setTitle(R.string.DIALOG_SENDING_WAVES_VIA_SMS)
+                                .setMessage(R.string.DIALOG_SENDING_WAVES_REQUEST)
+                                .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(final DialogInterface dialog, final int which) {
+                                        showSmsFragment();
+                                    }
+                                })
+                                .setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
 
-        String timeInterval = "";
-
-        final AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent i = new Intent(this, StartSmsReminder.class);
-        i.putExtra("timeInterval", timeInterval);
-        final PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, i, 0);
-
-        if (EXIT) {
-            calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),
-                    startHour, startMinute, 0);
-
-            Log.d(TAG, "onClick timePicker.getHour(): " + startHour);
-
-            am.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
-
-
-        } else {
-            pendingIntent.cancel();
-            if (am != null) {
-                am.cancel(pendingIntent);
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                })
+                                .show();
+                    }
+                });
             }
         }
     }
 
-    public void showAlertDialog() {
+    public void activateExitReminder() {
+        if (EXIT && getReserveChannel() != null && getDao().getQuestionnaireForStage(
+                getCurrentUserId(),
+                QuestionnaireStatus.NOT_SENT,
+                Constants.QuestionnaireStatuses.COMPLITED,
+                false).size() > 0) {
 
-        String timeInterval = "";
-
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
-        alertDialog.setCancelable(false);
-        alertDialog.setTitle(R.string.DIALOG_SMS_SENDING);
-        alertDialog.setMessage(String.format(this.getString(R.string.DIALOG_SMS_SENDING_REQUEST), timeInterval));
-
-        alertDialog.setPositiveButton(R.string.VIEW_BUTTON_SEND, new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+            if (mTimer != null) {
+                mTimer.cancel();
             }
-        });
-        alertDialog.setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
 
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+            List<StagesModel> stages = getReserveChannel().getStages();
+            List<Integer> datesList = null;
+            Date startDate = null;
+
+            if (stages != null) {
+                if (stages.size() > 0) {
+
+                    for (int i = 0; i < stages.size(); i++) {
+                        datesList.add(stages.get(i).getTimeTo() * 1000);
+                    }
+                    Collections.sort(datesList);
+
+                    for (int i = 0; i < datesList.size(); i++) {
+                        if (datesList.get(i) > System.currentTimeMillis()) {
+                            startDate = new Date(datesList.get(i));
+                            break;
+                        }
+                    }
+
+                    if (startDate != null) {
+                        mTimer = new Timer();
+                        mAlertSmsTask = new AlertSmsTask();
+//                        Date date = new Date(System.currentTimeMillis() + 10000);
+                        mTimer.schedule(mAlertSmsTask, startDate);
+                    }
+                }
             }
-        });
+        }
     }
-
 }

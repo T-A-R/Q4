@@ -1,6 +1,10 @@
 package pro.quizer.quizerexit.fragment;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,13 +16,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import pro.quizer.quizerexit.BuildConfig;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.broadcast.StartSmsReminder;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.ICallback;
+import pro.quizer.quizerexit.executable.RemoveUserExecutable;
 import pro.quizer.quizerexit.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizerexit.executable.SyncInfoExecutable;
 import pro.quizer.quizerexit.listener.QuotasClickListener;
@@ -28,6 +42,7 @@ import pro.quizer.quizerexit.model.view.SyncViewModel;
 import pro.quizer.quizerexit.utils.SystemUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 
+import static pro.quizer.quizerexit.activity.BaseActivity.EXIT;
 import static pro.quizer.quizerexit.activity.BaseActivity.IS_AFTER_AUTH;
 import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
@@ -35,6 +50,8 @@ public class HomeFragment extends BaseFragment implements ICallback {
 
     private UserModelR mUserModel;
     private BaseActivity mBaseActivity;
+//    private Timer mTimer;
+//    private AlertSmsTask mAlertSmsTask;
 
     public static Fragment newInstance(final boolean pIsCanShowUpdateDialog) {
         final HomeFragment fragment = new HomeFragment();
@@ -54,6 +71,16 @@ public class HomeFragment extends BaseFragment implements ICallback {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+//        if (EXIT) {
+//            if (mTimer != null) {
+//                mTimer.cancel();
+//            }
+//
+//            mTimer = new Timer();
+//            mAlertSmsTask = new AlertSmsTask();
+//            mTimer.schedule(mAlertSmsTask, 10000);
+//        }
 
         initView(view);
 
@@ -118,6 +145,7 @@ public class HomeFragment extends BaseFragment implements ICallback {
         if (mBaseActivity == null) {
             return;
         }
+        mBaseActivity.activateExitReminder();
 
         mUserModel = mBaseActivity.getCurrentUser();
         final ConfigModel config = mUserModel.getConfigR();
@@ -226,6 +254,75 @@ public class HomeFragment extends BaseFragment implements ICallback {
 
         if (isAdded()) {
 //            showToast(getString(R.string.NOTIFICATION_NO_CONNECTION_SAVING_QUIZ));
+        }
+    }
+
+//    public void startSMS() {
+//
+//        int startHour = 10;
+//        int startMinute = 20;
+//
+//        final Calendar calendar = Calendar.getInstance();
+//        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),
+//                startHour, startMinute, 0);
+//        final Calendar calendarCurrent = Calendar.getInstance();
+//
+//        TimeZone mTimeZone = calendar.getTimeZone();
+//        int mGMTOffset = mTimeZone.getRawOffset() / 3600000;
+//        int startHourWIthGmt = startHour + mGMTOffset;
+//
+//        final AlarmManager am = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+//        Intent i = new Intent(getContext(), StartSmsReminder.class);
+//        final PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, i, 0);
+//
+//        if (EXIT) {
+//
+//            if (calendarCurrent.getTimeInMillis() < calendar.getTimeInMillis()) {
+//
+//                Log.d(TAG, "Set SMS Reminder Timer on: " + startHour + ":" + startMinute);
+//
+//                am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+//                Toast.makeText(getContext().getApplicationContext(), "Alarm is set", Toast.LENGTH_SHORT).show();
+//            }
+//        } else {
+////            pendingIntent.cancel();
+////            if (am != null) {
+////                am.cancel(pendingIntent);
+////            }
+//        }
+//    }
+
+    class AlertSmsTask extends TimerTask {
+
+        @Override
+        public void run() {
+
+            if (!mBaseActivity.isFinishing()) {
+
+                mBaseActivity.runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        new AlertDialog.Builder(mBaseActivity, R.style.AlertDialogTheme)
+                                .setCancelable(false)
+                                .setTitle(R.string.DIALOG_REMOVE_USER_TITLE)
+                                .setMessage(R.string.DIALOG_REMOVE_USER_BODY)
+                                .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(final DialogInterface dialog, final int which) {
+                                        mBaseActivity.showSmsFragment();
+                                    }
+                                })
+                                .setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
+
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                })
+                                .show();
+                    }
+                });
+            }
         }
     }
 }

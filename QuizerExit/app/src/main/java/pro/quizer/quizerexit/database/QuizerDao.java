@@ -74,6 +74,9 @@ public interface QuizerDao {
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status")
     List<QuestionnaireDatabaseModelR> getQuestionnaireByStatus(String status);
 
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status AND send_sms = :send_sms AND survey_status = :survey")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireForStage(int userId, String status, String survey, boolean send_sms);
+
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status AND date_interview >= :timeFrom AND date_interview <= :timeTo")
     List<QuestionnaireDatabaseModelR> getQuestionnaireWithTime(int userId, String status, long timeFrom, long timeTo);
 

@@ -54,6 +54,15 @@
             android:noHistory="false"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
+        <activity
+            android:name=".activity.AlertDialogActivity"
+            android:noHistory="true" />
+
+        <!--<activity-->
+            <!--android:name=".activity.AlertDialogActivity"-->
+            <!--android:theme="@android:style/Theme.Holo.Light.Dialog.NoActionBar.MinWidth"-->
+            <!--android:noHistory="true" />-->
+
         <provider
             android:name="com.activeandroid.content.ContentProvider"
             android:authorities="pro.quizer.quizerexit"

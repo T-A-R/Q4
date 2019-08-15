@@ -11,6 +11,7 @@ import android.widget.Toast;
 import java.util.Collections;
 
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.activity.AlertDialogActivity;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.utils.SmsUtils;
@@ -22,8 +23,9 @@ public class StartSmsReminder extends BroadcastReceiver {
         Toast.makeText(context, "Отправка SMS...", Toast.LENGTH_SHORT).show();
         //TODO Show dialog
 
-        Intent i = new Intent(context,BaseActivity.class).putExtra("fromNotificationClick",true);
-        PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), i, 0);
+        Intent i = new Intent(context, AlertDialogActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(i);
 
     }
 }

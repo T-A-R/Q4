@@ -1,6 +1,7 @@
 package pro.quizer.quizerexit.model.sms;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ import pro.quizer.quizerexit.executable.SmsStageModelExecutable;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.QuestionsMatchesModel;
 import pro.quizer.quizerexit.model.config.StagesModel;
+
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
 public class SmsStage implements Serializable {
 
@@ -66,8 +69,11 @@ public class SmsStage implements Serializable {
     }
 
     public void markAsSent() {
+
+        //TODO Переделать статусы. Выставляет не правильно!
+
         for (final String token : mTokens) {
-            BaseActivity.getDao().setQuestionnaireStatus(QuestionnaireStatus.SENT, token);
+            BaseActivity.getDao().setQuestionnaireSendSms(true, token);
         }
 
         setStatus(QuestionnaireStatus.SENT);

@@ -6,12 +6,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.util.TimerTask;
 
 import pro.quizer.quizerexit.BuildConfig;
 import pro.quizer.quizerexit.Constants;
@@ -118,6 +119,7 @@ public class HomeFragment extends BaseFragment implements ICallback {
         if (mBaseActivity == null) {
             return;
         }
+        mBaseActivity.activateExitReminder();
 
         mUserModel = mBaseActivity.getCurrentUser();
         final ConfigModel config = mUserModel.getConfigR();
@@ -162,13 +164,6 @@ public class HomeFragment extends BaseFragment implements ICallback {
         final Button quotasBtn = pView.findViewById(R.id.quotas);
         quotasBtn.setOnClickListener(new QuotasClickListener(getBaseActivity()));
 
-
-//        quotasBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                throw new RuntimeException("This is a crash");
-//            }
-//        });
     }
 
     private void initSyncInfoViews() {

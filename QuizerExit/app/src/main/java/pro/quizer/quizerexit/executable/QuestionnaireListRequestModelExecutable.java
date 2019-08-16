@@ -51,6 +51,7 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
                     questionnaireDatabaseModel.getDate_interview(),
                     questionnaireDatabaseModel.getGps(),
                     questionnaireDatabaseModel.getSurvey_status(),
+                    questionnaireDatabaseModel.getSend_sms(),
                     questionnaireDatabaseModel.getGps_time(),
                     questionnaireDatabaseModel.getToken(),
                     questionnaireDatabaseModel.getAuth_time_difference(),

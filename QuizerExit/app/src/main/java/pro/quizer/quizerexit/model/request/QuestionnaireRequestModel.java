@@ -20,6 +20,7 @@ public class QuestionnaireRequestModel implements Serializable {
     private final long date_interview;
     private final String gps;
     private final String survey_status;
+    private final boolean send_sms;
     private final Long gps_time;
     private final Long auth_time_difference;
     private final Long send_time_difference;
@@ -38,6 +39,7 @@ public class QuestionnaireRequestModel implements Serializable {
                                      long date_interview,
                                      String gps,
                                      String survey_status,
+                                     boolean send_sms,
                                      long gps_time,
                                      String token,
                                      Long auth_time_difference,
@@ -55,6 +57,7 @@ public class QuestionnaireRequestModel implements Serializable {
         this.date_interview = date_interview;
         this.gps = gps;
         this.survey_status = survey_status;
+        this.send_sms = send_sms;
         this.token = token;
         this.elements = new ArrayList<>();
         this.auth_time_difference = auth_time_difference;

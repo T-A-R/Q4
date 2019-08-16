@@ -15,7 +15,7 @@ android {
         targetSdkVersion 26
 //        multiDexEnabled true
         versionCode 124
-        versionName "2.1.24.1479"
+        versionName "2.1.24"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         project.ext.set("archivesBaseName", "Quizer_ " + defaultConfig.versionName)
     }

@@ -334,14 +334,22 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     public UserModelR forceGetCurrentUser() {
-        mCurrentUser = getUserByUserId(getCurrentUserId());
+        try {
+            mCurrentUser = getUserByUserId(getCurrentUserId());
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_LOAD_ERROR));
+        }
 
         return mCurrentUser;
     }
 
     public UserModelR getCurrentUser() {
         if (mCurrentUser == null) {
-            mCurrentUser = getUserByUserId(getCurrentUserId());
+            try {
+                mCurrentUser = getUserByUserId(getCurrentUserId());
+            } catch (Exception e) {
+                showToast(getString(R.string.DB_LOAD_ERROR));
+            }
         }
 
         return mCurrentUser;

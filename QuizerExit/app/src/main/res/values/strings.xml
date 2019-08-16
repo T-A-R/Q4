@@ -83,6 +83,7 @@
     <string name="VIEW_EMPTY_QUOTAS">Список квот пуст</string>
     <string name="VIEW_EMPTY_SMS">Список СМС волн пуст</string>
     <string name="VIEW_BUTTON_SEND">Отправить</string>
+    <string name="VIEW_BUTTON_RESEND">Повторить отправку</string>
     <string name="VIEW_TOGGLE_SHOW_NOT_COMPLETED_QUOTAS">Отображать не выполненные</string>
     <string name="VIEW_TREE_DOTS">Нажмите чтобы развернуть…</string>
     <string name="VIEW_QUESTION_ANSWER_TABLE_LABEL">ВОПРОС&lt;br /&gt;ОТВЕТ</string>
@@ -214,4 +215,6 @@
     <string name="ERROR_103_DESC">Ошибка 1.03 (Ошибка получения JSON из ответа сервера)</string>
     <string name="SAVE_QUOTAS_TO_DB">Сохранение квот в базе данных</string>
     <string name="QUOTAS_RENEW">Список квот обновлен</string>
+
+    <string name="VIEW_BUTTON_SEND_FINISHED">Отправить завершенные стадии</string>
 </resources>

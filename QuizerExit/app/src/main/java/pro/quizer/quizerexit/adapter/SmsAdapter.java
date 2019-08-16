@@ -71,9 +71,11 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
         final String smsText = smsStage.toString();
         final String smsStatus = smsStage.getStatus();
 
-        holder.mSmsStatus.setText(smsStatus);
+//        holder.mSmsStatus.setText(smsStatus);
+        holder.mSmsStatus.setText("Завершена");
         holder.mTimeInterval.setText(timeInterval);
-        holder.mSmsText.setText(smsText);
+//        holder.mSmsText.setText(smsText);
+        holder.mSmsText.setText("#1 xx xxx xx xxx");
 
         final boolean availableToSend = currentTime > timeFrom;
 

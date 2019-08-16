@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_shadow"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <pro.quizer.quizerexit.view.resizeble.textview.MediumResizableTextView
+            android:id="@+id/sms_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:textColor="@android:color/black"
+            android:visibility="visible"
+            android:maxLines="1"
+            android:layout_weight="1"
+            tools:text="#1 5 5 5 5 5"
+            />
+
+        <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
+            android:id="@+id/sms_status"
+            android:layout_width="55dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="16sp"
+            android:layout_weight="0.6"
+            android:text="Не отправлено" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/sms_copy_btn"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/ic_copy" />
+
+    </LinearLayout>
+
+    <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+        android:id="@+id/send_sms_btn"
+        style="@style/ButtonGreen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/VIEW_BUTTON_SEND" />
+
+
+</LinearLayout>

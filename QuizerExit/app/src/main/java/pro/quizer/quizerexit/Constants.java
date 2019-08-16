@@ -99,4 +99,11 @@ public final class Constants {
         String ERROR = "error";
 
     }
+
+    public interface Sms {
+        String SENT = "Отправлена";
+        String NOT_SENT = "Не отправлена";
+        String WAITING = "Ожидание";
+
+    }
 }

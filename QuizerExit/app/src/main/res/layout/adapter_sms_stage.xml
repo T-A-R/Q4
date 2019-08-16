@@ -44,11 +44,17 @@
 
     </LinearLayout>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/sms_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_shadow"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -104,132 +110,6 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:text="@string/VIEW_BUTTON_SEND" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_shadow"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <pro.quizer.quizerexit.view.resizeble.textview.MediumResizableTextView
-                android:id="@+id/sms_text2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginStart="8dp"
-                android:textColor="@android:color/black"
-                android:visibility="visible"
-                android:maxLines="1"
-                android:layout_weight="1"
-                android:text="#2 xx xxx xx xxx"
-                />
-
-            <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
-                android:id="@+id/sms_status22"
-                android:layout_width="55dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginStart="8dp"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="16sp"
-                android:layout_weight="0.6"
-                android:text="Отправлено" />
-
-            <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/sms_copy2"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="4dp"
-                android:layout_marginRight="8dp"
-                android:src="@drawable/ic_copy" />
-
-        </LinearLayout>
-
-
-
-        <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
-            android:id="@+id/sms_retry2"
-            style="@style/ButtonRed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:text="@string/VIEW_BUTTON_RESEND" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_shadow"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <pro.quizer.quizerexit.view.resizeble.textview.MediumResizableTextView
-                android:id="@+id/sms_text3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginStart="8dp"
-                android:textColor="@android:color/black"
-                android:visibility="visible"
-                android:maxLines="1"
-                android:layout_weight="1"
-                android:text="#3 xx xxx xx xxx"
-                />
-
-            <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
-                android:id="@+id/sms_status23"
-                android:layout_width="55dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginStart="8dp"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="16sp"
-                android:layout_weight="0.6"
-                android:text="Отправлено" />
-
-            <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/sms_copy3"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="4dp"
-                android:layout_marginRight="8dp"
-                android:src="@drawable/ic_copy" />
-
-        </LinearLayout>
-
-
-
-        <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
-            android:id="@+id/sms_retry3"
-            style="@style/ButtonRed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:text="@string/VIEW_BUTTON_RESEND" />
 
     </LinearLayout>
 

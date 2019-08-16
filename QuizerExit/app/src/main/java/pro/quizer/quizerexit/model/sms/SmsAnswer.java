@@ -36,7 +36,7 @@ public class SmsAnswer implements Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder result = new StringBuilder(mSmsIndex + ":");
+        final StringBuilder result = new StringBuilder("#" + mSmsIndex);
 
         for (final int answer : mAnswers) {
             result.append(" ").append(answer);

@@ -80,6 +80,19 @@ public class SmsFragment extends BaseFragment implements ICallback {
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mBaseActivity);
                 mSmsRecyclerView.setLayoutManager(mLayoutManager);
                 mSmsRecyclerView.setAdapter(mAdapter);
+                int currentStage = 0;
+                long alpha = smsStages.get(0).getTimeTo() - (System.currentTimeMillis() / 1000);
+                for (int i = 0; i < smsStages.size(); i++) {
+                    long delta = smsStages.get(i).getTimeTo() - (System.currentTimeMillis() / 1000);
+                    if (delta > 0 && delta < alpha) {
+                        currentStage = i;
+                        alpha = delta;
+                    }
+                }
+                if (currentStage != 0)
+                    ((LinearLayoutManager) mLayoutManager).scrollToPositionWithOffset(currentStage, 20);
+                else if (alpha < 0)
+                    ((LinearLayoutManager) mLayoutManager).scrollToPositionWithOffset(smsStages.size() - 1, 20);
             }
         });
     }

@@ -1,5 +1,7 @@
 package pro.quizer.quizerexit.executable;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,6 +17,8 @@ import pro.quizer.quizerexit.model.config.QuestionsMatchesModel;
 import pro.quizer.quizerexit.model.config.StagesModel;
 import pro.quizer.quizerexit.model.sms.SmsAnswer;
 import pro.quizer.quizerexit.model.sms.SmsStage;
+
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
 public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, SmsAnswer>> {
 
@@ -49,7 +53,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
             result.put(smsNum, smsAnswer);
         }
 
-        load(QuestionnaireStatus.SENT, result);
+//        load(QuestionnaireStatus.SENT, result);
         load(QuestionnaireStatus.NOT_SENT, result);
 
 
@@ -57,6 +61,9 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
     }
 
     private void load(@QuestionnaireStatus final String pStatus, final Map<String, SmsAnswer> result) {
+
+        Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! execute: " + pStatus);
+
         final List<ElementDatabaseModelR> allElements = new ArrayList<>();
 
         final List<QuestionnaireDatabaseModelR> questionnaires = BaseActivity.getDao().getQuestionnaireWithTime(

@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
@@ -20,8 +21,13 @@ import com.google.gson.GsonBuilder;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import pro.quizer.quizerexit.BuildConfig;
 import pro.quizer.quizerexit.Constants;
@@ -30,8 +36,10 @@ import pro.quizer.quizerexit.DrawerUtils;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.database.QuizerDao;
 import pro.quizer.quizerexit.database.model.ActivationModelR;
+import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.database.model.AppLogsR;
 import pro.quizer.quizerexit.database.model.UserModelR;
+import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.RemoveUserExecutable;
 import pro.quizer.quizerexit.fragment.AboutFragment;
 import pro.quizer.quizerexit.fragment.HomeFragment;
@@ -40,9 +48,11 @@ import pro.quizer.quizerexit.fragment.QuotasFragment;
 import pro.quizer.quizerexit.fragment.SettingsFragment;
 import pro.quizer.quizerexit.fragment.SmsFragment;
 import pro.quizer.quizerexit.fragment.SyncFragment;
+import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.ReserveChannelModel;
+import pro.quizer.quizerexit.model.config.StagesModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.utils.DateUtils;
@@ -50,6 +60,7 @@ import pro.quizer.quizerexit.utils.DeviceUtils;
 import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.Internet;
 import pro.quizer.quizerexit.utils.SPUtils;
+import pro.quizer.quizerexit.utils.SmsUtils;
 import pro.quizer.quizerexit.view.Toolbar;
 
 import static pro.quizer.quizerexit.utils.FileUtils.AMR;
@@ -62,13 +73,16 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     static public String TAG = "QUIZERLOGS";
 
     public static final boolean AVIA = false;
+    public static final boolean EXIT = true;
 
     private HashMap<Integer, ElementModel> mTempMap;
     private HashMap<Integer, ElementModel> mMap;
     private UserModelR mCurrentUser;
     private String savedLogin = null;
-
     private String hasPhoto = null;
+
+    private Timer mTimer;
+    private AlertSmsTask mAlertSmsTask;
 
     public String getHasPhoto() {
         return hasPhoto;
@@ -135,6 +149,10 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     private List<ElementModel> getElements() {
         return getCurrentUser().getConfigR().getProjectInfo().getElements();
+    }
+
+    private ReserveChannelModel getReserveChannel() {
+        return getCurrentUser().getConfigR().getProjectInfo().getReserveChannel();
     }
 
     // not singleton
@@ -402,6 +420,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        showQuestionnaireList();
     }
 
     @Override
@@ -654,5 +673,94 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
      */
     public static void makeCrash() {
         throw new RuntimeException("This is a crash");
+    }
+
+    public static void showQuestionnaireList() {
+        List<QuestionnaireDatabaseModelR> list = getDao().getAllQuestionnaires();
+        for (int i = 0; i < list.size(); i++) {
+            Log.d(TAG, "showQuestionnaireList: " + list.get(i).getToken() + " " + list.get(i).getSurvey_status() + " " + list.get(i).getProject_id());
+        }
+    }
+
+    class AlertSmsTask extends TimerTask {
+
+        @Override
+        public void run() {
+
+            Log.d(TAG, "============= DIALOG SMS to send: " + getDao().getQuestionnaireForStage(
+                    getCurrentUserId(),
+                    QuestionnaireStatus.NOT_SENT,
+                    Constants.QuestionnaireStatuses.COMPLITED,
+                    false).size());
+
+            if (!isFinishing() && getDao().getQuestionnaireForStage(
+                    getCurrentUserId(),
+                    QuestionnaireStatus.NOT_SENT,
+                    Constants.QuestionnaireStatuses.COMPLITED,
+                    false).size() > 0) {
+
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
+                                .setCancelable(false)
+                                .setTitle(R.string.DIALOG_SENDING_WAVES_VIA_SMS)
+                                .setMessage(R.string.DIALOG_SENDING_WAVES_REQUEST)
+                                .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(final DialogInterface dialog, final int which) {
+                                        showSmsFragment();
+                                    }
+                                })
+                                .setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
+
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                })
+                                .show();
+                    }
+                });
+            }
+        }
+    }
+
+    public void activateExitReminder() {
+        if (EXIT && getReserveChannel() != null) {
+
+            if (mTimer != null) {
+                mTimer.cancel();
+            }
+
+            List<StagesModel> stages = getReserveChannel().getStages();
+            List<Integer> datesList = new ArrayList<>();
+            Date startDate = null;
+
+
+            if (stages != null) {
+                if (stages.size() > 0) {
+
+                    for (int i = 0; i < stages.size(); i++) {
+                        datesList.add(stages.get(i).getTimeTo());
+                    }
+                    Collections.sort(datesList);
+
+                    for (int i = 0; i < datesList.size(); i++) {
+                        if (datesList.get(i) > System.currentTimeMillis() / 1000) {
+                            startDate = new Date(Long.valueOf(datesList.get(i)) * 1000);
+                            Log.d(TAG, "============= DIALOG: date got: " + startDate);
+                            break;
+                        }
+                    }
+
+                    if (startDate != null) {
+                        mTimer = new Timer();
+                        mAlertSmsTask = new AlertSmsTask();
+                        mTimer.schedule(mAlertSmsTask, startDate);
+                    }
+                }
+            }
+        }
     }
 }

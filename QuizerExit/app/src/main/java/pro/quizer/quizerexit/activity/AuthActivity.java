@@ -27,9 +27,12 @@ import pro.quizer.quizerexit.API.QuizerAPI;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.database.model.AppLogsR;
+import pro.quizer.quizerexit.database.model.SmsItemR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.UpdateQuotasExecutable;
+import pro.quizer.quizerexit.model.config.QuestionsMatchesModel;
+import pro.quizer.quizerexit.model.config.StagesModel;
 import pro.quizer.quizerexit.model.logs.Crash;
 import pro.quizer.quizerexit.model.request.AuthRequestModel;
 import pro.quizer.quizerexit.model.request.ConfigRequestModel;
@@ -53,7 +56,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
     private List<String> mSavedUsers;
     private List<UserModelR> mSavedUserModels;
     private TextView mVersionView;
-//    private TextView mLogsView;
+    //    private TextView mLogsView;
     private int mVersionTapCount = 0;
 
     String login;
@@ -311,7 +314,32 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             return;
         }
 
+        makeSmsDatabase();
+
         downloadQuotas(pAuthResponseModel, pLogin, pPassword);
+    }
+
+    private void makeSmsDatabase() {
+        if (getCurrentUser().getConfigR().getProjectInfo().getReserveChannel() != null) {
+            try {
+                getDao().clearSmsDatabase();
+            } catch (Exception e) {
+                showToast(getString(R.string.DB_CLEAR_ERROR));
+            }
+            List<StagesModel> stages = getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getStages();
+            if (stages != null)
+                for (int i = 0; i < stages.size(); i++) {
+                    List<QuestionsMatchesModel> questionsMatchesModels = stages.get(i).getQuestionsMatches();
+                    if (questionsMatchesModels != null)
+                        for (int k = 0; k < questionsMatchesModels.size(); k++) {
+                            try {
+                                getDao().insertSmsItem(new SmsItemR(questionsMatchesModels.get(k).getSmsNum(), null));
+                            } catch (Exception e) {
+                                showToast(getString(R.string.DB_SAVE_ERROR));
+                            }
+                        }
+                }
+        }
     }
 
     private void downloadFiles(final ConfigResponseModel pConfigResponseModel,

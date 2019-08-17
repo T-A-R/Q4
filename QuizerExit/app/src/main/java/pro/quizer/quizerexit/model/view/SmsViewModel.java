@@ -2,6 +2,7 @@ package pro.quizer.quizerexit.model.view;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,6 +11,8 @@ import java.util.List;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.sms.SmsStage;
 import pro.quizer.quizerexit.utils.DateUtils;
+
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
 public class SmsViewModel implements Serializable {
 
@@ -28,7 +31,8 @@ public class SmsViewModel implements Serializable {
 
         if (mSmsStages != null && !mSmsStages.isEmpty()) {
             for (final SmsStage smsStage : mSmsStages) {
-                if (smsStage.getTimeTo() <= DateUtils.getCurrentTimeMillis() && QuestionnaireStatus.NOT_SENT.equals(smsStage.getStatus())) {
+                Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!getReadyToSendStages: " + smsStage.getTimeTo() + " " + DateUtils.getCurrentTimeMillis());
+                if (smsStage.getTimeTo() <= DateUtils.getCurrentTimeMillis()) {
                     finishedStages.add(smsStage);
                 }
             }

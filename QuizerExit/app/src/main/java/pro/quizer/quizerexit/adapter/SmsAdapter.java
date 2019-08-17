@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.ICallback;
@@ -32,7 +33,6 @@ import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
 
     private List<SmsStage> mSmsStages;
-    private List<SmsItem> mSmsItems;
     private BaseActivity mBaseActivity;
 
     class SmsViewHolder extends RecyclerView.ViewHolder {
@@ -76,16 +76,8 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
         final long timeTo = smsStage.getTimeTo() * 1000L;
         final long currentTime = DateUtils.getCurrentTimeMillis() * 1000L;
 
-        mSmsItems = new ArrayList<>();
-        Object[] keys = smsStage.getSmsAnswers().keySet().toArray();
-
-        for (int i = 0; i < smsStage.getSmsAnswers().size(); i++) {
-            mSmsItems.add(new SmsItem(smsStage.getSmsAnswers().get(keys[i]).getSmsIndex(), smsStage.getSmsAnswers().get(keys[i]).toString(), smsStage.getStatus()));
-//            mSmsItems.add(new SmsItem("" + i, "#" + i + " xx xxx xx xxx", "Отправлена"));
-        }
-
         SmsHolderAdapter mSmsHolderAdapter;
-        mSmsHolderAdapter = new SmsHolderAdapter(mBaseActivity, mSmsItems);
+        mSmsHolderAdapter = new SmsHolderAdapter(mBaseActivity, smsStage);
         holder.recyclerView.setAdapter(mSmsHolderAdapter);
         holder.recyclerView.setItemAnimator(new DefaultItemAnimator());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mBaseActivity, LinearLayoutManager.VERTICAL, false);
@@ -94,61 +86,18 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
         final String timeFromString = DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, timeFrom);
         final String timeToString = DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, timeTo);
         final String timeInterval = String.format(mBaseActivity.getString(R.string.VIEW_SMS_TIME_INTERVAL), timeFromString, timeToString);
-        final String smsText = smsStage.toString();
         final String smsStatus = smsStage.getStatus();
 
-//        holder.mSmsStatus.setText(smsStatus);
-        holder.mSmsStatus.setText("Завершена");
+
         holder.mTimeInterval.setText(timeInterval);
-//        holder.mSmsText.setText(smsText);
-        holder.mSmsText.setText("#1 xx xxx xx xxx");
 
         final boolean availableToSend = currentTime > timeFrom;
 
-        UiUtils.setButtonEnabled(holder.mRetryButton, availableToSend);
-
-        holder.mRetryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(mBaseActivity, R.style.AlertDialogTheme);
-                alertDialog.setCancelable(false);
-                alertDialog.setTitle(R.string.DIALOG_SMS_SENDING);
-                alertDialog.setMessage(String.format(mBaseActivity.getString(R.string.DIALOG_SMS_SENDING_CONFIRMATION), timeInterval));
-                alertDialog.setPositiveButton(R.string.VIEW_BUTTON_SEND, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int which) {
-                        SmsUtils.sendSms(mBaseActivity, new ICallback() {
-                            @Override
-                            public void onStarting() {
-
-                            }
-
-                            @Override
-                            public void onSuccess() {
-                                notifyItemChanged(position);
-                            }
-
-                            @Override
-                            public void onError(Exception pException) {
-
-                            }
-                        }, Collections.singletonList(smsStage));
-                    }
-                });
-                alertDialog.setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-                if (!mBaseActivity.isFinishing()) {
-                    alertDialog.show();
-                }
-            }
-        });
-
-
+        final boolean finished = currentTime > timeTo;
+        if (finished)
+            holder.mSmsStatus.setText(Constants.Sms.ENDED);
+        else
+            holder.mSmsStatus.setText(Constants.Sms.NOT_ENDED);
     }
 
     @Override

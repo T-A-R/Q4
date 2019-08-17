@@ -100,10 +100,17 @@ public final class Constants {
 
     }
 
+    public interface SmsStatus {
+        String SENT = "sent";
+        String NOT_SENT = "not_sent";
+    }
+
     public interface Sms {
         String SENT = "Отправлена";
         String NOT_SENT = "Не отправлена";
         String WAITING = "Ожидание";
+        String ENDED = "Завершена";
+        String NOT_ENDED = "Не завершена";
 
     }
 }

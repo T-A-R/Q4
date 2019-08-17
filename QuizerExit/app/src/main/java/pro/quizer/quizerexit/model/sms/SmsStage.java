@@ -8,12 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.SmsStageModelExecutable;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.QuestionsMatchesModel;
 import pro.quizer.quizerexit.model.config.StagesModel;
+import pro.quizer.quizerexit.utils.Evaluator.Constant;
 
 import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
@@ -53,8 +55,10 @@ public class SmsStage implements Serializable {
         return mContext.getString(mStatus != null && mStatus.equals(QuestionnaireStatus.SENT) ? R.string.STATUS_SENT : R.string.STATUS_NOT_SENT);
     }
 
-    public void setStatus(@QuestionnaireStatus final String pStatus) {
-        mStatus = pStatus;
+    public void setStatus(@QuestionnaireStatus final String pStatus, String smsNumber) {
+//        mStatus = pStatus;
+//        mSmsAnswers.get(smsNumber).setmSmsStatus(pStatus);
+        BaseActivity.getDao().setSmsItemStatusBySmsNumber(smsNumber, pStatus);
     }
 
     @Override
@@ -68,13 +72,13 @@ public class SmsStage implements Serializable {
         return result.toString();
     }
 
-    public void markAsSent() {
+    public void markAsSent(String smsNumber) {
 
         for (final String token : mTokens) {
             BaseActivity.getDao().setQuestionnaireSendSms(true, token);
         }
 
-        setStatus(QuestionnaireStatus.SENT);
+        setStatus(QuestionnaireStatus.SENT, smsNumber);
     }
 
     public Map<String, SmsAnswer> getSmsAnswers() {

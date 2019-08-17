@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,8 @@ import pro.quizer.quizerexit.executable.SmsViewModelExecutable;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.sms.SmsStage;
 import pro.quizer.quizerexit.model.view.SmsViewModel;
+
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
 public class SmsFragment extends BaseFragment implements ICallback {
 
@@ -66,7 +69,7 @@ public class SmsFragment extends BaseFragment implements ICallback {
 
             @Override
             public void run() {
-                final List<SmsStage> smsStages = pSmsViewModel.getSmsStages();
+                final List<SmsStage> smsStages = pSmsViewModel.getReadyToSendStages();
 
                 if (smsStages == null || smsStages.isEmpty()) {
                     showEmptyView(getString(R.string.VIEW_EMPTY_SMS));
@@ -84,13 +87,20 @@ public class SmsFragment extends BaseFragment implements ICallback {
                 long alpha = smsStages.get(0).getTimeTo() - (System.currentTimeMillis() / 1000);
                 for (int i = 0; i < smsStages.size(); i++) {
                     long delta = smsStages.get(i).getTimeTo() - (System.currentTimeMillis() / 1000);
-                    if (delta > 0 && delta < alpha) {
-                        currentStage = i;
+                    if (alpha > 0) {
+                        if (delta < alpha) {
+                            currentStage = i;
+                            alpha = delta;
+                        }
+                    } else {
                         alpha = delta;
+                        if (alpha > 0)
+                            currentStage = i;
                     }
                 }
+
                 if (currentStage != 0)
-                    ((LinearLayoutManager) mLayoutManager).scrollToPositionWithOffset(currentStage, 20);
+                    ((LinearLayoutManager) mLayoutManager).scrollToPositionWithOffset(currentStage - 1, 20);
                 else if (alpha < 0)
                     ((LinearLayoutManager) mLayoutManager).scrollToPositionWithOffset(smsStages.size() - 1, 20);
             }

@@ -20,7 +20,7 @@ import pro.quizer.quizerexit.model.sms.SmsStage;
 
 public final class SmsUtils {
 
-    public static void sendSms(final BaseActivity pBaseActivity, final ICallback pCallback, final List<SmsStage> pSmsStages) {
+    public static void sendSms(final BaseActivity pBaseActivity, final ICallback pCallback, final List<SmsStage> pSmsStages, String smsNumber) {
         final String SENT = "SMS_SENT";
         final String DELIVERED = "SMS_DELIVERED";
 
@@ -31,7 +31,8 @@ public final class SmsUtils {
         final StringBuilder sms = new StringBuilder();
 
         for (final SmsStage smsStage : pSmsStages) {
-            sms.append(smsStage.toString());
+//            sms.append(smsStage.toString());
+            sms.append(smsStage.getSmsAnswers().get(smsNumber).toString());
         }
 
         final String phoneNumber = getPhoneNumber(pBaseActivity);
@@ -54,7 +55,7 @@ public final class SmsUtils {
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
                         for (final SmsStage smsStage : pSmsStages) {
-                            smsStage.markAsSent();
+                            smsStage.markAsSent(smsNumber);
                         }
 
                         if (pCallback != null) {

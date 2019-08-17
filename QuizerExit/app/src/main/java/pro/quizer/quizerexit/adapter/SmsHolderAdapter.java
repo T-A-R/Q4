@@ -1,6 +1,7 @@
 package pro.quizer.quizerexit.adapter;
 
 import android.content.DialogInterface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,13 +20,16 @@ import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.model.sms.SmsItem;
 import pro.quizer.quizerexit.model.sms.SmsStage;
+import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.SmsUtils;
 import pro.quizer.quizerexit.utils.SystemUtils;
+import pro.quizer.quizerexit.utils.UiUtils;
 
 public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsViewInnerHolder> {
 
-    private List<SmsItem> mSmsItems;
+    private SmsStage smsStage;
     private BaseActivity mBaseActivity;
+    private List<SmsItem> mSmsItems;
 
     class SmsViewInnerHolder extends RecyclerView.ViewHolder {
 
@@ -43,9 +48,18 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
         }
     }
 
-    public SmsHolderAdapter(final BaseActivity pBaseActivity, List<SmsItem> mSmsItems) {
+    public SmsHolderAdapter(final BaseActivity pBaseActivity, SmsStage smsStage) {
         mBaseActivity = pBaseActivity;
-        this.mSmsItems = mSmsItems;
+        this.smsStage = smsStage;
+
+        mSmsItems = new ArrayList<>();
+        Object[] keys = smsStage.getSmsAnswers().keySet().toArray();
+
+        for (int i = 0; i < smsStage.getSmsAnswers().size(); i++) {
+            String status = BaseActivity.getDao().getSmsItemBySmsNumber(smsStage.getSmsAnswers().get(keys[i]).getSmsIndex()).get(0).getSmsStatus();
+            mSmsItems.add(new SmsItem(smsStage.getSmsAnswers().get(keys[i]).getSmsIndex(), smsStage.getSmsAnswers().get(keys[i]).toString(), smsStage.getSmsAnswers().get(keys[i]).getmSmsStatus()));
+//            mSmsItems.add(new SmsItem("" + i, "#" + i + " xx xxx xx xxx", "Отправлена"));
+        }
     }
 
     @Override
@@ -57,21 +71,33 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
     @Override
     public void onBindViewHolder(SmsViewInnerHolder holder, int position) {
         holder.mSmsText.setText(mSmsItems.get(position).getSmsText());
-        holder.mSmsStatus.setText(mSmsItems.get(position).getSmsStatus());
-        switch (mSmsItems.get(position).getSmsStatus()) {
-            case Constants.Sms.SENT:
-                holder.mSendSmsBtn.setText(R.string.VIEW_BUTTON_RESEND);
-                break;
-            case Constants.Sms.NOT_SENT:
-                holder.mSendSmsBtn.setText(R.string.VIEW_BUTTON_SEND);
-                break;
-            case Constants.Sms.WAITING:
-                holder.mSendSmsBtn.setText(R.string.VIEW_BUTTON_SEND);
-                break;
-            default:
-
-                break;
+        String status = null;
+        try {
+            status = BaseActivity.getDao().getSmsItemBySmsNumber(mSmsItems.get(position).getSmsNumber()).get(0).getSmsStatus();
+        } catch (Exception e) {
+            mBaseActivity.showToast(mBaseActivity.getString(R.string.DB_LOAD_ERROR));
         }
+        if (status != null)
+            if (status.equals(Constants.SmsStatus.SENT)) {
+                holder.mSmsStatus.setText(Constants.Sms.SENT);
+                holder.mSendSmsBtn.setBackground(ContextCompat.getDrawable(mBaseActivity, R.drawable.button_background_red));
+                holder.mSendSmsBtn.setText(R.string.VIEW_BUTTON_RESEND);
+            } else {
+                holder.mSmsStatus.setText(Constants.Sms.NOT_SENT);
+                holder.mSendSmsBtn.setBackground(ContextCompat.getDrawable(mBaseActivity, R.drawable.button_background_green));
+                holder.mSendSmsBtn.setText(R.string.VIEW_BUTTON_SEND);
+            }
+
+        final long timeFrom = smsStage.getTimeFrom() * 1000L;
+        final long timeTo = smsStage.getTimeTo() * 1000L;
+        final long currentTime = DateUtils.getCurrentTimeMillis() * 1000L;
+        final String timeFromString = DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, timeFrom);
+        final String timeToString = DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, timeTo);
+        final String timeInterval = String.format(mBaseActivity.getString(R.string.VIEW_SMS_TIME_INTERVAL), timeFromString, timeToString);
+
+        final boolean availableToSend = currentTime > timeFrom;
+
+//        UiUtils.setButtonEnabled(holder.mSendSmsBtn, availableToSend);
 
         holder.mCopySms.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,7 +112,7 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(mBaseActivity, R.style.AlertDialogTheme);
                 alertDialog.setCancelable(false);
                 alertDialog.setTitle(R.string.DIALOG_SMS_SENDING);
-                alertDialog.setMessage(String.format(mBaseActivity.getString(R.string.DIALOG_SMS_SENDING_CONFIRMATION), timeInterval));
+                alertDialog.setMessage(String.format(mBaseActivity.getString(R.string.DIALOG_SMS_SENDING_CONFIRMATION), mSmsItems.get(position).getSmsNumber()));
                 alertDialog.setPositiveButton(R.string.VIEW_BUTTON_SEND, new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
@@ -105,7 +131,7 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
                             public void onError(Exception pException) {
 
                             }
-                        }, Collections.singletonList(smsStage));
+                        }, Collections.singletonList(smsStage), mSmsItems.get(position).getSmsNumber());
                     }
                 });
                 alertDialog.setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {

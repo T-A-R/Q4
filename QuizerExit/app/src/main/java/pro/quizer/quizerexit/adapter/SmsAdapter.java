@@ -77,10 +77,11 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
         final long currentTime = DateUtils.getCurrentTimeMillis() * 1000L;
 
         mSmsItems = new ArrayList<>();
-        for (int i = 0; i < smsStage.getSmsAnswers().size(); i++) {
+        Object[] keys = smsStage.getSmsAnswers().keySet().toArray();
 
-//            mSmsItems.add(new SmsItem(smsStage.getSmsAnswers().get(i).getSmsIndex(),smsStage.getSmsAnswers().get(i).toString(), smsStage.getStatus()));
-            mSmsItems.add(new SmsItem("" + i, "#" + i + " xx xxx xx xxx", "Отправлена"));
+        for (int i = 0; i < smsStage.getSmsAnswers().size(); i++) {
+            mSmsItems.add(new SmsItem(smsStage.getSmsAnswers().get(keys[i]).getSmsIndex(), smsStage.getSmsAnswers().get(keys[i]).toString(), smsStage.getStatus()));
+//            mSmsItems.add(new SmsItem("" + i, "#" + i + " xx xxx xx xxx", "Отправлена"));
         }
 
         SmsHolderAdapter mSmsHolderAdapter;
@@ -147,12 +148,7 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
             }
         });
 
-        holder.mCopySms.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SystemUtils.copyText(SmsUtils.formatSmsPrefix(smsText, mBaseActivity), mBaseActivity);
-            }
-        });
+
     }
 
     @Override

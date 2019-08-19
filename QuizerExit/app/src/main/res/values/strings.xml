@@ -157,6 +157,7 @@
     <string name="DIALOG_TURN_ON">Включить</string>
     <string name="DIALOG_SMS_SENDING">Отправка СМС</string>
     <string name="DIALOG_SMS_SENDING_CONFIRMATION">Вы уверены, что хотите отправить СМС номер %1$s ?</string>
+    <string name="DIALOG_ALL_SMS_SENDING_CONFIRMATION">Вы уверены, что хотите отправить все неотправленные СМС?</string>
     <string name="DIALOG_SMS_SENDING_REQUEST">У вас есть неотправленные анкеты за период %1$s , вы хотите отправить волну?</string>
     <string name="DIALOG_SENDING_FILE_X_FROM_Y">Идет отправка %1$s из %2$s</string>
     <string name="DIALOG_NEW_APP_VERSION_IS_AVAILABLE">Доступна новая версия приложения</string>
@@ -218,4 +219,5 @@
 
     <string name="VIEW_BUTTON_SEND_FINISHED">Отправить завершенные стадии</string>
     <string name="sdsdsd">fff</string>
+    <string name="SMS_LIST_EMPTY">Нет неотправленных СМС по завершенным стадиям</string>
 </resources>

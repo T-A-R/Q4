@@ -109,6 +109,9 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
         holder.mSendSmsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                List<String> mSmsNumbers = new ArrayList<>();
+                mSmsNumbers.add(mSmsItems.get(position).getSmsNumber());
+
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(mBaseActivity, R.style.AlertDialogTheme);
                 alertDialog.setCancelable(false);
                 alertDialog.setTitle(R.string.DIALOG_SMS_SENDING);
@@ -131,7 +134,7 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
                             public void onError(Exception pException) {
 
                             }
-                        }, Collections.singletonList(smsStage), mSmsItems.get(position).getSmsNumber());
+                        }, Collections.singletonList(smsStage), mSmsNumbers);
                     }
                 });
                 alertDialog.setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {

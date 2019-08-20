@@ -76,7 +76,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
         try {
             quotaResponseModel = new GsonBuilder().create().fromJson(responseJson, QuotaResponseModel.class);
         } catch (final Exception pE) {
-            BaseActivity.addLogWithData(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.GET_QUOTAS), Constants.LogResult.ERROR, mContext.getString(R.string.ERROR_103_DESC), pE.getMessage());
+            BaseActivity.addLogWithData(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.GET_QUOTAS), Constants.LogResult.ERROR, mContext.getString(R.string.ERROR_103_DESC), responseJson);
             onError(new Exception(mContext.getString(R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS) + " " + mContext.getString(R.string.ERROR_103)));
             return;
         }

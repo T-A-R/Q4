@@ -162,7 +162,13 @@ public class HomeFragment extends BaseFragment implements ICallback {
         }
 
         final Button quotasBtn = pView.findViewById(R.id.quotas);
-        quotasBtn.setOnClickListener(new QuotasClickListener(getBaseActivity()));
+        if (true) {
+            quotasBtn.setVisibility(View.VISIBLE);
+            quotasBtn.setOnClickListener(new QuotasClickListener(getBaseActivity()));
+        } else {
+            quotasBtn.setVisibility(View.GONE);
+        }
+
 
     }
 

@@ -28,6 +28,7 @@ import pro.quizer.quizerexit.model.config.ProjectInfoModel;
 import pro.quizer.quizerexit.model.view.SyncViewModel;
 import pro.quizer.quizerexit.utils.SystemUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
+import pro.quizer.quizerexit.view.AppDrawer;
 
 import static pro.quizer.quizerexit.activity.BaseActivity.IS_AFTER_AUTH;
 import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
@@ -162,7 +163,7 @@ public class HomeFragment extends BaseFragment implements ICallback {
         }
 
         final Button quotasBtn = pView.findViewById(R.id.quotas);
-        if (true) {
+        if (projectInfo.getReserveChannel() == null) {
             quotasBtn.setVisibility(View.VISIBLE);
             quotasBtn.setOnClickListener(new QuotasClickListener(getBaseActivity()));
         } else {

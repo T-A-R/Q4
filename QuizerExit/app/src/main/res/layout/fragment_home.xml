@@ -20,7 +20,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="112dp"
                 android:layout_weight="1"
-                android:src="@drawable/ic_quizer" />
+                android:src="@drawable/quizer" />
 
             <LinearLayout
                 android:layout_width="match_parent"

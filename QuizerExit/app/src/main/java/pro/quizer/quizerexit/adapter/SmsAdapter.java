@@ -2,6 +2,7 @@ package pro.quizer.quizerexit.adapter;
 
 import android.content.DialogInterface;
 import android.os.Parcel;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -43,6 +45,7 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
         View mCopySms;
         Button mRetryButton;
         RecyclerView recyclerView;
+        LinearLayout cont;
 
         SmsViewHolder(View view) {
             super(view);
@@ -52,6 +55,7 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
             mSmsStatus = view.findViewById(R.id.sms_status);
             mCopySms = view.findViewById(R.id.sms_copy);
             mRetryButton = view.findViewById(R.id.sms_retry);
+            cont = view.findViewById(R.id.sms_stage_cont);
 
             recyclerView = (RecyclerView) view.findViewById(R.id.sms_rv);
         }
@@ -94,10 +98,25 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
         final boolean availableToSend = currentTime > timeFrom;
 
         final boolean finished = currentTime > timeTo;
-        if (finished)
+        final int sdk = android.os.Build.VERSION.SDK_INT;
+        if (finished) {
             holder.mSmsStatus.setText(Constants.Sms.ENDED);
+
+            if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_gray_shadow) );
+            } else {
+                holder.cont.setBackground(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_gray_shadow));
+            }
+        }
         else
+        {
             holder.mSmsStatus.setText(Constants.Sms.NOT_ENDED);
+            if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_shadow) );
+            } else {
+                holder.cont.setBackground(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_shadow));
+            }
+        }
     }
 
     @Override

@@ -16,5 +16,6 @@
     <color name="checkbox_disabled_color">#AAAAAA</color>
     <color name="checkbox_enabled_color">#636363</color>
     <color name="checkbox_selected_color">@color/brand_color</color>
+    <color name="dark_shadow">#cc222222</color>
 
 </resources>

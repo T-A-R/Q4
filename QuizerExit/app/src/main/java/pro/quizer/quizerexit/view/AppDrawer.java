@@ -63,6 +63,10 @@ public class AppDrawer extends RelativeLayout implements Serializable {
         mSyncBtn.setVisibility(View.GONE);
     }
 
+    public void disableQuota() {
+        mQuotasBtn.setVisibility(View.GONE);
+    }
+
     private void init() {
         inflate();
     }
@@ -125,14 +129,18 @@ public class AppDrawer extends RelativeLayout implements Serializable {
             }
         });
 
-        mQuotasBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mInternalClickListenerForToolbar.onClick(view);
-                baseActivity.closeDrawer();
-                new QuotasClickListener((BaseActivity) context).onClick(view);
-            }
-        });
+        if(!mBaseActivity.hasReserveChannel()) {
+            mQuotasBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mInternalClickListenerForToolbar.onClick(view);
+                    baseActivity.closeDrawer();
+                    new QuotasClickListener((BaseActivity) context).onClick(view);
+                }
+            });
+        } else {
+            mQuotasBtn.setVisibility(View.GONE);
+        }
 
         mChangeUserBtn.setOnClickListener(new OnClickListener() {
             @Override

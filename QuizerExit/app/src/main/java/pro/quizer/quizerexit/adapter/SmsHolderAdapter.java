@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
         TextView mSmsStatus;
         View mCopySms;
         Button mSendSmsBtn;
+        LinearLayout mSmsCont;
 
         SmsViewInnerHolder(View view) {
             super(view);
@@ -45,6 +47,7 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
             mSmsStatus = view.findViewById(R.id.sms_status);
             mCopySms = view.findViewById(R.id.sms_copy_btn);
             mSendSmsBtn = view.findViewById(R.id.send_sms_btn);
+            mSmsCont = view.findViewById(R.id.sms_cont);
         }
     }
 
@@ -72,6 +75,7 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
     public void onBindViewHolder(SmsViewInnerHolder holder, int position) {
         holder.mSmsText.setText(mSmsItems.get(position).getSmsText());
         String status = null;
+        final int sdk = android.os.Build.VERSION.SDK_INT;
         try {
             status = BaseActivity.getDao().getSmsItemBySmsNumber(mSmsItems.get(position).getSmsNumber()).get(0).getSmsStatus();
         } catch (Exception e) {
@@ -82,10 +86,20 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
                 holder.mSmsStatus.setText(Constants.Sms.SENT);
                 holder.mSendSmsBtn.setBackground(ContextCompat.getDrawable(mBaseActivity, R.drawable.button_background_red));
                 holder.mSendSmsBtn.setText(R.string.VIEW_BUTTON_RESEND);
+                if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    holder.mSmsCont.setBackgroundDrawable(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_gray_shadow) );
+                } else {
+                    holder.mSmsCont.setBackground(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_gray_shadow));
+                }
             } else {
                 holder.mSmsStatus.setText(Constants.Sms.NOT_SENT);
                 holder.mSendSmsBtn.setBackground(ContextCompat.getDrawable(mBaseActivity, R.drawable.button_background_green));
                 holder.mSendSmsBtn.setText(R.string.VIEW_BUTTON_SEND);
+                if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    holder.mSmsCont.setBackgroundDrawable(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_shadow) );
+                } else {
+                    holder.mSmsCont.setBackground(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_shadow));
+                }
             }
 
         final long timeFrom = smsStage.getTimeFrom() * 1000L;

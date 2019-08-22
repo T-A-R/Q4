@@ -2,14 +2,18 @@ package pro.quizer.quizerexit.activity;
 
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.Parcel;
 import android.os.RemoteException;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
@@ -89,6 +93,7 @@ public class ElementActivity extends BaseActivity {
     private long mGpsTime;
     private long mStartDateInterview;
     private boolean mIsMediaConnected;
+    private boolean mIsTimeDialogShow = false;
     private int mAudioRelativeId;
 
     // recording
@@ -278,6 +283,9 @@ public class ElementActivity extends BaseActivity {
         mElements = mProjectInfo.getElements();
         mMap = getMap();
 
+        if (!mIsTimeDialogShow)
+            checkTIme();
+
         activateExitReminder();
     }
 
@@ -364,7 +372,8 @@ public class ElementActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        resumeRecording();
+        if (!mIsTimeDialogShow)
+            checkTIme();
     }
 
     private void showFirstElement() {
@@ -1094,4 +1103,41 @@ public class ElementActivity extends BaseActivity {
             }
         }
     };
+
+    private void showTimeDialog() {
+        mIsTimeDialogShow = true;
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
+        alertDialog.setCancelable(false);
+        alertDialog.setTitle(R.string.DIALOG_PLEASE_TURN_ON_AUTO_TIME);
+        alertDialog.setMessage(R.string.DIALOG_YOU_NEED_TO_TURN_ON_AUTO_TIME);
+        alertDialog.setPositiveButton(R.string.DIALOG_TURN_ON, new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_DATE_SETTINGS);
+                startActivity(intent);
+                if (alertDialog != null) {
+                    dialog.dismiss();
+                    mIsTimeDialogShow = false;
+                }
+
+            }
+        });
+
+        alertDialog.show();
+    }
+
+    private boolean isTimeAutomatic() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME, 0) == 1;
+        } else {
+            return android.provider.Settings.System.getInt(getContentResolver(), android.provider.Settings.System.AUTO_TIME, 0) == 1;
+        }
+    }
+
+    private void checkTIme() {
+
+        if (!isTimeAutomatic() && mConfig.isForceTime()) {
+            showTimeDialog();
+        }
+    }
 }

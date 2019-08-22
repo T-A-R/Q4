@@ -67,7 +67,8 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
                         element.getDuration(),
                         element.getClick_rank(),
                         element.getRank(),
-                        element.getValue()
+                        element.getValue(),
+                        element.getSend_sms()
                 );
 
                 questionnaireRequestModel.addElement(elementRequestModel);

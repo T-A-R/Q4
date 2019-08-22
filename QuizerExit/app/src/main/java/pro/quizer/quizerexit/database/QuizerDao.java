@@ -60,6 +60,9 @@ public interface QuizerDao {
     @Query("SELECT * FROM ElementDatabaseModelR WHERE token = :token")
     List<ElementDatabaseModelR> getElementByToken(String token);
 
+    @Query("UPDATE ElementDatabaseModelR SET send_sms = :send_sms WHERE relative_id = :relative_id")
+    void setElementSendSms(boolean send_sms, Integer relative_id);
+
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status")
     List<QuestionnaireDatabaseModelR> getQuestionnaireByUserIdWithStatus(int userId, String status);
 

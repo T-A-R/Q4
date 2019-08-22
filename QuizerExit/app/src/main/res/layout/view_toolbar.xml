@@ -33,7 +33,7 @@
 
                 <ImageView
                     android:id="@+id/icon"
-                    android:src="@drawable/ic_preloader"
+                    android:src="@drawable/q_icon"
                     android:visibility="gone"
                     android:tint="@android:color/white"
                     android:layout_width="match_parent"

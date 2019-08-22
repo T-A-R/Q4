@@ -16,6 +16,7 @@ import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.model.config.PhoneModel;
+import pro.quizer.quizerexit.model.config.QuestionsMatchesModel;
 import pro.quizer.quizerexit.model.config.ReserveChannelModel;
 import pro.quizer.quizerexit.model.sms.SmsStage;
 
@@ -30,13 +31,11 @@ public final class SmsUtils {
         final PendingIntent sentPI = PendingIntent.getBroadcast(pBaseActivity, 0, new Intent(SENT), 0);
         final PendingIntent deliveredPI = PendingIntent.getBroadcast(pBaseActivity, 0, new Intent(DELIVERED), 0);
 
-        for(String smsNumber : smsNumbers) {
+        for (String smsNumber : smsNumbers) {
 
             final StringBuilder sms = new StringBuilder();
 
             for (final SmsStage smsStage : pSmsStages) {
-//            sms.append(smsStage.toString());
-                Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>> sendSms: " + smsNumber + " " + smsStage.getSmsAnswers().get(smsNumber));
                 try {
                     sms.append(smsStage.getSmsAnswers().get(smsNumber).toString());
                 } catch (Exception e) {
@@ -64,7 +63,15 @@ public final class SmsUtils {
                     switch (getResultCode()) {
                         case Activity.RESULT_OK:
                             for (final SmsStage smsStage : pSmsStages) {
-                                smsStage.markAsSent(smsNumber);
+                                Integer questionId = null;
+                                for (QuestionsMatchesModel questionsMatchesModel : smsStage.getQuestionsMatches()) {
+                                    if (questionsMatchesModel.getSmsNum().equals(smsNumber)) {
+                                        questionId = questionsMatchesModel.getQuestionId();
+                                        break;
+                                    }
+                                }
+                                if (smsNumber != null && questionId != null)
+                                    smsStage.markAsSent(smsNumber, questionId);
                             }
 
                             if (pCallback != null) {

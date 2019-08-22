@@ -38,6 +38,9 @@ public class ElementDatabaseModelR {
     @ColumnInfo(name = "type")
     private String type;
 
+    @ColumnInfo(name = "send_sms")
+    private boolean send_sms;
+
     public ElementDatabaseModelR() {
     }
 
@@ -53,6 +56,7 @@ public class ElementDatabaseModelR {
         this.rank = rank;
         this.value = value;
         this.type = type;
+        this.send_sms = false;
     }
 
     public int getId() {
@@ -133,5 +137,13 @@ public class ElementDatabaseModelR {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public boolean getSend_sms() {
+        return send_sms;
+    }
+
+    public void setSend_sms(boolean send_sms) {
+        this.send_sms = send_sms;
     }
 }

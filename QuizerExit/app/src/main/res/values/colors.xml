@@ -12,9 +12,11 @@
     <color name="red">#985E52</color>
     <color name="gray">#AAAAAA</color>
     <color name="lightGray">#D3D3D3</color>
+    <color name="lightGray2">#E0E0E0</color>
 
     <color name="checkbox_disabled_color">#AAAAAA</color>
     <color name="checkbox_enabled_color">#636363</color>
     <color name="checkbox_selected_color">@color/brand_color</color>
+    <color name="dark_shadow">#cc222222</color>
 
 </resources>

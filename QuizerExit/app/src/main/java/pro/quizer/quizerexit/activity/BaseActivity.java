@@ -771,4 +771,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
             }
         }
     }
+
+    public boolean hasReserveChannel() {
+        return getReserveChannel() != null;
+    }
 }

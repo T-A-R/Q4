@@ -2,25 +2,35 @@ package pro.quizer.quizerexit.adapter;
 
 import android.content.DialogInterface;
 import android.os.Parcel;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.ICallback;
+import pro.quizer.quizerexit.model.sms.SmsItem;
 import pro.quizer.quizerexit.model.sms.SmsStage;
 import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.SmsUtils;
 import pro.quizer.quizerexit.utils.SystemUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
+
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
 public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
 
@@ -34,6 +44,8 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
         TextView mSmsStatus;
         View mCopySms;
         Button mRetryButton;
+        RecyclerView recyclerView;
+        LinearLayout cont;
 
         SmsViewHolder(View view) {
             super(view);
@@ -43,6 +55,9 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
             mSmsStatus = view.findViewById(R.id.sms_status);
             mCopySms = view.findViewById(R.id.sms_copy);
             mRetryButton = view.findViewById(R.id.sms_retry);
+            cont = view.findViewById(R.id.sms_stage_cont);
+
+            recyclerView = (RecyclerView) view.findViewById(R.id.sms_rv);
         }
     }
 
@@ -65,67 +80,43 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
         final long timeTo = smsStage.getTimeTo() * 1000L;
         final long currentTime = DateUtils.getCurrentTimeMillis() * 1000L;
 
+        SmsHolderAdapter mSmsHolderAdapter;
+        mSmsHolderAdapter = new SmsHolderAdapter(mBaseActivity, smsStage);
+        holder.recyclerView.setAdapter(mSmsHolderAdapter);
+        holder.recyclerView.setItemAnimator(new DefaultItemAnimator());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mBaseActivity, LinearLayoutManager.VERTICAL, false);
+        holder.recyclerView.setLayoutManager(linearLayoutManager);
+
         final String timeFromString = DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, timeFrom);
         final String timeToString = DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, timeTo);
         final String timeInterval = String.format(mBaseActivity.getString(R.string.VIEW_SMS_TIME_INTERVAL), timeFromString, timeToString);
-        final String smsText = smsStage.toString();
         final String smsStatus = smsStage.getStatus();
 
-        holder.mSmsStatus.setText(smsStatus);
+
         holder.mTimeInterval.setText(timeInterval);
-        holder.mSmsText.setText(smsText);
 
         final boolean availableToSend = currentTime > timeFrom;
 
-        UiUtils.setButtonEnabled(holder.mRetryButton, availableToSend);
+        final boolean finished = currentTime > timeTo;
+        final int sdk = android.os.Build.VERSION.SDK_INT;
+        if (finished) {
+            holder.mSmsStatus.setText(Constants.Sms.ENDED);
 
-        holder.mRetryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(mBaseActivity, R.style.AlertDialogTheme);
-                alertDialog.setCancelable(false);
-                alertDialog.setTitle(R.string.DIALOG_SMS_SENDING);
-                alertDialog.setMessage(String.format(mBaseActivity.getString(R.string.DIALOG_SMS_SENDING_CONFIRMATION), timeInterval));
-                alertDialog.setPositiveButton(R.string.VIEW_BUTTON_SEND, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int which) {
-                        SmsUtils.sendSms(mBaseActivity, new ICallback() {
-                            @Override
-                            public void onStarting() {
-
-                            }
-
-                            @Override
-                            public void onSuccess() {
-                                notifyItemChanged(position);
-                            }
-
-                            @Override
-                            public void onError(Exception pException) {
-
-                            }
-                        }, Collections.singletonList(smsStage));
-                    }
-                });
-                alertDialog.setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-                if (!mBaseActivity.isFinishing()) {
-                    alertDialog.show();
-                }
+            if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_gray_shadow) );
+            } else {
+                holder.cont.setBackground(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_gray_shadow));
             }
-        });
-
-        holder.mCopySms.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SystemUtils.copyText(SmsUtils.formatSmsPrefix(smsText, mBaseActivity), mBaseActivity);
+        }
+        else
+        {
+            holder.mSmsStatus.setText(Constants.Sms.NOT_ENDED);
+            if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_shadow) );
+            } else {
+                holder.cont.setBackground(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_shadow));
             }
-        });
+        }
     }
 
     @Override

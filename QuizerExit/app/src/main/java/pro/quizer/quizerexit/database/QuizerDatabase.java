@@ -10,10 +10,19 @@ import pro.quizer.quizerexit.database.model.CrashLogs;
 import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
 import pro.quizer.quizerexit.database.model.ItemR;
 import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
+import pro.quizer.quizerexit.database.model.SmsItemR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 
 
-@Database(entities = {ActivationModelR.class, ElementDatabaseModelR.class, ItemR.class, CategoryR.class, QuestionnaireDatabaseModelR.class, UserModelR.class, AppLogsR.class, CrashLogs.class}, version = 5)
+@Database(entities = {ActivationModelR.class,
+        ElementDatabaseModelR.class,
+        ItemR.class,
+        CategoryR.class,
+        QuestionnaireDatabaseModelR.class,
+        UserModelR.class,
+        AppLogsR.class,
+        CrashLogs.class,
+        SmsItemR.class}, version = 6)
 public abstract class QuizerDatabase extends RoomDatabase {
     public abstract QuizerDao getQuizerDao();
 }

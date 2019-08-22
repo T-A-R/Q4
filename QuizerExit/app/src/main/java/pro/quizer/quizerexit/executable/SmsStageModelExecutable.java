@@ -62,8 +62,6 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
 
     private void load(@QuestionnaireStatus final String pStatus, final Map<String, SmsAnswer> result) {
 
-        Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! execute: " + pStatus);
-
         final List<ElementDatabaseModelR> allElements = new ArrayList<>();
 
         final List<QuestionnaireDatabaseModelR> questionnaires = BaseActivity.getDao().getQuestionnaireWithTime(
@@ -97,7 +95,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
                 }
 
                 result.put(index, smsAnswer);
-                mSmsStage.setStatus(pStatus);
+//                mSmsStage.setStatus(pStatus);
             }
         }
     }

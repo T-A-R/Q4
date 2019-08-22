@@ -12,6 +12,7 @@ import pro.quizer.quizerexit.database.model.AppLogsR;
 import pro.quizer.quizerexit.database.model.CrashLogs;
 import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
 import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
+import pro.quizer.quizerexit.database.model.SmsItemR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 
 @Dao
@@ -131,5 +132,20 @@ public interface QuizerDao {
 
     @Query("SELECT * FROM CrashLogs")
     List<CrashLogs> getCrashLogs();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertSmsItem(SmsItemR smsItemR);
+
+    @Query("UPDATE SmsItemR SET smsStatus = :status WHERE smsNumber = :smsNumber")
+    void setSmsItemStatusBySmsNumber(String smsNumber, String status);
+
+    @Query("SELECT * FROM SmsItemR")
+    List<SmsItemR> getSmsItems();
+
+    @Query("SELECT * FROM SmsItemR WHERE smsNumber = :smsNumber")
+    List<SmsItemR> getSmsItemBySmsNumber(String smsNumber);
+
+    @Query("DELETE FROM SmsItemR")
+    void clearSmsDatabase();
 
 }

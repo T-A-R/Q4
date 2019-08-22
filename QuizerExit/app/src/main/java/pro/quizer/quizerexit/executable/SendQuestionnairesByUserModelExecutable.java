@@ -76,7 +76,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                 alertDialog.setPositiveButton(R.string.VIEW_BUTTON_SEND, new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
-                        SmsUtils.sendSms(mBaseActivity, getCallback(), readyToSendStages);
+                        SmsUtils.sendSms(mBaseActivity, getCallback(), readyToSendStages, null);
                     }
                 });
                 alertDialog.setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
@@ -90,7 +90,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                     alertDialog.show();
                 }
             } else {
-                SmsUtils.sendSms(mBaseActivity, getCallback(), readyToSendStages);
+                SmsUtils.sendSms(mBaseActivity, getCallback(), readyToSendStages, null);
             }
         }
 

@@ -39,6 +39,9 @@ public class ConfigModel implements Serializable {
     @SerializedName("force_gps")
     private boolean force_gps;
 
+    @SerializedName("force_auto_time")
+    private boolean force_auto_time;
+
     @SerializedName("audio_record_all")
     private boolean audio_record_all;
 
@@ -116,6 +119,10 @@ public class ConfigModel implements Serializable {
 
     public boolean isForceGps() {
         return force_gps;
+    }
+
+    public boolean isForceTime() {
+        return force_auto_time;
     }
 
     public boolean isIsCriticalUpdate() {

@@ -1,23 +1,32 @@
 package pro.quizer.quizerexit.fragment;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.TimerTask;
 
 import pro.quizer.quizerexit.BuildConfig;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.broadcast.StartSmsSender;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.SendQuestionnairesByUserModelExecutable;
@@ -30,6 +39,7 @@ import pro.quizer.quizerexit.utils.SystemUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 import pro.quizer.quizerexit.view.AppDrawer;
 
+import static pro.quizer.quizerexit.activity.BaseActivity.EXIT;
 import static pro.quizer.quizerexit.activity.BaseActivity.IS_AFTER_AUTH;
 import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
@@ -170,7 +180,7 @@ public class HomeFragment extends BaseFragment implements ICallback {
             quotasBtn.setVisibility(View.GONE);
         }
 
-
+        startSMS();
     }
 
     private void initSyncInfoViews() {
@@ -228,6 +238,43 @@ public class HomeFragment extends BaseFragment implements ICallback {
 
         if (isAdded()) {
 //            showToast(getString(R.string.NOTIFICATION_NO_CONNECTION_SAVING_QUIZ));
+        }
+    }
+
+    public void startSMS() {
+
+        int STARTHOUR = 13;
+        int startMinute = 55;
+
+        final Calendar calendar = Calendar.getInstance();
+        final Calendar calendarCurrent = Calendar.getInstance();
+
+        TimeZone mTimeZone = calendar.getTimeZone();
+        int mGMTOffset = mTimeZone.getRawOffset() / 3600000;
+        int startHour = STARTHOUR + mGMTOffset;
+
+        Log.d(TAG, "GMT: " + mGMTOffset);
+
+        final AlarmManager am = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(getContext(), StartSmsSender.class);
+        final PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, i, 0);
+
+        if (EXIT) {
+            calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),
+                    startHour, startMinute, 0);
+
+            Log.d(TAG, "onClick timePicker.getHour(): " + STARTHOUR);
+
+            if (calendarCurrent.getTimeInMillis() < calendar.getTimeInMillis()) {
+
+                am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                Toast.makeText(getContext().getApplicationContext(), "Alarm is set " + startHour + ":" + startMinute, Toast.LENGTH_SHORT).show();
+            }
+        } else {
+//            pendingIntent.cancel();
+//            if (am != null) {
+//                am.cancel(pendingIntent);
+//            }
         }
     }
 }

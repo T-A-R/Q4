@@ -1,6 +1,8 @@
 package pro.quizer.quizerexit.activity;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,10 +24,12 @@ import com.google.gson.GsonBuilder;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -34,6 +38,7 @@ import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.CoreApplication;
 import pro.quizer.quizerexit.DrawerUtils;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.broadcast.StartSmsSender;
 import pro.quizer.quizerexit.database.QuizerDao;
 import pro.quizer.quizerexit.database.model.ActivationModelR;
 import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
@@ -743,7 +748,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
             List<StagesModel> stages = getReserveChannel().getStages();
             List<Integer> datesList = new ArrayList<>();
-            Date startDate = null;
+            Long startDate = null;
 
 
             if (stages != null) {
@@ -756,16 +761,18 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
                     for (int i = 0; i < datesList.size(); i++) {
                         if (datesList.get(i) > System.currentTimeMillis() / 1000) {
-                            startDate = new Date(Long.valueOf(datesList.get(i)) * 1000);
+                            startDate = Long.valueOf(datesList.get(i)) * 1000;
                             Log.d(TAG, "============= DIALOG: date got: " + startDate);
                             break;
                         }
                     }
 
                     if (startDate != null) {
-                        mTimer = new Timer();
-                        mAlertSmsTask = new AlertSmsTask();
-                        mTimer.schedule(mAlertSmsTask, startDate);
+//                        mTimer = new Timer();
+//                        mAlertSmsTask = new AlertSmsTask();
+//                        mTimer.schedule(mAlertSmsTask, startDate);
+
+                        startSMS(startDate);
                     }
                 }
             }
@@ -774,5 +781,48 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     public boolean hasReserveChannel() {
         return getReserveChannel() != null;
+    }
+
+    public void startSMS(Long startTime) {
+
+        Log.d(TAG, "(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0) startSMS: ");
+
+        int STARTHOUR = 13;
+        int startMinute = 55;
+
+        final Calendar calendar = Calendar.getInstance();
+        final Calendar calendarCurrent = Calendar.getInstance();
+
+        TimeZone mTimeZone = calendar.getTimeZone();
+        int mGMTOffset = mTimeZone.getRawOffset() / 3600000;
+        int startHour = STARTHOUR + mGMTOffset;
+
+        Log.d(TAG, "GMT: " + mGMTOffset);
+
+        final AlarmManager am = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(getContext(), StartSmsSender.class);
+        final PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, i, 0);
+
+        if (EXIT) {
+            calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),
+                    startHour, startMinute, 0);
+
+            Log.d(TAG, "onClick timePicker.getHour(): " + STARTHOUR);
+
+            am.set(AlarmManager.RTC_WAKEUP, startTime, pendingIntent);
+            Toast.makeText(getContext().getApplicationContext(), "Alarm is set " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, startTime), Toast.LENGTH_SHORT).show();
+
+            if (calendarCurrent.getTimeInMillis() < calendar.getTimeInMillis()) {
+
+//                am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+//                am.set(AlarmManager.RTC_WAKEUP, startTime, pendingIntent);
+//                Toast.makeText(getContext().getApplicationContext(), "Alarm is set " + startHour + ":" + startMinute, Toast.LENGTH_SHORT).show();
+            }
+        } else {
+//            pendingIntent.cancel();
+//            if (am != null) {
+//                am.cancel(pendingIntent);
+//            }
+        }
     }
 }

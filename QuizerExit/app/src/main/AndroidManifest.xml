@@ -13,7 +13,6 @@
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.VIBRATE"/>
-    <!--<uses-permission android:permission="android.permission.BIND_JOB_SERVICE" />-->
 
     <!--Функция отправки смс не используется для прохождения обычных опросов (при обычном опросе кнопка смс отсутствует в интерфейсе приложения). Смс отсылаются только в случае проведения Экзит-Пулов для обеспечения оперативной доставки до сервера результатов Экзит-Пула в случае сбоев с Интернетом.-->
     <uses-permission android:name="android.permission.SEND_SMS" />

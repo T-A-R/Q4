@@ -179,8 +179,6 @@ public class HomeFragment extends BaseFragment implements ICallback {
         } else {
             quotasBtn.setVisibility(View.GONE);
         }
-
-        startSMS();
     }
 
     private void initSyncInfoViews() {
@@ -238,43 +236,6 @@ public class HomeFragment extends BaseFragment implements ICallback {
 
         if (isAdded()) {
 //            showToast(getString(R.string.NOTIFICATION_NO_CONNECTION_SAVING_QUIZ));
-        }
-    }
-
-    public void startSMS() {
-
-        int STARTHOUR = 13;
-        int startMinute = 55;
-
-        final Calendar calendar = Calendar.getInstance();
-        final Calendar calendarCurrent = Calendar.getInstance();
-
-        TimeZone mTimeZone = calendar.getTimeZone();
-        int mGMTOffset = mTimeZone.getRawOffset() / 3600000;
-        int startHour = STARTHOUR + mGMTOffset;
-
-        Log.d(TAG, "GMT: " + mGMTOffset);
-
-        final AlarmManager am = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-        Intent i = new Intent(getContext(), StartSmsSender.class);
-        final PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, i, 0);
-
-        if (EXIT) {
-            calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),
-                    startHour, startMinute, 0);
-
-            Log.d(TAG, "onClick timePicker.getHour(): " + STARTHOUR);
-
-            if (calendarCurrent.getTimeInMillis() < calendar.getTimeInMillis()) {
-
-                am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-                Toast.makeText(getContext().getApplicationContext(), "Alarm is set " + startHour + ":" + startMinute, Toast.LENGTH_SHORT).show();
-            }
-        } else {
-//            pendingIntent.cancel();
-//            if (am != null) {
-//                am.cancel(pendingIntent);
-//            }
         }
     }
 }

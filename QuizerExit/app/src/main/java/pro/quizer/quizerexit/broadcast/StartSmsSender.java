@@ -10,14 +10,11 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.widget.Toast;
-import android.support.v4.app.NotificationManagerCompat;
 import android.media.MediaPlayer;
 import android.os.Vibrator;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.MainActivity;
-import pro.quizer.quizerexit.service.NotificationService;
 
 public class StartSmsSender extends BroadcastReceiver {
 
@@ -28,14 +25,6 @@ public class StartSmsSender extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
-//        Intent intent1 = new Intent(context, NotificationService.class);
-//        context.startService(intent1);
-
-//        mp = MediaPlayer.create(this, R.raw.sound_clip);
-//        vib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-//        vib.vibrate(500);
-//        mp.start();
 
 //        Notification.Builder builder = new Notification.Builder(context);
 //        builder.setContentTitle("Стадия закончена");
@@ -67,6 +56,7 @@ public class StartSmsSender extends BroadcastReceiver {
             mChannel.enableVibration(true);
             mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
             mChannel.setShowBadge(false);
+            assert notificationManager != null;
             notificationManager.createNotificationChannel(mChannel);
         }
 
@@ -87,12 +77,9 @@ public class StartSmsSender extends BroadcastReceiver {
         notificationCompat.defaults |= Notification.DEFAULT_SOUND;
         notificationCompat.defaults |= Notification.DEFAULT_VIBRATE;
 
-        notificationManager.notify(NOTIFICATION_ID, notificationCompat);
+        if (notificationManager != null) {
+            notificationManager.notify(NOTIFICATION_ID, notificationCompat);
+        }
 
-//        Notification notificationCompat = builder.build();
-//        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
-//        notificationCompat.defaults |= Notification.DEFAULT_SOUND;
-//        notificationCompat.defaults |= Notification.DEFAULT_VIBRATE;
-//        managerCompat.notify(NOTIFICATION_ID, notificationCompat);
     }
 }

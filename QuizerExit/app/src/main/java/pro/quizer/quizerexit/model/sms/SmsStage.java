@@ -55,10 +55,11 @@ public class SmsStage implements Serializable {
         return mContext.getString(mStatus != null && mStatus.equals(QuestionnaireStatus.SENT) ? R.string.STATUS_SENT : R.string.STATUS_NOT_SENT);
     }
 
-    public void setStatus(@QuestionnaireStatus final String pStatus, String smsNumber) {
+    public void setStatus(@QuestionnaireStatus final String pStatus, String smsNumber, Integer questionId) {
 //        mStatus = pStatus;
 //        mSmsAnswers.get(smsNumber).setmSmsStatus(pStatus);
         BaseActivity.getDao().setSmsItemStatusBySmsNumber(smsNumber, pStatus);
+        BaseActivity.getDao().setElementSendSms(true, questionId);
     }
 
     @Override
@@ -72,13 +73,13 @@ public class SmsStage implements Serializable {
         return result.toString();
     }
 
-    public void markAsSent(String smsNumber) {
+    public void markAsSent(String smsNumber, Integer questionId) {
 
         for (final String token : mTokens) {
             BaseActivity.getDao().setQuestionnaireSendSms(true, token);
         }
 
-        setStatus(QuestionnaireStatus.SENT, smsNumber);
+        setStatus(QuestionnaireStatus.SENT, smsNumber, questionId);
     }
 
     public Map<String, SmsAnswer> getSmsAnswers() {

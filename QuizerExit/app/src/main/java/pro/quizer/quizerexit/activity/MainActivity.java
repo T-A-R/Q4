@@ -1,13 +1,17 @@
 package pro.quizer.quizerexit.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.view.Toolbar;
 
 public class MainActivity extends BaseActivity implements ICallback {
+
+    boolean isSmsFragment = false;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -27,18 +31,33 @@ public class MainActivity extends BaseActivity implements ICallback {
         });
 
         boolean isAfterAuth = false;
+        boolean isAfterNotification = false;
         final Bundle bundle = getIntent().getExtras();
 
         if (bundle != null) {
             isAfterAuth = bundle.getBoolean(IS_AFTER_AUTH);
+            isAfterNotification = bundle.getBoolean("AfterNotification");
+            if (isAfterNotification && !isSmsFragment) {
+                Toast.makeText(this, "NOTIFICATION ON", Toast.LENGTH_LONG).show();
+
+            }
 
             if (isAfterAuth) {
                 bundle.putBoolean(IS_AFTER_AUTH, false);
             }
         }
 
-        showHomeFragment(false, isAfterAuth);
-        mToolbar.setTitle(getString(R.string.VIEW_HOME_TITLE));
+        if (isAfterNotification && !isSmsFragment) {
+            bundle.putBoolean("AfterNotification", false);
+            isSmsFragment = true;
+            showSmsFragment();
+        } else {
+            Log.d(TAG, "??????????????????????????????????????????: ");
+            showHomeFragment(false, isAfterAuth);
+            mToolbar.setTitle(getString(R.string.VIEW_HOME_TITLE));
+
+        }
+
     }
 
     @Override
@@ -54,5 +73,15 @@ public class MainActivity extends BaseActivity implements ICallback {
     @Override
     public void onError(final Exception pException) {
 //        hideProgressBar();
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        super.onBackPressed();
+        Log.d(TAG, "onBackPressed: ++++++++++++++++");
+        if (isSmsFragment) {
+            initViews();
+        }
     }
 }

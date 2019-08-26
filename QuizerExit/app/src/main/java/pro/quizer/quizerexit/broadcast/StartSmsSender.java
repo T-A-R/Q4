@@ -14,6 +14,7 @@ import android.media.MediaPlayer;
 import android.os.Vibrator;
 
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.activity.ElementActivity;
 import pro.quizer.quizerexit.activity.MainActivity;
 
 public class StartSmsSender extends BroadcastReceiver {
@@ -62,16 +63,21 @@ public class StartSmsSender extends BroadcastReceiver {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.q_icon)
-                .setContentTitle("Стадия закончена")
-                .setContentText("Пожалуйста отправьте волну СМС");
+                .setContentTitle("Отправка отчётов с помощью СМС.")
+                .setContentText("У вас есть неотправленные анкеты за прошедший период. Необходимо отправить отчёт с результатами с помощью СМС.");
 
-        Intent resultIntent = new Intent(context, MainActivity.class);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        stackBuilder.addParentStack(MainActivity.class);
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        if(!ElementActivity.CurrentlyRunning) {
 
-        builder.setContentIntent(resultPendingIntent);
+            Intent resultIntent = new Intent(context, MainActivity.class);
+            resultIntent.putExtra("AfterNotification", true);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+            stackBuilder.addParentStack(MainActivity.class);
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            builder.setContentIntent(resultPendingIntent);
+
+        }
 
         Notification notificationCompat = builder.build();
         notificationCompat.defaults |= Notification.DEFAULT_SOUND;

@@ -699,42 +699,45 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
         @Override
         public void run() {
+            Log.d(TAG, "run: STARTED !!!!!!!!!!!!!!!!!!!!!!!!! " + ElementActivity.CurrentlyRunning);
+            if (ElementActivity.CurrentlyRunning) {
 
-            Log.d(TAG, "============= DIALOG SMS to send: " + getDao().getQuestionnaireForStage(
-                    getCurrentUserId(),
-                    QuestionnaireStatus.NOT_SENT,
-                    Constants.QuestionnaireStatuses.COMPLITED,
-                    false).size());
+                Log.d(TAG, "============= DIALOG SMS to send: " + getDao().getQuestionnaireForStage(
+                        getCurrentUserId(),
+                        QuestionnaireStatus.NOT_SENT,
+                        Constants.QuestionnaireStatuses.COMPLITED,
+                        false).size());
 
-            if (!isFinishing() && getDao().getQuestionnaireForStage(
-                    getCurrentUserId(),
-                    QuestionnaireStatus.NOT_SENT,
-                    Constants.QuestionnaireStatuses.COMPLITED,
-                    false).size() > 0) {
+                if (!isFinishing() && getDao().getQuestionnaireForStage(
+                        getCurrentUserId(),
+                        QuestionnaireStatus.NOT_SENT,
+                        Constants.QuestionnaireStatuses.COMPLITED,
+                        false).size() > 0) {
 
-                runOnUiThread(new Runnable() {
+                    runOnUiThread(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
-                                .setCancelable(false)
-                                .setTitle(R.string.DIALOG_SENDING_WAVES_VIA_SMS)
-                                .setMessage(R.string.DIALOG_SENDING_WAVES_REQUEST)
-                                .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(final DialogInterface dialog, final int which) {
-                                        showSmsFragment();
-                                    }
-                                })
-                                .setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void run() {
+                            new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
+                                    .setCancelable(false)
+                                    .setTitle(R.string.DIALOG_SENDING_WAVES_VIA_SMS)
+                                    .setMessage(R.string.DIALOG_SENDING_WAVES_REQUEST)
+                                    .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(final DialogInterface dialog, final int which) {
+                                            showSmsFragment();
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
 
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                })
-                                .show();
-                    }
-                });
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    })
+                                    .show();
+                        }
+                    });
+                }
             }
         }
     }
@@ -760,6 +763,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                     Collections.sort(datesList);
 
                     for (int i = 0; i < datesList.size(); i++) {
+                        Log.d(TAG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ activateExitReminder: " + Long.valueOf(datesList.get(i)) * 1000);
                         if (datesList.get(i) > System.currentTimeMillis() / 1000) {
                             startDate = Long.valueOf(datesList.get(i)) * 1000;
                             Log.d(TAG, "============= DIALOG: date got: " + startDate);
@@ -768,12 +772,14 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                     }
 
                     if (startDate != null) {
-//                        mTimer = new Timer();
-//                        mAlertSmsTask = new AlertSmsTask();
-//                        mTimer.schedule(mAlertSmsTask, startDate);
-
-                        startSMS(startDate);
+                        mTimer = new Timer();
+                        mAlertSmsTask = new AlertSmsTask();
+                        mTimer.schedule(mAlertSmsTask, startDate);
+                        Log.d(TAG, "activateExitReminder: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, startDate));
+//                        startSMS(startDate);
                     }
+
+//                    startSMS(null);
                 }
             }
         }
@@ -788,7 +794,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         Log.d(TAG, "(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0) startSMS: ");
 
         int STARTHOUR = 13;
-        int startMinute = 55;
+        int startMinute = 33;
 
         final Calendar calendar = Calendar.getInstance();
         final Calendar calendarCurrent = Calendar.getInstance();
@@ -805,11 +811,13 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
         if (EXIT) {
             calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),
-                    startHour, startMinute, 0);
+                    STARTHOUR, startMinute, 0);
 
             Log.d(TAG, "onClick timePicker.getHour(): " + STARTHOUR);
+            Log.d(TAG, "@#@#@#@#@#@#@#@#@#@#@#@#@#@## onClick timePicker.getHour(): " + calendarCurrent.getTimeInMillis());
 
             am.set(AlarmManager.RTC_WAKEUP, startTime, pendingIntent);
+//            am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
             Toast.makeText(getContext().getApplicationContext(), "Alarm is set " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, startTime), Toast.LENGTH_SHORT).show();
 
             if (calendarCurrent.getTimeInMillis() < calendar.getTimeInMillis()) {

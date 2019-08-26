@@ -24,12 +24,10 @@ import com.google.gson.GsonBuilder;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -699,14 +697,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
         @Override
         public void run() {
-            Log.d(TAG, "run: STARTED !!!!!!!!!!!!!!!!!!!!!!!!! " + ElementActivity.CurrentlyRunning);
             if (ElementActivity.CurrentlyRunning) {
-
-                Log.d(TAG, "============= DIALOG SMS to send: " + getDao().getQuestionnaireForStage(
-                        getCurrentUserId(),
-                        QuestionnaireStatus.NOT_SENT,
-                        Constants.QuestionnaireStatuses.COMPLITED,
-                        false).size());
 
                 if (!isFinishing() && getDao().getQuestionnaireForStage(
                         getCurrentUserId(),
@@ -752,6 +743,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
             List<StagesModel> stages = getReserveChannel().getStages();
             List<Integer> datesList = new ArrayList<>();
             Long startDate = null;
+            Date startDateForDialog = null;
 
 
             if (stages != null) {
@@ -763,10 +755,9 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                     Collections.sort(datesList);
 
                     for (int i = 0; i < datesList.size(); i++) {
-                        Log.d(TAG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ activateExitReminder: " + Long.valueOf(datesList.get(i)) * 1000);
                         if (datesList.get(i) > System.currentTimeMillis() / 1000) {
                             startDate = Long.valueOf(datesList.get(i)) * 1000;
-                            Log.d(TAG, "============= DIALOG: date got: " + startDate);
+                            startDateForDialog = new Date(Long.valueOf(datesList.get(i)) * 1000);
                             break;
                         }
                     }
@@ -774,12 +765,10 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                     if (startDate != null) {
                         mTimer = new Timer();
                         mAlertSmsTask = new AlertSmsTask();
-                        mTimer.schedule(mAlertSmsTask, startDate);
-                        Log.d(TAG, "activateExitReminder: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, startDate));
-//                        startSMS(startDate);
-                    }
+                        mTimer.schedule(mAlertSmsTask, startDateForDialog);
 
-//                    startSMS(null);
+                        startSMS(startDate);
+                    }
                 }
             }
         }
@@ -791,46 +780,12 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     public void startSMS(Long startTime) {
 
-        Log.d(TAG, "(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0) startSMS: ");
-
-        int STARTHOUR = 13;
-        int startMinute = 33;
-
-        final Calendar calendar = Calendar.getInstance();
-        final Calendar calendarCurrent = Calendar.getInstance();
-
-        TimeZone mTimeZone = calendar.getTimeZone();
-        int mGMTOffset = mTimeZone.getRawOffset() / 3600000;
-        int startHour = STARTHOUR + mGMTOffset;
-
-        Log.d(TAG, "GMT: " + mGMTOffset);
-
         final AlarmManager am = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(getContext(), StartSmsSender.class);
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, i, 0);
 
         if (EXIT) {
-            calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),
-                    STARTHOUR, startMinute, 0);
-
-            Log.d(TAG, "onClick timePicker.getHour(): " + STARTHOUR);
-            Log.d(TAG, "@#@#@#@#@#@#@#@#@#@#@#@#@#@## onClick timePicker.getHour(): " + calendarCurrent.getTimeInMillis());
-
             am.set(AlarmManager.RTC_WAKEUP, startTime, pendingIntent);
-//            am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-            Toast.makeText(getContext().getApplicationContext(), "Alarm is set " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, startTime), Toast.LENGTH_SHORT).show();
-
-            if (calendarCurrent.getTimeInMillis() < calendar.getTimeInMillis()) {
-
-//                am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-//                am.set(AlarmManager.RTC_WAKEUP, startTime, pendingIntent);
-//                Toast.makeText(getContext().getApplicationContext(), "Alarm is set " + startHour + ":" + startMinute, Toast.LENGTH_SHORT).show();
-            }
-        } else {
-//            pendingIntent.cancel();
-//            if (am != null) {
-//                am.cancel(pendingIntent);
-//            }
         }
     }
 }

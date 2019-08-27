@@ -6,6 +6,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -709,6 +712,15 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
                         @Override
                         public void run() {
+
+                            try {
+                                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                                r.play();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
                             new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
                                     .setCancelable(false)
                                     .setTitle(R.string.DIALOG_SENDING_WAVES_VIA_SMS)

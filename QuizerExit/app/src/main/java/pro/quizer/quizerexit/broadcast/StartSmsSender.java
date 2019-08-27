@@ -60,15 +60,15 @@ public class StartSmsSender extends BroadcastReceiver {
 
             builder.setContentIntent(resultPendingIntent);
 
-        }
 
-        builder.getNotification().flags |= Notification.FLAG_AUTO_CANCEL;
-        Notification notificationCompat = builder.build();
-        notificationCompat.defaults |= Notification.DEFAULT_SOUND;
-        notificationCompat.defaults |= Notification.DEFAULT_VIBRATE;
+            builder.getNotification().flags |= Notification.FLAG_AUTO_CANCEL;
+            Notification notificationCompat = builder.build();
+            notificationCompat.defaults |= Notification.DEFAULT_SOUND;
+            notificationCompat.defaults |= Notification.DEFAULT_VIBRATE;
 
-        if (notificationManager != null) {
-            notificationManager.notify(NOTIFICATION_ID, notificationCompat);
+            if (notificationManager != null) {
+                notificationManager.notify(NOTIFICATION_ID, notificationCompat);
+            }
         }
 
     }

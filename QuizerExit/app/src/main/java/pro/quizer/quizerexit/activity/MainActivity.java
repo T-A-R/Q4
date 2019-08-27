@@ -37,10 +37,6 @@ public class MainActivity extends BaseActivity implements ICallback {
         if (bundle != null) {
             isAfterAuth = bundle.getBoolean(IS_AFTER_AUTH);
             isAfterNotification = bundle.getBoolean("AfterNotification");
-            if (isAfterNotification && !isSmsFragment) {
-                Toast.makeText(this, "NOTIFICATION ON", Toast.LENGTH_LONG).show();
-
-            }
 
             if (isAfterAuth) {
                 bundle.putBoolean(IS_AFTER_AUTH, false);
@@ -52,10 +48,8 @@ public class MainActivity extends BaseActivity implements ICallback {
             isSmsFragment = true;
             showSmsFragment();
         } else {
-            Log.d(TAG, "??????????????????????????????????????????: ");
             showHomeFragment(false, isAfterAuth);
             mToolbar.setTitle(getString(R.string.VIEW_HOME_TITLE));
-
         }
 
     }
@@ -79,7 +73,6 @@ public class MainActivity extends BaseActivity implements ICallback {
     public void onBackPressed() {
 
         super.onBackPressed();
-        Log.d(TAG, "onBackPressed: ++++++++++++++++");
         if (isSmsFragment) {
             initViews();
         }

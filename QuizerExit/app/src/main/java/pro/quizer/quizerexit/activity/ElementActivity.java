@@ -70,6 +70,7 @@ public class ElementActivity extends BaseActivity {
 
     public static final int FIRST_ELEMENT = Integer.MIN_VALUE;
     public static final int ONE_SEC = 1000;
+    public static boolean CurrentlyRunning = false;
     UserModelR mUser;
     ConfigModel mConfig;
     ProjectInfoModel mProjectInfo;
@@ -241,6 +242,7 @@ public class ElementActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        CurrentlyRunning= true;
     }
 
     public void pauseRecording() {
@@ -361,6 +363,8 @@ public class ElementActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        CurrentlyRunning = true;
 
         if (!checkPermission()) {
             requestPermission();

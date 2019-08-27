@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <!--Функция отправки смс не используется для прохождения обычных опросов (при обычном опросе кнопка смс отсутствует в интерфейсе приложения). Смс отсылаются только в случае проведения Экзит-Пулов для обеспечения оперативной доставки до сервера результатов Экзит-Пула в случае сбоев с Интернетом.-->
     <uses-permission android:name="android.permission.SEND_SMS" />
@@ -103,6 +104,18 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name=".broadcast.StartSmsSender"
+            android:enabled="true"
+            android:exported="false" >
+        </receiver>
+
+        <service
+            android:name=".service.NotificationService"
+            android:exported="false" >
+        </service>
+
 
     </application>
 

@@ -149,8 +149,8 @@
     <string name="DIALOG_ERROR_REMOVE_CURRENT_USER_TITLE">Ошибка удаления текущего пользователя</string>
     <string name="DIALOG_ERROR_REMOVE_CURRENT_USER_BODY">Перед удалением пользователя необходимо отправить все данные. Для для отправки всех данных перейдите в СИНХРОНИЗАЦИЮ.</string>
     <string name="DIALOG_GO_TO">Перейти</string>
-    <string name="DIALOG_SENDING_WAVES_VIA_SMS">Отправка волн через СМС</string>
-    <string name="DIALOG_SENDING_WAVES_REQUEST">У вас есть неотправленные анкеты. Вы хотите отправить волну сейчас через СМС?</string>
+    <string name="DIALOG_SENDING_WAVES_VIA_SMS">Отправка отчётов с помощью СМС.</string>
+    <string name="DIALOG_SENDING_WAVES_REQUEST">У вас есть неотправленные анкеты за прошедший период. Необходимо отправить отчёт с результатами с помощью СМС.</string>
     <string name="DIALOG_SENDING_WAVES_VIA_SMS_CONFIRMATION">Вы уверены, что хотите отправить волны для пользователя через СМС?</string>
     <string name="DIALOG_PLEASE_TURN_ON_GPS">Пожалуйста, включите GPS для продолжения работы.</string>
     <string name="DIALOG_PLEASE_TURN_ON_AUTO_TIME">Пожалуйста, включите автоматическое время сети.</string>
@@ -222,4 +222,6 @@
     <string name="VIEW_BUTTON_SEND_FINISHED">Отправить завершенные стадии</string>
     <string name="sdsdsd">fff</string>
     <string name="SMS_LIST_EMPTY">Нет неотправленных СМС по завершенным стадиям</string>
+    <string name="SMS_NOTIFICATION_TITLE">Отправка отчётов с помощью СМС.</string>
+    <string name="SMS_NOTIFICATION_TEXT">У вас есть неотправленные анкеты за прошедший период. Необходимо отправить отчёт с результатами с помощью СМС.</string>
 </resources>

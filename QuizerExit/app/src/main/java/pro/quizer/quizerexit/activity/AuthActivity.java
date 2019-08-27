@@ -1,5 +1,6 @@
 package pro.quizer.quizerexit.activity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -40,6 +41,7 @@ import pro.quizer.quizerexit.model.request.CrashRequestModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.utils.DateUtils;
+import pro.quizer.quizerexit.utils.DeviceUtils;
 import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.MD5Utils;
 import pro.quizer.quizerexit.utils.SPUtils;
@@ -56,6 +58,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
     private List<String> mSavedUsers;
     private List<UserModelR> mSavedUserModels;
     private TextView mVersionView;
+    private TextView mVersionWarning;
     //    private TextView mLogsView;
     private int mVersionTapCount = 0;
 
@@ -71,8 +74,18 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         mPasswordEditText = findViewById(R.id.auth_password_edit_text);
         mLoginSpinner = findViewById(R.id.login_spinner);
         mVersionView = findViewById(R.id.version_view);
+        mVersionWarning = findViewById(R.id.version_warning);
         final Button sendAuthButton = findViewById(R.id.send_auth_button);
         final TextView usersCount = findViewById(R.id.users_count);
+
+        final int sdk = android.os.Build.VERSION.SDK_INT;
+
+        if(sdk < Build.VERSION_CODES.LOLLIPOP && !Build.VERSION.RELEASE.equals("4.4.4")) {
+            mVersionWarning.setVisibility(View.VISIBLE);
+            mVersionWarning.setText(String.format(getString(R.string.VIEW_VERSION_WARNING), Build.VERSION.RELEASE));
+        } else {
+            mVersionWarning.setVisibility(View.GONE);
+        }
 
         if (Constants.Default.DEBUG) {
 //            mLogsView.setVisibility(View.VISIBLE);

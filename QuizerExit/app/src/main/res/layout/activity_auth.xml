@@ -29,9 +29,20 @@
         android:orientation="vertical">
 
         <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
+            android:id="@+id/version_warning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:gravity="center"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="18sp"
+            tools:text="@string/VIEW_VERSION_WARNING" />
+
+        <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
             android:id="@+id/users_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
             android:gravity="center"
             android:textColor="@android:color/black"

@@ -1,9 +1,14 @@
 package pro.quizer.quizerexit.activity;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -34,6 +39,7 @@ import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.CoreApplication;
 import pro.quizer.quizerexit.DrawerUtils;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.broadcast.StartSmsSender;
 import pro.quizer.quizerexit.database.QuizerDao;
 import pro.quizer.quizerexit.database.model.ActivationModelR;
 import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
@@ -694,42 +700,47 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
         @Override
         public void run() {
+            if (ElementActivity.CurrentlyRunning) {
 
-            Log.d(TAG, "============= DIALOG SMS to send: " + getDao().getQuestionnaireForStage(
-                    getCurrentUserId(),
-                    QuestionnaireStatus.NOT_SENT,
-                    Constants.QuestionnaireStatuses.COMPLITED,
-                    false).size());
+                if (!isFinishing() && getDao().getQuestionnaireForStage(
+                        getCurrentUserId(),
+                        QuestionnaireStatus.NOT_SENT,
+                        Constants.QuestionnaireStatuses.COMPLITED,
+                        false).size() > 0) {
 
-            if (!isFinishing() && getDao().getQuestionnaireForStage(
-                    getCurrentUserId(),
-                    QuestionnaireStatus.NOT_SENT,
-                    Constants.QuestionnaireStatuses.COMPLITED,
-                    false).size() > 0) {
+                    runOnUiThread(new Runnable() {
 
-                runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
 
-                    @Override
-                    public void run() {
-                        new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
-                                .setCancelable(false)
-                                .setTitle(R.string.DIALOG_SENDING_WAVES_VIA_SMS)
-                                .setMessage(R.string.DIALOG_SENDING_WAVES_REQUEST)
-                                .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(final DialogInterface dialog, final int which) {
-                                        showSmsFragment();
-                                    }
-                                })
-                                .setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
+                            try {
+                                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                                r.play();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                })
-                                .show();
-                    }
-                });
+                            new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
+                                    .setCancelable(false)
+                                    .setTitle(R.string.DIALOG_SENDING_WAVES_VIA_SMS)
+                                    .setMessage(R.string.DIALOG_SENDING_WAVES_REQUEST)
+                                    .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(final DialogInterface dialog, final int which) {
+                                            showSmsFragment();
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
+
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    })
+                                    .show();
+                        }
+                    });
+                }
             }
         }
     }
@@ -743,7 +754,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
             List<StagesModel> stages = getReserveChannel().getStages();
             List<Integer> datesList = new ArrayList<>();
-            Date startDate = null;
+            Long startDate = null;
+            Date startDateForDialog = null;
 
 
             if (stages != null) {
@@ -756,8 +768,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
                     for (int i = 0; i < datesList.size(); i++) {
                         if (datesList.get(i) > System.currentTimeMillis() / 1000) {
-                            startDate = new Date(Long.valueOf(datesList.get(i)) * 1000);
-                            Log.d(TAG, "============= DIALOG: date got: " + startDate);
+                            startDate = Long.valueOf(datesList.get(i)) * 1000;
+                            startDateForDialog = new Date(Long.valueOf(datesList.get(i)) * 1000);
                             break;
                         }
                     }
@@ -765,7 +777,9 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                     if (startDate != null) {
                         mTimer = new Timer();
                         mAlertSmsTask = new AlertSmsTask();
-                        mTimer.schedule(mAlertSmsTask, startDate);
+                        mTimer.schedule(mAlertSmsTask, startDateForDialog);
+
+                        startSMS(startDate);
                     }
                 }
             }
@@ -774,5 +788,16 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     public boolean hasReserveChannel() {
         return getReserveChannel() != null;
+    }
+
+    public void startSMS(Long startTime) {
+
+        final AlarmManager am = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(getContext(), StartSmsSender.class);
+        final PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, i, 0);
+
+        if (EXIT) {
+            am.set(AlarmManager.RTC_WAKEUP, startTime, pendingIntent);
+        }
     }
 }

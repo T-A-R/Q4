@@ -3,6 +3,7 @@ package pro.quizer.quizerexit.executable;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -55,7 +56,9 @@ public class UploadingExecutable extends BaseExecutable {
         moveFiles();
         moveQuestionnaires();
 
-        onSuccess();
+        if(mContext != null)
+            Toast.makeText(mContext, R.string.NOTIFICATION_UPLOADING, Toast.LENGTH_SHORT).show();
+//        onSuccess();
     }
 
     private void moveQuestionnaires() {

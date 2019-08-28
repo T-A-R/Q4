@@ -138,6 +138,7 @@
     <string name="NOTIFICATION_DOWNLOADING_FILES_ERROR">Ошибка при загрузке медиа-файлов.</string>
     <string name="NOTIFICATION_FORCE_GPS_ERROR">Работа без GPS координат невозможна в данном режиме работы! Спутники не инициализированы. Выйдите на отрытое пространство и дождитесь инициализации GPS.</string>
     <string name="NOTIFICATION_SENDING">Идет отправка…</string>
+    <string name="NOTIFICATION_UPLOADING">Идет выгрузка…</string>
     <string name="NOTIFICATION_UPDATING">Идет обновление…</string>
     <string name="NOTIFICATION_ANSWER_NOT_AVAILABLE_TABLE_QUESTION">Невозможно выбрать данный элемент.</string>
     <string name="NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS">Не удалось загрузить список квот.</string>
@@ -224,4 +225,5 @@
     <string name="SMS_LIST_EMPTY">Нет неотправленных СМС по завершенным стадиям</string>
     <string name="SMS_NOTIFICATION_TITLE">Отправка отчётов с помощью СМС.</string>
     <string name="SMS_NOTIFICATION_TEXT">У вас есть неотправленные анкеты за прошедший период. Необходимо отправить отчёт с результатами с помощью СМС.</string>
+
 </resources>

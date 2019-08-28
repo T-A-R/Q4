@@ -227,4 +227,18 @@
     <string name="SMS_NOTIFICATION_TITLE">Отправка отчётов с помощью СМС.</string>
     <string name="SMS_NOTIFICATION_TEXT">У вас есть неотправленные анкеты за прошедший период. Необходимо отправить отчёт с результатами с помощью СМС.</string>
 
+    <string name="VIEW_UPDATE_CONFIG">Обновить конфиг</string>
+    <string name="GET_CONFIG">Получение конфига</string>
+    <string name="TRY_TO_GET_CONFIG">Попытка получения конфига</string>
+    <string name="ERROR_601">Ошибка: 6.01</string>
+    <string name="ERROR_601_DESC">Ошибка 6.01 (Нет ответа от сервера. Возможны проблемы с подключением к сети интеренет)</string>
+    <string name="ERROR_602">Ошибка: 6.02</string>
+    <string name="ERROR_602_DESC">Ошибка 6.02 (Ошибка получения JSON из ответа сервера)</string>
+    <string name="ERROR_603">Ошибка: 6.03</string>
+    <string name="ERROR_603_DESC">Ошибка 6.03 (Ошибка парсинга JSON.)</string>
+    <string name="GET_CONFIG_DONE">Конфиг получен</string>
+    <string name="CONFIG_UPDATED">Конфиг обновлен</string>
+    <string name="ERROR_606">Ошибка: 6.06</string>
+    <string name="LOAD_FILES_COMPLITE">Загрузка медиа-файлов завершена</string>
+
 </resources>

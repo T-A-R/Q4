@@ -80,7 +80,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
 
         final int sdk = android.os.Build.VERSION.SDK_INT;
 
-        if(sdk < Build.VERSION_CODES.LOLLIPOP && !Build.VERSION.RELEASE.equals("4.4.4")) {
+        if (sdk < Build.VERSION_CODES.LOLLIPOP && !Build.VERSION.RELEASE.equals("4.4.4")) {
             mVersionWarning.setVisibility(View.VISIBLE);
             mVersionWarning.setText(String.format(getString(R.string.VIEW_VERSION_WARNING), Build.VERSION.RELEASE));
         } else {
@@ -245,15 +245,15 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         Gson gson = new Gson();
         String json = gson.toJson(configRequestModel);
 
-        addLogWithData(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, "Получение конфига", Constants.LogResult.SENT, "Попытка получения конфига", json);
+        addLogWithData(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.GET_CONFIG), Constants.LogResult.SENT, getString(R.string.TRY_TO_GET_CONFIG), json);
 
         QuizerAPI.getConfig(getServer(), json, responseBody -> {
 
             hideProgressBar();
 
             if (responseBody == null) {
-                showToast(getString(R.string.NOTIFICATION_SERVER_CONNECTION_ERROR) + " Ошибка: 6.01");
-                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, "Получение ответа от сервера на запрос конфига", Constants.LogResult.ERROR, "Ошибка 6.01 (Нет ответа от сервера. Возможны проблемы с подключением к сети интеренет)");
+                showToast(getString(R.string.NOTIFICATION_SERVER_CONNECTION_ERROR) + " " + getString(R.string.ERROR_601));
+                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.GET_CONFIG), Constants.LogResult.ERROR, getString(R.string.ERROR_601_DESC));
 
                 return;
             }
@@ -262,8 +262,8 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             try {
                 responseJson = responseBody.string();
             } catch (IOException e) {
-                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 6.02");
-                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, "Получение ответа от сервера на запрос конфига", Constants.LogResult.ERROR, "Ошибка 6.02 (Ошибка получения JSON из ответа сервера)");
+                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " " + getString(R.string.ERROR_602));
+                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.GET_CONFIG), Constants.LogResult.ERROR, getString(R.string.ERROR_602_DESC));
 
             }
             final GsonBuilder gsonBuilder = new GsonBuilder();
@@ -272,20 +272,20 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             try {
                 configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
             } catch (final Exception pE) {
-                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 6.03");
-                addLogWithData(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, "Получение ответа от сервера на запрос конфига", Constants.LogResult.ERROR, "Ошибка 6.03 (Ошибка парсинга JSON.)", responseJson);
+                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " " + getString(R.string.ERROR_603));
+                addLogWithData(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.GET_CONFIG), Constants.LogResult.ERROR, getString(R.string.ERROR_603_DESC), responseJson);
             }
 
             if (configResponseModel != null) {
                 if (configResponseModel.getResult() != 0) {
-                    addLogWithData(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, "Получение ответа от сервера на запрос конфига", Constants.LogResult.SUCCESS, "Конфиг получен", responseJson);
+                    addLogWithData(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.GET_CONFIG), Constants.LogResult.SUCCESS, getString(R.string.GET_CONFIG_DONE), responseJson);
                     downloadFiles(configResponseModel, pModel, pLogin, pPassword);
                 } else {
                     showToast(configResponseModel.getError());
-                    addLogWithData(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, "Получение ответа от сервера на запрос конфига", Constants.LogResult.ERROR, configResponseModel.getError(), responseJson);
+                    addLogWithData(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.GET_CONFIG), Constants.LogResult.ERROR, configResponseModel.getError(), responseJson);
                 }
             } else {
-                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " Ошибка: 6.06");
+                showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " " + getString(R.string.ERROR_606));
             }
         });
     }

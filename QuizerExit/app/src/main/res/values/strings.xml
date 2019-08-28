@@ -42,6 +42,7 @@
     <string name="VIEW_YES">Да</string>
     <string name="VIEW_NO">Нет</string>
     <string name="VIEW_USERS_COUNT_ON_DEVICE">Количество пользователей на данном устройстве: %1$s</string>
+    <string name="VIEW_VERSION_WARNING">Внимание! Вы работаете на устройстве с версией android %1$s. Стабильная работа приложения не гарантируется.</string>
     <string name="VIEW_ALL_COUNT_QUIZ">Количество собраных анкет: %1$s</string>
     <string name="VIEW_UNSENT_COUNT_QUIZ">Количество неотправленных анкет: %1$s</string>
     <string name="VIEW_UNSENT_COUNT_AUDIO">Количество неотправленных аудио файлов: %1$s</string>
@@ -138,6 +139,7 @@
     <string name="NOTIFICATION_DOWNLOADING_FILES_ERROR">Ошибка при загрузке медиа-файлов.</string>
     <string name="NOTIFICATION_FORCE_GPS_ERROR">Работа без GPS координат невозможна в данном режиме работы! Спутники не инициализированы. Выйдите на отрытое пространство и дождитесь инициализации GPS.</string>
     <string name="NOTIFICATION_SENDING">Идет отправка…</string>
+    <string name="NOTIFICATION_UPLOADING">Идет выгрузка…</string>
     <string name="NOTIFICATION_UPDATING">Идет обновление…</string>
     <string name="NOTIFICATION_ANSWER_NOT_AVAILABLE_TABLE_QUESTION">Невозможно выбрать данный элемент.</string>
     <string name="NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS">Не удалось загрузить список квот.</string>

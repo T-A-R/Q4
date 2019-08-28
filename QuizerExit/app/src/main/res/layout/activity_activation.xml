@@ -37,6 +37,7 @@
             android:hint="@string/TEXT_HINT_INPUT_ACTIVATION_KEY"
             android:inputType="textVisiblePassword"
             android:maxLines="1"
+            android:maxLength="20"
             android:textSize="18sp" />
 
         <pro.quizer.quizerexit.view.resizeble.button.ResizableButton

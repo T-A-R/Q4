@@ -800,4 +800,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
             am.set(AlarmManager.RTC_WAKEUP, startTime, pendingIntent);
         }
     }
+
+    public void updateConfig() {
+
+    }
 }

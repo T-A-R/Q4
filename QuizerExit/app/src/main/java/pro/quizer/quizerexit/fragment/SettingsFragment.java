@@ -43,6 +43,7 @@ public class SettingsFragment extends BaseFragment implements ICallback {
     };
 
     private TextView mConfigDateView;
+    private View mUpdateConfig;
     private TextView mConfigIdView;
     private TextView mAnswerMarginView;
     private View mDeleteUser;
@@ -196,6 +197,14 @@ public class SettingsFragment extends BaseFragment implements ICallback {
             @Override
             public void onClick(View view) {
                 mBaseActivity.showRemoveUserDialog();
+            }
+        });
+        
+        mUpdateConfig = pView.findViewById(R.id.udate_config);
+        mUpdateConfig.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBaseActivity.updateConfig();
             }
         });
     }

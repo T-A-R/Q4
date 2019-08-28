@@ -227,4 +227,6 @@
     <string name="SMS_NOTIFICATION_TITLE">Отправка отчётов с помощью СМС.</string>
     <string name="SMS_NOTIFICATION_TEXT">У вас есть неотправленные анкеты за прошедший период. Необходимо отправить отчёт с результатами с помощью СМС.</string>
 
+    <string name="VIEW_UPDATE_CONFIG">Обновить конфиг</string>
+
 </resources>

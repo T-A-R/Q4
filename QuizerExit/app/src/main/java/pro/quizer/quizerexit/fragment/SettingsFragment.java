@@ -199,12 +199,12 @@ public class SettingsFragment extends BaseFragment implements ICallback {
                 mBaseActivity.showRemoveUserDialog();
             }
         });
-        
+
         mUpdateConfig = pView.findViewById(R.id.udate_config);
         mUpdateConfig.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mBaseActivity.updateConfig();
+                mBaseActivity.reloadConfig();
             }
         });
     }

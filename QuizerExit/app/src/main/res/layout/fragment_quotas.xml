@@ -29,6 +29,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1"
+                    android:maxLines="1"
+                    android:maxLength="30"
                     android:hint="@string/TEXT_HINT_SEARCH" />
 
                 <ImageView

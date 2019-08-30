@@ -40,6 +40,6 @@
 
     </RelativeLayout>
 
-    <include layout="@layout/view_question_buttons_panel" />
+    <include layout="@layout/view_question_buttons_panel_adaptive" />
 
 </RelativeLayout>

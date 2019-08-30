@@ -21,7 +21,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+            <Button
                 android:id="@+id/logs_btn"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
@@ -29,6 +29,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
                 android:text="@string/VIEW_LOGS_BTN" />
 
             <include layout="@layout/view_divider" />
@@ -71,58 +73,70 @@
                 android:textSize="16sp"
                 tools:text="@string/VIEW_UNSENT_COUNT_AUDIO" />
 
-            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+            <Button
                 android:id="@+id/send_data"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
                 android:text="@string/VIEW_SEND_QUIZ" />
 
-            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+            <Button
                 android:id="@+id/send_audio"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
                 android:text="@string/VIEW_SEND_AUDIO" />
 
-            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+            <Button
                 android:id="@+id/send_photo"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
                 android:text="@string/VIEW_SEND_PHOTO" />
 
-            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+            <Button
                 android:id="@+id/upload_data"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
                 android:text="@string/VIEW_UPLOAD_DATA" />
 
-            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+            <Button
                 android:id="@+id/upload_ftp_data"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
                 android:text="@string/VIEW_FTP_UPLOAD_DATA" />
 
-            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+            <Button
                 android:id="@+id/delete_users"
                 style="@style/ButtonRed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
                 android:text="@string/VIEW_DELETE_USERS" />
 
         </LinearLayout>

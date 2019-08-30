@@ -42,7 +42,7 @@
     <string name="VIEW_YES">Да</string>
     <string name="VIEW_NO">Нет</string>
     <string name="VIEW_USERS_COUNT_ON_DEVICE">Количество пользователей на данном устройстве: %1$s</string>
-    <string name="VIEW_VERSION_WARNING">Внимание! Вы работаете на устройстве с версией android %1$s. Стабильная работа приложения не гарантируется.</string>
+    <string name="VIEW_VERSION_WARNING">Внимание!\nВы работаете на устройстве с версией android %1$s. Стабильная работа приложения не гарантируется.</string>
     <string name="VIEW_ALL_COUNT_QUIZ">Количество собраных анкет: %1$s</string>
     <string name="VIEW_UNSENT_COUNT_QUIZ">Количество неотправленных анкет: %1$s</string>
     <string name="VIEW_UNSENT_COUNT_AUDIO">Количество неотправленных аудио файлов: %1$s</string>

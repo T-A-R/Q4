@@ -87,22 +87,26 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="24dp">
 
-                    <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+                    <Button
                         android:id="@+id/start"
                         style="@style/ButtonStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/_36sdp"
                         android:layout_gravity="center_horizontal"
+                        android:maxLines="1"
+                        android:textSize="@dimen/_12ssp"
                         android:text="@string/VIEW_START" />
 
-                    <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+                    <Button
                         android:id="@+id/quotas"
                         style="@style/ButtonStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/_36sdp"
                         android:layout_below="@+id/start"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="8dp"
+                        android:maxLines="1"
+                        android:textSize="@dimen/_12ssp"
                         android:text="@string/VIEW_QUOTAS_TITLE" />
 
                 </RelativeLayout>

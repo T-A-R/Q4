@@ -151,9 +151,11 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                 } else {
                     SPUtils.addSendedQInSession(mBaseActivity, tokensToRemove.size());
 
+                    BaseActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, "Отправка анкеты", Constants.LogResult.SUCCESS, "Анкеты отправлены");
+
                     for (final String token : tokensToRemove) {
                         try {
-                            BaseActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, "Установка статуса SENT у анкеты", Constants.LogResult.SENT, "Запись в базу данных");
+                            BaseActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, "Установка статуса SENT у анкеты", Constants.LogResult.SENT, "Статус отправки анкеты в базе данных установлен как SENT");
                             BaseActivity.getDao().setQuestionnaireStatus(QuestionnaireStatus.SENT, token);
                         } catch (Exception e) {
                             BaseActivity.addLogWithData(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, "Установка статуса SENT у анкеты", Constants.LogResult.ERROR, "Ошибка записи а базу данных", e.getMessage());

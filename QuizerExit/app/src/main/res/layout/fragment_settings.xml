@@ -137,23 +137,27 @@
 
             </LinearLayout>
 
-            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+            <Button
                 android:id="@+id/udate_config"
                 style="@style/ButtonGreen"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
                 android:text="@string/VIEW_UPDATE_CONFIG" />
 
 
-            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+            <Button
                 android:id="@+id/delete_user"
                 style="@style/ButtonRed"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
                 android:text="@string/VIEW_DELETE_USER" />
 
         </LinearLayout>

@@ -63,14 +63,16 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+        <Button
             android:id="@+id/refresh_quotas"
             style="@style/ButtonStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_36sdp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
+            android:maxLines="1"
+            android:textSize="@dimen/_12ssp"
             android:text="@string/VIEW_BUTTON_REFRESH" />
 
         <FrameLayout

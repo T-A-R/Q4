@@ -17,6 +17,6 @@
         android:layout_below="@+id/element_header"
         tools:ignore="UnknownIdInLayout" />
 
-    <include layout="@layout/view_question_buttons_panel" />
+    <include layout="@layout/view_question_buttons_panel_adaptive" />
 
 </RelativeLayout>

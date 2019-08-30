@@ -729,24 +729,25 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                            if (!isFinishing()) {
+                                new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
+                                        .setCancelable(false)
+                                        .setTitle(R.string.DIALOG_SENDING_WAVES_VIA_SMS)
+                                        .setMessage(R.string.DIALOG_SENDING_WAVES_REQUEST)
+                                        .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(final DialogInterface dialog, final int which) {
+                                                showSmsFragment();
+                                            }
+                                        })
+                                        .setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
 
-                            new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
-                                    .setCancelable(false)
-                                    .setTitle(R.string.DIALOG_SENDING_WAVES_VIA_SMS)
-                                    .setMessage(R.string.DIALOG_SENDING_WAVES_REQUEST)
-                                    .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(final DialogInterface dialog, final int which) {
-                                            showSmsFragment();
-                                        }
-                                    })
-                                    .setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
-
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.cancel();
-                                        }
-                                    })
-                                    .show();
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.cancel();
+                                            }
+                                        })
+                                        .show();
+                            }
                         }
                     });
                 }
@@ -847,11 +848,11 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
             }
 
             String mConfigId = null;
-            if(authResponseModel != null) {
+            if (authResponseModel != null) {
                 mConfigId = authResponseModel.getConfigId();
             } else return;
 
-            if(mConfigId != null) {
+            if (mConfigId != null) {
                 final ConfigRequestModel configRequestModel = new ConfigRequestModel(
                         getLoginAdmin(),
                         mLogin,

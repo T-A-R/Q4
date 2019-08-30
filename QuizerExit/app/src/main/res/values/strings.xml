@@ -241,4 +241,10 @@
     <string name="ERROR_606">Ошибка: 6.06</string>
     <string name="LOAD_FILES_COMPLITE">Загрузка медиа-файлов завершена</string>
 
+    <string name="QUOTA_NOT_RENEWED_AFTER_SEND">Квота не обновлена после последней отправки анкеты.</string>
+    <string name="QUOTA_RENEWED_AFTER_SEND">Квота обновлена после последней отправки анкеты.</string>
+    <string name="QUOTA_NOT_RENEWED_AFTER_FINISH">Квота не обновлена после последнего завершения анкеты.</string>
+    <string name="QUOTA_RENEWED_AFTER_FINISH">Квота обновлена после последнего завершения анкеты.</string>
+    <string name="QUOTA_RENEW_TIME">Время последнего обновления квоты с сервера:</string>
+
 </resources>

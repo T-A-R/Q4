@@ -541,8 +541,10 @@ public class ElementActivity extends BaseActivity {
 
         try {
             BaseActivity.getDao().insertQuestionnaire(questionnaireDatabaseModel);
+            BaseActivity.addLog(mLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, "Сохранение анкеты", Constants.LogResult.SUCCESS, "Анкета сохранена в базе данных");
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
+            BaseActivity.addLogWithData(mLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, "Сохранение анкеты", Constants.LogResult.ERROR, "Анкета сохранена в базе данных", e.toString());
         }
     }
 

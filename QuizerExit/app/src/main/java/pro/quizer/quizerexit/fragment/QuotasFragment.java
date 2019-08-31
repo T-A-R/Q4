@@ -207,53 +207,77 @@ public class QuotasFragment extends BaseFragment implements ICallback {
             showToast(getString(R.string.DB_LOAD_ERROR));
         }
 
-        if (logs != null) {
-            for (int i = logs.size() - 1; i >= 0; i--) {
-                if (logs.get(i).getObject().equals(Constants.LogObject.QUOTA)
-                        && logs.get(i).getType().equals(Constants.LogType.SERVER)
-                        && logs.get(i).getResult().equals(Constants.LogResult.SUCCESS)) {
-                    String text = getString(R.string.QUOTA_RENEW_TIME) + " " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, Long.parseLong(logs.get(i).getDate()) * 1000);
-                    mQuotaText3.setText(text);
-                    mQuotaText3.setTextColor(getResources().getColor(R.color.black));
-                    break;
-                }
-            }
+        if(mBaseActivity.getCurrentUser().getQuotasR() != null) {
 
-            for (int i = logs.size() - 1; i >= 0; i--) {
-                if (logs.get(i).getObject().equals(Constants.LogObject.QUESTIONNAIRE)
-                        && logs.get(i).getType().equals(Constants.LogType.SERVER)
-                        && logs.get(i).getResult().equals(Constants.LogResult.SUCCESS)) {
+            mQuotaText1.setVisibility(View.VISIBLE);
+            mQuotaText2.setVisibility(View.VISIBLE);
+            mQuotaText3.setVisibility(View.VISIBLE);
 
-                    for(int k = i; k <logs.size(); k++) {
-                        if (logs.get(k).getObject().equals(Constants.LogObject.QUOTA)
-                                && logs.get(k).getType().equals(Constants.LogType.SERVER)
-                                && logs.get(k).getResult().equals(Constants.LogResult.SUCCESS)) {
-                            mQuotaText1.setText(getString(R.string.QUOTA_RENEWED_AFTER_SEND));
-                            mQuotaText1.setTextColor(getResources().getColor(R.color.black));
-                            break;
-                        }
+            if (logs != null) {
+
+                for (int i = logs.size() - 1; i >= 0; i--) {
+                    if (logs.get(i).getObject().equals(Constants.LogObject.QUOTA)
+                            && logs.get(i).getType().equals(Constants.LogType.SERVER)
+                            && logs.get(i).getResult().equals(Constants.LogResult.SUCCESS)) {
+                        String text = getString(R.string.QUOTA_RENEW_TIME) + " " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, Long.parseLong(logs.get(i).getDate()) * 1000);
+                        mQuotaText3.setText(text);
+                        mQuotaText3.setTextColor(getResources().getColor(R.color.black));
+                        break;
                     }
-                    break;
                 }
-            }
 
-            for (int i = logs.size() - 1; i >= 0; i--) {
-                if (logs.get(i).getObject().equals(Constants.LogObject.QUESTIONNAIRE)
-                        && logs.get(i).getType().equals(Constants.LogType.DATABASE)
-                        && logs.get(i).getResult().equals(Constants.LogResult.SUCCESS)) {
+                boolean hasRenew = false;
+                for (int i = logs.size() - 1; i >= 0; i--) {
+                    if (logs.get(i).getObject().equals(Constants.LogObject.QUESTIONNAIRE)
+                            && logs.get(i).getType().equals(Constants.LogType.SERVER)
+                            && logs.get(i).getResult().equals(Constants.LogResult.SUCCESS)) {
 
-                    for(int k = i; k <logs.size(); k++) {
-                        if (logs.get(k).getObject().equals(Constants.LogObject.QUOTA)
-                                && logs.get(k).getType().equals(Constants.LogType.SERVER)
-                                && logs.get(k).getResult().equals(Constants.LogResult.SUCCESS)) {
-                            mQuotaText2.setText(getString(R.string.QUOTA_RENEWED_AFTER_FINISH));
-                            mQuotaText1.setTextColor(getResources().getColor(R.color.black));
-                            break;
+                        hasRenew = true;
+
+                        for (int k = i; k < logs.size(); k++) {
+                            if (logs.get(k).getObject().equals(Constants.LogObject.QUOTA)
+                                    && logs.get(k).getType().equals(Constants.LogType.SERVER)
+                                    && logs.get(k).getResult().equals(Constants.LogResult.SUCCESS)) {
+                                mQuotaText1.setText(getString(R.string.QUOTA_RENEWED_AFTER_SEND));
+                                mQuotaText1.setTextColor(getResources().getColor(R.color.black));
+                                break;
+                            }
                         }
+                        break;
                     }
-                    break;
                 }
+
+                if(!hasRenew)
+                    mQuotaText1.setVisibility(View.GONE);
+
+                hasRenew = false;
+                for (int i = logs.size() - 1; i >= 0; i--) {
+                    if (logs.get(i).getObject().equals(Constants.LogObject.QUESTIONNAIRE)
+                            && logs.get(i).getType().equals(Constants.LogType.DATABASE)
+                            && logs.get(i).getResult().equals(Constants.LogResult.SUCCESS)) {
+
+                        hasRenew = true;
+
+                        for (int k = i; k < logs.size(); k++) {
+                            if (logs.get(k).getObject().equals(Constants.LogObject.QUOTA)
+                                    && logs.get(k).getType().equals(Constants.LogType.SERVER)
+                                    && logs.get(k).getResult().equals(Constants.LogResult.SUCCESS)) {
+                                mQuotaText2.setText(getString(R.string.QUOTA_RENEWED_AFTER_FINISH));
+                                mQuotaText2.setTextColor(getResources().getColor(R.color.black));
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                if(!hasRenew)
+                    mQuotaText2.setVisibility(View.GONE);
             }
+        } else {
+            mQuotaText1.setText(getString(R.string.NO_QUOTA_LIMITS));
+            mQuotaText2.setVisibility(View.GONE);
+            mQuotaText3.setVisibility(View.GONE);
         }
     }
 }

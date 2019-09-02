@@ -43,6 +43,7 @@ import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.DeviceUtils;
 import pro.quizer.quizerexit.utils.FileUtils;
+import pro.quizer.quizerexit.utils.FontUtils;
 import pro.quizer.quizerexit.utils.MD5Utils;
 import pro.quizer.quizerexit.utils.SPUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
@@ -141,6 +142,18 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         mVersionView.setOnClickListener(v -> {
 //            addLog(null, Constants.LogType.BUTTON, null, "Нажатие на кнопку", Constants.LogResult.PRESSED, "Версия приложения");
             onVersionClick();
+        });
+
+        setChangeFontCallback(new BaseActivity.ChangeFontCallback() {
+            @Override
+            public void onChangeFont() {
+                showToast(getString(R.string.SETTED) + " " + FontUtils.getCurrentFontName(getFontSizePosition()));
+                finish();
+                overridePendingTransition(0, 0);
+                startActivity(getIntent());
+                overridePendingTransition(0, 0);
+
+            }
         });
     }
 

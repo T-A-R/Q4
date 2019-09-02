@@ -1,10 +1,6 @@
 package pro.quizer.quizerexit.fragment;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,17 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.Calendar;
-import java.util.TimeZone;
-import java.util.TimerTask;
 
 import pro.quizer.quizerexit.BuildConfig;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
-import pro.quizer.quizerexit.broadcast.StartSmsSender;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.SendQuestionnairesByUserModelExecutable;
@@ -37,9 +27,7 @@ import pro.quizer.quizerexit.model.config.ProjectInfoModel;
 import pro.quizer.quizerexit.model.view.SyncViewModel;
 import pro.quizer.quizerexit.utils.SystemUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
-import pro.quizer.quizerexit.view.AppDrawer;
 
-import static pro.quizer.quizerexit.activity.BaseActivity.EXIT;
 import static pro.quizer.quizerexit.activity.BaseActivity.IS_AFTER_AUTH;
 import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
@@ -76,6 +64,14 @@ public class HomeFragment extends BaseFragment implements ICallback {
         }
 
         new SendQuestionnairesByUserModelExecutable(getBaseActivity(), mUserModel, this, false).execute();
+
+        mBaseActivity.setChangeFontCallback(new BaseActivity.ChangeFontCallback() {
+            @Override
+            public void onChangeFont() {
+                Log.d(TAG, "onChangeFont: ");
+                refreshFragment();
+            }
+        });
     }
 
     private void checkUpdates(final Bundle bundle, final ConfigModel configModel) {

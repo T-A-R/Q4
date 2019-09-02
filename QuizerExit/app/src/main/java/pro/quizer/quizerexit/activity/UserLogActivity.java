@@ -19,6 +19,7 @@ import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.adapter.UsersLogRecyclerAdapter;
 import pro.quizer.quizerexit.database.model.AppLogsR;
 import pro.quizer.quizerexit.model.request.LogsRequestModel;
+import pro.quizer.quizerexit.utils.FontUtils;
 import pro.quizer.quizerexit.view.Toolbar;
 
 public class UserLogActivity extends BaseActivity {
@@ -116,6 +117,18 @@ public class UserLogActivity extends BaseActivity {
         } else {
             Toast.makeText(this, R.string.LOG_EMPTY, Toast.LENGTH_SHORT).show();
         }
+
+        setChangeFontCallback(new BaseActivity.ChangeFontCallback() {
+            @Override
+            public void onChangeFont() {
+                showToast(getString(R.string.SETTED) + " " + FontUtils.getCurrentFontName(getFontSizePosition()));
+                finish();
+                overridePendingTransition(0, 0);
+                startActivity(getIntent());
+                overridePendingTransition(0, 0);
+
+            }
+        });
     }
 
     private void updateData() {

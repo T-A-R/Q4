@@ -19,6 +19,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import okhttp3.ResponseBody;
 import pro.quizer.quizerexit.API.QuizerAPI;
 import pro.quizer.quizerexit.BuildConfig;
 import pro.quizer.quizerexit.Constants;
@@ -72,6 +74,7 @@ import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.DeviceUtils;
 import pro.quizer.quizerexit.utils.FileUtils;
+import pro.quizer.quizerexit.utils.FontUtils;
 import pro.quizer.quizerexit.utils.Internet;
 import pro.quizer.quizerexit.utils.SPUtils;
 import pro.quizer.quizerexit.utils.SmsUtils;
@@ -97,6 +100,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     private Timer mTimer;
     private AlertSmsTask mAlertSmsTask;
+
+    ChangeFontCallback changeFontCallback;
 
     public String getHasPhoto() {
         return hasPhoto;
@@ -947,5 +952,40 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         });
 
 
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+        int currentFont = getFontSizePosition();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    if (getFontSizePosition() < 4) {
+                        setFontSizePosition(currentFont + 1);
+                        changeFontCallback.onChangeFont();
+                    }
+                }
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    if (getFontSizePosition() > 0) {
+                        setFontSizePosition(currentFont - 1);
+                        changeFontCallback.onChangeFont();
+                    }
+                }
+                return true;
+            default:
+                return super.dispatchKeyEvent(event);
+        }
+    }
+
+    public interface ChangeFontCallback {
+       void onChangeFont();
+    }
+
+    public void setChangeFontCallback(ChangeFontCallback listener) {
+        changeFontCallback = listener;
     }
 }

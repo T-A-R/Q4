@@ -22,6 +22,7 @@ import pro.quizer.quizerexit.executable.files.AllAudiosSendingExecutable;
 import pro.quizer.quizerexit.executable.files.AllPhotosSendingExecutable;
 import pro.quizer.quizerexit.executable.files.CleanUpFilesExecutable;
 import pro.quizer.quizerexit.model.view.ServiceViewModel;
+import pro.quizer.quizerexit.utils.FontUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 import pro.quizer.quizerexit.view.Toolbar;
 
@@ -57,6 +58,18 @@ public class ServiceActivity extends BaseActivity implements ICallback {
 
         new CleanUpFilesExecutable(getContext(), null).execute();
         updateData(new ServiceInfoExecutable().execute());
+
+        setChangeFontCallback(new BaseActivity.ChangeFontCallback() {
+            @Override
+            public void onChangeFont() {
+                showToast(getString(R.string.SETTED) + " " + FontUtils.getCurrentFontName(getFontSizePosition()));
+                finish();
+                overridePendingTransition(0, 0);
+                startActivity(getIntent());
+                overridePendingTransition(0, 0);
+
+            }
+        });
     }
 
     private void initViews() {

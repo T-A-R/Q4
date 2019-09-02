@@ -12,6 +12,7 @@ import java.util.List;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.adapter.UsersBtnRecyclerAdapter;
 import pro.quizer.quizerexit.database.model.UserModelR;
+import pro.quizer.quizerexit.utils.FontUtils;
 import pro.quizer.quizerexit.view.Toolbar;
 
 public class LogsActivity extends BaseActivity implements UsersBtnRecyclerAdapter.OnUserClickListener {
@@ -49,6 +50,18 @@ public class LogsActivity extends BaseActivity implements UsersBtnRecyclerAdapte
             mNoUsers.setVisibility(View.VISIBLE);
             mUserBtnsRecyclerView.setVisibility(View.GONE);
         }
+
+        setChangeFontCallback(new BaseActivity.ChangeFontCallback() {
+            @Override
+            public void onChangeFont() {
+                showToast(getString(R.string.SETTED) + " " + FontUtils.getCurrentFontName(getFontSizePosition()));
+                finish();
+                overridePendingTransition(0, 0);
+                startActivity(getIntent());
+                overridePendingTransition(0, 0);
+
+            }
+        });
     }
 
     private void updateData() {

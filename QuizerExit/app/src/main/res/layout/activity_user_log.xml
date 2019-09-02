@@ -17,21 +17,25 @@
         android:padding="16dp"
         android:layout_below="@+id/toolbar">
 
-        <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+        <Button
             android:id="@+id/send_logs_btn"
             style="@style/ButtonStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_36sdp"
             android:layout_gravity="center_horizontal"
+            android:maxLines="1"
+            android:textSize="@dimen/_12ssp"
             android:text="@string/SEND_LOGS_BTN" />
 
-        <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+        <Button
             android:id="@+id/clear_logs_btn"
             style="@style/ButtonRed"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_36sdp"
             android:layout_marginTop="16dp"
             android:layout_gravity="center_horizontal"
+            android:maxLines="1"
+            android:textSize="@dimen/_12ssp"
             android:text="@string/CLEAR_LOGS_BTN" />
 
         <android.support.v7.widget.RecyclerView

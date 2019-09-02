@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,7 @@ import java.util.List;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.ElementSubtype;
 import pro.quizer.quizerexit.model.ElementType;
@@ -24,6 +27,8 @@ import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.utils.CollectionUtils;
 import pro.quizer.quizerexit.utils.DateUtils;
+
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
 public class ElementFragment extends BaseFragment {
 

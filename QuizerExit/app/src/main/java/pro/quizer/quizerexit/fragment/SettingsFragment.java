@@ -209,12 +209,15 @@ public class SettingsFragment extends BaseFragment implements ICallback {
         });
     }
 
-    private void refreshFragment() {
+    public void refreshFragment() {
         // TODO: 2/5/2019 notify drawer
 //        mBaseActivity.getDrawerLayout().notifyAll();
 
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.detach(this).attach(this).commit();
+        if(!mBaseActivity.isFinishing()) {
+            mFontSizeSpinner.setSelection(mBaseActivity.getFontSizePosition());
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.detach(this).attach(this).commit();
+        }
     }
 
     private void initStrings() {
@@ -248,13 +251,10 @@ public class SettingsFragment extends BaseFragment implements ICallback {
         if (isAdded()) {
             showToast(getString(R.string.NOTIFICATION_UPDATING));
         }
-
-//        showProgressBar();
     }
 
     @Override
     public void onSuccess() {
-//        hideProgressBar();
 
         if (isAdded()) {
             updateData(new SettingViewModelExecutable(getContext()).execute());
@@ -263,7 +263,6 @@ public class SettingsFragment extends BaseFragment implements ICallback {
 
     @Override
     public void onError(final Exception pException) {
-//        hideProgressBar();
 
         if (isAdded()) {
             updateData(new SettingViewModelExecutable(getContext()).execute());

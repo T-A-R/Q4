@@ -19,6 +19,7 @@ import pro.quizer.quizerexit.model.request.ActivationRequestModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.DeviceUtils;
+import pro.quizer.quizerexit.utils.FontUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 
 public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKeyCallback {
@@ -47,6 +48,18 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
             if (!isKeyBtnPressed) {
                 isKeyBtnPressed = true;
                 sendKeyWithRetrofit(key);
+            }
+        });
+
+        setChangeFontCallback(new BaseActivity.ChangeFontCallback() {
+            @Override
+            public void onChangeFont() {
+                showToast(getString(R.string.SETTED) + " " + FontUtils.getCurrentFontName(getFontSizePosition()));
+                finish();
+                overridePendingTransition(0, 0);
+                startActivity(getIntent());
+                overridePendingTransition(0, 0);
+
             }
         });
     }

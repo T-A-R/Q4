@@ -247,5 +247,6 @@
     <string name="QUOTA_RENEWED_AFTER_FINISH">Квота обновлена после последнего завершения анкеты.</string>
     <string name="QUOTA_RENEW_TIME">Время последнего обновления квоты с сервера:</string>
     <string name="NO_QUOTA_LIMITS">Квотные ограничения отсутствуют.</string>
+    <string name="SETTED">Установлен</string>
 
 </resources>

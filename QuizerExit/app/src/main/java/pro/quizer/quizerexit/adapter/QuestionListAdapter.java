@@ -1,6 +1,8 @@
 package pro.quizer.quizerexit.adapter;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
@@ -16,9 +18,11 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -51,6 +55,8 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
     private boolean radioBtnIsPressed = false;
     private boolean onBind;
     private int focusPos;
+
+    TimePickerDialog.OnTimeSetListener myCallBack;
 
     public QuestionListAdapter(final HashMap<Integer, ElementModel> pMap,
                                final ElementModel pCurrentElement,
@@ -263,14 +269,45 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
                     if (isChecked && minAnswers == DEFAULT_MIN_ANSWERS && minAnswers == maxAnswers) {
                         Log.d(TAG, "onClick: 333333333333333333");
+
                         unselectAll();
+                        refresh();
 
                         pAnswer.setChecked(true);
                         radioBtnIsPressed = true;
 
-                        refresh();
+                        if (pAnswer.isChecked())
+                            switch (options.getOpenType()) {
+                                case OptionsOpenType.TIME:
+                                    setTime(view);
+                                    break;
+                                case OptionsOpenType.DATE:
+                                    setDate(view);
+                                    break;
+                                case OptionsOpenType.NUMBER:
+                                    mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                                    break;
+                                case OptionsOpenType.TEXT:
+                                    mEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+                                    break;
+                                default:
+                                    // неизвестный тип open_type
+                            }
 
-                        mEmptyRadioButton.performClick();
+                        if (mEditText.hasFocus()) {
+                            Log.d(TAG, "onClick: 1111111111155555555");
+                            if (!options.getOpenType().equals(OptionsOpenType.TIME) && !options.getOpenType().equals(OptionsOpenType.DATE)) {
+                                Log.d(TAG, "onClick: 1111111111166666666");
+                                showKeyboard();
+                            } else {
+                                Log.d(TAG, "onClick: 111111111117777777777");
+                                hideKeyboardFrom(mEditText);
+                            }
+//                                mEditText.clearFocus();
+                        }
+
+
+//                        refresh();
 
                     } else if (isChecked && maxAnswers != EMPTY_COUNT_ANSWER && checkedItemsCount >= maxAnswers) {
                         Log.d(TAG, "onClick: 44444444444444444444");
@@ -302,6 +339,24 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
 //                        refresh();
 
+                        if (pAnswer.isChecked())
+                            switch (options.getOpenType()) {
+                                case OptionsOpenType.TIME:
+                                    setTime(view);
+                                    break;
+                                case OptionsOpenType.DATE:
+                                    setDate(view);
+                                    break;
+                                case OptionsOpenType.NUMBER:
+                                    mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                                    break;
+                                case OptionsOpenType.TEXT:
+                                    mEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+                                    break;
+                                default:
+                                    // неизвестный тип open_type
+                            }
+
                         if (mEditText.isEnabled() && mEditText.getText() == null) {
                             mEditText.setBackgroundResource(R.drawable.edit_text_red_border);
                             mEditText.requestFocus();
@@ -312,7 +367,11 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
                         if (mEditText.hasFocus()) {
                             Log.d(TAG, "onClick: 5555555555555555555");
-                            showKeyboard();
+                            if (!options.getOpenType().equals(OptionsOpenType.TIME) && !options.getOpenType().equals(OptionsOpenType.DATE)) {
+                                Log.d(TAG, "onClick: 1111111888888888");
+                                showKeyboard();
+                            } else
+                                hideKeyboardFrom(mEditText);
                         }
 
 //                        Log.d(TAG, "onClick: " + pPosition + " checked: " + isChecked);
@@ -400,8 +459,10 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
                         if (mCheckBox.isEnabled()) {
                             Log.d(TAG, "onClick: 1111111144444444");
-                            if (mEditText.hasFocus())
+                            if (mEditText.hasFocus()) {
+                                Log.d(TAG, "onClick: 1111111999999999");
                                 showKeyboard();
+                            }
                             mEmptyRadioButton.setVisibility(View.GONE);
                             mEditText.setEnabled(true);
                             mEditText.setFocusable(true);
@@ -471,5 +532,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
         ((InputMethodManager) mBaseActivity.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
 
-
+    public void hideKeyboardFrom(View view) {
+        ((InputMethodManager) mBaseActivity.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 }

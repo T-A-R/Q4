@@ -228,7 +228,7 @@ public class ElementActivity extends BaseActivity {
             mCountDownTimer = new CountDownTimer(mAudioRecordLimitTime, ONE_SEC) {
 
                 public void onTick(long millisUntilFinished) {
-                    Log.d("Timer", "onTick: " + String.valueOf(millisUntilFinished));
+//                    Log.d("Timer", "onTick: " + String.valueOf(millisUntilFinished));
                 }
 
                 public void onFinish() {

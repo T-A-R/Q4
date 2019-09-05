@@ -80,7 +80,7 @@ public final class Constants {
         String DATABASE = "database";
         String BUTTON = "button";
         String FILE = "file";
-        String DIALOG = "file";
+        String DIALOG = "dialog";
     }
 
     public interface LogObject {

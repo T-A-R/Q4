@@ -248,5 +248,7 @@
     <string name="QUOTA_RENEW_TIME">Время последнего обновления квоты с сервера:</string>
     <string name="NO_QUOTA_LIMITS">Квотные ограничения отсутствуют.</string>
     <string name="SETTED">Установлен</string>
+    <string name="SHOW_SMS_DIALOG">Показ диалога об отправ</string>
+    <string name="CANT_SHOW_DIALOG">Невозможно отобразить диалог</string>
 
 </resources>

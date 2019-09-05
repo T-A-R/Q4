@@ -94,9 +94,9 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
     public void onBindViewHolder(@NonNull AnswerListViewHolder pAnswerListViewHolder, int pPosition) {
         final ElementModel elementModel = getModel(pPosition);
 
-        Log.d(TAG, "onBindViewHolder: POS: " + focusPos + " " + pPosition);
+//        Log.d(TAG, "onBindViewHolder: POS: " + focusPos + " " + pPosition);
         if (focusPos == pPosition) { // focus last clicked view again
-            Log.d(TAG, "onBindViewHolder: DING!");
+//            Log.d(TAG, "onBindViewHolder: DING!");
             pAnswerListViewHolder.mEditText.setFocusable(true);
             pAnswerListViewHolder.mEditText.setFocusableInTouchMode(true);
             pAnswerListViewHolder.mEditText.requestFocus();
@@ -233,7 +233,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
             mContentsRecyclerView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d(TAG, "onClick: 66666666666666666666666666666666666666666666666666666666666666");
+//                    Log.d(TAG, "onClick: 66666666666666666666666666666666666666666666666666666666666666");
                     if (mCheckBox.isEnabled()) {
                         mCheckBox.performClickProgramatically();
                     }
@@ -253,7 +253,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                         mEmptyButton.setVisibility(View.VISIBLE);
                     if (mEmptyRadioButton != null)
                         mEmptyRadioButton.setVisibility(View.VISIBLE);
-                    Log.d(TAG, "onClick: 555555555555555555555555555555555555555555555555555555");
+//                    Log.d(TAG, "onClick: 555555555555555555555555555555555555555555555555555555");
                     final CustomCheckableButton checkBox = (CustomCheckableButton) view;
                     final boolean isChecked = checkBox.isChecked();
                     final int minAnswers = getMinAnswer();
@@ -262,7 +262,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
 
                     if (isChecked && minAnswers == DEFAULT_MIN_ANSWERS && minAnswers == maxAnswers) {
-                        Log.d(TAG, "onClick: 777777777777777777777777777777777777777777777777777");
+//                        Log.d(TAG, "onClick: 777777777777777777777777777777777777777777777777777");
                         unselectAll();
 
                         pAnswer.setChecked(true);
@@ -273,7 +273,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                         mEmptyRadioButton.performClick();
 
                     } else if (isChecked && maxAnswers != EMPTY_COUNT_ANSWER && checkedItemsCount >= maxAnswers) {
-                        Log.d(TAG, "onClick: 88888888888888888888888888888888888888888888888");
+//                        Log.d(TAG, "onClick: 88888888888888888888888888888888888888888888888");
                         checkBox.setChecked(false);
 
                         QuestionListAdapter.this.mBaseActivity.showToast(String.format(QuestionListAdapter.this.mBaseActivity.getString(R.string.NOTIFICATION_MAX_ANSWERS), String.valueOf(maxAnswers)));
@@ -311,7 +311,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                         }
 
                         if (mEditText.hasFocus()) {
-                            Log.d(TAG, "onClick: 78787878787878787878");
+//                            Log.d(TAG, "onClick: 78787878787878787878");
                             showKeyboard();
                         }
 
@@ -330,7 +330,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                                 mEditText.requestFocus();
                             }
                         } else {
-                            Log.d(TAG, "onClick: SET ENABLED FALSE");
+//                            Log.d(TAG, "onClick: SET ENABLED FALSE");
                             mEditText.setEnabled(false);
                         }
                     }
@@ -343,7 +343,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
                 @Override
                 public void onClick(final View pView) {
-                    Log.d(TAG, "onClick: 111111111111111111111111111111111111111111111111111111");
+//                    Log.d(TAG, "onClick: 111111111111111111111111111111111111111111111111111111");
                     if (mCheckBox.isEnabled()) {
                         mCheckBox.performClickProgramatically();
                     }
@@ -355,7 +355,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
                     @Override
                     public void onClick(final View pView) {
-                        Log.d(TAG, "onClick: 2222222222222222222222222222222222222222222222222222");
+//                        Log.d(TAG, "onClick: 2222222222222222222222222222222222222222222222222222");
                         if (mCheckBox.isEnabled()) {
                             mCheckBox.performClickProgramatically();
                         }
@@ -369,9 +369,9 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                     @Override
                     public void onClick(final View pView) {
                         if (mCheckBox.isEnabled()) {
-                            Log.d(TAG, "onClick: 999999999999999999999999999999999999999999999999");
+//                            Log.d(TAG, "onClick: 999999999999999999999999999999999999999999999999");
                             if (mEditText.hasFocus()) {
-                                Log.d(TAG, "onClick: 898989898989898989898989898989");
+//                                Log.d(TAG, "onClick: 898989898989898989898989898989");
                                 showKeyboard();
                             }
                             mEmptyButton.setVisibility(View.GONE); //TODO Обработать включение
@@ -396,7 +396,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 //                        mCheckBox.setEnabled(true);
 //                        refresh();
 //                        showKeyboard();
-                        Log.d(TAG, "onClick: 3333333333333333333333333333333333333333333333333333333333");
+//                        Log.d(TAG, "onClick: 3333333333333333333333333333333333333333333333333333333333");
 
                         if (mCheckBox.isEnabled()) {
                             if (mEditText.hasFocus())
@@ -418,7 +418,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                 mClickableArea.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d(TAG, "onClick: 444444444444444444444444444444444444444444444444444444444");
+//                        Log.d(TAG, "onClick: 444444444444444444444444444444444444444444444444444444444");
                         if (mCheckBox.isEnabled()) {
                             mCheckBox.performClickProgramatically();
                         }

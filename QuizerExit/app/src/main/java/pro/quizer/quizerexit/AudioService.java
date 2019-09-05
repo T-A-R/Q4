@@ -33,7 +33,7 @@ import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.app.NotificationCompat;
+//import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.JsonWriter;
 import android.util.Log;
@@ -108,7 +108,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
     private MediaControllerCompat.TransportControls transCntrl;
     private PlaybackStateCompat.Builder stateBuilderImplFacility; // use method instead
     private MediaMetadataCompat.Builder metadataBuilder;
-    private NotificationCompat.Builder notifBuilder;
+//    private NotificationCompat.Builder notifBuilder;
 
     private boolean isRecorderInitialized = false;
     private MediaRecorder recorder;
@@ -794,37 +794,37 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
 //        startForeground(SERVICE_ID, notifBuilder.build());
     }
 
-    private void pauseSession() {
-        Log.d(LOG_TAG, "pauseSession()");
-        try {
-            unregisterReceiver(bnReceiver);
-        } catch (IllegalArgumentException iae) { // receiver not registered
-            Log.w(LOG_TAG, "Exception @ pauseSession : can't unregister receiver ", iae);
-        }
-        if (notifBuilder != null) {
-            notifBuilder.setContentText(getString(R.string.RECORD_AUDIO_PAUSED));
-            notifBuilder.mActions.clear();
-            String mediaId = mediaSes.getController().getMetadata().getDescription().getMediaId();
-            if (SOURCE_AUDIO.equals(mediaId)) {
-                notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_PLAY,
-                        getString(R.string.RECORD_AUDIO_PLAY),
-                        MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
-                                PlaybackStateCompat.ACTION_PLAY)));
-            } else if (SOURCE_MIC.equals(mediaId)) {
-                notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_RECORD,
-                        getString(R.string.RECORD_AUDIO_RECORD),
-                        MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
-                                PlaybackStateCompat.ACTION_PLAY)));
-            }
-            notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_STOP,
-                    getString(R.string.RECORD_AUDIO_STOP),
-                    MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
-                            PlaybackStateCompat.ACTION_STOP)));
-
-            startForeground(SERVICE_ID, notifBuilder.build()); // to update notification
-        }
-        stopForeground(false); // stop but leave notification
-    }
+//    private void pauseSession() {
+//        Log.d(LOG_TAG, "pauseSession()");
+//        try {
+//            unregisterReceiver(bnReceiver);
+//        } catch (IllegalArgumentException iae) { // receiver not registered
+//            Log.w(LOG_TAG, "Exception @ pauseSession : can't unregister receiver ", iae);
+//        }
+//        if (notifBuilder != null) {
+//            notifBuilder.setContentText(getString(R.string.RECORD_AUDIO_PAUSED));
+//            notifBuilder.mActions.clear();
+//            String mediaId = mediaSes.getController().getMetadata().getDescription().getMediaId();
+//            if (SOURCE_AUDIO.equals(mediaId)) {
+//                notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_PLAY,
+//                        getString(R.string.RECORD_AUDIO_PLAY),
+//                        MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
+//                                PlaybackStateCompat.ACTION_PLAY)));
+//            } else if (SOURCE_MIC.equals(mediaId)) {
+//                notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_RECORD,
+//                        getString(R.string.RECORD_AUDIO_RECORD),
+//                        MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
+//                                PlaybackStateCompat.ACTION_PLAY)));
+//            }
+//            notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_STOP,
+//                    getString(R.string.RECORD_AUDIO_STOP),
+//                    MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
+//                            PlaybackStateCompat.ACTION_STOP)));
+//
+//            startForeground(SERVICE_ID, notifBuilder.build()); // to update notification
+//        }
+//        stopForeground(false); // stop but leave notification
+//    }
 
     private void stopSession() {
         Log.d(LOG_TAG, "stopSession()");
@@ -842,7 +842,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
         // stop service to enable it be terminated when all clients will be unbound
         stopSelf();
         mediaSes.setActive(false);
-        notifBuilder = null;
+//        notifBuilder = null;
         stopForeground(true); // stop and remove notification
     }
 

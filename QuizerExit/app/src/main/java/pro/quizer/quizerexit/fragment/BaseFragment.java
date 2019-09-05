@@ -38,6 +38,8 @@ import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.FontUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
+
 public class BaseFragment extends HiddenCameraFragment implements Serializable {
 
     private BaseActivity mBaseActivity;
@@ -110,70 +112,70 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable {
 
     @Override
     public void onAttach(Context context) {
-        Log.d("FragmentLifeCycle", this + " - > onAttach()");
+//        Log.d("FragmentLifeCycle", this + " - > onAttach()");
 
         super.onAttach(context);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.d("FragmentLifeCycle", this + " - > onCreate()");
+//        Log.d("FragmentLifeCycle", this + " - > onCreate()");
 
         super.onCreate(savedInstanceState);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        Log.d("FragmentLifeCycle", this + " - > onActivityCreated()");
+//        Log.d("FragmentLifeCycle", this + " - > onActivityCreated()");
 
         super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public void onStart() {
-        Log.d("FragmentLifeCycle", this + " - > onStart()");
+//        Log.d("FragmentLifeCycle", this + " - > onStart()");
 
         super.onStart();
     }
 
     @Override
     public void onResume() {
-        Log.d("FragmentLifeCycle", this + " - > onResume()");
+//        Log.d("FragmentLifeCycle", this + " - > onResume()");
 
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        Log.d("FragmentLifeCycle", this + " - > onPause()");
+//        Log.d("FragmentLifeCycle", this + " - > onPause()");
 
         super.onPause();
     }
 
     @Override
     public void onStop() {
-        Log.d("FragmentLifeCycle", this + " - > onStop()");
+//        Log.d("FragmentLifeCycle", this + " - > onStop()");
 
         super.onStop();
     }
 
     @Override
     public void onDestroyView() {
-        Log.d("FragmentLifeCycle", this + " - > onDestroyView()");
+//        Log.d("FragmentLifeCycle", this + " - > onDestroyView()");
 
         super.onDestroyView();
     }
 
     @Override
     public void onDestroy() {
-        Log.d("FragmentLifeCycle", this + " - > onDestroy()");
+//        Log.d("FragmentLifeCycle", this + " - > onDestroy()");
 
         super.onDestroy();
     }
 
     @Override
     public void onDetach() {
-        Log.d("FragmentLifeCycle", this + " - > onDetach()");
+//        Log.d("FragmentLifeCycle", this + " - > onDetach()");
 
         super.onDetach();
     }
@@ -305,6 +307,7 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable {
     public void onCameraError(int errorCode) {
         switch (errorCode) {
             case CameraError.ERROR_CAMERA_OPEN_FAILED:
+                Log.d(TAG, "shotPicture: 555555555555555555555555555555555555555555555");
                 //Camera open failed. Probably because another application
                 //is using the camera
                 showToast("Не удается запустить камеру");
@@ -345,6 +348,7 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable {
                             final int pProjectId,
                             final String pUserLogin) {
         try {
+            Log.d(TAG, "shotPicture: 11111111111111111111111111111111111111111");
             startCamera(new CameraConfig()
                     .getBuilder(getContext())
                     .setCameraFacing(CameraFacing.FRONT_FACING_CAMERA)
@@ -353,8 +357,9 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable {
                     .setImageRotation(CameraRotation.ROTATION_270)
                     .build());
         } catch (final Exception pException) {
+            Log.d(TAG, "shotPicture: 22222222222222222222222222222222222222");
             showToast("Не удается стартануть камеру");
-
+            pException.printStackTrace();
             return;
         }
 
@@ -370,9 +375,12 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable {
             @Override
             public void run() {
                 try {
+                    Log.d(TAG, "shotPicture: 33333333333333333333333333333333333333333333");
                     takePicture();
                     mBaseActivity.setHasPhoto("true");
                 } catch (Exception e) {
+                    Log.d(TAG, "shotPicture: 444444444444444444444444444444444444444444444");
+                    e.printStackTrace();
                     onCameraError(CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA);
                     mBaseActivity.setHasPhoto("false");
                 }

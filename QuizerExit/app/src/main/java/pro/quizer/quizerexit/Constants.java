@@ -80,6 +80,7 @@ public final class Constants {
         String DATABASE = "database";
         String BUTTON = "button";
         String FILE = "file";
+        String DIALOG = "dialog";
     }
 
     public interface LogObject {
@@ -90,6 +91,7 @@ public final class Constants {
         String KEY = "key";
         String CONFIG = "config";
         String QUESTIONNAIRE = "questionnaire";
+        String SMS = "sms";
     }
 
     public interface LogResult {

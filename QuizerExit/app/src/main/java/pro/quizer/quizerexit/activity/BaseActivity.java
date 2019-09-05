@@ -735,23 +735,30 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                                 e.printStackTrace();
                             }
                             if (!isFinishing()) {
-                                new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
-                                        .setCancelable(false)
-                                        .setTitle(R.string.DIALOG_SENDING_WAVES_VIA_SMS)
-                                        .setMessage(R.string.DIALOG_SENDING_WAVES_REQUEST)
-                                        .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(final DialogInterface dialog, final int which) {
-                                                showSmsFragment();
-                                            }
-                                        })
-                                        .setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
+                                try {
+                                    new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
+                                            .setCancelable(false)
+                                            .setTitle(R.string.DIALOG_SENDING_WAVES_VIA_SMS)
+                                            .setMessage(R.string.DIALOG_SENDING_WAVES_REQUEST)
+                                            .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(final DialogInterface dialog, final int which) {
+                                                    showSmsFragment();
+                                                }
+                                            })
+                                            .setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
 
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.cancel();
-                                            }
-                                        })
-                                        .show();
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.cancel();
+                                                }
+                                            })
+                                            .show();
+                                } catch (Exception e) {
+                                    if (getCurrentUser() != null)
+                                        addLogWithData(getCurrentUser().getLogin(), Constants.LogType.DIALOG, Constants.LogObject.SMS, getString(R.string.SHOW_SMS_DIALOG), Constants.LogResult.ERROR, getString(R.string.CANT_SHOW_DIALOG), e.toString());
+                                    else
+                                        addLogWithData("android", Constants.LogType.DIALOG, Constants.LogObject.SMS, getString(R.string.SHOW_SMS_DIALOG), Constants.LogResult.ERROR, getString(R.string.CANT_SHOW_DIALOG), e.toString());
+                                }
                             }
                         }
                     });
@@ -982,7 +989,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     public interface ChangeFontCallback {
-       void onChangeFont();
+        void onChangeFont();
     }
 
     public void setChangeFontCallback(ChangeFontCallback listener) {

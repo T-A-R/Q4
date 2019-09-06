@@ -250,5 +250,18 @@
     <string name="SETTED">Установлен</string>
     <string name="SHOW_SMS_DIALOG">Показ диалога об отправ</string>
     <string name="CANT_SHOW_DIALOG">Невозможно отобразить диалог</string>
+    <string name="SAVE_SERVER_TO_DB">Сохранение сервера в базу данных</string>
+    <string name="SAVE_SERVER">Сохранение данных сервера</string>
+    <string name="SAVE_USER">Сохранение пользователя</string>
+    <string name="SAVE_CONFIG">Сохранение конфига</string>
+    <string name="SAVE_USER_TO_DB">Сохранение пользователя в базу данных</string>
+    <string name="SAVE_USER_TO_DB_ERROR">Ошибка сохранения пользователя в базу данных</string>
+    <string name="SAVE_CONFIG_TO_DB">Сохранение конфига в базу данных</string>
+    <string name="SAVE_CONFIG_TO_DB_ERROR">Ошибка сохранения конфига в базу данных</string>
+    <string name="SAVE_QUESTION_TO_DB">Сохранение анкеты</string>
+    <string name="SAVE_QUESTION_TO_DB_SUCCESS">Анкета сохранена в базе данных</string>
+    <string name="SAVE_QUESTION_TO_DB_ERROR">Ошибка сохранения анкеты в базе данных</string>
+    <string name="WITH_SMS">через СМС?</string>
+    <string name="SEND_QUESTION">Отправка анкеты</string>
 
 </resources>

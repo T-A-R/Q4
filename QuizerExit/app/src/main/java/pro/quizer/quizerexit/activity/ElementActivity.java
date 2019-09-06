@@ -242,7 +242,7 @@ public class ElementActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        CurrentlyRunning= true;
+        CurrentlyRunning = true;
     }
 
     public void pauseRecording() {
@@ -541,10 +541,11 @@ public class ElementActivity extends BaseActivity {
 
         try {
             BaseActivity.getDao().insertQuestionnaire(questionnaireDatabaseModel);
-            BaseActivity.addLog(mLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, "Сохранение анкеты", Constants.LogResult.SUCCESS, "Анкета сохранена в базе данных");
+            BaseActivity.addLog(mLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SAVE_QUESTION_TO_DB), Constants.LogResult.SUCCESS, getString(R.string.SAVE_QUESTION_TO_DB_SUCCESS));
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
-            BaseActivity.addLogWithData(mLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, "Сохранение анкеты", Constants.LogResult.ERROR, "Анкета сохранена в базе данных", e.toString());
+
+            BaseActivity.addLogWithData(mLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SAVE_QUESTION_TO_DB), Constants.LogResult.ERROR,getString(R.string.SAVE_QUESTION_TO_DB_ERROR), e.toString());
         }
     }
 

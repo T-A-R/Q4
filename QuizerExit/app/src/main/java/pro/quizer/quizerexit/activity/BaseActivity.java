@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import okhttp3.ResponseBody;
 import pro.quizer.quizerexit.API.QuizerAPI;
 import pro.quizer.quizerexit.BuildConfig;
 import pro.quizer.quizerexit.Constants;
@@ -52,7 +51,6 @@ import pro.quizer.quizerexit.database.model.ActivationModelR;
 import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.database.model.AppLogsR;
 import pro.quizer.quizerexit.database.model.UserModelR;
-import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.RemoveUserExecutable;
 import pro.quizer.quizerexit.fragment.AboutFragment;
 import pro.quizer.quizerexit.fragment.HomeFragment;
@@ -74,10 +72,8 @@ import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.DeviceUtils;
 import pro.quizer.quizerexit.utils.FileUtils;
-import pro.quizer.quizerexit.utils.FontUtils;
 import pro.quizer.quizerexit.utils.Internet;
 import pro.quizer.quizerexit.utils.SPUtils;
-import pro.quizer.quizerexit.utils.SmsUtils;
 import pro.quizer.quizerexit.view.Toolbar;
 
 import static pro.quizer.quizerexit.utils.FileUtils.AMR;
@@ -280,11 +276,11 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         }
 
         try {
-            addLog(Constants.LogUser.ANDROID, Constants.LogType.DATABASE, Constants.LogObject.CONFIG, "Сохранение данных сервера", Constants.LogResult.SENT, "Сохранение в базу данных");
+            addLog(Constants.LogUser.ANDROID, Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.SAVE_SERVER), Constants.LogResult.SENT, getString(R.string.SAVE_SERVER_TO_DB));
             getDao().insertActivationModelR(activationModelR);
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
-            addLog(Constants.LogUser.ANDROID, Constants.LogType.DATABASE, Constants.LogObject.CONFIG, "Сохранение данных сервера", Constants.LogResult.ERROR, getString(R.string.DB_SAVE_ERROR));
+            addLog(Constants.LogUser.ANDROID, Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.SAVE_SERVER), Constants.LogResult.ERROR, getString(R.string.DB_SAVE_ERROR));
 
         }
     }
@@ -345,24 +341,24 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                                            final int pUserProjectId) {
 
         try {
-            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, "Сохранение пользователя", Constants.LogResult.SENT, "Сохранение в базу данных");
+            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.SAVE_USER), Constants.LogResult.SENT, getString(R.string.SAVE_USER_TO_DB));
             savedLogin = pLogin;
             getDao().updateUserModelR(pLogin, pPassword, pConfigId, pRoleId, pUserProjectId, pUserId);
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
-            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, "Сохранение пользователя", Constants.LogResult.ERROR, e.getMessage());
+            addLogWithData(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.SAVE_USER), Constants.LogResult.ERROR, getString(R.string.SAVE_USER_TO_DB_ERROR), e.getMessage());
         }
     }
 
     public void updateConfig(final UserModelR pUserModel, final ConfigModel pConfigModel) {
 
         try {
-            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, "Сохранение конфига", Constants.LogResult.SENT, "Сохранение в базу данных");
+            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.SAVE_CONFIG), Constants.LogResult.SENT, getString(R.string.SAVE_CONFIG_TO_DB));
             getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
 
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
-            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, "Сохранение конфига", Constants.LogResult.ERROR, e.getMessage());
+            addLogWithData(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.SAVE_CONFIG), Constants.LogResult.ERROR, getString(R.string.SAVE_CONFIG_TO_DB_ERROR), e.getMessage());
 
         }
     }
@@ -436,12 +432,12 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         userModelR.setUser_project_id(pModel.getUserProjectId());
         userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
         try {
-            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, "Сохранение пользователя", Constants.LogResult.SENT, "Сохранение в базу данных");
+            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.SAVE_USER), Constants.LogResult.SENT, getString(R.string.SAVE_USER_TO_DB));
 
             getDao().insertUser(userModelR);
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
-            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, "Сохранение пользователя", Constants.LogResult.ERROR, getString(R.string.DB_SAVE_ERROR));
+            addLogWithData(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.SAVE_USER), Constants.LogResult.ERROR, getString(R.string.SAVE_USER_TO_DB_ERROR), e.getMessage());
         }
     }
 

@@ -232,7 +232,7 @@ public class ElementFragment extends BaseFragment {
                                 mIsPhotoQuestionnaire,
                                 mProjectId,
                                 mUser))
-                        .commit();
+                        .commitAllowingStateLoss();
             } else if (ElementSubtype.SCALE.equals(elementSubType)
                     || ElementSubtype.LIST.equals(elementSubType)
                     || (ElementSubtype.SELECT.equals(elementSubType) && mIsFromDialog)) {
@@ -246,7 +246,7 @@ public class ElementFragment extends BaseFragment {
                                 mCurrentElement,
                                 mNavigationCallback,
                                 getBaseActivity().getMap()))
-                        .commit();
+                        .commitAllowingStateLoss();
             } else {
                 showToast("Неизвестный тип элемента");
             }
@@ -257,7 +257,7 @@ public class ElementFragment extends BaseFragment {
                             mCurrentElement,
                             mNavigationCallback,
                             getBaseActivity().getMap()))
-                    .commit();
+                    .commitAllowingStateLoss();
         } else if (ElementType.BOX.equals(elementType)) {
             switch (elementSubType) {
                 case ElementSubtype.PAGE:
@@ -274,7 +274,7 @@ public class ElementFragment extends BaseFragment {
                                     mIsPhotoQuestionnaire,
                                     mProjectId,
                                     mUser))
-                            .commit();
+                            .commitAllowingStateLoss();
 
                     break;
                 case ElementSubtype.TABLE:
@@ -285,7 +285,7 @@ public class ElementFragment extends BaseFragment {
                                     mUser,
                                     mCurrentElement,
                                     mNavigationCallback))
-                            .commit();
+                            .commitAllowingStateLoss();
 
                     break;
                 case ElementSubtype.FUNNEL:
@@ -306,7 +306,7 @@ public class ElementFragment extends BaseFragment {
                                     mProjectId,
                                     mUser,
                                     getBaseActivity().getMap()))
-                            .commit();
+                            .commitAllowingStateLoss();
 
                     break;
             }

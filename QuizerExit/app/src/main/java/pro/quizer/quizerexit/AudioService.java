@@ -1,7 +1,6 @@
 package pro.quizer.quizerexit;
 
 import android.annotation.SuppressLint;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,8 +18,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.os.PowerManager;
 import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
@@ -33,11 +30,11 @@ import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-//import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.JsonWriter;
 import android.util.Log;
 import android.util.Xml;
+import android.widget.Toast;
 
 import org.xmlpull.v1.XmlSerializer;
 
@@ -53,7 +50,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import pro.quizer.quizerexit.activity.ElementActivity;
 import pro.quizer.quizerexit.utils.FileUtils;
 
 import static pro.quizer.quizerexit.utils.FileUtils.FOLDER_DIVIDER;
@@ -751,7 +747,12 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
     private void startSession() {
         Log.d(LOG_TAG, "startSession()");
         // start this MediaBrowserService, to make it run when UI will be closed
-        startService(new Intent(getApplicationContext(), this.getClass()));
+        try {
+            startService(new Intent(getApplicationContext(), this.getClass()));
+        } catch (Exception e) {
+//            Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
+        }
+
         mediaSes.setActive(true);
         registerReceiver(bnReceiver, intentFilter);
 
@@ -1045,8 +1046,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
      * },
      * ]
      *
-     * @throws IllegalStateException on JSON error
-     * @throws IOException           on file stream error
+
      */
     private void writeJSON(ArrayList<Byte> alWaveFormIn, ArrayList<Byte> alFftIn)
             throws IllegalStateException, IOException {
@@ -1081,9 +1081,6 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
      * </VLS_PROP_ENTRY_NAME>
      * </DOCUMENT>
      *
-     * @throws IllegalStateException    on XML error
-     * @throws IllegalArgumentException on XML error
-     * @throws IOException              on Filesystem error
      */
     private void writeXML(ArrayList<Byte> alWaveFormIn, ArrayList<Byte> alFftIn)
             throws IllegalStateException, IllegalArgumentException, IOException {

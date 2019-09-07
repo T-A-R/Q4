@@ -52,7 +52,7 @@ public abstract class AbstractViewHolder extends RecyclerView.ViewHolder {
     }
 
     @SuppressLint("SimpleDateFormat")
-    private void setInitialDateTime(final boolean pIsDate) {
+    public void setInitialDateTime(final boolean pIsDate) {
         SimpleDateFormat dateFormat;
 
         if (pIsDate) {
@@ -71,6 +71,7 @@ public abstract class AbstractViewHolder extends RecyclerView.ViewHolder {
             mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
             mCalendar.set(Calendar.MINUTE, minute);
             setInitialDateTime(false);
+
         }
     };
 
@@ -85,4 +86,6 @@ public abstract class AbstractViewHolder extends RecyclerView.ViewHolder {
     };
 
     public abstract void onBind(final ElementModel pAnswer, final int pPosition);
+
+    public Calendar getCalendar() { return mCalendar;}
 }

@@ -501,7 +501,6 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
                 Log.d(TAG, "Crash Logs Clear Error: " + e);
             }
         } else {
-//            Toast.makeText(this, "Краш-лог не отправлен: " + message, Toast.LENGTH_SHORT).show();
             Log.d(TAG, "Crash Logs Not Sent: " + message);
         }
     }

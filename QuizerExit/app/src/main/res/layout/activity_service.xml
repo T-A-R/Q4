@@ -129,7 +129,7 @@
                 android:text="@string/VIEW_FTP_UPLOAD_DATA" />
 
             <Button
-                android:id="@+id/delete_users"
+                android:id="@+id/clear_db"
                 style="@style/ButtonRed"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_36sdp"
@@ -137,7 +137,7 @@
                 android:layout_marginTop="8dp"
                 android:maxLines="1"
                 android:textSize="@dimen/_12ssp"
-                android:text="@string/VIEW_DELETE_USERS" />
+                android:text="@string/VIEW_CLEAR_DB" />
 
         </LinearLayout>
 

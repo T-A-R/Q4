@@ -48,6 +48,8 @@
     <string name="VIEW_UNSENT_COUNT_AUDIO">Количество неотправленных аудио файлов: %1$s</string>
     <string name="VIEW_UNSENT_COUNT_PHOTO">Количество неотправленных фото файлов: %1$s</string>
     <string name="VIEW_DELETE_USERS">Удалить пользователей</string>
+    <string name="VIEW_CLEAR_DB">Очистить базу данных</string>
+    <string name="VIEW_CLEAR_DB_TITLE">Очистка базы данных</string>
     <string name="VIEW_DELETE_USER">Удалить пользователя</string>
     <string name="VIEW_UPLOAD_DATA">Выгрузить данные</string>
     <string name="VIEW_FTP_UPLOAD_DATA">Отправка через FTP</string>
@@ -139,6 +141,7 @@
     <string name="NOTIFICATION_DOWNLOADING_FILES_ERROR">Ошибка при загрузке медиа-файлов.</string>
     <string name="NOTIFICATION_FORCE_GPS_ERROR">Работа без GPS координат невозможна в данном режиме работы! Спутники не инициализированы. Выйдите на отрытое пространство и дождитесь инициализации GPS.</string>
     <string name="NOTIFICATION_SENDING">Идет отправка…</string>
+    <string name="NOTIFICATION_DELETING_DB">Идет очистка базы данных…</string>
     <string name="NOTIFICATION_UPLOADING">Идет выгрузка…</string>
     <string name="NOTIFICATION_UPDATING">Идет обновление…</string>
     <string name="NOTIFICATION_ANSWER_NOT_AVAILABLE_TABLE_QUESTION">Невозможно выбрать данный элемент.</string>
@@ -146,6 +149,7 @@
     <string name="NOTIFICATION_UPDATE_QUOTAS">Список квот обновлен.</string>
 
     <string name="DIALOG_CHANGE_USER_BODY">Вы уверены, что хотите сменить пользователя?</string>
+    <string name="DIALOG_CLEAR_DB_BODY">Внимание! Все данные из базы будут удалены, ключая неотосланные анкеты, аудио и фото. Вам необходимо будет заново ввести ключ при наличии подключения к Интернет! Вы действительно хотите удалить данные?</string>
     <string name="DIALOG_REMOVE_USER_BODY">Вы уверены, что хотите удалить данного пользователя?</string>
     <string name="DIALOG_REMOVE_USER_TITLE">Удаление пользователя</string>
     <string name="DIALOG_ERROR_REMOVE_CURRENT_USER_TITLE">Ошибка удаления текущего пользователя</string>

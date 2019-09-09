@@ -75,7 +75,6 @@ public class SmsViewModel implements Serializable {
                 }
             }
         }
-        Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>> getNotSentSms: " + notSentSms.size());
         return notSentSms;
     }
 

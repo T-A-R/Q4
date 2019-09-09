@@ -307,10 +307,9 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable {
     public void onCameraError(int errorCode) {
         switch (errorCode) {
             case CameraError.ERROR_CAMERA_OPEN_FAILED:
-                Log.d(TAG, "shotPicture: 555555555555555555555555555555555555555555555");
                 //Camera open failed. Probably because another application
                 //is using the camera
-                showToast("Не удается запустить камеру");
+                showToast(getString(R.string.CANT_START_CAMERA));
 
                 break;
             case CameraError.ERROR_IMAGE_WRITE_FAILED:
@@ -321,7 +320,7 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable {
             case CameraError.ERROR_CAMERA_PERMISSION_NOT_AVAILABLE:
                 //camera permission is not available
                 //Ask for the camera permission before initializing it.
-                showToast("Нет доступа на камеру");
+                showToast(getString(R.string.NO_ACCESS_TO_CAMERA));
 
                 break;
             case CameraError.ERROR_DOES_NOT_HAVE_OVERDRAW_PERMISSION:
@@ -333,7 +332,7 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable {
 
                 break;
             case CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA:
-                showToast("Нет передней камеры");
+                showToast(getString(R.string.NO_FRONT_CAMERA));
 
                 break;
         }
@@ -348,7 +347,6 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable {
                             final int pProjectId,
                             final String pUserLogin) {
         try {
-            Log.d(TAG, "shotPicture: 11111111111111111111111111111111111111111");
             startCamera(new CameraConfig()
                     .getBuilder(getContext())
                     .setCameraFacing(CameraFacing.FRONT_FACING_CAMERA)
@@ -357,7 +355,6 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable {
                     .setImageRotation(CameraRotation.ROTATION_270)
                     .build());
         } catch (final Exception pException) {
-            Log.d(TAG, "shotPicture: 22222222222222222222222222222222222222");
             showToast("Не удается стартануть камеру");
             pException.printStackTrace();
             return;
@@ -375,11 +372,9 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable {
             @Override
             public void run() {
                 try {
-                    Log.d(TAG, "shotPicture: 33333333333333333333333333333333333333333333");
                     takePicture();
                     mBaseActivity.setHasPhoto("true");
                 } catch (Exception e) {
-                    Log.d(TAG, "shotPicture: 444444444444444444444444444444444444444444444");
                     e.printStackTrace();
                     onCameraError(CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA);
                     mBaseActivity.setHasPhoto("false");

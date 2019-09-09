@@ -89,28 +89,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         }
 
         if (Constants.Default.DEBUG) {
-//            mLogsView.setVisibility(View.VISIBLE);
-
-            List<AppLogsR> logs = getDao().getAppLogsR();
-            Log.d(TAG, "LOGS: " + logs.size());
-            if (logs != null)
-                for (int i = logs.size() >= 10 ? logs.size() - 10 : 0; i < logs.size(); i++) {
-                    String log = "login: " + logs.get(i).getLogin()
-                            + " date: " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, Long.parseLong(logs.get(i).getDate()) * 1000)
-//                            + " date: " + logs.get(i).getDate()
-                            + " device: " + logs.get(i).getDevice()
-                            + " app: " + logs.get(i).getAppversion()
-                            + " android: " + logs.get(i).getAndroid() + "\n"
-                            + " type: " + logs.get(i).getType()
-                            + " object: " + logs.get(i).getObject()
-                            + " action: " + logs.get(i).getAction()
-                            + " result: " + logs.get(i).getResult()
-                            + " desc: " + logs.get(i).getDescription() + "\n"
-                            + " data: " + logs.get(i).getData() + "\n";
-                    Log.d(TAG, log);
-                    Log.d(TAG, "____________________________________________________________");
-                }
-
+//            showLogs();
         }
 
         final int usersCountValue = getDao().getAllUsers().size();
@@ -155,6 +134,28 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
 
             }
         });
+    }
+
+    private void showLogs() {
+        List<AppLogsR> logs = getDao().getAppLogsR();
+        Log.d(TAG, "LOGS: " + logs.size());
+        if (logs != null)
+            for (int i = logs.size() >= 10 ? logs.size() - 10 : 0; i < logs.size(); i++) {
+                String log = "login: " + logs.get(i).getLogin()
+                        + " date: " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, Long.parseLong(logs.get(i).getDate()) * 1000)
+//                            + " date: " + logs.get(i).getDate()
+                        + " device: " + logs.get(i).getDevice()
+                        + " app: " + logs.get(i).getAppversion()
+                        + " android: " + logs.get(i).getAndroid() + "\n"
+                        + " type: " + logs.get(i).getType()
+                        + " object: " + logs.get(i).getObject()
+                        + " action: " + logs.get(i).getAction()
+                        + " result: " + logs.get(i).getResult()
+                        + " desc: " + logs.get(i).getDescription() + "\n"
+                        + " data: " + logs.get(i).getData() + "\n";
+                Log.d(TAG, log);
+                Log.d(TAG, "____________________________________________________________");
+            }
     }
 
     private void onVersionClick() {

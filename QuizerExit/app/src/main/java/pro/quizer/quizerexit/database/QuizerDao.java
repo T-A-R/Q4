@@ -63,6 +63,9 @@ public interface QuizerDao {
     @Query("UPDATE ElementDatabaseModelR SET send_sms = :send_sms WHERE relative_id = :relative_id")
     void setElementSendSms(boolean send_sms, Integer relative_id);
 
+    @Query("DELETE FROM ElementDatabaseModelR")
+    void clearElementDatabaseModelR();
+
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status")
     List<QuestionnaireDatabaseModelR> getQuestionnaireByUserIdWithStatus(int userId, String status);
 
@@ -99,6 +102,9 @@ public interface QuizerDao {
 
     @Query("SELECT * FROM QuestionnaireDatabaseModelR")
     List<QuestionnaireDatabaseModelR> getAllQuestionnaires();
+
+    @Query("DELETE FROM QuestionnaireDatabaseModelR")
+    void clearQuestionnaireDatabaseModelR();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAppLogsR(AppLogsR appLogsR);

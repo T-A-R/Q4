@@ -33,7 +33,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
     private Button mSendDataButton;
     private Button mSendAudioButton;
     private Button mSendPhotoButton;
-    private Button mDeleteUsersButton;
+    private Button mClearDbButton;
     private Button mUploadDataButton;
     private Button mUploadFTPDataButton;
     private Button mLogsButton;
@@ -47,6 +47,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
     private String mUnsendedAudioString;
     private String mUnsendedPhotoString;
     private Toolbar mToolbar;
+    private boolean isDeletingDB = false;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -76,7 +77,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
         mSendDataButton = findViewById(R.id.send_data);
         mSendAudioButton = findViewById(R.id.send_audio);
         mSendPhotoButton = findViewById(R.id.send_photo);
-        mDeleteUsersButton = findViewById(R.id.delete_users);
+        mClearDbButton = findViewById(R.id.clear_db);
         mUploadDataButton = findViewById(R.id.upload_data);
         mUploadFTPDataButton = findViewById(R.id.upload_ftp_data);
         mLogsButton = findViewById(R.id.logs_btn);
@@ -124,7 +125,6 @@ public class ServiceActivity extends BaseActivity implements ICallback {
                 UiUtils.setButtonEnabled(mSendDataButton, notSentQuestionnairesCount > 0);
                 UiUtils.setButtonEnabled(mSendAudioButton, notSentAudioCount > 0);
                 UiUtils.setButtonEnabled(mSendPhotoButton, notSentPhotoCount > 0);
-                UiUtils.setButtonEnabled(mDeleteUsersButton, usersCount > 0 && notSentQuestionnairesCount <= 0 && notSentAudioCount <= 0 && notSentPhotoCount <= 0);
                 UiUtils.setButtonEnabled(mUploadDataButton, notSentQuestionnairesCount > 0 || notSentAudioCount > 0 || notSentPhotoCount > 0 || notSentCrashCount > 0 || notSentLogsCount > 0);
             }
         });
@@ -162,9 +162,11 @@ public class ServiceActivity extends BaseActivity implements ICallback {
             }
         });
 
-        mDeleteUsersButton.setOnClickListener(new View.OnClickListener() {
+        mClearDbButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
+                showProgressBar();
+                isDeletingDB = true;
                 new DeleteUsersExecutable(ServiceActivity.this, ServiceActivity.this).execute();
             }
         });
@@ -194,13 +196,24 @@ public class ServiceActivity extends BaseActivity implements ICallback {
     @Override
     public void onStarting() {
 //        showProgressBar();
-        if (!isFinishing()) {
+        if (!isFinishing() && !isDeletingDB) {
+            showToast(getString(R.string.NOTIFICATION_SENDING));
+        }
+
+        if (!isFinishing() && isDeletingDB) {
             showToast(getString(R.string.NOTIFICATION_SENDING));
         }
     }
 
     @Override
     public void onSuccess() {
+
+        if (isDeletingDB) {
+            hideProgressBar();
+            startActivity(new Intent(this, ActivationActivity.class));
+            return;
+        }
+
         if (!isFinishing()) {
             updateData(new ServiceInfoExecutable().execute());
         }
@@ -209,6 +222,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
 
     @Override
     public void onError(final Exception pException) {
+        isDeletingDB = false;
         if (!isFinishing()) {
             updateData(new ServiceInfoExecutable().execute());
         }

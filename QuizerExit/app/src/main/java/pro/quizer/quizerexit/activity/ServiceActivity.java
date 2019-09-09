@@ -1,7 +1,9 @@
 package pro.quizer.quizerexit.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -165,9 +167,14 @@ public class ServiceActivity extends BaseActivity implements ICallback {
         mClearDbButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                showProgressBar();
-                isDeletingDB = true;
-                new DeleteUsersExecutable(ServiceActivity.this, ServiceActivity.this).execute();
+                if (!isFinishing()) {
+                    try {
+                        showClearDbAlertDialog();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
             }
         });
 
@@ -201,7 +208,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
         }
 
         if (!isFinishing() && isDeletingDB) {
-            showToast(getString(R.string.NOTIFICATION_SENDING));
+            showToast(getString(R.string.NOTIFICATION_DELETING_DB));
         }
     }
 
@@ -227,5 +234,23 @@ public class ServiceActivity extends BaseActivity implements ICallback {
             updateData(new ServiceInfoExecutable().execute());
         }
 //        hideProgressBar();
+    }
+
+    public void showClearDbAlertDialog() {
+        if (!isFinishing()) {
+            new AlertDialog.Builder(this, R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.VIEW_CLEAR_DB_TITLE)
+                    .setMessage(R.string.DIALOG_CLEAR_DB_BODY)
+                    .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialog, final int which) {
+                            showProgressBar();
+                            isDeletingDB = true;
+                            new DeleteUsersExecutable(ServiceActivity.this, ServiceActivity.this).execute();
+                        }
+                    })
+                    .setNegativeButton(R.string.VIEW_NO, null).show();
+        }
     }
 }

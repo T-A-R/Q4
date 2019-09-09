@@ -1,16 +1,20 @@
 package pro.quizer.quizerexit.executable;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import pro.quizer.quizerexit.R;
-import pro.quizer.quizerexit.activity.ActivationActivity;
-import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.utils.FileUtils;
 
 import static pro.quizer.quizerexit.CoreApplication.getQuizerDatabase;
 import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
+import static pro.quizer.quizerexit.executable.UploadingExecutable.UPLOADING_PATH;
+import static pro.quizer.quizerexit.utils.FileUtils.moveFile;
 
 public class DeleteUsersExecutable extends BaseExecutable {
 
@@ -30,15 +34,9 @@ public class DeleteUsersExecutable extends BaseExecutable {
 
         try {
 
+            moveFiles();
+
             getQuizerDatabase().clearAllTables();
-//            BaseActivity.getDao().clearUserModelR();
-//            BaseActivity.getDao().clearActivationModelR();
-//            BaseActivity.getDao().clearAppLogsR();
-//            BaseActivity.getDao().clearCrashLogs();
-//            BaseActivity.getDao().clearSmsDatabase();
-//            BaseActivity.getDao().clearQuestionnaireDatabaseModelR();
-//            BaseActivity.getDao().clearElementDatabaseModelR();
-//            onSuccess();
 
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -53,5 +51,19 @@ public class DeleteUsersExecutable extends BaseExecutable {
             onError(e);
         }
 
+    }
+
+    private void moveFiles() {
+
+        FileUtils.createFolderIfNotExist(UPLOADING_PATH);
+
+        final List<File> files = new ArrayList<>();
+
+        files.addAll(FileUtils.getFilesRecursion(FileUtils.JPEG, FileUtils.getPhotosStoragePath(mContext)));
+        files.addAll(FileUtils.getFilesRecursion(FileUtils.AMR, FileUtils.getAudioStoragePath(mContext)));
+
+        for (final File file : files) {
+            moveFile(file, UPLOADING_PATH);
+        }
     }
 }

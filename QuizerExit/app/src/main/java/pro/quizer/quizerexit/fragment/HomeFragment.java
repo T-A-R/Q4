@@ -72,6 +72,10 @@ public class HomeFragment extends BaseFragment implements ICallback {
                 refreshFragment();
             }
         });
+
+//        if (!mBaseActivity.checkPermission()) {
+//            mBaseActivity.requestPermission();
+//        }
     }
 
     private void checkUpdates(final Bundle bundle, final ConfigModel configModel) {
@@ -232,6 +236,14 @@ public class HomeFragment extends BaseFragment implements ICallback {
 
         if (isAdded()) {
 //            showToast(getString(R.string.NOTIFICATION_NO_CONNECTION_SAVING_QUIZ));
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!mBaseActivity.checkPermission()) {
+            mBaseActivity.requestPermission();
         }
     }
 }

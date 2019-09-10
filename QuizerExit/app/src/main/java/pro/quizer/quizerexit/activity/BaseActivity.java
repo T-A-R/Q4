@@ -87,6 +87,7 @@ import pro.quizer.quizerexit.view.Toolbar;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.READ_PHONE_STATE;
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.SEND_SMS;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -1014,13 +1015,15 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         final int sms = ContextCompat.checkSelfPermission(getApplicationContext(), SEND_SMS);
         final int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
         final int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+        final int phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_STATE);
 
         return (location == PackageManager.PERMISSION_GRANTED || !getCurrentUser().getConfigR().isGps()) &&
                 camera == PackageManager.PERMISSION_GRANTED &&
                 audio == PackageManager.PERMISSION_GRANTED &&
                 (sms == PackageManager.PERMISSION_GRANTED || !getCurrentUser().getConfigR().hasReserveChannels()) &&
                 writeStorage == PackageManager.PERMISSION_GRANTED &&
-                readStorage == PackageManager.PERMISSION_GRANTED;
+                readStorage == PackageManager.PERMISSION_GRANTED &&
+                (phoneState == PackageManager.PERMISSION_GRANTED || !getCurrentUser().getConfigR().hasReserveChannels());
     }
 
     public void requestPermission() {
@@ -1031,7 +1034,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                     RECORD_AUDIO,
                     WRITE_EXTERNAL_STORAGE,
                     READ_EXTERNAL_STORAGE,
-                    SEND_SMS
+                    SEND_SMS,
+                    READ_PHONE_STATE
             }, 200);
     }
 
@@ -1047,12 +1051,15 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                     final boolean writeStorageAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED;
                     final boolean readStorageAccepted = grantResults[4] == PackageManager.PERMISSION_GRANTED;
                     final boolean sendSms = grantResults[5] == PackageManager.PERMISSION_GRANTED;
+                    final boolean phoneState = grantResults[6] == PackageManager.PERMISSION_GRANTED;
 
-                    if ((getCurrentUser().getConfigR().isForceGps() && !locationAccepted)
+                    if (!locationAccepted
                             || !cameraAccepted
-                            || (getCurrentUser().getConfigR().isAudio() && !audioAccepted)
-                            || !writeStorageAccepted || !readStorageAccepted
-                            || (getCurrentUser().getConfigR().hasReserveChannels() && !sendSms)) {
+                            || !audioAccepted
+                            || !writeStorageAccepted
+                            || !readStorageAccepted
+                            || (getCurrentUser().getConfigR().hasReserveChannels() && !sendSms)
+                            || (getCurrentUser().getConfigR().hasReserveChannels() && !phoneState)) {
 
                         showPermissionDialog();
                         return;

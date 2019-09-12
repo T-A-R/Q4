@@ -389,6 +389,7 @@ public class ElementActivity extends BaseActivity {
 
             if (mConfig.isSaveAborted()) {
                 showProgressBar();
+                addLog(mUserLogin, Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.SAVE_ABORTED_QUEST));
                 saveQuestionnaireToDatabase(true);
                 showToast(getString(R.string.QUESTIONS_SAVED));
             }
@@ -408,6 +409,7 @@ public class ElementActivity extends BaseActivity {
                 UiUtils.setButtonEnabled(pForwardView, false);
             }
             showProgressBar();
+            addLog(mUserLogin, Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.SAVE_COMPLITED_QUEST));
             saveQuestionnaireToDatabase(false);
             showToast(getString(R.string.NOTIFICATION_QUIZ_IS_FINISHED));
 
@@ -432,6 +434,8 @@ public class ElementActivity extends BaseActivity {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 ? !isDestroyed() : !isFinishing()) {
+
+            addLog(mUserLogin, Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.NEXT_BUTTON) + " " + nextElement.getRelativeID());
 
             final FragmentTransaction fragmentTransaction = getSupportFragmentManager()
                     .beginTransaction()
@@ -475,12 +479,15 @@ public class ElementActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+        addLog(mUserLogin, Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.BACK_BUTTON));
         if (!getSupportFragmentManager().popBackStackImmediate()) {
             showExitPoolAlertDialog();
         }
     }
 
     public void showExitPoolAlertDialog() {
+
+        addLog(mUserLogin, Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.EXIT_BUTTON));
         if (!isFinishing()) {
             new AlertDialog.Builder(this, R.style.AlertDialogTheme)
                     .setCancelable(false)
@@ -545,7 +552,7 @@ public class ElementActivity extends BaseActivity {
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
 
-            BaseActivity.addLogWithData(mLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SAVE_QUESTION_TO_DB), Constants.LogResult.ERROR,getString(R.string.SAVE_QUESTION_TO_DB_ERROR), e.toString());
+            BaseActivity.addLogWithData(mLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SAVE_QUESTION_TO_DB), Constants.LogResult.ERROR, getString(R.string.SAVE_QUESTION_TO_DB_ERROR), e.toString());
         }
     }
 
@@ -610,6 +617,7 @@ public class ElementActivity extends BaseActivity {
         try {
             getDao().insertElement(elementDatabaseModel);
         } catch (Exception e) {
+            addLogWithData(mUserLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SAVE_QUESTION_TO_DB), Constants.LogResult.ERROR, getString(R.string.DIALOG_PLEASE_TURN_ON_AUTO_TIME), e.toString());
             showToast(getString(R.string.DB_SAVE_ERROR));
         }
     }
@@ -1113,6 +1121,7 @@ public class ElementActivity extends BaseActivity {
 
     private void showTimeDialog() {
         mIsTimeDialogShow = true;
+
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
         alertDialog.setCancelable(false);
         alertDialog.setTitle(R.string.DIALOG_PLEASE_TURN_ON_AUTO_TIME);
@@ -1144,7 +1153,13 @@ public class ElementActivity extends BaseActivity {
     private void checkTIme() {
 
         if (!isTimeAutomatic() && mConfig.isForceTime()) {
-            showTimeDialog();
+            try {
+                addLog(mUserLogin, Constants.LogType.DIALOG, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SHOW_DIALOG), Constants.LogResult.SUCCESS, getString(R.string.DIALOG_PLEASE_TURN_ON_AUTO_TIME));
+                showTimeDialog();
+            } catch (Exception e) {
+                addLogWithData(mUserLogin, Constants.LogType.DIALOG, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SHOW_DIALOG), Constants.LogResult.ERROR, getString(R.string.DIALOG_PLEASE_TURN_ON_AUTO_TIME), e.toString());
+
+            }
         }
     }
 }

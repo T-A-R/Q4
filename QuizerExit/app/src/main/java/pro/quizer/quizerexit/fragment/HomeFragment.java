@@ -146,6 +146,7 @@ public class HomeFragment extends BaseFragment implements ICallback {
             @Override
             public void onStarting() {
                 showProgressBar();
+                mBaseActivity.addLog(getBaseActivity().getCurrentUser().getLogin(), Constants.LogType.BUTTON, Constants.LogObject.LOG, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.VIEW_START));
             }
 
             @Override

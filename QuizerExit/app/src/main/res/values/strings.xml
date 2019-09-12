@@ -149,7 +149,7 @@
     <string name="NOTIFICATION_UPDATE_QUOTAS">Список квот обновлен.</string>
 
     <string name="DIALOG_CHANGE_USER_BODY">Вы уверены, что хотите сменить пользователя?</string>
-    <string name="DIALOG_CLEAR_DB_BODY">Внимание! Все данные из базы будут удалены, ключая неотосланные анкеты, аудио и фото. Вам необходимо будет заново ввести ключ при наличии подключения к Интернет! Вы действительно хотите удалить данные?</string>
+    <string name="DIALOG_CLEAR_DB_BODY">Внимание! Все данные из базы будут удалены, включая неотосланные анкеты, аудио и фото. Вам необходимо будет заново ввести ключ при наличии подключения к Интернет! Вы действительно хотите удалить данные?</string>
     <string name="DIALOG_REMOVE_USER_BODY">Вы уверены, что хотите удалить данного пользователя?</string>
     <string name="DIALOG_REMOVE_USER_TITLE">Удаление пользователя</string>
     <string name="DIALOG_ERROR_REMOVE_CURRENT_USER_TITLE">Ошибка удаления текущего пользователя</string>
@@ -299,5 +299,19 @@
     <string name="ERROR_303_DESC">Ошибка 3.03 (Ошибка парсинга JSON)</string>
     <string name="ERROR_304_DESC">Ошибка 3.04 (Сервер не принял отправленные данные)</string>
     <string name="GOT_FILELIST_TO_DELETE">Получен список на удаление файлов</string>
+    <string name="PRESS_SEND_QUEST_BUTTON">Нажатие на кнопку ОТПРАВИТЬ АНКЕТЫ</string>
+    <string name="PRESS_BUTTON">Нажатие на кнопку</string>
+    <string name="APP_VER_BUTTON">Версия приложения</string>
+    <string name="SEND_QUEST_BUTTON">Отправить анкеты</string>
+    <string name="SEND_PHOTO_BUTTON">Отправить фото</string>
+    <string name="SEND_AUDIO_BUTTON">Отправить аудио</string>
+    <string name="CLEAR_DB_BUTTON">Очистить базу данных</string>
+    <string name="UPLOAD_BUTTON">Выгрузить данные</string>
+    <string name="SHOW_DIALOG">Показ диалогового окна</string>
+    <string name="SAVE_ABORTED_QUEST">Сохранение прерванной анкеты</string>
+    <string name="SAVE_COMPLITED_QUEST">Сохранение завершенной анкеты</string>
+    <string name="BACK_BUTTON">Назад</string>
+    <string name="NEXT_BUTTON">Переход на следующий вопрос:</string>
+    <string name="EXIT_BUTTON">Выход</string>
 
 </resources>

@@ -7,10 +7,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="112dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_height="@dimen/_90sdp"
+        android:layout_marginTop="@dimen/_40sdp"
+        android:layout_marginLeft="@dimen/_12sdp"
+        android:layout_marginRight="@dimen/_12sdp"
         android:orientation="vertical">
 
         <android.support.v7.widget.AppCompatImageView
@@ -53,7 +53,7 @@
             android:id="@+id/login_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="56dp"
+            android:layout_marginTop="@dimen/_30sdp"
             android:hint="@string/TEXT_HINT_INPUT_LOGIN"
             android:inputType="textEmailAddress"
             android:maxLines="1"

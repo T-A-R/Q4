@@ -24,6 +24,7 @@ import pro.quizer.quizerexit.executable.files.AllAudiosSendingExecutable;
 import pro.quizer.quizerexit.executable.files.AllPhotosSendingExecutable;
 import pro.quizer.quizerexit.executable.files.CleanUpFilesExecutable;
 import pro.quizer.quizerexit.model.view.ServiceViewModel;
+import pro.quizer.quizerexit.utils.DeviceUtils;
 import pro.quizer.quizerexit.utils.FontUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 import pro.quizer.quizerexit.view.Toolbar;
@@ -46,6 +47,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
     private String mUnsendedQuestionairesString;
     private TextView mUnsendedAudio;
     private TextView mUnsendePhoto;
+    private TextView mDeviceId;
     private String mUnsendedAudioString;
     private String mUnsendedPhotoString;
     private Toolbar mToolbar;
@@ -88,6 +90,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
         mUnsendedQuestionaires = findViewById(R.id.unsended_questionnaires_count);
         mUnsendedAudio = findViewById(R.id.unsended_audio_files_count);
         mUnsendePhoto = findViewById(R.id.unsended_photo_files_count);
+        mDeviceId = findViewById(R.id.device_id);
         mToolbar = findViewById(R.id.toolbar);
         mToolbar.setTitle(getString(R.string.VIEW_SERVICE_TITLE));
         mToolbar.showCloseView(new View.OnClickListener() {
@@ -123,6 +126,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
                 UiUtils.setTextOrHide(mUnsendedQuestionaires, String.format(mUnsendedQuestionairesString, notSentQuestionnairesCount));
                 UiUtils.setTextOrHide(mUnsendedAudio, String.format(mUnsendedAudioString, notSentAudioCount));
                 UiUtils.setTextOrHide(mUnsendePhoto, String.format(mUnsendedPhotoString, notSentPhotoCount));
+                UiUtils.setTextOrHide(mDeviceId, "Device ID: " + DeviceUtils.getDeviceId());
 
                 UiUtils.setButtonEnabled(mSendDataButton, notSentQuestionnairesCount > 0);
                 UiUtils.setButtonEnabled(mSendAudioButton, notSentAudioCount > 0);

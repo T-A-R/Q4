@@ -147,7 +147,11 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
                 mAlertDialog.setMessage(message);
 
                 if (!mBaseActivity.isFinishing()) {
-                    mAlertDialog.show();
+                    try {
+                        mAlertDialog.show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });

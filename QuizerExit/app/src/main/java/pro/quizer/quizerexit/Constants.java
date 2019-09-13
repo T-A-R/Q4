@@ -92,6 +92,7 @@ public final class Constants {
         String CONFIG = "config";
         String QUESTIONNAIRE = "questionnaire";
         String SMS = "sms";
+        String LOG = "log";
     }
 
     public interface LogResult {

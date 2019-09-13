@@ -134,6 +134,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
         mSendDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
+                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.SEND_QUEST_BUTTON));
                 new SendAllQuestionnairesExecutable(ServiceActivity.this, ServiceActivity.this).execute();
             }
         });
@@ -146,7 +147,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
 
                     return;
                 }
-
+                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.SEND_PHOTO_BUTTON));
                 new AllPhotosSendingExecutable(ServiceActivity.this, ServiceActivity.this).execute();
             }
         });
@@ -159,7 +160,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
 
                     return;
                 }
-
+                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.SEND_AUDIO_BUTTON));
                 new AllAudiosSendingExecutable(ServiceActivity.this, ServiceActivity.this).execute();
             }
         });
@@ -167,6 +168,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
         mClearDbButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
+                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.CLEAR_DB_BUTTON));
                 if (!isFinishing()) {
                     try {
                         showClearDbAlertDialog();
@@ -181,6 +183,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
         mUploadDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
+                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.UPLOAD_BUTTON));
                 new UploadingExecutable(ServiceActivity.this, ServiceActivity.this).execute();
             }
         });
@@ -188,6 +191,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
         mUploadFTPDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
+                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.VIEW_FTP_UPLOAD_DATA));
                 new UploadingFTPExecutable(ServiceActivity.this, ServiceActivity.this).execute();
             }
         });
@@ -195,6 +199,7 @@ public class ServiceActivity extends BaseActivity implements ICallback {
         mLogsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
+                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.LOG, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.VIEW_LOGS_TITLE));
                 startLogsActivity();
             }
         });

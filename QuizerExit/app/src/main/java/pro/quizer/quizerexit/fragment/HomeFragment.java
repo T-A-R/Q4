@@ -25,6 +25,7 @@ import pro.quizer.quizerexit.listener.QuotasClickListener;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ProjectInfoModel;
 import pro.quizer.quizerexit.model.view.SyncViewModel;
+import pro.quizer.quizerexit.utils.DeviceUtils;
 import pro.quizer.quizerexit.utils.SystemUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 
@@ -72,10 +73,6 @@ public class HomeFragment extends BaseFragment implements ICallback {
                 refreshFragment();
             }
         });
-
-//        if (!mBaseActivity.checkPermission()) {
-//            mBaseActivity.requestPermission();
-//        }
     }
 
     private void checkUpdates(final Bundle bundle, final ConfigModel configModel) {

@@ -1,13 +1,46 @@
 package pro.quizer.quizerexit.utils;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Build;
+import android.provider.Settings.Secure;
+import android.telephony.TelephonyManager;
 
 import pro.quizer.quizerexit.BuildConfig;
+
+import static com.activeandroid.Cache.getContext;
 
 public class DeviceUtils {
 
     public static String getDeviceInfo() {
         return Build.MANUFACTURER + " " + Build.MODEL + " " + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK_INT + ") " + Build.ID;
+    }
+
+
+    @SuppressLint({"MissingPermission", "HardwareIds"})
+    public static String getDeviceId() {
+        String deviceId = null;
+        final TelephonyManager tm = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
+        try {
+            deviceId = tm.getDeviceId(); // возвращает IMEI
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (deviceId == null) deviceId = getAndroidId(); // возвращает ANDROID_ID если не получилось получить IMEI
+        return deviceId;
+    }
+
+    @SuppressLint("HardwareIds")
+    public static String getAndroidId() {
+        String androidId = null;
+        try {
+            androidId = Secure.getString(getContext().getContentResolver(), Secure.ANDROID_ID);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return androidId;
     }
 
     public static String getAppVersion() {

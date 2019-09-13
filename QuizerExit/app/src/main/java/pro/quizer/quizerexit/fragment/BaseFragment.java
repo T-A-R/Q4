@@ -309,7 +309,8 @@ public class BaseFragment extends HiddenCameraFragment implements Serializable {
             case CameraError.ERROR_CAMERA_OPEN_FAILED:
                 //Camera open failed. Probably because another application
                 //is using the camera
-                showToast(getString(R.string.CANT_START_CAMERA));
+//                showToast(getString(R.string.CANT_START_CAMERA));
+                shotPicture(mLoginAdmin, mToken, mRelativeId, mUserId, mProjectId, mUserLogin);
 
                 break;
             case CameraError.ERROR_IMAGE_WRITE_FAILED:

@@ -151,33 +151,6 @@ public class ElementActivity extends BaseActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 200;
 
-    private boolean checkPermission() {
-        final int location = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
-        final int camera = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
-        final int audio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
-        final int sms = ContextCompat.checkSelfPermission(getApplicationContext(), SEND_SMS);
-        final int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
-        final int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
-
-        return (location == PackageManager.PERMISSION_GRANTED || !mConfig.isGps()) &&
-                camera == PackageManager.PERMISSION_GRANTED &&
-                audio == PackageManager.PERMISSION_GRANTED &&
-                (sms == PackageManager.PERMISSION_GRANTED || !mConfig.hasReserveChannels()) &&
-                writeStorage == PackageManager.PERMISSION_GRANTED &&
-                readStorage == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{
-                ACCESS_FINE_LOCATION,
-                CAMERA,
-                RECORD_AUDIO,
-                WRITE_EXTERNAL_STORAGE,
-                READ_EXTERNAL_STORAGE,
-                SEND_SMS
-        }, PERMISSION_REQUEST_CODE);
-    }
-
     @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {

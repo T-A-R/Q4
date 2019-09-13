@@ -161,8 +161,12 @@
     <string name="DIALOG_PLEASE_TURN_ON_GPS">Пожалуйста, включите GPS для продолжения работы.</string>
     <string name="DIALOG_PLEASE_TURN_ON_AUTO_TIME">Пожалуйста, включите автоматическое время сети.</string>
     <string name="DIALOG_YOU_NEED_TO_TURN_ON_GPS">Для прохождения анкеты необходимо включить GPS.</string>
+    <string name="DIALOG_PLEASE_GIVE_PERM">Пожалуйста, предоставьте разрешения приложению.</string>
+    <string name="DIALOG_YOU_NEED_TO_TURN_ON_PERM">Для работы приложения необходимо перейти в настройки и предоставить нужные разрешия.</string>
     <string name="DIALOG_YOU_NEED_TO_TURN_ON_AUTO_TIME">Для прохождения анкеты необходимо включить автоматическое время сети.</string>
     <string name="DIALOG_TURN_ON">Включить</string>
+    <string name="DIALOG_PERM_ON">Перейти</string>
+    <string name="DIALOG_PERM_OFF">Отмена</string>
     <string name="DIALOG_SMS_SENDING">Отправка СМС</string>
     <string name="DIALOG_SMS_SENDING_CONFIRMATION">Вы уверены, что хотите отправить СМС номер %1$s ?</string>
     <string name="DIALOG_ALL_SMS_SENDING_CONFIRMATION">Вы уверены, что хотите отправить все неотправленные СМС?</string>

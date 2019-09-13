@@ -70,7 +70,7 @@ public class ActivationActivity extends BaseActivity implements QuizerAPI.SendKe
             Gson gson = new Gson();
             String json = gson.toJson(activationRequestModel);
 
-            addLogWithData(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.SEND_KEY), Constants.LogResult.SENT, getString(R.string.TRY_TO_SEND_KEY), json);
+            addLogWithData(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.SEND_KEY), Constants.LogResult.SENT, getString(R.string.TRY_TO_SEND_KEY) + " : " + key, json);
 
             QuizerAPI.sendKey(Constants.Default.ACTIVATION_URL, json, this);
         }

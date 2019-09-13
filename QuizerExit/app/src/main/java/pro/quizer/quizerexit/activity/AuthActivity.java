@@ -115,11 +115,9 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         }
 
         sendAuthButton.setOnClickListener(v -> {
-//            addLog(null, Constants.LogType.BUTTON, null, "Нажатие на кнопку", Constants.LogResult.PRESSED, "Отправить (Авторизация)");
             onLoginClickWithRetrofit();
         });
         mVersionView.setOnClickListener(v -> {
-//            addLog(null, Constants.LogType.BUTTON, null, "Нажатие на кнопку", Constants.LogResult.PRESSED, "Версия приложения");
             onVersionClick();
         });
 
@@ -163,6 +161,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
 
         if (mVersionTapCount == MAX_VERSION_TAP_COUNT) {
             finish();
+            addLog("android", Constants.LogType.BUTTON, null, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.APP_VER_BUTTON));
             startServiceActivity();
 
             mVersionTapCount = 0;

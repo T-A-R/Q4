@@ -91,6 +91,8 @@ public class ElementActivity extends BaseActivity {
     private GPSModel mGPSModel;
     private String mUserLogin;
     private String mGpsString;
+    private String mGpsNetworkString;
+    private boolean mIsUsedFakeGps = false;
     private long mGpsTime;
     private long mStartDateInterview;
     private boolean mIsMediaConnected;
@@ -270,6 +272,8 @@ public class ElementActivity extends BaseActivity {
                 mGPSModel = GpsUtils.getCurrentGps(this, mConfig.isForceGps());
                 if (mGPSModel != null) {
                     mGpsString = mGPSModel.getGPS();
+                    mGpsNetworkString = mGPSModel.getGPSNetwork();
+                    mIsUsedFakeGps = mGPSModel.isFakeGPS();
                     mGpsTime = mGPSModel.getTime();
 
                     if (!StringUtils.isEmpty(mGpsString)) {
@@ -290,6 +294,10 @@ public class ElementActivity extends BaseActivity {
                 } else {
                     initStartValues();
                 }
+            }
+
+            if(mIsUsedFakeGps) {
+                //TODO ALERT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             }
         } else {
             initStartValues();
@@ -499,6 +507,7 @@ public class ElementActivity extends BaseActivity {
         questionnaireDatabaseModel.setBilling_questions(mBillingQuestions);
         questionnaireDatabaseModel.setUser_project_id(mUserProjectId);
         questionnaireDatabaseModel.setGps(mGpsString);
+        questionnaireDatabaseModel.setGpsNetwork(mGpsNetworkString);
         questionnaireDatabaseModel.setGps_time(mGpsTime);
         questionnaireDatabaseModel.setDate_interview(mStartDateInterview);
         questionnaireDatabaseModel.setHas_photo(getHasPhoto());

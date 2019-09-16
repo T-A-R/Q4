@@ -8,14 +8,20 @@ public class GPSModel {
 
     private double lon;
     private double lat;
+    private double lonN;
+    private double latN;
     private long time;
+    private boolean isFakeGPS;
 
     private static String GPS_FORMAT = "%1$s:%2$s";
 
-    public GPSModel(double lon, double lat, long time) {
+    public GPSModel(double lon, double lat, double lonN, double latN, long time, boolean isFakeGPS) {
         this.lon = lon;
         this.lat = lat;
+        this.lonN = lonN;
+        this.latN = latN;
         this.time = time;
+        this.isFakeGPS = isFakeGPS;
     }
 
     public long getTime() {
@@ -28,5 +34,17 @@ public class GPSModel {
         } else {
             return String.format(GPS_FORMAT, lat, lon);
         }
+    }
+
+    public String getGPSNetwork() {
+        if (lonN == DEFAULT_GPS_VALUE || latN == DEFAULT_GPS_VALUE) {
+            return Constants.Strings.EMPTY;
+        } else {
+            return String.format(GPS_FORMAT, latN, lonN);
+        }
+    }
+
+    public boolean isFakeGPS() {
+        return isFakeGPS;
     }
 }

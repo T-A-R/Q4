@@ -5,7 +5,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.activeandroid.query.Update;
+//import com.activeandroid.query.Update;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

@@ -10,7 +10,10 @@ public final class GpsUtils {
     public static GPSModel getCurrentGps(final Activity pContext, final boolean pIsForceGps) throws Exception {
         double lat = DEFAULT_GPS_VALUE;
         double lon = DEFAULT_GPS_VALUE;
+        double latN = DEFAULT_GPS_VALUE;
+        double lonN = DEFAULT_GPS_VALUE;
         long time = DEFAULT_GPS_VALUE;
+        boolean isFakeGPS = false;
 
         final GPSTracker gps = new GPSTracker(pContext);
 
@@ -18,7 +21,10 @@ public final class GpsUtils {
             try {
                 lat = gps.getLatitude();
                 lon = gps.getLongitude();
+                latN = gps.getLatitudeNetwork();
+                lonN = gps.getLongitudeNetwork();
                 time = gps.getGpsTime();
+                isFakeGPS = gps.isFakeGPS();
             } catch (final Exception e) {
                 throw new Exception();
             }
@@ -27,6 +33,6 @@ public final class GpsUtils {
             return null;
         }
 
-        return new GPSModel(lon, lat, time);
+        return new GPSModel(lon, lat, lonN, latN, time, isFakeGPS);
     }
 }

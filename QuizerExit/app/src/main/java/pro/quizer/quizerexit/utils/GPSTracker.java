@@ -3,11 +3,13 @@ package pro.quizer.quizerexit.utils;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Service;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -28,6 +30,10 @@ public class GPSTracker extends Service implements LocationListener {
     double latitude; // latitude
     double longitude; // longitude
     long gpstime; // longitude
+    Location locationNetwork; // location
+    double latitudeNetwork; // latitude
+    double longitudeNetwork; // longitude
+    long gpstimeNetwork; // longitude
     // The minimum distance to change Updates in meters
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
     // The minimum time between updates in milliseconds
@@ -62,10 +68,10 @@ public class GPSTracker extends Service implements LocationListener {
                             MIN_TIME_BW_UPDATES,
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                     if (locationManager != null) {
-                        location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                        if (location != null) {
-                            latitude = location.getLatitude();
-                            longitude = location.getLongitude();
+                        locationNetwork = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                        if (locationNetwork != null) {
+                            latitudeNetwork = locationNetwork.getLatitude();
+                            longitudeNetwork = locationNetwork.getLongitude();
                             gpstime = location.getTime();
                         }
                     }
@@ -111,6 +117,26 @@ public class GPSTracker extends Service implements LocationListener {
         longitude = location.getLongitude();
 
         return longitude;
+    }
+
+    public double getLatitudeNetwork() throws Exception {
+        if (locationNetwork == null) {
+            throw new Exception("Не удается получить текущие координаты сети");
+        }
+
+        latitudeNetwork = locationNetwork.getLatitude();
+
+        return latitudeNetwork;
+    }
+
+    public double getLongitudeNetwork() throws Exception {
+        if (locationNetwork == null) {
+            throw new Exception("Не удается поулчить текущие координаты сети");
+        }
+
+        longitudeNetwork = locationNetwork.getLongitude();
+
+        return longitudeNetwork;
     }
 
     public long getGpsTime() throws Exception {
@@ -164,5 +190,19 @@ public class GPSTracker extends Service implements LocationListener {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    public boolean isFakeGPS() {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            return location.isFromMockProvider();
+        } else {
+            String mockLocation = "0";
+            try {
+                mockLocation = Settings.Secure.getString(mActivity.getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return !mockLocation.equals("0");
+        }
     }
 }

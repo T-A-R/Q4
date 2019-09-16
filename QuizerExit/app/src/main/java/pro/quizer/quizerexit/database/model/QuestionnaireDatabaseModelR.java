@@ -44,6 +44,9 @@ public class QuestionnaireDatabaseModelR {
     @ColumnInfo(name = "gps")
     private String gps;
 
+    @ColumnInfo(name = "gps_network")
+    private String gps_network;
+
     @ColumnInfo(name = "gps_time")
     private long gps_time;
 
@@ -96,6 +99,7 @@ public class QuestionnaireDatabaseModelR {
         this.user_project_id = user_project_id;
         this.date_interview = date_interview;
         this.gps = gps;
+        this.gps_network = gps_network;
         this.gps_time = gps_time;
         this.questions_passed = questions_passed;
         this.screens_passed = screens_passed;
@@ -204,6 +208,14 @@ public class QuestionnaireDatabaseModelR {
 
     public void setGps(String gps) {
         this.gps = gps;
+    }
+
+    public String getGpsNetwork() {
+        return gps_network;
+    }
+
+    public void setGpsNetwork(String gps) {
+        this.gps_network = gps_network;
     }
 
     public long getGps_time() {

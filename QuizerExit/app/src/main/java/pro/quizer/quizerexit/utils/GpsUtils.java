@@ -2,6 +2,9 @@ package pro.quizer.quizerexit.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
+
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
 public final class GpsUtils {
 
@@ -13,6 +16,7 @@ public final class GpsUtils {
         double latN = DEFAULT_GPS_VALUE;
         double lonN = DEFAULT_GPS_VALUE;
         long time = DEFAULT_GPS_VALUE;
+        long timeNetwork = DEFAULT_GPS_VALUE;
         boolean isFakeGPS = false;
 
         final GPSTracker gps = new GPSTracker(pContext);
@@ -23,9 +27,12 @@ public final class GpsUtils {
                 lon = gps.getLongitude();
                 latN = gps.getLatitudeNetwork();
                 lonN = gps.getLongitudeNetwork();
+                timeNetwork = gps.getGpsTimeNetwork();
                 time = gps.getGpsTime();
                 isFakeGPS = gps.isFakeGPS();
             } catch (final Exception e) {
+                e.printStackTrace();
+                Log.d(TAG, "getCurrentGps: " + e.getMessage());
                 throw new Exception();
             }
         } else {
@@ -33,6 +40,11 @@ public final class GpsUtils {
             return null;
         }
 
-        return new GPSModel(lon, lat, lonN, latN, time, isFakeGPS);
+        if(lat ==0 && latN ==0) {
+            gps.showNoGpsAlert();
+            return null;
+        }
+
+        return new GPSModel(lon, lat, lonN, latN, time, timeNetwork, isFakeGPS);
     }
 }

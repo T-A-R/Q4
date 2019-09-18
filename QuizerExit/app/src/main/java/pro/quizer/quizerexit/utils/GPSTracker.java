@@ -3,7 +3,6 @@ package pro.quizer.quizerexit.utils;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Service;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
@@ -16,6 +15,9 @@ import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.activity.MainActivity;
+
+import static pro.quizer.quizerexit.activity.BaseActivity.IS_AFTER_AUTH;
 
 public class GPSTracker extends Service implements LocationListener {
 
@@ -27,13 +29,13 @@ public class GPSTracker extends Service implements LocationListener {
     // flag for GPS status
     boolean canGetLocation = false;
     Location location; // location
-    double latitude; // latitude
-    double longitude; // longitude
-    long gpstime; // longitude
+    double latitude = 0; // latitude
+    double longitude = 0; // longitude
+    long gpstime = 0; // time
     Location locationNetwork; // location
-    double latitudeNetwork; // latitude
-    double longitudeNetwork; // longitude
-    long gpstimeNetwork; // longitude
+    double latitudeNetwork = 0; // latitude
+    double longitudeNetwork = 0; // longitude
+    long gpstimeNetwork = 0; // time
     // The minimum distance to change Updates in meters
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
     // The minimum time between updates in milliseconds
@@ -63,16 +65,14 @@ public class GPSTracker extends Service implements LocationListener {
             } else {
                 this.canGetLocation = true;
                 if (isNetworkEnabled) {
-                    locationManager.requestLocationUpdates(
-                            LocationManager.NETWORK_PROVIDER,
-                            MIN_TIME_BW_UPDATES,
-                            MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                    locationManager.requestSingleUpdate(
+                            LocationManager.NETWORK_PROVIDER, this, null);
                     if (locationManager != null) {
                         locationNetwork = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                         if (locationNetwork != null) {
                             latitudeNetwork = locationNetwork.getLatitude();
                             longitudeNetwork = locationNetwork.getLongitude();
-                            gpstime = location.getTime();
+                            gpstimeNetwork = locationNetwork.getTime();
                         }
                     }
                 }
@@ -99,54 +99,47 @@ public class GPSTracker extends Service implements LocationListener {
         return location;
     }
 
-    public double getLatitude() throws Exception {
+    public double getLatitude() {
         if (location == null) {
-            throw new Exception("Не удается получить текущие координаты GPS");
-        }
-
-        latitude = location.getLatitude();
+        } else latitude = location.getLatitude();
 
         return latitude;
     }
 
-    public double getLongitude() throws Exception {
+    public double getLongitude() {
         if (location == null) {
-            throw new Exception("Не удается поулчить текущие координаты GPS");
-        }
-
-        longitude = location.getLongitude();
+        } else longitude = location.getLongitude();
 
         return longitude;
     }
 
-    public double getLatitudeNetwork() throws Exception {
+    public double getLatitudeNetwork() {
         if (locationNetwork == null) {
-            throw new Exception("Не удается получить текущие координаты сети");
-        }
-
-        latitudeNetwork = locationNetwork.getLatitude();
+        } else latitudeNetwork = locationNetwork.getLatitude();
 
         return latitudeNetwork;
     }
 
-    public double getLongitudeNetwork() throws Exception {
+    public double getLongitudeNetwork() {
         if (locationNetwork == null) {
-            throw new Exception("Не удается поулчить текущие координаты сети");
-        }
-
-        longitudeNetwork = locationNetwork.getLongitude();
+        } else longitudeNetwork = locationNetwork.getLongitude();
 
         return longitudeNetwork;
     }
 
-    public long getGpsTime() throws Exception {
+    public long getGpsTime() {
         if (location == null) {
-            throw new Exception("Не удается поулчить текущие координаты GPS");
-        }
-
-        gpstime = location.getTime();
+        } else gpstime = location.getTime();
 
         return gpstime;
+    }
+
+    public long getGpsTimeNetwork() {
+        if (locationNetwork != null) {
+            gpstimeNetwork = locationNetwork.getTime();
+        }
+
+        return gpstimeNetwork;
     }
 
     public boolean canGetLocation() {
@@ -162,6 +155,26 @@ public class GPSTracker extends Service implements LocationListener {
 
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                mActivity.startActivity(intent);
+            }
+        });
+
+        if (!mActivity.isFinishing()) {
+            alertDialog.show();
+        }
+    }
+
+    public void showNoGpsAlert() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity, R.style.AlertDialogTheme);
+        alertDialog.setCancelable(false);
+        alertDialog.setTitle(R.string.DIALOG_NO_GPS);
+        alertDialog.setMessage(R.string.DIALOG_NO_GPS_TEXT);
+        alertDialog.setPositiveButton(R.string.DIALOG_NEXT, new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                mActivity.finish();
+                Intent intent = new Intent(mActivity, MainActivity.class);
+                intent.putExtra(IS_AFTER_AUTH, true);
                 mActivity.startActivity(intent);
             }
         });

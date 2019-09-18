@@ -182,6 +182,12 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                         }
                     }).execute();
 
+                    try {
+                        BaseActivity.getDao().clearWarningsR();
+                    } catch (Exception e) {
+                        BaseActivity.addLogWithData(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.WARNINGS, mBaseActivity.getString(R.string.CLEAR_WARNINGS), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.DB_CLEAR_ERROR), e.getMessage());
+                    }
+
                     onSuccess();
                 }
             } else {

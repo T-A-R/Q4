@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,6 +31,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +44,7 @@ import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
 import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.database.model.UserModelR;
+import pro.quizer.quizerexit.database.model.WarningsR;
 import pro.quizer.quizerexit.fragment.ElementFragment;
 import pro.quizer.quizerexit.model.ElementDatabaseType;
 import pro.quizer.quizerexit.model.ElementType;
@@ -94,6 +99,7 @@ public class ElementActivity extends BaseActivity {
     private String mGpsNetworkString;
     private boolean mIsUsedFakeGps = false;
     private long mGpsTime;
+    private long mGpsTimeNetwork;
     private long mStartDateInterview;
     private boolean mIsMediaConnected;
     private boolean mIsTimeDialogShow = false;
@@ -249,6 +255,8 @@ public class ElementActivity extends BaseActivity {
             }
         });
 
+        getLocation();
+
         mStart = findViewById(R.id.ibStart);
         mStop = findViewById(R.id.ibStop);
         mStatus = findViewById(R.id.tvState);
@@ -275,6 +283,7 @@ public class ElementActivity extends BaseActivity {
                     mGpsNetworkString = mGPSModel.getGPSNetwork();
                     mIsUsedFakeGps = mGPSModel.isFakeGPS();
                     mGpsTime = mGPSModel.getTime();
+                    mGpsTimeNetwork = mGPSModel.getTimeNetwork();
 
                     if (!StringUtils.isEmpty(mGpsString)) {
 //                    showToast(getString(R.string.NOTIFICATION_CURRENT_GPS) + mGpsString);
@@ -285,7 +294,8 @@ public class ElementActivity extends BaseActivity {
                     initStartValues();
                 }
             } catch (final Exception e) {
-                Log.d(TAG, "startGps: " + e);
+                e.printStackTrace();
+                Log.d(TAG, "startGps: " + e.getMessage());
                 if (mConfig.isForceGps()) {
 //                    showToast(getString(R.string.NOTIFICATION_FORCE_GPS_ERROR));
 
@@ -296,8 +306,14 @@ public class ElementActivity extends BaseActivity {
                 }
             }
 
-            if(mIsUsedFakeGps) {
-                //TODO ALERT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if (mIsUsedFakeGps) {
+                try {
+                    getDao().insertWarning(new WarningsR(Constants.Warnings.FAKE_GPS, mGpsTime));
+                    addLog(mUserLogin, Constants.LogType.BUTTON, Constants.LogObject.CONFIG, getString(R.string.CONFIG_ERROR), Constants.LogResult.PRESSED, getString(R.string.FAKE_GPS_ON));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                showFakeGPSAlertDialog();
             }
         } else {
             initStartValues();
@@ -491,6 +507,31 @@ public class ElementActivity extends BaseActivity {
         }
     }
 
+    public void showFakeGPSAlertDialog() {
+
+
+        if (!isFinishing()) {
+            new AlertDialog.Builder(this, R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.VIEW_FAKE_GPS_HEADER)
+                    .setMessage(R.string.VIEW_FAKE_GPS_BODY)
+                    .setPositiveButton(R.string.VIEW_APPLY, new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(final DialogInterface dialog, final int which) {
+                            if (mConfig.isSaveAborted()) {
+                                showProgressBar();
+                                saveQuestionnaireToDatabase(true);
+                                showToast(getString(R.string.QUESTIONS_SAVED));
+                            }
+                            finish();
+                            startMainActivity();
+                        }
+                    })
+                    .show();
+        }
+    }
+
     private void saveQuestionnaireToDatabase(boolean aborted) {
         final long endTime = DateUtils.getCurrentTimeMillis();
         final long durationTimeQuestionnaire = endTime - mStartDateInterview;
@@ -509,6 +550,7 @@ public class ElementActivity extends BaseActivity {
         questionnaireDatabaseModel.setGps(mGpsString);
         questionnaireDatabaseModel.setGpsNetwork(mGpsNetworkString);
         questionnaireDatabaseModel.setGps_time(mGpsTime);
+        questionnaireDatabaseModel.setGps_time_network(mGpsTimeNetwork);
         questionnaireDatabaseModel.setDate_interview(mStartDateInterview);
         questionnaireDatabaseModel.setHas_photo(getHasPhoto());
 
@@ -535,6 +577,18 @@ public class ElementActivity extends BaseActivity {
             showToast(getString(R.string.DB_SAVE_ERROR));
 
             BaseActivity.addLogWithData(mLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SAVE_QUESTION_TO_DB), Constants.LogResult.ERROR, getString(R.string.SAVE_QUESTION_TO_DB_ERROR), e.toString());
+        }
+
+        List<WarningsR> warnings = null;
+        try {
+            warnings = getDao().getWarningsByStatus(Constants.Warnings.FAKE_GPS, Constants.LogStatus.NOT_SENT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (warnings != null && warnings.size() > 0) {
+            questionnaireDatabaseModel.setUsedFakeGps(true);
+            questionnaireDatabaseModel.setFakeGpsTime(warnings.get(warnings.size() - 1).getWarningTime());
         }
     }
 
@@ -1142,6 +1196,67 @@ public class ElementActivity extends BaseActivity {
                 addLogWithData(mUserLogin, Constants.LogType.DIALOG, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SHOW_DIALOG), Constants.LogResult.ERROR, getString(R.string.DIALOG_PLEASE_TURN_ON_AUTO_TIME), e.toString());
 
             }
+        }
+    }
+
+
+    @SuppressLint("MissingPermission")
+    public void getLocation() {
+
+        long gpstime;
+        double latitudeNetwork;
+        double longitudeNetwork;
+        try {
+            LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+            // getting GPS status
+            boolean isNetworkEnabled = locationManager
+                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            if (!isNetworkEnabled) {
+                // no network provider is enabled
+            } else {
+                if (isNetworkEnabled) {
+                    locationManager.requestSingleUpdate(
+                            LocationManager.NETWORK_PROVIDER,
+                            new LocationListener() {
+                                @Override
+                                public void onLocationChanged(Location location) {
+                                    Log.d(TAG, "------ onLocationChanged: 111");
+                                }
+
+                                @Override
+                                public void onStatusChanged(String provider, int status, Bundle extras) {
+                                    Log.d(TAG, "------ onLocationChanged: 222");
+                                }
+
+                                @Override
+                                public void onProviderEnabled(String provider) {
+                                    Log.d(TAG, "------ onLocationChanged: 333");
+                                }
+
+                                @Override
+                                public void onProviderDisabled(String provider) {
+                                    Log.d(TAG, "------ onLocationChanged: 444");
+                                }
+                            }, null);
+                    if (locationManager != null) {
+                        Log.d(TAG, "------ onLocationChanged: 555");
+                        Location locationNetwork = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                        if (locationNetwork != null) {
+                            Log.d(TAG, "------ onLocationChanged: 666");
+                            latitudeNetwork = locationNetwork.getLatitude();
+                            longitudeNetwork = locationNetwork.getLongitude();
+                            gpstime = locationNetwork.getTime();
+                            Toast.makeText(this, "GPS: " + latitudeNetwork + " / " + longitudeNetwork + " Time: " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, gpstime), Toast.LENGTH_LONG).show();
+                            Log.d(TAG, "------ getLocation: " + latitudeNetwork + " / " + longitudeNetwork + " Time: " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, gpstime));
+                        }
+                    } else {
+                        Log.d(TAG, "------ onLocationChanged: 777");
+                    }
+                }
+            }
+        } catch (Exception e) {
+
         }
     }
 }

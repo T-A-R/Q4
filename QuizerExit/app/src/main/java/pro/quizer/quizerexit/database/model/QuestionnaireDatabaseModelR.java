@@ -50,6 +50,9 @@ public class QuestionnaireDatabaseModelR {
     @ColumnInfo(name = "gps_time")
     private long gps_time;
 
+    @ColumnInfo(name = "gps_time_network")
+    private long gps_time_network;
+
     @ColumnInfo(name = "questions_passed")
     private int questions_passed;
 
@@ -83,10 +86,16 @@ public class QuestionnaireDatabaseModelR {
     @ColumnInfo(name = "send_sms")
     private boolean send_sms;
 
+    @ColumnInfo(name = "used_fake_gps")
+    private boolean used_fake_gps;
+
+    @ColumnInfo(name = "fake_gps_time")
+    private Long fake_gps_time;
+
     public QuestionnaireDatabaseModelR() {
     }
 
-    public QuestionnaireDatabaseModelR(String token, String login_admin, String login, int user_id, String passw, int questionnaire_id, int project_id, int billing_questions, int user_project_id, long date_interview, String gps, long gps_time, int questions_passed, int screens_passed, int selected_questions, int duration_time_questionnaire, Long quota_time_difference, Long send_time_difference, Long auth_time_difference, String status, String survey_status, String has_photo) {
+    public QuestionnaireDatabaseModelR(String token, String login_admin, String login, int user_id, String passw, int questionnaire_id, int project_id, int billing_questions, int user_project_id, long date_interview, String gps, String gps_network, long gps_time, long gps_time_network, int questions_passed, int screens_passed, int selected_questions, int duration_time_questionnaire, Long quota_time_difference, Long send_time_difference, Long auth_time_difference, String status, String survey_status, String has_photo) {
 
         this.token = token;
         this.login_admin = login_admin;
@@ -101,6 +110,7 @@ public class QuestionnaireDatabaseModelR {
         this.gps = gps;
         this.gps_network = gps_network;
         this.gps_time = gps_time;
+        this.gps_time_network = gps_time_network;
         this.questions_passed = questions_passed;
         this.screens_passed = screens_passed;
         this.selected_questions = selected_questions;
@@ -312,5 +322,53 @@ public class QuestionnaireDatabaseModelR {
 
     public void setSend_sms(boolean send_sms) {
         this.send_sms = send_sms;
+    }
+
+    public boolean isUsedFakeGps() {
+        return used_fake_gps;
+    }
+
+    public void setUsedFakeGps(boolean used_fake_gps) {
+        this.used_fake_gps = used_fake_gps;
+    }
+
+    public Long getFakeGpsTime() {
+        return fake_gps_time;
+    }
+
+    public void setFakeGpsTime(Long fake_gps_time) {
+        this.fake_gps_time = fake_gps_time;
+    }
+
+    public String getGps_network() {
+        return gps_network;
+    }
+
+    public boolean isUsed_fake_gps() {
+        return used_fake_gps;
+    }
+
+    public Long getFake_gps_time() {
+        return fake_gps_time;
+    }
+
+    public void setGps_network(String gps_network) {
+        this.gps_network = gps_network;
+    }
+
+    public void setUsed_fake_gps(boolean used_fake_gps) {
+        this.used_fake_gps = used_fake_gps;
+    }
+
+    public void setFake_gps_time(Long fake_gps_time) {
+        this.fake_gps_time = fake_gps_time;
+    }
+
+    public long getGps_time_network() {
+        return gps_time_network;
+    }
+
+    public void setGps_time_network(long gps_time_network) {
+        this.gps_time_network = gps_time_network;
     }
 }

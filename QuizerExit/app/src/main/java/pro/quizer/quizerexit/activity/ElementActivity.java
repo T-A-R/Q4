@@ -255,8 +255,6 @@ public class ElementActivity extends BaseActivity {
             }
         });
 
-        getLocation();
-
         mStart = findViewById(R.id.ibStart);
         mStop = findViewById(R.id.ibStop);
         mStatus = findViewById(R.id.tvState);
@@ -1196,67 +1194,6 @@ public class ElementActivity extends BaseActivity {
                 addLogWithData(mUserLogin, Constants.LogType.DIALOG, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SHOW_DIALOG), Constants.LogResult.ERROR, getString(R.string.DIALOG_PLEASE_TURN_ON_AUTO_TIME), e.toString());
 
             }
-        }
-    }
-
-
-    @SuppressLint("MissingPermission")
-    public void getLocation() {
-
-        long gpstime;
-        double latitudeNetwork;
-        double longitudeNetwork;
-        try {
-            LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-            // getting GPS status
-            boolean isNetworkEnabled = locationManager
-                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            if (!isNetworkEnabled) {
-                // no network provider is enabled
-            } else {
-                if (isNetworkEnabled) {
-                    locationManager.requestSingleUpdate(
-                            LocationManager.NETWORK_PROVIDER,
-                            new LocationListener() {
-                                @Override
-                                public void onLocationChanged(Location location) {
-                                    Log.d(TAG, "------ onLocationChanged: 111");
-                                }
-
-                                @Override
-                                public void onStatusChanged(String provider, int status, Bundle extras) {
-                                    Log.d(TAG, "------ onLocationChanged: 222");
-                                }
-
-                                @Override
-                                public void onProviderEnabled(String provider) {
-                                    Log.d(TAG, "------ onLocationChanged: 333");
-                                }
-
-                                @Override
-                                public void onProviderDisabled(String provider) {
-                                    Log.d(TAG, "------ onLocationChanged: 444");
-                                }
-                            }, null);
-                    if (locationManager != null) {
-                        Log.d(TAG, "------ onLocationChanged: 555");
-                        Location locationNetwork = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                        if (locationNetwork != null) {
-                            Log.d(TAG, "------ onLocationChanged: 666");
-                            latitudeNetwork = locationNetwork.getLatitude();
-                            longitudeNetwork = locationNetwork.getLongitude();
-                            gpstime = locationNetwork.getTime();
-                            Toast.makeText(this, "GPS: " + latitudeNetwork + " / " + longitudeNetwork + " Time: " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, gpstime), Toast.LENGTH_LONG).show();
-                            Log.d(TAG, "------ getLocation: " + latitudeNetwork + " / " + longitudeNetwork + " Time: " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, gpstime));
-                        }
-                    } else {
-                        Log.d(TAG, "------ onLocationChanged: 777");
-                    }
-                }
-            }
-        } catch (Exception e) {
-
         }
     }
 }

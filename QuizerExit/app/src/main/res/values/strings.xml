@@ -65,6 +65,7 @@
     <string name="VIEW_SENT_COUNT_QUIZ_THIS_SESSION">Отправлено анкет в данном сеансе: %1$s</string>
     <string name="VIEW_SMS">СМС</string>
     <string name="VIEW_HOME_TITLE">Главный экран</string>
+    <string name="VIEW_HOME_TITLE_CAPS">ГЛАВНЫЙ ЭКРАН</string>
     <string name="VIEW_SMS_TIME_INTERVAL">%1$s - %2$s</string>
     <string name="VIEW_EXIT">Выйти</string>
     <string name="VIEW_CONFIG_TITLE">Конфигурация</string>

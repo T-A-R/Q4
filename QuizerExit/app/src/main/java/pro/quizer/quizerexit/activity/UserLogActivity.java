@@ -72,9 +72,9 @@ public class UserLogActivity extends BaseActivity {
                     List<AppLogsR> logs = BaseActivity.getDao().getAppLogsByLoginWithStatus(mLogin, Constants.LogStatus.NOT_SENT);
                     if (logs.size() > 0) {
 
-                        LogsRequestModel crashRequestModel = new LogsRequestModel(getLoginAdmin(), logs);
+                        LogsRequestModel logsRequestModel = new LogsRequestModel(getLoginAdmin(), logs);
                         Gson gson = new Gson();
-                        String json = gson.toJson(crashRequestModel);
+                        String json = gson.toJson(logsRequestModel);
                         QuizerAPI.sendLogs(getServer(), json, new QuizerAPI.SendLogsCallback() {
                             @Override
                             public void onSendLogs(boolean ok) {

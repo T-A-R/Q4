@@ -5,7 +5,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.activeandroid.query.Update;
+//import com.activeandroid.query.Update;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -181,6 +181,12 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                             BaseActivity.addLogWithData(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.GET_QUOTAS), Constants.LogResult.ERROR, " " + mBaseActivity.getString(R.string.ERROR_107) + R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS, pException.toString());
                         }
                     }).execute();
+
+                    try {
+                        BaseActivity.getDao().clearWarningsR();
+                    } catch (Exception e) {
+                        BaseActivity.addLogWithData(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.WARNINGS, mBaseActivity.getString(R.string.CLEAR_WARNINGS), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.DB_CLEAR_ERROR), e.getMessage());
+                    }
 
                     onSuccess();
                 }

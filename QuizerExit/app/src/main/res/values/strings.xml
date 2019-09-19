@@ -58,7 +58,9 @@
     <string name="VIEW_SEND_AUDIO">Отправить аудио</string>
     <string name="VIEW_SEND_PHOTO">Отправить фото</string>
     <string name="VIEW_EXIT_QUIZ_HEADER">Завершить анкету</string>
+    <string name="VIEW_FAKE_GPS_HEADER">Обнаружено нарушение.</string>
     <string name="VIEW_EXIT_QUIZ_BODY">Вы уверены, что хотите принудительно прервать анкету? \nЕё содержимое будет потеряно.</string>
+    <string name="VIEW_FAKE_GPS_BODY">Для продолжения работы закройте все программы для подмены GPS координат.</string>
     <string name="VIEW_SENT_COUNT_QUIZ_FROM_THIS_DEVICE">Отправлено анкет в рамках проекта с данного устройства: %1$s</string>
     <string name="VIEW_SENT_COUNT_QUIZ_THIS_SESSION">Отправлено анкет в данном сеансе: %1$s</string>
     <string name="VIEW_SMS">СМС</string>
@@ -159,12 +161,15 @@
     <string name="DIALOG_SENDING_WAVES_REQUEST">У вас есть неотправленные анкеты за прошедший период. Необходимо отправить отчёт с результатами с помощью СМС.</string>
     <string name="DIALOG_SENDING_WAVES_VIA_SMS_CONFIRMATION">Вы уверены, что хотите отправить волны для пользователя через СМС?</string>
     <string name="DIALOG_PLEASE_TURN_ON_GPS">Пожалуйста, включите GPS для продолжения работы.</string>
+    <string name="DIALOG_NO_GPS">Устройство не может определить Ваше местоположение.</string>
+    <string name="DIALOG_NO_GPS_TEXT">Свяжитесь со службой поддержки QUIZER.</string>
     <string name="DIALOG_PLEASE_TURN_ON_AUTO_TIME">Пожалуйста, включите автоматическое время сети.</string>
     <string name="DIALOG_YOU_NEED_TO_TURN_ON_GPS">Для прохождения анкеты необходимо включить GPS.</string>
     <string name="DIALOG_PLEASE_GIVE_PERM">Пожалуйста, предоставьте разрешения приложению.</string>
     <string name="DIALOG_YOU_NEED_TO_TURN_ON_PERM">Для работы приложения необходимо перейти в настройки и предоставить нужные разрешия.</string>
     <string name="DIALOG_YOU_NEED_TO_TURN_ON_AUTO_TIME">Для прохождения анкеты необходимо включить автоматическое время сети.</string>
     <string name="DIALOG_TURN_ON">Включить</string>
+    <string name="DIALOG_NEXT">Продолжить</string>
     <string name="DIALOG_PERM_ON">Перейти</string>
     <string name="DIALOG_PERM_OFF">Отмена</string>
     <string name="DIALOG_SMS_SENDING">Отправка СМС</string>
@@ -281,6 +286,7 @@
     <string name="ERROR_204">Ошибка: 2.04</string>
     <string name="QUESTIONS_SENT">Анкеты отправлены</string>
     <string name="SET_QUESTION_STATUS">Установка статуса SENT у анкеты</string>
+    <string name="CLEAR_WARNINGS">Очистка таблицы варнингов</string>
     <string name="SET_SENT_STATUS_QUESTION">Статус отправки анкеты в базе данных установлен как SENT</string>
     <string name="ERROR_107">Ошибка: 1.07</string>
     <string name="ERROR_205">Ошибка: 2.05</string>
@@ -317,5 +323,7 @@
     <string name="BACK_BUTTON">Назад</string>
     <string name="NEXT_BUTTON">Переход на следующий вопрос:</string>
     <string name="EXIT_BUTTON">Выход</string>
+    <string name="FAKE_GPS_ON">Включена подмена GPS</string>
+    <string name="CONFIG_ERROR">Неверные настройки</string>
 
 </resources>

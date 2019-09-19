@@ -14,6 +14,7 @@ import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
 import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.database.model.SmsItemR;
 import pro.quizer.quizerexit.database.model.UserModelR;
+import pro.quizer.quizerexit.database.model.WarningsR;
 
 @Dao
 public interface QuizerDao {
@@ -156,5 +157,20 @@ public interface QuizerDao {
 
     @Query("DELETE FROM SmsItemR")
     void clearSmsDatabase();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertWarning(WarningsR warningsR);
+
+    @Query("DELETE FROM WarningsR")
+    void clearWarningsR();
+
+    @Query("UPDATE WarningsR SET warningStatus = :status WHERE warning = :warning")
+    void setWarningStatus(String warning, String status);
+
+    @Query("SELECT * FROM WarningsR")
+    List<WarningsR> getWarnings();
+
+    @Query("SELECT * FROM WarningsR WHERE warning = :warning AND warningStatus = :status")
+    List<WarningsR> getWarningsByStatus(String warning, String status);
 
 }

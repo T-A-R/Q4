@@ -93,6 +93,7 @@ public final class Constants {
         String QUESTIONNAIRE = "questionnaire";
         String SMS = "sms";
         String LOG = "log";
+        String WARNINGS = "warnings";
     }
 
     public interface LogResult {
@@ -114,6 +115,9 @@ public final class Constants {
         String WAITING = "Ожидание";
         String ENDED = "Завершена";
         String NOT_ENDED = "Не завершена";
+    }
 
+    public interface Warnings {
+        String FAKE_GPS = "Подмена координат";
     }
 }

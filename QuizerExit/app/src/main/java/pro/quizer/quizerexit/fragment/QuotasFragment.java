@@ -1,5 +1,7 @@
 package pro.quizer.quizerexit.fragment;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
@@ -15,8 +17,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.support.v7.app.AlertDialog;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +30,7 @@ import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.SimpleTextWatcher;
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.activity.MainActivity;
 import pro.quizer.quizerexit.adapter.QuotasAdapter;
 import pro.quizer.quizerexit.database.model.AppLogsR;
 import pro.quizer.quizerexit.executable.ICallback;
@@ -53,6 +58,15 @@ public class QuotasFragment extends BaseFragment implements ICallback {
     private BaseActivity mBaseActivity;
     private HashMap<Integer, ElementModel> mMap;
     private boolean mIsNotCompletedOnly;
+
+    AlertDialog.Builder dialogBuilder;
+    AlertDialog infoDialog;
+
+    String quotaText1;
+    String quotaText2;
+    String quotaText3;
+    int quotaType1 = 2;
+    int quotaType2 = 2;
 
     public static Fragment newInstance() {
         final QuotasFragment fragment = new QuotasFragment();
@@ -120,26 +134,33 @@ public class QuotasFragment extends BaseFragment implements ICallback {
             }
         });
 
-        mRefreshBtn.setOnClickListener(new QuotasClickListener((BaseActivity) getContext(), new ICallback() {
+//        mRefreshBtn.setOnClickListener(new QuotasClickListener((BaseActivity) getContext(), new ICallback() {
+//
+//            @Override
+//            public void onStarting() {
+//                showProgressBar();
+//            }
+//
+//            @Override
+//            public void onSuccess() {
+//                hideProgressBar();
+//                refresh(mSearchEditTextView.getText().toString());
+//                checkQuotasLogs();
+//            }
+//
+//            @Override
+//            public void onError(Exception pException) {
+//                hideProgressBar();
+//                showToast(pException.toString());
+//            }
+//        }));
 
+        mRefreshBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onStarting() {
-                showProgressBar();
+            public void onClick(View v) {
+                showInfoDialog("test 1", "test 2", "test 3", 1, 2);
             }
-
-            @Override
-            public void onSuccess() {
-                hideProgressBar();
-                refresh(mSearchEditTextView.getText().toString());
-                checkQuotasLogs();
-            }
-
-            @Override
-            public void onError(Exception pException) {
-                hideProgressBar();
-                showToast(pException.toString());
-            }
-        }));
+        });
 
         checkQuotasLogs();
     }
@@ -207,7 +228,7 @@ public class QuotasFragment extends BaseFragment implements ICallback {
             showToast(getString(R.string.DB_LOAD_ERROR));
         }
 
-        if(mBaseActivity.getCurrentUser().getQuotasR() != null) {
+        if (mBaseActivity.getCurrentUser().getQuotasR() != null) {
 
             mQuotaText1.setVisibility(View.VISIBLE);
             mQuotaText2.setVisibility(View.VISIBLE);
@@ -220,6 +241,7 @@ public class QuotasFragment extends BaseFragment implements ICallback {
                             && logs.get(i).getType().equals(Constants.LogType.SERVER)
                             && logs.get(i).getResult().equals(Constants.LogResult.SUCCESS)) {
                         String text = getString(R.string.QUOTA_RENEW_TIME) + " " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, Long.parseLong(logs.get(i).getDate()) * 1000);
+                        quotaText3 = text;
                         mQuotaText3.setText(text);
                         mQuotaText3.setTextColor(getResources().getColor(R.color.black));
                         break;
@@ -238,6 +260,8 @@ public class QuotasFragment extends BaseFragment implements ICallback {
                             if (logs.get(k).getObject().equals(Constants.LogObject.QUOTA)
                                     && logs.get(k).getType().equals(Constants.LogType.SERVER)
                                     && logs.get(k).getResult().equals(Constants.LogResult.SUCCESS)) {
+                                quotaText1 = getString(R.string.QUOTA_RENEWED_AFTER_SEND);
+                                quotaType1 = 1;
                                 mQuotaText1.setText(getString(R.string.QUOTA_RENEWED_AFTER_SEND));
                                 mQuotaText1.setTextColor(getResources().getColor(R.color.black));
                                 break;
@@ -247,8 +271,10 @@ public class QuotasFragment extends BaseFragment implements ICallback {
                     }
                 }
 
-                if(!hasRenew)
+                if (!hasRenew) {
+                    quotaType1 = 0;
                     mQuotaText1.setVisibility(View.GONE);
+                }
 
                 hasRenew = false;
                 for (int i = logs.size() - 1; i >= 0; i--) {
@@ -262,6 +288,8 @@ public class QuotasFragment extends BaseFragment implements ICallback {
                             if (logs.get(k).getObject().equals(Constants.LogObject.QUOTA)
                                     && logs.get(k).getType().equals(Constants.LogType.SERVER)
                                     && logs.get(k).getResult().equals(Constants.LogResult.SUCCESS)) {
+                                quotaText2 = getString(R.string.QUOTA_RENEWED_AFTER_FINISH);
+                                quotaType2 = 1;
                                 mQuotaText2.setText(getString(R.string.QUOTA_RENEWED_AFTER_FINISH));
                                 mQuotaText2.setTextColor(getResources().getColor(R.color.black));
                                 break;
@@ -271,13 +299,72 @@ public class QuotasFragment extends BaseFragment implements ICallback {
                     }
                 }
 
-                if(!hasRenew)
+                if (!hasRenew) {
+                    quotaType2 = 0;
                     mQuotaText2.setVisibility(View.GONE);
+                }
             }
         } else {
+            quotaText1 = getString(R.string.NO_QUOTA_LIMITS);
+            quotaType1 = 1;
+            quotaType2 = 0;
             mQuotaText1.setText(getString(R.string.NO_QUOTA_LIMITS));
             mQuotaText2.setVisibility(View.GONE);
             mQuotaText3.setVisibility(View.GONE);
         }
+    }
+
+    private void showInfoDialog(String quota1, String quota2, String quota3, int quotaType1, int quotaType2) {
+        dialogBuilder = new AlertDialog.Builder(mBaseActivity);
+        View layoutView = getLayoutInflater().inflate(R.layout.dialog_info, null);
+        TextView dQuota1 = layoutView.findViewById(R.id.quota_1);
+        TextView dQuota2 = layoutView.findViewById(R.id.quota_2);
+        TextView dQuota3 = layoutView.findViewById(R.id.quota_3);
+        LinearLayout cont = layoutView.findViewById(R.id.cont);
+        LinearLayout quota1Cont = layoutView.findViewById(R.id.quota_1_cont);
+        LinearLayout quota2Cont = layoutView.findViewById(R.id.quota_2_cont);
+
+        cont.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                infoDialog.dismiss();
+            }
+        });
+
+        dQuota3.setText(this.quotaText3);
+
+        switch (this.quotaType1) {
+            case 0:
+                quota1Cont.setVisibility(View.GONE);
+                break;
+            case 1:
+                quota1Cont.setVisibility(View.VISIBLE);
+                dQuota1.setText(this.quotaText1);
+                dQuota1.setTextColor(getResources().getColor(R.color.black));
+                break;
+            case 2:
+                quota1Cont.setVisibility(View.VISIBLE);
+                break;
+        }
+
+        switch (this.quotaType2) {
+            case 0:
+                quota2Cont.setVisibility(View.GONE);
+                break;
+            case 1:
+                quota2Cont.setVisibility(View.VISIBLE);
+                dQuota2.setText(this.quotaText2);
+                dQuota2.setTextColor(getResources().getColor(R.color.black));
+                break;
+            case 2:
+                quota2Cont.setVisibility(View.VISIBLE);
+                break;
+        }
+
+        dialogBuilder.setView(layoutView);
+        infoDialog = dialogBuilder.create();
+        infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+        infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        infoDialog.show();
     }
 }

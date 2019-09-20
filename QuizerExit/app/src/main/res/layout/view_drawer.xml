@@ -6,14 +6,13 @@
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/home_cont"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
         android:layout_gravity="center_horizontal">
-
-
 
         <ImageButton
             android:id="@+id/home_btn"
@@ -40,11 +39,8 @@
                 android:textSize="@dimen/_12ssp" />
 
             <ImageView
-
                 android:layout_width="@dimen/_16sdp"
                 android:layout_height="@dimen/_16sdp"
-
-                android:layout_alignParentLeft="false"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
@@ -52,77 +48,232 @@
                 android:layout_marginRight="@dimen/_10sdp"
                 android:background="@drawable/home_white" />
 
-
-
         </RelativeLayout>
-
-
-
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/sync_btn"
-        style="@style/ButtonStyle"
+    <RelativeLayout
+        android:id="@+id/sync_cont"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_36sdp"
-        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
-        android:maxLines="1"
-        android:text="@string/VIEW_SYNC_TITLE"
-        android:textSize="@dimen/_12ssp" />
+        android:layout_gravity="center_horizontal">
 
-    <Button
-        android:id="@+id/settings_btn"
-        style="@style/ButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_36sdp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="16dp"
-        android:maxLines="1"
-        android:text="@string/VIEW_SETTINGS"
-        android:textSize="@dimen/_12ssp" />
+        <ImageButton
+            android:id="@+id/sync_btn"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:maxLines="1"
+            android:text="@string/VIEW_SYNC_TITLE"
+            android:textSize="@dimen/_12ssp" />
 
-    <Button
-        android:id="@+id/quotas_btn"
-        style="@style/ButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_36sdp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="16dp"
-        android:maxLines="1"
-        android:text="@string/VIEW_QUOTAS_TITLE"
-        android:textSize="@dimen/_12ssp" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/about_btn"
-        style="@style/ButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_36sdp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="16dp"
-        android:maxLines="1"
-        android:text="@string/VIEW_ABOUT_TITLE"
-        android:textSize="@dimen/_12ssp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:gravity="center"
+                android:text="@string/VIEW_SYNC_TITLE_CAPS"
+                android:textColor="@android:color/background_light"
+                android:textSize="@dimen/_12ssp" />
 
-    <Button
-        android:id="@+id/change_user_btn"
-        style="@style/ButtonRed"
+            <ImageView
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:background="@drawable/sync_white" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/settings_cont"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_36sdp"
-        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
-        android:maxLines="1"
-        android:text="@string/VIEW_EXIT"
-        android:textSize="@dimen/_12ssp" />
+        android:layout_gravity="center_horizontal">
+
+        <ImageButton
+            android:id="@+id/settings_btn"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:maxLines="1"
+            android:text="@string/VIEW_SETTINGS"
+            android:textSize="@dimen/_12ssp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:gravity="center"
+                android:text="@string/VIEW_SETTINGS_CAPS"
+                android:textColor="@android:color/background_light"
+                android:textSize="@dimen/_12ssp" />
+
+            <ImageView
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:background="@drawable/settings_white" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/quotas_cont"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_gravity="center_horizontal">
+
+        <ImageButton
+            android:id="@+id/quotas_btn"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:maxLines="1"
+            android:text="@string/VIEW_QUOTAS_TITLE"
+            android:textSize="@dimen/_12ssp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:gravity="center"
+                android:text="@string/VIEW_QUOTAS_TITLE_CAPS"
+                android:textColor="@android:color/background_light"
+                android:textSize="@dimen/_12ssp" />
+
+            <ImageView
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:background="@drawable/checkbox_white" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/about_cont"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_gravity="center_horizontal">
+
+        <ImageButton
+            android:id="@+id/about_btn"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:maxLines="1"
+            android:text="@string/VIEW_ABOUT_TITLE"
+            android:textSize="@dimen/_12ssp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:gravity="center"
+                android:text="@string/VIEW_ABOUT_TITLE_CAPS"
+                android:textColor="@android:color/background_light"
+                android:textSize="@dimen/_12ssp" />
+
+            <ImageView
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:background="@drawable/about_white" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/change_user_cont"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_gravity="center_horizontal">
+
+        <ImageButton
+            android:id="@+id/change_user_btn"
+            style="@style/ButtonRed"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:maxLines="1"
+            android:text="@string/VIEW_EXIT"
+            android:textSize="@dimen/_12ssp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:gravity="center"
+                android:text="@string/VIEW_EXIT_CAPS"
+                android:textColor="@android:color/background_light"
+                android:textSize="@dimen/_12ssp" />
+
+            <ImageView
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:background="@drawable/logout_white" />
+
+        </RelativeLayout>
+    </RelativeLayout>
 
 </LinearLayout>

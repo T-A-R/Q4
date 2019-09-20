@@ -19,11 +19,11 @@ import pro.quizer.quizerexit.listener.QuotasClickListener;
 public class AppDrawer extends RelativeLayout implements Serializable {
 
     ImageButton mHomeBtn;
-    Button mSyncBtn;
-    Button mSettingsBtn;
-    Button mAboutBtn;
-    Button mQuotasBtn;
-    Button mChangeUserBtn;
+    ImageButton mSyncBtn;
+    ImageButton mSettingsBtn;
+    ImageButton mAboutBtn;
+    ImageButton mQuotasBtn;
+    ImageButton mChangeUserBtn;
 
     private BaseActivity mBaseActivity;
 
@@ -31,10 +31,14 @@ public class AppDrawer extends RelativeLayout implements Serializable {
         @Override
         public void onClick(View view) {
             String title = "";
-            if (view == mHomeBtn) {
-                title = "Главный экран";
-            } else
-                title = ((TextView) view).getText().toString();
+
+            if (view == mHomeBtn) title = mBaseActivity.getString(R.string.VIEW_HOME_TITLE);
+            if (view == mSyncBtn) title = mBaseActivity.getString(R.string.VIEW_SYNC_TITLE);
+            if (view == mSettingsBtn) title = mBaseActivity.getString(R.string.VIEW_SETTINGS);
+            if (view == mAboutBtn) title = mBaseActivity.getString(R.string.VIEW_ABOUT_TITLE);
+            if (view == mQuotasBtn) title = mBaseActivity.getString(R.string.VIEW_QUOTAS_TITLE);
+            if (view == mChangeUserBtn) title = mBaseActivity.getString(R.string.VIEW_ABOUT_TITLE);
+
             mBaseActivity.setToolbarTitle(title);
         }
     };

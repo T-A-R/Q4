@@ -31,11 +31,13 @@
     <string name="VIEW_FINISH">Завершить</string>
     <string name="VIEW_OK">ОК</string>
     <string name="VIEW_SETTINGS">Настройки</string>
+    <string name="VIEW_SETTINGS_CAPS">НАСТРОЙКИ</string>
     <string name="VIEW_START">Начать</string>
     <string name="VIEW_APP_VERSION">Версия: %1$s</string>
     <string name="VIEW_SERVICE_TITLE">Сервисное обслуживание</string>
     <string name="VIEW_LOGS_TITLE">Журнал событий</string>
     <string name="VIEW_SYNC_TITLE">Синхронизация</string>
+    <string name="VIEW_SYNC_TITLE_CAPS">СИНХРОНИЗАЦИЯ</string>
     <string name="VIEW_FINISH_QUIZ">Завершить анкету</string>
     <string name="VIEW_CLOSE_APP_HEADER">Выход из приложения</string>
     <string name="VIEW_CLOSE_APP_BODY">Вы уверены, что хотите выйти из приложения?</string>
@@ -65,8 +67,10 @@
     <string name="VIEW_SENT_COUNT_QUIZ_THIS_SESSION">Отправлено анкет в данном сеансе: %1$s</string>
     <string name="VIEW_SMS">СМС</string>
     <string name="VIEW_HOME_TITLE">Главный экран</string>
+    <string name="VIEW_HOME_TITLE_CAPS">ГЛАВНЫЙ ЭКРАН</string>
     <string name="VIEW_SMS_TIME_INTERVAL">%1$s - %2$s</string>
     <string name="VIEW_EXIT">Выйти</string>
+    <string name="VIEW_EXIT_CAPS">ВЫЙТИ</string>
     <string name="VIEW_CONFIG_TITLE">Конфигурация</string>
     <string name="VIEW_ID">ID: %1$s</string>
     <string name="VIEW_DATE">Дата: %1$s</string>
@@ -75,7 +79,9 @@
     <string name="VIEW_SETTINGS_SPACING">Интервал между ответами: %1$s</string>
     <string name="VIEW_SETTINGS_EXIT_POLL_TITLE">Выбор номера (для Экзит-Пулл)</string>
     <string name="VIEW_QUOTAS_TITLE">Квоты</string>
+    <string name="VIEW_QUOTAS_TITLE_CAPS">КВОТЫ</string>
     <string name="VIEW_ABOUT_TITLE">О нас</string>
+    <string name="VIEW_ABOUT_TITLE_CAPS">О НАС</string>
     <string name="VIEW_BUTTON_REFRESH">Обновить</string>
     <string name="VIEW_X_FROM_Y">\u0020(%1$s из %2$s)</string>
     <string name="VIEW_X_FROM_Y_TWO">\u0020%1$s из %2$s</string>

@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -17,19 +18,27 @@ import pro.quizer.quizerexit.listener.QuotasClickListener;
 
 public class AppDrawer extends RelativeLayout implements Serializable {
 
-    Button mHomeBtn;
-    Button mSyncBtn;
-    Button mSettingsBtn;
-    Button mAboutBtn;
-    Button mQuotasBtn;
-    Button mChangeUserBtn;
+    ImageButton mHomeBtn;
+    ImageButton mSyncBtn;
+    ImageButton mSettingsBtn;
+    ImageButton mAboutBtn;
+    ImageButton mQuotasBtn;
+    ImageButton mChangeUserBtn;
 
     private BaseActivity mBaseActivity;
 
     final private View.OnClickListener mInternalClickListenerForToolbar = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            final String title = ((TextView) view).getText().toString();
+            String title = "";
+
+            if (view == mHomeBtn) title = mBaseActivity.getString(R.string.VIEW_HOME_TITLE);
+            if (view == mSyncBtn) title = mBaseActivity.getString(R.string.VIEW_SYNC_TITLE);
+            if (view == mSettingsBtn) title = mBaseActivity.getString(R.string.VIEW_SETTINGS);
+            if (view == mAboutBtn) title = mBaseActivity.getString(R.string.VIEW_ABOUT_TITLE);
+            if (view == mQuotasBtn) title = mBaseActivity.getString(R.string.VIEW_QUOTAS_TITLE);
+            if (view == mChangeUserBtn) title = mBaseActivity.getString(R.string.VIEW_ABOUT_TITLE);
+
             mBaseActivity.setToolbarTitle(title);
         }
     };
@@ -129,7 +138,7 @@ public class AppDrawer extends RelativeLayout implements Serializable {
             }
         });
 
-        if(!mBaseActivity.hasReserveChannel()) {
+        if (!mBaseActivity.hasReserveChannel()) {
             mQuotasBtn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {

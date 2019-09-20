@@ -49,11 +49,9 @@ public class QuotasFragment extends BaseFragment implements ICallback {
 
     private View mClearSearchBtn;
     private EditText mSearchEditTextView;
-    private TextView mQuotaText1;
-    private TextView mQuotaText2;
-    private TextView mQuotaText3;
     private Switch mNotCompletedOnlySwitch;
     private Button mRefreshBtn;
+    private Button mInfoBtn;
     private RecyclerView mQuotasRecyclerView;
     private BaseActivity mBaseActivity;
     private HashMap<Integer, ElementModel> mMap;
@@ -103,12 +101,10 @@ public class QuotasFragment extends BaseFragment implements ICallback {
         mBaseActivity = (BaseActivity) pView.getContext();
         mMap = mBaseActivity.getMap();
         mSearchEditTextView = pView.findViewById(R.id.search_edit_text);
-        mQuotaText1 = pView.findViewById(R.id.quota_1);
-        mQuotaText2 = pView.findViewById(R.id.quota_2);
-        mQuotaText3 = pView.findViewById(R.id.quota_3);
         mNotCompletedOnlySwitch = pView.findViewById(R.id.not_completed_only_switch);
         mClearSearchBtn = pView.findViewById(R.id.clear_search_icon);
         mRefreshBtn = pView.findViewById(R.id.refresh_quotas);
+        mInfoBtn = pView.findViewById(R.id.info_quotas);
         mQuotasRecyclerView = pView.findViewById(R.id.quotas_recycler_view);
 
         mNotCompletedOnlySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -134,28 +130,28 @@ public class QuotasFragment extends BaseFragment implements ICallback {
             }
         });
 
-//        mRefreshBtn.setOnClickListener(new QuotasClickListener((BaseActivity) getContext(), new ICallback() {
-//
-//            @Override
-//            public void onStarting() {
-//                showProgressBar();
-//            }
-//
-//            @Override
-//            public void onSuccess() {
-//                hideProgressBar();
-//                refresh(mSearchEditTextView.getText().toString());
-//                checkQuotasLogs();
-//            }
-//
-//            @Override
-//            public void onError(Exception pException) {
-//                hideProgressBar();
-//                showToast(pException.toString());
-//            }
-//        }));
+        mRefreshBtn.setOnClickListener(new QuotasClickListener((BaseActivity) getContext(), new ICallback() {
 
-        mRefreshBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onStarting() {
+                showProgressBar();
+            }
+
+            @Override
+            public void onSuccess() {
+                hideProgressBar();
+                refresh(mSearchEditTextView.getText().toString());
+                checkQuotasLogs();
+            }
+
+            @Override
+            public void onError(Exception pException) {
+                hideProgressBar();
+                showToast(pException.toString());
+            }
+        }));
+
+        mInfoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showInfoDialog("test 1", "test 2", "test 3", 1, 2);
@@ -230,10 +226,6 @@ public class QuotasFragment extends BaseFragment implements ICallback {
 
         if (mBaseActivity.getCurrentUser().getQuotasR() != null) {
 
-            mQuotaText1.setVisibility(View.VISIBLE);
-            mQuotaText2.setVisibility(View.VISIBLE);
-            mQuotaText3.setVisibility(View.VISIBLE);
-
             if (logs != null) {
 
                 for (int i = logs.size() - 1; i >= 0; i--) {
@@ -242,8 +234,6 @@ public class QuotasFragment extends BaseFragment implements ICallback {
                             && logs.get(i).getResult().equals(Constants.LogResult.SUCCESS)) {
                         String text = getString(R.string.QUOTA_RENEW_TIME) + " " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, Long.parseLong(logs.get(i).getDate()) * 1000);
                         quotaText3 = text;
-                        mQuotaText3.setText(text);
-                        mQuotaText3.setTextColor(getResources().getColor(R.color.black));
                         break;
                     }
                 }
@@ -262,8 +252,6 @@ public class QuotasFragment extends BaseFragment implements ICallback {
                                     && logs.get(k).getResult().equals(Constants.LogResult.SUCCESS)) {
                                 quotaText1 = getString(R.string.QUOTA_RENEWED_AFTER_SEND);
                                 quotaType1 = 1;
-                                mQuotaText1.setText(getString(R.string.QUOTA_RENEWED_AFTER_SEND));
-                                mQuotaText1.setTextColor(getResources().getColor(R.color.black));
                                 break;
                             }
                         }
@@ -273,7 +261,6 @@ public class QuotasFragment extends BaseFragment implements ICallback {
 
                 if (!hasRenew) {
                     quotaType1 = 0;
-                    mQuotaText1.setVisibility(View.GONE);
                 }
 
                 hasRenew = false;
@@ -290,8 +277,6 @@ public class QuotasFragment extends BaseFragment implements ICallback {
                                     && logs.get(k).getResult().equals(Constants.LogResult.SUCCESS)) {
                                 quotaText2 = getString(R.string.QUOTA_RENEWED_AFTER_FINISH);
                                 quotaType2 = 1;
-                                mQuotaText2.setText(getString(R.string.QUOTA_RENEWED_AFTER_FINISH));
-                                mQuotaText2.setTextColor(getResources().getColor(R.color.black));
                                 break;
                             }
                         }
@@ -301,16 +286,12 @@ public class QuotasFragment extends BaseFragment implements ICallback {
 
                 if (!hasRenew) {
                     quotaType2 = 0;
-                    mQuotaText2.setVisibility(View.GONE);
                 }
             }
         } else {
             quotaText1 = getString(R.string.NO_QUOTA_LIMITS);
             quotaType1 = 1;
             quotaType2 = 0;
-            mQuotaText1.setText(getString(R.string.NO_QUOTA_LIMITS));
-            mQuotaText2.setVisibility(View.GONE);
-            mQuotaText3.setVisibility(View.GONE);
         }
     }
 

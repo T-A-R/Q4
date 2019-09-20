@@ -83,6 +83,8 @@
     <string name="VIEW_ABOUT_TITLE">О нас</string>
     <string name="VIEW_ABOUT_TITLE_CAPS">О НАС</string>
     <string name="VIEW_BUTTON_REFRESH">Обновить</string>
+    <string name="VIEW_BUTTON_INFO">Info</string>
+    <string name="VIEW_BUTTON_MORE">Компакт. режим</string>
     <string name="VIEW_X_FROM_Y">\u0020(%1$s из %2$s)</string>
     <string name="VIEW_X_FROM_Y_TWO">\u0020%1$s из %2$s</string>
     <string name="VIEW_STATUS_DONE">Выполнено</string>

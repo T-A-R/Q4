@@ -31,6 +31,7 @@ import pro.quizer.quizerexit.utils.UiUtils;
 
 import static pro.quizer.quizerexit.activity.BaseActivity.IS_AFTER_AUTH;
 import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
+import static pro.quizer.quizerexit.activity.BaseActivity.makeCrash;
 
 public class HomeFragment extends BaseFragment implements ICallback {
 
@@ -65,6 +66,8 @@ public class HomeFragment extends BaseFragment implements ICallback {
         }
 
         new SendQuestionnairesByUserModelExecutable(getBaseActivity(), mUserModel, this, false).execute();
+
+        mBaseActivity.sendCrashLogs();
 
         mBaseActivity.setChangeFontCallback(new BaseActivity.ChangeFontCallback() {
             @Override
@@ -173,7 +176,13 @@ public class HomeFragment extends BaseFragment implements ICallback {
         final Button quotasBtn = pView.findViewById(R.id.quotas);
         if (projectInfo.getReserveChannel() == null) {
             quotasBtn.setVisibility(View.VISIBLE);
-            quotasBtn.setOnClickListener(new QuotasClickListener(getBaseActivity()));
+//            quotasBtn.setOnClickListener(new QuotasClickListener(getBaseActivity()));
+            quotasBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    makeCrash();
+                }
+            });
         } else {
             quotasBtn.setVisibility(View.GONE);
         }
@@ -220,6 +229,9 @@ public class HomeFragment extends BaseFragment implements ICallback {
 
     @Override
     public void onSuccess() {
+
+
+
         initSyncInfoViews();
 //        hideProgressBar();
 

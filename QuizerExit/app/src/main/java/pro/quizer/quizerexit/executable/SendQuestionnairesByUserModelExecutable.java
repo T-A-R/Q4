@@ -182,6 +182,8 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                         }
                     }).execute();
 
+//                    BaseActivity.sendCrashLogs();
+
                     try {
                         BaseActivity.getDao().clearWarningsR();
                     } catch (Exception e) {

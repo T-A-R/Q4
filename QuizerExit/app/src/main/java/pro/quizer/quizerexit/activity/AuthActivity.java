@@ -28,6 +28,7 @@ import pro.quizer.quizerexit.API.QuizerAPI;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.database.model.AppLogsR;
+import pro.quizer.quizerexit.database.model.CrashLogs;
 import pro.quizer.quizerexit.database.model.SmsItemR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.ICallback;
@@ -432,15 +433,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
             return;
         }
 
-        Log.d(TAG, "Crash logs: " + BaseActivity.getDao().getCrashLogs().size());
-        if (BaseActivity.getDao().getCrashLogs().size() > 0) {
-            String crashLog = BaseActivity.getDao().getCrashLogs().get(BaseActivity.getDao().getCrashLogs().size() - 1).getLog();
-            Log.d(TAG, "Sending Crash Log: " + crashLog);
-            CrashRequestModel crashRequestModel = new CrashRequestModel(getLoginAdmin(), new Crash(login, crashLog));
-            Gson gson = new Gson();
-            String json = gson.toJson(crashRequestModel);
-            QuizerAPI.sendCrash(getServer(), json, this);
-        }
+        sendCrashLogs();
 
         String responseJson;
         try {

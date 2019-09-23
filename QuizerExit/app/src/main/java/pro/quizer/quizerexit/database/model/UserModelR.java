@@ -44,6 +44,9 @@ public class UserModelR {
     @ColumnInfo(name = "quotas")
     private String quotas;
 
+    @ColumnInfo(name = "questionnaire_opened")
+    private boolean questionnaire_opened;
+
     public UserModelR() {
     }
 
@@ -147,5 +150,13 @@ public class UserModelR {
 
     public void setQuotas(String quotas) {
         this.quotas = quotas;
+    }
+
+    public boolean isQuestionnaire_opened() {
+        return questionnaire_opened;
+    }
+
+    public void setQuestionnaire_opened(boolean questionnaire_opened) {
+        this.questionnaire_opened = questionnaire_opened;
     }
 }

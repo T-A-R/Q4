@@ -10,10 +10,12 @@ import android.os.Environment;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import pro.quizer.quizerexit.CoreApplication;
 //import pro.quizer.quizerexit.database.QuizerDatabase;
 import pro.quizer.quizerexit.database.model.CrashLogs;
+import pro.quizer.quizerexit.database.model.UserModelR;
 
 public class TryMe implements Thread.UncaughtExceptionHandler {
 
@@ -74,7 +76,22 @@ public class TryMe implements Thread.UncaughtExceptionHandler {
 
         String log = reportBuilder.toString();
 
-        CoreApplication.getQuizerDatabase().getQuizerDao().insertCrashLog(new CrashLogs(log));
+        List<UserModelR> userList;
+        boolean flag = false;
+
+        try {
+            userList = CoreApplication.getQuizerDatabase().getQuizerDao().getUserWithAbortedQUestionnaire(true);
+            if(userList != null && userList.size() > 0) {
+                flag = true;
+                for(UserModelR user : userList) {
+                    CoreApplication.getQuizerDatabase().getQuizerDao().updateQuestionnaireStart(false, user.getUser_id());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        CoreApplication.getQuizerDatabase().getQuizerDao().insertCrashLog(new CrashLogs(log, flag));
 
 
         if (oldHandler != null) // если есть ранее установленный...

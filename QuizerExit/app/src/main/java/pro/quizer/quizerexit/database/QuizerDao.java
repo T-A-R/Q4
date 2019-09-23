@@ -34,6 +34,9 @@ public interface QuizerDao {
     @Query("UPDATE UserModelR SET password = :password, login = :login, config_id = :configId, role_id = :roleId, user_project_id = :userProjectId WHERE user_id = :userId")
     void updateUserModelR(String login, String password, String configId, int roleId, int userProjectId, int userId);
 
+    @Query("UPDATE UserModelR SET questionnaire_opened = :wasStarted WHERE user_id = :userId")
+    void updateQuestionnaireStart(boolean wasStarted, int userId);
+
     @Query("UPDATE UserModelR SET config = :config WHERE user_id = :userId AND user_project_id = :userProjectId")
     void updateConfig(String config, int userId, int userProjectId);
 
@@ -48,6 +51,9 @@ public interface QuizerDao {
 
     @Query("SELECT * FROM UserModelR WHERE user_id = :userId")
     List<UserModelR> getUserByUserId(int userId);
+
+    @Query("SELECT * FROM UserModelR WHERE questionnaire_opened = :status")
+    List<UserModelR> getUserWithAbortedQUestionnaire(boolean status);
 
     @Query("DELETE FROM UserModelR WHERE user_id = :userId")
     void deleteUserByUserId(int userId);

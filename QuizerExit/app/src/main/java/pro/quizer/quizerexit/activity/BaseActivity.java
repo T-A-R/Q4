@@ -1107,7 +1107,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
             }
             if (crashLogsList != null && crashLogsList.size() > 0) {
                 for (CrashLogs crash : crashLogsList) {
-                    crashList.add(new Crash(getCurrentUser().getLogin(), crash.getLog()));
+                    crashList.add(new Crash(getCurrentUser().getLogin(), crash.getLog(), crash.isFrom_questionnaire()));
                 }
             }
 

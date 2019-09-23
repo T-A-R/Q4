@@ -88,9 +88,6 @@ public class UploadingExecutable extends BaseExecutable {
     private void moveCrashLogs() {
 
         if (BaseActivity.getDao().getCrashLogs().size() > 0) {
-//            String crashLog = BaseActivity.getDao().getCrashLogs().get(BaseActivity.getDao().getCrashLogs().size() - 1).getLog();
-//            Log.d(TAG, "Sending Crash Log: " + crashLog);
-//            CrashRequestModel crashRequestModel = new CrashRequestModel("android", new Crash("android", crashLog));
 
             List<Crash> crashList = new ArrayList<>();
             List<CrashLogs> crashLogsList = null;
@@ -101,7 +98,7 @@ public class UploadingExecutable extends BaseExecutable {
             }
             if (crashLogsList != null && crashLogsList.size() > 0) {
                 for (CrashLogs crash : crashLogsList) {
-                    crashList.add(new Crash("android", crash.getLog()));
+                    crashList.add(new Crash("android", crash.getLog(), crash.isFrom_questionnaire()));
                 }
             }
 

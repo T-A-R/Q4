@@ -14,11 +14,15 @@ public class CrashLogs {
     @ColumnInfo(name = "log")
     private String log;
 
+    @ColumnInfo(name = "from_questionnaire")
+    private boolean from_questionnaire;
+
     public CrashLogs() {
     }
 
-    public CrashLogs(String log) {
+    public CrashLogs(String log, boolean from_questionnaire) {
         this.log = log;
+        this.from_questionnaire = from_questionnaire;
     }
 
     public int getId() {
@@ -35,5 +39,13 @@ public class CrashLogs {
 
     public void setLog(String log) {
         this.log = log;
+    }
+
+    public boolean isFrom_questionnaire() {
+        return from_questionnaire;
+    }
+
+    public void setFrom_questionnaire(boolean from_questionnaire) {
+        this.from_questionnaire = from_questionnaire;
     }
 }

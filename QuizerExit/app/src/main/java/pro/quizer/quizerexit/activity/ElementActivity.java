@@ -573,8 +573,14 @@ public class ElementActivity extends BaseActivity {
             BaseActivity.addLog(mLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SAVE_QUESTION_TO_DB), Constants.LogResult.SUCCESS, getString(R.string.SAVE_QUESTION_TO_DB_SUCCESS));
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
-
             BaseActivity.addLogWithData(mLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SAVE_QUESTION_TO_DB), Constants.LogResult.ERROR, getString(R.string.SAVE_QUESTION_TO_DB_ERROR), e.toString());
+        }
+
+        try {
+            BaseActivity.getDao().updateQuestionnaireStart(false, mUserId);
+            Log.d(TAG, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<< saveQuestionnaireToDatabase: false " + mUserId);
+        } catch (Exception e) {
+            BaseActivity.addLogWithData(mLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SAVE_FINISH_FLAG_TO_DB), Constants.LogResult.ERROR, getString(R.string.SAVE_QUESTION_TO_DB_ERROR), e.toString());
         }
 
         List<WarningsR> warnings = null;

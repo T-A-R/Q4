@@ -1,16 +1,22 @@
 package pro.quizer.quizerexit.executable;
 
+import android.util.Log;
+
 import java.util.List;
 
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
 import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.database.model.UserModelR;
+import pro.quizer.quizerexit.database.model.WarningsR;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.request.ElementRequestModel;
 import pro.quizer.quizerexit.model.request.QuestionnaireListRequestModel;
 import pro.quizer.quizerexit.model.request.QuestionnaireRequestModel;
+
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
 public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable<QuestionnaireListRequestModel> {
 
@@ -38,6 +44,25 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
 
         final List<QuestionnaireDatabaseModelR> questionnaires = BaseActivity.getDao().getQuestionnaireByUserIdWithStatus(mUserId, QuestionnaireStatus.NOT_SENT);
 
+        boolean isFakeGPS = false;
+        String fakeGPSTime = null;
+
+        List<WarningsR> warnings = null;
+        try {
+            warnings = BaseActivity.getDao().getWarningsByStatus(Constants.Warnings.FAKE_GPS, Constants.LogStatus.NOT_SENT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (warnings != null && warnings.size() > 0) {
+            isFakeGPS = true;
+            fakeGPSTime = String.valueOf(warnings.get(warnings.size() - 1).getWarningTime());
+        } else {
+            isFakeGPS = false;
+            fakeGPSTime = "0";
+
+        }
+
         for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : questionnaires) {
             final QuestionnaireRequestModel questionnaireRequestModel = new QuestionnaireRequestModel(
                     questionnaireDatabaseModel.getBilling_questions(),
@@ -54,10 +79,13 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
                     questionnaireDatabaseModel.getSurvey_status(),
                     questionnaireDatabaseModel.getSend_sms(),
                     questionnaireDatabaseModel.getGps_time(),
+                    questionnaireDatabaseModel.getGps_time_network(),
                     questionnaireDatabaseModel.getToken(),
                     questionnaireDatabaseModel.getAuth_time_difference(),
                     questionnaireDatabaseModel.getSend_time_difference(),
-                    questionnaireDatabaseModel.getQuota_time_difference()
+                    questionnaireDatabaseModel.getQuota_time_difference(),
+                    isFakeGPS,
+                    fakeGPSTime
             );
 
             final List<ElementDatabaseModelR> elements = BaseActivity.getDao().getElementByToken(questionnaireDatabaseModel.getToken());

@@ -56,6 +56,7 @@ import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.broadcast.StartSmsSender;
 import pro.quizer.quizerexit.database.QuizerDao;
 import pro.quizer.quizerexit.database.model.ActivationModelR;
+import pro.quizer.quizerexit.database.model.CrashLogs;
 import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.database.model.AppLogsR;
 import pro.quizer.quizerexit.database.model.UserModelR;
@@ -72,8 +73,10 @@ import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.ReserveChannelModel;
 import pro.quizer.quizerexit.model.config.StagesModel;
+import pro.quizer.quizerexit.model.logs.Crash;
 import pro.quizer.quizerexit.model.request.AuthRequestModel;
 import pro.quizer.quizerexit.model.request.ConfigRequestModel;
+import pro.quizer.quizerexit.model.request.CrashRequestModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
@@ -1090,5 +1093,44 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         });
 
         alertDialog.show();
+    }
+
+    public void sendCrashLogs() {
+        Log.d(TAG, "Crash logs: " + getDao().getCrashLogs().size());
+        if (getDao().getCrashLogs().size() > 0) {
+            List<Crash> crashList = new ArrayList<>();
+            List<CrashLogs> crashLogsList = null;
+            try {
+                crashLogsList = getDao().getCrashLogs();
+            } catch (Exception e) {
+                addLogWithData(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.LOG, getString(R.string.LOAD_CRASHLOG_FROM_DB), Constants.LogResult.ERROR, getString(R.string.DB_LOAD_ERROR), e.getMessage());
+            }
+            if (crashLogsList != null && crashLogsList.size() > 0) {
+                for (CrashLogs crash : crashLogsList) {
+                    crashList.add(new Crash(getCurrentUser().getLogin(), crash.getLog(), crash.isFrom_questionnaire()));
+                }
+            }
+
+            Log.d(TAG, "Sending Crash Logs: " + crashList.size());
+            CrashRequestModel crashRequestModel = new CrashRequestModel(getLoginAdmin(), crashList);
+            Gson gson = new Gson();
+            String json = gson.toJson(crashRequestModel);
+            QuizerAPI.sendCrash(getServer(), json, new QuizerAPI.SendCrashCallback() {
+                @Override
+                public void onSendCrash(boolean ok, String message) {
+                    if (ok) {
+                        try {
+                            getDao().clearCrashLogs();
+                            Log.d(TAG, "Crash Logs Cleared");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.d(TAG, "Crash Logs Clear Error: " + e);
+                        }
+                    } else {
+                        Log.d(TAG, "Crash Logs Not Sent: " + message);
+                    }
+                }
+            });
+        }
     }
 }

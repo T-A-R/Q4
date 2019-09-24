@@ -24,7 +24,7 @@ import pro.quizer.quizerexit.database.model.WarningsR;
         AppLogsR.class,
         CrashLogs.class,
         WarningsR.class,
-        SmsItemR.class}, version = 8)
+        SmsItemR.class}, version = 10)
 public abstract class QuizerDatabase extends RoomDatabase {
     public abstract QuizerDao getQuizerDao();
 }

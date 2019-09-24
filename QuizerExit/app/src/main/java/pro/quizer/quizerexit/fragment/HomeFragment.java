@@ -25,12 +25,13 @@ import pro.quizer.quizerexit.listener.QuotasClickListener;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ProjectInfoModel;
 import pro.quizer.quizerexit.model.view.SyncViewModel;
-import pro.quizer.quizerexit.utils.DeviceUtils;
 import pro.quizer.quizerexit.utils.SystemUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 
 import static pro.quizer.quizerexit.activity.BaseActivity.IS_AFTER_AUTH;
 import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
+import static pro.quizer.quizerexit.activity.BaseActivity.getDao;
+import static pro.quizer.quizerexit.activity.BaseActivity.makeCrash;
 
 public class HomeFragment extends BaseFragment implements ICallback {
 
@@ -65,6 +66,8 @@ public class HomeFragment extends BaseFragment implements ICallback {
         }
 
         new SendQuestionnairesByUserModelExecutable(getBaseActivity(), mUserModel, this, false).execute();
+
+        mBaseActivity.sendCrashLogs();
 
         mBaseActivity.setChangeFontCallback(new BaseActivity.ChangeFontCallback() {
             @Override
@@ -207,6 +210,14 @@ public class HomeFragment extends BaseFragment implements ICallback {
     }
 
     private void start() {
+
+        try {
+            getDao().updateQuestionnaireStart(true, mUserModel.getUser_id());
+            Log.d(TAG, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<< saveQuestionnaireToDatabase: true " + mUserModel.getUser_id());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         hideProgressBar();
 
         getBaseActivity().finish();
@@ -220,6 +231,9 @@ public class HomeFragment extends BaseFragment implements ICallback {
 
     @Override
     public void onSuccess() {
+
+
+
         initSyncInfoViews();
 //        hideProgressBar();
 

@@ -333,5 +333,9 @@
     <string name="EXIT_BUTTON">Выход</string>
     <string name="FAKE_GPS_ON">Включена подмена GPS</string>
     <string name="CONFIG_ERROR">Неверные настройки</string>
+    <string name="LOAD_CRASHLOG_FROM_DB">Чтение краш-лога из базы данных</string>
+    <string name="SAVE_CRASH_FILE">Выгрузка крашей в файл</string>
+    <string name="SAVE_CRASH_ERROR">Ошибка создания файла</string>
+    <string name="SAVE_FINISH_FLAG_TO_DB">Сохранение флага завершения анкеты</string>
 
 </resources>

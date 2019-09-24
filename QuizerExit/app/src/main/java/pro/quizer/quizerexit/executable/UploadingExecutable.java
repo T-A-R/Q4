@@ -17,6 +17,7 @@ import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.database.model.AppLogsR;
+import pro.quizer.quizerexit.database.model.CrashLogs;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.logs.Crash;
@@ -56,7 +57,7 @@ public class UploadingExecutable extends BaseExecutable {
         moveFiles();
         moveQuestionnaires();
 
-        if(mContext != null)
+        if (mContext != null)
             Toast.makeText(mContext, R.string.NOTIFICATION_UPLOADING, Toast.LENGTH_SHORT).show();
 //        onSuccess();
     }
@@ -87,9 +88,22 @@ public class UploadingExecutable extends BaseExecutable {
     private void moveCrashLogs() {
 
         if (BaseActivity.getDao().getCrashLogs().size() > 0) {
-            String crashLog = BaseActivity.getDao().getCrashLogs().get(BaseActivity.getDao().getCrashLogs().size() - 1).getLog();
-            Log.d(TAG, "Sending Crash Log: " + crashLog);
-            CrashRequestModel crashRequestModel = new CrashRequestModel("android", new Crash("android", crashLog));
+
+            List<Crash> crashList = new ArrayList<>();
+            List<CrashLogs> crashLogsList = null;
+            try {
+                crashLogsList = BaseActivity.getDao().getCrashLogs();
+            } catch (Exception e) {
+                BaseActivity.addLogWithData("android", Constants.LogType.DATABASE, Constants.LogObject.LOG, mContext.getString(R.string.LOAD_CRASHLOG_FROM_DB), Constants.LogResult.ERROR, mContext.getString(R.string.DB_LOAD_ERROR), e.getMessage());
+            }
+            if (crashLogsList != null && crashLogsList.size() > 0) {
+                for (CrashLogs crash : crashLogsList) {
+                    crashList.add(new Crash("android", crash.getLog(), crash.isFrom_questionnaire()));
+                }
+            }
+
+            Log.d(TAG, "Sending Crash Logs: " + crashList.size());
+            CrashRequestModel crashRequestModel = new CrashRequestModel("android", crashList);
 
             Gson gson = new Gson();
             String json = gson.toJson(crashRequestModel);
@@ -99,7 +113,7 @@ public class UploadingExecutable extends BaseExecutable {
                 FileUtils.createTxtFile(UPLOADING_PATH, String.format(UPLOADING_CRASH_FILE_NAME, "android", DateUtils.getCurrentTimeMillis()), json);
                 BaseActivity.getDao().clearCrashLogs();
             } catch (final IOException pE) {
-                Log.d(TAG, "Не удалось сформировать файл краш-лога при ручной выгрузке\n" + pE.getMessage());
+                BaseActivity.addLogWithData("android", Constants.LogType.FILE, Constants.LogObject.LOG, mContext.getString(R.string.SAVE_CRASH_FILE), Constants.LogResult.ERROR, mContext.getString(R.string.SAVE_CRASH_ERROR), pE.getMessage());
             }
         }
     }

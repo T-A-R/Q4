@@ -573,20 +573,13 @@ public class ElementActivity extends BaseActivity {
             BaseActivity.addLog(mLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SAVE_QUESTION_TO_DB), Constants.LogResult.SUCCESS, getString(R.string.SAVE_QUESTION_TO_DB_SUCCESS));
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
-
             BaseActivity.addLogWithData(mLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SAVE_QUESTION_TO_DB), Constants.LogResult.ERROR, getString(R.string.SAVE_QUESTION_TO_DB_ERROR), e.toString());
         }
 
-        List<WarningsR> warnings = null;
         try {
-            warnings = getDao().getWarningsByStatus(Constants.Warnings.FAKE_GPS, Constants.LogStatus.NOT_SENT);
+            BaseActivity.getDao().updateQuestionnaireStart(false, mUserId);
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (warnings != null && warnings.size() > 0) {
-            questionnaireDatabaseModel.setUsedFakeGps(true);
-            questionnaireDatabaseModel.setFakeGpsTime(warnings.get(warnings.size() - 1).getWarningTime());
+            BaseActivity.addLogWithData(mLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SAVE_FINISH_FLAG_TO_DB), Constants.LogResult.ERROR, getString(R.string.SAVE_QUESTION_TO_DB_ERROR), e.toString());
         }
     }
 

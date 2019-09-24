@@ -230,14 +230,6 @@ public class QuestionnaireDatabaseModelR {
         this.gps = gps;
     }
 
-    public String getGpsNetwork() {
-        return gps_network;
-    }
-
-    public void setGpsNetwork(String gps) {
-        this.gps_network = gps_network;
-    }
-
     public long getGps_time() {
         return gps_time;
     }
@@ -332,14 +324,6 @@ public class QuestionnaireDatabaseModelR {
 
     public void setSend_sms(boolean send_sms) {
         this.send_sms = send_sms;
-    }
-
-    public boolean isUsedFakeGps() {
-        return used_fake_gps;
-    }
-
-    public void setUsedFakeGps(boolean used_fake_gps) {
-        this.used_fake_gps = used_fake_gps;
     }
 
     public String getGps_network() {

@@ -546,11 +546,13 @@ public class ElementActivity extends BaseActivity {
         questionnaireDatabaseModel.setBilling_questions(mBillingQuestions);
         questionnaireDatabaseModel.setUser_project_id(mUserProjectId);
         questionnaireDatabaseModel.setGps(mGpsString);
-        questionnaireDatabaseModel.setGpsNetwork(mGpsNetworkString);
+        questionnaireDatabaseModel.setGps_network(mGpsNetworkString);
         questionnaireDatabaseModel.setGps_time(mGpsTime);
         questionnaireDatabaseModel.setGps_time_network(mGpsTimeNetwork);
         questionnaireDatabaseModel.setDate_interview(mStartDateInterview);
         questionnaireDatabaseModel.setHas_photo(getHasPhoto());
+
+        Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>> execute 1: " + questionnaireDatabaseModel.getGps_network());
 
         if (aborted)
             questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.ABORTED);

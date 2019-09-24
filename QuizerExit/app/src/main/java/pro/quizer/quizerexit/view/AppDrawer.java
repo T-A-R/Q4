@@ -25,6 +25,13 @@ public class AppDrawer extends RelativeLayout implements Serializable {
     ImageButton mQuotasBtn;
     ImageButton mChangeUserBtn;
 
+    RelativeLayout mHomeBtnCont;
+    RelativeLayout mSyncBtnCont;
+    RelativeLayout mSettingsBtnCont;
+    RelativeLayout mAboutBtnCont;
+    RelativeLayout mQuotasBtnCont;
+    RelativeLayout mChangeUserBtnCont;
+
     private BaseActivity mBaseActivity;
 
     final private View.OnClickListener mInternalClickListenerForToolbar = new OnClickListener() {
@@ -65,15 +72,15 @@ public class AppDrawer extends RelativeLayout implements Serializable {
     }
 
     public void disableHome() {
-        mHomeBtn.setVisibility(View.GONE);
+        mHomeBtnCont.setVisibility(View.GONE);
     }
 
     public void disableSync() {
-        mSyncBtn.setVisibility(View.GONE);
+        mSyncBtnCont.setVisibility(View.GONE);
     }
 
     public void disableQuota() {
-        mQuotasBtn.setVisibility(View.GONE);
+        mQuotasBtnCont.setVisibility(View.GONE);
     }
 
     private void init() {
@@ -101,6 +108,13 @@ public class AppDrawer extends RelativeLayout implements Serializable {
         mAboutBtn = findViewById(R.id.about_btn);
         mQuotasBtn = findViewById(R.id.quotas_btn);
         mChangeUserBtn = findViewById(R.id.change_user_btn);
+
+        mHomeBtnCont = findViewById(R.id.home_cont);
+        mSyncBtnCont = findViewById(R.id.sync_cont);
+        mSettingsBtnCont = findViewById(R.id.settings_cont);
+        mAboutBtnCont = findViewById(R.id.about_cont);
+        mQuotasBtnCont = findViewById(R.id.quotas_cont);
+        mChangeUserBtnCont = findViewById(R.id.change_user_cont);
 
         mHomeBtn.setOnClickListener(new OnClickListener() {
             @Override
@@ -148,7 +162,7 @@ public class AppDrawer extends RelativeLayout implements Serializable {
                 }
             });
         } else {
-            mQuotasBtn.setVisibility(View.GONE);
+            mQuotasBtnCont.setVisibility(View.GONE);
         }
 
         mChangeUserBtn.setOnClickListener(new OnClickListener() {

@@ -255,6 +255,8 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                 @Override
                 public void onClick(View view) {
 
+                    Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 3");
+
                     if (mEmptyButton != null)
                         mEmptyButton.setVisibility(View.VISIBLE);
                     if (mEmptyRadioButton != null)
@@ -267,47 +269,60 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
 
                     if (isChecked && minAnswers == DEFAULT_MIN_ANSWERS && minAnswers == maxAnswers) {
-
+                        Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 4");
                         unselectAnother(pPosition);
 
                         pAnswer.setChecked(true);
                         radioBtnIsPressed = true;
 
+                        Log.d(TAG, "?????????????????????????? onClick: " + options.getOpenType());
+
                         if (pAnswer.isChecked())
                             switch (options.getOpenType()) {
                                 case OptionsOpenType.TIME:
+                                    Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 5");
                                     hideKeyboardFrom(view);
                                     setTime(view);
                                     break;
                                 case OptionsOpenType.DATE:
+                                    Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 6");
                                     hideKeyboardFrom(view);
                                     setDate(view);
                                     break;
                                 case OptionsOpenType.NUMBER:
+                                    Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 7");
                                     mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
                                     refresh();
                                     showKeyboard();
                                     break;
                                 case OptionsOpenType.TEXT:
+                                    Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 8");
                                     mEditText.setInputType(InputType.TYPE_CLASS_TEXT);
                                     refresh();
                                     showKeyboard();
+                                    break;
+                                case OptionsOpenType.CHECKBOX:
+                                    Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 8.1");
+                                    refresh();
                                     break;
                                 default:
                                     // неизвестный тип open_type
                             }
 
                     } else if (isChecked && maxAnswers != EMPTY_COUNT_ANSWER && checkedItemsCount >= maxAnswers) {
+                        Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 9");
                         checkBox.setChecked(false);
 
                         QuestionListAdapter.this.mBaseActivity.showToast(String.format(QuestionListAdapter.this.mBaseActivity.getString(R.string.NOTIFICATION_MAX_ANSWERS), String.valueOf(maxAnswers)));
                     } else if (options.isUnchecker()) {
-
+                        Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 10");
                         if (isChecked) {
+                            Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 11");
                             setCheckedItemsCount(1);
                             unselectAll();
                             disableOther(pAnswer.getRelativeID());
                         } else {
+                            Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 12");
                             setCheckedItemsCount(0);
                             enableAll();
                         }
@@ -317,8 +332,10 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                         refresh();
                     } else {
                         if (isChecked) {
+                            Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 13");
                             setCheckedItemsCount(checkedItemsCount + 1);
                         } else {
+                            Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 14");
                             setCheckedItemsCount(checkedItemsCount - 1);
                         }
 
@@ -329,15 +346,19 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                         if (pAnswer.isChecked())
                             switch (options.getOpenType()) {
                                 case OptionsOpenType.TIME:
+                                    Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 15");
                                     setTime(view);
                                     break;
                                 case OptionsOpenType.DATE:
+                                    Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 16");
                                     setDate(view);
                                     break;
                                 case OptionsOpenType.NUMBER:
+                                    Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 17");
                                     mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
                                     break;
                                 case OptionsOpenType.TEXT:
+                                    Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 18");
                                     mEditText.setInputType(InputType.TYPE_CLASS_TEXT);
                                     break;
                                 default:
@@ -345,9 +366,11 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                             }
 
                         if (mEditText.isEnabled() && mEditText.getText() == null) {
+                            Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 19");
                             mEditText.setBackgroundResource(R.drawable.edit_text_red_border);
                             mEditText.requestFocus();
                         } else {
+                            Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 20");
                             mEditText.setBackgroundResource(R.drawable.edit_text_transparent_border);
                             mEditText.requestFocus();
                         }
@@ -360,19 +383,23 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                         }
 
                         if (isChecked) {
+                            Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 21");
                             mEditText.setEnabled(true);
                             mEditText.setFocusable(true);
                             mEditText.setFocusableInTouchMode(true);
                             mEditText.requestFocus();
 
                             if (mEditText.isEnabled() && mEditText.getText().toString().matches("")) {
+                                Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 22");
                                 mEditText.setBackgroundResource(R.drawable.edit_text_red_border);
                                 mEditText.requestFocus();
                             } else {
+                                Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 23");
                                 mEditText.setBackgroundResource(R.drawable.edit_text_transparent_border);
                                 mEditText.requestFocus();
                             }
                         } else {
+                            Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 24");
                             mEditText.setEnabled(false);
                         }
                     }
@@ -386,6 +413,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                 @Override
                 public void onClick(final View pView) {
                     if (mCheckBox.isEnabled()) {
+                        Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 25");
                         mCheckBox.performClickProgramatically();
                     }
                 }
@@ -397,6 +425,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                     @Override
                     public void onClick(final View pView) {
                         if (mCheckBox.isEnabled()) {
+                            Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 26");
                             mCheckBox.performClickProgramatically();
                         }
                     }
@@ -408,6 +437,7 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
 
                     @Override
                     public void onClick(final View pView) {
+                        Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 27");
                         if (mCheckBox.isEnabled()) {
                             if (mEditText.hasFocus()) {
                                 showKeyboard();
@@ -430,8 +460,9 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
                     @Override
                     public void onClick(final View pView) {
                         focusPos = pPosition;
-
+                        Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 1");
                         if (mCheckBox.isEnabled()) {
+                            Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 2");
                             if (mEditText.hasFocus()) {
                                 showKeyboard();
                             }

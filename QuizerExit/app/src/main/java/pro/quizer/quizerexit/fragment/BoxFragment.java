@@ -92,23 +92,27 @@ public class BoxFragment extends AbstractContentElementFragment {
         }
 
         if (bundle != null) {
-            mUser = getBaseActivity().getCurrentUser();
-            mMap = getBaseActivity().getMap();
-            mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
-            mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
-            mAttributes = mCurrentElement.getOptions();
-            mIsPhotoQuestionnaire = bundle.getBoolean(BUNDLE_IS_PHOTO_QUESTIONNAIRE);
-            mUserLogin = bundle.getString(BUNDLE_USER_LOGIN);
-            mProjectId = bundle.getInt(BUNDLE_PROJECT_ID);
-            mLoginAdmin = bundle.getString(BUNDLE_LOGIN_ADMIN);
-            mToken = bundle.getString(BUNDLE_TOKEN);
-            mUserId = bundle.getInt(BUNDLE_USER_ID);
-            mIsButtonsVisible = bundle.getBoolean(BUNDLE_IS_BUTTON_VISIBLE);
-            initHeader(view);
-            initView();
-            handleButtonsVisibility();
+            try {
+                mUser = getBaseActivity().getCurrentUser();
+                mMap = getBaseActivity().getMap();
+                mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
+                mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
+                mAttributes = mCurrentElement.getOptions();
+                mIsPhotoQuestionnaire = bundle.getBoolean(BUNDLE_IS_PHOTO_QUESTIONNAIRE);
+                mUserLogin = bundle.getString(BUNDLE_USER_LOGIN);
+                mProjectId = bundle.getInt(BUNDLE_PROJECT_ID);
+                mLoginAdmin = bundle.getString(BUNDLE_LOGIN_ADMIN);
+                mToken = bundle.getString(BUNDLE_TOKEN);
+                mUserId = bundle.getInt(BUNDLE_USER_ID);
+                mIsButtonsVisible = bundle.getBoolean(BUNDLE_IS_BUTTON_VISIBLE);
+                initHeader(view);
+                initView();
+                handleButtonsVisibility();
+            } catch (Exception e) {
+                showToast(getString(R.string.NOTIFICATION_INTERNAL_APP_ERROR) + "1001.1");
+            }
         } else {
-            showToast(getString(R.string.NOTIFICATION_INTERNAL_APP_ERROR) + "1001");
+            showToast(getString(R.string.NOTIFICATION_INTERNAL_APP_ERROR) + "1001.2");
         }
     }
 

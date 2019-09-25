@@ -240,7 +240,7 @@ public class QuotasFragment extends BaseFragment implements ICallback {
 
         if (mBaseActivity.getCurrentUser().getQuotasR() != null) {
 
-            if (logs != null) {
+            if (logs != null && isAdded()) {
 
                 for (int i = logs.size() - 1; i >= 0; i--) {
                     if (logs.get(i).getObject().equals(Constants.LogObject.QUOTA)

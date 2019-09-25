@@ -14,8 +14,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 26
 //        multiDexEnabled true
-        versionCode 129
-        versionName "2.1.29"
+        versionCode 130
+        versionName "2.1.30"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         project.ext.set("archivesBaseName", "Quizer_ " + defaultConfig.versionName)
     }

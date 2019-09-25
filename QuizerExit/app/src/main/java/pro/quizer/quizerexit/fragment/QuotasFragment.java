@@ -3,14 +3,12 @@ package pro.quizer.quizerexit.fragment;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,13 +22,11 @@ import android.support.v7.app.AlertDialog;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.SimpleTextWatcher;
 import pro.quizer.quizerexit.activity.BaseActivity;
-import pro.quizer.quizerexit.activity.MainActivity;
 import pro.quizer.quizerexit.adapter.QuotasAdapter;
 import pro.quizer.quizerexit.database.model.AppLogsR;
 import pro.quizer.quizerexit.executable.ICallback;
@@ -40,10 +36,7 @@ import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.quota.QuotaModel;
 import pro.quizer.quizerexit.model.view.QuotasViewModel;
 import pro.quizer.quizerexit.utils.DateUtils;
-import pro.quizer.quizerexit.utils.Evaluator.Constant;
 import pro.quizer.quizerexit.utils.StringUtils;
-
-import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
 public class QuotasFragment extends BaseFragment implements ICallback {
 
@@ -52,10 +45,13 @@ public class QuotasFragment extends BaseFragment implements ICallback {
     private Switch mNotCompletedOnlySwitch;
     private Button mRefreshBtn;
     private Button mInfoBtn;
+    private Button mDetailsBtn;
     private RecyclerView mQuotasRecyclerView;
     private BaseActivity mBaseActivity;
     private HashMap<Integer, ElementModel> mMap;
     private boolean mIsNotCompletedOnly;
+
+    private QuotasAdapter mAdapter;
 
     AlertDialog.Builder dialogBuilder;
     AlertDialog infoDialog;
@@ -65,6 +61,7 @@ public class QuotasFragment extends BaseFragment implements ICallback {
     String quotaText3;
     int quotaType1 = 2;
     int quotaType2 = 2;
+    boolean isDetailedView = false;
 
     public static Fragment newInstance() {
         final QuotasFragment fragment = new QuotasFragment();
@@ -105,6 +102,7 @@ public class QuotasFragment extends BaseFragment implements ICallback {
         mClearSearchBtn = pView.findViewById(R.id.clear_search_icon);
         mRefreshBtn = pView.findViewById(R.id.refresh_quotas);
         mInfoBtn = pView.findViewById(R.id.info_quotas);
+        mDetailsBtn = pView.findViewById(R.id.details_quotas);
         mQuotasRecyclerView = pView.findViewById(R.id.quotas_recycler_view);
 
         mNotCompletedOnlySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -154,7 +152,23 @@ public class QuotasFragment extends BaseFragment implements ICallback {
         mInfoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showInfoDialog("test 1", "test 2", "test 3", 1, 2);
+                showInfoDialog();
+            }
+        });
+
+        mDetailsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (isDetailedView) {
+                    isDetailedView = false;
+                    mDetailsBtn.setText("ПОКАЗАТЬ ДЕТАЛИ");
+                }
+                else {
+                    isDetailedView = true;
+                    mDetailsBtn.setText("СКРЫТЬ ДЕТАЛИ");
+                }
+                mAdapter.onClickDetails(isDetailedView);
             }
         });
 
@@ -181,7 +195,7 @@ public class QuotasFragment extends BaseFragment implements ICallback {
                 hideEmptyView();
 
                 final BaseActivity baseActivity = (BaseActivity) getContext();
-                final QuotasAdapter mAdapter = new QuotasAdapter(baseActivity, quotas, mMap);
+                mAdapter = new QuotasAdapter(baseActivity, quotas, mMap);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(baseActivity);
                 mQuotasRecyclerView.setLayoutManager(mLayoutManager);
                 mQuotasRecyclerView.setAdapter(mAdapter);
@@ -295,7 +309,7 @@ public class QuotasFragment extends BaseFragment implements ICallback {
         }
     }
 
-    private void showInfoDialog(String quota1, String quota2, String quota3, int quotaType1, int quotaType2) {
+    private void showInfoDialog() {
         dialogBuilder = new AlertDialog.Builder(mBaseActivity);
         View layoutView = getLayoutInflater().inflate(R.layout.dialog_info, null);
         TextView dQuota1 = layoutView.findViewById(R.id.quota_1);
@@ -347,5 +361,9 @@ public class QuotasFragment extends BaseFragment implements ICallback {
         infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
         infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         infoDialog.show();
+    }
+
+    public interface DetailsCallback {
+        void onClickDetails(boolean expanded);
     }
 }

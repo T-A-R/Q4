@@ -2,6 +2,7 @@ package pro.quizer.quizerexit.adapter;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +13,30 @@ import java.util.List;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.fragment.QuotasFragment;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.quota.QuotaModel;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
-public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewHolder> {
+public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewHolder> implements QuotasFragment.DetailsCallback {
 
     private List<QuotaModel> mQuotasList;
     private BaseActivity mBaseActivity;
     private HashMap<Integer, ElementModel> mMap;
+    private boolean isDetailsVisible = false;
+
+    @Override
+    public void onClickDetails(boolean expanded) {
+        Log.d(TAG, "onClickDetails: " + expanded);
+        if(expanded) {
+            isDetailsVisible = true;
+        } else {
+            isDetailsVisible = false;
+        }
+        notifyDataSetChanged();
+    }
 
     class QuotaViewHolder extends RecyclerView.ViewHolder {
 
@@ -72,6 +87,14 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
             count = mBaseActivity.getString(R.string.VIEW_STATUS_NOT_DONE_TWO) + count2;
         } else {
             count = mBaseActivity.getString(R.string.VIEW_STATUS_MORE_THAN_DONE) + count;
+        }
+
+        if(isDetailsVisible) {
+            holder.mRecyclerView.setVisibility(View.VISIBLE);
+            Log.d(TAG, "onBindViewHolder: VISIBLE");
+        } else {
+            holder.mRecyclerView.setVisibility(View.GONE);
+            Log.d(TAG, "onBindViewHolder: GONE");
         }
 
         holder.mCount.setText(count);

@@ -104,13 +104,12 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginRight="8dp"
                 android:maxLines="1"
-                android:layout_weight="1"
                 android:textSize="@dimen/_12ssp"
                 android:text="@string/VIEW_BUTTON_INFO"
                 android:layout_marginEnd="8dp" />
 
             <Button
-                android:id="@+id/more_quotas"
+                android:id="@+id/details_quotas"
                 style="@style/ButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_36sdp"

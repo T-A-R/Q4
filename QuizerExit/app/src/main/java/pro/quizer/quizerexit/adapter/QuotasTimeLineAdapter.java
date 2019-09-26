@@ -1,9 +1,11 @@
 package pro.quizer.quizerexit.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.github.vipulasri.timelineview.TimelineView;
@@ -15,6 +17,8 @@ import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.quota.QuotaTimeLineModel;
 import pro.quizer.quizerexit.utils.UiUtils;
 
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
+
 public class QuotasTimeLineAdapter extends RecyclerView.Adapter<QuotasTimeLineAdapter.QuotaTimeLineViewHolder> {
 
     private List<QuotaTimeLineModel> mAnswers;
@@ -25,10 +29,12 @@ public class QuotasTimeLineAdapter extends RecyclerView.Adapter<QuotasTimeLineAd
         TextView mMessage;
         TimelineView mTimeLineView;
         TimelineView mTimeLineStubView;
+        FrameLayout mCont;
 
         QuotaTimeLineViewHolder(final View pItemView, final int pViewType) {
             super(pItemView);
 
+            mCont = pItemView.findViewById(R.id.cont);
             mTimeLineView = pItemView.findViewById(R.id.timeline);
             mTimeLineStubView = pItemView.findViewById(R.id.timeline_stub);
             mMessage = pItemView.findViewById(R.id.text_timeline_title);
@@ -58,6 +64,12 @@ public class QuotasTimeLineAdapter extends RecyclerView.Adapter<QuotasTimeLineAd
         QuotaTimeLineModel model = mAnswers.get(position);
 
         UiUtils.setTextOrHide(holder.mMessage, model.getAnswer());
+        holder.mCont.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 2");
+            }
+        });
 
     }
 

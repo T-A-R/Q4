@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -25,7 +27,7 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
     private List<QuotaModel> mQuotasList;
     private BaseActivity mBaseActivity;
     private HashMap<Integer, ElementModel> mMap;
-    private boolean isDetailsVisible = false;
+    private boolean isDetailsVisible = true;
 
     @Override
     public void onClickDetails(boolean expanded) {
@@ -42,12 +44,16 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
 
         TextView mCount;
         RecyclerView mRecyclerView;
+        LinearLayout mCont;
+        RelativeLayout mRecyclerCont;
 
         QuotaViewHolder(View view) {
             super(view);
 
             mRecyclerView = view.findViewById(R.id.quotas_time_line_recycler_view);
             mCount = view.findViewById(R.id.quotas_time_line_count);
+            mCont = view.findViewById(R.id.quota_cont);
+            mRecyclerCont = view.findViewById(R.id.recycler_cont);
         }
     }
 
@@ -91,11 +97,15 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
 
         if(isDetailsVisible) {
             holder.mRecyclerView.setVisibility(View.VISIBLE);
+//            holder.mRecyclerCont.setOnClickListener(v -> onHolderClick(position));
             Log.d(TAG, "onBindViewHolder: VISIBLE");
         } else {
             holder.mRecyclerView.setVisibility(View.GONE);
             Log.d(TAG, "onBindViewHolder: GONE");
         }
+
+        holder.mCont.setOnClickListener(v -> onHolderClick(position));
+
 
         holder.mCount.setText(count);
 
@@ -115,5 +125,16 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
     @Override
     public int getItemCount() {
         return mQuotasList.size();
+    }
+
+    private void onHolderClick(int position) {
+        Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> onHolderClick: ");
+        if(isDetailsVisible) {
+            isDetailsVisible = false;
+            notifyItemChanged(position);
+        } else {
+            isDetailsVisible = true;
+            notifyItemChanged(position);
+        }
     }
 }

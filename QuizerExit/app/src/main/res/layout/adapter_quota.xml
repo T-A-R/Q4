@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="2dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/quota_cont">
 
     <include layout="@layout/view_divider"/>
 
@@ -19,6 +20,16 @@
         android:textSize="18sp"
         tools:text="16 из 33" />
 
+    <RelativeLayout
+        android:id="@+id/recycler_cont"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/quotas_time_line_recycler_view"
         android:layout_width="match_parent"
@@ -26,5 +37,5 @@
         android:nestedScrollingEnabled="false"
         android:paddingBottom="8dp" />
 
-
+    </RelativeLayout>
 </LinearLayout>

@@ -61,7 +61,7 @@ public class QuotasFragment extends BaseFragment implements ICallback {
     String quotaText3;
     int quotaType1 = 2;
     int quotaType2 = 2;
-    boolean isDetailedView = false;
+    boolean isDetailedView = true;
 
     public static Fragment newInstance() {
         final QuotasFragment fragment = new QuotasFragment();
@@ -162,11 +162,11 @@ public class QuotasFragment extends BaseFragment implements ICallback {
 
                 if (isDetailedView) {
                     isDetailedView = false;
-                    mDetailsBtn.setText("ПОКАЗАТЬ ДЕТАЛИ");
+                    mDetailsBtn.setText(getString(R.string.VIEW_BUTTON_MORE));
                 }
                 else {
                     isDetailedView = true;
-                    mDetailsBtn.setText("СКРЫТЬ ДЕТАЛИ");
+                    mDetailsBtn.setText(getString(R.string.QUOTA_HIDE_DETAILS));
                 }
                 mAdapter.onClickDetails(isDetailedView);
             }

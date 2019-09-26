@@ -119,7 +119,7 @@
                 android:maxLines="1"
                 android:layout_weight="1"
                 android:textSize="@dimen/_12ssp"
-                android:text="@string/VIEW_BUTTON_MORE"
+                android:text="@string/QUOTA_HIDE_DETAILS"
                 android:layout_marginStart="8dp" />
 
         </LinearLayout>

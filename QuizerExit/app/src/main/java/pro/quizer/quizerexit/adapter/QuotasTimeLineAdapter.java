@@ -1,7 +1,6 @@
 package pro.quizer.quizerexit.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +15,6 @@ import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.model.quota.QuotaTimeLineModel;
 import pro.quizer.quizerexit.utils.UiUtils;
-
-import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
 public class QuotasTimeLineAdapter extends RecyclerView.Adapter<QuotasTimeLineAdapter.QuotaTimeLineViewHolder> {
 
@@ -62,15 +59,7 @@ public class QuotasTimeLineAdapter extends RecyclerView.Adapter<QuotasTimeLineAd
     @Override
     public void onBindViewHolder(QuotaTimeLineViewHolder holder, int position) {
         QuotaTimeLineModel model = mAnswers.get(position);
-
         UiUtils.setTextOrHide(holder.mMessage, model.getAnswer());
-        holder.mCont.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> onClick: 2");
-            }
-        });
-
     }
 
     @Override

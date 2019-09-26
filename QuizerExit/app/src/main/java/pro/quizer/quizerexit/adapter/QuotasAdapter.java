@@ -1,5 +1,6 @@
 package pro.quizer.quizerexit.adapter;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -7,9 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,15 +28,19 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
     private List<QuotaModel> mQuotasList;
     private BaseActivity mBaseActivity;
     private HashMap<Integer, ElementModel> mMap;
-    private boolean isDetailsVisible = true;
+    private List<Integer> mHoldersState = new ArrayList<>();
 
     @Override
     public void onClickDetails(boolean expanded) {
         Log.d(TAG, "onClickDetails: " + expanded);
-        if(expanded) {
-            isDetailsVisible = true;
+        if (expanded) {
+            for(int i = 0; i< mQuotasList.size();i++) {
+                mHoldersState.set(i, 1);
+            }
         } else {
-            isDetailsVisible = false;
+            for(int i = 0; i< mQuotasList.size();i++) {
+                mHoldersState.set(i, 0);
+            }
         }
         notifyDataSetChanged();
     }
@@ -45,7 +50,6 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
         TextView mCount;
         RecyclerView mRecyclerView;
         LinearLayout mCont;
-        RelativeLayout mRecyclerCont;
 
         QuotaViewHolder(View view) {
             super(view);
@@ -53,7 +57,6 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
             mRecyclerView = view.findViewById(R.id.quotas_time_line_recycler_view);
             mCount = view.findViewById(R.id.quotas_time_line_count);
             mCont = view.findViewById(R.id.quota_cont);
-            mRecyclerCont = view.findViewById(R.id.recycler_cont);
         }
     }
 
@@ -62,6 +65,9 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
         mBaseActivity = pBaseActivity;
         mQuotasList = pQuotasList;
         mMap = pMap;
+        for (int i = 0; i < mQuotasList.size(); i++) {
+            mHoldersState.add(1);
+        }
     }
 
     @Override
@@ -88,19 +94,24 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
         String count2 = String.format(mBaseActivity.getString(R.string.VIEW_X_FROM_Y_TWO), done, limit);
 
         if (doneInt == limitInt) {
-            count =  mBaseActivity.getString(R.string.VIEW_STATUS_DONE_TWO) + count;
+            count = mBaseActivity.getString(R.string.VIEW_STATUS_DONE_TWO) + count;
         } else if (doneInt < limitInt) {
             count = mBaseActivity.getString(R.string.VIEW_STATUS_NOT_DONE_TWO) + count2;
         } else {
             count = mBaseActivity.getString(R.string.VIEW_STATUS_MORE_THAN_DONE) + count;
         }
-
-        if(isDetailsVisible) {
+        final int sdk = android.os.Build.VERSION.SDK_INT;
+        if (mHoldersState.get(position) == 1) {
             holder.mRecyclerView.setVisibility(View.VISIBLE);
-//            holder.mRecyclerCont.setOnClickListener(v -> onHolderClick(position));
+            if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                holder.mCount.setBackgroundDrawable(ContextCompat.getDrawable(mBaseActivity, R.drawable.button_background_gray_light) );
+            } else {
+                holder.mCount.setBackground(ContextCompat.getDrawable(mBaseActivity, R.drawable.button_background_gray_light));
+            }
             Log.d(TAG, "onBindViewHolder: VISIBLE");
         } else {
             holder.mRecyclerView.setVisibility(View.GONE);
+            holder.mCount.setBackgroundColor(0xFFFFFF);
             Log.d(TAG, "onBindViewHolder: GONE");
         }
 
@@ -128,12 +139,11 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
     }
 
     private void onHolderClick(int position) {
-        Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> onHolderClick: ");
-        if(isDetailsVisible) {
-            isDetailsVisible = false;
+        if (mHoldersState.get(position) == 1) {
+            mHoldersState.set(position, 0);
             notifyItemChanged(position);
         } else {
-            isDetailsVisible = true;
+            mHoldersState.set(position, 1);
             notifyItemChanged(position);
         }
     }

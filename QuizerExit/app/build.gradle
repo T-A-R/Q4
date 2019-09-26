@@ -15,7 +15,7 @@ android {
         targetSdkVersion 26
 //        multiDexEnabled true
         versionCode 130
-        versionName "2.1.30"
+        versionName "2.1.30.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         project.ext.set("archivesBaseName", "Quizer_ " + defaultConfig.versionName)
     }

@@ -45,4 +45,9 @@
         <item name="android:textColor">@color/brand_color</item>
     </style>
 
+    <style name="DialogSlideAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_down</item>
+    </style>
+
 </resources>

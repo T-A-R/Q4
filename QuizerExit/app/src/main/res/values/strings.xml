@@ -83,6 +83,8 @@
     <string name="VIEW_ABOUT_TITLE">О нас</string>
     <string name="VIEW_ABOUT_TITLE_CAPS">О НАС</string>
     <string name="VIEW_BUTTON_REFRESH">Обновить</string>
+    <string name="VIEW_BUTTON_INFO">Info</string>
+    <string name="VIEW_BUTTON_MORE">ПОКАЗАТЬ ДЕТАЛИ</string>
     <string name="VIEW_X_FROM_Y">\u0020(%1$s из %2$s)</string>
     <string name="VIEW_X_FROM_Y_TWO">\u0020%1$s из %2$s</string>
     <string name="VIEW_STATUS_DONE">Выполнено</string>
@@ -335,5 +337,6 @@
     <string name="SAVE_CRASH_FILE">Выгрузка крашей в файл</string>
     <string name="SAVE_CRASH_ERROR">Ошибка создания файла</string>
     <string name="SAVE_FINISH_FLAG_TO_DB">Сохранение флага завершения анкеты</string>
+    <string name="QUOTA_HIDE_DETAILS">СКРЫТЬ ДЕТАЛИ</string>
 
 </resources>

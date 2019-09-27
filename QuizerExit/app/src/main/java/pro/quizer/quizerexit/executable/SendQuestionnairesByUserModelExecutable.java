@@ -38,16 +38,28 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
     private final BaseActivity mBaseActivity;
     private final UserModelR mUserModel;
     private final boolean mIsShowAlertDialog;
+    private final boolean isFromService;
 
     public SendQuestionnairesByUserModelExecutable(final BaseActivity pBaseActivity, final UserModelR pUserModel, final ICallback pCallback, final boolean pIsShowAlertDialog) {
         super(pCallback);
-
         final ConfigModel configModel = pUserModel.getConfigR();
 
         mBaseActivity = pBaseActivity;
         mServerUrl = configModel.getServerUrl();
         mUserModel = pUserModel;
         mIsShowAlertDialog = pIsShowAlertDialog;
+        this.isFromService = false;
+    }
+
+    public SendQuestionnairesByUserModelExecutable(final BaseActivity pBaseActivity, final UserModelR pUserModel, final ICallback pCallback, final boolean pIsShowAlertDialog, final boolean isFromService) {
+        super(pCallback);
+        final ConfigModel configModel = pUserModel.getConfigR();
+
+        mBaseActivity = pBaseActivity;
+        mServerUrl = configModel.getServerUrl();
+        mUserModel = pUserModel;
+        mIsShowAlertDialog = pIsShowAlertDialog;
+        this.isFromService = isFromService;
     }
 
     @Override
@@ -99,10 +111,19 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
 
     private void sendViaInternetWithRetrofit() {
 
-        QuestionnaireListRequestModel requestModel = new QuestionnaireListRequestModelExecutable(mUserModel).execute();
+        QuestionnaireListRequestModel requestModel;
+        if (isFromService) {
+            requestModel = new QuestionnaireListRequestModelExecutable(mUserModel, true).execute();
+        } else {
+            requestModel = new QuestionnaireListRequestModelExecutable(mUserModel, false).execute();
+        }
         if (requestModel == null) {
             onSuccess();
             return;
+        }
+
+        if (isFromService) {
+            requestModel.setFromService();
         }
         Gson gson = new Gson();
         String json = gson.toJson(requestModel);

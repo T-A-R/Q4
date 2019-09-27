@@ -147,7 +147,8 @@ public class SyncFragment extends BaseFragment implements ICallback {
                 mSendDataButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(final View view) {
-                        new SendQuestionnairesByUserModelExecutable(getBaseActivity(), mUserModel, SyncFragment.this, false).execute();
+                        new SendQuestionnairesByUserModelExecutable(
+                                getBaseActivity(), mUserModel, SyncFragment.this, false).execute();
                     }
                 });
 

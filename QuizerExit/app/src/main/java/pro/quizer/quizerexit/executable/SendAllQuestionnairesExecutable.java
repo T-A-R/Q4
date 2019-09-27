@@ -1,10 +1,14 @@
 package pro.quizer.quizerexit.executable;
 
+import android.util.Log;
+
 import java.util.List;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.database.model.UserModelR;
+
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
 public class SendAllQuestionnairesExecutable extends BaseExecutable {
 
@@ -30,7 +34,7 @@ public class SendAllQuestionnairesExecutable extends BaseExecutable {
         }
 
         for (int i = 0; i < users.size(); i++) {
-            new SendQuestionnairesByUserModelExecutable(mContext, users.get(i), i == users.size() - 1 ? mCallback : null, true).execute();
+            new SendQuestionnairesByUserModelExecutable(mContext, users.get(i), i == users.size() - 1 ? mCallback : null, true, true).execute();
         }
     }
 }

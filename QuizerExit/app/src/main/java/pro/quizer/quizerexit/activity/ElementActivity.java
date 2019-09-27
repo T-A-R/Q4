@@ -552,8 +552,6 @@ public class ElementActivity extends BaseActivity {
         questionnaireDatabaseModel.setDate_interview(mStartDateInterview);
         questionnaireDatabaseModel.setHas_photo(getHasPhoto());
 
-        Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>> execute 1: " + questionnaireDatabaseModel.getGps_network());
-
         if (aborted)
             questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.ABORTED);
         else

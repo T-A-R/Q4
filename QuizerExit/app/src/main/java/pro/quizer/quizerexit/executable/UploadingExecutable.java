@@ -72,7 +72,7 @@ public class UploadingExecutable extends BaseExecutable {
         }
 
         for (final UserModelR user : users) {
-            final QuestionnaireListRequestModel requestModel = new QuestionnaireListRequestModelExecutable(user).execute();
+            final QuestionnaireListRequestModel requestModel = new QuestionnaireListRequestModelExecutable(user, true).execute();
 
             if (requestModel != null) {
                 try {

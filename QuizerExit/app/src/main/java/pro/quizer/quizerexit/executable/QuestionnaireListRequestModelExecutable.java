@@ -24,9 +24,10 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
     private final String mLoginAdmin;
     private final String mLogin;
     private final String mPassword;
+    private final boolean mGetAllQuestionnaires;
 
 
-    public QuestionnaireListRequestModelExecutable(final UserModelR pUserModel) {
+    public QuestionnaireListRequestModelExecutable(final UserModelR pUserModel, final boolean pGetAllQuestionnaires) {
         super();
 
         final ConfigModel configModel = pUserModel.getConfigR();
@@ -35,14 +36,19 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
         mLoginAdmin = configModel.getLoginAdmin();
         mLogin = pUserModel.getLogin();
         mPassword = pUserModel.getPassword();
+        mGetAllQuestionnaires = pGetAllQuestionnaires;
 
     }
 
     @Override
     public QuestionnaireListRequestModel execute() {
         final QuestionnaireListRequestModel requestModel = new QuestionnaireListRequestModel(mLoginAdmin, mLogin, mPassword);
-
-        final List<QuestionnaireDatabaseModelR> questionnaires = BaseActivity.getDao().getQuestionnaireByUserIdWithStatus(mUserId, QuestionnaireStatus.NOT_SENT);
+        List<QuestionnaireDatabaseModelR> questionnaires;
+        if (mGetAllQuestionnaires) {
+            questionnaires = BaseActivity.getDao().getQuestionnaireByUserId(mUserId);
+        } else {
+            questionnaires = BaseActivity.getDao().getQuestionnaireByUserIdWithStatus(mUserId, QuestionnaireStatus.NOT_SENT);
+        }
 
         boolean isFakeGPS = false;
         String fakeGPSTime = null;
@@ -64,7 +70,6 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
         }
 
         for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : questionnaires) {
-            Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>> execute 2: " + questionnaireDatabaseModel.getGps_network());
             final QuestionnaireRequestModel questionnaireRequestModel = new QuestionnaireRequestModel(
                     questionnaireDatabaseModel.getBilling_questions(),
                     questionnaireDatabaseModel.getQuestionnaire_id(),

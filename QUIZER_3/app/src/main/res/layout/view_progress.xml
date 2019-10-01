@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:id="@+id/progressBar"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:focusableInTouchMode="true"
+    android:clickable="true"
+    android:focusable="true"
+    android:visibility="gone">
+
+    <FrameLayout
+        android:layout_width="@dimen/progress_bar_frame_size"
+        android:layout_height="@dimen/progress_bar_frame_size"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/loading_frame"/>
+
+        <pro.quizer.quizer3.view.LoadingSpinner
+            android:layout_width="@dimen/progress_bar_size"
+            android:layout_height="@dimen/progress_bar_size"
+            android:layout_gravity="center"/>
+
+    </FrameLayout>
+
+</FrameLayout>

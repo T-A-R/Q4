@@ -1,0 +1,103 @@
+<resources>
+    <string name="app_name">Quizer 3</string>
+    <string name="menu">Меню</string>
+    <string name="profile">Профиль</string>
+    <string name="to_enter">Войти</string>
+    <string name="to_register">Зарегистрироваться</string>
+    <string name="notification">Текст Уведомления</string>
+    <string name="screensaver">Подождите\nВыполняется вход</string>
+    <string name="error_auth">Не удалось авторизоваться.</string>
+    <string name="doubleclick_exit">Нажмите дважды, чтобы выйти</string>
+
+    <string name="menu_player_map">Menu 1</string>
+    <string name="menu_player_raffles">Menu 2</string>
+    <string name="menu_player_wins">Menu 3</string>
+    <string name="menu_delegate_raffles">Розыгрыши</string>
+    <string name="menu_delegate_add">Добавить</string>
+    <string name="menu_delegate_winners">Победители</string>
+
+    <string name="load_image">Загрузить изображение</string>
+    <string name="camera">Камера</string>
+    <string name="gallery">Галерея</string>
+    <string name="no_memory">На устройстве недостаточно памяти</string>
+
+    <string name="side_menu_unknown_name">Имя неизвестно</string>
+    <string name="side_menu_id">id: %1$s</string>
+    <string name="side_menu_edit">Редактировать</string>
+    <string name="side_menu_rating">Рейтинг пользователей</string>
+    <string name="side_menu_contacts">Связаться с нами</string>
+    <string name="side_menu_benefit">Рассчитать выгоду</string>
+    <string name="side_menu_guarant">Гарантированные призы</string>
+    <string name="side_menu_tariffs">Тарифы</string>
+    <string name="side_menu_faq">Частые вопросы</string>
+    <string name="side_menu_info">Информация о компании</string>
+    <string name="side_menu_promo">Промоматериалы</string>
+    <string name="side_menu_notify_on">Включить уведомления</string>
+    <string name="side_menu_notify_off">Отключить уведомления</string>
+    <string name="side_menu_delegate">Кабинет представителя</string>
+    <string name="side_menu_player">Кабинет игрока</string>
+    <string name="side_menu_exit">Выйти</string>
+    <string name="side_menu_raffles">Осталось %1$s</string>
+    <string name="side_menu_date">Оплачено до</string>
+    <string name="side_menu_no_tariff">Тариф не оплачен</string>
+
+    <string name="register_title">Добро пожаловать\nв Checkpot</string>
+    <string name="register_btn_register">Регистрация</string>
+    <string name="register_btn_skip">Перейти к розыгрышам</string>
+
+    <string name="page_title">Page Fragment Title</string>
+    <string name="page_btn_one">Button 1</string>
+    <string name="page_btn_two">Button 2</string>
+    <string name="page_btn_three">Button 3</string>
+    <string name="button_send">Отправить</string>
+    <string name="et_enter_key">Введите ключ</string>
+    <string name="empty_key">Ключ активации пуст. Пожалуйста, введите ключ и повторите попытку.</string>
+
+    <string name="error_101">Ошибка 1.01</string>
+    <string name="error_102">Ошибка 1.02</string>
+    <string name="error_103">Ошибка 1.03</string>
+    <string name="error_104">Ошибка 1.04</string>
+
+    <string name="error_201">Ошибка 2.01</string>
+    <string name="error_202">Ошибка 2.02</string>
+    <string name="error_203">Ошибка 2.03</string>
+    <string name="error_204">Ошибка 2.04</string>
+
+    <string name="error_301">Ошибка 3.01</string>
+    <string name="error_302">Ошибка 3.02</string>
+    <string name="error_303">Ошибка 3.03</string>
+    <string name="error_304">Ошибка 3.04</string>
+
+    <string name="error_401">Ошибка 4.01</string>
+    <string name="error_402">Ошибка 4.02</string>
+    <string name="error_403">Ошибка 4.03</string>
+    <string name="error_404">Ошибка 4.04</string>
+
+    <string name="error_501">Ошибка 5.01</string>
+    <string name="error_502">Ошибка 5.02</string>
+    <string name="error_503">Ошибка 5.03</string>
+    <string name="error_504">Ошибка 5.04</string>
+
+    <string name="error_601">Ошибка 6.01</string>
+    <string name="error_602">Ошибка 6.02</string>
+    <string name="error_603">Ошибка 6.03</string>
+    <string name="error_604">Ошибка 6.04</string>
+
+    <string name="server_not_response">Нет ответа от сервера. Возможны проблемы с подключением к сети интеренет.</string>
+    <string name="server_response_error">Ошибка при ответе сервера.</string>
+
+    <string name="db_clear_error">Ошибка очистки базы данных.</string>
+    <string name="db_save_error">Ошибка записи в базу данных.</string>
+    <string name="db_load_error">Ошибка чтения из базы данных.</string>
+
+    <string name="log_send_key">Отправка ключа</string>
+    <string name="log_try_to_send_key">Попытка отправки ключа</string>
+    <string name="log_save_server_info">Сохранение данных сервера</string>
+    <string name="log_save_server_to_db">Сохранение сервера в базу данных</string>
+    <string name="log_error_501_desc">Ошибка 5.01 (Нет ответа от сервера. Возможны проблемы с подключением к сети интеренет)</string>
+    <string name="log_error_502_desc">Ошибка 5.02 (Ошибка получения JSON из ответа сервера)</string>
+    <string name="log_error_503_desc">Ошибка 5.03 (Ошибка парсинга JSON.)</string>
+    <string name="log_send_key_success">Успешная отправка ключа</string>
+
+
+</resources>

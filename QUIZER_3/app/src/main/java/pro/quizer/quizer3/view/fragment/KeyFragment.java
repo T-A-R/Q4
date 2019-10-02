@@ -5,8 +5,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import pro.quizer.quizer3.R;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -30,6 +33,7 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
     private EditText etKey;
 
     private boolean isKeyBtnPressed = false;
+    private boolean isExit = false;
 
     public KeyFragment() {
         super(R.layout.fragment_key);
@@ -38,6 +42,7 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
     @Override
     protected void onReady() {
         FrameLayout cont = (FrameLayout) findViewById(R.id.cont_key_fragment);
+        LinearLayout image = (LinearLayout) findViewById(R.id.cont_image);
         btnSend = (Button) findViewById(R.id.btn_send_activation);
         etKey = (EditText) findViewById(R.id.et_activation);
 
@@ -51,6 +56,7 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
 
         cont.startAnimation(Anim.getAppear(getContext()));
         btnSend.startAnimation(Anim.getAppearSlide(getContext(), 500));
+//        image.startAnimation(Anim.getSlideUpDown(getContext()));
 
         getUser().setFirstStart(false);
         getUser().setDelegateMode(false);
@@ -116,7 +122,7 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
 
         if (responseBody == null) {
             showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_501));
-            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.log_send_key), Constants.LogResult.ERROR, getString(R.string.log_error_501_desc),"");
+            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.log_send_key), Constants.LogResult.ERROR, getString(R.string.log_error_501_desc), "");
             return;
         }
 
@@ -132,18 +138,18 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
 
         if (responseJson != null)
             Log.d(TAG, "onSendKey: " + responseJson);
-            try {
-                activationModel = new GsonBuilder().create().fromJson(responseJson, ActivationResponseModel.class);
-            } catch (Exception pE) {
-                showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_503));
-                addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.log_send_key), Constants.LogResult.ERROR, getString(R.string.log_error_503_desc), responseJson);
-            }
+        try {
+            activationModel = new GsonBuilder().create().fromJson(responseJson, ActivationResponseModel.class);
+        } catch (Exception pE) {
+            showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_503));
+            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.log_send_key), Constants.LogResult.ERROR, getString(R.string.log_error_503_desc), responseJson);
+        }
 
         if (activationModel != null) {
             if (activationModel.getResult() != 0) {
                 saveActivationBundle(activationModel);
                 addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.log_send_key), Constants.LogResult.SUCCESS, getString(R.string.log_send_key_success), responseJson);
-                replaceFragment(new PageFragment());
+                replaceFragment(new AuthFragment());
             } else {
                 showToast(activationModel.getError());
                 addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.log_send_key), Constants.LogResult.ERROR, activationModel.getError(), responseJson);
@@ -151,6 +157,17 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
         } else {
             showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_504));
         }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (isExit) {
+            getActivity().finish();
+        } else {
+            Toast.makeText(getContext(), "Для выхода нажмите \"Назад\" еще раз", Toast.LENGTH_SHORT).show();
+            isExit = true;
+        }
+        return true;
     }
 }
 

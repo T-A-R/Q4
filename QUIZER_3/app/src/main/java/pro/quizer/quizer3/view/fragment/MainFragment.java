@@ -239,6 +239,7 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
     }
 
     public void openNewAcivityScreen() {
+        Log.d(TAG, "startScreens: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         if (newActivityScreen != null) openScreen(newActivityScreen);
     }
 

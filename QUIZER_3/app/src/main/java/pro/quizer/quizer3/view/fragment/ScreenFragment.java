@@ -9,6 +9,11 @@ import android.widget.Toast;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
+import java.util.List;
+
+import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.database.models.ActivationModelR;
+import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.view.activity.ScreenActivity;
 import pro.quizer.quizer3.model.User;
 
@@ -72,66 +77,6 @@ public abstract class ScreenFragment extends SmartFragment {
         this.delegateScreen = delegateScreen;
         return this;
     }
-
-//    public void showLoadImageAlert(int cameraRequestCode, int galleryRequestCode) {
-//        Context context = getContext();
-//        if (context == null)
-//            return;
-//
-//        new AlertDialog.Builder(context)
-//                .setMessage(R.string.load_image)
-//                .setPositiveButton(R.string.camera, (dialogInterface, i) -> openCamera(cameraRequestCode))
-//                .setNegativeButton(R.string.gallery, (dialogInterface, i) -> openGallery(galleryRequestCode))
-//                .create()
-//                .show();
-//    }
-
-//    public void openGallery(int requestCode) {
-//        System.gc();
-//
-//        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-//        photoPickerIntent.setType("image/*");
-//        startActivityForResult(photoPickerIntent, requestCode);
-//    }
-
-//    public void openCamera(int requestCode) {
-//        requestCodeFragment = requestCode;
-//        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-//            requestPermissions(
-//                    new String[]{Manifest.permission.CAMERA}, RequestCameraPermissionID);
-//            return;
-//        }
-//
-//        Context context = getContext();
-//        FragmentActivity activity = getActivity();
-//        if (activity == null || context == null) {
-//            return;
-//        }
-//
-//        System.gc();
-//
-//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        if (takePictureIntent.resolveActivity(activity.getPackageManager()) == null) {
-//            return;
-//        }
-//
-//        cameraPhotoPath = null;
-//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-//        String imageFileName = "JPEG_" + timeStamp + "_";
-//        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-//        File photoFile;
-//        try {
-//            photoFile = File.createTempFile(imageFileName, ".jpg", storageDir);
-//        } catch (IOException e) {
-//            Log.d(TAG, "ScreenFragment.openCamera() " + e);
-//            return;
-//        }
-//
-//        cameraPhotoPath = photoFile.getAbsolutePath();
-//
-//        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileUtils.getUriForFile(context, photoFile));
-//        startActivityForResult(takePictureIntent, requestCode);
-//    }
 
     public void showScreensaver(boolean full) {
         showScreensaver("", full);
@@ -244,4 +189,33 @@ public abstract class ScreenFragment extends SmartFragment {
 //            break;
 //        }
 //    }
+
+    public int getCurrentUserId() {
+        return SPUtils.getCurrentUserId(getContext());
+    }
+
+    public ActivationModelR getActivationModel() {
+
+        List<ActivationModelR> list = null;
+
+        try {
+            list = getDao().getActivationModelR();
+        } catch (Exception e) {
+            showToast(getString(R.string.db_load_error));
+        }
+
+        if (list != null && !list.isEmpty())
+            return list.get(0);
+        else
+            return null;
+
+    }
+
+    public String getLoginAdmin() {
+        return getActivationModel().getLogin_admin();
+    }
+
+    public String getServer() {
+        return getActivationModel().getServer();
+    }
 }

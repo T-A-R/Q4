@@ -40,6 +40,10 @@ public class Anim {
         return AnimationUtils.loadAnimation(context, R.anim.appear_slide);
     }
 
+    static public Animation getSlideUpDown(Context context) {
+        return AnimationUtils.loadAnimation(context, R.anim.slide_up_down);
+    }
+
     static public Animation getAppearSlide(Context context, long startOffset) {
         Animation animation = getAppearSlide(context);
         animation.setStartOffset(startOffset);

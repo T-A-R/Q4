@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         if (view == null) {
             return;
         }
-
         view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
         view.post(() -> mainFragment.startScreens());
     }
@@ -82,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public boolean dispatchTouchEvent(MotionEvent event) {
-
         View view = getCurrentFocus();
         boolean ret = super.dispatchTouchEvent(event);
 

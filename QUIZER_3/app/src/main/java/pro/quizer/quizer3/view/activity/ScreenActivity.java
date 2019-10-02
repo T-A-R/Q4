@@ -19,7 +19,6 @@ public class ScreenActivity extends MainActivity {
 
         setContentView(R.layout.activity_screen);
 
-
         mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.screen);
 
         View view = mainFragment.getView();

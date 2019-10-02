@@ -1,5 +1,7 @@
 package pro.quizer.quizer3.view.fragment;
 
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -40,7 +42,14 @@ public class ScreensManager implements ScreenFragment.ScreenListener {
 
         removeFramgent();
         try {
-            activity.getSupportFragmentManager().beginTransaction().add(R.id.cont_screen, fragment).commit();
+        FragmentManager fragmentManager = activity.getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left);
+//        mainFragment = (MainFragment) fragmentManager.findFragmentById(R.id.screen);
+        transaction.addToBackStack(null);
+        transaction.add(R.id.cont_screen, fragment).commit();
+
+//            activity.getSupportFragmentManager().beginTransaction().add(R.id.cont_screen, fragment).commit();
             curFragment = fragment;
 
             if (listener != null) {
@@ -58,7 +67,13 @@ public class ScreensManager implements ScreenFragment.ScreenListener {
         curFragment.setListener(null);
         curFragment.hideKeyboard();
         try {
-            activity.getSupportFragmentManager().beginTransaction().remove(curFragment).commit();
+            FragmentManager fragmentManager = activity.getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left);
+//        mainFragment = (MainFragment) fragmentManager.findFragmentById(R.id.screen);
+            transaction.addToBackStack(null);
+            transaction.remove(curFragment).commit();
+//            activity.getSupportFragmentManager().beginTransaction().remove(curFragment).commit();
         }
         catch (Exception e) {
             Log.d(TAG, "ScreensManager.removeFramgent() " + e);

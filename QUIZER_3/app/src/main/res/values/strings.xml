@@ -52,6 +52,15 @@
     <string name="button_send">Отправить</string>
     <string name="et_enter_key">Введите ключ</string>
     <string name="empty_key">Ключ активации пуст. Пожалуйста, введите ключ и повторите попытку.</string>
+    <string name="auth_version_warning">Внимание!\nВы работаете на устройстве с версией android %1$s. Стабильная работа приложения не гарантируется.</string>
+    <string name="auth_users_on_device">Количество пользователей на данном устройстве: %1$s</string>
+    <string name="auth_enter_login">Введите логин</string>
+    <string name="auth_enter_password">Введите пароль</string>
+    <string name="auth_version_button">Версия: %1$s</string>
+    <string name="notification_empty_login_or_pass">Логин или пароль пуст. Пожалуйста, введите логин и пароль, а затем повторите попытку входа.</string>
+    <string name="notification_max_users">Достигнуто максимальное количество пользователей на устройстве (%1$s)! Обратитесь к менеджеру!</string>
+    <string name="notification_short_login">Минимальная длина логина - 3 символа. Пожалуйста, введите логин и повторите попытку входа.</string>
+    <string name="user_auth">Авторизация пользователя</string>
 
     <string name="error_101">Ошибка 1.01</string>
     <string name="error_102">Ошибка 1.02</string>
@@ -98,6 +107,10 @@
     <string name="log_error_502_desc">Ошибка 5.02 (Ошибка получения JSON из ответа сервера)</string>
     <string name="log_error_503_desc">Ошибка 5.03 (Ошибка парсинга JSON.)</string>
     <string name="log_send_key_success">Успешная отправка ключа</string>
+    <string name="exit_message">Для выхода нажмите \"Назад\" еще раз</string>
+    <string name="button_press">Нажатие на кнопку</string>
+    <string name="button_version">Кнопка версия на экране авторизации</string>
+    <string name="send_auth_request">Отправка запроса на авторизицию пользователя</string>
 
 
 </resources>

@@ -61,6 +61,22 @@
     <string name="notification_max_users">Достигнуто максимальное количество пользователей на устройстве (%1$s)! Обратитесь к менеджеру!</string>
     <string name="notification_short_login">Минимальная длина логина - 3 символа. Пожалуйста, введите логин и повторите попытку входа.</string>
     <string name="user_auth">Авторизация пользователя</string>
+    <string name="saved_data_login">Удалось войти под сохраненными локальными данными.</string>
+    <string name="new_data_login">Удалось войти с введенными данными</string>
+    <string name="wrong_login_or_pass">Неверный логин или пароль.</string>
+    <string name="send_auth_request">Отправка запроса на авторизицию пользователя</string>
+    <string name="get_config">Получение конфига</string>
+    <string name="try_to_get_config">Попытка получения конфига</string>
+    <string name="get_config_success">Успешное получение конфига</string>
+    <string name="loading_files">Загрузка медиа файлов</string>
+    <string name="try_to_load_files">Попытка загрузки медиафайлов</string>
+    <string name="save_user">Сохранение пользователя</string>
+    <string name="save_user_to_db">Сохранение пользователя в базу данных</string>
+    <string name="save_user_to_db_error">Ошибка сохранения пользователя в базу данных</string>
+    <string name="load_quotas_error">Не удалось загрузить список квот.</string>
+    <string name="downloaded_count_files">Скачано %1$s файл(а)</string>
+    <string name="download_files_error">Ошибка при загрузке медиа-файлов.</string>
+    <string name="downloading_media_files">Загрузка медиа файлов</string>
 
     <string name="error_101">Ошибка 1.01</string>
     <string name="error_102">Ошибка 1.02</string>
@@ -103,14 +119,22 @@
     <string name="log_try_to_send_key">Попытка отправки ключа</string>
     <string name="log_save_server_info">Сохранение данных сервера</string>
     <string name="log_save_server_to_db">Сохранение сервера в базу данных</string>
+    <string name="log_send_key_success">Успешная отправка ключа</string>
     <string name="log_error_501_desc">Ошибка 5.01 (Нет ответа от сервера. Возможны проблемы с подключением к сети интеренет)</string>
     <string name="log_error_502_desc">Ошибка 5.02 (Ошибка получения JSON из ответа сервера)</string>
     <string name="log_error_503_desc">Ошибка 5.03 (Ошибка парсинга JSON.)</string>
-    <string name="log_send_key_success">Успешная отправка ключа</string>
+    <string name="log_error_401_desc">Ошибка 4.01 (Не получен или отрицательный ответ от сервера)</string>
+    <string name="log_error_402_desc">Ошибка 4.02 (Ошибка получения JSON из ответа сервера)</string>
+    <string name="log_error_403_desc">Ошибка 4.03 (Ошибка парсинга JSON.)</string>
+    <string name="log_error_404_desc">Ошибка 4.04 (Ошибка получения серверного времени)</string>
+    <string name="log_error_601_desc">Ошибка 6.01 (Нет ответа от сервера. Возможны проблемы с подключением к сети интеренет)</string>
+    <string name="log_error_602_desc">Ошибка 6.02 (Ошибка получения JSON из ответа сервера)</string>
+    <string name="log_error_603_desc">Ошибка 6.03 (Ошибка парсинга JSON.)</string>
+
     <string name="exit_message">Для выхода нажмите \"Назад\" еще раз</string>
     <string name="button_press">Нажатие на кнопку</string>
     <string name="button_version">Кнопка версия на экране авторизации</string>
-    <string name="send_auth_request">Отправка запроса на авторизицию пользователя</string>
+
 
 
 </resources>

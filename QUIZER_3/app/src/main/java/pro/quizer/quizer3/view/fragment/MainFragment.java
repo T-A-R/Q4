@@ -182,60 +182,55 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
         NotifyType curNotify = wasNotify;
         wasNotify = null;
 
-        if (getUser().isFirstStart()) {
-            Log.d(TAG, "MainFragment() getUser().isFirstStart()");
-//            openScreen(new TutorialFragment());
-            openScreen(new KeyFragment());
-            disableSideMenu();
-            return;
-        }
-
-        if (!getUser().isAuthorized()) {
-            Log.d(TAG, "MainFragment() !getUser().isAuthorized()");
+        if (!isActivated()) {
+            Log.d(TAG, "MainFragment() Activation");
             disableSideMenu();
             openScreen(new KeyFragment());
-            return;
+        } else {
+            Log.d(TAG, "MainFragment() Authorization");
+            disableSideMenu();
+            openScreen(new AuthFragment());
         }
 
         //TODO OneSignal
 //        OneSignal.idsAvailable((userId, registrationId) -> CheckpotAPI.pushTouch(userId));
 
-        screensaver.show(getResources().getString(R.string.screensaver), true);
-        getUser().updateUser(ok -> contSwipe.post(() -> {
-            hideScreensaver();
-            if (!ok) {
-                Toast.makeText(getContext(), R.string.error_auth, Toast.LENGTH_SHORT).show();
-//                openScreen(new KeyFragment().setEnter(!getUser().isFirstStart()));
-                return;
-            }
-
-            enableSideMenu();
-
-            if (curNotify == NotifyType.Activated) {
-                getUser().setDelegateMode(true);
-            }
-
-            onModeChanged();
-
-
-            if (!getUser().isDelegateMode()) {
-                Log.d(TAG, "MainFragment() !getUser().isDelegateMode()");
-//                openScreen(getUser().getCurrentUser().getName() == null ? new ProfileFragment() : new MapFragment());
-            } else {
-                Log.d(TAG, "MainFragment() getUser().isDelegateMode()");
-//                openScreen(getUser().getPlace() != null ? new RafflesFragment() : new EditPlaceFragment());
-            }
-
-//           TODO YANDEX_METRICA
-
-//            if (MainActivity.ENABLE_YANDEX_METRICA) {
-//                UserProfile userProfile = UserProfile.newBuilder()
-//                        .apply(Attribute.customString("uuid").withValue(getUser().getUserUuid())).build();
-//                YandexMetrica.setUserProfileID(getUser().getUserUuid());
-//                YandexMetrica.reportUserProfile(userProfile);
-//                Log.d(MainActivity.TAG, "YandexMetrica Profile ID: " + getUser().getUserUuid());
+//        screensaver.show(getResources().getString(R.string.screensaver), true);
+//        getUser().updateUser(ok -> contSwipe.post(() -> {
+//            hideScreensaver();
+//            if (!ok) {
+//                Toast.makeText(getContext(), R.string.error_auth, Toast.LENGTH_SHORT).show();
+////                openScreen(new KeyFragment().setEnter(!getUser().isFirstStart()));
+//                return;
 //            }
-        }));
+//
+//            enableSideMenu();
+//
+//            if (curNotify == NotifyType.Activated) {
+//                getUser().setDelegateMode(true);
+//            }
+//
+//            onModeChanged();
+//
+//
+//            if (!getUser().isDelegateMode()) {
+//                Log.d(TAG, "MainFragment() !getUser().isDelegateMode()");
+////                openScreen(getUser().getCurrentUser().getName() == null ? new ProfileFragment() : new MapFragment());
+//            } else {
+//                Log.d(TAG, "MainFragment() getUser().isDelegateMode()");
+////                openScreen(getUser().getPlace() != null ? new RafflesFragment() : new EditPlaceFragment());
+//            }
+//
+////           TODO YANDEX_METRICA
+//
+////            if (MainActivity.ENABLE_YANDEX_METRICA) {
+////                UserProfile userProfile = UserProfile.newBuilder()
+////                        .apply(Attribute.customString("uuid").withValue(getUser().getUserUuid())).build();
+////                YandexMetrica.setUserProfileID(getUser().getUserUuid());
+////                YandexMetrica.reportUserProfile(userProfile);
+////                Log.d(MainActivity.TAG, "YandexMetrica Profile ID: " + getUser().getUserUuid());
+////            }
+//        }));
     }
 
     public void openNewAcivityScreen() {

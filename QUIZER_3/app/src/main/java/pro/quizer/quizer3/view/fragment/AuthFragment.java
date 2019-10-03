@@ -12,20 +12,30 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.krishna.fileloader.FileLoader;
+import com.krishna.fileloader.listener.MultiFileDownloadListener;
 import com.reginald.editspinner.EditSpinner;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.ResponseBody;
 import pro.quizer.quizer3.API.QuizerAPI;
 import pro.quizer.quizer3.API.models.request.AuthRequestModel;
+import pro.quizer.quizer3.API.models.request.ConfigRequestModel;
+import pro.quizer.quizer3.API.models.response.AuthResponseModel;
+import pro.quizer.quizer3.API.models.response.ConfigResponseModel;
 import pro.quizer.quizer3.BuildConfig;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.UserModelR;
+import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.MD5Utils;
+import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
@@ -105,15 +115,12 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 }
             }
         }
-
-
     }
 
     @Override
     public void onClick(View view) {
         if (view == btnSend) {
-//            showScreensaver(true);
-//            replaceFragment(new PageFragment());
+            showScreensaver(false);
             onLoginClick();
         } else if (view == tvVersionView) {
             onVersionClick();
@@ -203,10 +210,246 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         QuizerAPI.authUser(getServer(), json, this);
     }
 
-    @Override
-    public void onAuthUser(ResponseBody data) {
-        hideScreensaver();
+    private void onLoggedInWithoutUpdateLocalData(final int pUserId) {
+        saveCurrentUserId(pUserId);
         replaceFragment(new PageFragment());
+    }
+
+    private void saveUserAndLogin(final ConfigResponseModel pConfigResponseModel,
+                                  final AuthResponseModel pAuthResponseModel,
+                                  final String pLogin,
+                                  final String pPassword) {
+        try {
+            saveUser(pLogin, pPassword, pAuthResponseModel, pConfigResponseModel.getConfig());
+            saveCurrentUserId(pAuthResponseModel.getUserId());
+        } catch (final Exception e) {
+            showToast(getString(R.string.server_response_error) + "\n" + e);
+
+            return;
+        }
+
+        //TODO Создание базы СМС для квизера.
+//        makeSmsDatabase();
+
+        //TODO Сделать загрузку квот.
+//        downloadQuotas(pAuthResponseModel, pLogin, pPassword);
+
+        //TODO Убрать эти строки после загрузки квот.
+        hideScreensaver();
+        onLoggedIn(pLogin, pPassword, pAuthResponseModel);
+    }
+
+//    private void downloadQuotas(final AuthResponseModel pAuthResponseModel,
+//                                final String pLogin,
+//                                final String pPassword) {
+//        new UpdateQuotasExecutable(this, new ICallback() {
+//
+//            @Override
+//            public void onStarting() {
+//                showScreensaver(false);
+//            }
+//
+//            @Override
+//            public void onSuccess() {
+//                hideScreensaver();
+//                onLoggedIn(pLogin, pPassword, pAuthResponseModel);
+//            }
+//
+//            @Override
+//            public void onError(Exception pException) {
+//                hideScreensaver();
+//                showToast(getString(R.string.load_quotas_error) + "\n" + pException.toString());
+//            }
+//        }).execute();
+//    }
+
+    private void onLoggedIn(final String pLogin,
+                            final String pPassword,
+                            final AuthResponseModel pAuthResponseModel) {
+        SPUtils.resetSendedQInSession(getContext());
+
+        updateDatabaseUserByUserId(pLogin, pPassword, pAuthResponseModel.getConfigId(), pAuthResponseModel.getUserId(), pAuthResponseModel.getRoleId(), pAuthResponseModel.getUserProjectId());
+
+        onLoggedInWithoutUpdateLocalData(pAuthResponseModel.getUserId());
+    }
+
+    private boolean isNeedDownloadConfig(final AuthResponseModel pAuthResponseModel) {
+        final UserModelR userModel = getUserByUserId(pAuthResponseModel.getUserId());
+
+        if (userModel == null) {
+            return true;
+        } else {
+            return !pAuthResponseModel.getConfigId().equals(userModel.getConfig_id());
+        }
+    }
+
+    public void downloadConfig(final String pLogin, final String pPassword, final AuthResponseModel pModel) {
+        showScreensaver(false);
+
+        final ConfigRequestModel configRequestModel = new ConfigRequestModel(
+                getLoginAdmin(),
+                pLogin,
+                pPassword,
+                pModel.getConfigId()
+        );
+
+        Gson gson = new Gson();
+        String json = gson.toJson(configRequestModel);
+
+        addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SENT, getString(R.string.try_to_get_config), json);
+
+        QuizerAPI.getConfig(getServer(), json, responseBody -> {
+
+            hideScreensaver();
+
+            if (responseBody == null) {
+                showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_601));
+                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_601_desc),"");
+
+                return;
+            }
+
+            String responseJson = null;
+            try {
+                responseJson = responseBody.string();
+            } catch (IOException e) {
+                showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_602));
+                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_602_desc), e.getMessage());
+
+            }
+            final GsonBuilder gsonBuilder = new GsonBuilder();
+            ConfigResponseModel configResponseModel = null;
+
+            try {
+                configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
+            } catch (final Exception pE) {
+                showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_603));
+                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_603_desc), responseJson);
+            }
+
+            if (configResponseModel != null) {
+                if (configResponseModel.getResult() != 0) {
+                    addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SUCCESS, getString(R.string.get_config_success), responseJson);
+                    downloadFiles(configResponseModel, pModel, pLogin, pPassword);
+                } else {
+                    showToast(configResponseModel.getError());
+                    addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, configResponseModel.getError(), responseJson);
+                }
+            } else {
+                showToast(getString(R.string.server_response_error) + " " + configResponseModel.getError());
+            }
+        });
+    }
+
+    private void downloadFiles(final ConfigResponseModel pConfigResponseModel,
+                               final AuthResponseModel pAuthResponseModel,
+                               final String pLogin,
+                               final String pPassword) {
+        addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.loading_files), Constants.LogResult.SENT, getString(R.string.try_to_load_files),"");
+
+        final String[] fileUris = pConfigResponseModel.getConfig().getProjectInfo().getMediaFiles();
+
+        if (fileUris == null || fileUris.length == 0) {
+            saveUserAndLogin(pConfigResponseModel, pAuthResponseModel, pLogin, pPassword);
+        } else {
+            showScreensaver(false);
+
+            FileLoader.multiFileDownload(getContext())
+                    .fromDirectory(Constants.Strings.EMPTY, FileLoader.DIR_EXTERNAL_PRIVATE)
+                    .progressListener(new MultiFileDownloadListener() {
+                        @Override
+                        public void onProgress(final File downloadedFile, final int progress, final int totalFiles) {
+                            FileUtils.renameFile(downloadedFile, FileUtils.getFileName(fileUris[progress - 1]));
+
+                            if (progress == totalFiles) {
+                                hideScreensaver();
+                                saveUserAndLogin(pConfigResponseModel, pAuthResponseModel, pLogin, pPassword);
+                            }
+                            showToast(String.format(getString(R.string.downloaded_count_files), String.valueOf(progress)));
+                        }
+
+                        @Override
+                        public void onError(final Exception e, final int progress) {
+                            super.onError(e, progress);
+                            showToast(getString(R.string.download_files_error));
+                            addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.downloading_media_files), Constants.LogResult.ERROR, getString(R.string.download_files_error),"");
+                            hideScreensaver();
+                        }
+                    }).loadMultiple(fileUris);
+        }
+    }
+
+    @Override
+    public void onAuthUser(ResponseBody responseBody) {
+        hideScreensaver();
+//        replaceFragment(new PageFragment());
+
+        if (responseBody == null) {
+            showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_401));
+            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_401_desc), "");
+
+            final UserModelR savedUserModel = getLocalUserModel(login, passwordMD5);
+
+            if (savedUserModel != null) {
+                showToast(getString(R.string.saved_data_login));
+                addLog(savedUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SUCCESS, getString(R.string.saved_data_login), "");
+                onLoggedInWithoutUpdateLocalData(savedUserModel.getUser_id());
+            } else {
+                showToast(getString(R.string.wrong_login_or_pass));
+                addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.wrong_login_or_pass), "login: " + login + " pass: " + password);
+            }
+
+            return;
+        }
+
+        //TODO Отправка крашей.
+//        sendCrashLogs();
+
+        String responseJson;
+        try {
+            responseJson = responseBody.string();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_402));
+            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_402_desc), e.getMessage());
+
+            responseJson = null;
+        }
+
+        AuthResponseModel authResponseModel = null;
+        try {
+            authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
+        } catch (final Exception pE) {
+            showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_403));
+            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_403_desc), responseJson);
+        }
+
+        if (authResponseModel == null) return;
+
+        if (authResponseModel.getServerTime() != null) {
+            SPUtils.saveAuthTimeDifference(getContext(), authResponseModel.getServerTime());
+        } else {
+            showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_404));
+            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_404_desc), responseJson);
+        }
+
+        if (authResponseModel.getResult() != 0) {
+            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SUCCESS, getString(R.string.new_data_login),"");
+
+            if (isNeedDownloadConfig(authResponseModel)) {
+                downloadConfig(login, passwordMD5, authResponseModel);
+            } else {
+                onLoggedIn(login,
+                        passwordMD5,
+                        authResponseModel);
+            }
+        } else {
+            showToast(authResponseModel.getError());
+            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, authResponseModel.getError(),"");
+
+        }
+
+
     }
 }
 

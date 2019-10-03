@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView xmlns:android="http://schemas.android.com/apk/res/android"
+<pro.quizer.quizer3.view.element.textview.SmallResizableTextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/text1"
     style="?android:attr/spinnerItemStyle"
     android:singleLine="true"

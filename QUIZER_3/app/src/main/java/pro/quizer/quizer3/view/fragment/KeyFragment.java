@@ -65,7 +65,7 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
     @Override
     public void onClick(View view) {
         if (view == btnSend) {
-            showScreensaver(true);
+            showScreensaver(false);
             final String key = etKey.getText().toString();
 
             if (StringUtils.isEmpty(key)) {

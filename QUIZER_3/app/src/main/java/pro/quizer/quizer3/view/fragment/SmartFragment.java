@@ -10,9 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
+
+import java.util.List;
 
 import pro.quizer.quizer3.CoreApplication;
+import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.QuizerDao;
+import pro.quizer.quizer3.database.models.ActivationModelR;
 import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
@@ -131,5 +136,26 @@ public abstract class SmartFragment extends Fragment {
             appLogsR.setData(data.substring(0, Math.min(data.length(), 5000)));
 
         getDao().insertAppLogsR(appLogsR);
+    }
+
+    public boolean isActivated() {
+        return getActivationModel() != null;
+    }
+
+    public ActivationModelR getActivationModel() {
+
+        List<ActivationModelR> list = null;
+
+        try {
+            list = getDao().getActivationModelR();
+        } catch (Exception e) {
+            Toast.makeText(getContext(), getString(R.string.db_load_error), Toast.LENGTH_SHORT).show();
+        }
+
+        if (list != null && !list.isEmpty())
+            return list.get(0);
+        else
+            return null;
+
     }
 }

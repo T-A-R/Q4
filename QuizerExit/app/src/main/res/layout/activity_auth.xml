@@ -28,6 +28,17 @@
         android:layout_marginRight="56dp"
         android:orientation="vertical">
 
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+
         <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
             android:id="@+id/version_warning"
             android:layout_width="match_parent"
@@ -48,6 +59,9 @@
             android:textColor="@android:color/black"
             android:textSize="16sp"
             tools:text="@string/VIEW_USERS_COUNT_ON_DEVICE" />
+
+        </LinearLayout>
+        </ScrollView>
 
         <pro.quizer.quizerexit.view.resizeble.editspinner.ResizableEditSpinner
             android:id="@+id/login_spinner"

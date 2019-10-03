@@ -108,7 +108,8 @@ public class QuestionListAdapter extends AbstractQuestionAdapter<QuestionListAda
             pAnswerListViewHolder.mEditText.setFocusableInTouchMode(true);
             pAnswerListViewHolder.mEditText.requestFocus();
 
-            pAnswerListViewHolder.mAnswer.performClick();
+            if (pAnswerListViewHolder.mAnswer != null)
+                pAnswerListViewHolder.mAnswer.performClick();
         }
         if (pAnswerListViewHolder.mEmptyRadioButton != null)
             pAnswerListViewHolder.mEmptyRadioButton.setVisibility(View.VISIBLE);

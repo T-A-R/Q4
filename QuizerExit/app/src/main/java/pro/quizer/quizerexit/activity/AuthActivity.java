@@ -76,21 +76,23 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         mPasswordEditText = findViewById(R.id.auth_password_edit_text);
         mLoginSpinner = findViewById(R.id.login_spinner);
         mVersionView = findViewById(R.id.version_view);
-        mVersionWarning = findViewById(R.id.version_warning);
+
         final Button sendAuthButton = findViewById(R.id.send_auth_button);
         final TextView usersCount = findViewById(R.id.users_count);
+        if (!AVIA) {
+            mVersionWarning = findViewById(R.id.version_warning);
+            final int sdk = android.os.Build.VERSION.SDK_INT;
 
-        final int sdk = android.os.Build.VERSION.SDK_INT;
+            if (sdk < Build.VERSION_CODES.LOLLIPOP && !Build.VERSION.RELEASE.equals("4.4.4")) {
+                mVersionWarning.setVisibility(View.VISIBLE);
+                mVersionWarning.setText(String.format(getString(R.string.VIEW_VERSION_WARNING), Build.VERSION.RELEASE));
+            } else {
+                mVersionWarning.setVisibility(View.GONE);
+            }
 
-        if (sdk < Build.VERSION_CODES.LOLLIPOP && !Build.VERSION.RELEASE.equals("4.4.4")) {
-            mVersionWarning.setVisibility(View.VISIBLE);
-            mVersionWarning.setText(String.format(getString(R.string.VIEW_VERSION_WARNING), Build.VERSION.RELEASE));
-        } else {
-            mVersionWarning.setVisibility(View.GONE);
-        }
-
-        if (Constants.Default.DEBUG) {
+            if (Constants.Default.DEBUG) {
 //            showLogs();
+            }
         }
 
         final int usersCountValue = getDao().getAllUsers().size();

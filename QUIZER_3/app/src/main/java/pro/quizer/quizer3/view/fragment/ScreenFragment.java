@@ -5,22 +5,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.Toast;
-
-import com.google.gson.GsonBuilder;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
-
-import java.util.List;
-
-import pro.quizer.quizer3.API.models.response.AuthResponseModel;
-import pro.quizer.quizer3.Constants;
-import pro.quizer.quizer3.R;
-import pro.quizer.quizer3.database.models.ActivationModelR;
-import pro.quizer.quizer3.database.models.UserModelR;
-import pro.quizer.quizer3.model.config.ConfigModel;
-import pro.quizer.quizer3.model.config.ReserveChannelModel;
-import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.view.activity.ScreenActivity;
 import pro.quizer.quizer3.model.User;
 
@@ -33,6 +19,7 @@ public abstract class ScreenFragment extends SmartFragment {
     private Class<? extends ScreenFragment> prevClass;
     private String cameraPhotoPath;
     private int requestCodeFragment;
+
 
     final int RequestCameraPermissionID = 1001;
 
@@ -115,10 +102,6 @@ public abstract class ScreenFragment extends SmartFragment {
             main.setMenuCursor(index);
     }
 
-    public void showToast(String text) {
-        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
-    }
-
     public User getUser() {
         return User.getUser();
     }
@@ -197,100 +180,5 @@ public abstract class ScreenFragment extends SmartFragment {
 //        }
 //    }
 
-    public int getCurrentUserId() {
-        return SPUtils.getCurrentUserId(getContext());
-    }
 
-    public UserModelR getUserByUserId(final int pUserId) {
-
-        List<UserModelR> list = null;
-        try {
-            list = getDao().getUserByUserId(pUserId);
-        } catch (Exception e) {
-            showToast(getString(R.string.db_load_error));
-        }
-
-        if (list == null || list.isEmpty()) {
-            return null;
-        } else {
-            return list.get(0);
-        }
-    }
-
-
-
-    public String getLoginAdmin() {
-        return getActivationModel().getLogin_admin();
-    }
-
-    public String getServer() {
-        return getActivationModel().getServer();
-    }
-
-    public UserModelR getLocalUserModel(final String pLogin, final String pPassword) {
-
-        List<UserModelR> list = null;
-        try {
-            list = getDao().getLocalUserModel(pLogin, pPassword);
-        } catch (Exception e) {
-            showToast(getString(R.string.db_load_error));
-        }
-
-        if (list != null && !list.isEmpty())
-            return list.get(0);
-        else
-            return null;
-    }
-
-    public void saveCurrentUserId(final int pUserId) {
-        SPUtils.saveCurrentUserId(getContext(), pUserId);
-    }
-
-    public void saveUser(final String pLogin, final String pPassword, final AuthResponseModel pModel, final ConfigModel pConfigModel) throws Exception {
-
-        try {
-            getDao().deleteUserByUserId(pModel.getUserId());
-        } catch (Exception e) {
-            showToast(getString(R.string.db_clear_error));
-        }
-
-        final ReserveChannelModel reserveChannelModel = pConfigModel.getProjectInfo().getReserveChannel();
-
-        if (reserveChannelModel != null) {
-            reserveChannelModel.selectPhone(0);
-        }
-
-        final UserModelR userModelR = new UserModelR();
-        userModelR.setLogin(pLogin);
-        userModelR.setPassword(pPassword);
-        userModelR.setConfig_id(pModel.getConfigId());
-        userModelR.setRole_id(pModel.getRoleId());
-        userModelR.setUser_id(pModel.getUserId());
-        userModelR.setUser_project_id(pModel.getUserProjectId());
-        userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
-        try {
-            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.SENT, getString(R.string.save_user_to_db), "login: " + userModelR.getLogin());
-
-            getDao().insertUser(userModelR);
-        } catch (Exception e) {
-            showToast(getString(R.string.db_save_error));
-            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.ERROR, getString(R.string.save_user_to_db_error), e.getMessage());
-        }
-    }
-
-    public void updateDatabaseUserByUserId(final String pLogin,
-                                           final String pPassword,
-                                           final String pConfigId,
-                                           final int pUserId,
-                                           final int pRoleId,
-                                           final int pUserProjectId) {
-
-        try {
-            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.SENT, getString(R.string.save_user_to_db),"login: " + pLogin);
-            getDao().updateUserModelR(pLogin, pPassword, pConfigId, pRoleId, pUserProjectId, pUserId);
-        } catch (Exception e) {
-            showToast(getString(R.string.db_save_error));
-            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.ERROR, getString(R.string.save_user_to_db_error), e.getMessage());
-        }
-    }
 }

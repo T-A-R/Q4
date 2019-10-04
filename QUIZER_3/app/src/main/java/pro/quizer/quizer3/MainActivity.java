@@ -13,6 +13,7 @@ import android.widget.EditText;
 
 import pro.quizer.quizer3.R;
 
+import pro.quizer.quizer3.database.QuizerDao;
 import pro.quizer.quizer3.model.User;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.view.fragment.MainFragment;
@@ -98,4 +99,5 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         }
         return ret;
     }
+
 }

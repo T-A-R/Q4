@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/cont_home_fragment">
+
+    <ImageView
+        android:id="@+id/quizer_logo"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_90sdp"
+        android:layout_marginLeft="@dimen/_40sdp"
+        android:layout_marginRight="@dimen/_40sdp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/_42sdp"
+        android:src="@drawable/quizer" />
+
+    <RelativeLayout
+        android:id="@+id/buttons_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="@dimen/_40sdp"
+        android:layout_marginRight="@dimen/_40sdp"
+        android:layout_marginBottom="@dimen/_30sdp">
+
+        <Button
+            android:id="@+id/btn_start"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_gravity="center_horizontal"
+            android:maxLines="1"
+            android:text="@string/button_start"
+            android:textSize="@dimen/_12ssp" />
+
+        <Button
+            android:id="@+id/btn_quotas"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_below="@+id/btn_start"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:maxLines="1"
+            android:text="@string/button_quotas"
+            android:textSize="@dimen/_12ssp" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttons_panel"
+        android:layout_below="@+id/quizer_logo"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+
+        android:layout_marginLeft="@dimen/_12sdp"
+        android:layout_marginRight="@dimen/_12sdp"
+        android:layout_marginBottom="@dimen/_10sdp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/config_agreement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:gravity="center|top"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                tools:text="Экзит пул agreement..." />
+
+
+            <TextView
+                android:id="@+id/config_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:gravity="center|top"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="Экзит пул" />
+
+            <TextView
+                android:id="@+id/count_all"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginRight="@dimen/_12sdp"
+                android:textColor="@color/dark_shadow"
+                android:visibility="gone"
+                tools:text="Всего собрано: 10" />
+
+            <TextView
+                android:id="@+id/count_sent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/count_all"
+                android:layout_marginLeft="@dimen/_12sdp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="@dimen/_12sdp"
+                android:textColor="@color/dark_shadow"
+                android:visibility="gone"
+                tools:text="Отправлено: 10" />
+
+            <TextView
+                android:id="@+id/current_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:visibility="gone"
+                tools:text="Экзит пул agreement..." />
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
+    <include layout="@layout/view_progress" />
+
+</RelativeLayout>

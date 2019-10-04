@@ -39,7 +39,6 @@ import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
-import pro.quizer.quizer3.view.screens.PageFragment;
 
 public class AuthFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.AuthUserCallback {
 
@@ -212,7 +211,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     private void onLoggedInWithoutUpdateLocalData(final int pUserId) {
         saveCurrentUserId(pUserId);
-        replaceFragment(new PageFragment());
+        replaceFragment(new HomeFragment());
     }
 
     private void saveUserAndLogin(final ConfigResponseModel pConfigResponseModel,

@@ -12,20 +12,34 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.google.gson.GsonBuilder;
+
+import java.io.File;
 import java.util.List;
 
+import pro.quizer.quizer3.API.models.response.AuthResponseModel;
+import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.CoreApplication;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.QuizerDao;
 import pro.quizer.quizer3.database.models.ActivationModelR;
 import pro.quizer.quizer3.database.models.AppLogsR;
+import pro.quizer.quizer3.database.models.UserModelR;
+import pro.quizer.quizer3.model.config.ConfigModel;
+import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
+import pro.quizer.quizer3.utils.FileUtils;
+import pro.quizer.quizer3.utils.SPUtils;
+
+import static pro.quizer.quizer3.utils.FileUtils.AMR;
+import static pro.quizer.quizer3.utils.FileUtils.JPEG;
 
 @SuppressWarnings("unused")
 public abstract class SmartFragment extends Fragment {
-    protected Listener listener;
 
+    protected Listener listener;
+    private UserModelR mCurrentUser;
     private int layoutSrc;
 
     public SmartFragment(int layoutSrc) {
@@ -43,7 +57,9 @@ public abstract class SmartFragment extends Fragment {
         onReady();
     }
 
-    /** Вызывается onActivityCreated */
+    /**
+     * Вызывается onActivityCreated
+     */
     abstract protected void onReady();
 
     public void setListener(Listener listener) {
@@ -115,12 +131,12 @@ public abstract class SmartFragment extends Fragment {
     }
 
     public static void addLog(String login,
-                                      String type,
-                                      String object,
-                                      String action,
-                                      String result,
-                                      String desc,
-                                      String data) {
+                              String type,
+                              String object,
+                              String action,
+                              String result,
+                              String desc,
+                              String data) {
         AppLogsR appLogsR = new AppLogsR();
         appLogsR.setLogin(login);
         appLogsR.setDevice(DeviceUtils.getDeviceInfo());
@@ -136,6 +152,10 @@ public abstract class SmartFragment extends Fragment {
             appLogsR.setData(data.substring(0, Math.min(data.length(), 5000)));
 
         getDao().insertAppLogsR(appLogsR);
+    }
+
+    public void showToast(String text) {
+        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
     }
 
     public boolean isActivated() {
@@ -157,5 +177,129 @@ public abstract class SmartFragment extends Fragment {
         else
             return null;
 
+    }
+
+    public int getCurrentUserId() {
+        return SPUtils.getCurrentUserId(getContext());
+    }
+
+    public UserModelR getUserByUserId(final int pUserId) {
+
+        List<UserModelR> list = null;
+        try {
+            list = getDao().getUserByUserId(pUserId);
+        } catch (Exception e) {
+            showToast(getString(R.string.db_load_error));
+        }
+
+        if (list == null || list.isEmpty()) {
+            return null;
+        } else {
+            return list.get(0);
+        }
+    }
+
+
+    public String getLoginAdmin() {
+        return getActivationModel().getLogin_admin();
+    }
+
+    public String getServer() {
+        return getActivationModel().getServer();
+    }
+
+    public UserModelR getLocalUserModel(final String pLogin, final String pPassword) {
+
+        List<UserModelR> list = null;
+        try {
+            list = getDao().getLocalUserModel(pLogin, pPassword);
+        } catch (Exception e) {
+            showToast(getString(R.string.db_load_error));
+        }
+
+        if (list != null && !list.isEmpty())
+            return list.get(0);
+        else
+            return null;
+    }
+
+    public void saveCurrentUserId(final int pUserId) {
+        SPUtils.saveCurrentUserId(getContext(), pUserId);
+    }
+
+    public void saveUser(final String pLogin, final String pPassword, final AuthResponseModel pModel, final ConfigModel pConfigModel) throws Exception {
+
+        try {
+            getDao().deleteUserByUserId(pModel.getUserId());
+        } catch (Exception e) {
+            showToast(getString(R.string.db_clear_error));
+        }
+
+        final ReserveChannelModel reserveChannelModel = pConfigModel.getProjectInfo().getReserveChannel();
+
+        if (reserveChannelModel != null) {
+            reserveChannelModel.selectPhone(0);
+        }
+
+        final UserModelR userModelR = new UserModelR();
+        userModelR.setLogin(pLogin);
+        userModelR.setPassword(pPassword);
+        userModelR.setConfig_id(pModel.getConfigId());
+        userModelR.setRole_id(pModel.getRoleId());
+        userModelR.setUser_id(pModel.getUserId());
+        userModelR.setUser_project_id(pModel.getUserProjectId());
+        userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
+        try {
+            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.SENT, getString(R.string.save_user_to_db), "login: " + userModelR.getLogin());
+
+            getDao().insertUser(userModelR);
+        } catch (Exception e) {
+            showToast(getString(R.string.db_save_error));
+            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.ERROR, getString(R.string.save_user_to_db_error), e.getMessage());
+        }
+    }
+
+    public void updateDatabaseUserByUserId(final String pLogin,
+                                           final String pPassword,
+                                           final String pConfigId,
+                                           final int pUserId,
+                                           final int pRoleId,
+                                           final int pUserProjectId) {
+
+        try {
+            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.SENT, getString(R.string.save_user_to_db), "login: " + pLogin);
+            getDao().updateUserModelR(pLogin, pPassword, pConfigId, pRoleId, pUserProjectId, pUserId);
+        } catch (Exception e) {
+            showToast(getString(R.string.db_save_error));
+            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.ERROR, getString(R.string.save_user_to_db_error), e.getMessage());
+        }
+    }
+
+    public UserModelR getCurrentUser() {
+        if (mCurrentUser == null) {
+            try {
+                mCurrentUser = getUserByUserId(getCurrentUserId());
+            } catch (Exception e) {
+                showToast(getString(R.string.db_load_error));
+            }
+        }
+
+        return mCurrentUser;
+    }
+
+    public List<File> getAllPhotos() {
+        return FileUtils.getFilesRecursion(JPEG, FileUtils.getPhotosStoragePath(getContext()));
+    }
+
+    public List<File> getPhotosByUserId(final int pUserId) {
+        return FileUtils.getFilesRecursion(JPEG, FileUtils.getPhotosStoragePath(getContext()) + FileUtils.FOLDER_DIVIDER + pUserId);
+    }
+
+    public List<File> getAllAudio() {
+        return FileUtils.getFilesRecursion(AMR, FileUtils.getAudioStoragePath(getContext()));
+    }
+
+    public List<File> getAudioByUserId(final int pUserId) {
+        return FileUtils.getFilesRecursion(AMR, FileUtils.getAudioStoragePath(getContext()) + FileUtils.FOLDER_DIVIDER + pUserId);
     }
 }

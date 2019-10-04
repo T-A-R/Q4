@@ -134,7 +134,12 @@
     <string name="exit_message">Для выхода нажмите \"Назад\" еще раз</string>
     <string name="button_press">Нажатие на кнопку</string>
     <string name="button_version">Кнопка версия на экране авторизации</string>
-
+    <string name="button_start">Начать</string>
+    <string name="button_quotas">Квоты</string>
+    <string name="collected_questions">Количество собраных анкет: %1$s</string>
+    <string name="questions_sent_from_device">Отправлено анкет в рамках проекта с данного устройства: %1$s</string>
+    <string name="start_questions">Начало новой анкеты</string>
+    <string name="start_question_error">Ошибка запуска анкеты. Попробуйте еще раз</string>
 
 
 </resources>

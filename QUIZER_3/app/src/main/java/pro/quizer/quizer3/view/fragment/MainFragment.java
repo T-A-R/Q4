@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 //import com.onesignal.OneSignal;
 //import com.yandex.metrica.YandexMetrica;
@@ -20,27 +19,12 @@ import android.widget.Toast;
 
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
-
 import pro.quizer.quizer3.model.User;
 import pro.quizer.quizer3.utils.ImageUtils;
-//import com.quizer.template.view.screens.common.contacts.ContactsFragment;
-//import com.quizer.template.view.screens.delegate.CalculatorFragment;
-//import com.quizer.template.view.screens.delegate.NotActivatedFragment;
-//import com.quizer.template.view.screens.delegate.PromoFragment;
-//import com.quizer.template.view.screens.delegate.aboutWinner.WinnersFragment;
-//import com.quizer.template.view.screens.delegate.addedRaffle.AddRaffleFragment;
-//import com.quizer.template.view.screens.delegate.editPlace.EditPlaceFragment;
-//import com.quizer.template.view.screens.delegate.tariffAndPayment.ChooseTariffFragment;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.screens.PageFragment;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
-//import com.quizer.template.view.screens.player.advantage.AdvantageFragment;
-//import com.quizer.template.view.screens.player.map.MapFragment;
-//import com.quizer.template.view.screens.player.rafles.RafflesFragment;
-//import com.quizer.template.view.screens.player.registration.Reg1Fragment;
-//import com.quizer.template.view.screens.player.registration.KeyFragment;
-//import com.quizer.template.view.screens.player.tutorial.TutorialFragment;
 
 public class MainFragment extends SmartFragment implements View.OnClickListener, MenuFragment.Listener, ScreensManager.Listener, User.ModeChangeListener, IMainFragment {
     static public NotifyType wasNotify;
@@ -178,9 +162,6 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
     }
 
     public void startScreens() {
-
-        NotifyType curNotify = wasNotify;
-        wasNotify = null;
 
         if (!isActivated()) {
             Log.d(TAG, "MainFragment() Activation");

@@ -22,6 +22,7 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.model.User;
 import pro.quizer.quizer3.utils.ImageUtils;
 import pro.quizer.quizer3.view.Anim;
+import pro.quizer.quizer3.view.Toolbar;
 import pro.quizer.quizer3.view.screens.PageFragment;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
@@ -426,16 +427,11 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
 //            openScreen(new KeyFragment().setEnter(true));
         } else if (view == txtEdit) {
             hide();
-            if (!getUser().isAuthorized())
-            {
+            if (!getUser().isAuthorized()) {
 //                openScreen(new Reg1Fragment().setEnter(true));
-            }
-            else if (!getUser().isDelegateMode())
-            {
+            } else if (!getUser().isDelegateMode()) {
 //                openScreen(new ProfileFragment());
-            }
-            else
-            {
+            } else {
 //                openScreen(new EditPlaceFragment());
             }
         }
@@ -457,6 +453,10 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
             sideMenuDrawer.openDrawer(Gravity.LEFT);
         }
 
+    }
+
+    public static void showDrawer() {
+        sideMenuDrawer.openDrawer(Gravity.LEFT);
     }
 
     public void onModeChangedSide() {
@@ -568,5 +568,9 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
 
     public static void openDrawer() {
         sideMenuDrawer.openDrawer(Gravity.LEFT);
+    }
+
+    public interface ToolBarListener {
+        void onToolBarClick();
     }
 }

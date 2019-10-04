@@ -78,6 +78,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         tvVersionView = (TextView) findViewById(R.id.version_view);
 
         MainFragment.disableSideMenu();
+//        MainFragment.hideToolbar();
 
         esLogin.setTypeface(Fonts.getFuturaPtMedium());
         etPass.setTypeface(Fonts.getFuturaPtMedium());

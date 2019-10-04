@@ -5,6 +5,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.utils.Fonts;
@@ -19,12 +20,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private boolean isExit = false;
 
     public ElementFragment() {
-        super(R.layout.fragment_key);
+        super(R.layout.fragment_element);
     }
 
     @Override
     protected void onReady() {
-        FrameLayout cont = (FrameLayout) findViewById(R.id.cont_key_fragment);
+        RelativeLayout cont = (RelativeLayout) findViewById(R.id.cont_key_fragment);
         LinearLayout image = (LinearLayout) findViewById(R.id.cont_image);
         btnSend = (Button) findViewById(R.id.btn_send_activation);
         etKey = (EditText) findViewById(R.id.et_activation);

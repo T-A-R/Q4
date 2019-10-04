@@ -1,41 +1,24 @@
 package pro.quizer.quizer3.view.fragment;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import java.io.IOException;
-
-import okhttp3.ResponseBody;
-import pro.quizer.quizer3.API.QuizerAPI;
-import pro.quizer.quizer3.API.models.request.ActivationRequestModel;
-import pro.quizer.quizer3.API.models.response.ActivationResponseModel;
-import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.R;
-import pro.quizer.quizer3.database.models.ActivationModelR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.SyncInfoExecutable;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.ProjectInfoModel;
 import pro.quizer.quizer3.model.view.SyncViewModel;
 import pro.quizer.quizer3.utils.Fonts;
-import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
-
-import static pro.quizer.quizer3.MainActivity.TAG;
+import pro.quizer.quizer3.view.Toolbar;
 
 public class HomeFragment extends ScreenFragment implements View.OnClickListener {
 
+    private Toolbar toolbar;
     private Button btnStart;
     private Button btnQuotas;
     private TextView tvConfigAgreement;
@@ -54,6 +37,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     @Override
     protected void onReady() {
+
+        toolbar = findViewById(R.id.toolbar);
         RelativeLayout cont = (RelativeLayout) findViewById(R.id.cont_home_fragment);
         btnStart = (Button) findViewById(R.id.btn_start);
         btnQuotas = (Button) findViewById(R.id.btn_quotas);
@@ -80,7 +65,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         cont.startAnimation(Anim.getAppear(getContext()));
         btnStart.startAnimation(Anim.getAppearSlide(getContext(), 500));
         btnQuotas.startAnimation(Anim.getAppearSlide(getContext(), 500));
-//        image.startAnimation(Anim.getSlideUpDown(getContext()));
+
+        toolbar.setTitle(getString(R.string.home_screen));
+        toolbar.showOptionsView(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                MainFragment.showDrawer();
+            }
+        });
 
         initViews();
     }

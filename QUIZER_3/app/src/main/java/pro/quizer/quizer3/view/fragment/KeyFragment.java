@@ -47,6 +47,7 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
         etKey = (EditText) findViewById(R.id.et_activation);
 
         MainFragment.disableSideMenu();
+//        MainFragment.hideToolbar();
 
         etKey.setTypeface(Fonts.getFuturaPtMedium());
         btnSend.setTypeface(Fonts.getFuturaPtBook());

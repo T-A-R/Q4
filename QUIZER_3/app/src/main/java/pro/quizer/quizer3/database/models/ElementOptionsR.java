@@ -20,11 +20,17 @@ public class ElementOptionsR {
     @ColumnInfo(name = "jump")
     private Integer jump;
 
+    @ColumnInfo(name = "search")
+    private boolean search;
+
     @ColumnInfo(name = "pre_condition")
     private String pre_condition;
 
     @ColumnInfo(name = "post_condition")
     private String post_condition;
+
+    @ColumnInfo(name = "data")
+    private String data;
 
     @ColumnInfo(name = "order")
     private Integer order;
@@ -68,6 +74,12 @@ public class ElementOptionsR {
     @ColumnInfo(name = "unchecker")
     private boolean unchecker;
 
+    @ColumnInfo(name = "start_value")
+    private Integer start_value;
+
+    @ColumnInfo(name = "end_value")
+    private Integer end_value;
+
     @ColumnInfo(name = "status_image")
     @TypeConverters({ElementStatusImageRConverter.class})
     private ElementStatusImageR status_image;
@@ -75,11 +87,13 @@ public class ElementOptionsR {
     public ElementOptionsR() {
     }
 
-    public ElementOptionsR(String title, Integer jump, String pre_condition, String post_condition, Integer order, Integer number, boolean polyanswer, boolean record_sound, boolean take_photo, String description, boolean flip_cols_and_rows, boolean rotation, boolean fixed_order, Integer min_answers, Integer max_answers, String open_type, String placeholder, boolean unchecker, ElementStatusImageR status_image) {
+    public ElementOptionsR(String title, Integer jump, boolean search, String pre_condition, String post_condition, String data, Integer order, Integer number, boolean polyanswer, boolean record_sound, boolean take_photo, String description, boolean flip_cols_and_rows, boolean rotation, boolean fixed_order, Integer min_answers, Integer max_answers, String open_type, String placeholder, boolean unchecker, Integer start_value, Integer end_value, ElementStatusImageR status_image) {
         this.title = title;
         this.jump = jump;
+        this.search = search;
         this.pre_condition = pre_condition;
         this.post_condition = post_condition;
+        this.data = data;
         this.order = order;
         this.number = number;
         this.polyanswer = polyanswer;
@@ -94,6 +108,8 @@ public class ElementOptionsR {
         this.open_type = open_type;
         this.placeholder = placeholder;
         this.unchecker = unchecker;
+        this.start_value = start_value;
+        this.end_value = end_value;
         this.status_image = status_image;
     }
 
@@ -121,6 +137,14 @@ public class ElementOptionsR {
         this.jump = jump;
     }
 
+    public boolean isSearch() {
+        return search;
+    }
+
+    public void setSearch(boolean search) {
+        this.search = search;
+    }
+
     public String getPre_condition() {
         return pre_condition;
     }
@@ -135,6 +159,14 @@ public class ElementOptionsR {
 
     public void setPost_condition(String post_condition) {
         this.post_condition = post_condition;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 
     public Integer getOrder() {
@@ -247,6 +279,22 @@ public class ElementOptionsR {
 
     public void setUnchecker(boolean unchecker) {
         this.unchecker = unchecker;
+    }
+
+    public Integer getStart_value() {
+        return start_value;
+    }
+
+    public void setStart_value(Integer start_value) {
+        this.start_value = start_value;
+    }
+
+    public Integer getEnd_value() {
+        return end_value;
+    }
+
+    public void setEnd_value(Integer end_value) {
+        this.end_value = end_value;
     }
 
     public ElementStatusImageR getStatus_image() {

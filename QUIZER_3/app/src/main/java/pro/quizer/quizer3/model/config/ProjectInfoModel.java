@@ -32,7 +32,7 @@ public class ProjectInfoModel implements Serializable {
     private String thank_you_picture;
 
     @SerializedName("elements")
-    private List<ElementModel> elements;
+    private List<ElementModelNew> elements;
 
     @SerializedName("reserve_channel")
     private ReserveChannelModel reserve_channel;
@@ -61,7 +61,7 @@ public class ProjectInfoModel implements Serializable {
         return agreement;
     }
 
-    public List<ElementModel> getElements() {
+    public List<ElementModelNew> getElements() {
         return elements;
     }
 

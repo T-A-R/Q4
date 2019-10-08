@@ -11,6 +11,7 @@ import pro.quizer.quizer3.database.models.ActivationModelR;
 import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
+import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.SmsItemR;
 import pro.quizer.quizer3.database.models.UserModelR;
@@ -27,6 +28,15 @@ public interface QuizerDao {
 
     @Query("DELETE FROM ActivationModelR")
     void clearActivationModelR();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertElementItemR(ElementItemR elementItemR);
+
+    @Query("SELECT * FROM ElementItemR")
+    List<ElementItemR> getAllElementItemR();
+
+    @Query("DELETE FROM ElementItemR")
+    void clearElementItemR();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertUser(UserModelR userModelR);

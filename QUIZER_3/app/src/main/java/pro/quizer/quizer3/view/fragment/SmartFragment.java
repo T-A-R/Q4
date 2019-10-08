@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.google.gson.GsonBuilder;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -25,9 +26,13 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.QuizerDao;
 import pro.quizer.quizer3.database.models.ActivationModelR;
 import pro.quizer.quizer3.database.models.AppLogsR;
+import pro.quizer.quizer3.database.models.ElementContentsR;
+import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.model.config.ConfigModel;
+import pro.quizer.quizer3.model.config.Contents;
 import pro.quizer.quizer3.model.config.ElementModel;
+import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
@@ -43,7 +48,7 @@ public abstract class SmartFragment extends Fragment {
     protected Listener listener;
     private UserModelR mCurrentUser;
     private int layoutSrc;
-    private HashMap<Integer, ElementModel> mMap;
+    private HashMap<Integer, ElementModelNew> mMap;
 
     public SmartFragment(int layoutSrc) {
         this.layoutSrc = layoutSrc;
@@ -290,15 +295,15 @@ public abstract class SmartFragment extends Fragment {
         return mCurrentUser;
     }
 
-    private List<ElementModel> getElements() {
+    private List<ElementModelNew> getElements() {
         return getCurrentUser().getConfigR().getProjectInfo().getElements();
     }
 
-    public HashMap<Integer, ElementModel> getMap() {
+    public HashMap<Integer, ElementModelNew> getMap() {
         if (mMap == null) {
             mMap = new HashMap<>();
 
-            generateMap(getElements());
+            generateMap(getElements(), false);
 
             return mMap;
         } else {
@@ -306,14 +311,53 @@ public abstract class SmartFragment extends Fragment {
         }
     }
 
-    private void generateMap(final List<ElementModel> elements) {
-        for (final ElementModel element : elements) {
+    private void generateMap(final List<ElementModelNew> elements, boolean rebuild) {
+        for (final ElementModelNew element : elements) {
             mMap.put(element.getRelativeID(), element);
 
-            final List<ElementModel> nestedList = element.getElements();
+            if (rebuild)
+                try {
+                    ElementItemR elementItemR = new ElementItemR();
+                    elementItemR.setConfigId(getCurrentUser().getConfig_id());
+                    elementItemR.setUserId(getCurrentUser().getUser_id());
+                    elementItemR.setProjectId(getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+                    elementItemR.setType(element.getType());
+                    elementItemR.setSubtype(element.getSubtype());
+                    elementItemR.setRelative_id(element.getRelativeID());
+                    elementItemR.setRelative_parent_id(element.getRelativeParentID());
+
+                    final List<Contents> contentsList = element.getContents();
+                    List<ElementContentsR> elementContentsRList = new ArrayList<>();
+                    if (contentsList != null && !contentsList.isEmpty()) {
+                        for (Contents contents : contentsList) {
+                            elementContentsRList.add(new ElementContentsR(contents.getType(), contents.getData(), contents.getOrder()));
+                        }
+                    }
+                    if (elementContentsRList.size() > 0) {
+                        elementItemR.setElementContentsR(elementContentsRList);
+                    }
+
+                    elementItemR.setRelative_parent_id(element.getRelativeParentID());
+
+
+                    getDao().insertElementItemR(elementItemR);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            final List<ElementModelNew> nestedList = element.getElements();
             if (nestedList != null && !nestedList.isEmpty()) {
-                generateMap(nestedList);
+                generateMap(nestedList, rebuild);
             }
+        }
+    }
+
+    public void rebuildElementsDatabase() {
+        try {
+            getDao().clearElementItemR();
+            generateMap(getElements(), true);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

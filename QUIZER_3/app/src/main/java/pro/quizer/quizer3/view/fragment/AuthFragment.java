@@ -34,6 +34,7 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.ElementModel;
+import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.model.config.ProjectInfoModel;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
@@ -347,7 +348,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     private void createElementsItems(String mLogin) {
         try {
-            List<ElementModel> mElements = getCurrentUser().getConfigR().getProjectInfo().getElements();
+            List<ElementModelNew> mElements = getCurrentUser().getConfigR().getProjectInfo().getElements();
         } catch (Exception e) {
             showToast(getString(R.string.make_elements_error));
             addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.make_elements_error), e.getMessage());

@@ -5,6 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 
+import java.util.List;
+
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.database.ElementContentsRConverter;
 import pro.quizer.quizer3.database.ElementOptionsRConverter;
@@ -17,7 +19,7 @@ public class ElementItemR {
     private int id;
 
     @ColumnInfo(name = "configId")
-    private int configId;
+    private String configId;
 
     @ColumnInfo(name = "userId")
     private int userId;
@@ -46,12 +48,12 @@ public class ElementItemR {
 
     @ColumnInfo(name = "elementContentsR")
     @TypeConverters({ElementContentsRConverter.class})
-    private ElementContentsR elementContentsR;
+    private List<ElementContentsR> elementContentsR;
 
     public ElementItemR() {
     }
 
-    public ElementItemR(int configId, int userId, int projectId, int questionnaireId, String type, String subtype, Integer relative_id, Integer relative_parent_id, ElementOptionsR elementOptionsR, ElementContentsR elementContentsR) {
+    public ElementItemR(String configId, int userId, int projectId, int questionnaireId, String type, String subtype, Integer relative_id, Integer relative_parent_id, ElementOptionsR elementOptionsR, List<ElementContentsR> elementContentsR) {
         this.configId = configId;
         this.userId = userId;
         this.projectId = projectId;
@@ -72,11 +74,11 @@ public class ElementItemR {
         this.id = id;
     }
 
-    public int getConfigId() {
+    public String getConfigId() {
         return configId;
     }
 
-    public void setConfigId(int configId) {
+    public void setConfigId(String configId) {
         this.configId = configId;
     }
 
@@ -144,11 +146,11 @@ public class ElementItemR {
         this.elementOptionsR = elementOptionsR;
     }
 
-    public ElementContentsR getElementContentsR() {
+    public List<ElementContentsR> getElementContentsR() {
         return elementContentsR;
     }
 
-    public void setElementContentsR(ElementContentsR elementContentsR) {
+    public void setElementContentsR(List<ElementContentsR> elementContentsR) {
         this.elementContentsR = elementContentsR;
     }
 }

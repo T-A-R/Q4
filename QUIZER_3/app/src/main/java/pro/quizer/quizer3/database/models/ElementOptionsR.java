@@ -1,0 +1,259 @@
+package pro.quizer.quizer3.database.models;
+
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
+
+import pro.quizer.quizer3.database.ElementStatusImageRConverter;
+
+@Entity
+public class ElementOptionsR {
+
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    private int id;
+
+    @ColumnInfo(name = "title")
+    private String title;
+
+    @ColumnInfo(name = "jump")
+    private Integer jump;
+
+    @ColumnInfo(name = "pre_condition")
+    private String pre_condition;
+
+    @ColumnInfo(name = "post_condition")
+    private String post_condition;
+
+    @ColumnInfo(name = "order")
+    private Integer order;
+
+    @ColumnInfo(name = "number")
+    private Integer number;
+
+    @ColumnInfo(name = "polyanswer")
+    private boolean polyanswer;
+
+    @ColumnInfo(name = "record_sound")
+    private boolean record_sound;
+
+    @ColumnInfo(name = "take_photo")
+    private boolean take_photo;
+
+    @ColumnInfo(name = "description")
+    private String description;
+
+    @ColumnInfo(name = "flip_cols_and_rows")
+    private boolean flip_cols_and_rows;
+
+    @ColumnInfo(name = "rotation")
+    private boolean rotation;
+
+    @ColumnInfo(name = "fixed_order")
+    private boolean fixed_order;
+
+    @ColumnInfo(name = "min_answers")
+    private Integer min_answers;
+
+    @ColumnInfo(name = "max_answers")
+    private Integer max_answers;
+
+    @ColumnInfo(name = "open_type")
+    private String open_type;
+
+    @ColumnInfo(name = "placeholder")
+    private String placeholder;
+
+    @ColumnInfo(name = "unchecker")
+    private boolean unchecker;
+
+    @ColumnInfo(name = "status_image")
+    @TypeConverters({ElementStatusImageRConverter.class})
+    private ElementStatusImageR status_image;
+
+    public ElementOptionsR() {
+    }
+
+    public ElementOptionsR(String title, Integer jump, String pre_condition, String post_condition, Integer order, Integer number, boolean polyanswer, boolean record_sound, boolean take_photo, String description, boolean flip_cols_and_rows, boolean rotation, boolean fixed_order, Integer min_answers, Integer max_answers, String open_type, String placeholder, boolean unchecker, ElementStatusImageR status_image) {
+        this.title = title;
+        this.jump = jump;
+        this.pre_condition = pre_condition;
+        this.post_condition = post_condition;
+        this.order = order;
+        this.number = number;
+        this.polyanswer = polyanswer;
+        this.record_sound = record_sound;
+        this.take_photo = take_photo;
+        this.description = description;
+        this.flip_cols_and_rows = flip_cols_and_rows;
+        this.rotation = rotation;
+        this.fixed_order = fixed_order;
+        this.min_answers = min_answers;
+        this.max_answers = max_answers;
+        this.open_type = open_type;
+        this.placeholder = placeholder;
+        this.unchecker = unchecker;
+        this.status_image = status_image;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Integer getJump() {
+        return jump;
+    }
+
+    public void setJump(Integer jump) {
+        this.jump = jump;
+    }
+
+    public String getPre_condition() {
+        return pre_condition;
+    }
+
+    public void setPre_condition(String pre_condition) {
+        this.pre_condition = pre_condition;
+    }
+
+    public String getPost_condition() {
+        return post_condition;
+    }
+
+    public void setPost_condition(String post_condition) {
+        this.post_condition = post_condition;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
+
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
+
+    public boolean isPolyanswer() {
+        return polyanswer;
+    }
+
+    public void setPolyanswer(boolean polyanswer) {
+        this.polyanswer = polyanswer;
+    }
+
+    public boolean isRecord_sound() {
+        return record_sound;
+    }
+
+    public void setRecord_sound(boolean record_sound) {
+        this.record_sound = record_sound;
+    }
+
+    public boolean isTake_photo() {
+        return take_photo;
+    }
+
+    public void setTake_photo(boolean take_photo) {
+        this.take_photo = take_photo;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isFlip_cols_and_rows() {
+        return flip_cols_and_rows;
+    }
+
+    public void setFlip_cols_and_rows(boolean flip_cols_and_rows) {
+        this.flip_cols_and_rows = flip_cols_and_rows;
+    }
+
+    public boolean isRotation() {
+        return rotation;
+    }
+
+    public void setRotation(boolean rotation) {
+        this.rotation = rotation;
+    }
+
+    public boolean isFixed_order() {
+        return fixed_order;
+    }
+
+    public void setFixed_order(boolean fixed_order) {
+        this.fixed_order = fixed_order;
+    }
+
+    public Integer getMin_answers() {
+        return min_answers;
+    }
+
+    public void setMin_answers(Integer min_answers) {
+        this.min_answers = min_answers;
+    }
+
+    public Integer getMax_answers() {
+        return max_answers;
+    }
+
+    public void setMax_answers(Integer max_answers) {
+        this.max_answers = max_answers;
+    }
+
+    public String getOpen_type() {
+        return open_type;
+    }
+
+    public void setOpen_type(String open_type) {
+        this.open_type = open_type;
+    }
+
+    public String getPlaceholder() {
+        return placeholder;
+    }
+
+    public void setPlaceholder(String placeholder) {
+        this.placeholder = placeholder;
+    }
+
+    public boolean isUnchecker() {
+        return unchecker;
+    }
+
+    public void setUnchecker(boolean unchecker) {
+        this.unchecker = unchecker;
+    }
+
+    public ElementStatusImageR getStatus_image() {
+        return status_image;
+    }
+
+    public void setStatus_image(ElementStatusImageR status_image) {
+        this.status_image = status_image;
+    }
+}

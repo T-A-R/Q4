@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.google.gson.GsonBuilder;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 import pro.quizer.quizer3.API.models.response.AuthResponseModel;
@@ -26,6 +27,7 @@ import pro.quizer.quizer3.database.models.ActivationModelR;
 import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.model.config.ConfigModel;
+import pro.quizer.quizer3.model.config.ElementModel;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
@@ -41,6 +43,7 @@ public abstract class SmartFragment extends Fragment {
     protected Listener listener;
     private UserModelR mCurrentUser;
     private int layoutSrc;
+    private HashMap<Integer, ElementModel> mMap;
 
     public SmartFragment(int layoutSrc) {
         this.layoutSrc = layoutSrc;
@@ -285,6 +288,33 @@ public abstract class SmartFragment extends Fragment {
         }
 
         return mCurrentUser;
+    }
+
+    private List<ElementModel> getElements() {
+        return getCurrentUser().getConfigR().getProjectInfo().getElements();
+    }
+
+    public HashMap<Integer, ElementModel> getMap() {
+        if (mMap == null) {
+            mMap = new HashMap<>();
+
+            generateMap(getElements());
+
+            return mMap;
+        } else {
+            return mMap;
+        }
+    }
+
+    private void generateMap(final List<ElementModel> elements) {
+        for (final ElementModel element : elements) {
+            mMap.put(element.getRelativeID(), element);
+
+            final List<ElementModel> nestedList = element.getElements();
+            if (nestedList != null && !nestedList.isEmpty()) {
+                generateMap(nestedList);
+            }
+        }
     }
 
     public List<File> getAllPhotos() {

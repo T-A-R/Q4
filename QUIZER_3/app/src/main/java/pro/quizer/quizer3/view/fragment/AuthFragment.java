@@ -32,6 +32,9 @@ import pro.quizer.quizer3.BuildConfig;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.UserModelR;
+import pro.quizer.quizer3.model.config.ConfigModel;
+import pro.quizer.quizer3.model.config.ElementModel;
+import pro.quizer.quizer3.model.config.ProjectInfoModel;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.MD5Utils;
@@ -330,6 +333,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             if (configResponseModel != null) {
                 if (configResponseModel.getResult() != 0) {
                     addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SUCCESS, getString(R.string.get_config_success), responseJson);
+                    createElementsItems(pLogin);
                     downloadFiles(configResponseModel, pModel, pLogin, pPassword);
                 } else {
                     showToast(configResponseModel.getError());
@@ -339,6 +343,15 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 showToast(getString(R.string.server_response_error) + " " + configResponseModel.getError());
             }
         });
+    }
+
+    private void createElementsItems(String mLogin) {
+        try {
+            List<ElementModel> mElements = getCurrentUser().getConfigR().getProjectInfo().getElements();
+        } catch (Exception e) {
+            showToast(getString(R.string.make_elements_error));
+            addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.make_elements_error), e.getMessage());
+        }
     }
 
     private void downloadFiles(final ConfigResponseModel pConfigResponseModel,

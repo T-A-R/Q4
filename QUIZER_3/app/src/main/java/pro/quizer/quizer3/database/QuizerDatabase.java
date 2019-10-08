@@ -6,7 +6,11 @@ import android.arch.persistence.room.RoomDatabase;
 import pro.quizer.quizer3.database.models.ActivationModelR;
 import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.CrashLogs;
+import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
+import pro.quizer.quizer3.database.models.ElementItemR;
+import pro.quizer.quizer3.database.models.ElementOptionsR;
+import pro.quizer.quizer3.database.models.ElementStatusImageR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.SmsItemR;
 import pro.quizer.quizer3.database.models.UserModelR;
@@ -20,7 +24,11 @@ import pro.quizer.quizer3.database.models.WarningsR;
         AppLogsR.class,
         CrashLogs.class,
         WarningsR.class,
-        SmsItemR.class}, version = 1)
+        ElementItemR.class,
+        ElementOptionsR.class,
+        ElementContentsR.class,
+        ElementStatusImageR.class,
+        SmsItemR.class}, version = 2)
 public abstract class QuizerDatabase extends RoomDatabase {
     public abstract QuizerDao getQuizerDao();
 }

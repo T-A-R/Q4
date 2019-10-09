@@ -72,9 +72,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             public void onClick(final View v) {
                 MainFragment.showDrawer();
             }
-        });
+        }, null);
 
         initViews();
+        showElementsDB();
     }
 
     public void initViews() {
@@ -125,6 +126,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 Toast.makeText(getContext(), getString(R.string.start_questions), Toast.LENGTH_SHORT).show();
                 try {
                     getDao().updateQuestionnaireStart(true, mUserModel.getUser_id());
+                    initCurrentElements();
                     replaceFragment(new ElementFragment());
                 } catch (Exception e) {
                     showToast(getString(R.string.start_question_error));

@@ -129,11 +129,11 @@ public class OptionsModelNew implements Serializable {
         return polyanswer;
     }
 
-    public int getMinAnswers() {
+    public Integer getMinAnswers() {
         return min_answers;
     }
 
-    public int getMaxAnswers() {
+    public Integer getMaxAnswers() {
         return max_answers;
     }
 
@@ -145,7 +145,7 @@ public class OptionsModelNew implements Serializable {
         return record_sound;
     }
 
-    public int getNumber() {
+    public Integer getNumber() {
         return number;
     }
 
@@ -157,7 +157,7 @@ public class OptionsModelNew implements Serializable {
         jump = pJump;
     }
 
-    public int getJump() {
+    public Integer getJump() {
         return jump;
     }
 

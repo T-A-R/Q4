@@ -226,6 +226,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         try {
             saveUser(pLogin, pPassword, pAuthResponseModel, pConfigResponseModel.getConfig());
             saveCurrentUserId(pAuthResponseModel.getUserId());
+            rebuildElementsDatabase();
         } catch (final Exception e) {
             showToast(getString(R.string.server_response_error) + "\n" + e);
 
@@ -334,7 +335,8 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             if (configResponseModel != null) {
                 if (configResponseModel.getResult() != 0) {
                     addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SUCCESS, getString(R.string.get_config_success), responseJson);
-                    createElementsItems(pLogin);
+//                    createElementsItems(pLogin);
+
                     downloadFiles(configResponseModel, pModel, pLogin, pPassword);
                 } else {
                     showToast(configResponseModel.getError());

@@ -73,37 +73,51 @@
                 android:tint="@android:color/white"
                 android:visibility="visible" />
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/toolbar_right_frame"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/_60sdp"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:minWidth="?attr/actionBarSize"
                 android:orientation="horizontal"
-                android:padding="12dp">
+                android:padding="8dp">
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/toolbar_view_info"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_copy"
+                    android:tint="@android:color/white"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <android.support.v7.widget.AppCompatImageView
                     android:id="@+id/toolbar_view_options"
-                    android:layout_width="match_parent"
+                    android:layout_width="@dimen/_20sdp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_options"
                     android:tint="@android:color/white"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
                     android:visibility="gone"
                     tools:visibility="visible" />
 
                 <android.support.v7.widget.AppCompatImageView
                     android:id="@+id/toolbar_view_close"
-                    android:layout_width="match_parent"
+                    android:layout_width="@dimen/_20sdp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_close"
                     android:tint="@android:color/white"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
                     android:visibility="gone"
                     tools:visibility="visible" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
         </RelativeLayout>
 

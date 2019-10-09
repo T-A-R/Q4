@@ -18,6 +18,7 @@ public class Toolbar extends RelativeLayout implements Serializable {
     private ImageView mLogo;
     private TextView mTitle;
     private View mCloseView;
+    private View mInfoView;
     private View mOptionsView;
 
     public Toolbar(final Context context) {
@@ -61,6 +62,7 @@ public class Toolbar extends RelativeLayout implements Serializable {
         mIcon = findViewById(R.id.icon);
         mTitle = findViewById(R.id.toolbar_view_title);
         mCloseView = findViewById(R.id.toolbar_view_close);
+        mInfoView = findViewById(R.id.toolbar_view_info);
         mOptionsView = findViewById(R.id.toolbar_view_options);
     }
 
@@ -68,16 +70,26 @@ public class Toolbar extends RelativeLayout implements Serializable {
         inflate();
     }
 
-    public void showOptionsView(final OnClickListener pOnClickListener) {
+    public void showOptionsView(final OnClickListener pOnClickListener, final OnClickListener pOnInfoClickListener) {
         mCloseView.setVisibility(View.GONE);
+        mInfoView.setVisibility(View.GONE);
         mOptionsView.setVisibility(View.VISIBLE);
         mOptionsView.setOnClickListener(pOnClickListener);
+        mInfoView.setOnClickListener(pOnInfoClickListener);
     }
 
     public void showCloseView(final OnClickListener pOnClickListener) {
         mOptionsView.setVisibility(View.GONE);
+        mInfoView.setVisibility(View.GONE);
         mCloseView.setVisibility(View.VISIBLE);
         mCloseView.setOnClickListener(pOnClickListener);
     }
 
+    public void showInfoView() {
+        mInfoView.setVisibility(View.VISIBLE);
+    }
+
+    public void hideInfoView() {
+        mInfoView.setVisibility(View.GONE);
+    }
 }

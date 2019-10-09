@@ -28,17 +28,20 @@ import pro.quizer.quizer3.database.models.ActivationModelR;
 import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
+import pro.quizer.quizer3.database.models.ElementOptionsR;
+import pro.quizer.quizer3.database.models.ElementStatusImageR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.Contents;
-import pro.quizer.quizer3.model.config.ElementModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
+import pro.quizer.quizer3.model.config.OptionsModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.SPUtils;
 
+import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.utils.FileUtils.AMR;
 import static pro.quizer.quizer3.utils.FileUtils.JPEG;
 
@@ -49,6 +52,8 @@ public abstract class SmartFragment extends Fragment {
     private UserModelR mCurrentUser;
     private int layoutSrc;
     private HashMap<Integer, ElementModelNew> mMap;
+
+    List<ElementItemR> elementItemRList = null;
 
     public SmartFragment(int layoutSrc) {
         this.layoutSrc = layoutSrc;
@@ -236,7 +241,7 @@ public abstract class SmartFragment extends Fragment {
     }
 
     public void saveUser(final String pLogin, final String pPassword, final AuthResponseModel pModel, final ConfigModel pConfigModel) throws Exception {
-
+        Log.d(TAG, "Saving User To Database............. ");
         try {
             getDao().deleteUserByUserId(pModel.getUserId());
         } catch (Exception e) {
@@ -265,6 +270,8 @@ public abstract class SmartFragment extends Fragment {
             showToast(getString(R.string.db_save_error));
             addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.ERROR, getString(R.string.save_user_to_db_error), e.getMessage());
         }
+
+
     }
 
     public void updateDatabaseUserByUserId(final String pLogin,
@@ -296,14 +303,16 @@ public abstract class SmartFragment extends Fragment {
     }
 
     private List<ElementModelNew> getElements() {
+        if (getCurrentUser() == null) Log.d(TAG, "------------ USER: ");
+        if (getCurrentUser().getConfigR() == null) Log.d(TAG, "------------ CONFIG: ");
         return getCurrentUser().getConfigR().getProjectInfo().getElements();
     }
 
-    public HashMap<Integer, ElementModelNew> getMap() {
+    public HashMap<Integer, ElementModelNew> getMap(boolean rebuild) {
         if (mMap == null) {
             mMap = new HashMap<>();
 
-            generateMap(getElements(), false);
+            generateMap(getElements(), rebuild);
 
             return mMap;
         } else {
@@ -337,8 +346,47 @@ public abstract class SmartFragment extends Fragment {
                         elementItemR.setElementContentsR(elementContentsRList);
                     }
 
-                    elementItemR.setRelative_parent_id(element.getRelativeParentID());
+                    final OptionsModelNew optionsModelNew = element.getOptions();
+                    if (optionsModelNew != null) {
+                        ElementOptionsR elementOptionsR = new ElementOptionsR();
+                        elementOptionsR.setData(optionsModelNew.getData());
+                        elementOptionsR.setTitle(optionsModelNew.getTitle());
+                        if (optionsModelNew.getJump() != null)
+                            elementOptionsR.setJump(optionsModelNew.getJump());
+                        elementOptionsR.setSearch(optionsModelNew.isSearch());
+                        elementOptionsR.setPre_condition(optionsModelNew.getPre_condition());
+                        elementOptionsR.setPost_condition(optionsModelNew.getPost_condition());
+                        elementOptionsR.setOrder(optionsModelNew.getOrder());
+                        if (optionsModelNew.getNumber() != null)
+                            elementOptionsR.setNumber(optionsModelNew.getNumber());
+                        elementOptionsR.setPolyanswer(optionsModelNew.isPolyanswer());
+                        elementOptionsR.setRecord_sound(optionsModelNew.isRecordSound());
+                        elementOptionsR.setTake_photo(optionsModelNew.isTakePhoto());
+                        elementOptionsR.setDescription(optionsModelNew.getDescription());
+                        elementOptionsR.setFlip_cols_and_rows(optionsModelNew.isFlipColsAndRows());
+                        elementOptionsR.setRotation(optionsModelNew.isRotation());
+                        elementOptionsR.setFixed_order(optionsModelNew.isFixedOrder());
+                        if (optionsModelNew.getMinAnswers() != null)
+                            elementOptionsR.setMin_answers(optionsModelNew.getMinAnswers());
+                        if (optionsModelNew.getMaxAnswers() != null)
+                            elementOptionsR.setMax_answers(optionsModelNew.getMaxAnswers());
+                        elementOptionsR.setOpen_type(optionsModelNew.getOpenType());
+                        elementOptionsR.setPlaceholder(optionsModelNew.getPlaceholder());
+                        elementOptionsR.setUnchecker(optionsModelNew.isUnchecker());
+                        elementOptionsR.setStart_value(optionsModelNew.getStart_value());
+                        elementOptionsR.setEnd_value(optionsModelNew.getEnd_value());
+                        if (optionsModelNew.getStatusImage() != null) {
+                            ElementStatusImageR elementStatusImageR = new ElementStatusImageR();
+                            elementStatusImageR.setType(optionsModelNew.getStatusImage().getType());
+                            elementStatusImageR.setData(optionsModelNew.getStatusImage().getData());
+                            elementStatusImageR.setData_on(optionsModelNew.getStatusImage().getData_on());
+                            elementStatusImageR.setData_off(optionsModelNew.getStatusImage().getData_off());
 
+                            elementOptionsR.setStatus_image(elementStatusImageR);
+                        }
+
+                        elementItemR.setElementOptionsR(elementOptionsR);
+                    }
 
                     getDao().insertElementItemR(elementItemR);
                 } catch (Exception e) {
@@ -353,12 +401,47 @@ public abstract class SmartFragment extends Fragment {
     }
 
     public void rebuildElementsDatabase() {
+
         try {
+            Log.d(TAG, "Clearing Elements Database............. ");
             getDao().clearElementItemR();
-            generateMap(getElements(), true);
+            Log.d(TAG, "Rebuilding Elements Database............. ");
+            getMap(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void showElementsDB() {
+        Log.d(TAG, "========== DATABASE ========== ");
+        initCurrentElements();
+        Log.d(TAG, "Elements: " + getCurrentElements().size());
+
+        for(int i = 0; i < getCurrentElements().size(); i++) {
+            Log.d(TAG, "id: " + getCurrentElements().get(i).getRelative_id());
+        }
+    }
+
+    public void initCurrentElements() {
+        try {
+            elementItemRList = getDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<ElementItemR> getCurrentElements() {
+        return elementItemRList;
+    }
+
+    public ElementItemR getElement(Integer id) {
+        ElementItemR elementItemR = null;
+        try {
+            elementItemR = getDao().getElementById(id, getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return elementItemR;
     }
 
     public List<File> getAllPhotos() {

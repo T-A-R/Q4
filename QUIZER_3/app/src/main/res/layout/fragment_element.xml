@@ -11,16 +11,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/_62sdp"
-        android:layout_marginBottom="@dimen/_52sdp">
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="top"
+        android:layout_marginTop="@dimen/_62sdp"
+        android:layout_marginBottom="@dimen/_50sdp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -28,8 +24,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/bg_shadow"
-            android:visibility="visible">
+            android:background="@drawable/bg_green_shadow"
+            android:visibility="gone">
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
@@ -43,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/_8sdp"
                     android:text="Title 1"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     android:textSize="@dimen/_16ssp"
                     tools:layout_editor_absoluteX="10dp"
                     tools:ignore="MissingConstraints" />
@@ -52,7 +48,7 @@
                     android:id="@+id/image_close_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_close"
+                    android:src="@drawable/ico_close_white"
                     app:layout_constraintEnd_toEndOf="@+id/title_1"
                     tools:layout_editor_absoluteY="2dp"
                     tools:ignore="MissingConstraints" />
@@ -67,7 +63,7 @@
                 android:layout_marginRight="@dimen/_8sdp"
                 android:layout_marginBottom="@dimen/_8sdp"
                 android:text="Question desc"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="@android:color/black"
                 android:textSize="@dimen/_14ssp"
                 android:visibility="gone"/>
 
@@ -114,7 +110,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/bg_shadow"
+            android:background="@drawable/bg_green_shadow"
             android:visibility="gone">
 
             <android.support.constraint.ConstraintLayout
@@ -129,7 +125,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/_8sdp"
                     android:text="Title 1"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     android:textSize="@dimen/_16ssp"
                     tools:layout_editor_absoluteX="10dp"
                     tools:ignore="MissingConstraints" />
@@ -138,7 +134,7 @@
                     android:id="@+id/image_close_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_close"
+                    android:src="@drawable/ico_close_white"
                     app:layout_constraintEnd_toEndOf="@+id/title_2"
                     tools:layout_editor_absoluteY="2dp"
                     tools:ignore="MissingConstraints" />
@@ -153,7 +149,7 @@
                 android:layout_marginRight="@dimen/_8sdp"
                 android:layout_marginBottom="@dimen/_8sdp"
                 android:text="Question desc"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="@android:color/black"
                 android:textSize="@dimen/_14ssp"
                 android:visibility="gone"/>
 
@@ -200,7 +196,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/bg_shadow"
+            android:background="@drawable/bg_green_shadow"
             android:visibility="visible">
 
             <TextView
@@ -208,7 +204,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_8sdp"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/white"
                 android:textSize="@dimen/_16ssp"
                 android:text="Question" />
 
@@ -220,7 +216,7 @@
                 android:layout_marginRight="@dimen/_8sdp"
                 android:layout_marginBottom="@dimen/_8sdp"
                 android:text="Question desc"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="@android:color/black"
                 android:textSize="@dimen/_14ssp"
                 android:visibility="gone"/>
 
@@ -260,18 +256,15 @@
 
             </LinearLayout>
 
-            <include layout="@layout/view_divider" />
-
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/answers_recyclerview"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_8sdp"/>
 
         </LinearLayout>
 
     </LinearLayout>
-
-    </ScrollView>
 
     <android.support.v7.widget.LinearLayoutCompat
         android:id="@+id/button_panel"

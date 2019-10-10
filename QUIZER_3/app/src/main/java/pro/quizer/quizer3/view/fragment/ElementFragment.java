@@ -1,5 +1,6 @@
 package pro.quizer.quizer3.view.fragment;
 
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -12,8 +13,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.adapter.QuestionAdapter;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.utils.Fonts;
@@ -23,7 +28,7 @@ import pro.quizer.quizer3.view.Toolbar;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class ElementFragment extends ScreenFragment implements View.OnClickListener {
+public class ElementFragment extends ScreenFragment implements View.OnClickListener, QuestionAdapter.OnAnswerClickListener {
 
     private Toolbar toolbar;
     private Button btnNext;
@@ -61,6 +66,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private boolean isExit = false;
     private int currentQuestionId;
     private ElementItemR currentElement = null;
+
+    private QuestionAdapter adapter;
 
     public ElementFragment() {
         super(R.layout.fragment_element);
@@ -141,6 +148,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         MainFragment.enableSideMenu();
         initCurrentElements();
         initQuestion();
+        initRecyclerView();
     }
 
     @Override
@@ -248,6 +256,23 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             }
         }
 
+
+    }
+
+    private void initRecyclerView() {
+        List<ElementItemR> answersList = new ArrayList<>();
+        for(ElementItemR element : getCurrentElements()) {
+            if (element.getRelative_parent_id() == currentElement.getRelative_id()) {
+                answersList.add(element);
+            }
+        }
+        adapter = new QuestionAdapter(answersList, this);
+        rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvAnswers.setAdapter(adapter);
+    }
+
+    @Override
+    public void onAnswerClick(int position, boolean enabled, String answer) {
 
     }
 }

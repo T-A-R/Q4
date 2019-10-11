@@ -39,14 +39,15 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         Preferences preferences = new Preferences(getApplicationContext());
         getUser().setPreferences(preferences);
 
-        mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.main);
+        if(savedInstanceState == null) {
+            mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.main);
 
-        View view = mainFragment.getView();
-        if (mainFragment == null || view == null)
-            Log.d(TAG, "MainActivity.onCreate() WTF? view == null");
-        else
-            view.post(() -> view.getViewTreeObserver().addOnGlobalLayoutListener(MainActivity.this));
-
+            View view = mainFragment.getView();
+            if (mainFragment == null || view == null)
+                Log.d(TAG, "MainActivity.onCreate() WTF? view == null");
+            else
+                view.post(() -> view.getViewTreeObserver().addOnGlobalLayoutListener(MainActivity.this));
+        }
     }
 
     @Override

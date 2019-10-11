@@ -19,14 +19,16 @@ public class ScreenActivity extends MainActivity {
 
         setContentView(R.layout.activity_screen);
 
-        mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.screen);
+        if(savedInstanceState == null) {
 
-        View view = mainFragment.getView();
-        if (view == null)
-            Log.d(TAG, "MainActivity.onCreate() WTF? view == null");
-        else
-            view.getViewTreeObserver().addOnGlobalLayoutListener(this);
+            mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.screen);
 
+            View view = mainFragment.getView();
+            if (view == null)
+                Log.d(TAG, "MainActivity.onCreate() WTF? view == null");
+            else
+                view.getViewTreeObserver().addOnGlobalLayoutListener(this);
+        }
     }
 
     @Override

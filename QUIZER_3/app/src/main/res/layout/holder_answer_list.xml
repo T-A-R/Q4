@@ -3,8 +3,8 @@
     android:id="@+id/answer_cont"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:background="@drawable/bg_shadow"
+    android:orientation="vertical"
     android:visibility="visible">
 
     <LinearLayout
@@ -42,7 +42,6 @@
             android:visibility="visible" />
 
     </LinearLayout>
-
 
 
     <RelativeLayout
@@ -96,13 +95,27 @@
 
     </RelativeLayout>
 
-    <EditText
-        android:id="@+id/edit_answer"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/_8sdp"
-        android:layout_marginLeft="@dimen/_8sdp"
-        android:textSize="@dimen/_12ssp"
-        android:maxLines="1" />
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/edit_answer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:maxLines="1"
+            android:textSize="@dimen/_12ssp" />
+
+        <ImageView
+            android:id="@+id/edit_button"
+            android:layout_margin="@dimen/_4sdp"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_22sdp"
+            android:src="@drawable/button_background_white"/>
+
+
+    </RelativeLayout>
 
 </LinearLayout>

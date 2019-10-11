@@ -266,7 +266,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 answersList.add(element);
             }
         }
-        adapter = new QuestionAdapter(answersList, this);
+        adapter = new QuestionAdapter(currentElement, answersList, this);
         rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
         rvAnswers.setAdapter(adapter);
     }

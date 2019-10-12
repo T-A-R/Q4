@@ -20,14 +20,26 @@
         android:layout_marginTop="@dimen/_62sdp"
         android:src="@drawable/quizer" />
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/buttons_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="@dimen/_40sdp"
         android:layout_marginRight="@dimen/_40sdp"
-        android:layout_marginBottom="@dimen/_30sdp">
+        android:layout_marginBottom="@dimen/_30sdp"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_continue"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_gravity="center_horizontal"
+            android:maxLines="1"
+            android:text="@string/button_continue"
+            android:textSize="@dimen/_12ssp"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/btn_start"
@@ -35,6 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_36sdp"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
             android:maxLines="1"
             android:text="@string/button_start"
             android:textSize="@dimen/_12ssp" />
@@ -44,14 +57,13 @@
             style="@style/ButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_36sdp"
-            android:layout_below="@+id/btn_start"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
             android:maxLines="1"
             android:text="@string/button_quotas"
             android:textSize="@dimen/_12ssp" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

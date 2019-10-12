@@ -53,7 +53,7 @@ dependencies {
     implementation 'com.reginald:editspinner:1.0.0'
     implementation 'commons-codec:commons-codec:20041127.091804'
     implementation 'com.github.kk121:File-Loader:1.2'
-
+    implementation 'net.sourceforge.streamsupport:android-retrofuture:1.7.0'
 
 
 

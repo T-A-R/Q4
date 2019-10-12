@@ -28,7 +28,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
     private ElementItemR question;
     private List<ElementItemR> answersList;
     private String[] mDataset;
-    private boolean[] mOpenChecked;
+    private boolean[] mAnswerChecked;
     private int lastSelectedPosition = -1;
     public boolean isOpen;
     public boolean isMulti;
@@ -39,7 +39,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
         this.answersList = answersList;
         this.onAnswerClickListener = onAnswerClickListener;
         this.mDataset = new String[answersList.size()];
-        this.mOpenChecked = new boolean[answersList.size()];
+        this.mAnswerChecked = new boolean[answersList.size()];
         if (question.getElementOptionsR().getOpen_type() != null) {
             this.isOpen = true;
             this.openType = question.getElementOptionsR().getOpen_type();
@@ -85,7 +85,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
                 }
             }
         } else {
-            if (mOpenChecked[position]) {
+            if (mAnswerChecked[position]) {
                 holder.button.setImageResource(R.drawable.checkbox_checked);
             } else {
                 holder.button.setImageResource(R.drawable.checkbox_unchecked);
@@ -150,10 +150,10 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
                 answerDesc.setVisibility(View.GONE);
             }
             if(item.getElementOptionsR().isUnchecker()) {
-                if(mOpenChecked[getAdapterPosition()]) {
-                    for(int i = 0; i < mOpenChecked.length; i++) {
+                if(mAnswerChecked[getAdapterPosition()]) {
+                    for(int i = 0; i < mAnswerChecked.length; i++) {
                         if(i != getAdapterPosition()) {
-                            mOpenChecked[i] = false;
+                            mAnswerChecked[i] = false;
                         }
                     }
                 }
@@ -167,10 +167,10 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
             notifyDataSetChanged();
 
             if (isMulti) {
-                if (mOpenChecked[getAdapterPosition()]) {
-                    mOpenChecked[getAdapterPosition()] = false;
+                if (mAnswerChecked[getAdapterPosition()]) {
+                    mAnswerChecked[getAdapterPosition()] = false;
                 } else {
-                    mOpenChecked[getAdapterPosition()] = true;
+                    mAnswerChecked[getAdapterPosition()] = true;
                 }
             }
 
@@ -215,5 +215,13 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
         public void afterTextChanged(Editable editable) {
 
         }
+    }
+
+    public String[] getOpenAnswersText() {
+        return mDataset;
+    }
+
+    public boolean[] getAnswersChecked() {
+        return mAnswerChecked;
     }
 }

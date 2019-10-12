@@ -134,6 +134,7 @@
     <string name="exit_message">Для выхода нажмите \"Назад\" еще раз</string>
     <string name="button_press">Нажатие на кнопку</string>
     <string name="button_version">Кнопка версия на экране авторизации</string>
+    <string name="button_continue">Продолжить</string>
     <string name="button_start">Начать</string>
     <string name="button_quotas">Квоты</string>
     <string name="collected_questions">Количество собраных анкет: %1$s</string>

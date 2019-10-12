@@ -10,8 +10,10 @@ import java.util.List;
 import pro.quizer.quizer3.database.models.ActivationModelR;
 import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.CrashLogs;
+import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
+import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.SmsItemR;
 import pro.quizer.quizer3.database.models.UserModelR;
@@ -195,4 +197,24 @@ public interface QuizerDao {
     @Query("SELECT * FROM WarningsR WHERE warning = :warning AND warningStatus = :status")
     List<WarningsR> getWarningsByStatus(String warning, String status);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertElementPassedR(ElementPassedR elementPassedR);
+
+    @Query("SELECT * FROM ElementPassedR WHERE token =:token")
+    List<ElementPassedR> getAllElementPassedR(String token);
+
+    @Query("SELECT * FROM ElementPassedR WHERE token =:token ORDER BY id DESC LIMIT 1")
+    ElementPassedR getLastElementPassedR(String token);
+
+    @Query("DELETE FROM ElementPassedR")
+    void clearElementPassedR();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertCurrentQuestionnaireR(CurrentQuestionnaireR currentQuestionnaireR);
+
+    @Query("SELECT * FROM CurrentQuestionnaireR ORDER BY id DESC LIMIT 1")
+    CurrentQuestionnaireR getCurrentQuestionnaireR();
+
+    @Query("DELETE FROM CurrentQuestionnaireR")
+    void clearCurrentQuestionnaireR();
 }

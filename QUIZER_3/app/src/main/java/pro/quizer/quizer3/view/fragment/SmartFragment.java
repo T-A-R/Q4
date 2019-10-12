@@ -26,6 +26,7 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.QuizerDao;
 import pro.quizer.quizer3.database.models.ActivationModelR;
 import pro.quizer.quizer3.database.models.AppLogsR;
+import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementOptionsR;
@@ -458,5 +459,15 @@ public abstract class SmartFragment extends Fragment {
 
     public List<File> getAudioByUserId(final int pUserId) {
         return FileUtils.getFilesRecursion(AMR, FileUtils.getAudioStoragePath(getContext()) + FileUtils.FOLDER_DIVIDER + pUserId);
+    }
+
+    public CurrentQuestionnaireR getQuestionnaire() {
+        CurrentQuestionnaireR currentQuestionnaireR = null;
+        try {
+            currentQuestionnaireR = getDao().getCurrentQuestionnaireR();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return currentQuestionnaireR;
     }
 }

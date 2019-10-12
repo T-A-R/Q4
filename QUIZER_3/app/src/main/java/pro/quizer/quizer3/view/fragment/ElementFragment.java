@@ -1,5 +1,7 @@
 package pro.quizer.quizer3.view.fragment;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,7 +22,9 @@ import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.QuestionAdapter;
 import pro.quizer.quizer3.database.models.ElementItemR;
+import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.model.ElementType;
+import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.view.Anim;
@@ -66,11 +70,20 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private boolean isExit = false;
     private int currentQuestionId;
     private ElementItemR currentElement = null;
+    List<ElementItemR> answersList;
+    private Long startTime;
+    private Integer startElementId;
+    private Integer nextElementId;
 
     private QuestionAdapter adapter;
 
     public ElementFragment() {
         super(R.layout.fragment_element);
+    }
+
+    public ElementFragment setStartElement(Integer startElementId) {
+        this.startElementId = startElementId;
+        return this;
     }
 
     @Override
@@ -158,6 +171,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
             if (!isNextBtnPressed) {
                 isNextBtnPressed = true;
+                if(saveElement()) {
+                    replaceFragment(new ElementFragment().setStartElement(nextElementId));
+                } else {
+                    showToast("Выберите ответ.");
+                }
             }
         } else if (view == btnPrev) {
             showScreensaver(false);
@@ -166,10 +184,18 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 isPrevBtnPressed = true;
             }
         } else if (view == btnExit) {
-            replaceFragment(new HomeFragment());
+
 
             if (!isExitBtnPressed) {
                 isExitBtnPressed = true;
+                try {
+                    getDao().clearCurrentQuestionnaireR();
+                    getDao().clearElementPassedR();
+                } catch (Exception e) {
+                    isExitBtnPressed = false;
+                    e.printStackTrace();
+                }
+                replaceFragment(new HomeFragment());
             }
         } else if (view == closeImage1) {
             titleCont1.setVisibility(View.GONE);
@@ -203,6 +229,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void initQuestion() {
+
+        startTime = DateUtils.getCurrentTimeMillis();
 
         if (getCurrentElements() != null && getCurrentElements().size() > 0) {
             for (int i = 0; i < getCurrentElements().size(); i++) {
@@ -260,8 +288,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void initRecyclerView() {
-        List<ElementItemR> answersList = new ArrayList<>();
-        for(ElementItemR element : getCurrentElements()) {
+        answersList = new ArrayList<>();
+        for (ElementItemR element : getCurrentElements()) {
             if (element.getRelative_parent_id() == currentElement.getRelative_id()) {
                 answersList.add(element);
             }
@@ -274,6 +302,41 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     @Override
     public void onAnswerClick(int position, boolean enabled, String answer) {
 
+    }
+
+    private boolean saveElement() {
+        boolean saved = false;
+        for (int i = 0; i < adapter.getAnswersChecked().length; i++) {
+            if(adapter.getAnswersChecked()[i]) {
+                ElementPassedR elementPassedR = new ElementPassedR();
+                elementPassedR.setRelative_id(answersList.get(i).getRelative_id());
+                elementPassedR.setProject_id(currentElement.getProjectId());
+                elementPassedR.setToken(getQuestionnaire().getToken());
+                elementPassedR.setDuration(startTime - DateUtils.getCurrentTimeMillis());
+                elementPassedR.setValue(adapter.getOpenAnswersText()[i]);
+
+                try {
+                    getDao().insertElementPassedR(elementPassedR);
+                    saved = true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
+        return saved;
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //TODO save startTime
     }
 }
 

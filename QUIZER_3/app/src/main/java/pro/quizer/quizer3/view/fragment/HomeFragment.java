@@ -245,6 +245,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     questionnaire.setGps_time_network(mGpsTimeNetwork);
                     questionnaire.setUsed_fake_gps(mIsUserFakeGps);
                     questionnaire.setFake_gps_time(mFakeGpsTime);
+                    questionnaire.setQuestion_start_time(DateUtils.getCurrentTimeMillis());
 
                     getDao().insertCurrentQuestionnaireR(questionnaire);
                     return true;

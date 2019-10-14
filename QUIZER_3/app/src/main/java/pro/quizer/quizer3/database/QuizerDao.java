@@ -215,6 +215,15 @@ public interface QuizerDao {
     @Query("SELECT * FROM CurrentQuestionnaireR ORDER BY id DESC LIMIT 1")
     CurrentQuestionnaireR getCurrentQuestionnaireR();
 
+    @Query("UPDATE CurrentQuestionnaireR SET question_start_time = :time")
+    void setQuestionTime(Long time);
+
+    @Query("UPDATE CurrentQuestionnaireR SET prev_element_id = :id ")
+    void setPrevElement(List<Integer> id);
+
+    @Query("UPDATE CurrentQuestionnaireR SET current_element_id = :id ")
+    void setCurrentElement(Integer id);
+
     @Query("DELETE FROM CurrentQuestionnaireR")
     void clearCurrentQuestionnaireR();
 }

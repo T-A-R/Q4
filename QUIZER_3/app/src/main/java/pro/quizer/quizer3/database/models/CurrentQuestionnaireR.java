@@ -3,6 +3,11 @@ package pro.quizer.quizer3.database.models;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
+
+import java.util.List;
+
+import pro.quizer.quizer3.database.PrevQuestionConverter;
 
 @Entity
 public class CurrentQuestionnaireR {
@@ -50,10 +55,20 @@ public class CurrentQuestionnaireR {
     @ColumnInfo(name = "quota_time_difference")
     private Long quota_time_difference;
 
+    @ColumnInfo(name = "question_start_time")
+    private Long question_start_time;
+
+    @ColumnInfo(name = "prev_element_id")
+    @TypeConverters({PrevQuestionConverter.class})
+    private List<Integer> prev_element_id;
+
+    @ColumnInfo(name = "current_element_id")
+    private Integer current_element_id;
+
     public CurrentQuestionnaireR() {
     }
 
-    public CurrentQuestionnaireR(String token, Integer project_id, Integer user_project_id, Long start_date, String gps, String gps_network, Long gps_time, Long gps_time_network, boolean used_fake_gps, Long fake_gps_time, Long auth_time_difference, Long send_time_difference, Long quota_time_difference) {
+    public CurrentQuestionnaireR(String token, Integer project_id, Integer user_project_id, Long start_date, String gps, String gps_network, Long gps_time, Long gps_time_network, boolean used_fake_gps, Long fake_gps_time, Long auth_time_difference, Long send_time_difference, Long quota_time_difference, Long question_start_time, List<Integer> prev_element_id, Integer current_element_id) {
         this.token = token;
         this.project_id = project_id;
         this.user_project_id = user_project_id;
@@ -67,6 +82,9 @@ public class CurrentQuestionnaireR {
         this.auth_time_difference = auth_time_difference;
         this.send_time_difference = send_time_difference;
         this.quota_time_difference = quota_time_difference;
+        this.question_start_time = question_start_time;
+        this.prev_element_id = prev_element_id;
+        this.current_element_id = current_element_id;
     }
 
     public int getId() {
@@ -179,5 +197,29 @@ public class CurrentQuestionnaireR {
 
     public void setQuota_time_difference(Long quota_time_difference) {
         this.quota_time_difference = quota_time_difference;
+    }
+
+    public Long getQuestion_start_time() {
+        return question_start_time;
+    }
+
+    public void setQuestion_start_time(Long question_start_time) {
+        this.question_start_time = question_start_time;
+    }
+
+    public List<Integer> getPrev_element_id() {
+        return prev_element_id;
+    }
+
+    public void setPrev_element_id(List<Integer> prev_element_id) {
+        this.prev_element_id = prev_element_id;
+    }
+
+    public Integer getCurrent_element_id() {
+        return current_element_id;
+    }
+
+    public void setCurrent_element_id(Integer current_element_id) {
+        this.current_element_id = current_element_id;
     }
 }

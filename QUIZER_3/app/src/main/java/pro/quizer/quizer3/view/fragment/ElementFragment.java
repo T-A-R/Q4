@@ -21,6 +21,7 @@ import java.util.List;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.QuestionAdapter;
+import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.model.ElementType;
@@ -74,6 +75,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private Long startTime;
     private Integer startElementId;
     private Integer nextElementId;
+    private Integer prevElementId;
 
     private QuestionAdapter adapter;
 
@@ -161,28 +163,35 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         MainFragment.enableSideMenu();
         initCurrentElements();
         initQuestion();
+        updateCurrentQuestionnaire();
         initRecyclerView();
     }
 
     @Override
     public void onClick(View view) {
         if (view == btnNext) {
-            onReady();
+//            onReady();
 
-            if (!isNextBtnPressed) {
-                isNextBtnPressed = true;
-                if(saveElement()) {
-                    replaceFragment(new ElementFragment().setStartElement(nextElementId));
-                } else {
-                    showToast("Выберите ответ.");
-                }
+//            if (!isNextBtnPressed) {
+//                isNextBtnPressed = true;
+            if (saveElement()) {
+                Log.d(TAG, "nextElement: " + nextElementId);
+//                    ElementFragment fragment = new ElementFragment();
+//                    fragment.setStartElement(nextElementId);
+//                    replaceFragment(fragment);
+                TransFragment fragment = new TransFragment();
+                fragment.setStartElement(nextElementId);
+                replaceFragment(fragment);
+            } else {
+                showToast("Выберите ответ.");
             }
+//            }
         } else if (view == btnPrev) {
-            showScreensaver(false);
+//            showScreensaver(false);
+            TransFragment fragment = new TransFragment();
+            fragment.setStartElement(nextElementId);
+            replaceFragment(fragment);
 
-            if (!isPrevBtnPressed) {
-                isPrevBtnPressed = true;
-            }
         } else if (view == btnExit) {
 
 
@@ -232,12 +241,26 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
         startTime = DateUtils.getCurrentTimeMillis();
 
-        if (getCurrentElements() != null && getCurrentElements().size() > 0) {
-            for (int i = 0; i < getCurrentElements().size(); i++) {
-                if (!getCurrentElements().get(i).getType().equals(ElementType.BOX)) {
-                    currentQuestionId = getCurrentElements().get(i).getRelative_id();
-                    currentElement = getCurrentElements().get(i);
-                    break;
+//        if (getCurrentElements() != null && getCurrentElements().size() > 0) {
+//            for (int i = 0; i < getCurrentElements().size(); i++) {
+//                if (!getCurrentElements().get(i).getType().equals(ElementType.BOX)) {
+//                    currentQuestionId = getCurrentElements().get(i).getRelative_id();
+//                    currentElement = getCurrentElements().get(i);
+//                    break;
+//                }
+//            }
+//        }
+
+        if (startElementId != null && startElementId != 0) {
+            currentElement = getElement(startElementId);
+        } else {
+            if (getCurrentElements() != null && getCurrentElements().size() > 0) {
+                for (int i = 0; i < getCurrentElements().size(); i++) {
+                    if (!getCurrentElements().get(i).getType().equals(ElementType.BOX)) {
+                        startElementId = getCurrentElements().get(i).getRelative_id();
+                        currentElement = getCurrentElements().get(i);
+                        break;
+                    }
                 }
             }
         }
@@ -304,10 +327,25 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     }
 
+    private void updateCurrentQuestionnaire() {
+        try {
+            getDao().setCurrentElement(startElementId);
+            getDao().setQuestionTime(DateUtils.getCurrentTimeMillis());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private boolean saveElement() {
         boolean saved = false;
         for (int i = 0; i < adapter.getAnswersChecked().length; i++) {
-            if(adapter.getAnswersChecked()[i]) {
+            if (adapter.getAnswersChecked()[i]) {
+                if (currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+                    //TODO Переход из контейнера с ротацией
+                    nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                } else if (nextElementId == null) {
+                    nextElementId = answersList.get(0).getElementOptionsR().getJump();
+                }
                 ElementPassedR elementPassedR = new ElementPassedR();
                 elementPassedR.setRelative_id(answersList.get(i).getRelative_id());
                 elementPassedR.setProject_id(currentElement.getProjectId());
@@ -316,6 +354,16 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 elementPassedR.setValue(adapter.getOpenAnswersText()[i]);
 
                 try {
+                    List<Integer> prevList;
+                    if(getQuestionnaire().getPrev_element_id() != null) {
+                        prevList = getQuestionnaire().getPrev_element_id();
+                        prevList.add(startElementId);
+
+                    } else {
+                        prevList = new ArrayList<>();
+                        prevList.add(startElementId);
+                    }
+                    getDao().setPrevElement(prevList);
                     getDao().insertElementPassedR(elementPassedR);
                     saved = true;
                 } catch (Exception e) {

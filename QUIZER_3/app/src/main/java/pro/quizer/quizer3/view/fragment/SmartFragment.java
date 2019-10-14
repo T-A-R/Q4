@@ -54,6 +54,7 @@ public abstract class SmartFragment extends Fragment {
     private int layoutSrc;
     private HashMap<Integer, ElementModelNew> mMap;
 
+    private CurrentQuestionnaireR currentQuestionnaire = null;
     List<ElementItemR> elementItemRList = null;
 
     public SmartFragment(int layoutSrc) {
@@ -426,6 +427,7 @@ public abstract class SmartFragment extends Fragment {
     public void initCurrentElements() {
         try {
             elementItemRList = getDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+            currentQuestionnaire = getDao().getCurrentQuestionnaireR();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -462,12 +464,6 @@ public abstract class SmartFragment extends Fragment {
     }
 
     public CurrentQuestionnaireR getQuestionnaire() {
-        CurrentQuestionnaireR currentQuestionnaireR = null;
-        try {
-            currentQuestionnaireR = getDao().getCurrentQuestionnaireR();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return currentQuestionnaireR;
+        return currentQuestionnaire;
     }
 }

@@ -20,6 +20,7 @@ import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.utils.Fonts;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
+
 import android.util.Log;
 
 public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListObjectViewHolder> {
@@ -149,10 +150,10 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
             } else {
                 answerDesc.setVisibility(View.GONE);
             }
-            if(item.getElementOptionsR().isUnchecker()) {
-                if(mAnswerChecked[getAdapterPosition()]) {
-                    for(int i = 0; i < mAnswerChecked.length; i++) {
-                        if(i != getAdapterPosition()) {
+            if (item.getElementOptionsR().isUnchecker()) {
+                if (mAnswerChecked[getAdapterPosition()]) {
+                    for (int i = 0; i < mAnswerChecked.length; i++) {
+                        if (i != getAdapterPosition()) {
                             mAnswerChecked[i] = false;
                         }
                     }
@@ -167,11 +168,16 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
             notifyDataSetChanged();
 
             if (isMulti) {
-                if (mAnswerChecked[getAdapterPosition()]) {
-                    mAnswerChecked[getAdapterPosition()] = false;
+                if (mAnswerChecked[lastSelectedPosition]) {
+                    mAnswerChecked[lastSelectedPosition] = false;
                 } else {
-                    mAnswerChecked[getAdapterPosition()] = true;
+                    mAnswerChecked[lastSelectedPosition] = true;
                 }
+            } else {
+                for (int i = 0; i < mAnswerChecked.length; i++) {
+                    mAnswerChecked[i] = false;
+                }
+                mAnswerChecked[lastSelectedPosition] = true;
             }
 
             if (isChecked) {
@@ -186,7 +192,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
             String answer = null;
             if (answerEditText.getText() != null)
                 answer = answerEditText.getText().toString();
-            onUserClickListener.onAnswerClick(getAdapterPosition(), isChecked, answer);
+            onUserClickListener.onAnswerClick(lastSelectedPosition, isChecked, answer);
         }
     }
 

@@ -24,6 +24,7 @@ import pro.quizer.quizer3.adapter.QuestionAdapter;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
+import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.Fonts;
@@ -46,6 +47,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private LinearLayout titleImagesCont2;
     private LinearLayout questionCont;
     private LinearLayout questionImagesCont;
+    private TextView tvUnhide;
     private TextView tvTitle1;
     private TextView tvTitle2;
     private TextView tvQuestion;
@@ -100,6 +102,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         questionCont = (LinearLayout) findViewById(R.id.question_cont);
         questionImagesCont = (LinearLayout) findViewById(R.id.question_images_cont);
         rvAnswers = (RecyclerView) findViewById(R.id.answers_recyclerview);
+        tvUnhide = (TextView) findViewById(R.id.unhide_title);
         tvTitle1 = (TextView) findViewById(R.id.title_1);
         tvTitle2 = (TextView) findViewById(R.id.title_2);
         tvTitleDesc1 = (TextView) findViewById(R.id.title_desc_1);
@@ -121,12 +124,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         btnPrev = (Button) findViewById(R.id.back_btn);
         btnExit = (Button) findViewById(R.id.exit_btn);
 
+        tvUnhide.setTypeface(Fonts.getFuturaPtBook());
         tvTitle1.setTypeface(Fonts.getFuturaPtBook());
         tvTitle2.setTypeface(Fonts.getFuturaPtBook());
-        tvTitleDesc1.setTypeface(Fonts.getFuturaPtBook());
-        tvTitleDesc2.setTypeface(Fonts.getFuturaPtBook());
+//        tvTitleDesc1.setTypeface(Fonts.getFuturaPtBook());
+//        tvTitleDesc2.setTypeface(Fonts.getFuturaPtBook());
         tvQuestion.setTypeface(Fonts.getFuturaPtBook());
-        tvQuestionDesc.setTypeface(Fonts.getFuturaPtBook());
+//        tvQuestionDesc.setTypeface(Fonts.getFuturaPtBook());
         btnNext.setTypeface(Fonts.getFuturaPtBook());
         btnPrev.setTypeface(Fonts.getFuturaPtBook());
         btnExit.setTypeface(Fonts.getFuturaPtBook());
@@ -170,27 +174,36 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if (view == btnNext) {
-//            onReady();
 
-//            if (!isNextBtnPressed) {
-//                isNextBtnPressed = true;
-            if (saveElement()) {
-                Log.d(TAG, "nextElement: " + nextElementId);
-//                    ElementFragment fragment = new ElementFragment();
-//                    fragment.setStartElement(nextElementId);
-//                    replaceFragment(fragment);
-                TransFragment fragment = new TransFragment();
-                fragment.setStartElement(nextElementId);
+            if (!isNextBtnPressed) {
+                isNextBtnPressed = true;
+                if (saveElement()) {
+                    TransFragment fragment = new TransFragment();
+                    fragment.setStartElement(nextElementId);
+                    replaceFragment(fragment);
+                } else {
+                    showToast("Выберите ответ.");
+                }
+            }
+        } else if (view == btnPrev) {
+            TransFragment fragment = new TransFragment();
+            List<PrevElementsR> prevList;
+            if (prevElementId != 0) {
+                prevList = getQuestionnaire().getPrev_element_id();
+                prevElementId = prevList.get(prevList.size() - 1).getPrevId();
+                prevList.remove(prevList.size() - 1);
+                try {
+                    getDao().setPrevElement(prevList);
+                } catch (Exception e) {
+                    showToast(getString(R.string.set_last_element_error));
+                    return;
+                }
+                fragment.setStartElement(prevElementId);
                 replaceFragment(fragment);
             } else {
-                showToast("Выберите ответ.");
+                onClick(btnExit);
             }
-//            }
-        } else if (view == btnPrev) {
-//            showScreensaver(false);
-            TransFragment fragment = new TransFragment();
-            fragment.setStartElement(nextElementId);
-            replaceFragment(fragment);
+
 
         } else if (view == btnExit) {
 
@@ -241,28 +254,39 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
         startTime = DateUtils.getCurrentTimeMillis();
 
-//        if (getCurrentElements() != null && getCurrentElements().size() > 0) {
-//            for (int i = 0; i < getCurrentElements().size(); i++) {
-//                if (!getCurrentElements().get(i).getType().equals(ElementType.BOX)) {
-//                    currentQuestionId = getCurrentElements().get(i).getRelative_id();
-//                    currentElement = getCurrentElements().get(i);
-//                    break;
-//                }
-//            }
-//        }
-
-        if (startElementId != null && startElementId != 0) {
-            currentElement = getElement(startElementId);
+        List<PrevElementsR> prevList;
+        if (getQuestionnaire().getPrev_element_id() != null && getQuestionnaire().getPrev_element_id().size() > 0) {
+            prevList = getQuestionnaire().getPrev_element_id();
+            prevElementId = prevList.get(prevList.size() - 1).getPrevId();
         } else {
-            if (getCurrentElements() != null && getCurrentElements().size() > 0) {
-                for (int i = 0; i < getCurrentElements().size(); i++) {
-                    if (!getCurrentElements().get(i).getType().equals(ElementType.BOX)) {
-                        startElementId = getCurrentElements().get(i).getRelative_id();
-                        currentElement = getCurrentElements().get(i);
-                        break;
-                    }
+            prevElementId = 0;
+        }
+
+        if(startElementId == null) startElementId = 0;
+
+        if (getCurrentElements() != null && getCurrentElements().size() > 0) {
+
+            if (startElementId != 0) {
+                currentElement = getElement(startElementId);
+            } else {
+                currentElement = getCurrentElements().get(0);
+            }
+
+            boolean found = false;
+
+            for (int i = 0; i < getCurrentElements().size(); i++) {
+                if(getCurrentElements().get(i).getRelative_id() == currentElement.getRelative_id()) {
+                    found = true;
+                }
+                if (found && !getCurrentElements().get(i).getType().equals(ElementType.BOX)) {
+                    startElementId = getCurrentElements().get(i).getRelative_id();
+                    currentElement = getCurrentElements().get(i);
+                    break;
                 }
             }
+
+            Log.d(TAG, "==================== initQuestion: " + currentElement.getRelative_id());
+            showElementsQuery();
         }
 
         tvQuestion.setText(currentElement.getElementOptionsR().getTitle());
@@ -354,14 +378,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 elementPassedR.setValue(adapter.getOpenAnswersText()[i]);
 
                 try {
-                    List<Integer> prevList;
-                    if(getQuestionnaire().getPrev_element_id() != null) {
+                    List<PrevElementsR> prevList;
+                    if (getQuestionnaire().getPrev_element_id() != null) {
                         prevList = getQuestionnaire().getPrev_element_id();
-                        prevList.add(startElementId);
+                        prevList.add(new PrevElementsR(startElementId));
 
                     } else {
                         prevList = new ArrayList<>();
-                        prevList.add(startElementId);
+                        prevList.add(new PrevElementsR(startElementId));
                     }
                     getDao().setPrevElement(prevList);
                     getDao().insertElementPassedR(elementPassedR);

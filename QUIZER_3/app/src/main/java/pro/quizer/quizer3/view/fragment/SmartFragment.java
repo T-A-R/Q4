@@ -429,6 +429,7 @@ public abstract class SmartFragment extends Fragment {
             elementItemRList = getDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
             currentQuestionnaire = getDao().getCurrentQuestionnaireR();
         } catch (Exception e) {
+            Log.d(TAG, "initCurrentElements: ERROR");
             e.printStackTrace();
         }
     }
@@ -465,5 +466,11 @@ public abstract class SmartFragment extends Fragment {
 
     public CurrentQuestionnaireR getQuestionnaire() {
         return currentQuestionnaire;
+    }
+
+    public void showElementsQuery() {
+        for(int i = 0; i < getQuestionnaire().getPrev_element_id().size(); i++) {
+            Log.d(TAG, i + " element: " + getQuestionnaire().getPrev_element_id().get(i).getPrevId());
+        }
     }
 }

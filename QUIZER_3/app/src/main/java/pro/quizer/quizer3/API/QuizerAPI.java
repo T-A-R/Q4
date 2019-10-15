@@ -85,7 +85,7 @@ public class QuizerAPI {
         CoreApplication.getQuizerApi().getConfig(url, fields).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                Log.d(TAG, "QuizerAPI.getConfig.onResponse() Message: " + response.message());
+                Log.d(TAG, "QuizerAPI.getConfig.onResponse() Message: " + response);
                 listener.onGetConfig(response.body());
             }
 

@@ -20,6 +20,7 @@ import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.utils.Fonts;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
+import static pro.quizer.quizer3.model.OptionsOpenType.CHECKBOX;
 
 import android.util.Log;
 
@@ -31,7 +32,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
     private String[] mDataset;
     private boolean[] mAnswerChecked;
     private int lastSelectedPosition = -1;
-    public boolean isOpen;
+    public boolean isOpen = false;
     public boolean isMulti;
     private String openType;
 
@@ -68,6 +69,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
             if (position == lastSelectedPosition) {
                 holder.editButton.setVisibility(View.GONE);
                 holder.button.setImageResource(R.drawable.radio_button_checked);
+                holder.answerEditText.requestFocus();
                 if (isOpen) {
                     holder.answerEditText.setVisibility(View.VISIBLE);
                     holder.answerEditText.requestFocus();
@@ -111,6 +113,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
         public EditText answerEditText;
         ImageView button;
         ImageView editButton;
+        RelativeLayout openQuestionCont;
         RelativeLayout openAnswerCont;
         LinearLayout cont;
         boolean isChecked = false;
@@ -126,7 +129,8 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
             answerEditText = (EditText) itemView.findViewById(R.id.edit_answer);
             button = (ImageView) itemView.findViewById(R.id.radio_button);
             editButton = (ImageView) itemView.findViewById(R.id.edit_button);
-            openAnswerCont = (RelativeLayout) itemView.findViewById(R.id.open_question);
+            openQuestionCont = (RelativeLayout) itemView.findViewById(R.id.open_question);
+            openAnswerCont = (RelativeLayout) itemView.findViewById(R.id.open_cont);
             cont = (LinearLayout) itemView.findViewById(R.id.answer_cont);
 
             answerTitle.setTypeface(Fonts.getFuturaPtBook());
@@ -150,6 +154,13 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
             } else {
                 answerDesc.setVisibility(View.GONE);
             }
+
+            if (item.getElementOptionsR().getOpen_type().equals(CHECKBOX)) {
+                openAnswerCont.setVisibility(View.GONE);
+            } else {
+                openAnswerCont.setVisibility(View.VISIBLE);
+            }
+
             if (item.getElementOptionsR().isUnchecker()) {
                 if (mAnswerChecked[getAdapterPosition()]) {
                     for (int i = 0; i < mAnswerChecked.length; i++) {

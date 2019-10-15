@@ -60,7 +60,7 @@ public class CurrentQuestionnaireR {
 
     @ColumnInfo(name = "prev_element_id")
     @TypeConverters({PrevQuestionConverter.class})
-    private List<Integer> prev_element_id;
+    private List<PrevElementsR> prev_element_id;
 
     @ColumnInfo(name = "current_element_id")
     private Integer current_element_id;
@@ -68,7 +68,7 @@ public class CurrentQuestionnaireR {
     public CurrentQuestionnaireR() {
     }
 
-    public CurrentQuestionnaireR(String token, Integer project_id, Integer user_project_id, Long start_date, String gps, String gps_network, Long gps_time, Long gps_time_network, boolean used_fake_gps, Long fake_gps_time, Long auth_time_difference, Long send_time_difference, Long quota_time_difference, Long question_start_time, List<Integer> prev_element_id, Integer current_element_id) {
+    public CurrentQuestionnaireR(String token, Integer project_id, Integer user_project_id, Long start_date, String gps, String gps_network, Long gps_time, Long gps_time_network, boolean used_fake_gps, Long fake_gps_time, Long auth_time_difference, Long send_time_difference, Long quota_time_difference, Long question_start_time, List<PrevElementsR> prev_element_id, Integer current_element_id) {
         this.token = token;
         this.project_id = project_id;
         this.user_project_id = user_project_id;
@@ -207,11 +207,11 @@ public class CurrentQuestionnaireR {
         this.question_start_time = question_start_time;
     }
 
-    public List<Integer> getPrev_element_id() {
+    public List<PrevElementsR> getPrev_element_id() {
         return prev_element_id;
     }
 
-    public void setPrev_element_id(List<Integer> prev_element_id) {
+    public void setPrev_element_id(List<PrevElementsR> prev_element_id) {
         this.prev_element_id = prev_element_id;
     }
 

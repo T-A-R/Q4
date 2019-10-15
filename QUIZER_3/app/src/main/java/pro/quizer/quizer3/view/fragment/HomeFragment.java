@@ -7,9 +7,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import java9.util.concurrent.CompletableFuture;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
+import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.SyncInfoExecutable;
 import pro.quizer.quizer3.model.config.ConfigModel;
@@ -246,6 +250,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     questionnaire.setUsed_fake_gps(mIsUserFakeGps);
                     questionnaire.setFake_gps_time(mFakeGpsTime);
                     questionnaire.setQuestion_start_time(DateUtils.getCurrentTimeMillis());
+                    List<PrevElementsR> prev = new ArrayList<>();
+                    prev.add(new PrevElementsR(0));
+                    questionnaire.setPrev_element_id(prev);
 
                     getDao().insertCurrentQuestionnaireR(questionnaire);
                     return true;

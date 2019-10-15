@@ -1,6 +1,7 @@
 package pro.quizer.quizer3.view.fragment;
 
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -43,6 +44,8 @@ import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
+
+import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class AuthFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.AuthUserCallback {
 
@@ -317,6 +320,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             String responseJson = null;
             try {
                 responseJson = responseBody.string();
+                Log.d(TAG, "downloadConfig: " + responseJson);
             } catch (IOException e) {
                 showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_602));
                 addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_602_desc), e.getMessage());

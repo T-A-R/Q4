@@ -10,25 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pro.quizer.quizer3.database.models.ElementContentsR;
+import pro.quizer.quizer3.database.models.PrevElementsR;
 
 public class PrevQuestionConverter {
     @TypeConverter
-    public static List<Integer> fromSting(String value) {
-        Type listType = new TypeToken<ArrayList<String>>() {}.getType();
-//        final GsonBuilder gsonBuilder = new GsonBuilder();
-//        ElementContentsR elementContentsR = null;
-//
-//        try {
-//            elementContentsR = gsonBuilder.create().fromJson(value, ElementContentsR.class);
-//        } catch (final Exception pE) {
-//            Log.d(TAG, "ElementContentsRConverter: error converting json to CategoryR");
-//        }
-//
-//        return elementContentsR;
+    public static List<PrevElementsR> fromSting(String value) {
+        Type listType = new TypeToken<ArrayList<PrevElementsR>>() {}.getType();
         return new Gson().fromJson(value, listType);
     }
     @TypeConverter
-    public static String fromElementContentsR(List<Integer> elementContentsR) {
+    public static String fromElementContentsR(List<PrevElementsR> elementContentsR) {
         Gson gson = new Gson();
         String json = gson.toJson(elementContentsR);
         return json;

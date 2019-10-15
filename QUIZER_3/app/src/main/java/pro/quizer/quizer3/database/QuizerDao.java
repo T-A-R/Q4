@@ -4,6 +4,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.TypeConverters;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
+import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.SmsItemR;
 import pro.quizer.quizer3.database.models.UserModelR;
@@ -219,7 +221,8 @@ public interface QuizerDao {
     void setQuestionTime(Long time);
 
     @Query("UPDATE CurrentQuestionnaireR SET prev_element_id = :id ")
-    void setPrevElement(List<Integer> id);
+    @TypeConverters({PrevQuestionConverter.class})
+    void setPrevElement(List<PrevElementsR> id);
 
     @Query("UPDATE CurrentQuestionnaireR SET current_element_id = :id ")
     void setCurrentElement(Integer id);

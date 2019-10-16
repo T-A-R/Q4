@@ -145,6 +145,7 @@
     <string name="make_elements_error">Ошибка создания модели анкеты</string>
     <string name="exit_questionaire_warning">Вы уверены, что хотите принудительно прервать анкету? \nЕё содержимое будет потеряно.</string>
     <string name="set_last_element_error">Ошибка обновления таблицы переходов</string>
+    <string name="select_spinner">Выбрать…</string>
 
 
 </resources>

@@ -107,6 +107,7 @@
             android:layout_marginLeft="@dimen/_8sdp"
             android:layout_marginRight="@dimen/_8sdp"
             android:maxLines="1"
+            android:inputType="text"
             android:textSize="@dimen/_12ssp" />
 
         <ImageView

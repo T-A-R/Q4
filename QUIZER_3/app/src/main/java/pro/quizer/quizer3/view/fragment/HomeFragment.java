@@ -255,6 +255,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     questionnaire.setPrev_element_id(prev);
 
                     getDao().insertCurrentQuestionnaireR(questionnaire);
+                    getDao().clearWasElementShown(false);
                     return true;
                 } catch (Exception e) {
                     Log.d(TAG, "startQuestionnaire: insertCurrentQuestionnaireR() error.");

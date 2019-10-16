@@ -42,6 +42,9 @@ public class ElementItemR {
     @ColumnInfo(name = "relative_parent_id")
     private Integer relative_parent_id;
 
+    @ColumnInfo(name = "was_shown")
+    private boolean was_shown;
+
     @ColumnInfo(name = "elementOptionsR")
     @TypeConverters({ElementOptionsRConverter.class})
     private ElementOptionsR elementOptionsR;
@@ -51,6 +54,7 @@ public class ElementItemR {
     private List<ElementContentsR> elementContentsR;
 
     public ElementItemR() {
+        this.was_shown = false;
     }
 
     public ElementItemR(String configId, int userId, int projectId, int questionnaireId, String type, String subtype, Integer relative_id, Integer relative_parent_id, ElementOptionsR elementOptionsR, List<ElementContentsR> elementContentsR) {
@@ -64,6 +68,7 @@ public class ElementItemR {
         this.relative_parent_id = relative_parent_id;
         this.elementOptionsR = elementOptionsR;
         this.elementContentsR = elementContentsR;
+        this.was_shown = false;
     }
 
     public int getId() {
@@ -152,5 +157,13 @@ public class ElementItemR {
 
     public void setElementContentsR(List<ElementContentsR> elementContentsR) {
         this.elementContentsR = elementContentsR;
+    }
+
+    public boolean isWas_shown() {
+        return was_shown;
+    }
+
+    public void setWas_shown(boolean was_shown) {
+        this.was_shown = was_shown;
     }
 }

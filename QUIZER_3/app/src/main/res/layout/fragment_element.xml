@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/brand_color"
                 android:orientation="vertical"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <android.support.constraint.ConstraintLayout
 
@@ -247,7 +247,6 @@
 
             </LinearLayout>
 
-
             <TextView
                 android:id="@+id/question"
                 android:layout_width="match_parent"
@@ -306,11 +305,28 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/spinner_cont"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_shadow"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    android:id="@+id/answers_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"/>
+
+            </LinearLayout>
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/answers_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/_8sdp" />
+                android:layout_marginBottom="@dimen/_8sdp"
+                android:visibility="gone" />
 
         </LinearLayout>
 

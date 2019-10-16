@@ -7,6 +7,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -136,6 +137,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
             answerTitle.setTypeface(Fonts.getFuturaPtBook());
             answerDesc.setTypeface(Fonts.getFuturaPtBook());
             answerEditText.setTypeface(Fonts.getFuturaPtBook());
+            answerEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
             this.onUserClickListener = onUserClickListener;
 

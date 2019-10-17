@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import pro.quizer.quizer3.view.activity.ScreenActivity;
 import pro.quizer.quizer3.model.User;
+
+import static pro.quizer.quizer3.MainActivity.TAG;
 
 @SuppressWarnings("unused")
 public abstract class ScreenFragment extends SmartFragment {
@@ -141,6 +144,7 @@ public abstract class ScreenFragment extends SmartFragment {
 //        }
 
         View view = getView();
+        Log.d(TAG, "replaceFragment: " + screenListener + " " + view);
         if (screenListener != null && view != null)
             view.post(() -> screenListener.fragmentReplace(ScreenFragment.this, newScreen));
     }

@@ -5,6 +5,7 @@ import pro.quizer.quizer3.R;
 public class TransFragment extends ScreenFragment {
 
     private int startElementId;
+    private boolean resumed;
 
     public TransFragment() {
         super(R.layout.fragment_trans);
@@ -12,13 +13,20 @@ public class TransFragment extends ScreenFragment {
 
     public TransFragment setStartElement(Integer startElementId) {
         this.startElementId = startElementId;
+        this.resumed = false;
+        return this;
+    }
+
+    public TransFragment setStartElement(Integer startElementId, boolean resumed) {
+        this.startElementId = startElementId;
+        this.resumed = resumed;
         return this;
     }
 
     @Override
     protected void onReady() {
         ElementFragment fragment = new ElementFragment();
-        fragment.setStartElement(startElementId);
+        fragment.setStartElement(startElementId, resumed);
         replaceFragment(fragment);
     }
 }

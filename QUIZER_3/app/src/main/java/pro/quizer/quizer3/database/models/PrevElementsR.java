@@ -14,11 +14,15 @@ public class PrevElementsR {
     @ColumnInfo(name = "prevId")
     private Integer prevId;
 
+    @ColumnInfo(name = "nextId")
+    private Integer nextId;
+
     public PrevElementsR() {
     }
 
-    public PrevElementsR(Integer prevId) {
+    public PrevElementsR(Integer prevId, Integer nextId) {
         this.prevId = prevId;
+        this.nextId = nextId;
     }
 
     public int getId() {
@@ -35,5 +39,13 @@ public class PrevElementsR {
 
     public void setPrevId(Integer prevId) {
         this.prevId = prevId;
+    }
+
+    public Integer getNextId() {
+        return nextId;
+    }
+
+    public void setNextId(Integer nextId) {
+        this.nextId = nextId;
     }
 }

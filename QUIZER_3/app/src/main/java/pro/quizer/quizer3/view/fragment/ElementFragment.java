@@ -1,6 +1,8 @@
 package pro.quizer.quizer3.view.fragment;
 
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +24,7 @@ import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.R;
@@ -32,6 +35,7 @@ import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.ElementType;
+import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
@@ -91,9 +95,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private int spinnerSelection = -1;
     private boolean isTitle1Hided = false;
     private boolean isTitle2Hided = false;
+    private boolean isResumed = false;
 
     private QuestionAdapter adapter;
     private ArrayAdapter adapterSpinner;
+    private List<AnswerState> savedAnswerStates;
+
+    private final String KEY_RECYCLER_STATE = "recycler_state";
 
     public ElementFragment() {
         super(R.layout.fragment_element);
@@ -101,6 +109,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     public ElementFragment setStartElement(Integer startElementId) {
         this.startElementId = startElementId;
+        return this;
+    }
+
+    public ElementFragment setStartElement(Integer startElementId, boolean resumed) {
+        this.startElementId = startElementId;
+        this.isResumed = resumed;
         return this;
     }
 
@@ -181,6 +195,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
         MainFragment.enableSideMenu();
         initCurrentElements();
+        loadResumedData();
         initQuestion();
         updateCurrentQuestionnaire();
         initRecyclerView();
@@ -193,6 +208,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //            if (!isNextBtnPressed) {
 //                isNextBtnPressed = true;
             if (saveElement()) {
+                Log.d(TAG, "LOADING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + nextElementId);
                 TransFragment fragment = new TransFragment();
                 fragment.setStartElement(nextElementId);
                 replaceFragment(fragment);
@@ -221,17 +237,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
 
         } else if (view == btnExit) {
-            if (!isExitBtnPressed) {
-                isExitBtnPressed = true;
-                try {
-                    getDao().clearCurrentQuestionnaireR();
-                    getDao().clearElementPassedR();
-                } catch (Exception e) {
-                    isExitBtnPressed = false;
-                    e.printStackTrace();
-                }
-                replaceFragment(new HomeFragment());
+//            if (!isExitBtnPressed) {
+//                isExitBtnPressed = true;
+            try {
+                getDao().clearCurrentQuestionnaireR();
+                getDao().clearElementPassedR();
+            } catch (Exception e) {
+                isExitBtnPressed = false;
+                e.printStackTrace();
             }
+            replaceFragment(new HomeFragment());
+//            }
         } else if (view == closeImage1) {
             titleCont1.setVisibility(View.GONE);
             unhideCont.setVisibility(View.VISIBLE);
@@ -253,33 +269,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         }
     }
 
-
-    @Override
-    public boolean onBackPressed() {
-        if (isExit) {
-            replaceFragment(new HomeFragment());
-        } else {
-            Toast.makeText(getContext(), getString(R.string.exit_questionaire_warning), Toast.LENGTH_SHORT).show();
-            isExit = true;
-        }
-        return true;
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
     private void initQuestion() {
 
         startTime = DateUtils.getCurrentTimeMillis();
 
         List<PrevElementsR> prevList;
+        if (getQuestionnaire() == null) {
+            initCurrentElements();
+        }
         if (getQuestionnaire().getPrev_element_id() != null && getQuestionnaire().getPrev_element_id().size() > 0) {
             prevList = getQuestionnaire().getPrev_element_id();
             prevElementId = prevList.get(prevList.size() - 1).getPrevId();
@@ -336,7 +333,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             }
             if (parentElement != null) {
                 if (parentElement.getType().equals(ElementType.BOX) && !parentElement.isWas_shown()) {
-                    getDao().setWasElementShown(true,parentElement.getRelative_id(), parentElement.getUserId(), parentElement.getProjectId());
+                    getDao().setWasElementShown(true, parentElement.getRelative_id(), parentElement.getUserId(), parentElement.getProjectId());
                     titleCont2.setVisibility(View.VISIBLE);
                     tvTitle2.setText(parentElement.getElementOptionsR().getTitle());
                     if (parentElement.getElementOptionsR().getDescription() != null) {
@@ -353,7 +350,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         }
                         if (parentElement2 != null) {
                             if (parentElement2.getType().equals(ElementType.BOX) && !parentElement2.isWas_shown()) {
-                                getDao().setWasElementShown(true,parentElement2.getRelative_id(), parentElement2.getUserId(), parentElement2.getProjectId());
+                                getDao().setWasElementShown(true, parentElement2.getRelative_id(), parentElement2.getUserId(), parentElement2.getProjectId());
                                 titleCont1.setVisibility(View.VISIBLE);
                                 tvTitle1.setText(parentElement2.getElementOptionsR().getTitle());
                                 if (parentElement2.getElementOptionsR().getDescription() != null) {
@@ -421,24 +418,27 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private boolean saveElement() {
         boolean saved = false;
         if (answerType.equals(ElementSubtype.LIST)) {
-            for (int i = 0; i < adapter.getAnswersChecked().length; i++) {
-                if (adapter.getAnswersChecked()[i]) {
+            List<AnswerState> answerStates = adapter.getAnswers();
+            for (int i = 0; i < answerStates.size(); i++) {
+                if (answerStates.get(i).isChecked()) {
                     if (currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
                         //TODO Переход из контейнера с ротацией
                         nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
-                    } else if (nextElementId == null) {
-                        nextElementId = answersList.get(0).getElementOptionsR().getJump();
+                    } else if (nextElementId == null || nextElementId == 0) {
+
+                        nextElementId = getElement(answerStates.get(i).getRelative_id()).getElementOptionsR().getJump();
+                        Log.d(TAG, "saveElement: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< " + nextElementId);
                     }
                     ElementPassedR elementPassedR = new ElementPassedR();
-                    elementPassedR.setRelative_id(answersList.get(i).getRelative_id());
+                    elementPassedR.setRelative_id(answerStates.get(i).getRelative_id());
                     elementPassedR.setProject_id(currentElement.getProjectId());
                     elementPassedR.setToken(getQuestionnaire().getToken());
                     elementPassedR.setDuration(startTime - DateUtils.getCurrentTimeMillis());
-                    elementPassedR.setValue(adapter.getOpenAnswersText()[i]);
+                    elementPassedR.setValue(answerStates.get(i).getData());
 
                     try {
                         getDao().insertElementPassedR(elementPassedR);
-                        getDao().setWasElementShown(true,startElementId, currentElement.getUserId(), currentElement.getProjectId());
+                        getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
                         saved = true;
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -449,11 +449,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 List<PrevElementsR> prevList;
                 if (getQuestionnaire().getPrev_element_id() != null) {
                     prevList = getQuestionnaire().getPrev_element_id();
-                    prevList.add(new PrevElementsR(startElementId));
+                    prevList.add(new PrevElementsR(startElementId, nextElementId));
 
                 } else {
                     prevList = new ArrayList<>();
-                    prevList.add(new PrevElementsR(startElementId));
+                    prevList.add(new PrevElementsR(startElementId, nextElementId));
                 }
                 try {
                     getDao().setPrevElement(prevList);
@@ -475,15 +475,15 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     List<PrevElementsR> prevList;
                     if (getQuestionnaire().getPrev_element_id() != null) {
                         prevList = getQuestionnaire().getPrev_element_id();
-                        prevList.add(new PrevElementsR(startElementId));
+                        prevList.add(new PrevElementsR(startElementId, nextElementId));
 
                     } else {
                         prevList = new ArrayList<>();
-                        prevList.add(new PrevElementsR(startElementId));
+                        prevList.add(new PrevElementsR(startElementId, nextElementId));
                     }
                     getDao().setPrevElement(prevList);
                     getDao().insertElementPassedR(elementPassedR);
-                    getDao().setWasElementShown(true,startElementId, currentElement.getUserId(), currentElement.getProjectId());
+                    getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
                     saved = true;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -492,17 +492,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         }
         showToast("" + saved);
         return saved;
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        //TODO save startTime
     }
 
     @Override
@@ -518,6 +507,91 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
         showToast("Выберите ответ");
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Parcelable listState = Objects.requireNonNull(rvAnswers.getLayoutManager()).onSaveInstanceState();
+        outState.putParcelable(KEY_RECYCLER_STATE, listState);
+        outState.putSerializable("LIST", (ArrayList<AnswerState>) adapter.getAnswers());
+        outState.putLong("startTime", startTime);
+        outState.putInt("startElementId", startElementId);
+        Log.d(TAG, "onSaveInstanceState: " + nextElementId);
+        if (nextElementId != null)
+            outState.putInt("nextElementId", nextElementId);
+        outState.putInt("prevElementId", prevElementId);
+        outState.putString("answerType", answerType);
+        outState.putBoolean("isTitle1Hided", isTitle1Hided);
+        outState.putBoolean("isTitle2Hided", isTitle2Hided);
+        outState.putInt("spinnerSelection", spinnerSelection);
+        outState.putInt("lastSelectedPosition", adapter.getLastSelectedPosition());
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        restoreViews(savedInstanceState);
+        restoreData(savedInstanceState);
+    }
+
+    public void restoreViews(Bundle bundle) {
+        if (bundle != null) {
+            Parcelable listState = bundle.getParcelable(KEY_RECYCLER_STATE);
+            rvAnswers.getLayoutManager().onRestoreInstanceState(listState);
+            adapter.setAnswers((List<AnswerState>) bundle.getSerializable("LIST"));
+            adapter.setLastSelectedPosition(bundle.getInt("lastSelectedPosition"));
+        }
+    }
+
+    public void restoreData(Bundle bundle) {
+        if (bundle != null) {
+            startTime = bundle.getLong("startTime");
+            startElementId = bundle.getInt("startElementId");
+            nextElementId = bundle.getInt("nextElementId", 0);
+            Log.d(TAG, "restoreData: " + nextElementId);
+            prevElementId = bundle.getInt("prevElementId");
+            spinnerSelection = bundle.getInt("spinnerSelection");
+            isTitle1Hided = bundle.getBoolean("isTitle1Hided");
+            isTitle2Hided = bundle.getBoolean("isTitle2Hided");
+            answerType = bundle.getString("answerType");
+        }
+    }
+
+    public void loadResumedData() {
+        List<PrevElementsR> prevList = getQuestionnaire().getPrev_element_id();
+        if (prevList != null && prevList.size() > 0) {
+            PrevElementsR lastPassedElement = prevList.get(prevList.size() - 1);
+            startElementId = lastPassedElement.getNextId();
+            Log.d(TAG, ">>>>>>>>>>>>>>>> loadResumedData: " + startElementId);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //TODO save startTime
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (isExit) {
+            replaceFragment(new HomeFragment());
+        } else {
+            Toast.makeText(getContext(), getString(R.string.exit_questionaire_warning), Toast.LENGTH_SHORT).show();
+            isExit = true;
+        }
+        return true;
     }
 }
 

@@ -14,10 +14,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.ElementItemR;
+import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.utils.Fonts;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
@@ -30,7 +32,8 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
     private OnAnswerClickListener onAnswerClickListener;
     private ElementItemR question;
     private List<ElementItemR> answersList;
-    private String[] mDataset;
+    private List<AnswerState> answersState;
+//    private String[] mDataset;
     private boolean[] mAnswerChecked;
     private int lastSelectedPosition = -1;
     public boolean isOpen = false;
@@ -41,13 +44,17 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
         this.question = question;
         this.answersList = answersList;
         this.onAnswerClickListener = onAnswerClickListener;
-        this.mDataset = new String[answersList.size()];
-        this.mAnswerChecked = new boolean[answersList.size()];
+//        this.mDataset = new String[answersList.size()];
+//        this.mAnswerChecked = new boolean[answersList.size()];
         if (question.getElementOptionsR().getOpen_type() != null) {
             this.isOpen = true;
             this.openType = question.getElementOptionsR().getOpen_type();
         }
         this.isMulti = question.getElementOptionsR().isPolyanswer();
+        this.answersState = new ArrayList<>();
+        for (int i = 0; i < answersList.size(); i++) {
+            this.answersState.add(new AnswerState(answersList.get(i).getRelative_id(), false, ""));
+        }
     }
 
     public void checkUnchecker() {
@@ -65,7 +72,11 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
 
     @Override
     public void onBindViewHolder(@NonNull ListObjectViewHolder holder, int position) {
-        holder.bind(answersList.get(position));
+        if (answersState == null) {
+            holder.bind(answersList.get(position), null);
+        } else {
+            holder.bind(answersList.get(position), answersState.get(position));
+        }
         if (!isMulti) {
             if (position == lastSelectedPosition) {
                 holder.editButton.setVisibility(View.GONE);
@@ -89,7 +100,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
                 }
             }
         } else {
-            if (mAnswerChecked[position]) {
+            if (answersState.get(position).isChecked()) {
                 holder.button.setImageResource(R.drawable.checkbox_checked);
             } else {
                 holder.button.setImageResource(R.drawable.checkbox_unchecked);
@@ -97,8 +108,8 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
         }
 
         holder.myCustomEditTextListener.updatePosition(holder.getAdapterPosition());
-        if (mDataset != null)
-            holder.answerEditText.setText(mDataset[holder.getAdapterPosition()]);
+//        if (mDataset != null)
+        holder.answerEditText.setText(answersState.get(holder.getAdapterPosition()).getData());
 
     }
 
@@ -148,7 +159,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
 
         }
 
-        public void bind(final ElementItemR item) {
+        public void bind(final ElementItemR item, AnswerState answerState) {
             answerTitle.setText(item.getElementOptionsR().getTitle());
             if (item.getElementOptionsR().getDescription() != null) {
                 answerDesc.setVisibility(View.VISIBLE);
@@ -164,13 +175,26 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
             }
 
             if (item.getElementOptionsR().isUnchecker()) {
-                if (mAnswerChecked[getAdapterPosition()]) {
-                    for (int i = 0; i < mAnswerChecked.length; i++) {
+                if (answerState.isChecked()) {
+                    for (int i = 0; i < answersState.size(); i++) {
                         if (i != getAdapterPosition()) {
-                            mAnswerChecked[i] = false;
+                            answersState.get(i).setChecked(false);
                         }
                     }
                 }
+            }
+
+            if (answerState != null) {
+                setChecked(answerState);
+            }
+        }
+
+        public void setChecked(AnswerState answerState) {
+            if (answerState.isChecked()) {
+                editButton.setVisibility(View.GONE);
+                answerEditText.setVisibility(View.VISIBLE);
+                answerEditText.setText(answerState.getData());
+//                answerEditText.requestFocus();
             }
         }
 
@@ -181,16 +205,16 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
             notifyDataSetChanged();
 
             if (isMulti) {
-                if (mAnswerChecked[lastSelectedPosition]) {
-                    mAnswerChecked[lastSelectedPosition] = false;
+                if (answersState.get(lastSelectedPosition).isChecked()) {
+                    answersState.get(lastSelectedPosition).setChecked(false);
                 } else {
-                    mAnswerChecked[lastSelectedPosition] = true;
+                    answersState.get(lastSelectedPosition).setChecked(true);
                 }
             } else {
-                for (int i = 0; i < mAnswerChecked.length; i++) {
-                    mAnswerChecked[i] = false;
+                for (int i = 0; i < answersState.size(); i++) {
+                    answersState.get(i).setChecked(false);
                 }
-                mAnswerChecked[lastSelectedPosition] = true;
+                answersState.get(lastSelectedPosition).setChecked(true);
             }
 
             if (isChecked) {
@@ -227,7 +251,8 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            mDataset[position] = charSequence.toString();
+            answersState.get(position).setData(charSequence.toString());
+//            mDataset[position] = charSequence.toString();
         }
 
         @Override
@@ -236,11 +261,36 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
         }
     }
 
-    public String[] getOpenAnswersText() {
-        return mDataset;
+//    public String[] getOpenAnswersText() {
+//        return mDataset;
+//    }
+
+//    public boolean[] getAnswersChecked() {
+//        return mAnswerChecked;
+//    }
+
+    public List<AnswerState> getAnswers() {
+        return answersState;
     }
 
-    public boolean[] getAnswersChecked() {
-        return mAnswerChecked;
+    public void setLastSelectedPosition(int lastSelectedPosition) {
+        this.lastSelectedPosition = lastSelectedPosition;
+        Log.d(TAG, "setLastSelectedPosition: " + lastSelectedPosition);
+    }
+
+    public int getLastSelectedPosition() {
+        Log.d(TAG, "getLastSelectedPosition: " + lastSelectedPosition);
+        return lastSelectedPosition;
+    }
+
+    public void setAnswers(List<AnswerState> answers) {
+        if (answers != null) {
+            for (int i = 0; i < answers.size(); i++) {
+                Log.d(TAG, "setAnswers: " + answers.get(i).getRelative_id() + " : " + answers.get(i).getData() + " : " + answers.get(i).isChecked());
+            }
+            this.answersState = answers;
+        } else {
+            Log.d(TAG, "setAnswers: NULL");
+        }
     }
 }

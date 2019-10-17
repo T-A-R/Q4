@@ -193,7 +193,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             replaceFragment(new HomeFragment());
         } else if (view == btnContinue) {
             Toast.makeText(getContext(), "Продолжение прерванной анкеты", Toast.LENGTH_SHORT).show();
-//            replaceFragment(new HomeFragment());
+            replaceFragment(new ElementFragment());
         }
     }
 
@@ -251,7 +251,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     questionnaire.setFake_gps_time(mFakeGpsTime);
                     questionnaire.setQuestion_start_time(DateUtils.getCurrentTimeMillis());
                     List<PrevElementsR> prev = new ArrayList<>();
-                    prev.add(new PrevElementsR(0));
+                    prev.add(new PrevElementsR(0,0));
                     questionnaire.setPrev_element_id(prev);
 
                     getDao().insertCurrentQuestionnaireR(questionnaire);

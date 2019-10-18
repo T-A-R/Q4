@@ -208,7 +208,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //            if (!isNextBtnPressed) {
 //                isNextBtnPressed = true;
             if (saveElement()) {
-                Log.d(TAG, "LOADING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + nextElementId);
                 TransFragment fragment = new TransFragment();
                 fragment.setStartElement(nextElementId);
                 replaceFragment(fragment);

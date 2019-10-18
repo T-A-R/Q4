@@ -144,8 +144,16 @@
     <string name="home_screen">Главный экран</string>
     <string name="make_elements_error">Ошибка создания модели анкеты</string>
     <string name="exit_questionaire_warning">Вы уверены, что хотите принудительно прервать анкету? \nЕё содержимое будет потеряно.</string>
+    <string name="fill_input_warning">Заполните текстовое поле в выбранных вариантах ответа.</string>
     <string name="set_last_element_error">Ошибка обновления таблицы переходов</string>
     <string name="select_spinner">Выбрать…</string>
+    <string name="default_placeholder">Введите ответ</string>
+    <string name="hint_time">Укажите время</string>
+    <string name="hint_date">Укажите дату</string>
+    <string name="apply">Принять</string>
+    <string name="cancel">Отмена</string>
+    <string name="table_label">ВОПРОС&lt;br /&gt;ОТВЕТ</string>
+    <string name="view_OK">ОК</string>
 
 
 </resources>

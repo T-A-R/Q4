@@ -51,6 +51,9 @@ public interface QuizerDao {
     @Query("SELECT * FROM ElementItemR WHERE relative_id =:id AND userId =:user_id AND projectId = :project_id LIMIT 1")
     ElementItemR getElementById(Integer id, Integer user_id, Integer project_id);
 
+    @Query("SELECT * FROM ElementItemR WHERE relative_parent_id =:id AND userId =:user_id AND projectId = :project_id")
+    List<ElementItemR> getChildElements(Integer id, Integer user_id, Integer project_id);
+
     @Query("DELETE FROM ElementItemR")
     void clearElementItemR();
 

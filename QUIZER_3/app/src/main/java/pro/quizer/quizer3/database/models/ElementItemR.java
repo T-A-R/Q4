@@ -11,6 +11,8 @@ import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.database.ElementContentsRConverter;
 import pro.quizer.quizer3.database.ElementOptionsRConverter;
 
+import static pro.quizer.quizer3.view.fragment.SmartFragment.getDao;
+
 @Entity
 public class ElementItemR {
 
@@ -165,5 +167,9 @@ public class ElementItemR {
 
     public void setWas_shown(boolean was_shown) {
         this.was_shown = was_shown;
+    }
+
+    public List<ElementItemR> getElements() {
+        return getDao().getChildElements(relative_id, userId, projectId);
     }
 }

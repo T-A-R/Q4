@@ -3,6 +3,7 @@ package pro.quizer.quizer3.view.activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import pro.quizer.quizer3.R;
 
@@ -47,6 +48,10 @@ public class ScreenActivity extends MainActivity {
             return;
 
         super.onBackPressed();
+    }
+
+    public void showToastfromActivity(String text) {
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 }
 

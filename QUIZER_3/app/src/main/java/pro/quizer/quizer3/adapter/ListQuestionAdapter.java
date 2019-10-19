@@ -27,7 +27,7 @@ import static pro.quizer.quizer3.model.OptionsOpenType.CHECKBOX;
 
 import android.util.Log;
 
-public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListObjectViewHolder> {
+public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapter.ListObjectViewHolder> {
 
     private OnAnswerClickListener onAnswerClickListener;
     private ElementItemR question;
@@ -40,7 +40,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ListOb
     public boolean isMulti;
     private String openType;
 
-    public QuestionAdapter(ElementItemR question, List<ElementItemR> answersList, OnAnswerClickListener onAnswerClickListener) {
+    public ListQuestionAdapter(ElementItemR question, List<ElementItemR> answersList, OnAnswerClickListener onAnswerClickListener) {
         this.question = question;
         this.answersList = answersList;
         this.onAnswerClickListener = onAnswerClickListener;

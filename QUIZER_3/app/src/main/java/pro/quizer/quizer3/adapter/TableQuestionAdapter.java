@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
+import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementOptionsR;
 import pro.quizer.quizer3.Constants;
@@ -36,12 +38,12 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.view.activity.ScreenActivity;
 import pro.quizer.quizer3.model.OptionsOpenType;
-import pro.quizer.quizerexit.model.config.ElementModel;
-import pro.quizer.quizerexit.model.config.OptionsModel;
-import pro.quizer.quizer3.utils.CollectionUtils;
+//import pro.quizer.quizer3.utils.CollectionUtils;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
-import pro.quizer.quizerexit.view.CustomCheckableButton;
+
+import static pro.quizer.quizer3.MainActivity.TAG;
+//import pro.quizer.quizerexit.view.CustomCheckableButton;
 
 public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderImpl> implements OnItemClickListener {
 
@@ -61,19 +63,19 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private ElementItemR mCurrentElement;
     private boolean mIsFlipColsAndRows;
     //    private BaseActivity mBaseActivity;
-    private ScreenActivity mContext;
+    private MainActivity mContext;
 //    private HashMap<Integer, ElementItemR> mMap;
 
 //    public TableQuestionAdapter(final ElementItemR pCurrentElement, final Context context, final List<ElementItemR> pQuestions, final Runnable pRefreshRunnable, final HashMap<Integer, ElementItemR> pMap) {
-    public TableQuestionAdapter(final ElementItemR pCurrentElement, final Context context, final List<ElementItemR> pQuestions, final Runnable pRefreshRunnable) {
+    public TableQuestionAdapter(final ElementItemR pCurrentElement, final Context context, final List<ElementItemR> pQuestions) {
         mCurrentElement = pCurrentElement;
         setOnItemClickListener(this);
-        mRefreshRunnable = pRefreshRunnable;
+//        mRefreshRunnable = pRefreshRunnable;
         mLayoutInflater = LayoutInflater.from(context);
         final Resources res = context.getResources();
         final ElementOptionsR optionsModel = pCurrentElement.getElementOptionsR();
         mIsFlipColsAndRows = optionsModel.isFlip_cols_and_rows();
-        mContext = (ScreenActivity) context;
+        mContext = (MainActivity) context;
 //        mMap = pMap;
 
         mQuestions = pQuestions;
@@ -86,19 +88,19 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 //            CollectionUtils.shuffleTableAnswers(mCurrentElement, mQuestions);
 //        }
 
-        if (mQuestions.get(0) != null) {
-            mQuestions.add(0, null);
-        }
+//        if (mQuestions.get(0) != null) {
+//            mQuestions.add(0, null);
+//        }
 
-        for (final ElementItemR question : mQuestions) {
-            if (question != null) {
-                final List<ElementItemR> answers = question.getElements();
-
-                if (answers.get(0) != null) {
-                    answers.add(0, null);
-                }
-            }
-        }
+//        for (final ElementItemR question : mQuestions) {
+//            if (question != null) {
+//                final List<ElementItemR> answers = question.getElements();
+//                Log.d(TAG, "TableQuestionAdapter: " + question.getRelative_id());
+//                if (answers.get(0) != null) {
+//                    answers.add(0, null);
+//                }
+//            }
+//        }
 
         mAnswers = mQuestions.get(1).getElements();
 
@@ -176,7 +178,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 vh.mTableItemRadioButton.setVisibility(View.VISIBLE);
             }
 
-            setChecked(vh, currentElement.isChecked());
+            //TODO Установка отмеченных
+//            setChecked(vh, currentElement.isChecked());
+            setChecked(vh, false);
 
             //TODO Отключение элементов
 
@@ -189,8 +193,15 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     private void setChecked(final TableItemViewHolder vh, final boolean pIsChecked) {
-        vh.mTableItemCheckBox.setChecked(pIsChecked);
-        vh.mTableItemRadioButton.setChecked(pIsChecked);
+        if(pIsChecked) {
+            vh.mTableItemCheckBox.setImageResource(R.drawable.checkbox_checked);
+            vh.mTableItemRadioButton.setImageResource(R.drawable.radio_button_checked);
+        } else {
+            vh.mTableItemCheckBox.setImageResource(R.drawable.checkbox_unchecked);
+            vh.mTableItemRadioButton.setImageResource(R.drawable.radio_button_unchecked);
+        }
+//        vh.mTableItemCheckBox.setChecked(pIsChecked);
+//        vh.mTableItemRadioButton.setChecked(pIsChecked);
         vh.mOpenAnswerEditText.setText(pIsChecked ? "✓" : "");
     }
 
@@ -280,7 +291,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             element = mLeftSide.get(questionIndex);
         }
 
-        if (element != null) {
+        if (element != null && element.getElements().size() >0) {
             return element.getElements().get(answerIndex);
         } else {
             return null;
@@ -378,7 +389,10 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             final EditText mEditText = mView.findViewById(R.id.answer_edit_text);
 
             final String placeholder = options.getPlaceholder();
-            final String textAnswer = clickedElement.getTextAnswer();
+
+            //TODO Выставить текст ответа
+//            final String textAnswer = clickedElement.getTextAnswer();
+            final String textAnswer = "";
 
             mEditText.setVisibility(View.VISIBLE);
             mEditText.setHint(StringUtils.isEmpty(placeholder) ? mContext.getString(R.string.default_placeholder) : placeholder);
@@ -429,8 +443,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                                 return;
                             }
 
-                            clickedElement.setTextAnswer(answer);
-                            clickedElement.setChecked(true);
+                            //TODO Добавить ответы.
+//                            clickedElement.setTextAnswer(answer);
+//                            clickedElement.setChecked(true);
                             notifyItemChanged(row, column);
                             mRefreshRunnable.run();
                         }
@@ -440,8 +455,10 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                             new DialogInterface.OnClickListener() {
 
                                 public void onClick(final DialogInterface dialogBox, final int id) {
-                                    clickedElement.setTextAnswer(Constants.Strings.EMPTY);
-                                    clickedElement.setChecked(false);
+
+                                    //TODO Добавить ответы.
+//                                    clickedElement.setTextAnswer(Constants.Strings.EMPTY);
+//                                    clickedElement.setChecked(false);
                                     dialogBox.cancel();
                                     notifyItemChanged(row, column);
                                     mRefreshRunnable.run();
@@ -454,12 +471,14 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 alertDialog.show();
             }
         } else {
-            clickedElement.setChecked(!isElementChecked);
+            //TODO Добавить ответы.
+//            clickedElement.setChecked(!isElementChecked);
         }
 
-        if (!isPolyanswer && clickedElement.isFullySelected()) {
-            unselectOther(row, column, clickedQuestion, clickedElement);
-        }
+        //TODO Добавить ответы.
+//        if (!isPolyanswer && clickedElement.isFullySelected()) {
+//            unselectOther(row, column, clickedQuestion, clickedElement);
+//        }
 
         notifyItemChanged(row, column);
     }
@@ -469,7 +488,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         for (final ElementItemR answer : pQuestion.getElements()) {
             if (answer != null && answer.getRelative_id() != clickedRelativeId) {
-                answer.setChecked(false);
+
+                //TODO Добавить ответы.
+//                answer.setChecked(false);
             }
         }
 

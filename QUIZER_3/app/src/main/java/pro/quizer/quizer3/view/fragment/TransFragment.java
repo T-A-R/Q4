@@ -1,6 +1,7 @@
 package pro.quizer.quizer3.view.fragment;
 
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.model.ElementSubtype;
 
 public class TransFragment extends ScreenFragment {
 
@@ -25,8 +26,16 @@ public class TransFragment extends ScreenFragment {
 
     @Override
     protected void onReady() {
-        ElementFragment fragment = new ElementFragment();
-        fragment.setStartElement(startElementId, resumed);
-        replaceFragment(fragment);
+        if(getElement(startElementId).getSubtype().equals(ElementSubtype.TABLE)) {
+            TableFragment fragment = new TableFragment();
+            fragment.setStartElement(startElementId, resumed);
+            replaceFragment(fragment);
+        } else {
+            ElementFragment fragment = new ElementFragment();
+            fragment.setStartElement(startElementId, resumed);
+            replaceFragment(fragment);
+        }
+
+
     }
 }

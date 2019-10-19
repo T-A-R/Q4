@@ -50,8 +50,6 @@ public class ScreenActivity extends MainActivity {
         super.onBackPressed();
     }
 
-    public void showToastfromActivity(String text) {
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-    }
+
 }
 

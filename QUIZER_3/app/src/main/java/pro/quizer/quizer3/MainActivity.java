@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import pro.quizer.quizer3.R;
 
@@ -101,5 +102,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         }
         return ret;
     }
-
+    public void showToastfromActivity(String text) {
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
 }

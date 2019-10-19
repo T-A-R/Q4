@@ -267,7 +267,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 try {
                     Log.d(TAG, "startQuestionnaire: insertCurrentQuestionnaireR() completed.");
                     hideScreensaver();
-                    replaceFragment(new ElementFragment());
+//                    replaceFragment(new ElementFragment());
+                    replaceFragment(new TableFragment());
                     return true;
                 } catch (Exception e) {
                     hideScreensaver();

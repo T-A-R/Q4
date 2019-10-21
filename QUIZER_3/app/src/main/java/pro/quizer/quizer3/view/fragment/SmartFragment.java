@@ -428,7 +428,6 @@ public abstract class SmartFragment extends Fragment {
         try {
             elementItemRList = getDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
             currentQuestionnaire = getDao().getCurrentQuestionnaireR();
-            Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! initCurrentElements: " + elementItemRList.size());
         } catch (Exception e) {
             Log.d(TAG, "initCurrentElements: ERROR");
             e.printStackTrace();

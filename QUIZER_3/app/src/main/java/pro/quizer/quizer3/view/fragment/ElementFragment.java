@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -19,12 +20,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Spinner;
 
+import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.ListQuestionAdapter;
+import pro.quizer.quizer3.adapter.TableQuestionAdapter;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
@@ -33,6 +37,7 @@ import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.Fonts;
+import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
@@ -53,6 +58,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private LinearLayout questionCont;
     private LinearLayout questionImagesCont;
     private LinearLayout spinnerCont;
+    private FrameLayout tableCont;
     private TextView tvUnhide;
     private TextView tvTitle1;
     private TextView tvTitle2;
@@ -62,6 +68,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private TextView tvQuestionDesc;
     private RecyclerView rvAnswers;
     private Spinner spinnerAnswers;
+    private AdaptiveTableLayout tableLayout;
     private ImageView title1Image1;
     private ImageView title1Image2;
     private ImageView title1Image3;
@@ -91,8 +98,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private boolean isTitle2Hided = false;
     private boolean isResumed = false;
 
-    private ListQuestionAdapter adapter;
+    private ListQuestionAdapter adapterList;
     private ArrayAdapter adapterSpinner;
+    private TableQuestionAdapter adapterTable;
     private List<AnswerState> savedAnswerStates;
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
@@ -125,8 +133,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         questionCont = (LinearLayout) findViewById(R.id.question_cont);
         questionImagesCont = (LinearLayout) findViewById(R.id.question_images_cont);
         spinnerCont = (LinearLayout) findViewById(R.id.spinner_cont);
+        tableCont = (FrameLayout) findViewById(R.id.table_cont);
         rvAnswers = (RecyclerView) findViewById(R.id.answers_recyclerview);
         spinnerAnswers = (Spinner) findViewById(R.id.answers_spinner);
+        tableLayout = (AdaptiveTableLayout) findViewById(R.id.table_question_layout);
         tvUnhide = (TextView) findViewById(R.id.unhide_title);
         tvTitle1 = (TextView) findViewById(R.id.title_1);
         tvTitle2 = (TextView) findViewById(R.id.title_2);
@@ -191,6 +201,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         initCurrentElements();
         loadResumedData();
         initQuestion();
+        setQuestionType();
+        initViews();
         updateCurrentQuestionnaire();
         initRecyclerView();
     }
@@ -293,25 +305,35 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 if (getCurrentElements().get(i).getRelative_id() == currentElement.getRelative_id()) {
                     found = true;
                 }
-                if (found && !getCurrentElements().get(i).getType().equals(ElementType.BOX)) {
-                    startElementId = getCurrentElements().get(i).getRelative_id();
-                    currentElement = getCurrentElements().get(i);
-                    break;
+                if (found) {
+                    if (!getCurrentElements().get(i).getType().equals(ElementType.BOX) || getCurrentElements().get(i).getSubtype().equals(ElementSubtype.TABLE)) {
+                        startElementId = getCurrentElements().get(i).getRelative_id();
+                        currentElement = getCurrentElements().get(i);
+                        break;
+                    }
                 }
             }
 
-            if (currentElement.getSubtype().equals(ElementSubtype.LIST)) {
-                answerType = ElementSubtype.LIST;
-                rvAnswers.setVisibility(View.VISIBLE);
-            } else if (currentElement.getSubtype().equals(ElementSubtype.SELECT)) {
-                answerType = ElementSubtype.SELECT;
-                spinnerCont.setVisibility(View.VISIBLE);
-            }
+
 
             Log.d(TAG, "==================== initQuestion: " + currentElement.getRelative_id());
             showElementsQuery();
         }
+    }
 
+    private void setQuestionType() {
+        if (currentElement.getSubtype().equals(ElementSubtype.LIST)) {
+            answerType = ElementSubtype.LIST;
+        } else if (currentElement.getSubtype().equals(ElementSubtype.SELECT)) {
+            answerType = ElementSubtype.SELECT;
+        } else  if (currentElement.getSubtype().equals(ElementSubtype.TABLE)) {
+            answerType = ElementSubtype.TABLE;
+        } else  if (currentElement.getSubtype().equals(ElementSubtype.SCALE)) {
+            answerType = ElementSubtype.SCALE;
+        }
+    }
+
+    private void initViews() {
         tvQuestion.setText(currentElement.getElementOptionsR().getTitle());
         if (currentElement.getElementOptionsR().getDescription() != null) {
             tvQuestionDesc.setVisibility(View.VISIBLE);
@@ -357,13 +379,19 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
             }
         }
-
-
     }
 
     private void initRecyclerView() {
         answersList = new ArrayList<>();
         List<String> itemsList = new ArrayList<>();
+
+        if (answerType.equals(ElementSubtype.LIST)) {
+            rvAnswers.setVisibility(View.VISIBLE);
+        } else if (answerType.equals(ElementSubtype.SELECT)) {
+            spinnerCont.setVisibility(View.VISIBLE);
+        } else if (answerType.equals(ElementSubtype.TABLE)) {
+            tableCont.setVisibility(View.VISIBLE);
+        }
 
         for (ElementItemR element : getCurrentElements()) {
             if (element.getRelative_parent_id() == currentElement.getRelative_id()) {
@@ -373,9 +401,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         }
 
         if (answerType.equals(ElementSubtype.LIST)) {
-            adapter = new ListQuestionAdapter(currentElement, answersList, this);
+            adapterList = new ListQuestionAdapter(currentElement, answersList, this);
             rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
-            rvAnswers.setAdapter(adapter);
+            rvAnswers.setAdapter(adapterList);
         } else if (answerType.equals(ElementSubtype.SELECT)) {
             itemsList.add(getString(R.string.select_spinner));
             adapterSpinner = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, itemsList) {
@@ -391,6 +419,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             spinnerAnswers.setAdapter(adapterSpinner);
             spinnerAnswers.setSelection(itemsList.size() - 1);
             spinnerAnswers.setOnItemSelectedListener(this);
+        } else if (answerType.equals(ElementSubtype.TABLE)) {
+            adapterTable = new TableQuestionAdapter(currentElement, getActivity(), mRefreshRecyclerViewRunnable);
+            Log.d(TAG, "initRecyclerView: " + tableLayout + " " + adapterTable);
+            tableLayout.setAdapter(adapterTable);
+            tableLayout.setDrawingCacheEnabled(true);
         }
     }
 
@@ -411,7 +444,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private boolean saveElement() {
         boolean saved = false;
         if (answerType.equals(ElementSubtype.LIST)) {
-            List<AnswerState> answerStates = adapter.getAnswers();
+            List<AnswerState> answerStates = adapterList.getAnswers();
             for (int i = 0; i < answerStates.size(); i++) {
                 if (answerStates.get(i).isChecked()) {
                     if (currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
@@ -502,38 +535,47 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         showToast("Выберите ответ");
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Parcelable listState = Objects.requireNonNull(rvAnswers.getLayoutManager()).onSaveInstanceState();
-        outState.putParcelable(KEY_RECYCLER_STATE, listState);
-        outState.putSerializable("LIST", (ArrayList<AnswerState>) adapter.getAnswers());
-        outState.putLong("startTime", startTime);
-        outState.putInt("startElementId", startElementId);
-        Log.d(TAG, "onSaveInstanceState: " + nextElementId);
-        if (nextElementId != null)
-            outState.putInt("nextElementId", nextElementId);
-        outState.putInt("prevElementId", prevElementId);
-        outState.putString("answerType", answerType);
-        outState.putBoolean("isTitle1Hided", isTitle1Hided);
-        outState.putBoolean("isTitle2Hided", isTitle2Hided);
-        outState.putInt("spinnerSelection", spinnerSelection);
-        outState.putInt("lastSelectedPosition", adapter.getLastSelectedPosition());
-    }
+    private Runnable mRefreshRecyclerViewRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Log.d(TAG, "?????????????? run: " + getView());
+            UiUtils.hideKeyboard(getContext(), getView());
+        }
+    };
 
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        restoreViews(savedInstanceState);
-        restoreData(savedInstanceState);
-    }
+
+//    @Override
+//    public void onSaveInstanceState(@NonNull Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        Parcelable listState = Objects.requireNonNull(rvAnswers.getLayoutManager()).onSaveInstanceState();
+//        outState.putParcelable(KEY_RECYCLER_STATE, listState);
+//        outState.putSerializable("LIST", (ArrayList<AnswerState>) adapterList.getAnswers());
+//        outState.putLong("startTime", startTime);
+//        outState.putInt("startElementId", startElementId);
+//        Log.d(TAG, "onSaveInstanceState: " + nextElementId);
+//        if (nextElementId != null)
+//            outState.putInt("nextElementId", nextElementId);
+//        outState.putInt("prevElementId", prevElementId);
+//        outState.putString("answerType", answerType);
+//        outState.putBoolean("isTitle1Hided", isTitle1Hided);
+//        outState.putBoolean("isTitle2Hided", isTitle2Hided);
+//        outState.putInt("spinnerSelection", spinnerSelection);
+//        outState.putInt("lastSelectedPosition", adapterList.getLastSelectedPosition());
+//    }
+//
+//    @Override
+//    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+//        super.onViewStateRestored(savedInstanceState);
+//        restoreViews(savedInstanceState);
+//        restoreData(savedInstanceState);
+//    }
 
     public void restoreViews(Bundle bundle) {
         if (bundle != null) {
             Parcelable listState = bundle.getParcelable(KEY_RECYCLER_STATE);
             rvAnswers.getLayoutManager().onRestoreInstanceState(listState);
-            adapter.setAnswers((List<AnswerState>) bundle.getSerializable("LIST"));
-            adapter.setLastSelectedPosition(bundle.getInt("lastSelectedPosition"));
+            adapterList.setAnswers((List<AnswerState>) bundle.getSerializable("LIST"));
+            adapterList.setLastSelectedPosition(bundle.getInt("lastSelectedPosition"));
         }
     }
 
@@ -556,9 +598,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         if (prevList != null && prevList.size() > 0) {
             PrevElementsR lastPassedElement = prevList.get(prevList.size() - 1);
             startElementId = lastPassedElement.getNextId();
-            Log.d(TAG, ">>>>>>>>>>>>>>>> loadResumedData: " + startElementId);
         }
     }
+
+
 
     @Override
     public void onPause() {

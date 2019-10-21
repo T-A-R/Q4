@@ -2,6 +2,7 @@ package pro.quizer.quizer3.database.models;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 
@@ -47,6 +48,9 @@ public class ElementItemR {
     @ColumnInfo(name = "was_shown")
     private boolean was_shown;
 
+    @ColumnInfo(name = "checked")
+    private boolean checked;
+
     @ColumnInfo(name = "elementOptionsR")
     @TypeConverters({ElementOptionsRConverter.class})
     private ElementOptionsR elementOptionsR;
@@ -54,6 +58,9 @@ public class ElementItemR {
     @ColumnInfo(name = "elementContentsR")
     @TypeConverters({ElementContentsRConverter.class})
     private List<ElementContentsR> elementContentsR;
+
+    @Ignore
+    private List<ElementItemR> subElements;
 
     public ElementItemR() {
         this.was_shown = false;
@@ -71,6 +78,8 @@ public class ElementItemR {
         this.elementOptionsR = elementOptionsR;
         this.elementContentsR = elementContentsR;
         this.was_shown = false;
+        this.checked = false;
+        this.subElements = getDao().getChildElements(relative_id, userId, projectId);
     }
 
     public int getId() {
@@ -169,7 +178,16 @@ public class ElementItemR {
         this.was_shown = was_shown;
     }
 
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
+
     public List<ElementItemR> getElements() {
-        return getDao().getChildElements(relative_id, userId, projectId);
+//        return getDao().getChildElements(relative_id, userId, projectId);
+        return subElements;
     }
 }

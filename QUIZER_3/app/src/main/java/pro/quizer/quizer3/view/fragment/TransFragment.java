@@ -26,16 +26,10 @@ public class TransFragment extends ScreenFragment {
 
     @Override
     protected void onReady() {
-        if(getElement(startElementId).getSubtype().equals(ElementSubtype.TABLE)) {
-            TableFragment fragment = new TableFragment();
-            fragment.setStartElement(startElementId, resumed);
-            replaceFragment(fragment);
-        } else {
-            ElementFragment fragment = new ElementFragment();
-            fragment.setStartElement(startElementId, resumed);
-            replaceFragment(fragment);
-        }
 
+        ElementFragment fragment = new ElementFragment();
+        fragment.setStartElement(startElementId, resumed);
+        replaceFragment(fragment);
 
     }
 }

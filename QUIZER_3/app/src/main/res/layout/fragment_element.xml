@@ -328,6 +328,23 @@
                 android:layout_marginBottom="@dimen/_8sdp"
                 android:visibility="gone" />
 
+            <FrameLayout
+                android:id="@+id/table_cont"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_shadow"
+                android:visibility="gone">
+
+                <com.cleveroad.adaptivetablelayout.AdaptiveTableLayout
+                    android:id="@+id/table_question_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_4sdp"
+                    app:cellMargin="1dp"
+                    tools:ignore="UnknownIdInLayout" />
+
+            </FrameLayout>
+
         </LinearLayout>
 
     </LinearLayout>

@@ -41,6 +41,7 @@ import pro.quizer.quizer3.model.OptionsOpenType;
 //import pro.quizer.quizer3.utils.CollectionUtils;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
+import pro.quizer.quizer3.view.element.CustomCheckableButton;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 //import pro.quizer.quizerexit.view.CustomCheckableButton;
@@ -66,11 +67,11 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private MainActivity mContext;
 //    private HashMap<Integer, ElementItemR> mMap;
 
-//    public TableQuestionAdapter(final ElementItemR pCurrentElement, final Context context, final List<ElementItemR> pQuestions, final Runnable pRefreshRunnable, final HashMap<Integer, ElementItemR> pMap) {
-    public TableQuestionAdapter(final ElementItemR pCurrentElement, final Context context, final List<ElementItemR> pQuestions) {
+    //    public TableQuestionAdapter(final ElementItemR pCurrentElement, final Context context, final List<ElementItemR> pQuestions, final Runnable pRefreshRunnable, final HashMap<Integer, ElementItemR> pMap) {
+    public TableQuestionAdapter(final ElementItemR pCurrentElement, final Context context, final Runnable pRefreshRunnable) {
         mCurrentElement = pCurrentElement;
         setOnItemClickListener(this);
-//        mRefreshRunnable = pRefreshRunnable;
+        mRefreshRunnable = pRefreshRunnable;
         mLayoutInflater = LayoutInflater.from(context);
         final Resources res = context.getResources();
         final ElementOptionsR optionsModel = pCurrentElement.getElementOptionsR();
@@ -78,7 +79,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         mContext = (MainActivity) context;
 //        mMap = pMap;
 
-        mQuestions = pQuestions;
+        mQuestions = pCurrentElement.getElements();
+        if (mQuestions != null)
+            mAnswers = mQuestions.get(0).getElements();
 
 //        if (optionsModel.isRotation()) {
 //            CollectionUtils.shuffleElements(mCurrentElement, mQuestions);
@@ -102,7 +105,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 //            }
 //        }
 
-        mAnswers = mQuestions.get(1).getElements();
+
+        Log.d(TAG, "TableQuestionAdapter: " + mQuestions.size() + " : " + mAnswers.size());
 
         if (mIsFlipColsAndRows) {
             mTopSide = mQuestions;
@@ -111,6 +115,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mTopSide = mAnswers;
             mLeftSide = mQuestions;
         }
+        Log.d(TAG, "TableQuestionAdapter 2: " + mLeftSide.size() + " : " + mTopSide.size());
+
 
         mRowHeight = res.getDimensionPixelSize(R.dimen.row_height);
 
@@ -123,12 +129,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     @Override
     public int getRowCount() {
-        return mLeftSide.size();
+        return mLeftSide.size() + 1;
     }
 
     @Override
     public int getColumnCount() {
-        return mTopSide.size();
+        return mTopSide.size() + 1;
     }
 
     @NonNull
@@ -179,8 +185,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             }
 
             //TODO Установка отмеченных
-//            setChecked(vh, currentElement.isChecked());
-            setChecked(vh, false);
+            Log.d(TAG, "!!!!!!!!!!!setChecked: " + currentElement.isChecked() + " ID: " + currentElement.getRelative_id());
+            setChecked(vh, currentElement.isChecked());
+//            setChecked(vh, false);
 
             //TODO Отключение элементов
 
@@ -193,22 +200,23 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     private void setChecked(final TableItemViewHolder vh, final boolean pIsChecked) {
-        if(pIsChecked) {
-            vh.mTableItemCheckBox.setImageResource(R.drawable.checkbox_checked);
-            vh.mTableItemRadioButton.setImageResource(R.drawable.radio_button_checked);
-        } else {
-            vh.mTableItemCheckBox.setImageResource(R.drawable.checkbox_unchecked);
-            vh.mTableItemRadioButton.setImageResource(R.drawable.radio_button_unchecked);
-        }
-//        vh.mTableItemCheckBox.setChecked(pIsChecked);
-//        vh.mTableItemRadioButton.setChecked(pIsChecked);
+//        if (pIsChecked) {
+//            vh.mTableItemCheckBox.setImageResource(R.drawable.checkbox_checked);
+//            vh.mTableItemRadioButton.setImageResource(R.drawable.radio_button_checked);
+//        } else {
+//            vh.mTableItemCheckBox.setImageResource(R.drawable.checkbox_unchecked);
+//            vh.mTableItemRadioButton.setImageResource(R.drawable.radio_button_unchecked);
+//        }
+        Log.d(TAG, "!!!!!!!!!!!setChecked: " + pIsChecked);
+        vh.mTableItemCheckBox.setChecked(pIsChecked);
+        vh.mTableItemRadioButton.setChecked(pIsChecked);
         vh.mOpenAnswerEditText.setText(pIsChecked ? "✓" : "");
     }
 
     @Override
     public void onBindHeaderColumnViewHolder(@NonNull final ViewHolderImpl viewHolder, final int column) {
         final TableHeaderColumnViewHolder vh = (TableHeaderColumnViewHolder) viewHolder;
-        final ElementOptionsR optionsModel = mTopSide.get(column).getElementOptionsR();
+        final ElementOptionsR optionsModel = mTopSide.get(column - 1).getElementOptionsR();
 
 //        UiUtils.setTextOrHide(vh.mHeaderColumnTextView, optionsModel.getTitle(mBaseActivity, mMap));
         UiUtils.setTextOrHide(vh.mHeaderColumnTextView, optionsModel.getTitle());
@@ -218,7 +226,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     @Override
     public void onBindHeaderRowViewHolder(@NonNull final ViewHolderImpl viewHolder, final int row) {
         final TableHeaderRowViewHolder vh = (TableHeaderRowViewHolder) viewHolder;
-        final ElementOptionsR optionsModel = mLeftSide.get(row).getElementOptionsR();
+        final ElementOptionsR optionsModel = mLeftSide.get(row - 1).getElementOptionsR();
 
 //        UiUtils.setTextOrHide(vh.mHeaderRowTextView, optionsModel.getTitle(mBaseActivity, mMap));
         UiUtils.setTextOrHide(vh.mHeaderRowTextView, optionsModel.getTitle());
@@ -244,7 +252,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 //                return mColumnWidth;
 //            }
 //        } else {
-            return mColumnWidth;
+        return mColumnWidth;
 //        }
     }
 
@@ -265,7 +273,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 //                return mRowHeight;
 //            }
 //        } else {
-            return mRowHeight;
+        return mRowHeight;
 //        }
     }
 
@@ -280,18 +288,18 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final ElementItemR element;
 
         if (mIsFlipColsAndRows) {
-            questionIndex = column;
-            answerIndex = row;
+            questionIndex = column - 1;
+            answerIndex = row - 1;
 
             element = mTopSide.get(questionIndex);
         } else {
-            questionIndex = row;
-            answerIndex = column;
+            questionIndex = row - 1;
+            answerIndex = column - 1;
 
             element = mLeftSide.get(questionIndex);
         }
 
-        if (element != null && element.getElements().size() >0) {
+        if (element != null && element.getElements().size() > 0) {
             return element.getElements().get(answerIndex);
         } else {
             return null;
@@ -300,9 +308,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     private ElementItemR getQuestion(final int row, final int column) {
         if (mIsFlipColsAndRows) {
-            return mTopSide.get(column);
+            return mTopSide.get(column - 1);
         } else {
-            return mLeftSide.get(row);
+            return mLeftSide.get(row - 1);
         }
     }
 
@@ -311,35 +319,35 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     // отображаем диалоговое окно для выбора даты
     public void setDate(final EditText pEditText) {
         if (!mContext.isFinishing()) {
-        new DatePickerDialog(mContext, new DatePickerDialog.OnDateSetListener() {
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                mCalendar.set(Calendar.YEAR, year);
-                mCalendar.set(Calendar.MONTH, monthOfYear);
-                mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                setInitialDateTime(pEditText, true);
-            }
-        },
-                mCalendar.get(Calendar.YEAR),
-                mCalendar.get(Calendar.MONTH),
-                mCalendar.get(Calendar.DAY_OF_MONTH))
-                .show();
+            new DatePickerDialog(mContext, new DatePickerDialog.OnDateSetListener() {
+                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                    mCalendar.set(Calendar.YEAR, year);
+                    mCalendar.set(Calendar.MONTH, monthOfYear);
+                    mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    setInitialDateTime(pEditText, true);
+                }
+            },
+                    mCalendar.get(Calendar.YEAR),
+                    mCalendar.get(Calendar.MONTH),
+                    mCalendar.get(Calendar.DAY_OF_MONTH))
+                    .show();
         }
     }
 
     // отображаем диалоговое окно для выбора времени
     public void setTime(final EditText pEditText) {
         if (!mContext.isFinishing()) {
-        new TimePickerDialog(mContext, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                mCalendar.set(Calendar.MINUTE, minute);
-                setInitialDateTime(pEditText, false);
-            }
-        },
-                mCalendar.get(Calendar.HOUR_OF_DAY),
-                mCalendar.get(Calendar.MINUTE), true)
-                .show();
+            new TimePickerDialog(mContext, new TimePickerDialog.OnTimeSetListener() {
+                @Override
+                public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                    mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    mCalendar.set(Calendar.MINUTE, minute);
+                    setInitialDateTime(pEditText, false);
+                }
+            },
+                    mCalendar.get(Calendar.HOUR_OF_DAY),
+                    mCalendar.get(Calendar.MINUTE), true)
+                    .show();
         }
     }
 
@@ -362,6 +370,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final ElementItemR clickedElement = getElement(row, column);
 
         if (clickedElement == null) {
+            Log.d(TAG, "onItemClick: element NULL!");
             return;
         }
 
@@ -374,8 +383,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 //            return;
 //        }
 
-        final boolean isElementChecked = false; //TODO Добавить таблицу ответов
-//        final boolean isElementChecked = clickedElement.isChecked();
+//        final boolean isElementChecked = false; //TODO Добавить таблицу ответов
+        final boolean isElementChecked = clickedElement.isChecked();
+        Log.d(TAG, "???????? onItemClick: " + isElementChecked + "/" + clickedElement.isChecked() + " ID: " + clickedElement.getRelative_id());
         final ElementOptionsR options = clickedElement.getElementOptionsR();
         final String openType = options.getOpen_type();
 
@@ -445,9 +455,10 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
                             //TODO Добавить ответы.
 //                            clickedElement.setTextAnswer(answer);
-//                            clickedElement.setChecked(true);
+                            clickedElement.setChecked(true);
                             notifyItemChanged(row, column);
                             mRefreshRunnable.run();
+
                         }
                     })
 
@@ -458,7 +469,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
                                     //TODO Добавить ответы.
 //                                    clickedElement.setTextAnswer(Constants.Strings.EMPTY);
-//                                    clickedElement.setChecked(false);
+                                    clickedElement.setChecked(false);
                                     dialogBox.cancel();
                                     notifyItemChanged(row, column);
                                     mRefreshRunnable.run();
@@ -471,14 +482,16 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 alertDialog.show();
             }
         } else {
+            Log.d(TAG, ">>>>>>>>>> onItemClick: " + !isElementChecked + " ID: " + clickedElement.getRelative_id());
             //TODO Добавить ответы.
-//            clickedElement.setChecked(!isElementChecked);
+            clickedElement.setChecked(!isElementChecked);
         }
 
         //TODO Добавить ответы.
 //        if (!isPolyanswer && clickedElement.isFullySelected()) {
-//            unselectOther(row, column, clickedQuestion, clickedElement);
-//        }
+        if (!isPolyanswer && clickedElement.isChecked()) {
+            unselectOther(row, column, clickedQuestion, clickedElement);
+        }
 
         notifyItemChanged(row, column);
     }
@@ -490,7 +503,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             if (answer != null && answer.getRelative_id() != clickedRelativeId) {
 
                 //TODO Добавить ответы.
-//                answer.setChecked(false);
+                answer.setChecked(false);
             }
         }
 
@@ -509,12 +522,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     @Override
     public void onRowHeaderClick(final int row) {
-        showAdditionalInfoDialog(mLeftSide.get(row).getElementOptionsR());
+        showAdditionalInfoDialog(mLeftSide.get(row - 1).getElementOptionsR());
     }
 
     @Override
     public void onColumnHeaderClick(final int column) {
-        showAdditionalInfoDialog(mTopSide.get(column).getElementOptionsR());
+        showAdditionalInfoDialog(mTopSide.get(column - 1).getElementOptionsR());
     }
 
     @Override
@@ -553,8 +566,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         FrameLayout mOpenAnswerFrame;
         EditText mOpenAnswerEditText;
-        ImageView mTableItemRadioButton;
-        ImageView mTableItemCheckBox;
+        CustomCheckableButton mTableItemRadioButton;
+        CustomCheckableButton mTableItemCheckBox;
         View mDisableFrame;
 
         private TableItemViewHolder(@NonNull final View itemView) {

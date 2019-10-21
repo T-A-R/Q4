@@ -23,19 +23,17 @@
         android:orientation="horizontal"
         android:layout_height="wrap_content">
 
-        <ImageView
+        <pro.quizer.quizer3.view.element.CustomCheckBox
             android:id="@+id/table_item_check_box"
             android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/checkbox_unchecked"/>
+            android:layout_height="wrap_content"/>
 
-        <ImageView
+        <pro.quizer.quizer3.view.element.CustomRadioButton
             android:id="@+id/table_item_radio_button"
             android:layout_width="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_height="wrap_content"
-            android:src="@drawable/radio_button_unchecked"/>
+            android:layout_height="wrap_content"/>
 
         <FrameLayout
             android:id="@+id/open_answer_frame"

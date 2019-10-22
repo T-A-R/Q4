@@ -186,9 +186,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final ElementModel currentElement = getElement(row, column);
 
         if (currentElement != null) {
-            final OptionsModel optionsModel = currentElement.getOptions();
+//            final OptionsModel optionsModel = currentElement.getOptions();
 
-            if (!OptionsOpenType.CHECKBOX.equals(optionsModel.getOpenType())) {
+            if (!OptionsOpenType.CHECKBOX.equals(currentElement.getOptions().getOpenType())) {
                 vh.mOpenAnswerFrame.setVisibility(View.VISIBLE);
             } else {
                 vh.mOpenAnswerFrame.setVisibility(View.GONE);
@@ -451,6 +451,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
                             clickedElement.setTextAnswer(answer);
                             clickedElement.setChecked(true);
+                            if (!isPolyanswer) {
+                                unselectOther(row, column, clickedQuestion, clickedElement);
+                            }
                             notifyItemChanged(row, column);
                             mRefreshRunnable.run();
                         }

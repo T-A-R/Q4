@@ -206,16 +206,20 @@ public class GPSTracker extends Service implements LocationListener {
     }
 
     public boolean isFakeGPS() {
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            return location.isFromMockProvider();
-        } else {
-            String mockLocation = "0";
-            try {
-                mockLocation = Settings.Secure.getString(mActivity.getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION);
-            } catch (Exception e) {
-                e.printStackTrace();
+        if(location != null) {
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                return location.isFromMockProvider();
+            } else {
+                String mockLocation = "0";
+                try {
+                    mockLocation = Settings.Secure.getString(mActivity.getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return !mockLocation.equals("0");
             }
-            return !mockLocation.equals("0");
+        } else {
+            return false;
         }
     }
 }

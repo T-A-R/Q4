@@ -637,4 +637,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mHeaderLeftTopTextView = itemView.findViewById(R.id.table_header_left_top_text_view);
         }
     }
+
+    public AnswerState[][] getmAnswersState() {
+        return mAnswersState;
+    }
+
+    public void setmAnswersState(AnswerState[][] mAnswersState) {
+        this.mAnswersState = mAnswersState;
+    }
 }

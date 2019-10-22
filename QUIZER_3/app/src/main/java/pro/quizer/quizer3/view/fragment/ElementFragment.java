@@ -515,6 +515,18 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     e.printStackTrace();
                 }
             }
+        } else if (answerType.equals(ElementSubtype.TABLE)) {
+            ElementPassedR elementPassedR = new ElementPassedR();
+            elementPassedR.setRelative_id(currentElement.getRelative_id());
+            elementPassedR.setProject_id(currentElement.getProjectId());
+            elementPassedR.setToken(getQuestionnaire().getToken());
+            elementPassedR.setDuration(startTime - DateUtils.getCurrentTimeMillis());
+            AnswerState[][] answerStates = adapterTable.getmAnswersState();
+            for(int i = 0; i < answerStates.length; i ++) {
+                for(int k = 0; k < answerStates[i].length; k ++) {
+
+                }
+            }
         }
         showToast("" + saved);
         return saved;

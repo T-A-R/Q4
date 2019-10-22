@@ -58,14 +58,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private List<ElementItemR> mLeftSide;
     private List<ElementItemR> mTopSide;
     private List<ElementItemR> mAnswers;
-    private List<AnswerState> mAnswersState;
+    private AnswerState[][] mAnswersState;
     private List<ElementItemR> mQuestions;
     private Runnable mRefreshRunnable;
     private ElementItemR mCurrentElement;
     private boolean mIsFlipColsAndRows;
-    //    private BaseActivity mBaseActivity;
     private MainActivity mContext;
-//    private HashMap<Integer, ElementItemR> mMap;
 
     //    public TableQuestionAdapter(final ElementItemR pCurrentElement, final Context context, final List<ElementItemR> pQuestions, final Runnable pRefreshRunnable, final HashMap<Integer, ElementItemR> pMap) {
     public TableQuestionAdapter(final ElementItemR pCurrentElement, final Context context, final Runnable pRefreshRunnable) {
@@ -77,11 +75,20 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final ElementOptionsR optionsModel = pCurrentElement.getElementOptionsR();
         mIsFlipColsAndRows = optionsModel.isFlip_cols_and_rows();
         mContext = (MainActivity) context;
-//        mMap = pMap;
 
         mQuestions = pCurrentElement.getElements();
         if (mQuestions != null)
             mAnswers = mQuestions.get(0).getElements();
+
+        this.mAnswersState = new AnswerState[mQuestions.size()][mAnswers.size()];
+        if (mQuestions != null) {
+            for (int i = 0; i < mQuestions.size(); i++) {
+                List<ElementItemR> pAnswers = mQuestions.get(i).getElements();
+                for (int k = 0; k < pAnswers.size(); k++) {
+                    mAnswersState[i][k] = new AnswerState(pAnswers.get(k).getRelative_id(), false, "");
+                }
+            }
+        }
 
 //        if (optionsModel.isRotation()) {
 //            CollectionUtils.shuffleElements(mCurrentElement, mQuestions);
@@ -185,8 +192,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             }
 
             //TODO Установка отмеченных
-            Log.d(TAG, "!!!!!!!!!!!setChecked: " + currentElement.isChecked() + " ID: " + currentElement.getRelative_id());
-            setChecked(vh, currentElement.isChecked());
+            Log.d(TAG, "!!!!!!!!!!!setChecked: " + mAnswersState[row - 1][column - 1].isChecked() + " ID: " + mAnswersState[row - 1][column - 1].getRelative_id());
+            setChecked(vh, mAnswersState[row - 1][column - 1].isChecked());
 //            setChecked(vh, false);
 
             //TODO Отключение элементов
@@ -384,13 +391,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 //        }
 
 //        final boolean isElementChecked = false; //TODO Добавить таблицу ответов
-        final boolean isElementChecked = clickedElement.isChecked();
-        Log.d(TAG, "???????? onItemClick: " + isElementChecked + "/" + clickedElement.isChecked() + " ID: " + clickedElement.getRelative_id());
+        final boolean isElementChecked = mAnswersState[row - 1][column - 1].isChecked();
+        Log.d(TAG, "???????? onItemClick: " + isElementChecked + " ID: " + mAnswersState[row - 1][column - 1].getRelative_id());
         final ElementOptionsR options = clickedElement.getElementOptionsR();
         final String openType = options.getOpen_type();
 
         if (!OptionsOpenType.CHECKBOX.equals(openType)) {
-//            final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mBaseActivity);
             final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mContext);
             final View mView = layoutInflaterAndroid.inflate(R.layout.dialog_user_input_box, null);
             final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
@@ -402,7 +408,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
             //TODO Выставить текст ответа
 //            final String textAnswer = clickedElement.getTextAnswer();
-            final String textAnswer = "";
+            final String textAnswer = mAnswersState[row - 1][column - 1].getData();
 
             mEditText.setVisibility(View.VISIBLE);
             mEditText.setHint(StringUtils.isEmpty(placeholder) ? mContext.getString(R.string.default_placeholder) : placeholder);
@@ -455,7 +461,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
                             //TODO Добавить ответы.
 //                            clickedElement.setTextAnswer(answer);
-                            clickedElement.setChecked(true);
+//                            clickedElement.setChecked(true);
+                            mAnswersState[row - 1][column - 1].setChecked(true);
+                            mAnswersState[row - 1][column - 1].setData(answer);
+                            if (!isPolyanswer && mAnswersState[row - 1][column - 1].isChecked()) {
+                                unselectOther(row, column, clickedQuestion, clickedElement);
+                            }
                             notifyItemChanged(row, column);
                             mRefreshRunnable.run();
 
@@ -469,7 +480,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
                                     //TODO Добавить ответы.
 //                                    clickedElement.setTextAnswer(Constants.Strings.EMPTY);
-                                    clickedElement.setChecked(false);
+//                                    clickedElement.setChecked(false);
+                                    mAnswersState[row - 1][column - 1].setChecked(false);
+                                    mAnswersState[row - 1][column - 1].setData(Constants.Strings.EMPTY);
                                     dialogBox.cancel();
                                     notifyItemChanged(row, column);
                                     mRefreshRunnable.run();
@@ -484,12 +497,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         } else {
             Log.d(TAG, ">>>>>>>>>> onItemClick: " + !isElementChecked + " ID: " + clickedElement.getRelative_id());
             //TODO Добавить ответы.
-            clickedElement.setChecked(!isElementChecked);
+//            clickedElement.setChecked(!isElementChecked);
+            mAnswersState[row - 1][column - 1].setChecked(!isElementChecked);
         }
 
         //TODO Добавить ответы.
 //        if (!isPolyanswer && clickedElement.isFullySelected()) {
-        if (!isPolyanswer && clickedElement.isChecked()) {
+        if (!isPolyanswer && mAnswersState[row - 1][column - 1].isChecked()) {
             unselectOther(row, column, clickedQuestion, clickedElement);
         }
 
@@ -499,11 +513,18 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private void unselectOther(final int row, final int column, final ElementItemR pQuestion, final ElementItemR pClickedElement) {
         final int clickedRelativeId = pClickedElement.getRelative_id();
 
-        for (final ElementItemR answer : pQuestion.getElements()) {
-            if (answer != null && answer.getRelative_id() != clickedRelativeId) {
+//        for (final ElementItemR answer : pQuestion.getElements()) {
+//            if (answer != null && answer.getRelative_id() != clickedRelativeId) {
+//
+//                //TODO Добавить ответы.
+//                answer.setChecked(false);
+//            }
+//        }
 
-                //TODO Добавить ответы.
-                answer.setChecked(false);
+        List<ElementItemR> answersList = pQuestion.getElements();
+        for (int i = 0; i < answersList.size(); i++) {
+            if (clickedRelativeId != mAnswersState[row - 1][i].getRelative_id()) {
+                mAnswersState[row - 1][i].setChecked(false);
             }
         }
 
@@ -577,6 +598,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mTableItemRadioButton = itemView.findViewById(R.id.table_item_radio_button);
             mTableItemCheckBox = itemView.findViewById(R.id.table_item_check_box);
             mDisableFrame = itemView.findViewById(R.id.disable_frame);
+
+            mOpenAnswerEditText.setFocusableInTouchMode(false);
         }
     }
 

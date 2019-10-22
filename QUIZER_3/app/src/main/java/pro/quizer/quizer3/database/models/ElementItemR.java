@@ -59,8 +59,8 @@ public class ElementItemR {
     @TypeConverters({ElementContentsRConverter.class})
     private List<ElementContentsR> elementContentsR;
 
-    @Ignore
-    private List<ElementItemR> subElements;
+//    @Ignore
+//    private List<ElementItemR> subElements;
 
     public ElementItemR() {
         this.was_shown = false;
@@ -79,7 +79,7 @@ public class ElementItemR {
         this.elementContentsR = elementContentsR;
         this.was_shown = false;
         this.checked = false;
-        this.subElements = getDao().getChildElements(relative_id, userId, projectId);
+//        this.subElements = getDao().getChildElements(relative_id, userId, projectId);
     }
 
     public int getId() {
@@ -187,7 +187,6 @@ public class ElementItemR {
     }
 
     public List<ElementItemR> getElements() {
-//        return getDao().getChildElements(relative_id, userId, projectId);
-        return subElements;
+        return getDao().getChildElements(relative_id, userId, projectId);
     }
 }

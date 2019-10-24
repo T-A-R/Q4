@@ -27,9 +27,6 @@ public class ScreensManager implements ScreenFragment.ScreenListener {
     }
 
     void openScreen(final ScreenFragment fragment, boolean fromBackPress) {
-//        if (curFragment != null && curFragment.getClass() == fragment.getClass() && curFragment.isDelegateScreen() == fragment.isDelegateScreen() && !fromBackPress) {
-//            return;
-//        }
 
         if (main == null) return;
 
@@ -45,10 +42,8 @@ public class ScreensManager implements ScreenFragment.ScreenListener {
             FragmentManager fragmentManager = activity.getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             if (fromBackPress) {
-                Log.d(TAG, "openScreen: BACK");
                 transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_left, R.anim.exit_to_right);
             } else {
-                Log.d(TAG, "openScreen: FORWARD");
                 transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left);
             }
 //        mainFragment = (MainFragment) fragmentManager.findFragmentById(R.id.screen);

@@ -473,26 +473,31 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     private void unselectOther(final int row, final int column, final ElementItemR pQuestion, final ElementItemR pClickedElement) {
+        Log.d(TAG, ">>>>>>>>>>>>>> unselectOther: START");
         final int clickedRelativeId = pClickedElement.getRelative_id();
 
         List<ElementItemR> answersList = pQuestion.getElements();
         for (int i = 0; i < answersList.size(); i++) {
             if (clickedRelativeId != mAnswersState[row - 1][i].getRelative_id()) {
                 mAnswersState[row - 1][i].setChecked(false);
+                Log.d(TAG, "========= unselectOther: row: " + row + " i: " + i + " " + mAnswersState[row - 1][i].isChecked() );
             }
         }
 
-        final int answersSize = mAnswers.size();
+        Log.d(TAG, "??????? unselectOther: " + row);
+        notifyRowChanged(row -1);
 
-        if (mIsFlipColsAndRows) {
-            for (int i = 0; i < answersSize; i++) {
-                notifyItemChanged(i, column);
-            }
-        } else {
-            for (int i = 0; i < answersSize; i++) {
-                notifyItemChanged(row, i);
-            }
-        }
+//        final int answersSize = mAnswers.size();
+//
+//        if (mIsFlipColsAndRows) {
+//            for (int i = 0; i < answersSize; i++) {
+//                notifyItemChanged(i, column);
+//            }
+//        } else {
+//            for (int i = 0; i < answersSize; i++) {
+//                notifyItemChanged(row, i);
+//            }
+//        }
     }
 
     @Override

@@ -321,8 +321,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             }
 
 
-            Log.d(TAG, "==================== initQuestion: " + currentElement.getRelative_id());
-            showElementsQuery();
+//            Log.d(TAG, "==================== initQuestion: " + currentElement.getRelative_id());
+//            showElementsQuery();
         }
     }
 
@@ -720,7 +720,24 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
         } else if (answerType.equals(ElementSubtype.TABLE)) {
             AnswerState[][] answersTableState = adapterTable.getmAnswersState();
-            Log.d(TAG, ">>>>>>>>>>>>>>> load from table: " + answersTableState.length + "." + answersTableState[0].length);
+
+            for(int i = 0; i < answersTableState.length; i++) {
+                for(int k = 0; k < answersTableState[i].length; k++) {
+                    ElementPassedR answerStateRestored = null;
+                    try {
+                        answerStateRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answersTableState[i][k].getRelative_id());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if(answerStateRestored != null) {
+                        answersTableState[i][k].setChecked(true);
+                        answersTableState[i][k].setData(answerStateRestored.getValue());
+                    }
+                }
+            }
+
+            adapterTable.setmAnswersState(answersTableState);
+//            adapterTable.
         }
     }
 

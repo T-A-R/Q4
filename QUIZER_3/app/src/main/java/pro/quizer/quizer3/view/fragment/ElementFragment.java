@@ -2,8 +2,6 @@ package pro.quizer.quizer3.view.fragment;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,7 +22,6 @@ import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.ListQuestionAdapter;
@@ -96,7 +93,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private int spinnerSelection = -1;
     private boolean isTitle1Hided = false;
     private boolean isTitle2Hided = false;
-    private boolean isResumed = false;
+    private boolean isRestored = false;
 
     private ListQuestionAdapter adapterList;
     private ArrayAdapter adapterSpinner;
@@ -114,9 +111,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         return this;
     }
 
-    public ElementFragment setStartElement(Integer startElementId, boolean resumed) {
+    public ElementFragment setStartElement(Integer startElementId, boolean restored) {
         this.startElementId = startElementId;
-        this.isResumed = resumed;
+        this.isRestored = restored;
         return this;
     }
 
@@ -205,20 +202,29 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         initViews();
         updateCurrentQuestionnaire();
         initRecyclerView();
+        if (isRestored) {
+            loadSavedData();
+        }
     }
 
     @Override
     public void onClick(View view) {
         if (view == btnNext) {
-            Log.d(TAG, "onClick NEXT: " + nextElementId);
 //            if (!isNextBtnPressed) {
 //                isNextBtnPressed = true;
             if (saveElement()) {
-                TransFragment fragment = new TransFragment();
-                fragment.setStartElement(nextElementId);
-                replaceFragment(fragment);
+                Log.d(TAG, "onClick NEXT: " + nextElementId);
+                if (nextElementId == 0) {
+                    saveQuestionnaire();
+                } else if (nextElementId == -1) {
+                    exitQuestionnaire();
+                } else {
+                    TransFragment fragment = new TransFragment();
+                    fragment.setStartElement(nextElementId);
+                    replaceFragment(fragment);
+                }
             } else {
-                showToast("Выберите ответ.");
+//                showToast("Выберите ответ.");
             }
 //            }
         } else if (view == btnPrev) {
@@ -234,8 +240,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     showToast(getString(R.string.set_last_element_error));
                     return;
                 }
-                fragment.setStartElement(prevElementId);
-                replaceFragment(fragment);
+                fragment.setStartElement(prevElementId, true);
+                replaceFragmentBack(fragment);
             } else {
                 onClick(btnExit);
             }
@@ -315,7 +321,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             }
 
 
-
             Log.d(TAG, "==================== initQuestion: " + currentElement.getRelative_id());
             showElementsQuery();
         }
@@ -326,9 +331,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             answerType = ElementSubtype.LIST;
         } else if (currentElement.getSubtype().equals(ElementSubtype.SELECT)) {
             answerType = ElementSubtype.SELECT;
-        } else  if (currentElement.getSubtype().equals(ElementSubtype.TABLE)) {
+        } else if (currentElement.getSubtype().equals(ElementSubtype.TABLE)) {
             answerType = ElementSubtype.TABLE;
-        } else  if (currentElement.getSubtype().equals(ElementSubtype.SCALE)) {
+        } else if (currentElement.getSubtype().equals(ElementSubtype.SCALE)) {
             answerType = ElementSubtype.SCALE;
         }
     }
@@ -421,7 +426,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             spinnerAnswers.setOnItemSelectedListener(this);
         } else if (answerType.equals(ElementSubtype.TABLE)) {
             adapterTable = new TableQuestionAdapter(currentElement, getActivity(), mRefreshRecyclerViewRunnable);
-            Log.d(TAG, "initRecyclerView: " + tableLayout + " " + adapterTable);
             tableLayout.setAdapter(adapterTable);
             tableLayout.setDrawingCacheEnabled(true);
         }
@@ -445,91 +449,148 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         boolean saved = false;
         if (answerType.equals(ElementSubtype.LIST)) {
             List<AnswerState> answerStates = adapterList.getAnswers();
-            for (int i = 0; i < answerStates.size(); i++) {
-                if (answerStates.get(i).isChecked()) {
-                    if (currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
-                        //TODO Переход из контейнера с ротацией
-                        nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
-                    } else if (nextElementId == null || nextElementId == 0) {
+            if (answerStates != null) {
 
-                        nextElementId = getElement(answerStates.get(i).getRelative_id()).getElementOptionsR().getJump();
-                        Log.d(TAG, "saveElement: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< " + nextElementId);
-                    }
-                    ElementPassedR elementPassedR = new ElementPassedR();
-                    elementPassedR.setRelative_id(answerStates.get(i).getRelative_id());
-                    elementPassedR.setProject_id(currentElement.getProjectId());
-                    elementPassedR.setToken(getQuestionnaire().getToken());
-                    elementPassedR.setDuration(startTime - DateUtils.getCurrentTimeMillis());
-                    elementPassedR.setValue(answerStates.get(i).getData());
-
-                    try {
-                        getDao().insertElementPassedR(elementPassedR);
-                        getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
-                        saved = true;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                if (currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+                    //TODO Переход из контейнера с ротацией
+                    nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                } else if (nextElementId == null || nextElementId == 0) {
+                    nextElementId = getElement(answerStates.get(0).getRelative_id()).getElementOptionsR().getJump();
                 }
-            }
-            if (saved) {
-                List<PrevElementsR> prevList;
-                if (getQuestionnaire().getPrev_element_id() != null) {
-                    prevList = getQuestionnaire().getPrev_element_id();
-                    prevList.add(new PrevElementsR(startElementId, nextElementId));
 
-                } else {
-                    prevList = new ArrayList<>();
-                    prevList.add(new PrevElementsR(startElementId, nextElementId));
-                }
+                ElementPassedR elementPassedR = new ElementPassedR();
+                elementPassedR.setRelative_id(currentElement.getRelative_id());
+                elementPassedR.setProject_id(currentElement.getProjectId());
+                elementPassedR.setToken(getQuestionnaire().getToken());
+                elementPassedR.setDuration(startTime - DateUtils.getCurrentTimeMillis());
+
                 try {
-                    getDao().setPrevElement(prevList);
+                    getDao().insertElementPassedR(elementPassedR);
+                    getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
+                    saved = true;
                 } catch (Exception e) {
                     e.printStackTrace();
+                    saved = false;
+                }
+
+                for (int i = 0; i < answerStates.size(); i++) {
+                    if (answerStates.get(i).isChecked()) {
+
+                        ElementPassedR answerPassedR = new ElementPassedR();
+                        answerPassedR.setRelative_id(answerStates.get(i).getRelative_id());
+                        answerPassedR.setProject_id(currentElement.getProjectId());
+                        answerPassedR.setToken(getQuestionnaire().getToken());
+                        answerPassedR.setValue(answerStates.get(i).getData());
+
+                        try {
+                            getDao().insertElementPassedR(answerPassedR);
+                            saved = true;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            saved = false;
+                            return saved;
+                        }
+                    }
                 }
             }
         } else if (answerType.equals(ElementSubtype.SELECT)) {
             if (spinnerSelection != -1) {
                 ElementPassedR elementPassedR = new ElementPassedR();
                 nextElementId = answersList.get(spinnerSelection).getElementOptionsR().getJump();
-
-                elementPassedR.setRelative_id(answersList.get(spinnerSelection).getRelative_id());
+                elementPassedR.setRelative_id(currentElement.getRelative_id());
                 elementPassedR.setProject_id(currentElement.getProjectId());
                 elementPassedR.setToken(getQuestionnaire().getToken());
                 elementPassedR.setDuration(startTime - DateUtils.getCurrentTimeMillis());
 
                 try {
-                    List<PrevElementsR> prevList;
-                    if (getQuestionnaire().getPrev_element_id() != null) {
-                        prevList = getQuestionnaire().getPrev_element_id();
-                        prevList.add(new PrevElementsR(startElementId, nextElementId));
-
-                    } else {
-                        prevList = new ArrayList<>();
-                        prevList.add(new PrevElementsR(startElementId, nextElementId));
-                    }
-                    getDao().setPrevElement(prevList);
                     getDao().insertElementPassedR(elementPassedR);
                     getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
                     saved = true;
                 } catch (Exception e) {
                     e.printStackTrace();
+                    saved = false;
+                    return saved;
+                }
+
+                ElementPassedR answerPassedR = new ElementPassedR();
+                answerPassedR.setRelative_id(answersList.get(spinnerSelection).getRelative_id());
+                answerPassedR.setProject_id(currentElement.getProjectId());
+                answerPassedR.setToken(getQuestionnaire().getToken());
+
+                try {
+                    getDao().insertElementPassedR(answerPassedR);
+                    saved = true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    saved = false;
+                    return saved;
                 }
             }
         } else if (answerType.equals(ElementSubtype.TABLE)) {
-            ElementPassedR elementPassedR = new ElementPassedR();
-            elementPassedR.setRelative_id(currentElement.getRelative_id());
-            elementPassedR.setProject_id(currentElement.getProjectId());
-            elementPassedR.setToken(getQuestionnaire().getToken());
-            elementPassedR.setDuration(startTime - DateUtils.getCurrentTimeMillis());
             AnswerState[][] answerStates = adapterTable.getmAnswersState();
-            for(int i = 0; i < answerStates.length; i ++) {
-                for(int k = 0; k < answerStates[i].length; k ++) {
+            if (answerStates != null && answerStates[0][0].getRelative_id() != null && adapterTable.isCompleted()) {
+                if (currentElement.getElementOptionsR().getJump() != null)
+                    nextElementId = currentElement.getElementOptionsR().getJump();
+                else
+                    nextElementId = getElement(answerStates[0][0].getRelative_id()).getElementOptionsR().getJump();
+                ElementPassedR elementPassedR = new ElementPassedR();
+                elementPassedR.setRelative_id(currentElement.getRelative_id());
+                elementPassedR.setProject_id(currentElement.getProjectId());
+                elementPassedR.setToken(getQuestionnaire().getToken());
+                elementPassedR.setDuration(startTime - DateUtils.getCurrentTimeMillis());
+                try {
+                    getDao().insertElementPassedR(elementPassedR);
+                    getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
+                    saved = true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    saved = false;
+                    return saved;
+                }
 
+                for (int i = 0; i < answerStates.length; i++) {
+                    for (int k = 0; k < answerStates[i].length; k++) {
+                        if (answerStates[i][k].isChecked()) {
+                            ElementPassedR answerPassedR = new ElementPassedR();
+                            answerPassedR.setRelative_id(answerStates[i][k].getRelative_id());
+                            answerPassedR.setValue(answerStates[i][k].getData());
+                            answerPassedR.setProject_id(currentElement.getProjectId());
+                            answerPassedR.setToken(getQuestionnaire().getToken());
+                            try {
+                                getDao().insertElementPassedR(answerPassedR);
+                                saved = true;
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                saved = false;
+                                return saved;
+                            }
+                        }
+                    }
                 }
             }
         }
-        showToast("" + saved);
+
+        if (saved) {
+            updatePrevElement();
+        }
         return saved;
+    }
+
+    private void updatePrevElement() {
+        List<PrevElementsR> prevList;
+        if (getQuestionnaire().getPrev_element_id() != null) {
+            prevList = getQuestionnaire().getPrev_element_id();
+            prevList.add(new PrevElementsR(startElementId, nextElementId));
+
+        } else {
+            prevList = new ArrayList<>();
+            prevList.add(new PrevElementsR(startElementId, nextElementId));
+        }
+        try {
+            getDao().setPrevElement(prevList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -544,13 +605,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        showToast("Выберите ответ");
+        showToast("Выберите ответ (не выбрано)");
     }
 
     private Runnable mRefreshRecyclerViewRunnable = new Runnable() {
         @Override
         public void run() {
-            Log.d(TAG, "?????????????? run: " + getView());
             UiUtils.hideKeyboard(getContext(), getView());
         }
     };
@@ -613,6 +673,56 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         }
     }
 
+    public void loadSavedData() {
+        if (answerType.equals(ElementSubtype.LIST)) {
+            List<AnswerState> answerStatesAdapter = adapterList.getAnswers();
+            List<AnswerState> answerStatesRestored = new ArrayList<>();
+            int lastSelectedPosition = 0;
+            for (int i = 0; i < answerStatesAdapter.size(); i++) {
+                AnswerState answerStateNew = new AnswerState();
+                ElementPassedR answerStateRestored = null;
+                try {
+                    answerStateRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answerStatesAdapter.get(i).getRelative_id());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (answerStateRestored != null) {
+                    answerStateNew.setChecked(true);
+                    answerStateNew.setData(answerStateRestored.getValue());
+                    lastSelectedPosition = i;
+                } else {
+                    answerStateNew.setChecked(false);
+                    answerStateNew.setData("");
+                }
+
+                answerStateNew.setRelative_id(answerStatesAdapter.get(i).getRelative_id());
+                answerStatesRestored.add(answerStateNew);
+            }
+            adapterList.setAnswers(answerStatesRestored);
+            adapterList.setLastSelectedPosition(lastSelectedPosition);
+            adapterList.notifyDataSetChanged();
+
+        } else if (answerType.equals(ElementSubtype.SELECT)) {
+            spinnerSelection = -1;
+
+            for (int i = 0; i < answersList.size(); i++) {
+                ElementPassedR answerStateRestored = null;
+                try {
+                    answerStateRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answersList.get(i).getRelative_id());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (answerStateRestored != null) {
+                    spinnerSelection = i;
+                    spinnerAnswers.setSelection(spinnerSelection);
+                }
+            }
+
+        } else if (answerType.equals(ElementSubtype.TABLE)) {
+            AnswerState[][] answersTableState = adapterTable.getmAnswersState();
+            Log.d(TAG, ">>>>>>>>>>>>>>> load from table: " + answersTableState.length + "." + answersTableState[0].length);
+        }
+    }
 
 
     @Override
@@ -640,6 +750,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             isExit = true;
         }
         return true;
+    }
+
+    public boolean saveQuestionnaire() {
+        showToast("Анкета сохранена");
+        replaceFragment(new HomeFragment());
+        return true;
+    }
+
+    public void exitQuestionnaire() {
+        showToast("Выход без сохранения.");
+        replaceFragment(new HomeFragment());
     }
 }
 

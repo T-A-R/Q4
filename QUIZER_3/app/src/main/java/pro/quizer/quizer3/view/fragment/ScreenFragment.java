@@ -132,21 +132,15 @@ public abstract class ScreenFragment extends SmartFragment {
     }
 
     protected void replaceFragment(ScreenFragment newScreen) {
-        //TODO Поменять имена фрагментов.
-//        if (newScreen instanceof EventFragment ||
-//                newScreen instanceof PlaceFragment ||
-//                newScreen instanceof ParticipFragment ||
-//                newScreen instanceof ComplainFragment ||
-//                newScreen instanceof ComplainMessageFragment) {
-//
-//            openScreenInNewActivity(newScreen);
-//            return;
-//        }
-
         View view = getView();
-        Log.d(TAG, "replaceFragment: " + screenListener + " " + view);
         if (screenListener != null && view != null)
-            view.post(() -> screenListener.fragmentReplace(ScreenFragment.this, newScreen));
+            view.post(() -> screenListener.fragmentReplace(ScreenFragment.this, newScreen, false));
+    }
+
+    protected void replaceFragmentBack(ScreenFragment newScreen) {
+        View view = getView();
+        if (screenListener != null && view != null)
+            view.post(() -> screenListener.fragmentReplace(ScreenFragment.this, newScreen, true));
     }
 
     @Override
@@ -163,7 +157,7 @@ public abstract class ScreenFragment extends SmartFragment {
     }
 
     public interface ScreenListener {
-        void fragmentReplace(ScreenFragment curScreen, ScreenFragment newScreen);
+        void fragmentReplace(ScreenFragment curScreen, ScreenFragment newScreen, boolean fromBackPress);
     }
 
 //    @Override

@@ -212,7 +212,10 @@ public interface QuizerDao {
     void insertElementPassedR(ElementPassedR elementPassedR);
 
     @Query("SELECT * FROM ElementPassedR WHERE token =:token")
-    List<ElementPassedR> getAllElementPassedR(String token);
+    List<ElementPassedR> getAllElementsPassedR(String token);
+
+    @Query("SELECT * FROM ElementPassedR WHERE token =:token AND relative_id =:relative_id LIMIT 1")
+    ElementPassedR getElementPassedR(String token, int relative_id);
 
     @Query("SELECT * FROM ElementPassedR WHERE token =:token ORDER BY id DESC LIMIT 1")
     ElementPassedR getLastElementPassedR(String token);

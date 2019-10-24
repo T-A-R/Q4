@@ -26,12 +26,12 @@ public class ScreensManager implements ScreenFragment.ScreenListener {
         openScreen(fragment, false);
     }
 
-    void openScreen(final ScreenFragment fragment, boolean force) {
-        if (curFragment != null && curFragment.getClass() == fragment.getClass() && curFragment.isDelegateScreen() == fragment.isDelegateScreen() && !force) {
-            return;
-        }
+    void openScreen(final ScreenFragment fragment, boolean fromBackPress) {
+//        if (curFragment != null && curFragment.getClass() == fragment.getClass() && curFragment.isDelegateScreen() == fragment.isDelegateScreen() && !fromBackPress) {
+//            return;
+//        }
 
-        if(main == null) return;
+        if (main == null) return;
 
         if (curFragment != null) {
             fragment.setPrevClass(curFragment.getClass());
@@ -40,14 +40,20 @@ public class ScreensManager implements ScreenFragment.ScreenListener {
         fragment.setMain(main);
         fragment.setScreenListener(this);
 
-        removeFramgent();
+        removeFragment(fromBackPress);
         try {
-        FragmentManager fragmentManager = activity.getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left);
+            FragmentManager fragmentManager = activity.getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            if (fromBackPress) {
+                Log.d(TAG, "openScreen: BACK");
+                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_left, R.anim.exit_to_right);
+            } else {
+                Log.d(TAG, "openScreen: FORWARD");
+                transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left);
+            }
 //        mainFragment = (MainFragment) fragmentManager.findFragmentById(R.id.screen);
-        transaction.addToBackStack(null);
-        transaction.add(R.id.cont_screen, fragment).commit();
+            transaction.addToBackStack(null);
+            transaction.add(R.id.cont_screen, fragment).commit();
 
 //            activity.getSupportFragmentManager().beginTransaction().add(R.id.cont_screen, fragment).commit();
             curFragment = fragment;
@@ -60,7 +66,7 @@ public class ScreensManager implements ScreenFragment.ScreenListener {
         }
     }
 
-    private void removeFramgent() {
+    private void removeFragment(boolean fromBackPress) {
         if (curFragment == null)
             return;
 
@@ -69,13 +75,15 @@ public class ScreensManager implements ScreenFragment.ScreenListener {
         try {
             FragmentManager fragmentManager = activity.getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left);
+            if (fromBackPress)
+                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_left, R.anim.exit_to_right);
+            else
+                transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left);
 //        mainFragment = (MainFragment) fragmentManager.findFragmentById(R.id.screen);
             transaction.addToBackStack(null);
             transaction.remove(curFragment).commit();
 //            activity.getSupportFragmentManager().beginTransaction().remove(curFragment).commit();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.d(TAG, "ScreensManager.removeFramgent() " + e);
         }
         curFragment = null;
@@ -86,8 +94,8 @@ public class ScreensManager implements ScreenFragment.ScreenListener {
     }
 
     @Override
-    public void fragmentReplace(ScreenFragment curScreen, ScreenFragment newScreen) {
-        openScreen(newScreen);
+    public void fragmentReplace(ScreenFragment curScreen, ScreenFragment newScreen, boolean fromBackPress) {
+        openScreen(newScreen, fromBackPress);
     }
 
     public boolean onBackPressed() {

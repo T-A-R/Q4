@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -25,9 +24,7 @@ import com.cleveroad.adaptivetablelayout.OnItemClickListener;
 import com.cleveroad.adaptivetablelayout.ViewHolderImpl;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 
 import pro.quizer.quizer3.MainActivity;
@@ -36,15 +33,12 @@ import pro.quizer.quizer3.database.models.ElementOptionsR;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.model.state.AnswerState;
-import pro.quizer.quizer3.view.activity.ScreenActivity;
 import pro.quizer.quizer3.model.OptionsOpenType;
-//import pro.quizer.quizer3.utils.CollectionUtils;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.element.CustomCheckableButton;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
-//import pro.quizer.quizerexit.view.CustomCheckableButton;
 
 public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderImpl> implements OnItemClickListener {
 
@@ -65,7 +59,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private boolean mIsFlipColsAndRows;
     private MainActivity mContext;
 
-    //    public TableQuestionAdapter(final ElementItemR pCurrentElement, final Context context, final List<ElementItemR> pQuestions, final Runnable pRefreshRunnable, final HashMap<Integer, ElementItemR> pMap) {
     public TableQuestionAdapter(final ElementItemR pCurrentElement, final Context context, final Runnable pRefreshRunnable) {
         mCurrentElement = pCurrentElement;
         setOnItemClickListener(this);
@@ -113,8 +106,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 //        }
 
 
-        Log.d(TAG, "TableQuestionAdapter: " + mQuestions.size() + " : " + mAnswers.size());
-
         if (mIsFlipColsAndRows) {
             mTopSide = mQuestions;
             mLeftSide = mAnswers;
@@ -122,14 +113,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mTopSide = mAnswers;
             mLeftSide = mQuestions;
         }
-        Log.d(TAG, "TableQuestionAdapter 2: " + mLeftSide.size() + " : " + mTopSide.size());
 
 
         mRowHeight = res.getDimensionPixelSize(R.dimen.row_height);
 
         mHeaderHeight = res.getDimensionPixelSize(R.dimen.column_header_height);
 
-        final int widthIndex = mTopSide.size() >= CELL_COUNT ? CELL_COUNT : HALF;
+        final int widthIndex = mTopSide.size() + 1 >= CELL_COUNT ? CELL_COUNT : HALF;
         mHeaderWidth = UiUtils.getDisplayWidth(context) / widthIndex;
         mColumnWidth = UiUtils.getDisplayWidth(context) / widthIndex;
     }
@@ -191,10 +181,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 vh.mTableItemRadioButton.setVisibility(View.VISIBLE);
             }
 
-            //TODO Установка отмеченных
-            Log.d(TAG, "!!!!!!!!!!!setChecked: " + mAnswersState[row - 1][column - 1].isChecked() + " ID: " + mAnswersState[row - 1][column - 1].getRelative_id());
             setChecked(vh, mAnswersState[row - 1][column - 1].isChecked());
-//            setChecked(vh, false);
 
             //TODO Отключение элементов
 
@@ -207,14 +194,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     private void setChecked(final TableItemViewHolder vh, final boolean pIsChecked) {
-//        if (pIsChecked) {
-//            vh.mTableItemCheckBox.setImageResource(R.drawable.checkbox_checked);
-//            vh.mTableItemRadioButton.setImageResource(R.drawable.radio_button_checked);
-//        } else {
-//            vh.mTableItemCheckBox.setImageResource(R.drawable.checkbox_unchecked);
-//            vh.mTableItemRadioButton.setImageResource(R.drawable.radio_button_unchecked);
-//        }
-        Log.d(TAG, "!!!!!!!!!!!setChecked: " + pIsChecked);
         vh.mTableItemCheckBox.setChecked(pIsChecked);
         vh.mTableItemRadioButton.setChecked(pIsChecked);
         vh.mOpenAnswerEditText.setText(pIsChecked ? "✓" : "");
@@ -225,7 +204,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final TableHeaderColumnViewHolder vh = (TableHeaderColumnViewHolder) viewHolder;
         final ElementOptionsR optionsModel = mTopSide.get(column - 1).getElementOptionsR();
 
-//        UiUtils.setTextOrHide(vh.mHeaderColumnTextView, optionsModel.getTitle(mBaseActivity, mMap));
         UiUtils.setTextOrHide(vh.mHeaderColumnTextView, optionsModel.getTitle());
         UiUtils.setTextOrHide(vh.mHeaderColumnDescriptionTextView, optionsModel.getDescription());
     }
@@ -235,7 +213,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final TableHeaderRowViewHolder vh = (TableHeaderRowViewHolder) viewHolder;
         final ElementOptionsR optionsModel = mLeftSide.get(row - 1).getElementOptionsR();
 
-//        UiUtils.setTextOrHide(vh.mHeaderRowTextView, optionsModel.getTitle(mBaseActivity, mMap));
         UiUtils.setTextOrHide(vh.mHeaderRowTextView, optionsModel.getTitle());
         UiUtils.setTextOrHide(vh.mHeaderRowDescriptionTextView, optionsModel.getDescription());
 
@@ -390,9 +367,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 //            return;
 //        }
 
-//        final boolean isElementChecked = false; //TODO Добавить таблицу ответов
         final boolean isElementChecked = mAnswersState[row - 1][column - 1].isChecked();
-        Log.d(TAG, "???????? onItemClick: " + isElementChecked + " ID: " + mAnswersState[row - 1][column - 1].getRelative_id());
         final ElementOptionsR options = clickedElement.getElementOptionsR();
         final String openType = options.getOpen_type();
 
@@ -403,11 +378,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             dialog.setView(mView);
 
             final EditText mEditText = mView.findViewById(R.id.answer_edit_text);
-
             final String placeholder = options.getPlaceholder();
-
-            //TODO Выставить текст ответа
-//            final String textAnswer = clickedElement.getTextAnswer();
             final String textAnswer = mAnswersState[row - 1][column - 1].getData();
 
             mEditText.setVisibility(View.VISIBLE);
@@ -459,9 +430,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                                 return;
                             }
 
-                            //TODO Добавить ответы.
-//                            clickedElement.setTextAnswer(answer);
-//                            clickedElement.setChecked(true);
                             mAnswersState[row - 1][column - 1].setChecked(true);
                             mAnswersState[row - 1][column - 1].setData(answer);
                             if (!isPolyanswer && mAnswersState[row - 1][column - 1].isChecked()) {
@@ -478,9 +446,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
                                 public void onClick(final DialogInterface dialogBox, final int id) {
 
-                                    //TODO Добавить ответы.
-//                                    clickedElement.setTextAnswer(Constants.Strings.EMPTY);
-//                                    clickedElement.setChecked(false);
                                     mAnswersState[row - 1][column - 1].setChecked(false);
                                     mAnswersState[row - 1][column - 1].setData(Constants.Strings.EMPTY);
                                     dialogBox.cancel();
@@ -495,9 +460,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 alertDialog.show();
             }
         } else {
-            Log.d(TAG, ">>>>>>>>>> onItemClick: " + !isElementChecked + " ID: " + clickedElement.getRelative_id());
-            //TODO Добавить ответы.
-//            clickedElement.setChecked(!isElementChecked);
             mAnswersState[row - 1][column - 1].setChecked(!isElementChecked);
         }
 
@@ -512,14 +474,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     private void unselectOther(final int row, final int column, final ElementItemR pQuestion, final ElementItemR pClickedElement) {
         final int clickedRelativeId = pClickedElement.getRelative_id();
-
-//        for (final ElementItemR answer : pQuestion.getElements()) {
-//            if (answer != null && answer.getRelative_id() != clickedRelativeId) {
-//
-//                //TODO Добавить ответы.
-//                answer.setChecked(false);
-//            }
-//        }
 
         List<ElementItemR> answersList = pQuestion.getElements();
         for (int i = 0; i < answersList.size(); i++) {
@@ -644,5 +598,46 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     public void setmAnswersState(AnswerState[][] mAnswersState) {
         this.mAnswersState = mAnswersState;
+    }
+
+    public boolean isCompleted() {
+        boolean completed = false;
+        if (!mIsFlipColsAndRows) {
+            for (int i = 0; i < mAnswersState.length; i++) {
+                int answersCounter = 0;
+                for (int k = 0; k < mAnswersState[i].length; k++) {
+
+                    if (mAnswersState[i][k].isChecked()) {
+                        answersCounter++;
+                    }
+                }
+                if (answersCounter > 0) {
+                    Integer min = mQuestions.get(i).getElementOptionsR().getMin_answers();
+                    Integer max = mQuestions.get(i).getElementOptionsR().getMax_answers();
+                    if (min != null && answersCounter < min) {
+                        completed = false;
+                        mContext.showToastfromActivity("В строке " + (i+1) + " выберите минимум " + min + " ответа");
+                        return completed;
+                    } else {
+                        completed = true;
+                    }
+                    if (max != null && answersCounter > max) {
+                        completed = false;
+                        mContext.showToastfromActivity("В строке " + (i+1) + " выберите максимум " + max + " ответа");
+                        return completed;
+                    } else {
+                        completed = true;
+                    }
+                } else {
+                    completed = false;
+                    mContext.showToastfromActivity("Пожалуйста ответьте на все вопросы");
+                    return completed;
+                }
+            }
+        } else {
+            completed = false;
+            mContext.showToastfromActivity("Перевернутая таблица!");
+        }
+        return completed;
     }
 }

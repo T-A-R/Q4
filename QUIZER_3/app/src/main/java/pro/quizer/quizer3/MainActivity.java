@@ -105,4 +105,13 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public void showToastfromActivity(String text) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
+
+    public void showKeyboard() {
+        Log.d(TAG, "showKeyboard: OK");
+        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+    }
+
+    public void hideKeyboardFrom(View view) {
+        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 }

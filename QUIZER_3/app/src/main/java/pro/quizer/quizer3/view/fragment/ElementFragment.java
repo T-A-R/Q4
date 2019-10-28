@@ -423,7 +423,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         }
 
         if (answerType.equals(ElementSubtype.LIST)) {
-            adapterList = new ListQuestionAdapter(currentElement, answersList, this);
+            adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList, this);
             rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
             rvAnswers.setAdapter(adapterList);
         } else if (answerType.equals(ElementSubtype.SELECT)) {

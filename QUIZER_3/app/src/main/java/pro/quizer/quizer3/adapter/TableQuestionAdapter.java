@@ -58,9 +58,11 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private ElementItemR mCurrentElement;
     private boolean mIsFlipColsAndRows;
     private MainActivity mContext;
+    private OnTableAnswerClickListener mOnTableAnswerClickListener;
 
-    public TableQuestionAdapter(final ElementItemR pCurrentElement, final Context context, final Runnable pRefreshRunnable) {
+    public TableQuestionAdapter(final ElementItemR pCurrentElement, final Context context, final Runnable pRefreshRunnable, OnTableAnswerClickListener pOnTableAnswerClickListener) {
         mCurrentElement = pCurrentElement;
+        mOnTableAnswerClickListener = pOnTableAnswerClickListener;
         setOnItemClickListener(this);
         mRefreshRunnable = pRefreshRunnable;
         mLayoutInflater = LayoutInflater.from(context);
@@ -358,6 +360,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             return;
         }
 
+        mOnTableAnswerClickListener.onAnswerClick(row, column);
+
         final ElementItemR clickedQuestion = getQuestion(row, column);
         final boolean isPolyanswer = clickedQuestion.getElementOptionsR().isPolyanswer();
 
@@ -473,19 +477,17 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     private void unselectOther(final int row, final int column, final ElementItemR pQuestion, final ElementItemR pClickedElement) {
-        Log.d(TAG, ">>>>>>>>>>>>>> unselectOther: START");
+
         final int clickedRelativeId = pClickedElement.getRelative_id();
 
         List<ElementItemR> answersList = pQuestion.getElements();
         for (int i = 0; i < answersList.size(); i++) {
             if (clickedRelativeId != mAnswersState[row - 1][i].getRelative_id()) {
                 mAnswersState[row - 1][i].setChecked(false);
-                Log.d(TAG, "========= unselectOther: row: " + row + " i: " + i + " " + mAnswersState[row - 1][i].isChecked() );
             }
         }
 
-        Log.d(TAG, "??????? unselectOther: " + row);
-        notifyRowChanged(row -1);
+        notifyRowChanged(row - 1);
 
 //        final int answersSize = mAnswers.size();
 //
@@ -621,14 +623,14 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                     Integer max = mQuestions.get(i).getElementOptionsR().getMax_answers();
                     if (min != null && answersCounter < min) {
                         completed = false;
-                        mContext.showToastfromActivity("В строке " + (i+1) + " выберите минимум " + min + " ответа");
+                        mContext.showToastfromActivity("В строке " + (i + 1) + " выберите минимум " + min + " ответа");
                         return completed;
                     } else {
                         completed = true;
                     }
                     if (max != null && answersCounter > max) {
                         completed = false;
-                        mContext.showToastfromActivity("В строке " + (i+1) + " выберите максимум " + max + " ответа");
+                        mContext.showToastfromActivity("В строке " + (i + 1) + " выберите максимум " + max + " ответа");
                         return completed;
                     } else {
                         completed = true;
@@ -644,5 +646,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mContext.showToastfromActivity("Перевернутая таблица!");
         }
         return completed;
+    }
+
+    public interface OnTableAnswerClickListener {
+        void onAnswerClick(int row, int column);
     }
 }

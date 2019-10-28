@@ -220,6 +220,9 @@ public interface QuizerDao {
     @Query("SELECT * FROM ElementPassedR WHERE token =:token ORDER BY id DESC LIMIT 1")
     ElementPassedR getLastElementPassedR(String token);
 
+    @Query("DELETE FROM ElementPassedR WHERE id >=:id")
+    void deleteOldElementsPassedR(int id);
+
     @Query("DELETE FROM ElementPassedR")
     void clearElementPassedR();
 

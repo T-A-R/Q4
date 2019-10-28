@@ -204,7 +204,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             lastSelectedPosition = getAdapterPosition();
             notifyDataSetChanged();
 
-            if (isMulti) {
+            if (isMulti && !answersList.get(lastSelectedPosition).getElementOptionsR().isUnchecker()) {
                 if (answersState.get(lastSelectedPosition).isChecked()) {
                     answersState.get(lastSelectedPosition).setChecked(false);
                 } else {
@@ -213,6 +213,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             } else {
                 for (int i = 0; i < answersState.size(); i++) {
                     answersState.get(i).setChecked(false);
+                    answersState.get(i).setData("");
                 }
                 answersState.get(lastSelectedPosition).setChecked(true);
             }

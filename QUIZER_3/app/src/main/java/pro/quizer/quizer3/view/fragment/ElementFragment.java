@@ -40,7 +40,7 @@ import pro.quizer.quizer3.view.Toolbar;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class ElementFragment extends ScreenFragment implements View.OnClickListener, ListQuestionAdapter.OnAnswerClickListener, AdapterView.OnItemSelectedListener {
+public class ElementFragment extends ScreenFragment implements View.OnClickListener, ListQuestionAdapter.OnAnswerClickListener, TableQuestionAdapter.OnTableAnswerClickListener, AdapterView.OnItemSelectedListener {
 
     private Toolbar toolbar;
     private Button btnNext;
@@ -202,9 +202,26 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         initViews();
         updateCurrentQuestionnaire();
         initRecyclerView();
-        if (isRestored) {
+        if (isRestored || wasReloaded()) {
             loadSavedData();
         }
+    }
+
+    public boolean wasReloaded() {
+        List<ElementPassedR> elements = null;
+
+        try {
+            elements = getDao().getAllElementsPassedR(getQuestionnaire().getToken());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(elements != null && elements.size() >0)
+        for (ElementPassedR element : elements) {
+            if(element.getRelative_id() == currentElement.getRelative_id()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -425,15 +442,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             spinnerAnswers.setSelection(itemsList.size() - 1);
             spinnerAnswers.setOnItemSelectedListener(this);
         } else if (answerType.equals(ElementSubtype.TABLE)) {
-            adapterTable = new TableQuestionAdapter(currentElement, getActivity(), mRefreshRecyclerViewRunnable);
+            adapterTable = new TableQuestionAdapter(currentElement, getActivity(), mRefreshRecyclerViewRunnable, this);
             tableLayout.setAdapter(adapterTable);
             tableLayout.setDrawingCacheEnabled(true);
         }
-    }
-
-    @Override
-    public void onAnswerClick(int position, boolean enabled, String answer) {
-
     }
 
     private void updateCurrentQuestionnaire() {
@@ -573,7 +585,16 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         if (saved) {
             updatePrevElement();
         }
+        showPassed();
         return saved;
+    }
+
+    public void showPassed() {
+        List<ElementPassedR> elementPassedRS = getDao().getAllElementsPassedR(getQuestionnaire().getToken());
+        Log.d(TAG, "==========================================");
+        for (ElementPassedR element : elementPassedRS) {
+            Log.d(TAG, ">>>>>>>>>>>>>>> showPassed: " + element.getId());
+        }
     }
 
     private void updatePrevElement() {
@@ -594,11 +615,22 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long selectionId) {
 
         if (position != answersList.size()) {
+            if (isRestored) {
+                if (position != spinnerSelection) {
+                    try {
+                        int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
+                        getDao().deleteOldElementsPassedR(id);
+                        showToast("Deleted!");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        showToast("Ошибка очистки таблицы элементов.");
+                    }
+                }
+            }
             spinnerSelection = position;
-            showToast(answersList.get(position).getElementOptionsR().getTitle());
         }
 
     }
@@ -606,6 +638,37 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
         showToast("Выберите ответ (не выбрано)");
+    }
+
+    @Override
+    public void onAnswerClick(int position, boolean enabled, String answer) {
+        if (isRestored) {
+//            int id = currentElement.getId();
+            try {
+                int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
+                getDao().deleteOldElementsPassedR(id);
+                showToast("Deleted!");
+            } catch (Exception e) {
+                e.printStackTrace();
+                showToast("Ошибка очистки таблицы элементов.");
+            }
+        }
+    }
+
+    @Override
+    public void onAnswerClick(int row, int column) {
+        if (isRestored) {
+//            int id = currentElement.getId();
+            try {
+                int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
+                getDao().deleteOldElementsPassedR(id);
+                showToast("Deleted!");
+                showPassed();
+            } catch (Exception e) {
+                e.printStackTrace();
+                showToast("Ошибка очистки таблицы элементов.");
+            }
+        }
     }
 
     private Runnable mRefreshRecyclerViewRunnable = new Runnable() {
@@ -721,15 +784,15 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } else if (answerType.equals(ElementSubtype.TABLE)) {
             AnswerState[][] answersTableState = adapterTable.getmAnswersState();
 
-            for(int i = 0; i < answersTableState.length; i++) {
-                for(int k = 0; k < answersTableState[i].length; k++) {
+            for (int i = 0; i < answersTableState.length; i++) {
+                for (int k = 0; k < answersTableState[i].length; k++) {
                     ElementPassedR answerStateRestored = null;
                     try {
                         answerStateRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answersTableState[i][k].getRelative_id());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    if(answerStateRestored != null) {
+                    if (answerStateRestored != null) {
                         answersTableState[i][k].setChecked(true);
                         answersTableState[i][k].setData(answerStateRestored.getValue());
                     }
@@ -779,5 +842,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         showToast("Выход без сохранения.");
         replaceFragment(new HomeFragment());
     }
+
+
 }
 

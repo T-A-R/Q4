@@ -62,7 +62,8 @@
     <string name="VIEW_EXIT_QUIZ_HEADER">Завершить анкету</string>
     <string name="VIEW_FAKE_GPS_HEADER">Обнаружено нарушение.</string>
     <string name="VIEW_EXIT_QUIZ_BODY">Вы уверены, что хотите принудительно прервать анкету? \nЕё содержимое будет потеряно.</string>
-    <string name="VIEW_FAKE_GPS_BODY">Для продолжения работы закройте все программы для подмены GPS координат.</string>
+    <string name="VIEW_FAKE_GPS_BODY">На Вашем устройстве используется программа для подмены GPS-координат. Для продолжения работы необходимо её удалить.</string>
+    <string name="VIEW_FAKE_GPS_ALERT">На Вашем устройстве используется программа для подмены GPS-координат. Анкета помечена как грубый брак.</string>
     <string name="VIEW_SENT_COUNT_QUIZ_FROM_THIS_DEVICE">Отправлено анкет в рамках проекта с данного устройства: %1$s</string>
     <string name="VIEW_SENT_COUNT_QUIZ_THIS_SESSION">Отправлено анкет в данном сеансе: %1$s</string>
     <string name="VIEW_SMS">СМС</string>

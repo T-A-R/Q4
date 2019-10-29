@@ -321,6 +321,23 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/info_cont"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_shadow"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <WebView
+                    android:id="@+id/info_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_4sdp"/>
+
+            </LinearLayout>
+
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/answers_recyclerview"
                 android:layout_width="match_parent"

@@ -45,6 +45,9 @@ public interface QuizerDao {
     @Query("UPDATE ElementItemR SET was_shown =:was_shown WHERE relative_id =:id AND userId =:user_id AND projectId = :project_id")
     void setWasElementShown(boolean was_shown, Integer id, Integer user_id, Integer project_id);
 
+    @Query("UPDATE ElementItemR SET enabled =:enabled WHERE relative_id =:id AND userId =:user_id AND projectId = :project_id")
+    void setElementEnabled(boolean enabled, Integer id, Integer user_id, Integer project_id);
+
     @Query("UPDATE ElementItemR SET was_shown =:was_shown")
     void clearWasElementShown(boolean was_shown);
 

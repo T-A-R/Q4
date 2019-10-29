@@ -2,13 +2,11 @@ package pro.quizer.quizer3.database.models;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 
 import java.util.List;
 
-import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.database.ElementContentsRConverter;
 import pro.quizer.quizer3.database.ElementOptionsRConverter;
 
@@ -51,6 +49,9 @@ public class ElementItemR {
     @ColumnInfo(name = "checked")
     private boolean checked;
 
+    @ColumnInfo(name = "enabled")
+    private boolean enabled;
+
     @ColumnInfo(name = "elementOptionsR")
     @TypeConverters({ElementOptionsRConverter.class})
     private ElementOptionsR elementOptionsR;
@@ -59,11 +60,9 @@ public class ElementItemR {
     @TypeConverters({ElementContentsRConverter.class})
     private List<ElementContentsR> elementContentsR;
 
-//    @Ignore
-//    private List<ElementItemR> subElements;
-
     public ElementItemR() {
         this.was_shown = false;
+        this.enabled = true;
     }
 
     public ElementItemR(String configId, int userId, int projectId, int questionnaireId, String type, String subtype, Integer relative_id, Integer relative_parent_id, ElementOptionsR elementOptionsR, List<ElementContentsR> elementContentsR) {
@@ -79,7 +78,7 @@ public class ElementItemR {
         this.elementContentsR = elementContentsR;
         this.was_shown = false;
         this.checked = false;
-//        this.subElements = getDao().getChildElements(relative_id, userId, projectId);
+        this.enabled = true;
     }
 
     public int getId() {
@@ -188,5 +187,13 @@ public class ElementItemR {
 
     public List<ElementItemR> getElements() {
         return getDao().getChildElements(relative_id, userId, projectId);
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

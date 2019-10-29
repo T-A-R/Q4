@@ -106,8 +106,11 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
+    public QuizerDao getMainDao() {
+        return CoreApplication.getQuizerDatabase().getQuizerDao();
+    }
+
     public void showKeyboard() {
-        Log.d(TAG, "showKeyboard: OK");
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
 

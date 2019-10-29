@@ -115,7 +115,7 @@
             android:layout_margin="@dimen/_4sdp"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_22sdp"
-            android:src="@drawable/button_background_white"/>
+            android:src="@drawable/button_background_transparent"/>
 
 
     </RelativeLayout>

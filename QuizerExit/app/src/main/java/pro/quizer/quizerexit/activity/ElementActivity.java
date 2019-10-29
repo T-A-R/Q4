@@ -507,6 +507,7 @@ public class ElementActivity extends BaseActivity {
 
     public void showFakeGPSAlertDialog() {
 
+        saveQuestionnaireToDatabase(true);
 
         if (!isFinishing()) {
             new AlertDialog.Builder(this, R.style.AlertDialogTheme)
@@ -517,11 +518,6 @@ public class ElementActivity extends BaseActivity {
 
                         @Override
                         public void onClick(final DialogInterface dialog, final int which) {
-                            if (mConfig.isSaveAborted()) {
-                                showProgressBar();
-                                saveQuestionnaireToDatabase(true);
-                                showToast(getString(R.string.QUESTIONS_SAVED));
-                            }
                             finish();
                             startMainActivity();
                         }
@@ -551,6 +547,32 @@ public class ElementActivity extends BaseActivity {
         questionnaireDatabaseModel.setGps_time_network(mGpsTimeNetwork);
         questionnaireDatabaseModel.setDate_interview(mStartDateInterview);
         questionnaireDatabaseModel.setHas_photo(getHasPhoto());
+
+        boolean isFakeGPS = false;
+        Long fakeGPSTime = null;
+
+        List<WarningsR> warnings = null;
+        try {
+            warnings = BaseActivity.getDao().getWarningsByStatus(Constants.Warnings.FAKE_GPS, Constants.LogStatus.NOT_SENT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (warnings != null && warnings.size() > 0) {
+            isFakeGPS = true;
+            fakeGPSTime = warnings.get(warnings.size() - 1).getWarningTime();
+        } else {
+            isFakeGPS = false;
+            fakeGPSTime = 0L;
+        }
+        questionnaireDatabaseModel.setUsed_fake_gps(isFakeGPS);
+        questionnaireDatabaseModel.setGps_time_fk(fakeGPSTime);
+
+        try {
+            BaseActivity.getDao().clearWarningsR();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (aborted)
             questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.ABORTED);

@@ -50,25 +50,6 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
             questionnaires = BaseActivity.getDao().getQuestionnaireByUserIdWithStatus(mUserId, QuestionnaireStatus.NOT_SENT);
         }
 
-        boolean isFakeGPS = false;
-        String fakeGPSTime = null;
-
-        List<WarningsR> warnings = null;
-        try {
-            warnings = BaseActivity.getDao().getWarningsByStatus(Constants.Warnings.FAKE_GPS, Constants.LogStatus.NOT_SENT);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (warnings != null && warnings.size() > 0) {
-            isFakeGPS = true;
-            fakeGPSTime = String.valueOf(warnings.get(warnings.size() - 1).getWarningTime());
-        } else {
-            isFakeGPS = false;
-            fakeGPSTime = "0";
-
-        }
-
         for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : questionnaires) {
             final QuestionnaireRequestModel questionnaireRequestModel = new QuestionnaireRequestModel(
                     questionnaireDatabaseModel.getBilling_questions(),
@@ -90,8 +71,8 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
                     questionnaireDatabaseModel.getAuth_time_difference(),
                     questionnaireDatabaseModel.getSend_time_difference(),
                     questionnaireDatabaseModel.getQuota_time_difference(),
-                    isFakeGPS,
-                    fakeGPSTime
+                    questionnaireDatabaseModel.isUsed_fake_gps(),
+                    questionnaireDatabaseModel.getGps_time_fk()
             );
 
             final List<ElementDatabaseModelR> elements = BaseActivity.getDao().getElementByToken(questionnaireDatabaseModel.getToken());

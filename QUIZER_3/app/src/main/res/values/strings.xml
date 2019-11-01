@@ -8,6 +8,9 @@
     <string name="screensaver">Подождите\nВыполняется вход</string>
     <string name="error_auth">Не удалось авторизоваться.</string>
     <string name="doubleclick_exit">Нажмите дважды, чтобы выйти</string>
+    <string name="app_ver">Версия: %1$s</string>
+    <string name="e_mail_sales_quizer_pro">e-mail: sales@quizer.pro</string>
+    <string name="_7_909_214_48_33">тел.: +7 909 214 48 33</string>
 
     <string name="menu_player_map">Menu 1</string>
     <string name="menu_player_raffles">Menu 2</string>
@@ -77,11 +80,15 @@
     <string name="downloaded_count_files">Скачано %1$s файл(а)</string>
     <string name="download_files_error">Ошибка при загрузке медиа-файлов.</string>
     <string name="downloading_media_files">Загрузка медиа файлов</string>
+    <string name="sending_request">Отправка запроса на сервер</string>
+    <string name="get_quotas">Получение квот</string>
+    <string name="save_quotas">Сохранение квот</string>
 
     <string name="error_101">Ошибка 1.01</string>
     <string name="error_102">Ошибка 1.02</string>
     <string name="error_103">Ошибка 1.03</string>
     <string name="error_104">Ошибка 1.04</string>
+    <string name="error_105">Ошибка 1.05</string>
 
     <string name="error_201">Ошибка 2.01</string>
     <string name="error_202">Ошибка 2.02</string>
@@ -114,12 +121,17 @@
     <string name="db_clear_error">Ошибка очистки базы данных.</string>
     <string name="db_save_error">Ошибка записи в базу данных.</string>
     <string name="db_load_error">Ошибка чтения из базы данных.</string>
+    <string name="save_quotas_to_db">Сохранение квот в базе данных</string>
+    <string name="quotas_renew">Список квот обновлен</string>
 
     <string name="log_send_key">Отправка ключа</string>
     <string name="log_try_to_send_key">Попытка отправки ключа</string>
     <string name="log_save_server_info">Сохранение данных сервера</string>
     <string name="log_save_server_to_db">Сохранение сервера в базу данных</string>
     <string name="log_send_key_success">Успешная отправка ключа</string>
+    <string name="log_error_101_desc">Ошибка 1.01 (Не получен или отрицательный ответ от сервера)</string>
+    <string name="log_error_102_desc">Ошибка 1.02 (Ошибка получения JSON из ответа сервера)</string>
+    <string name="log_error_103_desc">Ошибка 1.03 (Ошибка получения JSON из ответа сервера)</string>
     <string name="log_error_501_desc">Ошибка 5.01 (Нет ответа от сервера. Возможны проблемы с подключением к сети интеренет)</string>
     <string name="log_error_502_desc">Ошибка 5.02 (Ошибка получения JSON из ответа сервера)</string>
     <string name="log_error_503_desc">Ошибка 5.03 (Ошибка парсинга JSON.)</string>
@@ -142,6 +154,8 @@
     <string name="start_questions">Начало новой анкеты</string>
     <string name="start_question_error">Ошибка запуска анкеты. Попробуйте еще раз</string>
     <string name="home_screen">Главный экран</string>
+    <string name="quotas_screen">Квоты</string>
+    <string name="about_screen">О нас</string>
     <string name="make_elements_error">Ошибка создания модели анкеты</string>
     <string name="exit_questionaire_warning">Вы уверены, что хотите принудительно прервать анкету? \nЕё содержимое будет потеряно.</string>
     <string name="fill_input_warning">Заполните текстовое поле в выбранных вариантах ответа.</string>
@@ -156,6 +170,34 @@
     <string name="view_OK">ОК</string>
     <string name="empty_string_warning">Заполните текстовое поле в выбранных вариантах ответа.</string>
     <string name="empty_answers_warning">Вы не выбрали ни одного ответа.</string>
+    <string name="view_x_from_y">\u0020(%1$s из %2$s)</string>
+    <string name="view_x_from_y_two">\u0020%1$s из %2$s</string>
+    <string name="view_status_done">Выполнено</string>
+    <string name="view_status_done_two">Квота закрыта</string>
+    <string name="view_status_not_done">Не выполнено</string>
+    <string name="view_status_not_done_two">Собрано</string>
+    <string name="view_status_more_than_done">Перевыполненно</string>
+    <string name="view_no_quotas_by_query">Список квот по заданному фильтру пуст</string>
+    <string name="view_empty_qoutas">Список квот пуст</string>
+    <string name="view_button_show_details">Показать детали</string>
+    <string name="view_button_hide_details">Скрыть детали</string>
+    <string name="view_button_refresh">Обновить</string>
+    <string name="view_button_info">INFO</string>
+    <string name="view_switch_hide_completed_quotas">Скрыть выполненные</string>
+    <string name="view_hint_search">Поиск</string>
+    <string name="quota_not_renew_after_send">Квота не обновлена после последней отправки анкеты.</string>
+    <string name="quota_not_renew_after_finish">Квота не обновлена после последнего завершения анкеты.</string>
+    <string name="quota_renew_time">Время последнего обновления квоты с сервера:</string>
+    <string name="no_quota_limits">Квотные ограничения отсутствуют.</string>
+    <string name="quota_renewed_after_finish">Квота обновлена после последнего завершения анкеты.</string>
+    <string name="quota_renewed_after_send">Квота обновлена после последней отправки анкеты.</string>
+    <string name="notification_updating">Идет обновление…</string>
+    <string name="drawer_home">ГЛАВНЫЙ ЭКРАН</string>
+    <string name="drawer_sync">СИНХРОНИЗАЦИЯ</string>
+    <string name="drawer_settings">НАСТРОЙКИ</string>
+    <string name="drawer_quotas">КВОТЫ</string>
+    <string name="drawer_about">О НАС</string>
+    <string name="drawer_exit">ВЫЙТИ</string>
 
 
 </resources>

@@ -1,9 +1,11 @@
 package pro.quizer.quizer3;
 
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -13,14 +15,26 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.HashMap;
+import java.util.List;
+
 import pro.quizer.quizer3.R;
 
 import pro.quizer.quizer3.database.QuizerDao;
+import pro.quizer.quizer3.database.models.AppLogsR;
+import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.model.User;
+import pro.quizer.quizer3.model.config.ElementModel;
+import pro.quizer.quizer3.model.config.ElementModelNew;
+import pro.quizer.quizer3.utils.DateUtils;
+import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.Fonts;
+import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.view.fragment.MainFragment;
 
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
+import pro.quizer.quizer3.view.fragment.QuotasFragment;
+import pro.quizer.quizer3.view.fragment.ScreenFragment;
 
 
 public class MainActivity extends AppCompatActivity implements ViewTreeObserver.OnGlobalLayoutListener {
@@ -28,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     static public String TAG = "TARLOGS";
     static public boolean DEBUG_MODE = true;
     static public final int MAX_LOGO_SIZE = 200;
+    private UserModelR mCurrentUser;
+    private HashMap<Integer, ElementModelNew> mMap;
 
     private MainFragment mainFragment;
 
@@ -110,6 +126,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         return CoreApplication.getQuizerDatabase().getQuizerDao();
     }
 
+    public static QuizerDao getStaticDao() {
+        return CoreApplication.getQuizerDatabase().getQuizerDao();
+    }
+
     public void showKeyboard() {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
@@ -117,4 +137,107 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public void hideKeyboardFrom(View view) {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+    public HashMap<Integer, ElementModelNew> getMap() {
+        if (mMap == null) {
+            mMap = new HashMap<>();
+
+            generateMap(getElements());
+
+            return mMap;
+        } else {
+            return mMap;
+        }
+    }
+
+    private List<ElementModelNew> getElements() {
+        return getCurrentUser().getConfigR().getProjectInfo().getElements();
+    }
+
+    private void generateMap(final List<ElementModelNew> elements) {
+        for (final ElementModelNew element : elements) {
+            mMap.put(element.getRelativeID(), element);
+
+            final List<ElementModelNew> nestedList = element.getElements();
+            if (nestedList != null && !nestedList.isEmpty()) {
+                generateMap(nestedList);
+            }
+        }
+    }
+
+    public UserModelR getCurrentUser() {
+        if (mCurrentUser == null) {
+            try {
+                mCurrentUser = getUserByUserId(getCurrentUserId());
+            } catch (Exception e) {
+                Toast.makeText(this, getString(R.string.db_load_error), Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        return mCurrentUser;
+    }
+
+    public UserModelR forceGetCurrentUser() {
+        try {
+            mCurrentUser = getUserByUserId(getCurrentUserId());
+        } catch (Exception e) {
+            Toast.makeText(this, getString(R.string.db_load_error), Toast.LENGTH_SHORT).show();
+        }
+
+        return mCurrentUser;
+    }
+
+    public int getCurrentUserId() {
+        return SPUtils.getCurrentUserId(this);
+    }
+
+    public UserModelR getUserByUserId(final int pUserId) {
+
+        List<UserModelR> list = null;
+        try {
+            list = getMainDao().getUserByUserId(pUserId);
+        } catch (Exception e) {
+            Toast.makeText(this, getString(R.string.db_load_error), Toast.LENGTH_SHORT).show();
+        }
+
+        if (list == null || list.isEmpty()) {
+            return null;
+        } else {
+            return list.get(0);
+        }
+    }
+
+    public int getFontSizePosition() {
+        return SPUtils.getFontSizePosition(this);
+    }
+
+    public int getAnswerMargin() {
+        return SPUtils.getAnswerMargin(this);
+    }
+
+    public static void addLog(String login,
+                              String type,
+                              String object,
+                              String action,
+                              String result,
+                              String desc,
+                              String data) {
+        AppLogsR appLogsR = new AppLogsR();
+        appLogsR.setLogin(login);
+        appLogsR.setDevice(DeviceUtils.getDeviceInfo());
+        appLogsR.setAppversion(DeviceUtils.getAppVersion());
+        appLogsR.setAndroid(DeviceUtils.getAndroidVersion());
+        appLogsR.setDate(String.valueOf(DateUtils.getCurrentTimeMillis()));
+        appLogsR.setType(type);
+        appLogsR.setObject(object);
+        appLogsR.setAction(action);
+        appLogsR.setResult(result);
+        appLogsR.setDescription(desc);
+        if (data != null)
+            appLogsR.setData(data.substring(0, Math.min(data.length(), 5000)));
+
+        getStaticDao().insertAppLogsR(appLogsR);
+    }
+
+
 }

@@ -77,7 +77,7 @@ public class PageFragment extends ScreenFragment implements SmartFragment.Listen
         btn2.setOnClickListener(v -> setTab(2));
         btn3.setOnClickListener(v -> setTab(3));
 
-        MainFragment.enableSideMenu();
+        MainFragment.enableSideMenu(true);
 
         setTab(1);
     }
@@ -156,7 +156,7 @@ public class PageFragment extends ScreenFragment implements SmartFragment.Listen
     public void onResume() {
         super.onResume();
         showMenu();
-        MainFragment.enableSideMenu();
+        MainFragment.enableSideMenu(true);
     }
 
 }

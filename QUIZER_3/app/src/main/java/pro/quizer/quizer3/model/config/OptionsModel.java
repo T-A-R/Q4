@@ -115,6 +115,11 @@ public class OptionsModel implements Serializable {
 //        return ConditionUtils.formatTitle(pBaseActivity, title, pMap);
 //    }
 
+
+    public String getTitle() {
+        return title;
+    }
+
     public boolean isSearch() {
         return search;
     }

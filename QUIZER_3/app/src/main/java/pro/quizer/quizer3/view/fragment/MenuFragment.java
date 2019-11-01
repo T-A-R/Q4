@@ -126,7 +126,7 @@ public class MenuFragment extends SmartFragment implements View.OnTouchListener,
 
             if (opened)
                 return;
-            MainFragment.enableSideMenu();
+            MainFragment.enableSideMenu(true);
             cont.setVisibility(View.VISIBLE);
             cont.startAnimation(Anim.getAnimation(getContext(), R.anim.menu_show));
             opened = true;

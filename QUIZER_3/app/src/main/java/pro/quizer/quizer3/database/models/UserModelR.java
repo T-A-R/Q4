@@ -66,19 +66,19 @@ public class UserModelR {
         return new Gson().fromJson(config, ConfigModel.class);
     }
 
-//    public List<QuotaModel> getQuotasR() {
-//        try {
-//            final List<QuotaModel> list = new Gson().fromJson(quotas, QuotaResponseModel.class).getQuotas();
-//            for (QuotaModel quotaModel : list) {
-//                quotaModel.setUserId(user_id);
-//                quotaModel.setUserProjectId(user_project_id);
-//            }
-//
-//            return list;
-//        } catch (final Exception pE) {
-//            return new ArrayList<>();
-//        }
-//    }
+    public List<QuotaModel> getQuotasR() {
+        try {
+            final List<QuotaModel> list = new Gson().fromJson(quotas, QuotaResponseModel.class).getQuotas();
+            for (QuotaModel quotaModel : list) {
+                quotaModel.setUserId(user_id);
+                quotaModel.setUserProjectId(user_project_id);
+            }
+
+            return list;
+        } catch (final Exception pE) {
+            return new ArrayList<>();
+        }
+    }
 
     public int getId() {
         return id;

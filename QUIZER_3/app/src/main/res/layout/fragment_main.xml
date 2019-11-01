@@ -32,7 +32,7 @@
             android:layout_gravity="start"
             android:background="@android:color/transparent">
 
-            <include layout="@layout/fragment_side_menu" />
+            <include layout="@layout/view_drawer" />
 
         </android.support.design.widget.NavigationView>
 

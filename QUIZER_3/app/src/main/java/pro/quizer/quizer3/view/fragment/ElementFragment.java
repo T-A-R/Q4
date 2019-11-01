@@ -201,7 +201,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         btnPrev.startAnimation(Anim.getAppearSlide(getContext(), 500));
         btnExit.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
-        MainFragment.enableSideMenu();
+        MainFragment.enableSideMenu(false);
         initCurrentElements();
         loadResumedData();
         initQuestion();

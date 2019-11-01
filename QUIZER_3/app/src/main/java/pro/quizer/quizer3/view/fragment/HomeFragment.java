@@ -70,7 +70,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         tvCountSent = (TextView) findViewById(R.id.count_sent);
         tvCurrentUser = (TextView) findViewById(R.id.current_user);
 
-        MainFragment.enableSideMenu();
+        MainFragment.enableSideMenu(true);
 
         btnContinue.setTypeface(Fonts.getFuturaPtBook());
         btnContinue.setTransformationMethod(null);
@@ -87,6 +87,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         tvCurrentUser.setTypeface(Fonts.getFuturaPtBook());
 
         cont.startAnimation(Anim.getAppear(getContext()));
+        btnContinue.startAnimation(Anim.getAppearSlide(getContext(), 500));
         btnStart.startAnimation(Anim.getAppearSlide(getContext(), 500));
         btnQuotas.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
@@ -159,38 +160,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 isStartBtnPressed = true;
 
                 startQuestionnaire();
-
-//                try {
-//                    getDao().updateQuestionnaireStart(true, mUserModel.getUser_id());
-//                    initCurrentElements();
-//                    getDao().clearCurrentQuestionnaireR();
-//                    getDao().clearElementPassedR();
-//
-//                    CurrentQuestionnaireR questionnaire = new CurrentQuestionnaireR();
-//                    questionnaire.setToken(StringUtils.generateToken());
-//                    questionnaire.setProject_id(getCurrentUser().getConfigR().getProjectInfo().getProjectId());
-//                    questionnaire.setUser_project_id(getCurrentUser().getUser_project_id());
-//                    questionnaire.setStart_date(DateUtils.getCurrentTimeMillis());
-//                    questionnaire.setGps(mGps);
-//                    questionnaire.setGps_network(mGpsNetwork);
-//                    questionnaire.setGps_time(mGpsTime);
-//                    questionnaire.setGps_time_network(mGpsTimeNetwork);
-//                    questionnaire.setUsed_fake_gps(mIsUserFakeGps);
-//                    questionnaire.setFake_gps_time(mFakeGpsTime);
-//
-//                    getDao().insertCurrentQuestionnaireR(questionnaire);
-//                    hideScreensaver();
-//                    replaceFragment(new ElementFragment());
-//                } catch (Exception e) {
-//                    hideScreensaver();
-//                    isStartBtnPressed = false;
-//                    showToast(getString(R.string.start_question_error));
-//                }
-
             }
         } else if (view == btnQuotas) {
-            Toast.makeText(getContext(), "Quotas", Toast.LENGTH_SHORT).show();
-            replaceFragment(new HomeFragment());
+            replaceFragment(new QuotasFragment());
         } else if (view == btnContinue) {
             Toast.makeText(getContext(), "Продолжение прерванной анкеты", Toast.LENGTH_SHORT).show();
             replaceFragment(new ElementFragment());

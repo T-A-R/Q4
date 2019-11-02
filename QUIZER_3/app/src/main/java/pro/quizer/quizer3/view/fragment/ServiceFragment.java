@@ -1,6 +1,5 @@
 package pro.quizer.quizer3.view.fragment;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,16 +12,14 @@ import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.view.Anim;
 
-import static pro.quizer.quizer3.MainActivity.TAG;
-
-public class TempFragment extends ScreenFragment implements View.OnClickListener {
+public class ServiceFragment extends ScreenFragment implements View.OnClickListener {
     private Button btnSend;
     private EditText etKey;
 
     private boolean isKeyBtnPressed = false;
     private boolean isExit = false;
 
-    public TempFragment() {
+    public ServiceFragment() {
         super(R.layout.fragment_key);
     }
 

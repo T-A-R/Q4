@@ -72,13 +72,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         MainFragment.enableSideMenu(true);
 
-        btnContinue.setTypeface(Fonts.getFuturaPtBook());
-        btnContinue.setTransformationMethod(null);
-        btnStart.setTypeface(Fonts.getFuturaPtBook());
-        btnStart.setTransformationMethod(null);
+//        btnContinue.setTypeface(Fonts.getFuturaPtBook());
+//        btnContinue.setTransformationMethod(null);
+//        btnStart.setTypeface(Fonts.getFuturaPtBook());
+//        btnStart.setTransformationMethod(null);
         btnStart.setOnClickListener(this);
-        btnQuotas.setTypeface(Fonts.getFuturaPtBook());
-        btnQuotas.setTransformationMethod(null);
+//        btnQuotas.setTypeface(Fonts.getFuturaPtBook());
+//        btnQuotas.setTransformationMethod(null);
         btnQuotas.setOnClickListener(this);
         tvConfigAgreement.setTypeface(Fonts.getFuturaPtBook());
         tvConfigName.setTypeface(Fonts.getFuturaPtBook());

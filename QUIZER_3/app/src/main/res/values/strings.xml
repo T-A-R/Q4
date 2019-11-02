@@ -155,6 +155,7 @@
     <string name="start_question_error">Ошибка запуска анкеты. Попробуйте еще раз</string>
     <string name="home_screen">Главный экран</string>
     <string name="quotas_screen">Квоты</string>
+    <string name="sync_screen">Синхронизация</string>
     <string name="about_screen">О нас</string>
     <string name="make_elements_error">Ошибка создания модели анкеты</string>
     <string name="exit_questionaire_warning">Вы уверены, что хотите принудительно прервать анкету? \nЕё содержимое будет потеряно.</string>
@@ -198,6 +199,30 @@
     <string name="drawer_quotas">КВОТЫ</string>
     <string name="drawer_about">О НАС</string>
     <string name="drawer_exit">ВЫЙТИ</string>
-
+    <string name="button_sms">СМС</string>
+    <string name="notification_please_send_quiz">Действие невозможно. Сначала отправьте все анкеты.</string>
+    <string name="view_sent_count_quiz_from_this_device">Отправлено анкет в рамках проекта с данного устройства: %1$s</string>
+    <string name="view_sent_count_quiz_from_this_session">Отправлено анкет в данном сеансе: %1$s</string>
+    <string name="view_unsent_count_quiz">Количество неотправленных анкет: %1$s</string>
+    <string name="view_unsent_count_audio">Количество неотправленных аудио файлов: %1$s</string>
+    <string name="view_unsent_count_photo">Количество неотправленных фото файлов: %1$s</string>
+    <string name="button_delete_users">Удалить пользователей</string>
+    <string name="button_clear_db">Очистить базу данных</string>
+    <string name="clear_db_title">Очистка базы данных</string>
+    <string name="button_delete_user">Удалить пользователя</string>
+    <string name="button_upload_data">Выгрузить данные</string>
+    <string name="button_ftp_upload_data">Отправка через FTP</string>
+    <string name="button_send_quiz">Отправить анкеты</string>
+    <string name="button_logs">Журнал событий</string>
+    <string name="button_send_audio">Отправить аудио</string>
+    <string name="button_send_photo">Отправить фото</string>
+    <string name="button_update_config">Обновить конфиг</string>
+    <string name="view_config_title">Конфигурация</string>
+    <string name="view_id">ID: %1$s</string>
+    <string name="view_date">Дата: %1$s</string>
+    <string name="view_display_settings_title">Настройки отображения</string>
+    <string name="view_settings_font_size">Размер шрифта в вопросах:</string>
+    <string name="view_settings_spacing">Интервал между ответами: %1$s</string>
+    <string name="view_exit_poll_number_title">Выбор номера (для Экзит-Пулл)</string>
 
 </resources>

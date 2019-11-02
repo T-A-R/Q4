@@ -15,6 +15,7 @@ import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.activity.ElementActivity;
 import pro.quizer.quizerexit.activity.MainActivity;
 
 import static pro.quizer.quizerexit.activity.BaseActivity.IS_AFTER_AUTH;
@@ -165,23 +166,46 @@ public class GPSTracker extends Service implements LocationListener {
     }
 
     public void showNoGpsAlert() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity, R.style.AlertDialogTheme);
-        alertDialog.setCancelable(false);
-        alertDialog.setTitle(R.string.DIALOG_NO_GPS);
-        alertDialog.setMessage(R.string.DIALOG_NO_GPS_TEXT);
-        alertDialog.setPositiveButton(R.string.DIALOG_NEXT, new DialogInterface.OnClickListener() {
+        ElementActivity elementActivity = (ElementActivity) mActivity;
+        elementActivity.showToast(""+ elementActivity.isForceGPS());
+        if (elementActivity.isForceGPS()) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity, R.style.AlertDialogTheme);
+            alertDialog.setCancelable(false);
+            alertDialog.setTitle(R.string.DIALOG_NO_GPS);
+            alertDialog.setMessage(R.string.DIALOG_NO_GPS_TEXT);
+            alertDialog.setPositiveButton(R.string.DIALOG_NEXT, new DialogInterface.OnClickListener() {
 
-            public void onClick(DialogInterface dialog, int which) {
-                mActivity.finish();
-                Intent intent = new Intent(mActivity, MainActivity.class);
-                intent.putExtra(IS_AFTER_AUTH, true);
-                mActivity.startActivity(intent);
+                public void onClick(DialogInterface dialog, int which) {
+                    mActivity.finish();
+                    Intent intent = new Intent(mActivity, MainActivity.class);
+                    intent.putExtra(IS_AFTER_AUTH, true);
+                    mActivity.startActivity(intent);
+                }
+            });
+
+            if (!mActivity.isFinishing()) {
+                alertDialog.show();
             }
-        });
+        } else {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity, R.style.AlertDialogTheme);
+            alertDialog.setCancelable(false);
+            alertDialog.setTitle(R.string.DIALOG_NO_GPS);
+            alertDialog.setMessage(R.string.DIALOG_NO_GPS_TEXT_WARNING);
+            alertDialog.setPositiveButton(R.string.DIALOG_NEXT, new DialogInterface.OnClickListener() {
 
-        if (!mActivity.isFinishing()) {
-            alertDialog.show();
+                public void onClick(DialogInterface dialog, int which) {
+                    if (!mActivity.isFinishing()) {
+                        ((ElementActivity) mActivity).showFirstElement();
+                    }
+                }
+            });
+
+            if (!mActivity.isFinishing()) {
+                alertDialog.show();
+            }
         }
+
+
     }
 
     @Override

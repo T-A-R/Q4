@@ -1,11 +1,8 @@
 package pro.quizer.quizer3;
 
-
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -17,8 +14,6 @@ import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
-
-import pro.quizer.quizer3.R;
 
 import pro.quizer.quizer3.database.QuizerDao;
 import pro.quizer.quizer3.database.models.AppLogsR;
@@ -33,8 +28,6 @@ import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.view.fragment.MainFragment;
 
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
-import pro.quizer.quizer3.view.fragment.QuotasFragment;
-import pro.quizer.quizer3.view.fragment.ScreenFragment;
 
 
 public class MainActivity extends AppCompatActivity implements ViewTreeObserver.OnGlobalLayoutListener {
@@ -44,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     static public final int MAX_LOGO_SIZE = 200;
     private UserModelR mCurrentUser;
     private HashMap<Integer, ElementModelNew> mMap;
-
+    private HashMap<Integer, ElementModelNew> mTempMap;
     private MainFragment mainFragment;
 
     @Override
@@ -147,6 +140,25 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             return mMap;
         } else {
             return mMap;
+        }
+    }
+
+    public HashMap<Integer, ElementModelNew> createNewMap(final List<ElementModelNew> elements) {
+        mTempMap = new HashMap<>();
+
+        generateTempMap(elements);
+
+        return mTempMap;
+    }
+
+    private void generateTempMap(final List<ElementModelNew> elements) {
+        for (final ElementModelNew element : elements) {
+            mTempMap.put(element.getRelativeID(), element);
+
+            final List<ElementModelNew> nestedList = element.getElements();
+            if (nestedList != null && !nestedList.isEmpty()) {
+                generateTempMap(nestedList);
+            }
         }
     }
 

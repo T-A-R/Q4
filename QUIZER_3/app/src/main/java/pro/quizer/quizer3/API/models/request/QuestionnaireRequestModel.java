@@ -26,7 +26,7 @@ public class QuestionnaireRequestModel implements Serializable {
     private final Long quota_time_difference;
     private final String token;
     private final boolean used_fake_gps;
-    private final String fake_gps_time;
+    private final Long fake_gps_time;
     private final List<ElementRequestModel> elements;
 
     public QuestionnaireRequestModel(int billing_questions,
@@ -49,7 +49,7 @@ public class QuestionnaireRequestModel implements Serializable {
                                      Long send_time_difference,
                                      Long quota_time_difference,
                                      boolean used_fake_gps,
-                                     String fake_gps_time) {
+                                     Long fake_gps_time) {
         this.gps_time = gps_time;
         this.gps_time_network = gps_time_network;
         this.billing_questions = billing_questions;

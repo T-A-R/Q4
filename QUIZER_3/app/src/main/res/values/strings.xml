@@ -89,11 +89,14 @@
     <string name="error_103">Ошибка 1.03</string>
     <string name="error_104">Ошибка 1.04</string>
     <string name="error_105">Ошибка 1.05</string>
+    <string name="error_107">Ошибка: 1.07</string>
 
     <string name="error_201">Ошибка 2.01</string>
     <string name="error_202">Ошибка 2.02</string>
     <string name="error_203">Ошибка 2.03</string>
     <string name="error_204">Ошибка 2.04</string>
+    <string name="error_205">Ошибка: 2.05</string>
+    <string name="error_206">Ошибка: 2.06</string>
 
     <string name="error_301">Ошибка 3.01</string>
     <string name="error_302">Ошибка 3.02</string>
@@ -117,12 +120,20 @@
 
     <string name="server_not_response">Нет ответа от сервера. Возможны проблемы с подключением к сети интеренет.</string>
     <string name="server_response_error">Ошибка при ответе сервера.</string>
+    <string name="empty_tokens_list_error">Сервер не принял отправленные данные.</string>
 
     <string name="db_clear_error">Ошибка очистки базы данных.</string>
     <string name="db_save_error">Ошибка записи в базу данных.</string>
     <string name="db_load_error">Ошибка чтения из базы данных.</string>
     <string name="save_quotas_to_db">Сохранение квот в базе данных</string>
     <string name="quotas_renew">Список квот обновлен</string>
+    <string name="set_quiz_status">Установка статуса SENT у анкеты</string>
+    <string name="set_sent_quiz_status">Статус отправки анкеты в базе данных установлен как SENT</string>
+    <string name="send_quiz_attempt">Попытка отправки анкеты на сервер</string>
+    <string name="quiz_sent">Анкеты отправлены</string>
+
+    <string name="STATUS_SENT">Отправлено</string>
+    <string name="STATUS_NOT_SENT">Не отправлено</string>
 
     <string name="log_send_key">Отправка ключа</string>
     <string name="log_try_to_send_key">Попытка отправки ключа</string>
@@ -132,6 +143,9 @@
     <string name="log_error_101_desc">Ошибка 1.01 (Не получен или отрицательный ответ от сервера)</string>
     <string name="log_error_102_desc">Ошибка 1.02 (Ошибка получения JSON из ответа сервера)</string>
     <string name="log_error_103_desc">Ошибка 1.03 (Ошибка получения JSON из ответа сервера)</string>
+    <string name="log_error_201_desc">Ошибка 2.01 (Не получен или отрицательный ответ от сервера)</string>
+    <string name="log_error_202_desc">Ошибка 2.02 (Ошибка получения JSON из ответа сервера)</string>
+    <string name="log_error_203_desc">Ошибка 2.03 (Ошибка парсинга JSON)</string>
     <string name="log_error_501_desc">Ошибка 5.01 (Нет ответа от сервера. Возможны проблемы с подключением к сети интеренет)</string>
     <string name="log_error_502_desc">Ошибка 5.02 (Ошибка получения JSON из ответа сервера)</string>
     <string name="log_error_503_desc">Ошибка 5.03 (Ошибка парсинга JSON.)</string>
@@ -216,6 +230,8 @@
     <string name="button_logs">Журнал событий</string>
     <string name="button_send_audio">Отправить аудио</string>
     <string name="button_send_photo">Отправить фото</string>
+    <string name="button_send_log">Отправить журнал на сервер</string>
+    <string name="button_clear_logs">Очистить журнал логов</string>
     <string name="button_update_config">Обновить конфиг</string>
     <string name="view_config_title">Конфигурация</string>
     <string name="view_id">ID: %1$s</string>
@@ -224,5 +240,21 @@
     <string name="view_settings_font_size">Размер шрифта в вопросах:</string>
     <string name="view_settings_spacing">Интервал между ответами: %1$s</string>
     <string name="view_exit_poll_number_title">Выбор номера (для Экзит-Пулл)</string>
+    <string name="view_user_count_on_device">Количество пользователей на данном устройстве: %1$s</string>
+    <string name="view_no_users">Нет сохранённых логинов</string>
+    <string name="service_title">Сервисное обслуживание</string>
+    <string name="notification_sending_empty_users_list">Пользователи не существуют для текущей отправки.</string>
+    <string name="notification_no_numbers_available">Список номеров для отправки анкет через СМС пуст.</string>
+    <string name="notification_sending_sms">Отправка СМС…</string>
+    <string name="notification_successfully_sent_sms">Сообщение успешно отправлено.</string>
+    <string name="notification_unsuccessfully_sent_sms">Сообщение не удалось отправить.</string>
+    <string name="notification_successfully_delivered_sms">Сообщение успешно доставлено.</string>
+    <string name="notification_unsuccessfully_delivered_sms">Сообщение не удалось доставить.</string>
+    <string name="notification_no_connection">Отправка не осуществлена по причине отсутствия интернета. Проверьте подключение к интернету и повторите попытку снова.</string>
+    <string name="dialog_sending_waves_via_sms">Отправка отчётов с помощью СМС.</string>
+    <string name="dialog_sending_waves_via_sms_confirmation">Вы уверены, что хотите отправить волны для пользователя через СМС?</string>
+    <string name="with_sms">через СМС?</string>
+    <string name="notification_cancel_sending_sms">Отправка через СМС отменена.</string>
+    <string name="send_quiz">Отправка анкеты</string>
 
 </resources>

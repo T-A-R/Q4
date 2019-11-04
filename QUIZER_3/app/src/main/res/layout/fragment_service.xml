@@ -3,9 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/service_cont">
 
-    <pro.quizer.quizerexit.view.Toolbar
+    <pro.quizer.quizer3.view.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -42,7 +43,7 @@
                 android:layout_marginBottom="@dimen/_12sdp"
                 android:maxLines="1"
                 android:textSize="@dimen/_12ssp"
-                android:text="@string/VIEW_LOGS_BTN" />
+                android:text="@string/button_logs" />
 
             <include layout="@layout/view_divider" />
 
@@ -55,7 +56,7 @@
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                tools:text="@string/VIEW_USERS_COUNT_ON_DEVICE" />
+                tools:text="@string/view_user_count_on_device" />
 
             <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                 android:id="@+id/unsended_questionnaires_count"
@@ -64,7 +65,7 @@
                 android:layout_marginBottom="4dp"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                tools:text="@string/VIEW_UNSENT_COUNT_QUIZ" />
+                tools:text="@string/view_unsent_count_quiz" />
 
             <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                 android:id="@+id/unsended_audio_files_count"
@@ -73,7 +74,7 @@
                 android:layout_marginBottom="4dp"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                tools:text="@string/VIEW_UNSENT_COUNT_AUDIO" />
+                tools:text="@string/view_unsent_count_audio" />
 
             <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                 android:id="@+id/unsended_photo_files_count"
@@ -82,7 +83,7 @@
                 android:layout_marginBottom="4dp"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                tools:text="@string/VIEW_UNSENT_COUNT_AUDIO" />
+                tools:text="@string/view_unsent_count_photo" />
 
             <Button
                 android:id="@+id/send_data"
@@ -93,7 +94,7 @@
                 android:layout_marginTop="16dp"
                 android:maxLines="1"
                 android:textSize="@dimen/_12ssp"
-                android:text="@string/VIEW_SEND_QUIZ" />
+                android:text="@string/button_send_quiz" />
 
             <Button
                 android:id="@+id/send_audio"
@@ -104,7 +105,7 @@
                 android:layout_marginTop="16dp"
                 android:maxLines="1"
                 android:textSize="@dimen/_12ssp"
-                android:text="@string/VIEW_SEND_AUDIO" />
+                android:text="@string/button_send_audio" />
 
             <Button
                 android:id="@+id/send_photo"
@@ -115,7 +116,7 @@
                 android:layout_marginTop="16dp"
                 android:maxLines="1"
                 android:textSize="@dimen/_12ssp"
-                android:text="@string/VIEW_SEND_PHOTO" />
+                android:text="@string/button_send_photo" />
 
             <Button
                 android:id="@+id/upload_data"
@@ -126,7 +127,7 @@
                 android:layout_marginTop="8dp"
                 android:maxLines="1"
                 android:textSize="@dimen/_12ssp"
-                android:text="@string/VIEW_UPLOAD_DATA" />
+                android:text="@string/button_upload_data" />
 
             <Button
                 android:id="@+id/upload_ftp_data"
@@ -137,7 +138,7 @@
                 android:layout_marginTop="8dp"
                 android:maxLines="1"
                 android:textSize="@dimen/_12ssp"
-                android:text="@string/VIEW_FTP_UPLOAD_DATA" />
+                android:text="@string/button_ftp_upload_data" />
 
             <Button
                 android:id="@+id/clear_db"
@@ -148,7 +149,7 @@
                 android:layout_marginTop="8dp"
                 android:maxLines="1"
                 android:textSize="@dimen/_12ssp"
-                android:text="@string/VIEW_CLEAR_DB" />
+                android:text="@string/button_clear_db" />
 
         </LinearLayout>
 

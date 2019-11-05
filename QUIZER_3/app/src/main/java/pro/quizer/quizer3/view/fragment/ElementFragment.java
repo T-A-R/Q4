@@ -237,7 +237,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //            if (!isNextBtnPressed) {
 //                isNextBtnPressed = true;
             if (saveElement()) {
-//                Log.d(TAG, "onClick NEXT: " + nextElementId);
+                Log.d(TAG, "onClick NEXT: " + nextElementId);
                 if (nextElementId == 0) {
                     saveQuestionnaire();
                 } else if (nextElementId == -1) {
@@ -248,6 +248,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     replaceFragment(fragment);
                 }
             } else {
+                Log.d(TAG, "saveElement: FALSE");
 //                showToast("Выберите ответ.");
             }
 //            }
@@ -425,8 +426,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } else if (answerType.equals(ElementSubtype.TABLE)) {
             tableCont.setVisibility(View.VISIBLE);
         } else if (answerType.equals(ElementSubtype.HTML)) {
-            tvQuestion.setVisibility(View.GONE);
-            tvQuestionDesc.setVisibility(View.GONE);
+            questionCont.setVisibility(View.GONE);
+//            tvQuestion.setVisibility(View.GONE);
+//            tvQuestionDesc.setVisibility(View.GONE);
             infoCont.setVisibility(View.VISIBLE);
             infoText.loadData(currentElement.getElementOptionsR().getData() , "text/html; charset=UTF-8", null);
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

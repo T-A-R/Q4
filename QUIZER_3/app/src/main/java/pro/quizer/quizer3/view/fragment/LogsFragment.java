@@ -23,7 +23,6 @@ public class LogsFragment extends ScreenFragment implements UsersBtnRecyclerAdap
 
     private TextView mNoUsers;
     private RecyclerView mUserBtnsRecyclerView;
-    private MainActivity mBaseActivity;
     private List<UserModelR> usersList;
     private UsersBtnRecyclerAdapter pAdapter;
     private Toolbar mToolbar;
@@ -34,8 +33,6 @@ public class LogsFragment extends ScreenFragment implements UsersBtnRecyclerAdap
 
     @Override
     protected void onReady() {
-
-        mBaseActivity = (MainActivity) getContext();
 
         initViews();
         MainFragment.disableSideMenu();

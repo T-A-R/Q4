@@ -20,6 +20,22 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/info_cont"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_shadow"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <WebView
+                android:id="@+id/info_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_4sdp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/question_cont"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -318,22 +334,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="5dp"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/info_cont"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_shadow"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <WebView
-                    android:id="@+id/info_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/_4sdp"/>
 
             </LinearLayout>
 

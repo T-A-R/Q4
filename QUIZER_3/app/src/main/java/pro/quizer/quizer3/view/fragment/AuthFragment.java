@@ -162,7 +162,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         if (mVersionTapCount == MAX_VERSION_TAP_COUNT) {
             addLog("android", Constants.LogType.BUTTON, null, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_version), "");
             mVersionTapCount = 0;
-            replaceFragment(new KeyFragment());
+            replaceFragment(new ServiceFragment());
         }
     }
 

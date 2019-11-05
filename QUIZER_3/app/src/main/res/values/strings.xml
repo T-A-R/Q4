@@ -102,6 +102,8 @@
     <string name="error_302">Ошибка 3.02</string>
     <string name="error_303">Ошибка 3.03</string>
     <string name="error_304">Ошибка 3.04</string>
+    <string name="error_305">Ошибка 3.05</string>
+    <string name="error_306">Ошибка 3.06</string>
 
     <string name="error_401">Ошибка 4.01</string>
     <string name="error_402">Ошибка 4.02</string>
@@ -146,6 +148,10 @@
     <string name="log_error_201_desc">Ошибка 2.01 (Не получен или отрицательный ответ от сервера)</string>
     <string name="log_error_202_desc">Ошибка 2.02 (Ошибка получения JSON из ответа сервера)</string>
     <string name="log_error_203_desc">Ошибка 2.03 (Ошибка парсинга JSON)</string>
+    <string name="log_error_301_desc">Ошибка 3.01 (Не получен или отрицательный ответ от сервера)</string>
+    <string name="log_error_302_desc">Ошибка 3.02 (Ошибка получения JSON из ответа сервера)</string>
+    <string name="log_error_303_desc">Ошибка 3.03 (Ошибка парсинга JSON)</string>
+    <string name="log_error_304_desc">Ошибка 3.04 (Сервер не принял отправленные данные)</string>
     <string name="log_error_501_desc">Ошибка 5.01 (Нет ответа от сервера. Возможны проблемы с подключением к сети интеренет)</string>
     <string name="log_error_502_desc">Ошибка 5.02 (Ошибка получения JSON из ответа сервера)</string>
     <string name="log_error_503_desc">Ошибка 5.03 (Ошибка парсинга JSON.)</string>
@@ -256,5 +262,26 @@
     <string name="with_sms">через СМС?</string>
     <string name="notification_cancel_sending_sms">Отправка через СМС отменена.</string>
     <string name="send_quiz">Отправка анкеты</string>
+    <string name="clear_warnings_db">Очистка таблицы варнингов.</string>
+    <string name="notification_sending">Идет отправка…</string>
+    <string name="notification_uploading">Идет выгрузка…</string>
+    <string name="notification_clear_db">Идет очистка базы данных…</string>
+    <string name="dialog_sending_file_x_from_y">Идет отправка %1$s из %2$s</string>
+    <string name="sending">Отправка</string>
+    <string name="deleting">Удаление</string>
+    <string name="try_to_send">Попытка отправки</string>
+    <string name="got_fileslist_to_delete">Получен список на удаление файлов</string>
+    <string name="to_server">на сервер</string>
+    <string name="load_crashlog_from_db">Чтение краш-лога из базы данных</string>
+    <string name="save_crashlog_to_file">Выгрузка крашей в файл</string>
+    <string name="save_ctashlog_error">Ошибка создания файла</string>
+    <string name="ftp_upload">Отправка через FTP</string>
+    <string name="dialog_clear_db_warning">Внимание! Все данные из базы будут удалены, включая неотосланные анкеты, аудио и фото. Вам необходимо будет заново ввести ключ при наличии подключения к Интернет! Вы действительно хотите удалить данные?</string>
+    <string name="view_yes">Да</string>
+    <string name="view_no">Нет</string>
+    <string name="log_empty">Журнал событий пуст</string>
+    <string name="send_logs_success">Журнал событий отправлен на сервер</string>
+    <string name="send_logs_error">Ошибка отправки журнала событий</string>
+    <string name="send_logs_empty">Новых событий для отправки нет</string>
 
 </resources>

@@ -191,14 +191,14 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
 
                         @Override
                         public void onSuccess() {
-                            Toast.makeText(mBaseActivity, R.string.NOTIFICATION_UPDATE_QUOTAS, Toast.LENGTH_SHORT).show();
-                            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.GET_QUOTAS), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.QUOTAS_RENEW), null);
+                            Toast.makeText(mBaseActivity, R.string.quotas_renew, Toast.LENGTH_SHORT).show();
+                            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.quotas_renew), null);
                         }
 
                         @Override
                         public void onError(Exception pException) {
-                            Toast.makeText(mBaseActivity, R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS + " " + mBaseActivity.getString(R.string.error_107), Toast.LENGTH_SHORT).show();
-                            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.GET_QUOTAS), Constants.LogResult.ERROR, " " + mBaseActivity.getString(R.string.ERROR_107) + R.string.NOTIFICATION_ERROR_CANNOT_UPDATE_QUOTAS, pException.toString());
+                            Toast.makeText(mBaseActivity, R.string.load_quotas_error + " " + mBaseActivity.getString(R.string.error_107), Toast.LENGTH_SHORT).show();
+                            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.ERROR, " " + mBaseActivity.getString(R.string.error_107) + R.string.load_quotas_error, pException.toString());
                         }
                     }).execute();
 
@@ -207,14 +207,14 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                     try {
                         MainActivity.getStaticDao().clearWarningsR();
                     } catch (Exception e) {
-                        MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.WARNINGS, mBaseActivity.getString(R.string.CLEAR_WARNINGS), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.DB_CLEAR_ERROR), e.getMessage());
+                        MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.WARNINGS, mBaseActivity.getString(R.string.clear_warnings_db), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.db_clear_error), e.getMessage());
                     }
 
                     onSuccess();
                 }
             } else {
                 onError(new Exception(deletingListResponseModel.getError() + " " + mBaseActivity.getString(R.string.error_205)));
-                MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.ERROR, " " + mBaseActivity.getString(R.string.ERROR_205) + deletingListResponseModel.getError(), null);
+                MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.ERROR, " " + mBaseActivity.getString(R.string.error_205) + deletingListResponseModel.getError(), null);
 
             }
         } else {

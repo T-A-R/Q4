@@ -1,5 +1,8 @@
 package pro.quizer.quizer3.view.fragment;
 
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,11 +16,17 @@ import java.io.File;
 import java.util.List;
 
 import pro.quizer.quizer3.Constants;
+import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.executable.DeleteUsersExecutable;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.SendAllQuestionnairesExecutable;
 import pro.quizer.quizer3.executable.ServiceInfoExecutable;
+import pro.quizer.quizer3.executable.files.AllAudiosSendingExecutable;
+import pro.quizer.quizer3.executable.files.AllPhotosSendingExecutable;
 import pro.quizer.quizer3.executable.files.CleanUpFilesExecutable;
+import pro.quizer.quizer3.executable.files.UploadingExecutable;
+import pro.quizer.quizer3.executable.files.UploadingFTPExecutable;
 import pro.quizer.quizer3.model.view.ServiceViewModel;
 import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.Fonts;
@@ -26,7 +35,7 @@ import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
-public class ServiceFragment extends ScreenFragment implements ICallback {
+public class ServiceFragment extends ScreenFragment {
 
     private Button mSendDataButton;
     private Button mSendAudioButton;
@@ -135,7 +144,22 @@ public class ServiceFragment extends ScreenFragment implements ICallback {
             @Override
             public void onClick(final View view) {
                 addLog("android", Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_send_quiz), null);
-                new SendAllQuestionnairesExecutable(ServiceActivity.this, ServiceActivity.this).execute();
+                new SendAllQuestionnairesExecutable((MainActivity) getActivity(), new ICallback() {
+                    @Override
+                    public void onStarting() {
+                        showToast(getString(R.string.notification_sending));
+                    }
+
+                    @Override
+                    public void onSuccess() {
+                        updateData(new ServiceInfoExecutable().execute());
+                    }
+
+                    @Override
+                    public void onError(Exception pException) {
+                        updateData(new ServiceInfoExecutable().execute());
+                    }
+                }).execute();
             }
         });
 
@@ -143,12 +167,27 @@ public class ServiceFragment extends ScreenFragment implements ICallback {
             @Override
             public void onClick(final View view) {
                 if (notSentQuestionnairesCount > 0) {
-                    showToast(getString(R.string.NOTIFICATION_PLEASE_SEND_QUIZ));
+                    showToast(getString(R.string.notification_please_send_quiz));
 
                     return;
                 }
-                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.SEND_PHOTO_BUTTON));
-                new AllPhotosSendingExecutable(ServiceActivity.this, ServiceActivity.this).execute();
+                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_send_photo), null);
+                new AllPhotosSendingExecutable((MainActivity) getActivity(), new ICallback() {
+                    @Override
+                    public void onStarting() {
+                        showToast(getString(R.string.notification_sending));
+                    }
+
+                    @Override
+                    public void onSuccess() {
+                        updateData(new ServiceInfoExecutable().execute());
+                    }
+
+                    @Override
+                    public void onError(Exception pException) {
+                        updateData(new ServiceInfoExecutable().execute());
+                    }
+                }).execute();
             }
         });
 
@@ -156,20 +195,35 @@ public class ServiceFragment extends ScreenFragment implements ICallback {
             @Override
             public void onClick(final View view) {
                 if (notSentQuestionnairesCount > 0) {
-                    showToast(getString(R.string.NOTIFICATION_PLEASE_SEND_QUIZ));
+                    showToast(getString(R.string.notification_please_send_quiz));
 
                     return;
                 }
-                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.SEND_AUDIO_BUTTON));
-                new AllAudiosSendingExecutable(ServiceActivity.this, ServiceActivity.this).execute();
+                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_send_audio), null);
+                new AllAudiosSendingExecutable((MainActivity) getActivity(), new ICallback() {
+                    @Override
+                    public void onStarting() {
+                        showToast(getString(R.string.notification_sending));
+                    }
+
+                    @Override
+                    public void onSuccess() {
+                        updateData(new ServiceInfoExecutable().execute());
+                    }
+
+                    @Override
+                    public void onError(Exception pException) {
+                        updateData(new ServiceInfoExecutable().execute());
+                    }
+                }).execute();
             }
         });
 
         mClearDbButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.CLEAR_DB_BUTTON));
-                if (!isFinishing()) {
+                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_clear_db), null);
+                if (getActivity() != null && !getActivity().isFinishing()) {
                     try {
                         showClearDbAlertDialog();
                     } catch (Exception e) {
@@ -183,28 +237,91 @@ public class ServiceFragment extends ScreenFragment implements ICallback {
         mUploadDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.UPLOAD_BUTTON));
-                new UploadingExecutable(ServiceActivity.this, ServiceActivity.this).execute();
+                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_upload_data), null);
+                new UploadingExecutable((MainActivity) getActivity(), new ICallback() {
+                    @Override
+                    public void onStarting() {
+                        showToast(getString(R.string.notification_uploading));
+                    }
+
+                    @Override
+                    public void onSuccess() {
+                        updateData(new ServiceInfoExecutable().execute());
+                    }
+
+                    @Override
+                    public void onError(Exception pException) {
+                        updateData(new ServiceInfoExecutable().execute());
+                    }
+                }).execute();
             }
         });
 
         mUploadFTPDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.VIEW_FTP_UPLOAD_DATA));
-                new UploadingFTPExecutable(ServiceActivity.this, ServiceActivity.this).execute();
+                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.ftp_upload), null);
+                new UploadingFTPExecutable((MainActivity) getActivity(), new ICallback() {
+                    @Override
+                    public void onStarting() {
+                        showToast(getString(R.string.notification_uploading));
+                    }
+
+                    @Override
+                    public void onSuccess() {
+                        updateData(new ServiceInfoExecutable().execute());
+                    }
+
+                    @Override
+                    public void onError(Exception pException) {
+                        updateData(new ServiceInfoExecutable().execute());
+                    }
+                }).execute();
             }
         });
 
         mLogsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.LOG, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.VIEW_LOGS_TITLE));
-                startLogsActivity();
+                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.LOG, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_logs), null);
+                replaceFragment(new LogsFragment());
             }
         });
     }
 
+    public void showClearDbAlertDialog() {
+        if (getActivity() != null && !getActivity().isFinishing()) {
+            new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.clear_db_title)
+                    .setMessage(R.string.dialog_clear_db_warning)
+                    .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialog, final int which) {
+                            showScreensaver(false);
+                            isDeletingDB = true;
+                            new DeleteUsersExecutable((MainActivity) getActivity(), new ICallback() {
+                                @Override
+                                public void onStarting() {
+                                    showToast(getString(R.string.notification_clear_db));
+                                }
+
+                                @Override
+                                public void onSuccess() {
+                                    hideScreensaver();
+                                    replaceFragment(new KeyFragment());
+                                }
+
+                                @Override
+                                public void onError(Exception pException) {
+                                    updateData(new ServiceInfoExecutable().execute());
+                                }
+                            }).execute();
+                        }
+                    })
+                    .setNegativeButton(R.string.view_no, null).show();
+        }
+    }
 
     @Override
     public boolean onBackPressed() {
@@ -212,19 +329,19 @@ public class ServiceFragment extends ScreenFragment implements ICallback {
         return true;
     }
 
-    @Override
-    public void onStarting() {
-
-    }
-
-    @Override
-    public void onSuccess() {
-
-    }
-
-    @Override
-    public void onError(Exception pException) {
-
-    }
+//    @Override
+//    public void onStarting() {
+//
+//    }
+//
+//    @Override
+//    public void onSuccess() {
+//
+//    }
+//
+//    @Override
+//    public void onError(Exception pException) {
+//
+//    }
 }
 

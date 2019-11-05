@@ -12,6 +12,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,11 +24,15 @@ import pro.quizer.quizer3.model.config.ElementModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
+import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.view.fragment.MainFragment;
 
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
+
+import static pro.quizer.quizer3.utils.FileUtils.AMR;
+import static pro.quizer.quizer3.utils.FileUtils.JPEG;
 
 
 public class MainActivity extends AppCompatActivity implements ViewTreeObserver.OnGlobalLayoutListener {
@@ -217,6 +222,22 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         } else {
             return list.get(0);
         }
+    }
+
+    public List<File> getAllPhotos() {
+        return FileUtils.getFilesRecursion(JPEG, FileUtils.getPhotosStoragePath(this));
+    }
+
+    public List<File> getPhotosByUserId(final int pUserId) {
+        return FileUtils.getFilesRecursion(JPEG, FileUtils.getPhotosStoragePath(this) + FileUtils.FOLDER_DIVIDER + pUserId);
+    }
+
+    public List<File> getAllAudio() {
+        return FileUtils.getFilesRecursion(AMR, FileUtils.getAudioStoragePath(this));
+    }
+
+    public List<File> getAudioByUserId(final int pUserId) {
+        return FileUtils.getFilesRecursion(AMR, FileUtils.getAudioStoragePath(this) + FileUtils.FOLDER_DIVIDER + pUserId);
     }
 
     public int getFontSizePosition() {

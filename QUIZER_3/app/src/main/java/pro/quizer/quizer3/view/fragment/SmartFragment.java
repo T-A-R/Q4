@@ -14,14 +14,22 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.krishna.fileloader.FileLoader;
+import com.krishna.fileloader.listener.MultiFileDownloadListener;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import pro.quizer.quizer3.API.QuizerAPI;
+import pro.quizer.quizer3.API.models.request.AuthRequestModel;
+import pro.quizer.quizer3.API.models.request.ConfigRequestModel;
 import pro.quizer.quizer3.API.models.response.AuthResponseModel;
+import pro.quizer.quizer3.API.models.response.ConfigResponseModel;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.CoreApplication;
 import pro.quizer.quizer3.MainActivity;
@@ -423,7 +431,7 @@ public abstract class SmartFragment extends Fragment {
         initCurrentElements();
         Log.d(TAG, "Elements: " + getCurrentElements().size());
 
-        for(int i = 0; i < getCurrentElements().size(); i++) {
+        for (int i = 0; i < getCurrentElements().size(); i++) {
             Log.d(TAG, "id: " + getCurrentElements().get(i).getRelative_id());
         }
     }
@@ -473,8 +481,151 @@ public abstract class SmartFragment extends Fragment {
     }
 
     public void showElementsQuery() {
-        for(int i = 0; i < getQuestionnaire().getPrev_element_id().size(); i++) {
+        for (int i = 0; i < getQuestionnaire().getPrev_element_id().size(); i++) {
             Log.d(TAG, i + " element: " + getQuestionnaire().getPrev_element_id().get(i).getPrevId());
+        }
+    }
+
+    public void reloadConfig() {
+
+        String mLogin = getCurrentUser().getLogin();
+        String mPass = getCurrentUser().getPassword();
+
+        AuthRequestModel post = new AuthRequestModel(getLoginAdmin(), mPass, mLogin);
+        Gson gsonAuth = new Gson();
+        String jsonAuth = gsonAuth.toJson(post);
+
+        addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SENT, getString(R.string.sending_request), jsonAuth);
+
+        QuizerAPI.authUser(getServer(), jsonAuth, responseBody -> {
+            if (responseBody == null) {
+                showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_401));
+                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_401_desc), null);
+
+                return;
+            }
+
+            String responseJson;
+            try {
+                responseJson = responseBody.string();
+            } catch (IOException e) {
+                e.printStackTrace();
+                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_402_desc), null);
+                responseJson = null;
+            }
+
+            AuthResponseModel authResponseModel = null;
+            try {
+                authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
+            } catch (final Exception pE) {
+                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_403_desc), responseJson);
+            }
+
+            String mConfigId = null;
+            if (authResponseModel != null) {
+                mConfigId = authResponseModel.getConfigId();
+            } else return;
+
+            if (mConfigId != null) {
+                final ConfigRequestModel configRequestModel = new ConfigRequestModel(
+                        getLoginAdmin(),
+                        mLogin,
+                        mPass,
+                        mConfigId
+                );
+
+                Gson gson = new Gson();
+                String json = gson.toJson(configRequestModel);
+
+                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SENT, getString(R.string.try_to_get_config), json);
+
+                QuizerAPI.getConfig(getServer(), json, configResponseBody -> {
+
+                    if (configResponseBody == null) {
+                        showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_601));
+                        addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_601_desc), null);
+
+                        return;
+                    }
+
+                    String configResponseJson = null;
+                    try {
+                        configResponseJson = configResponseBody.string();
+                    } catch (IOException e) {
+                        showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_602));
+                        addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_602_desc), null);
+
+                    }
+                    final GsonBuilder gsonBuilder = new GsonBuilder();
+                    ConfigResponseModel configResponseModel = null;
+
+                    try {
+                        configResponseModel = gsonBuilder.create().fromJson(configResponseJson, ConfigResponseModel.class);
+                    } catch (final Exception pE) {
+                        showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_603));
+                        addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_603_desc), configResponseJson);
+                    }
+
+                    if (configResponseModel != null) {
+                        if (configResponseModel.getResult() != 0) {
+                            addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SUCCESS, getString(R.string.get_config_success), configResponseJson);
+
+                            addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.loading_files), Constants.LogResult.SENT, getString(R.string.try_to_load_files), configResponseJson);
+
+                            updateConfig(getCurrentUser(), configResponseModel.getConfig());
+                            showToast(getString(R.string.config_updated));
+
+                            final String[] fileUris = getCurrentUser().getConfigR().getProjectInfo().getMediaFiles();
+
+                            if (fileUris == null || fileUris.length == 0) {
+                                Log.d(TAG, "reloadConfig: file list empty");
+                            } else {
+
+                                FileLoader.multiFileDownload(getContext())
+                                        .fromDirectory(Constants.Strings.EMPTY, FileLoader.DIR_EXTERNAL_PRIVATE)
+                                        .progressListener(new MultiFileDownloadListener() {
+                                            @Override
+                                            public void onProgress(final File downloadedFile, final int progress, final int totalFiles) {
+                                                FileUtils.renameFile(downloadedFile, FileUtils.getFileName(fileUris[progress - 1]));
+
+                                                if (progress == totalFiles) {
+                                                    showToast(String.format(getString(R.string.load_files_complete)));
+                                                }
+                                                showToast(String.format(getString(R.string.downloaded_count_files), String.valueOf(progress)));
+                                            }
+
+                                            @Override
+                                            public void onError(final Exception e, final int progress) {
+                                                super.onError(e, progress);
+                                                showToast(getString(R.string.download_files_error));
+                                                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.loading_files), Constants.LogResult.ERROR, getString(R.string.download_files_error), e.toString());
+                                            }
+                                        }).loadMultiple(fileUris);
+                            }
+                        } else {
+                            showToast(configResponseModel.getError());
+                            addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, configResponseModel.getError(), configResponseJson);
+                        }
+                    }
+
+                });
+            } else return;
+
+        });
+
+
+    }
+
+    public void updateConfig(final UserModelR pUserModel, final ConfigModel pConfigModel) {
+
+        try {
+            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.save_config), Constants.LogResult.SENT, getString(R.string.save_config_to_db), null);
+            getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
+
+        } catch (Exception e) {
+            showToast(getString(R.string.db_save_error));
+            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.save_config), Constants.LogResult.ERROR, getString(R.string.save_config_to_db_error), e.getMessage());
+
         }
     }
 }

@@ -1,8 +1,11 @@
 package pro.quizer.quizer3;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -246,6 +249,18 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public int getAnswerMargin() {
         return SPUtils.getAnswerMargin(this);
+    }
+
+    public void setAnswerMargin(final int pValue) {
+        SPUtils.saveAnswerMargin(this, pValue);
+    }
+
+    public void setFontSizePosition(final int pPosition) {
+        SPUtils.saveFontSizePosition(this, pPosition);
+    }
+
+    public void restartActivity() {
+        startActivity(new Intent(this, MainActivity.class));
     }
 
     public static void addLog(String login,

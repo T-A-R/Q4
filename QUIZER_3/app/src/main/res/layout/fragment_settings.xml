@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/cont_settings_fragment">
 
     <pro.quizer.quizer3.view.Toolbar
         android:id="@+id/toolbar"
@@ -50,6 +51,12 @@
                 android:textSize="16sp" />
 
             <include layout="@layout/view_divider" />
+
+            <LinearLayout
+                android:id="@+id/text_settings_cont"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
             <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                 android:layout_width="match_parent"
@@ -107,6 +114,8 @@
                 android:thumb="@drawable/custom_thumb" />
 
             <include layout="@layout/view_divider" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/sms_section"

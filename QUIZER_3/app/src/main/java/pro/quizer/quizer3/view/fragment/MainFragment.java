@@ -329,7 +329,8 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
             hide();
             openScreen(new SyncFragment());
         } else if (view == mSettingsBtn) {
-
+            hide();
+            openScreen(new SettingsFragment());
         } else if (view == mQuotasBtn) {
             hide();
             openScreen(new QuotasFragment());

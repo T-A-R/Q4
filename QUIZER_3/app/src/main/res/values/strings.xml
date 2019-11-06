@@ -83,6 +83,18 @@
     <string name="sending_request">Отправка запроса на сервер</string>
     <string name="get_quotas">Получение квот</string>
     <string name="save_quotas">Сохранение квот</string>
+    <string name="get_config_done">Конфиг получен</string>
+    <string name="config_updated">Конфиг обновлен</string>
+    <string name="load_files_complete">Загрузка медиа-файлов завершена</string>
+    <string name="save_config">Сохранение конфига</string>
+    <string name="save_config_to_db">Сохранение конфига в базу данных</string>
+    <string name="save_config_to_db_error">Ошибка сохранения конфига в базу данных</string>
+    <string name="dialog_remove_user_title">Удаление пользователя</string>
+    <string name="dialog_remove_user_body">Вы уверены, что хотите удалить данного пользователя?</string>
+    <string name="dialog_error_remove_user_title">Ошибка удаления текущего пользователя</string>
+    <string name="dialog_error_remove_user_body">Перед удалением пользователя необходимо отправить все данные. Для для отправки всех данных перейдите в СИНХРОНИЗАЦИЮ.</string>
+    <string name="dialog_go_to">Перейти</string>
+
 
     <string name="error_101">Ошибка 1.01</string>
     <string name="error_102">Ошибка 1.02</string>
@@ -176,6 +188,7 @@
     <string name="home_screen">Главный экран</string>
     <string name="quotas_screen">Квоты</string>
     <string name="sync_screen">Синхронизация</string>
+    <string name="settings_screen">Настройки</string>
     <string name="about_screen">О нас</string>
     <string name="make_elements_error">Ошибка создания модели анкеты</string>
     <string name="exit_questionaire_warning">Вы уверены, что хотите принудительно прервать анкету? \nЕё содержимое будет потеряно.</string>
@@ -279,6 +292,7 @@
     <string name="dialog_clear_db_warning">Внимание! Все данные из базы будут удалены, включая неотосланные анкеты, аудио и фото. Вам необходимо будет заново ввести ключ при наличии подключения к Интернет! Вы действительно хотите удалить данные?</string>
     <string name="view_yes">Да</string>
     <string name="view_no">Нет</string>
+    <string name="view_cancel">Отмена</string>
     <string name="log_empty">Журнал событий пуст</string>
     <string name="send_logs_success">Журнал событий отправлен на сервер</string>
     <string name="send_logs_error">Ошибка отправки журнала событий</string>

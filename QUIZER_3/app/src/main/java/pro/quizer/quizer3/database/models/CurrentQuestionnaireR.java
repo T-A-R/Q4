@@ -65,7 +65,18 @@ public class CurrentQuestionnaireR {
     @ColumnInfo(name = "current_element_id")
     private Integer current_element_id;
 
+    @ColumnInfo(name = "count_interrupted")
+    private Integer count_interrupted;
+
+    @ColumnInfo(name = "paused")
+    private boolean paused;
+
+    @ColumnInfo(name = "has_photo")
+    private String has_photo;
+
     public CurrentQuestionnaireR() {
+        this.count_interrupted = 0;
+        this.paused = false;
     }
 
     public CurrentQuestionnaireR(String token, Integer project_id, Integer user_project_id, Long start_date, String gps, String gps_network, Long gps_time, Long gps_time_network, boolean used_fake_gps, Long fake_gps_time, Long auth_time_difference, Long send_time_difference, Long quota_time_difference, Long question_start_time, List<PrevElementsR> prev_element_id, Integer current_element_id) {
@@ -85,6 +96,8 @@ public class CurrentQuestionnaireR {
         this.question_start_time = question_start_time;
         this.prev_element_id = prev_element_id;
         this.current_element_id = current_element_id;
+        this.count_interrupted = 0;
+        this.paused = false;
     }
 
     public int getId() {
@@ -221,5 +234,29 @@ public class CurrentQuestionnaireR {
 
     public void setCurrent_element_id(Integer current_element_id) {
         this.current_element_id = current_element_id;
+    }
+
+    public Integer getCount_interrupted() {
+        return count_interrupted;
+    }
+
+    public void setCount_interrupted(Integer count_interrupted) {
+        this.count_interrupted = count_interrupted;
+    }
+
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
+    public String getHas_photo() {
+        return has_photo;
+    }
+
+    public void setHas_photo(String has_photo) {
+        this.has_photo = has_photo;
     }
 }

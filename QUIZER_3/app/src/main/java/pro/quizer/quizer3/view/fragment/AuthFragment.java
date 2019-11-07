@@ -31,8 +31,11 @@ import pro.quizer.quizer3.API.models.response.AuthResponseModel;
 import pro.quizer.quizer3.API.models.response.ConfigResponseModel;
 import pro.quizer.quizer3.BuildConfig;
 import pro.quizer.quizer3.Constants;
+import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.UserModelR;
+import pro.quizer.quizer3.executable.ICallback;
+import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.ElementModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
@@ -89,8 +92,8 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
         esLogin.setTypeface(Fonts.getFuturaPtMedium());
         etPass.setTypeface(Fonts.getFuturaPtMedium());
-        btnSend.setTypeface(Fonts.getFuturaPtBook());
-        btnSend.setTransformationMethod(null);
+//        btnSend.setTypeface(Fonts.getFuturaPtBook());
+//        btnSend.setTransformationMethod(null);
 
         btnSend.setOnClickListener(this);
         tvVersionView.setOnClickListener(this);
@@ -240,36 +243,36 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 //        makeSmsDatabase();
 
         //TODO Сделать загрузку квот.
-//        downloadQuotas(pAuthResponseModel, pLogin, pPassword);
+        downloadQuotas(pAuthResponseModel, pLogin, pPassword);
 
         //TODO Убрать эти строки после загрузки квот.
-        hideScreensaver();
-        onLoggedIn(pLogin, pPassword, pAuthResponseModel);
+//        hideScreensaver();
+//        onLoggedIn(pLogin, pPassword, pAuthResponseModel);
     }
 
-//    private void downloadQuotas(final AuthResponseModel pAuthResponseModel,
-//                                final String pLogin,
-//                                final String pPassword) {
-//        new UpdateQuotasExecutable(this, new ICallback() {
-//
-//            @Override
-//            public void onStarting() {
-//                showScreensaver(false);
-//            }
-//
-//            @Override
-//            public void onSuccess() {
-//                hideScreensaver();
-//                onLoggedIn(pLogin, pPassword, pAuthResponseModel);
-//            }
-//
-//            @Override
-//            public void onError(Exception pException) {
-//                hideScreensaver();
-//                showToast(getString(R.string.load_quotas_error) + "\n" + pException.toString());
-//            }
-//        }).execute();
-//    }
+    private void downloadQuotas(final AuthResponseModel pAuthResponseModel,
+                                final String pLogin,
+                                final String pPassword) {
+        new UpdateQuotasExecutable(getContext(), new ICallback() {
+
+            @Override
+            public void onStarting() {
+                showScreensaver(false);
+            }
+
+            @Override
+            public void onSuccess() {
+                hideScreensaver();
+                onLoggedIn(pLogin, pPassword, pAuthResponseModel);
+            }
+
+            @Override
+            public void onError(Exception pException) {
+                hideScreensaver();
+                showToast(getString(R.string.load_quotas_error) + "\n" + pException.toString());
+            }
+        }).execute();
+    }
 
     private void onLoggedIn(final String pLogin,
                             final String pPassword,
@@ -468,8 +471,15 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, authResponseModel.getError(),"");
 
         }
+    }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        MainActivity mBaseActivity = (MainActivity) getActivity();
+        if (!mBaseActivity.checkPermission()) {
+            mBaseActivity.requestPermission();
+        }
     }
 }
 

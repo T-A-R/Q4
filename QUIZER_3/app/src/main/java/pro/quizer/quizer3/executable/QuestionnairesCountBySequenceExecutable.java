@@ -29,7 +29,7 @@ public class QuestionnairesCountBySequenceExecutable extends BaseModelExecutable
     public Integer execute() {
         int count = 0;
 
-        final List<QuestionnaireDatabaseModelR> sentQuestionnaires = MainActivity.getStaticDao().getQuestionnaireForQuotas(userId, userProjectId,QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLITED);
+        final List<QuestionnaireDatabaseModelR> sentQuestionnaires = MainActivity.getStaticDao().getQuestionnaireForQuotas(userId, userProjectId,QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
 
         for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : sentQuestionnaires) {
 

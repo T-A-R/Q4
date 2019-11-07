@@ -50,8 +50,8 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
 //        MainFragment.hideToolbar();
 
         etKey.setTypeface(Fonts.getFuturaPtMedium());
-        btnSend.setTypeface(Fonts.getFuturaPtBook());
-        btnSend.setTransformationMethod(null);
+//        btnSend.setTypeface(Fonts.getFuturaPtBook());
+//        btnSend.setTransformationMethod(null);
 
         btnSend.setOnClickListener(this);
 

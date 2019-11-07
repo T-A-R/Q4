@@ -63,7 +63,8 @@ public final class Constants {
 
     public interface QuestionnaireStatuses {
         String ABORTED = "aborted";
-        String COMPLITED = "complited";
+        String COMPLETED = "completed";
+        String UNFINISHED = "unfinished";
     }
 
     public interface LogUser {

@@ -1,10 +1,16 @@
 package pro.quizer.quizer3;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -34,6 +40,13 @@ import pro.quizer.quizer3.view.fragment.MainFragment;
 
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.READ_PHONE_STATE;
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.SEND_SMS;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static pro.quizer.quizer3.utils.FileUtils.AMR;
 import static pro.quizer.quizer3.utils.FileUtils.JPEG;
 
@@ -43,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     static public String TAG = "TARLOGS";
     static public boolean DEBUG_MODE = true;
     static public final int MAX_LOGO_SIZE = 200;
+    public boolean mIsPermDialogShow = false;
     private UserModelR mCurrentUser;
     private HashMap<Integer, ElementModelNew> mMap;
     private HashMap<Integer, ElementModelNew> mTempMap;
@@ -58,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         Preferences preferences = new Preferences(getApplicationContext());
         getUser().setPreferences(preferences);
 
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.main);
 
             View view = mainFragment.getView();
@@ -119,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         }
         return ret;
     }
+
     public void showToastfromActivity(String text) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
@@ -261,6 +276,89 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void restartActivity() {
         startActivity(new Intent(this, MainActivity.class));
+    }
+
+    public boolean checkPermission() {
+        final int location = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
+        final int camera = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
+        final int audio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
+        final int sms = ContextCompat.checkSelfPermission(getApplicationContext(), SEND_SMS);
+        final int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+        final int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+        final int phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_STATE);
+
+        return location == PackageManager.PERMISSION_GRANTED &&
+                camera == PackageManager.PERMISSION_GRANTED &&
+                audio == PackageManager.PERMISSION_GRANTED &&
+                sms == PackageManager.PERMISSION_GRANTED &&
+                writeStorage == PackageManager.PERMISSION_GRANTED &&
+                readStorage == PackageManager.PERMISSION_GRANTED &&
+                phoneState == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public void requestPermission() {
+        if (!mIsPermDialogShow)
+            ActivityCompat.requestPermissions(this, new String[]{
+                    ACCESS_FINE_LOCATION,
+                    CAMERA,
+                    RECORD_AUDIO,
+                    WRITE_EXTERNAL_STORAGE,
+                    READ_EXTERNAL_STORAGE,
+                    SEND_SMS,
+                    READ_PHONE_STATE
+            }, 200);
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
+        switch (requestCode) {
+            case 200:
+                if (grantResults.length > 0) {
+                    final boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    final boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    final boolean audioAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                    final boolean writeStorageAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+                    final boolean readStorageAccepted = grantResults[4] == PackageManager.PERMISSION_GRANTED;
+                    final boolean sendSms = grantResults[5] == PackageManager.PERMISSION_GRANTED;
+                    final boolean phoneState = grantResults[6] == PackageManager.PERMISSION_GRANTED;
+
+                    if (!locationAccepted
+                            || !cameraAccepted
+                            || !audioAccepted
+                            || !writeStorageAccepted
+                            || !readStorageAccepted
+                            || !sendSms
+                            || !phoneState) {
+
+                        showPermissionDialog();
+                        return;
+                    }
+                }
+                break;
+        }
+    }
+
+    private void showPermissionDialog() {
+        mIsPermDialogShow = true;
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
+        alertDialog.setCancelable(false);
+        alertDialog.setTitle(R.string.dialog_please_give_permissions);
+        alertDialog.setMessage(R.string.dialog_you_need_to_turn_on_permissions);
+        alertDialog.setPositiveButton(R.string.dialog_perm_on, new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + BuildConfig.APPLICATION_ID));
+                startActivity(intent);
+                if (alertDialog != null) {
+                    dialog.dismiss();
+                    mIsPermDialogShow = false;
+                }
+
+            }
+        });
+
+        alertDialog.show();
     }
 
     public static void addLog(String login,

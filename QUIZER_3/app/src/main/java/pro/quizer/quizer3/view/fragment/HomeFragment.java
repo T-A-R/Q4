@@ -119,7 +119,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if(currentQuestionnaire != null) {
+        if (currentQuestionnaire != null) {
             btnContinue.setVisibility(View.VISIBLE);
             btnContinue.setOnClickListener(this);
         } else {
@@ -164,8 +164,16 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         } else if (view == btnQuotas) {
             replaceFragment(new QuotasFragment());
         } else if (view == btnContinue) {
-            Toast.makeText(getContext(), "Продолжение прерванной анкеты", Toast.LENGTH_SHORT).show();
-            replaceFragment(new ElementFragment());
+            try {
+                getDao().setCurrentQuestionnairePaused(false);
+                int counter = currentQuestionnaire.getCount_interrupted() + 1;
+                getDao().setInterruptedCounter(counter);
+                showToast("Продолжение прерванной анкеты");
+                replaceFragment(new ElementFragment());
+            } catch (Exception e) {
+                e.printStackTrace();
+                showToast("Ошибка продолжения прерванной анкеты");
+            }
         }
     }
 
@@ -184,15 +192,20 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         CompletableFuture.supplyAsync(() -> {
             Log.d(TAG, "startQuestionnaire: START...");
-            try {
-                Log.d(TAG, "startQuestionnaire: clearCurrentQuestionnaireR() started.");
-                getDao().clearCurrentQuestionnaireR();
-                return true;
-            } catch (Exception e) {
-                Log.d(TAG, "startQuestionnaire: clearCurrentQuestionnaireR() error.");
-                return false;
-            }
-
+            if(currentQuestionnaire != null) {
+                return saveQuestionnaireToDatabase(true);
+            } else return true;
+        }).thenApplyAsync(result -> {
+            if (result) {
+                try {
+                    Log.d(TAG, "startQuestionnaire: clearCurrentQuestionnaireR() started.");
+                    getDao().clearCurrentQuestionnaireR();
+                    return true;
+                } catch (Exception e) {
+                    Log.d(TAG, "startQuestionnaire: clearCurrentQuestionnaireR() error.");
+                    return false;
+                }
+            } else return false;
         }).thenApplyAsync(result -> {
             if (result) {
                 Log.d(TAG, "startQuestionnaire: clearCurrentQuestionnaireR() completed.");
@@ -223,7 +236,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     questionnaire.setFake_gps_time(mFakeGpsTime);
                     questionnaire.setQuestion_start_time(DateUtils.getCurrentTimeMillis());
                     List<PrevElementsR> prev = new ArrayList<>();
-                    prev.add(new PrevElementsR(0,0));
+                    prev.add(new PrevElementsR(0, 0));
                     questionnaire.setPrev_element_id(prev);
 
                     getDao().insertCurrentQuestionnaireR(questionnaire);

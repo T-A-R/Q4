@@ -89,12 +89,24 @@
     <string name="save_config">Сохранение конфига</string>
     <string name="save_config_to_db">Сохранение конфига в базу данных</string>
     <string name="save_config_to_db_error">Ошибка сохранения конфига в базу данных</string>
+    <string name="save_question_to_db">Сохранение анкеты</string>
+    <string name="save_question_to_db_success">Анкета сохранена в базе данных</string>
+    <string name="save_question_to_db_error">Ошибка сохранения анкеты в базе данных</string>
+
     <string name="dialog_remove_user_title">Удаление пользователя</string>
     <string name="dialog_remove_user_body">Вы уверены, что хотите удалить данного пользователя?</string>
     <string name="dialog_error_remove_user_title">Ошибка удаления текущего пользователя</string>
     <string name="dialog_error_remove_user_body">Перед удалением пользователя необходимо отправить все данные. Для для отправки всех данных перейдите в СИНХРОНИЗАЦИЮ.</string>
     <string name="dialog_go_to">Перейти</string>
-
+    <string name="dialog_sending_waves_via_sms">Отправка отчётов с помощью СМС.</string>
+    <string name="dialog_sending_waves_via_sms_confirmation">Вы уверены, что хотите отправить волны для пользователя через СМС?</string>
+    <string name="dialog_please_turn_on_auto_time">Пожалуйста, включите автоматическое время сети.</string>
+    <string name="dialog_you_need_to_turn_on_gps">Для прохождения анкеты необходимо включить GPS.</string>
+    <string name="dialog_please_give_permissions">Пожалуйста, предоставьте разрешения приложению.</string>
+    <string name="dialog_you_need_to_turn_on_permissions">Для работы приложения необходимо перейти в настройки и предоставить нужные разрешия.</string>
+    <string name="dialog_you_need_to_turn_on_auto_time">Для прохождения анкеты необходимо включить автоматическое время сети.</string>
+    <string name="dialog_perm_on">Перейти</string>
+    <string name="dialog_perm_off">Отмена</string>
 
     <string name="error_101">Ошибка 1.01</string>
     <string name="error_102">Ошибка 1.02</string>
@@ -270,8 +282,6 @@
     <string name="notification_successfully_delivered_sms">Сообщение успешно доставлено.</string>
     <string name="notification_unsuccessfully_delivered_sms">Сообщение не удалось доставить.</string>
     <string name="notification_no_connection">Отправка не осуществлена по причине отсутствия интернета. Проверьте подключение к интернету и повторите попытку снова.</string>
-    <string name="dialog_sending_waves_via_sms">Отправка отчётов с помощью СМС.</string>
-    <string name="dialog_sending_waves_via_sms_confirmation">Вы уверены, что хотите отправить волны для пользователя через СМС?</string>
     <string name="with_sms">через СМС?</string>
     <string name="notification_cancel_sending_sms">Отправка через СМС отменена.</string>
     <string name="send_quiz">Отправка анкеты</string>

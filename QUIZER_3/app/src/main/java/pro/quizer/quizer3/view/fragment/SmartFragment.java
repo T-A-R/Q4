@@ -39,18 +39,27 @@ import pro.quizer.quizer3.database.models.ActivationModelR;
 import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementContentsR;
+import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementOptionsR;
+import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.ElementStatusImageR;
+import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.UserModelR;
+import pro.quizer.quizer3.database.models.WarningsR;
+import pro.quizer.quizer3.model.ElementDatabaseType;
+import pro.quizer.quizer3.model.ElementType;
+import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.Contents;
+import pro.quizer.quizer3.model.config.ElementModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.model.config.OptionsModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
+import pro.quizer.quizer3.utils.LogUtils;
 import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 
@@ -65,6 +74,9 @@ public abstract class SmartFragment extends Fragment {
     private UserModelR mCurrentUser;
     private int layoutSrc;
     private HashMap<Integer, ElementModelNew> mMap;
+    private Integer countElements;
+    private Integer countScreens;
+    private Integer countQuestions;
 
     private CurrentQuestionnaireR currentQuestionnaire = null;
     List<ElementItemR> elementItemRList = null;
@@ -627,5 +639,145 @@ public abstract class SmartFragment extends Fragment {
             addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.save_config), Constants.LogResult.ERROR, getString(R.string.save_config_to_db_error), e.getMessage());
 
         }
+    }
+
+    public boolean saveQuestionnaireToDatabase(boolean aborted) {
+        boolean saved = true;
+        countElements = 0;
+        countScreens = 0;
+        countQuestions = 0;
+
+        List<ElementPassedR> elements = null;
+
+        try {
+            elements = getDao().getAllElementsPassedR(currentQuestionnaire.getToken());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (elements != null && elements.size() > 0) {
+            for (ElementPassedR element : elements) {
+                saveElement(element);
+            }
+        } else return false;
+
+        final long endTime = DateUtils.getCurrentTimeMillis();
+        final long durationTimeQuestionnaire = endTime - currentQuestionnaire.getStart_date();
+
+        final QuestionnaireDatabaseModelR questionnaireDatabaseModel = new QuestionnaireDatabaseModelR();
+        questionnaireDatabaseModel.setStatus(QuestionnaireStatus.NOT_SENT);
+        questionnaireDatabaseModel.setToken(currentQuestionnaire.getToken());
+        questionnaireDatabaseModel.setLogin_admin(getLoginAdmin());
+        questionnaireDatabaseModel.setLogin(getCurrentUser().getLogin());
+        questionnaireDatabaseModel.setUser_id(getCurrentUserId());
+        questionnaireDatabaseModel.setPassw(getCurrentUser().getPassword());
+        questionnaireDatabaseModel.setQuestionnaire_id(getCurrentUser().getConfigR().getProjectInfo().getQuestionnaireId());
+        questionnaireDatabaseModel.setProject_id(getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+//        questionnaireDatabaseModel.setBilling_questions(mBillingQuestions); //TODO Узнать надо или нет!
+        questionnaireDatabaseModel.setUser_project_id(getCurrentUser().getUser_project_id());
+        questionnaireDatabaseModel.setGps(currentQuestionnaire.getGps());
+        questionnaireDatabaseModel.setGps_network(currentQuestionnaire.getGps_network());
+        questionnaireDatabaseModel.setGps_time(currentQuestionnaire.getGps_time());
+        questionnaireDatabaseModel.setGps_time_network(currentQuestionnaire.getGps_time_network());
+        questionnaireDatabaseModel.setDate_interview(currentQuestionnaire.getStart_date());
+        questionnaireDatabaseModel.setHas_photo(currentQuestionnaire.getHas_photo());
+
+        //TODO Переделать параметры на currentQuestionnaire
+        boolean isFakeGPS = false;
+        Long fakeGPSTime = null;
+
+        List<WarningsR> warnings = null;
+        try {
+            warnings = getDao().getWarningsByStatus(Constants.Warnings.FAKE_GPS, Constants.LogStatus.NOT_SENT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (warnings != null && warnings.size() > 0) {
+            isFakeGPS = true;
+            fakeGPSTime = warnings.get(warnings.size() - 1).getWarningTime();
+        } else {
+            isFakeGPS = false;
+            fakeGPSTime = 0L;
+        }
+        questionnaireDatabaseModel.setUsed_fake_gps(isFakeGPS);
+        questionnaireDatabaseModel.setGps_time_fk(fakeGPSTime);
+
+        try {
+            getDao().clearWarningsR();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (aborted) {
+            if (currentQuestionnaire.isPaused())
+                questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.UNFINISHED);
+            else
+                questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.ABORTED);
+        } else {
+            questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.COMPLETED);
+        }
+
+        questionnaireDatabaseModel.setQuestions_passed(countQuestions);
+        questionnaireDatabaseModel.setScreens_passed(countScreens); //TODO сделать подсчет экранов.
+        questionnaireDatabaseModel.setSelected_questions(countElements);
+        questionnaireDatabaseModel.setDuration_time_questionnaire((int) durationTimeQuestionnaire);
+        questionnaireDatabaseModel.setAuth_time_difference(SPUtils.getAuthTimeDifference(getContext()));
+        questionnaireDatabaseModel.setQuota_time_difference(SPUtils.getQuotaTimeDifference(getContext()));
+        questionnaireDatabaseModel.setSend_time_difference(SPUtils.getSendTimeDifference(getContext()));
+
+        try {
+            getDao().insertQuestionnaire(questionnaireDatabaseModel);
+            addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.SUCCESS, getString(R.string.save_question_to_db_success), null);
+        } catch (Exception e) {
+            showToast(getString(R.string.db_save_error));
+            addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.ERROR, getString(R.string.save_question_to_db_error), e.toString());
+        saved = false;
+        }
+
+        return saved;
+    }
+
+    private boolean saveElement(final ElementPassedR element) {
+        try {
+            final ElementDatabaseModelR elementDatabaseModel = new ElementDatabaseModelR();
+            ElementItemR elementItemR = null;
+            elementItemR = getDao().getElementById(element.getRelative_id(), getCurrentUserId(), currentQuestionnaire.getProject_id());
+
+            Integer parentId;
+            if (elementItemR != null) {
+                parentId = elementItemR.getRelative_parent_id();
+            } else return false;
+            elementDatabaseModel.setToken(element.getToken());
+
+            elementDatabaseModel.setRelative_id(element.getRelative_id());
+            elementDatabaseModel.setRelative_parent_id(parentId);
+            elementDatabaseModel.setItem_order(elementItemR.getElementOptionsR().getOrder());
+            if (ElementType.ANSWER.equals(elementItemR.getType())) {
+                elementDatabaseModel.setValue(element.getValue());
+                elementDatabaseModel.setType(ElementDatabaseType.ELEMENT);
+                countElements++;
+            } else {
+                if (ElementType.QUESTION.equals(elementItemR.getType())) {
+                    countQuestions++;
+                }
+                elementDatabaseModel.setDuration(element.getDuration());
+                elementDatabaseModel.setType(ElementDatabaseType.SCREEN);
+                countScreens++;
+            }
+
+            LogUtils.logAction("saveElement " + element.getRelative_id());
+
+            try {
+                getDao().insertElement(elementDatabaseModel);
+            } catch (Exception e) {
+//                addLogWithData(mUserLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SAVE_QUESTION_TO_DB), Constants.LogResult.ERROR, getString(R.string.DIALOG_PLEASE_TURN_ON_AUTO_TIME), e.toString());
+                showToast(getString(R.string.db_save_error));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showToast(getString(R.string.db_load_error));
+            return false;
+        }
+        return true;
     }
 }

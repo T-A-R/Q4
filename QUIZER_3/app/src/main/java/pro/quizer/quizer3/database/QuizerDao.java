@@ -245,6 +245,12 @@ public interface QuizerDao {
     @Query("UPDATE CurrentQuestionnaireR SET current_element_id = :id ")
     void setCurrentElement(Integer id);
 
+    @Query("UPDATE CurrentQuestionnaireR SET count_interrupted = :counter ")
+    void setInterruptedCounter(Integer counter);
+
+    @Query("UPDATE CurrentQuestionnaireR SET paused = :paused ")
+    void setCurrentQuestionnairePaused(boolean paused);
+
     @Query("DELETE FROM CurrentQuestionnaireR")
     void clearCurrentQuestionnaireR();
 }

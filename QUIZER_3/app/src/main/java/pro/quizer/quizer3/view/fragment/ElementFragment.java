@@ -26,6 +26,7 @@ import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.ListQuestionAdapter;
 import pro.quizer.quizer3.adapter.TableQuestionAdapter;
@@ -604,6 +605,23 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
                 }
             }
+        } else if (answerType.equals(ElementSubtype.HTML)) {
+            ElementPassedR elementPassedR = new ElementPassedR();
+            nextElementId = currentElement.getElementOptionsR().getJump();
+            elementPassedR.setRelative_id(currentElement.getRelative_id());
+            elementPassedR.setProject_id(currentElement.getProjectId());
+            elementPassedR.setToken(getQuestionnaire().getToken());
+            elementPassedR.setDuration(startTime - DateUtils.getCurrentTimeMillis());
+
+            try {
+                getDao().insertElementPassedR(elementPassedR);
+                getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
+                saved = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                saved = false;
+                return saved;
+            }
         }
 
         if (saved) {
@@ -887,6 +905,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
+        MainActivity mActivity = (MainActivity) getActivity();
+        if (!mActivity.checkPermission()) {
+            mActivity.requestPermission();
+        }
     }
 
     @Override

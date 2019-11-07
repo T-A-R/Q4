@@ -167,11 +167,11 @@ public class GPSTracker extends Service implements LocationListener {
 
     public void showNoGpsAlert() {
         ElementActivity elementActivity = (ElementActivity) mActivity;
-        elementActivity.showToast(""+ elementActivity.isForceGPS());
+        elementActivity.showToast("" + elementActivity.isForceGPS());
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity, R.style.AlertDialogTheme);
+        alertDialog.setCancelable(false);
+        alertDialog.setTitle(R.string.DIALOG_NO_GPS);
         if (elementActivity.isForceGPS()) {
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity, R.style.AlertDialogTheme);
-            alertDialog.setCancelable(false);
-            alertDialog.setTitle(R.string.DIALOG_NO_GPS);
             alertDialog.setMessage(R.string.DIALOG_NO_GPS_TEXT);
             alertDialog.setPositiveButton(R.string.DIALOG_NEXT, new DialogInterface.OnClickListener() {
 
@@ -182,14 +182,7 @@ public class GPSTracker extends Service implements LocationListener {
                     mActivity.startActivity(intent);
                 }
             });
-
-            if (!mActivity.isFinishing()) {
-                alertDialog.show();
-            }
         } else {
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity, R.style.AlertDialogTheme);
-            alertDialog.setCancelable(false);
-            alertDialog.setTitle(R.string.DIALOG_NO_GPS);
             alertDialog.setMessage(R.string.DIALOG_NO_GPS_TEXT_WARNING);
             alertDialog.setPositiveButton(R.string.DIALOG_NEXT, new DialogInterface.OnClickListener() {
 
@@ -199,13 +192,10 @@ public class GPSTracker extends Service implements LocationListener {
                     }
                 }
             });
-
-            if (!mActivity.isFinishing()) {
-                alertDialog.show();
-            }
         }
-
-
+        if (!mActivity.isFinishing()) {
+            alertDialog.show();
+        }
     }
 
     @Override
@@ -230,7 +220,7 @@ public class GPSTracker extends Service implements LocationListener {
     }
 
     public boolean isFakeGPS() {
-        if(location != null) {
+        if (location != null) {
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 return location.isFromMockProvider();
             } else {

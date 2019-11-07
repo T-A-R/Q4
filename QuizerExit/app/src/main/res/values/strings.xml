@@ -172,6 +172,7 @@
     <string name="DIALOG_PLEASE_TURN_ON_GPS">Пожалуйста, включите GPS для продолжения работы.</string>
     <string name="DIALOG_NO_GPS">Устройство не может определить Ваше местоположение.</string>
     <string name="DIALOG_NO_GPS_TEXT">Свяжитесь со службой поддержки QUIZER.</string>
+    <string name="DIALOG_NO_GPS_TEXT_WARNING">Координаты определить невозможно, пожалуйста, предупредите Вашего организатора</string>
     <string name="DIALOG_PLEASE_TURN_ON_AUTO_TIME">Пожалуйста, включите автоматическое время сети.</string>
     <string name="DIALOG_YOU_NEED_TO_TURN_ON_GPS">Для прохождения анкеты необходимо включить GPS.</string>
     <string name="DIALOG_PLEASE_GIVE_PERM">Пожалуйста, предоставьте разрешения приложению.</string>

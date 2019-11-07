@@ -41,6 +41,7 @@ import pro.quizer.quizerexit.AudioService;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.database.QuizerDao;
 import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
 import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.database.model.UserModelR;
@@ -375,7 +376,7 @@ public class ElementActivity extends BaseActivity {
             checkTIme();
     }
 
-    private void showFirstElement() {
+    public void showFirstElement() {
         showNextElement(FIRST_ELEMENT, false, null);
     }
 
@@ -1210,5 +1211,13 @@ public class ElementActivity extends BaseActivity {
 
             }
         }
+    }
+
+    public QuizerDao getElementDao() {
+        return getDao();
+    }
+
+    public boolean isForceGPS() {
+        return mConfig.isForceGps();
     }
 }

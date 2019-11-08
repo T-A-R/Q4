@@ -431,7 +431,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //            tvQuestion.setVisibility(View.GONE);
 //            tvQuestionDesc.setVisibility(View.GONE);
             infoCont.setVisibility(View.VISIBLE);
-            infoText.loadData(currentElement.getElementOptionsR().getData() , "text/html; charset=UTF-8", null);
+            infoText.loadData(currentElement.getElementOptionsR().getData(), "text/html; charset=UTF-8", null);
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 //                infoText.setText(Html.fromHtml(currentElement.getElementOptionsR().getData(), Html.FROM_HTML_MODE_LEGACY));
 //            } else {
@@ -499,7 +499,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 elementPassedR.setRelative_id(currentElement.getRelative_id());
                 elementPassedR.setProject_id(currentElement.getProjectId());
                 elementPassedR.setToken(getQuestionnaire().getToken());
-                elementPassedR.setDuration(startTime - DateUtils.getCurrentTimeMillis());
+                elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
 
                 try {
                     getDao().insertElementPassedR(elementPassedR);
@@ -537,6 +537,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 elementPassedR.setRelative_id(currentElement.getRelative_id());
                 elementPassedR.setProject_id(currentElement.getProjectId());
                 elementPassedR.setToken(getQuestionnaire().getToken());
+                elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
                 elementPassedR.setDuration(startTime - DateUtils.getCurrentTimeMillis());
 
                 try {
@@ -574,6 +575,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 elementPassedR.setRelative_id(currentElement.getRelative_id());
                 elementPassedR.setProject_id(currentElement.getProjectId());
                 elementPassedR.setToken(getQuestionnaire().getToken());
+                elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
                 elementPassedR.setDuration(startTime - DateUtils.getCurrentTimeMillis());
                 try {
                     getDao().insertElementPassedR(elementPassedR);
@@ -611,7 +613,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             elementPassedR.setRelative_id(currentElement.getRelative_id());
             elementPassedR.setProject_id(currentElement.getProjectId());
             elementPassedR.setToken(getQuestionnaire().getToken());
-            elementPassedR.setDuration(startTime - DateUtils.getCurrentTimeMillis());
+            elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
 
             try {
                 getDao().insertElementPassedR(elementPassedR);
@@ -929,8 +931,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     public boolean saveQuestionnaire() {
-        showToast("Анкета сохранена");
-        replaceFragment(new HomeFragment());
+        if (saveQuestionnaireToDatabase(getQuestionnaire(), false)) {
+            showToast("Анкета сохранена");
+            replaceFragment(new HomeFragment());
+        } else {
+            showToast("Ошибка сохранения анкеты. Попробуйте еще раз");
+        }
         return true;
     }
 

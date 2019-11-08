@@ -48,13 +48,13 @@ public class QuestionnaireDatabaseModelR {
     private String gps_network;
 
     @ColumnInfo(name = "gps_time")
-    private long gps_time;
+    private Long gps_time;
 
     @ColumnInfo(name = "gps_time_network")
-    private long gps_time_network;
+    private Long gps_time_network;
 
     @ColumnInfo(name = "gps_time_fk")
-    private long gps_time_fk;
+    private Long gps_time_fk;
 
     @ColumnInfo(name = "questions_passed")
     private int questions_passed;
@@ -96,7 +96,7 @@ public class QuestionnaireDatabaseModelR {
     public QuestionnaireDatabaseModelR() {
     }
 
-    public QuestionnaireDatabaseModelR(String token, String login_admin, String login, int user_id, String passw, int questionnaire_id, int project_id, int billing_questions, int user_project_id, long date_interview, String gps, String gps_network, long gps_time, long gps_time_network, int questions_passed, int screens_passed, int selected_questions, int duration_time_questionnaire, Long quota_time_difference, Long send_time_difference, Long auth_time_difference, String status, String survey_status, String has_photo, boolean used_fake_gps) {
+    public QuestionnaireDatabaseModelR(String token, String login_admin, String login, int user_id, String passw, int questionnaire_id, int project_id, int billing_questions, int user_project_id, long date_interview, String gps, String gps_network, Long gps_time, Long gps_time_network, int questions_passed, int screens_passed, int selected_questions, int duration_time_questionnaire, Long quota_time_difference, Long send_time_difference, Long auth_time_difference, String status, String survey_status, String has_photo, boolean used_fake_gps) {
 
         this.token = token;
         this.login_admin = login_admin;
@@ -126,11 +126,11 @@ public class QuestionnaireDatabaseModelR {
         this.used_fake_gps = used_fake_gps;
     }
 
-    public long getGps_time_fk() {
+    public Long getGps_time_fk() {
         return gps_time_fk;
     }
 
-    public void setGps_time_fk(long gps_time_fk) {
+    public void setGps_time_fk(Long gps_time_fk) {
         this.gps_time_fk = gps_time_fk;
     }
 
@@ -230,11 +230,11 @@ public class QuestionnaireDatabaseModelR {
         this.gps = gps;
     }
 
-    public long getGps_time() {
+    public Long getGps_time() {
         return gps_time;
     }
 
-    public void setGps_time(long gps_time) {
+    public void setGps_time(Long gps_time) {
         this.gps_time = gps_time;
     }
 
@@ -342,11 +342,11 @@ public class QuestionnaireDatabaseModelR {
         this.used_fake_gps = used_fake_gps;
     }
 
-    public long getGps_time_network() {
+    public Long getGps_time_network() {
         return gps_time_network;
     }
 
-    public void setGps_time_network(long gps_time_network) {
+    public void setGps_time_network(Long gps_time_network) {
         this.gps_time_network = gps_time_network;
     }
 }

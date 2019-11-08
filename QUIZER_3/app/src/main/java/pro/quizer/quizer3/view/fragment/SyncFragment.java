@@ -12,6 +12,8 @@ import android.widget.Toast;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.UserModelR;
+import pro.quizer.quizer3.executable.ICallback;
+import pro.quizer.quizer3.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizer3.executable.SyncInfoExecutable;
 import pro.quizer.quizer3.executable.files.CleanUpFilesExecutable;
 import pro.quizer.quizer3.model.view.SyncViewModel;
@@ -21,7 +23,7 @@ import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
-public class SyncFragment extends ScreenFragment implements View.OnClickListener {
+public class SyncFragment extends ScreenFragment implements View.OnClickListener, ICallback {
 
     private Toolbar mToolbar;
     private TextView mUserNameTitle;
@@ -163,8 +165,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
                 mSendDataButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(final View view) {
-                        //TODO SEND QUIZ
-//                        new SendQuestionnairesByUserModelExecutable(getBaseActivity(), mUserModel, SyncFragment.this, false).execute();
+                        new SendQuestionnairesByUserModelExecutable((MainActivity) getActivity(), mUserModel, SyncFragment.this, false).execute();
                     }
                 });
 
@@ -200,26 +201,26 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
         });
     }
 
-//    @Override
-//    public void onStarting() {
-//        if (isAdded()) {
-//            showToast(getString(R.string.NOTIFICATION_SENDING));
-//        }
-//    }
-//
-//    @Override
-//    public void onSuccess() {
-//        if (isAdded()) {
-//            updateData(new SyncInfoExecutable(getContext()).execute());
-//        }
-//    }
-//
-//    @Override
-//    public void onError(final Exception pException) {
-//        if (isAdded()) {
-//            showToast(pException.toString());
-//            updateData(new SyncInfoExecutable(getContext()).execute());
-//        }
-//    }
+    @Override
+    public void onStarting() {
+        if (isAdded()) {
+            showToast(getString(R.string.notification_sending));
+        }
+    }
+
+    @Override
+    public void onSuccess() {
+        if (isAdded()) {
+            updateData(new SyncInfoExecutable(getContext()).execute());
+        }
+    }
+
+    @Override
+    public void onError(final Exception pException) {
+        if (isAdded()) {
+            showToast(pException.toString());
+            updateData(new SyncInfoExecutable(getContext()).execute());
+        }
+    }
 }
 

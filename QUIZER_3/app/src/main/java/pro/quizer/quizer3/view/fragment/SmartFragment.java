@@ -641,7 +641,7 @@ public abstract class SmartFragment extends Fragment {
         }
     }
 
-    public boolean saveQuestionnaireToDatabase(boolean aborted) {
+    public boolean saveQuestionnaireToDatabase(CurrentQuestionnaireR currentQuiz, boolean aborted) {
         boolean saved = true;
         countElements = 0;
         countScreens = 0;
@@ -650,22 +650,29 @@ public abstract class SmartFragment extends Fragment {
         List<ElementPassedR> elements = null;
 
         try {
-            elements = getDao().getAllElementsPassedR(currentQuestionnaire.getToken());
+            elements = getDao().getAllElementsPassedR(currentQuiz.getToken());
         } catch (Exception e) {
             e.printStackTrace();
         }
         if (elements != null && elements.size() > 0) {
             for (ElementPassedR element : elements) {
-                saveElement(element);
+                if(!saveElement(currentQuiz, element)) {
+                    showToast("Ошибка сохранения элемента анкеты");
+                    Log.d(TAG, "saveQuestionnaireToDatabase: Elements List is empty");
+                    return false;
+                }
             }
-        } else return false;
+        } else {
+            Log.d(TAG, "saveQuestionnaireToDatabase: Elements List is empty");
+            return false;
+        }
 
         final long endTime = DateUtils.getCurrentTimeMillis();
-        final long durationTimeQuestionnaire = endTime - currentQuestionnaire.getStart_date();
+        final long durationTimeQuestionnaire = endTime - currentQuiz.getStart_date();
 
         final QuestionnaireDatabaseModelR questionnaireDatabaseModel = new QuestionnaireDatabaseModelR();
         questionnaireDatabaseModel.setStatus(QuestionnaireStatus.NOT_SENT);
-        questionnaireDatabaseModel.setToken(currentQuestionnaire.getToken());
+        questionnaireDatabaseModel.setToken(currentQuiz.getToken());
         questionnaireDatabaseModel.setLogin_admin(getLoginAdmin());
         questionnaireDatabaseModel.setLogin(getCurrentUser().getLogin());
         questionnaireDatabaseModel.setUser_id(getCurrentUserId());
@@ -674,12 +681,12 @@ public abstract class SmartFragment extends Fragment {
         questionnaireDatabaseModel.setProject_id(getCurrentUser().getConfigR().getProjectInfo().getProjectId());
 //        questionnaireDatabaseModel.setBilling_questions(mBillingQuestions); //TODO Узнать надо или нет!
         questionnaireDatabaseModel.setUser_project_id(getCurrentUser().getUser_project_id());
-        questionnaireDatabaseModel.setGps(currentQuestionnaire.getGps());
-        questionnaireDatabaseModel.setGps_network(currentQuestionnaire.getGps_network());
-        questionnaireDatabaseModel.setGps_time(currentQuestionnaire.getGps_time());
-        questionnaireDatabaseModel.setGps_time_network(currentQuestionnaire.getGps_time_network());
-        questionnaireDatabaseModel.setDate_interview(currentQuestionnaire.getStart_date());
-        questionnaireDatabaseModel.setHas_photo(currentQuestionnaire.getHas_photo());
+        questionnaireDatabaseModel.setGps(currentQuiz.getGps());
+        questionnaireDatabaseModel.setGps_network(currentQuiz.getGps_network());
+        questionnaireDatabaseModel.setGps_time(currentQuiz.getGps_time());
+        questionnaireDatabaseModel.setGps_time_network(currentQuiz.getGps_time_network());
+        questionnaireDatabaseModel.setDate_interview(currentQuiz.getStart_date());
+        questionnaireDatabaseModel.setHas_photo(currentQuiz.getHas_photo());
 
         //TODO Переделать параметры на currentQuestionnaire
         boolean isFakeGPS = false;
@@ -709,7 +716,7 @@ public abstract class SmartFragment extends Fragment {
         }
 
         if (aborted) {
-            if (currentQuestionnaire.isPaused())
+            if (currentQuiz.isPaused())
                 questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.UNFINISHED);
             else
                 questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.ABORTED);
@@ -731,17 +738,26 @@ public abstract class SmartFragment extends Fragment {
         } catch (Exception e) {
             showToast(getString(R.string.db_save_error));
             addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.ERROR, getString(R.string.save_question_to_db_error), e.toString());
-        saved = false;
+            saved = false;
         }
 
+        if(saved) {
+            try {
+                getDao().clearCurrentQuestionnaireR();
+                getDao().clearElementPassedR();
+            } catch (Exception e) {
+                showToast(getString(R.string.warning_clear_current_quiz_error));
+                addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.ERROR, getString(R.string.warning_clear_current_quiz_error), e.toString());
+            }
+        }
         return saved;
     }
 
-    private boolean saveElement(final ElementPassedR element) {
+    private boolean saveElement(CurrentQuestionnaireR currentQuiz, final ElementPassedR element) {
         try {
             final ElementDatabaseModelR elementDatabaseModel = new ElementDatabaseModelR();
             ElementItemR elementItemR = null;
-            elementItemR = getDao().getElementById(element.getRelative_id(), getCurrentUserId(), currentQuestionnaire.getProject_id());
+            elementItemR = getDao().getElementById(element.getRelative_id(), getCurrentUserId(), currentQuiz.getProject_id());
 
             Integer parentId;
             if (elementItemR != null) {
@@ -770,7 +786,7 @@ public abstract class SmartFragment extends Fragment {
             try {
                 getDao().insertElement(elementDatabaseModel);
             } catch (Exception e) {
-//                addLogWithData(mUserLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SAVE_QUESTION_TO_DB), Constants.LogResult.ERROR, getString(R.string.DIALOG_PLEASE_TURN_ON_AUTO_TIME), e.toString());
+                addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.ERROR, getString(R.string.db_save_error), e.toString());
                 showToast(getString(R.string.db_save_error));
             }
         } catch (Exception e) {

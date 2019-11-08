@@ -11,10 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java9.util.concurrent.CompletableFuture;
+import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.UserModelR;
+import pro.quizer.quizer3.executable.ICallback;
+import pro.quizer.quizer3.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizer3.executable.SyncInfoExecutable;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.ProjectInfoModel;
@@ -100,6 +103,23 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         }, null);
 
         initViews();
+        new SendQuestionnairesByUserModelExecutable((MainActivity) getActivity(), mUserModel, new ICallback() {
+            @Override
+            public void onStarting() {
+
+            }
+
+            @Override
+            public void onSuccess() {
+                initSyncInfoViews();
+            }
+
+            @Override
+            public void onError(Exception pException) {
+
+            }
+        }, false).execute();
+
 //        showElementsDB();
     }
 
@@ -193,7 +213,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         CompletableFuture.supplyAsync(() -> {
             Log.d(TAG, "startQuestionnaire: START...");
             if(currentQuestionnaire != null) {
-                return saveQuestionnaireToDatabase(true);
+                boolean saved = saveQuestionnaireToDatabase(currentQuestionnaire, true);
+                if(!saved) {
+                    hideScreensaver();
+                }
+                return saved;
             } else return true;
         }).thenApplyAsync(result -> {
             if (result) {

@@ -253,7 +253,6 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
 
             @Override
             public void run() {
-                Log.d(TAG, "?????????????????????????????: " + mConfigDateView + " / " + mConfigDateString + " / " + pSettingsViewModel.getConfigDate());
                 UiUtils.setTextOrHide(mConfigDateView, String.format(mConfigDateString, pSettingsViewModel.getConfigDate()));
                 UiUtils.setTextOrHide(mConfigIdView, String.format(mConfigIdString, pSettingsViewModel.getConfigId()));
                 updateAnswerMarginString(pSettingsViewModel.getAnswerMargin());

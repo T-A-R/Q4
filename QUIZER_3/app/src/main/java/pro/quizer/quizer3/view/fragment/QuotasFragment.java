@@ -183,12 +183,12 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
                 if (isDetailedView) {
                     isDetailedView = false;
                     mDetailsBtn.setText(getString(R.string.view_button_show_details));
-                }
-                else {
+                } else {
                     isDetailedView = true;
                     mDetailsBtn.setText(getString(R.string.view_button_hide_details));
                 }
-                mAdapter.onClickDetails(isDetailedView);
+                if (mAdapter != null)
+                    mAdapter.onClickDetails(isDetailedView);
             }
         });
 

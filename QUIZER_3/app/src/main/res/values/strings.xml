@@ -307,5 +307,6 @@
     <string name="send_logs_success">Журнал событий отправлен на сервер</string>
     <string name="send_logs_error">Ошибка отправки журнала событий</string>
     <string name="send_logs_empty">Новых событий для отправки нет</string>
+    <string name="warning_clear_current_quiz_error">Ошибка очистки данных анкеты</string>
 
 </resources>

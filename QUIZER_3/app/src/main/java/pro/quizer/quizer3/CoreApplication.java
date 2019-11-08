@@ -12,7 +12,9 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import pro.quizer.quizer3.API.RetrofitQuizerAPI;
+import pro.quizer.quizer3.API.UserAgentInterceptor;
 import pro.quizer.quizer3.database.QuizerDatabase;
+import pro.quizer.quizer3.utils.DeviceUtils;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -27,9 +29,12 @@ public class CoreApplication extends Application {
         super.onCreate();
         ActiveAndroid.initialize(this);
 
+        String userAgent = "QUIZER " + BuildConfig.VERSION_NAME + " || " + DeviceUtils.getAndroidVersion() + " || " + DeviceUtils.getDeviceInfo();
+
         OkHttpClient client;
         client = new OkHttpClient.Builder()
 //                .addInterceptor((new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)))
+                .addInterceptor(new UserAgentInterceptor(userAgent))
                 .connectTimeout(20, TimeUnit.SECONDS)
                 .readTimeout(20, TimeUnit.SECONDS)
                 .build();

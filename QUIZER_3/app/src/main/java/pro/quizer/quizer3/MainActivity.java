@@ -54,6 +54,7 @@ import static pro.quizer.quizer3.utils.FileUtils.JPEG;
 public class MainActivity extends AppCompatActivity implements ViewTreeObserver.OnGlobalLayoutListener {
 
     static public String TAG = "TARLOGS";
+    public static final String IS_AFTER_AUTH = "IS_AFTER_AUTH";
     static public boolean DEBUG_MODE = true;
     static public final int MAX_LOGO_SIZE = 200;
     public boolean mIsPermDialogShow = false;
@@ -359,6 +360,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         });
 
         alertDialog.show();
+    }
+
+    public boolean isForceGPS() {
+        return getCurrentUser().getConfigR().isForceGps();
     }
 
     public static void addLog(String login,

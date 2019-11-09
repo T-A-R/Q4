@@ -1,5 +1,10 @@
 package pro.quizer.quizer3.view.fragment;
 
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Build;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -9,8 +14,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import java9.util.concurrent.CompletableFuture;
+import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
@@ -24,6 +31,8 @@ import pro.quizer.quizer3.model.config.ProjectInfoModel;
 import pro.quizer.quizer3.model.view.SyncViewModel;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.Fonts;
+import pro.quizer.quizer3.utils.GPSModel;
+import pro.quizer.quizer3.utils.GpsUtils;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
@@ -48,12 +57,15 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private UserModelR mUserModel;
     CurrentQuestionnaireR currentQuestionnaire = null;
 
-    private String mGps;
-    private String mGpsNetwork;
+    private String mGpsString;
+    private String mGpsNetworkString;
     private Long mGpsTime;
     private Long mGpsTimeNetwork;
-    private boolean mIsUserFakeGps;
+    private boolean mIsUsedFakeGps;
+    private boolean mIsTimeDialogShow = false;
+    private boolean isForceGps = false;
     private Long mFakeGpsTime;
+    private GPSModel mGPSModel;
 
     public HomeFragment() {
         super(R.layout.fragment_home);
@@ -175,7 +187,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onClick(View view) {
         if (view == btnStart) {
-            showScreensaver(false);
             if (!isStartBtnPressed) {
                 isStartBtnPressed = true;
 
@@ -198,6 +209,15 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        MainActivity mBaseActivity = (MainActivity) getActivity();
+        if (!mBaseActivity.checkPermission()) {
+            mBaseActivity.requestPermission();
+        }
+    }
+
+    @Override
     public boolean onBackPressed() {
         if (isExit && getActivity() != null) {
             getActivity().finish();
@@ -209,81 +229,231 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void startQuestionnaire() {
+        if (checkTime() && checkGps()) {
+            showScreensaver(false);
+            CompletableFuture.supplyAsync(() -> {
+                Log.d(TAG, "startQuestionnaire: START...");
+                if (currentQuestionnaire != null) {
+                    boolean saved = saveQuestionnaireToDatabase(currentQuestionnaire, true);
+                    if (!saved) {
+                        hideScreensaver();
+                    }
+                    return saved;
+                } else return true;
+            }).thenApplyAsync(result -> {
+                if (result) {
+                    try {
+                        Log.d(TAG, "startQuestionnaire: clearCurrentQuestionnaireR() started.");
+                        getDao().clearCurrentQuestionnaireR();
+                        return true;
+                    } catch (Exception e) {
+                        Log.d(TAG, "startQuestionnaire: clearCurrentQuestionnaireR() error.");
+                        return false;
+                    }
+                } else return false;
+            }).thenApplyAsync(result -> {
+                if (result) {
+                    Log.d(TAG, "startQuestionnaire: clearCurrentQuestionnaireR() completed.");
+                    try {
+                        Log.d(TAG, "startQuestionnaire: clearElementPassedR() started.");
+                        getDao().clearElementPassedR();
+                        return true;
+                    } catch (Exception e) {
+                        Log.d(TAG, "startQuestionnaire: clearElementPassedR() error.");
+                        return false;
+                    }
+                } else return false;
+            }).thenApplyAsync(result -> {
+                if (result) {
+                    Log.d(TAG, "startQuestionnaire: clearElementPassedR() completed.");
+                    try {
+                        Log.d(TAG, "startQuestionnaire: insertCurrentQuestionnaireR() started.");
+                        CurrentQuestionnaireR questionnaire = new CurrentQuestionnaireR();
+                        questionnaire.setToken(StringUtils.generateToken());
+                        questionnaire.setProject_id(getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+                        questionnaire.setUser_project_id(getCurrentUser().getUser_project_id());
+                        questionnaire.setStart_date(DateUtils.getCurrentTimeMillis());
+                        questionnaire.setGps(mGpsString);
+                        questionnaire.setGps_network(mGpsNetworkString);
+                        questionnaire.setGps_time(mGpsTime);
+                        questionnaire.setGps_time_network(mGpsTimeNetwork);
+                        questionnaire.setUsed_fake_gps(mIsUsedFakeGps);
+                        if (mIsUsedFakeGps)
+                            questionnaire.setFake_gps_time(DateUtils.getCurrentTimeMillis());
+                        questionnaire.setQuestion_start_time(DateUtils.getCurrentTimeMillis());
+                        List<PrevElementsR> prev = new ArrayList<>();
+                        prev.add(new PrevElementsR(0, 0));
+                        questionnaire.setPrev_element_id(prev);
 
-        CompletableFuture.supplyAsync(() -> {
-            Log.d(TAG, "startQuestionnaire: START...");
-            if(currentQuestionnaire != null) {
-                boolean saved = saveQuestionnaireToDatabase(currentQuestionnaire, true);
-                if(!saved) {
-                    hideScreensaver();
-                }
-                return saved;
-            } else return true;
-        }).thenApplyAsync(result -> {
-            if (result) {
-                try {
-                    Log.d(TAG, "startQuestionnaire: clearCurrentQuestionnaireR() started.");
-                    getDao().clearCurrentQuestionnaireR();
-                    return true;
-                } catch (Exception e) {
-                    Log.d(TAG, "startQuestionnaire: clearCurrentQuestionnaireR() error.");
-                    return false;
-                }
-            } else return false;
-        }).thenApplyAsync(result -> {
-            if (result) {
-                Log.d(TAG, "startQuestionnaire: clearCurrentQuestionnaireR() completed.");
-                try {
-                    Log.d(TAG, "startQuestionnaire: clearElementPassedR() started.");
-                    getDao().clearElementPassedR();
-                    return true;
-                } catch (Exception e) {
-                    Log.d(TAG, "startQuestionnaire: clearElementPassedR() error.");
-                    return false;
-                }
-            } else return false;
-        }).thenApplyAsync(result -> {
-            if (result) {
-                Log.d(TAG, "startQuestionnaire: clearElementPassedR() completed.");
-                try {
-                    Log.d(TAG, "startQuestionnaire: insertCurrentQuestionnaireR() started.");
-                    CurrentQuestionnaireR questionnaire = new CurrentQuestionnaireR();
-                    questionnaire.setToken(StringUtils.generateToken());
-                    questionnaire.setProject_id(getCurrentUser().getConfigR().getProjectInfo().getProjectId());
-                    questionnaire.setUser_project_id(getCurrentUser().getUser_project_id());
-                    questionnaire.setStart_date(DateUtils.getCurrentTimeMillis());
-                    questionnaire.setGps(mGps);
-                    questionnaire.setGps_network(mGpsNetwork);
-                    questionnaire.setGps_time(mGpsTime);
-                    questionnaire.setGps_time_network(mGpsTimeNetwork);
-                    questionnaire.setUsed_fake_gps(mIsUserFakeGps);
-                    questionnaire.setFake_gps_time(mFakeGpsTime);
-                    questionnaire.setQuestion_start_time(DateUtils.getCurrentTimeMillis());
-                    List<PrevElementsR> prev = new ArrayList<>();
-                    prev.add(new PrevElementsR(0, 0));
-                    questionnaire.setPrev_element_id(prev);
+                        getDao().insertCurrentQuestionnaireR(questionnaire);
+                        getDao().clearWasElementShown(false);
 
-                    getDao().insertCurrentQuestionnaireR(questionnaire);
-                    getDao().clearWasElementShown(false);
-                    return true;
-                } catch (Exception e) {
-                    Log.d(TAG, "startQuestionnaire: insertCurrentQuestionnaireR() error.");
+                        if (mIsUsedFakeGps) {
+                            currentQuestionnaire = questionnaire;
+                            return false;
+                        }
+                        return true;
+                    } catch (Exception e) {
+                        Log.d(TAG, "startQuestionnaire: insertCurrentQuestionnaireR() error.");
+                        return false;
+                    }
+                } else return false;
+            }).thenApplyAsync(result -> {
+                if (result) {
+                    try {
+                        Log.d(TAG, "startQuestionnaire: insertCurrentQuestionnaireR() completed.");
+                        hideScreensaver();
+                        replaceFragment(new ElementFragment());
+                        return true;
+                    } catch (Exception e) {
+                        hideScreensaver();
+                        return false;
+                    }
+                } else {
+                    hideScreensaver();
                     return false;
                 }
-            } else return false;
-        }).thenApplyAsync(result -> {
-            if (result) {
-                try {
-                    Log.d(TAG, "startQuestionnaire: insertCurrentQuestionnaireR() completed.");
-                    hideScreensaver();
-                    replaceFragment(new ElementFragment());
-                    return true;
-                } catch (Exception e) {
-                    hideScreensaver();
-                    return false;
+            }).thenApplyAsync(result -> {
+                if (!result) {
+                    if (mIsUsedFakeGps) {
+                        Log.d(TAG, "startQuestionnaire: FAKE GPS ALERT");
+                        saveQuestionnaireToDatabase(currentQuestionnaire, true);
+                        new SendQuestionnairesByUserModelExecutable((MainActivity) getActivity(), mUserModel, null, false).execute();
+                        MainActivity activity = (MainActivity) getActivity();
+                        if(activity != null)
+                        activity.runOnUiThread(new Runnable(){
+                            public void run() {
+                                showFakeGPSAlertDialog();
+                            }
+                        });
+                    }
                 }
-            } else return false;
+                return true;
+            });
+        } else {
+            isStartBtnPressed = false;
+        }
+    }
+
+    private boolean isTimeAutomatic() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return Settings.Global.getInt(Objects.requireNonNull(getActivity()).getContentResolver(), Settings.Global.AUTO_TIME, 0) == 1;
+        } else {
+            return android.provider.Settings.System.getInt(Objects.requireNonNull(getActivity()).getContentResolver(), android.provider.Settings.System.AUTO_TIME, 0) == 1;
+        }
+    }
+
+    private boolean checkTime() {
+
+        if (!isTimeAutomatic() && getCurrentUser().getConfigR().isForceTime()) {
+            try {
+                addLog(getCurrentUser().getLogin(), Constants.LogType.DIALOG, Constants.LogObject.QUESTIONNAIRE, getString(R.string.show_dialog), Constants.LogResult.SUCCESS, getString(R.string.dialog_please_turn_on_auto_time), null);
+                showTimeDialog();
+            } catch (Exception e) {
+                addLog(getCurrentUser().getLogin(), Constants.LogType.DIALOG, Constants.LogObject.QUESTIONNAIRE, getString(R.string.show_dialog), Constants.LogResult.ERROR, getString(R.string.dialog_please_turn_on_auto_time), e.toString());
+            }
+            return false;
+        } else return true;
+    }
+
+    private void showTimeDialog() {
+        mIsTimeDialogShow = true;
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(Objects.requireNonNull(getContext()), R.style.AlertDialogTheme);
+        alertDialog.setCancelable(false);
+        alertDialog.setTitle(R.string.dialog_please_turn_on_auto_time);
+        alertDialog.setMessage(R.string.dialog_you_need_to_turn_on_auto_time);
+        alertDialog.setPositiveButton(R.string.dialog_turn_on, new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_DATE_SETTINGS);
+                startActivity(intent);
+                if (alertDialog != null) {
+                    dialog.dismiss();
+                    mIsTimeDialogShow = false;
+                }
+
+            }
         });
+
+        alertDialog.show();
+    }
+
+    private boolean checkGps() {
+        isForceGps = getCurrentUser().getConfigR().isForceGps();
+        if (getCurrentUser().getConfigR().isGps() && mGPSModel == null) {
+            try {
+                mGPSModel = GpsUtils.getCurrentGps(getActivity(), isForceGps);
+                if (mGPSModel == null || mGPSModel.isNoGps()) {
+                    showNoGpsAlert();
+                } else {
+                    mGpsString = mGPSModel.getGPS();
+                    mGpsNetworkString = mGPSModel.getGPSNetwork();
+                    mIsUsedFakeGps = mGPSModel.isFakeGPS();
+//                    mIsUsedFakeGps = true; // For tests!
+                    mGpsTime = mGPSModel.getTime();
+                    mGpsTimeNetwork = mGPSModel.getTimeNetwork();
+                    return true;
+                }
+            } catch (final Exception e) {
+                e.printStackTrace();
+                Log.d(TAG, "startGps: " + e.getMessage());
+            }
+
+            if (getCurrentUser().getConfigR().isForceGps()) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    public void showNoGpsAlert() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
+        alertDialog.setCancelable(false);
+        alertDialog.setTitle(R.string.dialog_no_gps);
+        if (isForceGps) {
+            alertDialog.setMessage(R.string.dialog_no_gps_text);
+            alertDialog.setPositiveButton(R.string.dialog_next, new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+        } else {
+            alertDialog.setMessage(R.string.dialog_no_gps_text_warning);
+            alertDialog.setPositiveButton(R.string.dialog_next, new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+        }
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity != null && !activity.isFinishing()) {
+            alertDialog.show();
+        }
+    }
+
+    public void showFakeGPSAlertDialog() {
+
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity != null && !activity.isFinishing()) {
+            new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.dialog_fake_gps_title)
+                    .setMessage(R.string.dialog_fake_gps_body)
+                    .setPositiveButton(R.string.dialog_apply, new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(final DialogInterface dialog, final int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        }
     }
 }
 

@@ -92,6 +92,7 @@
     <string name="save_question_to_db">Сохранение анкеты</string>
     <string name="save_question_to_db_success">Анкета сохранена в базе данных</string>
     <string name="save_question_to_db_error">Ошибка сохранения анкеты в базе данных</string>
+    <string name="show_dialog">Показ диалогового окна</string>
 
     <string name="dialog_remove_user_title">Удаление пользователя</string>
     <string name="dialog_remove_user_body">Вы уверены, что хотите удалить данного пользователя?</string>
@@ -106,7 +107,17 @@
     <string name="dialog_you_need_to_turn_on_permissions">Для работы приложения необходимо перейти в настройки и предоставить нужные разрешия.</string>
     <string name="dialog_you_need_to_turn_on_auto_time">Для прохождения анкеты необходимо включить автоматическое время сети.</string>
     <string name="dialog_perm_on">Перейти</string>
+    <string name="dialog_next">Продолжить</string>
     <string name="dialog_perm_off">Отмена</string>
+    <string name="dialog_apply">Принять</string>
+    <string name="dialog_turn_on">Включить</string>
+    <string name="dialog_please_turn_on_gps">Пожалуйста, включите GPS для продолжения работы.</string>
+    <string name="dialog_no_gps">Устройство не может определить Ваше местоположение.</string>
+    <string name="dialog_no_gps_text">Свяжитесь со службой поддержки QUIZER.</string>
+    <string name="dialog_no_gps_text_warning">Координаты определить невозможно, пожалуйста, предупредите Вашего организатора</string>
+    <string name="dialog_show_error">Невозможно отобразить диалог</string>
+    <string name="dialog_fake_gps_title">Обнаружено нарушение.</string>
+    <string name="dialog_fake_gps_body">На Вашем устройстве используется программа для подмены GPS-координат. Для продолжения работы необходимо её удалить.</string>
 
     <string name="error_101">Ошибка 1.01</string>
     <string name="error_102">Ошибка 1.02</string>

@@ -662,9 +662,6 @@ public abstract class SmartFragment extends Fragment {
                     return false;
                 }
             }
-        } else {
-            Log.d(TAG, "saveQuestionnaireToDatabase: Elements List is empty");
-            return false;
         }
 
         final long endTime = DateUtils.getCurrentTimeMillis();
@@ -687,33 +684,8 @@ public abstract class SmartFragment extends Fragment {
         questionnaireDatabaseModel.setGps_time_network(currentQuiz.getGps_time_network());
         questionnaireDatabaseModel.setDate_interview(currentQuiz.getStart_date());
         questionnaireDatabaseModel.setHas_photo(currentQuiz.getHas_photo());
-
-        //TODO Переделать параметры на currentQuestionnaire
-        boolean isFakeGPS = false;
-        Long fakeGPSTime = null;
-
-        List<WarningsR> warnings = null;
-        try {
-            warnings = getDao().getWarningsByStatus(Constants.Warnings.FAKE_GPS, Constants.LogStatus.NOT_SENT);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (warnings != null && warnings.size() > 0) {
-            isFakeGPS = true;
-            fakeGPSTime = warnings.get(warnings.size() - 1).getWarningTime();
-        } else {
-            isFakeGPS = false;
-            fakeGPSTime = 0L;
-        }
-        questionnaireDatabaseModel.setUsed_fake_gps(isFakeGPS);
-        questionnaireDatabaseModel.setGps_time_fk(fakeGPSTime);
-
-        try {
-            getDao().clearWarningsR();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        questionnaireDatabaseModel.setUsed_fake_gps(currentQuiz.isUsed_fake_gps());
+        questionnaireDatabaseModel.setGps_time_fk(currentQuiz.getFake_gps_time());
 
         if (aborted) {
             if (currentQuiz.isPaused())

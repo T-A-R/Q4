@@ -428,16 +428,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             tableCont.setVisibility(View.VISIBLE);
         } else if (answerType.equals(ElementSubtype.HTML)) {
             questionCont.setVisibility(View.GONE);
-//            tvQuestion.setVisibility(View.GONE);
-//            tvQuestionDesc.setVisibility(View.GONE);
             infoCont.setVisibility(View.VISIBLE);
             infoText.loadData(currentElement.getElementOptionsR().getData(), "text/html; charset=UTF-8", null);
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//                infoText.setText(Html.fromHtml(currentElement.getElementOptionsR().getData(), Html.FROM_HTML_MODE_LEGACY));
-//            } else {
-//                infoText.setText(Html.fromHtml(currentElement.getElementOptionsR().getData()));
-//            }
-//            UiUtils.setTextOrHide(infoText, currentElement.getElementOptionsR().getData());
         }
 
         for (ElementItemR element : getCurrentElements()) {
@@ -488,12 +480,18 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             List<AnswerState> answerStates = adapterList.getAnswers();
             if (answerStates != null && notEmpty(answerStates)) {
 
-                if (currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
-                    //TODO Переход из контейнера с ротацией
-                    nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
-                } else if (nextElementId == null || nextElementId == 0) {
-                    nextElementId = getElement(answerStates.get(0).getRelative_id()).getElementOptionsR().getJump();
+                for(AnswerState answerState : answerStates) {
+                    if(answerState.isChecked()) {
+                        nextElementId = getElement(answerState.getRelative_id()).getElementOptionsR().getJump();
+                    }
                 }
+
+//                if (currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+//                    //TODO Переход из контейнера с ротацией
+//                    nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+//                } else if (nextElementId == null || nextElementId == 0) {
+//                    nextElementId = getElement(answerStates.get(0).getRelative_id()).getElementOptionsR().getJump();
+//                }
 
                 ElementPassedR elementPassedR = new ElementPassedR();
                 elementPassedR.setRelative_id(currentElement.getRelative_id());

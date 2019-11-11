@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -23,14 +22,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.ElementItemR;
-import pro.quizer.quizer3.model.OptionsOpenType;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.utils.Fonts;
 
@@ -60,7 +56,24 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     public ListQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
         this.question = question;
+        if (question.getElementOptionsR() != null && question.getElementOptionsR().isRotation()) {
+            List<ElementItemR> shuffleList = new ArrayList<>();
+            for (ElementItemR elementItemR : answersList) {
+                if (elementItemR.getElementOptionsR() != null && !elementItemR.getElementOptionsR().isFixed_order()) {
+                    shuffleList.add(elementItemR);
+                }
+            }
+            Collections.shuffle(shuffleList, new Random());
+            int k = 0;
+            for (int i = 0; i < answersList.size(); i++) {
+                if (answersList.get(i).getElementOptionsR() != null && !answersList.get(i).getElementOptionsR().isFixed_order()) {
+                    answersList.set(i, shuffleList.get(k));
+                    k++;
+                }
+            }
+        }
         this.answersList = answersList;
+
         this.onAnswerClickListener = onAnswerClickListener;
         if (question.getElementOptionsR().getOpen_type() != null) {
             this.isOpen = true;
@@ -71,11 +84,6 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         for (int i = 0; i < answersList.size(); i++) {
             this.answersState.add(new AnswerState(answersList.get(i).getRelative_id(), false, ""));
         }
-
-//        Log.d(TAG, "===========================");
-//        for (int i = 0; i < answersState.size(); i++) {
-//            Log.d(TAG, i + ": " + answersState.get(i).isChecked() + " / " + answersState.get(i).getData());
-//        }
     }
 
     @NonNull
@@ -124,15 +132,15 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             }
         }
 
-        if(!answersList.get(position).isEnabled()) {
-            if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bg_gray_shadow) );
+        if (!answersList.get(position).isEnabled()) {
+            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bg_gray_shadow));
             } else {
                 holder.cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_gray_shadow));
             }
         } else {
-            if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bg_shadow) );
+            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bg_shadow));
             } else {
                 holder.cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_shadow));
             }
@@ -394,9 +402,9 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             }
             this.answersState = answers;
             for (int i = 0; i < answers.size(); i++) {
-                if(answersList.get(i).getElementOptionsR().isUnchecker() && answers.get(i).isChecked()) {
-                    for(int k = 0; k < answersList.size(); k++) {
-                        if(k != i) {
+                if (answersList.get(i).getElementOptionsR().isUnchecker() && answers.get(i).isChecked()) {
+                    for (int k = 0; k < answersList.size(); k++) {
+                        if (k != i) {
                             answersList.get(k).setEnabled(false);
                         }
                     }

@@ -452,12 +452,23 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
         try {
             authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
         } catch (final Exception pE) {
-            showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " " + getString(R.string.ERROR_403));
             addLogWithData(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.USER_AUTH), Constants.LogResult.ERROR, getString(R.string.ERROR_403_DESC), responseJson);
-
         }
 
-        if (authResponseModel == null) return;
+        if (authResponseModel == null) {
+            final UserModelR savedUserModel = getLocalUserModel(login, passwordMD5);
+
+            if (savedUserModel != null) {
+                showToast(getString(R.string.SAVED_DATA_LOGIN));
+                addLog(savedUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.USER_AUTH), Constants.LogResult.SUCCESS, getString(R.string.SAVED_DATA_LOGIN));
+                onLoggedInWithoutUpdateLocalData(savedUserModel.getUser_id());
+            } else {
+                showToast(getString(R.string.WRONG_LOGIN));
+                addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.USER_AUTH), Constants.LogResult.ERROR, getString(R.string.WRONG_LOGIN));
+            }
+
+            return;
+        }
 
         if (authResponseModel.getServerTime() != null) {
             SPUtils.saveAuthTimeDifference(AuthActivity.this, authResponseModel.getServerTime());

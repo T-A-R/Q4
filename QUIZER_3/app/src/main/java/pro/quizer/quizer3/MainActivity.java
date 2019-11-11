@@ -54,6 +54,7 @@ import static pro.quizer.quizer3.utils.FileUtils.JPEG;
 public class MainActivity extends AppCompatActivity implements ViewTreeObserver.OnGlobalLayoutListener {
 
     static public String TAG = "TARLOGS";
+    static public boolean AVIA = false;
     public static final String IS_AFTER_AUTH = "IS_AFTER_AUTH";
     static public boolean DEBUG_MODE = true;
     static public final int MAX_LOGO_SIZE = 200;

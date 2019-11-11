@@ -443,11 +443,23 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         try {
             authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
         } catch (final Exception pE) {
-            showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_403));
             addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_403_desc), responseJson);
         }
 
-        if (authResponseModel == null) return;
+        if (authResponseModel == null) {
+            final UserModelR savedUserModel = getLocalUserModel(login, passwordMD5);
+
+            if (savedUserModel != null) {
+                showToast(getString(R.string.saved_data_login));
+                addLog(savedUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SUCCESS, getString(R.string.saved_data_login), "");
+                onLoggedInWithoutUpdateLocalData(savedUserModel.getUser_id());
+            } else {
+                showToast(getString(R.string.wrong_login_or_pass));
+                addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.wrong_login_or_pass), "login: " + login + " pass: " + password);
+            }
+
+            return;
+        }
 
         if (authResponseModel.getServerTime() != null) {
             SPUtils.saveAuthTimeDifference(getContext(), authResponseModel.getServerTime());

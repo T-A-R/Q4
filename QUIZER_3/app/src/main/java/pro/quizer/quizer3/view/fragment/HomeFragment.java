@@ -35,9 +35,11 @@ import pro.quizer.quizer3.utils.GPSModel;
 import pro.quizer.quizer3.utils.GpsUtils;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
+import pro.quizer.quizer3.utils.Internet;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
+import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class HomeFragment extends ScreenFragment implements View.OnClickListener {
@@ -219,12 +221,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     @Override
     public boolean onBackPressed() {
-        if (isExit && getActivity() != null) {
-            getActivity().finish();
-        } else {
-            Toast.makeText(getContext(), "Для выхода нажмите \"Назад\" еще раз", Toast.LENGTH_SHORT).show();
-            isExit = true;
-        }
+        showExitAlertDialog();
         return true;
     }
 
@@ -453,6 +450,28 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         }
                     })
                     .show();
+        }
+    }
+
+    public void showExitAlertDialog() {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity!= null && !activity.isFinishing()) {
+            if (AVIA && !Internet.hasConnection(getContext())) {
+                showToast(getString(R.string.toast_cant_exit));
+                return;
+            }
+
+            new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.dialog_close_app_title)
+                    .setMessage(R.string.dialog_close_app_body)
+                    .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialog, final int which) {
+                            activity.finish();
+                        }
+                    })
+                    .setNegativeButton(R.string.view_no, null).show();
         }
     }
 }

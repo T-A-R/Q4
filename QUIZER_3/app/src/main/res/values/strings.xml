@@ -94,6 +94,8 @@
     <string name="save_question_to_db_error">Ошибка сохранения анкеты в базе данных</string>
     <string name="show_dialog">Показ диалогового окна</string>
 
+    <string name="toast_cant_exit">Подключение к интернету отсутствует, выход из аккаунта невозможен  Для выхода используйте кнопку Назад</string>
+
     <string name="dialog_remove_user_title">Удаление пользователя</string>
     <string name="dialog_remove_user_body">Вы уверены, что хотите удалить данного пользователя?</string>
     <string name="dialog_error_remove_user_title">Ошибка удаления текущего пользователя</string>
@@ -118,6 +120,9 @@
     <string name="dialog_show_error">Невозможно отобразить диалог</string>
     <string name="dialog_fake_gps_title">Обнаружено нарушение.</string>
     <string name="dialog_fake_gps_body">На Вашем устройстве используется программа для подмены GPS-координат. Для продолжения работы необходимо её удалить.</string>
+    <string name="dialog_close_app_title">Выход из приложения</string>
+    <string name="dialog_close_app_body">Вы уверены, что хотите выйти из приложения?</string>
+
 
     <string name="error_101">Ошибка 1.01</string>
     <string name="error_102">Ошибка 1.02</string>

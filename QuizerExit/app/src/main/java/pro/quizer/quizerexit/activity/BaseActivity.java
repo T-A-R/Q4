@@ -584,7 +584,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     public void showExitAlertDialog() {
         if (!isFinishing()) {
-            if (!Internet.hasConnection(this)) {
+            if (AVIA && !Internet.hasConnection(this)) {
                 showToast(getString(R.string.TOAST_CANNOT_EXIT_WITHOUT_INTERNET_CONNECTION));
                 return;
             }

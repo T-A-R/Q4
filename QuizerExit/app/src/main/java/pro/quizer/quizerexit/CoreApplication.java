@@ -47,6 +47,7 @@ public class CoreApplication extends Application {
 
         quizerDatabase = Room.databaseBuilder(getApplicationContext(), QuizerDatabase.class, "quizer_database")
                 .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
                 .build();
 
 //        YandexMetricaConfig config = YandexMetricaConfig.newConfigBuilder(API_key)

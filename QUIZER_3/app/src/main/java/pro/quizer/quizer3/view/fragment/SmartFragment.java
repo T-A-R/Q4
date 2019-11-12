@@ -190,7 +190,11 @@ public abstract class SmartFragment extends Fragment {
         if (data != null)
             appLogsR.setData(data.substring(0, Math.min(data.length(), 5000)));
 
-        getDao().insertAppLogsR(appLogsR);
+        try {
+            getDao().insertAppLogsR(appLogsR);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void showToast(String text) {

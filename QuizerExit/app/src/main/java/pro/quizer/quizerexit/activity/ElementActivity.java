@@ -382,6 +382,9 @@ public class ElementActivity extends BaseActivity {
     }
 
     private void showNextElement(final int pNextRelativeId, final boolean pIsAddToBackStack, final View pForwardView) {
+        if(mUserLogin == null) {
+            showDataErrorDialog();
+        }
         if (pNextRelativeId == -1) {
 
             if (mConfig.isSaveAborted()) {
@@ -518,6 +521,22 @@ public class ElementActivity extends BaseActivity {
                     .setMessage(R.string.VIEW_FAKE_GPS_BODY)
                     .setPositiveButton(R.string.VIEW_APPLY, new DialogInterface.OnClickListener() {
 
+                        @Override
+                        public void onClick(final DialogInterface dialog, final int which) {
+                            finish();
+                        }
+                    })
+                    .show();
+        }
+    }
+
+    public void showDataErrorDialog() {
+        if (!isFinishing()) {
+            new AlertDialog.Builder(this, R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle("Ошибка обновления данных")
+                    .setMessage("Пожалуйста перезапустите приложение.")
+                    .setPositiveButton(R.string.DIALOG_NEXT, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(final DialogInterface dialog, final int which) {
                             finish();

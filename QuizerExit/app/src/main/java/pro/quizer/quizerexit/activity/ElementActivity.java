@@ -320,8 +320,9 @@ public class ElementActivity extends BaseActivity {
     }
 
     @SuppressLint("MissingPermission")
-    private void initStartValues() {
+    public void initStartValues() {
         if (StringUtils.isEmpty(mToken)) {
+
             mStartDateInterview = DateUtils.getCurrentTimeMillis();
 
             mStop.setVisibility(View.INVISIBLE);
@@ -520,7 +521,6 @@ public class ElementActivity extends BaseActivity {
                         @Override
                         public void onClick(final DialogInterface dialog, final int which) {
                             finish();
-                            startMainActivity();
                         }
                     })
                     .show();

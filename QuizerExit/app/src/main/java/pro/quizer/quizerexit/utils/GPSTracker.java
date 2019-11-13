@@ -188,7 +188,7 @@ public class GPSTracker extends Service implements LocationListener {
 
                 public void onClick(DialogInterface dialog, int which) {
                     if (!mActivity.isFinishing()) {
-                        ((ElementActivity) mActivity).showFirstElement();
+                        ((ElementActivity) mActivity).initStartValues();
                     }
                 }
             });

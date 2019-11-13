@@ -1,23 +1,23 @@
 package pro.quizer.quizerexit.model.sms;
 
 import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.activeandroid.query.Update;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
 import pro.quizer.quizerexit.executable.SmsStageModelExecutable;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.QuestionsMatchesModel;
 import pro.quizer.quizerexit.model.config.StagesModel;
-import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
+import pro.quizer.quizerexit.utils.Evaluator.Constant;
+
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
 public class SmsStage implements Serializable {
 
@@ -55,8 +55,11 @@ public class SmsStage implements Serializable {
         return mContext.getString(mStatus != null && mStatus.equals(QuestionnaireStatus.SENT) ? R.string.STATUS_SENT : R.string.STATUS_NOT_SENT);
     }
 
-    public void setStatus(@QuestionnaireStatus final String pStatus) {
-        mStatus = pStatus;
+    public void setStatus(@QuestionnaireStatus final String pStatus, String smsNumber, Integer questionId) {
+//        mStatus = pStatus;
+//        mSmsAnswers.get(smsNumber).setmSmsStatus(pStatus);
+        BaseActivity.getDao().setSmsItemStatusBySmsNumber(smsNumber, pStatus);
+        BaseActivity.getDao().setElementSendSms(true, questionId);
     }
 
     @Override
@@ -70,19 +73,16 @@ public class SmsStage implements Serializable {
         return result.toString();
     }
 
-    public void markAsSent() {
+    public void markAsSent(String smsNumber, Integer questionId) {
+
         for (final String token : mTokens) {
-            new Update(QuestionnaireDatabaseModel.class).set(
-                    QuestionnaireDatabaseModel.STATUS + " = ?",
-                    QuestionnaireStatus.SENT
-            ).where(QuestionnaireDatabaseModel.TOKEN + " = ?", token).execute();
+            BaseActivity.getDao().setQuestionnaireSendSms(true, token);
         }
 
-        setStatus(QuestionnaireStatus.SENT);
+        setStatus(QuestionnaireStatus.SENT, smsNumber, questionId);
     }
 
     public Map<String, SmsAnswer> getSmsAnswers() {
         return mSmsAnswers;
     }
-
 }

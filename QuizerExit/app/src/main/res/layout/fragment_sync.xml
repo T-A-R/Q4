@@ -56,14 +56,16 @@
                 android:textSize="16sp"
                 tools:text="ПУСТО" />
 
-            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+            <Button
                 android:layout_marginBottom="12dp"
                 android:id="@+id/send_q"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
                 android:text="@string/VIEW_SEND_QUIZ" />
 
             <include layout="@layout/view_divider"/>
@@ -78,14 +80,16 @@
                 android:textSize="16sp"
                 tools:text="ПУСТО" />
 
-            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+            <Button
                 android:layout_marginBottom="12dp"
                 android:id="@+id/send_audio"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
                 android:text="@string/VIEW_SEND_AUDIO" />
 
             <include layout="@layout/view_divider"/>
@@ -100,22 +104,26 @@
                 android:textSize="16sp"
                 tools:text="ПУСТО" />
 
-            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+            <Button
                 android:id="@+id/send_photo"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
                 android:text="@string/VIEW_SEND_PHOTO" />
 
-            <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+            <Button
                 android:id="@+id/sync_sms"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
                 android:text="@string/VIEW_SMS" />
 
         </LinearLayout>

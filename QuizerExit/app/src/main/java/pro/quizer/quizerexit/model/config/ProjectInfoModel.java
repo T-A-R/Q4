@@ -77,8 +77,8 @@ public class ProjectInfoModel implements Serializable {
     }
 
     public ReserveChannelModel getReserveChannel() {
-        return null;
-//        return reserve_channel;
+//        return null;
+        return reserve_channel;
     }
 
 }

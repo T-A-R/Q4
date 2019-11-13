@@ -20,13 +20,13 @@ import java.util.List;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.SettingViewModelExecutable;
 import pro.quizer.quizerexit.model.FontSizeModel;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.PhoneModel;
 import pro.quizer.quizerexit.model.config.ReserveChannelModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.view.SettingsViewModel;
 import pro.quizer.quizerexit.utils.UiUtils;
 
@@ -43,6 +43,7 @@ public class SettingsFragment extends BaseFragment implements ICallback {
     };
 
     private TextView mConfigDateView;
+    private View mUpdateConfig;
     private TextView mConfigIdView;
     private TextView mAnswerMarginView;
     private View mDeleteUser;
@@ -145,8 +146,8 @@ public class SettingsFragment extends BaseFragment implements ICallback {
             }
         });
 
-        final UserModel currentUser = mBaseActivity.getCurrentUser();
-        final ConfigModel configModel = currentUser.getConfig();
+        final UserModelR currentUser = mBaseActivity.getCurrentUser();
+        final ConfigModel configModel = currentUser.getConfigR();
         final ReserveChannelModel reserveChannelModel = configModel.getProjectInfo().getReserveChannel();
 
         if (reserveChannelModel != null) {
@@ -198,14 +199,25 @@ public class SettingsFragment extends BaseFragment implements ICallback {
                 mBaseActivity.showRemoveUserDialog();
             }
         });
+
+        mUpdateConfig = pView.findViewById(R.id.udate_config);
+        mUpdateConfig.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBaseActivity.reloadConfig();
+            }
+        });
     }
 
-    private void refreshFragment() {
+    public void refreshFragment() {
         // TODO: 2/5/2019 notify drawer
 //        mBaseActivity.getDrawerLayout().notifyAll();
 
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.detach(this).attach(this).commit();
+        if(!mBaseActivity.isFinishing()) {
+            mFontSizeSpinner.setSelection(mBaseActivity.getFontSizePosition());
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.detach(this).attach(this).commit();
+        }
     }
 
     private void initStrings() {
@@ -239,13 +251,10 @@ public class SettingsFragment extends BaseFragment implements ICallback {
         if (isAdded()) {
             showToast(getString(R.string.NOTIFICATION_UPDATING));
         }
-
-//        showProgressBar();
     }
 
     @Override
     public void onSuccess() {
-//        hideProgressBar();
 
         if (isAdded()) {
             updateData(new SettingViewModelExecutable(getContext()).execute());
@@ -254,7 +263,6 @@ public class SettingsFragment extends BaseFragment implements ICallback {
 
     @Override
     public void onError(final Exception pException) {
-//        hideProgressBar();
 
         if (isAdded()) {
             updateData(new SettingViewModelExecutable(getContext()).execute());

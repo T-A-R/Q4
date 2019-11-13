@@ -1,7 +1,6 @@
 package pro.quizer.quizerexit;
 
 import android.annotation.SuppressLint;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,8 +18,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.os.PowerManager;
 import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
@@ -33,11 +30,11 @@ import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.JsonWriter;
 import android.util.Log;
 import android.util.Xml;
+import android.widget.Toast;
 
 import org.xmlpull.v1.XmlSerializer;
 
@@ -53,7 +50,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import pro.quizer.quizerexit.activity.ElementActivity;
 import pro.quizer.quizerexit.utils.FileUtils;
 
 import static pro.quizer.quizerexit.utils.FileUtils.FOLDER_DIVIDER;
@@ -108,7 +104,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
     private MediaControllerCompat.TransportControls transCntrl;
     private PlaybackStateCompat.Builder stateBuilderImplFacility; // use method instead
     private MediaMetadataCompat.Builder metadataBuilder;
-    private NotificationCompat.Builder notifBuilder;
+//    private NotificationCompat.Builder notifBuilder;
 
     private boolean isRecorderInitialized = false;
     private MediaRecorder recorder;
@@ -546,12 +542,14 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                         to get better results see http://stackoverflow.com/questions/10655703/what-does-androids-getmaxamplitude-function-for-the-mediarecorder-actually-gi
                      */
                     // integer value (unsigned 16 bit)
-                    double amplitude = recorder.getMaxAmplitude();
-                    // try to calculate dB using two approaches
-                    // very inaccurate
-                    //double dbApprox = 20 * Math.log10(amplitude / 0.1);
-                    double dbSki = 20 * Math.log10(amplitude / 51805.5336 / 0.0002);
-                    publishProgress(dbSki);
+                    if(recorder != null) {
+                        double amplitude = recorder.getMaxAmplitude();
+                        // try to calculate dB using two approaches
+                        // very inaccurate
+                        //double dbApprox = 20 * Math.log10(amplitude / 0.1);
+                        double dbSki = 20 * Math.log10(amplitude / 51805.5336 / 0.0002);
+                        publishProgress(dbSki);
+                    }
                 }
             }
             return null;
@@ -749,80 +747,85 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
     private void startSession() {
         Log.d(LOG_TAG, "startSession()");
         // start this MediaBrowserService, to make it run when UI will be closed
-        startService(new Intent(getApplicationContext(), this.getClass()));
+        try {
+            startService(new Intent(getApplicationContext(), this.getClass()));
+        } catch (Exception e) {
+//            Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
+        }
+
         mediaSes.setActive(true);
         registerReceiver(bnReceiver, intentFilter);
 
-        // foreground notification
-        MediaControllerCompat controller = mediaSes.getController();
-        MediaMetadataCompat metadata = controller.getMetadata();
-        MediaDescriptionCompat description = metadata.getDescription();
-
-        notifBuilder = new NotificationCompat.Builder(getApplicationContext());
-        notifBuilder.setContentTitle(description.getTitle())
-                .setContentText(description.getSubtitle())
-                .setSubText(description.getDescription())
-                .setTicker(description.getSubtitle())
-                .setLargeIcon(description.getIconBitmap())
-                //.setContentIntent(controller.getSessionActivity()) // does not work
-                .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 1,
-                        new Intent(getApplicationContext(), ElementActivity.class),
-                        PendingIntent.FLAG_UPDATE_CURRENT))
-                .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(
-                        AudioService.this, PlaybackStateCompat.ACTION_STOP))
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setSmallIcon(R.drawable.ic_notif_record)
-                //.setColor(ContextCompat.getColor(AudioService.this, R.color.colorPrimaryDark)) // looks bad
-                .setStyle(new NotificationCompat.MediaStyle()
-                        .setMediaSession(mediaSes.getSessionToken())
-                        .setShowActionsInCompactView(0).setShowCancelButton(true)
-                        .setCancelButtonIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(
-                                AudioService.this, PlaybackStateCompat.ACTION_STOP)));
-
-        if (!SOURCE_MIC.equals(description.getMediaId()) || isPauseRecordingSupported()) {
-            notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_PAUSE,
-                    getString(R.string.RECORD_AUDIO_PAUSE),
-                    MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
-                            PlaybackStateCompat.ACTION_PAUSE)));
-        }
-        notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_STOP,
-                getString(R.string.RECORD_AUDIO_STOP),
-                MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
-                        PlaybackStateCompat.ACTION_STOP)));
-        startForeground(SERVICE_ID, notifBuilder.build());
+//        // foreground notification
+//        MediaControllerCompat controller = mediaSes.getController();
+//        MediaMetadataCompat metadata = controller.getMetadata();
+//        MediaDescriptionCompat description = metadata.getDescription();
+//
+//        notifBuilder = new NotificationCompat.Builder(getApplicationContext());
+//        notifBuilder.setContentTitle(description.getTitle())
+//                .setContentText(description.getSubtitle())
+//                .setSubText(description.getDescription())
+//                .setTicker(description.getSubtitle())
+//                .setLargeIcon(description.getIconBitmap())
+//                //.setContentIntent(controller.getSessionActivity()) // does not work
+//                .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 1,
+//                        new Intent(getApplicationContext(), ElementActivity.class),
+//                        PendingIntent.FLAG_UPDATE_CURRENT))
+//                .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(
+//                        AudioService.this, PlaybackStateCompat.ACTION_STOP))
+//                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+//                .setSmallIcon(R.drawable.ic_notif_record)
+//                //.setColor(ContextCompat.getColor(AudioService.this, R.color.colorPrimaryDark)) // looks bad
+//                .setStyle(new NotificationCompat.MediaStyle()
+//                        .setMediaSession(mediaSes.getSessionToken())
+//                        .setShowActionsInCompactView(0).setShowCancelButton(true)
+//                        .setCancelButtonIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(
+//                                AudioService.this, PlaybackStateCompat.ACTION_STOP)));
+//
+//        if (!SOURCE_MIC.equals(description.getMediaId()) || isPauseRecordingSupported()) {
+//            notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_PAUSE,
+//                    getString(R.string.RECORD_AUDIO_PAUSE),
+//                    MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
+//                            PlaybackStateCompat.ACTION_PAUSE)));
+//        }
+//        notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_STOP,
+//                getString(R.string.RECORD_AUDIO_STOP),
+//                MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
+//                        PlaybackStateCompat.ACTION_STOP)));
+//        startForeground(SERVICE_ID, notifBuilder.build());
     }
 
-    private void pauseSession() {
-        Log.d(LOG_TAG, "pauseSession()");
-        try {
-            unregisterReceiver(bnReceiver);
-        } catch (IllegalArgumentException iae) { // receiver not registered
-            Log.w(LOG_TAG, "Exception @ pauseSession : can't unregister receiver ", iae);
-        }
-        if (notifBuilder != null) {
-            notifBuilder.setContentText(getString(R.string.RECORD_AUDIO_PAUSED));
-            notifBuilder.mActions.clear();
-            String mediaId = mediaSes.getController().getMetadata().getDescription().getMediaId();
-            if (SOURCE_AUDIO.equals(mediaId)) {
-                notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_PLAY,
-                        getString(R.string.RECORD_AUDIO_PLAY),
-                        MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
-                                PlaybackStateCompat.ACTION_PLAY)));
-            } else if (SOURCE_MIC.equals(mediaId)) {
-                notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_RECORD,
-                        getString(R.string.RECORD_AUDIO_RECORD),
-                        MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
-                                PlaybackStateCompat.ACTION_PLAY)));
-            }
-            notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_STOP,
-                    getString(R.string.RECORD_AUDIO_STOP),
-                    MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
-                            PlaybackStateCompat.ACTION_STOP)));
-
-            startForeground(SERVICE_ID, notifBuilder.build()); // to update notification
-        }
-        stopForeground(false); // stop but leave notification
-    }
+//    private void pauseSession() {
+//        Log.d(LOG_TAG, "pauseSession()");
+//        try {
+//            unregisterReceiver(bnReceiver);
+//        } catch (IllegalArgumentException iae) { // receiver not registered
+//            Log.w(LOG_TAG, "Exception @ pauseSession : can't unregister receiver ", iae);
+//        }
+//        if (notifBuilder != null) {
+//            notifBuilder.setContentText(getString(R.string.RECORD_AUDIO_PAUSED));
+//            notifBuilder.mActions.clear();
+//            String mediaId = mediaSes.getController().getMetadata().getDescription().getMediaId();
+//            if (SOURCE_AUDIO.equals(mediaId)) {
+//                notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_PLAY,
+//                        getString(R.string.RECORD_AUDIO_PLAY),
+//                        MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
+//                                PlaybackStateCompat.ACTION_PLAY)));
+//            } else if (SOURCE_MIC.equals(mediaId)) {
+//                notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_RECORD,
+//                        getString(R.string.RECORD_AUDIO_RECORD),
+//                        MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
+//                                PlaybackStateCompat.ACTION_PLAY)));
+//            }
+//            notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_STOP,
+//                    getString(R.string.RECORD_AUDIO_STOP),
+//                    MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
+//                            PlaybackStateCompat.ACTION_STOP)));
+//
+//            startForeground(SERVICE_ID, notifBuilder.build()); // to update notification
+//        }
+//        stopForeground(false); // stop but leave notification
+//    }
 
     private void stopSession() {
         Log.d(LOG_TAG, "stopSession()");
@@ -840,7 +843,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
         // stop service to enable it be terminated when all clients will be unbound
         stopSelf();
         mediaSes.setActive(false);
-        notifBuilder = null;
+//        notifBuilder = null;
         stopForeground(true); // stop and remove notification
     }
 
@@ -1043,8 +1046,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
      * },
      * ]
      *
-     * @throws IllegalStateException on JSON error
-     * @throws IOException           on file stream error
+
      */
     private void writeJSON(ArrayList<Byte> alWaveFormIn, ArrayList<Byte> alFftIn)
             throws IllegalStateException, IOException {
@@ -1079,9 +1081,6 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
      * </VLS_PROP_ENTRY_NAME>
      * </DOCUMENT>
      *
-     * @throws IllegalStateException    on XML error
-     * @throws IllegalArgumentException on XML error
-     * @throws IOException              on Filesystem error
      */
     private void writeXML(ArrayList<Byte> alWaveFormIn, ArrayList<Byte> alFftIn)
             throws IllegalStateException, IllegalArgumentException, IOException {
@@ -1235,7 +1234,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
     }
 
     private void actionPausePlaying() {
-        pauseSession();
+//        pauseSession();
         pauseVisualizer();
         setPBState(PlaybackStateCompat.STATE_PAUSED);
         servState = ServiceState.PausedPlaying;
@@ -1331,7 +1330,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
     }
 
     private void actionPauseRecording() {
-        pauseSession();
+//        pauseSession();
         //pauseVisualizer();
         setPBState(PlaybackStateCompat.STATE_PAUSED);
         servState = ServiceState.PausedRecording;

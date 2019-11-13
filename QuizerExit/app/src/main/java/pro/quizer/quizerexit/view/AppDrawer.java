@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -17,19 +18,34 @@ import pro.quizer.quizerexit.listener.QuotasClickListener;
 
 public class AppDrawer extends RelativeLayout implements Serializable {
 
-    Button mHomeBtn;
-    Button mSyncBtn;
-    Button mSettingsBtn;
-    Button mAboutBtn;
-    Button mQuotasBtn;
-    Button mChangeUserBtn;
+    ImageButton mHomeBtn;
+    ImageButton mSyncBtn;
+    ImageButton mSettingsBtn;
+    ImageButton mAboutBtn;
+    ImageButton mQuotasBtn;
+    ImageButton mChangeUserBtn;
+
+    RelativeLayout mHomeBtnCont;
+    RelativeLayout mSyncBtnCont;
+    RelativeLayout mSettingsBtnCont;
+    RelativeLayout mAboutBtnCont;
+    RelativeLayout mQuotasBtnCont;
+    RelativeLayout mChangeUserBtnCont;
 
     private BaseActivity mBaseActivity;
 
     final private View.OnClickListener mInternalClickListenerForToolbar = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            final String title = ((TextView) view).getText().toString();
+            String title = "";
+
+            if (view == mHomeBtn) title = mBaseActivity.getString(R.string.VIEW_HOME_TITLE);
+            if (view == mSyncBtn) title = mBaseActivity.getString(R.string.VIEW_SYNC_TITLE);
+            if (view == mSettingsBtn) title = mBaseActivity.getString(R.string.VIEW_SETTINGS);
+            if (view == mAboutBtn) title = mBaseActivity.getString(R.string.VIEW_ABOUT_TITLE);
+            if (view == mQuotasBtn) title = mBaseActivity.getString(R.string.VIEW_QUOTAS_TITLE);
+            if (view == mChangeUserBtn) title = mBaseActivity.getString(R.string.VIEW_ABOUT_TITLE);
+
             mBaseActivity.setToolbarTitle(title);
         }
     };
@@ -56,11 +72,15 @@ public class AppDrawer extends RelativeLayout implements Serializable {
     }
 
     public void disableHome() {
-        mHomeBtn.setVisibility(View.GONE);
+        mHomeBtnCont.setVisibility(View.GONE);
     }
 
     public void disableSync() {
-        mSyncBtn.setVisibility(View.GONE);
+        mSyncBtnCont.setVisibility(View.GONE);
+    }
+
+    public void disableQuota() {
+        mQuotasBtnCont.setVisibility(View.GONE);
     }
 
     private void init() {
@@ -88,6 +108,13 @@ public class AppDrawer extends RelativeLayout implements Serializable {
         mAboutBtn = findViewById(R.id.about_btn);
         mQuotasBtn = findViewById(R.id.quotas_btn);
         mChangeUserBtn = findViewById(R.id.change_user_btn);
+
+        mHomeBtnCont = findViewById(R.id.home_cont);
+        mSyncBtnCont = findViewById(R.id.sync_cont);
+        mSettingsBtnCont = findViewById(R.id.settings_cont);
+        mAboutBtnCont = findViewById(R.id.about_cont);
+        mQuotasBtnCont = findViewById(R.id.quotas_cont);
+        mChangeUserBtnCont = findViewById(R.id.change_user_cont);
 
         mHomeBtn.setOnClickListener(new OnClickListener() {
             @Override
@@ -125,14 +152,18 @@ public class AppDrawer extends RelativeLayout implements Serializable {
             }
         });
 
-        mQuotasBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mInternalClickListenerForToolbar.onClick(view);
-                baseActivity.closeDrawer();
-                new QuotasClickListener((BaseActivity) context).onClick(view);
-            }
-        });
+        if (!mBaseActivity.hasReserveChannel()) {
+            mQuotasBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mInternalClickListenerForToolbar.onClick(view);
+                    baseActivity.closeDrawer();
+                    new QuotasClickListener((BaseActivity) context).onClick(view);
+                }
+            });
+        } else {
+            mQuotasBtnCont.setVisibility(View.GONE);
+        }
 
         mChangeUserBtn.setOnClickListener(new OnClickListener() {
             @Override

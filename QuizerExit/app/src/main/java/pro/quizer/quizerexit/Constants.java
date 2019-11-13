@@ -17,6 +17,8 @@ public final class Constants {
 
         String API_key = "a1d64454-4597-4c28-a047-dee22d3c8cfd";
 
+        boolean DEBUG = true;
+
     }
 
     public interface SP {
@@ -55,12 +57,67 @@ public final class Constants {
         String PHOTO_FILE = "photo_file";
         String AUDIO_FILE = "audio_file";
         String DOWNLOAD_UPDATE = "download_update";
+        String CRASH = "crash";
+        String LOGS = "log";
     }
 
     public interface QuestionnaireStatuses {
-
         String ABORTED = "aborted";
         String COMPLITED = "complited";
+    }
 
+    public interface LogUser {
+        String ANDROID = "android";
+    }
+
+    public interface LogStatus {
+        String SENT = "sent";
+        String NOT_SENT = "not_sent";
+    }
+
+    public interface LogType {
+        String SERVER = "server";
+        String DATABASE = "database";
+        String BUTTON = "button";
+        String FILE = "file";
+        String DIALOG = "dialog";
+    }
+
+    public interface LogObject {
+        String FILE = "file";
+        String AUTH = "auth";
+        String USER = "user";
+        String QUOTA = "quota";
+        String KEY = "key";
+        String CONFIG = "config";
+        String QUESTIONNAIRE = "questionnaire";
+        String SMS = "sms";
+        String LOG = "log";
+        String WARNINGS = "warnings";
+    }
+
+    public interface LogResult {
+        String SUCCESS = "success";
+        String SENT = "sent";
+        String PRESSED = "pressed";
+        String ERROR = "error";
+
+    }
+
+    public interface SmsStatus {
+        String SENT = "sent";
+        String NOT_SENT = "not_sent";
+    }
+
+    public interface Sms {
+        String SENT = "Отправлена";
+        String NOT_SENT = "Не отправлена";
+        String WAITING = "Ожидание";
+        String ENDED = "Завершена";
+        String NOT_ENDED = "Не завершена";
+    }
+
+    public interface Warnings {
+        String FAKE_GPS = "Подмена координат";
     }
 }

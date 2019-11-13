@@ -4,7 +4,11 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +21,7 @@ import okhttp3.ResponseBody;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.CoreApplication;
 import pro.quizer.quizerexit.model.request.FileRequestModel;
+import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,6 +33,8 @@ public class QuizerAPI {
 
     /**
      * Отправка ключа.
+     * <p>
+     * Код ошибок 5.хх
      *
      * @param url
      * @param json
@@ -61,6 +68,8 @@ public class QuizerAPI {
 
     /**
      * Запрос конфига.
+     * <p>
+     * Код ошибок 6.хх
      *
      * @param url
      * @param json
@@ -94,6 +103,8 @@ public class QuizerAPI {
 
     /**
      * Авторизация.
+     * <p>
+     * Код ошибок 4.хх
      *
      * @param url
      * @param json
@@ -129,6 +140,8 @@ public class QuizerAPI {
 
     /**
      * Отправка анкет.
+     * <p>
+     * Код ошибок 2.хх
      *
      * @param url
      * @param json
@@ -164,6 +177,8 @@ public class QuizerAPI {
 
     /**
      * Получение квот.
+     * <p>
+     * Код ошибок 1.хх
      *
      * @param url
      * @param json
@@ -198,6 +213,8 @@ public class QuizerAPI {
 
     /**
      * Отправка файлов (аудио и фото).
+     * <p>
+     * Код ошибок 3.хх
      *
      * @param url
      * @param files
@@ -239,6 +256,102 @@ public class QuizerAPI {
 
     public interface SendFilesCallback {
         void onSendFilesCallback(ResponseBody data);
+    }
+
+    /**
+     * Отправка crash-логов.
+     *
+     * @param url
+     * @param json
+     * @param listener
+     */
+
+    static public void sendCrash(String url, String json, final SendCrashCallback listener) {
+
+        Log.d(TAG, "sendCrash: " + json);
+
+        Map<String, String> fields = new HashMap<>();
+        fields.put(Constants.ServerFields.JSON_DATA, json);
+
+        CoreApplication.getQuizerApi().sendCrash(url, fields).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+
+                String message = getMessage(response);
+                listener.onSendCrash(response.code() == 200, message);
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d(TAG, "QuizerAPI.sendCrash.onFailure() " + t);
+                listener.onSendCrash(false, t.getMessage());
+            }
+        });
+    }
+
+    public interface SendCrashCallback {
+        void onSendCrash(boolean ok, String message);
+    }
+
+    /**
+     * Отправка логов.
+     *
+     * @param url
+     * @param json
+     * @param listener
+     */
+
+    static public void sendLogs(String url, String json, final SendLogsCallback listener) {
+
+        Log.d(TAG, "sendCrash: " + json);
+
+        Map<String, String> fields = new HashMap<>();
+        fields.put(Constants.ServerFields.JSON_DATA, json);
+
+        CoreApplication.getQuizerApi().sendLogs(url, fields).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d(TAG, "QuizerAPI.sendLogs.onResponse() Message: " + response.message());
+                listener.onSendLogs(response.code() == 200);
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d(TAG, "QuizerAPI.sendLogs.onFailure() " + t);
+                listener.onSendLogs(false);
+            }
+        });
+    }
+
+    public interface SendLogsCallback {
+        void onSendLogs(boolean ok);
+    }
+
+    private static String getMessage(Response<ResponseBody> response) {
+
+        ResponseBody responseBody = null;
+        if (response != null)
+            responseBody = response.body();
+        String json = null;
+
+        try {
+            json = responseBody.string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        AuthResponseModel authResponseModel = null;
+        try {
+            authResponseModel = new GsonBuilder().create().fromJson(json, AuthResponseModel.class);
+        } catch (JsonSyntaxException e) {
+            e.printStackTrace();
+        }
+        if (authResponseModel != null)
+            return authResponseModel.getError();
+        else
+            return null;
     }
 
 }

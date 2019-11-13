@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.github.vipulasri.timelineview.TimelineView;
@@ -25,10 +26,12 @@ public class QuotasTimeLineAdapter extends RecyclerView.Adapter<QuotasTimeLineAd
         TextView mMessage;
         TimelineView mTimeLineView;
         TimelineView mTimeLineStubView;
+        FrameLayout mCont;
 
         QuotaTimeLineViewHolder(final View pItemView, final int pViewType) {
             super(pItemView);
 
+            mCont = pItemView.findViewById(R.id.cont);
             mTimeLineView = pItemView.findViewById(R.id.timeline);
             mTimeLineStubView = pItemView.findViewById(R.id.timeline_stub);
             mMessage = pItemView.findViewById(R.id.text_timeline_title);
@@ -56,9 +59,7 @@ public class QuotasTimeLineAdapter extends RecyclerView.Adapter<QuotasTimeLineAd
     @Override
     public void onBindViewHolder(QuotaTimeLineViewHolder holder, int position) {
         QuotaTimeLineModel model = mAnswers.get(position);
-
         UiUtils.setTextOrHide(holder.mMessage, model.getAnswer());
-
     }
 
     @Override

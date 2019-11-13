@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +19,16 @@ import java.util.List;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.ElementSubtype;
 import pro.quizer.quizerexit.model.ElementType;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.utils.CollectionUtils;
 import pro.quizer.quizerexit.utils.DateUtils;
+
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
 
 public class ElementFragment extends BaseFragment {
 
@@ -44,7 +49,7 @@ public class ElementFragment extends BaseFragment {
     private ElementModel mCurrentElement;
     private FragmentManager mFragmentManger;
     private NavigationCallback mCallback;
-    private UserModel mUser;
+    private UserModelR mUser;
     private boolean mIsButtonsVisible = true;
     private long mStartTime;
     private boolean mIsFromDialog = false;
@@ -114,7 +119,7 @@ public class ElementFragment extends BaseFragment {
             final String pUserLogin,
             final boolean pIsPhotoQuestionnaire,
             final int pProjectId,
-            final UserModel user,
+            final UserModelR user,
             final HashMap<Integer, ElementModel> pMap) {
         final ElementFragment fragment = new ElementFragment();
 
@@ -151,6 +156,7 @@ public class ElementFragment extends BaseFragment {
 
         if (activity != null) {
             mFragmentManger = ((FragmentActivity) activity).getSupportFragmentManager();
+//            mFragmentManger = getChildFragmentManager();
         }
 
         if (bundle != null) {
@@ -226,7 +232,7 @@ public class ElementFragment extends BaseFragment {
                                 mIsPhotoQuestionnaire,
                                 mProjectId,
                                 mUser))
-                        .commit();
+                        .commitAllowingStateLoss();
             } else if (ElementSubtype.SCALE.equals(elementSubType)
                     || ElementSubtype.LIST.equals(elementSubType)
                     || (ElementSubtype.SELECT.equals(elementSubType) && mIsFromDialog)) {
@@ -240,7 +246,7 @@ public class ElementFragment extends BaseFragment {
                                 mCurrentElement,
                                 mNavigationCallback,
                                 getBaseActivity().getMap()))
-                        .commit();
+                        .commitAllowingStateLoss();
             } else {
                 showToast("Неизвестный тип элемента");
             }
@@ -251,7 +257,7 @@ public class ElementFragment extends BaseFragment {
                             mCurrentElement,
                             mNavigationCallback,
                             getBaseActivity().getMap()))
-                    .commit();
+                    .commitAllowingStateLoss();
         } else if (ElementType.BOX.equals(elementType)) {
             switch (elementSubType) {
                 case ElementSubtype.PAGE:
@@ -268,7 +274,7 @@ public class ElementFragment extends BaseFragment {
                                     mIsPhotoQuestionnaire,
                                     mProjectId,
                                     mUser))
-                            .commit();
+                            .commitAllowingStateLoss();
 
                     break;
                 case ElementSubtype.TABLE:
@@ -279,7 +285,7 @@ public class ElementFragment extends BaseFragment {
                                     mUser,
                                     mCurrentElement,
                                     mNavigationCallback))
-                            .commit();
+                            .commitAllowingStateLoss();
 
                     break;
                 case ElementSubtype.FUNNEL:
@@ -300,7 +306,7 @@ public class ElementFragment extends BaseFragment {
                                     mProjectId,
                                     mUser,
                                     getBaseActivity().getMap()))
-                            .commit();
+                            .commitAllowingStateLoss();
 
                     break;
             }

@@ -110,6 +110,21 @@ public abstract class AbstractQuestionAdapter<T extends RecyclerView.ViewHolder>
         }
     }
 
+    void unselectAnother(int pos) {
+        for (int i = 0; i < mAnswers.size(); i++) {
+            if (mAnswers.get(i) != null && i != pos) {
+                mAnswers.get(i).setChecked(false);
+            }
+        }
+
+
+        for (final ElementModel item : mAnswers) {
+            if (item != null) {
+                item.setChecked(false);
+            }
+        }
+    }
+
     void disableOther(final int pId) {
         for (final ElementModel item : mAnswers) {
             if (item != null && pId != item.getRelativeID()) {

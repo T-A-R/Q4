@@ -21,6 +21,8 @@ public class QuestionnaireListRequestModel implements Serializable {
     private final long device_time;
     private final String app_version;
     private final String device_info;
+    private final String device_id;
+    private boolean service_send;
 
     public QuestionnaireListRequestModel(String login_admin, String login, String passw) {
         this.name_form = Constants.NameForm.QUESTIONNAIRE;
@@ -31,6 +33,8 @@ public class QuestionnaireListRequestModel implements Serializable {
         this.device_time = DateUtils.getCurrentTimeMillis();
         this.device_info = DeviceUtils.getDeviceInfo();
         this.app_version = DeviceUtils.getAppVersion();
+        this.device_id = DeviceUtils.getDeviceId();
+        this.service_send = false;
     }
 
     public void addQuestionnaire(final QuestionnaireRequestModel pModel) {
@@ -41,4 +45,7 @@ public class QuestionnaireListRequestModel implements Serializable {
         return !questionnairies.isEmpty();
     }
 
+    public void setFromService() {
+        this.service_send = true;
+    }
 }

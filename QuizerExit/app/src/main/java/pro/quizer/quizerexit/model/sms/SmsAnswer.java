@@ -6,16 +6,19 @@ import android.os.Parcelable;
 import java.io.Serializable;
 import java.util.Map;
 
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.model.QuestionnaireStatus;
 
 public class SmsAnswer implements Serializable {
 
     private final String mSmsIndex;
+    private String mSmsStatus;
     private final int[] mAnswers;
 
     public SmsAnswer(String mSmsIndex, final int pArraySize) {
         this.mSmsIndex = mSmsIndex;
         this.mAnswers = new int[pArraySize];
+        this.mSmsStatus = Constants.SmsStatus.NOT_SENT;
     }
 
     public String getSmsIndex() {
@@ -36,7 +39,7 @@ public class SmsAnswer implements Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder result = new StringBuilder(mSmsIndex + ":");
+        final StringBuilder result = new StringBuilder("#" + mSmsIndex);
 
         for (final int answer : mAnswers) {
             result.append(" ").append(answer);
@@ -45,4 +48,11 @@ public class SmsAnswer implements Serializable {
         return result.toString();
     }
 
+    public String getmSmsStatus() {
+        return mSmsStatus;
+    }
+
+    public void setmSmsStatus(String mSmsStatus) {
+        this.mSmsStatus = mSmsStatus;
+    }
 }

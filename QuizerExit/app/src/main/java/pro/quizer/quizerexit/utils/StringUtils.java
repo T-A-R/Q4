@@ -22,4 +22,8 @@ public final class StringUtils {
 
         return currentDate + currentTimeMillis + randomString;
     }
+
+    public static String cutString(String longString, int maxLenght) {
+        return longString.substring(0, Math.min(longString.length(), maxLenght));
+    }
 }

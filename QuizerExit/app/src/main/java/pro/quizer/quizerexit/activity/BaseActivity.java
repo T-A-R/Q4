@@ -1,56 +1,99 @@
 package pro.quizer.quizerexit.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.activeandroid.query.Delete;
-import com.activeandroid.query.Select;
-import com.activeandroid.query.Update;
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.krishna.fileloader.FileLoader;
+import com.krishna.fileloader.listener.MultiFileDownloadListener;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import pro.quizer.quizerexit.API.QuizerAPI;
 import pro.quizer.quizerexit.BuildConfig;
+import pro.quizer.quizerexit.Constants;
+import pro.quizer.quizerexit.CoreApplication;
 import pro.quizer.quizerexit.DrawerUtils;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.broadcast.StartSmsSender;
+import pro.quizer.quizerexit.database.QuizerDao;
+import pro.quizer.quizerexit.database.model.ActivationModelR;
+import pro.quizer.quizerexit.database.model.CrashLogs;
+import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
+import pro.quizer.quizerexit.database.model.AppLogsR;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.RemoveUserExecutable;
 import pro.quizer.quizerexit.fragment.AboutFragment;
 import pro.quizer.quizerexit.fragment.HomeFragment;
+import pro.quizer.quizerexit.fragment.LogsFragment;
 import pro.quizer.quizerexit.fragment.QuotasFragment;
 import pro.quizer.quizerexit.fragment.SettingsFragment;
 import pro.quizer.quizerexit.fragment.SmsFragment;
 import pro.quizer.quizerexit.fragment.SyncFragment;
+import pro.quizer.quizerexit.model.QuestionnaireStatus;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.ReserveChannelModel;
-import pro.quizer.quizerexit.model.database.ActivationModel;
-import pro.quizer.quizerexit.model.database.UserModel;
+import pro.quizer.quizerexit.model.config.StagesModel;
+import pro.quizer.quizerexit.model.logs.Crash;
+import pro.quizer.quizerexit.model.request.AuthRequestModel;
+import pro.quizer.quizerexit.model.request.ConfigRequestModel;
+import pro.quizer.quizerexit.model.request.CrashRequestModel;
 import pro.quizer.quizerexit.model.response.ActivationResponseModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
+import pro.quizer.quizerexit.model.response.ConfigResponseModel;
+import pro.quizer.quizerexit.utils.DateUtils;
+import pro.quizer.quizerexit.utils.DeviceUtils;
 import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.Internet;
 import pro.quizer.quizerexit.utils.SPUtils;
 import pro.quizer.quizerexit.view.Toolbar;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.READ_PHONE_STATE;
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.SEND_SMS;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static pro.quizer.quizerexit.utils.FileUtils.AMR;
 import static pro.quizer.quizerexit.utils.FileUtils.JPEG;
 
@@ -61,12 +104,19 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     static public String TAG = "QUIZERLOGS";
 
     public static final boolean AVIA = false;
+    public static final boolean EXIT = true;
 
     private HashMap<Integer, ElementModel> mTempMap;
     private HashMap<Integer, ElementModel> mMap;
-    private UserModel mCurrentUser;
-
+    private UserModelR mCurrentUser;
+    private String savedLogin = null;
     private String hasPhoto = null;
+
+    private Timer mTimer;
+    private AlertSmsTask mAlertSmsTask;
+    public boolean mIsPermDialogShow = false;
+
+    ChangeFontCallback changeFontCallback;
 
     public String getHasPhoto() {
         return hasPhoto;
@@ -132,8 +182,11 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     private List<ElementModel> getElements() {
-        // BAD
-        return getCurrentUser().getConfig().getProjectInfo().getElements();
+        return getCurrentUser().getConfigR().getProjectInfo().getElements();
+    }
+
+    private ReserveChannelModel getReserveChannel() {
+        return getCurrentUser().getConfigR().getProjectInfo().getReserveChannel();
     }
 
     // not singleton
@@ -207,7 +260,12 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         showFragmentWithBackstack(AboutFragment.newInstance());
     }
 
+    public void showLogsFragment() {
+        showFragmentWithBackstack(LogsFragment.newInstance());
+    }
+
     public void showQuotasFragment() {
+        addLog("android", Constants.LogType.BUTTON, Constants.LogObject.LOG, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.VIEW_START));
         showFragmentWithBackstack(QuotasFragment.newInstance());
     }
 
@@ -216,11 +274,11 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     public String getServer() {
-        return getActivationModel().server;
+        return getActivationModel().getServer();
     }
 
     public String getLoginAdmin() {
-        return getActivationModel().login_admin;
+        return getActivationModel().getLogin_admin();
     }
 
     public String getAppVersionName() {
@@ -228,40 +286,65 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     public void saveActivationBundle(final ActivationResponseModel pActivationModel) {
-        final ActivationModel activationModel = new ActivationModel();
-        activationModel.server = pActivationModel.getServer();
-        activationModel.login_admin = pActivationModel.getLoginAdmin();
 
-        new Delete().from(ActivationModel.class).execute();
+        final ActivationModelR activationModelR = new ActivationModelR(pActivationModel.getServer(),
+                pActivationModel.getLoginAdmin());
+        try {
+            getDao().clearActivationModelR();
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_CLEAR_ERROR));
+        }
 
-        activationModel.save();
-    }
+        try {
+            addLog(Constants.LogUser.ANDROID, Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.SAVE_SERVER), Constants.LogResult.SENT, getString(R.string.SAVE_SERVER_TO_DB));
+            getDao().insertActivationModelR(activationModelR);
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_SAVE_ERROR));
+            addLog(Constants.LogUser.ANDROID, Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.SAVE_SERVER), Constants.LogResult.ERROR, getString(R.string.DB_SAVE_ERROR));
 
-    public ActivationModel getActivationModel() {
-        // GOOD select
-        final List<ActivationModel> list = new Select().from(ActivationModel.class).limit(1).execute();
-
-        if (list != null && !list.isEmpty()) {
-            return list.get(0);
-        } else {
-            return null;
         }
     }
 
-    public UserModel getLocalUserModel(final String pLogin, final String pPassword) {
-        // GOOD select
-        final List<UserModel> list = new Select().from(UserModel.class).where(UserModel.LOGIN + " = ? AND " + UserModel.PASSWORD + " = ?", pLogin, pPassword).limit(1).execute();
+    public ActivationModelR getActivationModel() {
 
-        if (list != null && !list.isEmpty()) {
-            return list.get(0);
-        } else {
-            return null;
+        List<ActivationModelR> list = null;
+
+        try {
+            list = getDao().getActivationModelR();
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_LOAD_ERROR));
         }
+
+        if (list != null && !list.isEmpty())
+            return list.get(0);
+        else
+            return null;
+
     }
 
-    public UserModel getUserByUserId(final int pUserId) {
-        // BAD select
-        final List<UserModel> list = new Select().from(UserModel.class).where(UserModel.USER_ID + " = ?", pUserId).execute();
+    public UserModelR getLocalUserModel(final String pLogin, final String pPassword) {
+
+        List<UserModelR> list = null;
+        try {
+            list = getDao().getLocalUserModel(pLogin, pPassword);
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_LOAD_ERROR));
+        }
+
+        if (list != null && !list.isEmpty())
+            return list.get(0);
+        else
+            return null;
+    }
+
+    public UserModelR getUserByUserId(final int pUserId) {
+
+        List<UserModelR> list = null;
+        try {
+            list = getDao().getUserByUserId(pUserId);
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_LOAD_ERROR));
+        }
 
         if (list == null || list.isEmpty()) {
             return null;
@@ -276,36 +359,51 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
                                            final int pUserId,
                                            final int pRoleId,
                                            final int pUserProjectId) {
-        new Update(UserModel.class).set(
-                UserModel.LOGIN + " = ? , " +
-                        UserModel.PASSWORD + " = ? , " +
-                        UserModel.CONFIG_ID + " = ? , " +
-                        UserModel.ROLE_ID + " = ? , " +
-                        UserModel.USER_PROJECT_ID + " = ?",
-                pLogin, pPassword, pConfigId, pRoleId, pUserProjectId
-        ).where(UserModel.USER_ID + " = ?", pUserId).execute();
+
+        try {
+            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.SAVE_USER), Constants.LogResult.SENT, getString(R.string.SAVE_USER_TO_DB));
+            savedLogin = pLogin;
+            getDao().updateUserModelR(pLogin, pPassword, pConfigId, pRoleId, pUserProjectId, pUserId);
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_SAVE_ERROR));
+            addLogWithData(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.SAVE_USER), Constants.LogResult.ERROR, getString(R.string.SAVE_USER_TO_DB_ERROR), e.getMessage());
+        }
     }
 
-    public void updateConfig(final UserModel pUserModel, final ConfigModel pConfigModel) {
-        new Update(UserModel.class).set(UserModel.CONFIG + " = ?",
-                new GsonBuilder().create().toJson(pConfigModel)
-        ).where(UserModel.USER_ID + " = ? AND " + UserModel.USER_PROJECT_ID + " = ?",
-                pUserModel.user_id, pUserModel.user_project_id).execute();
+    public void updateConfig(final UserModelR pUserModel, final ConfigModel pConfigModel) {
+
+        try {
+            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.SAVE_CONFIG), Constants.LogResult.SENT, getString(R.string.SAVE_CONFIG_TO_DB));
+            getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
+
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_SAVE_ERROR));
+            addLogWithData(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.SAVE_CONFIG), Constants.LogResult.ERROR, getString(R.string.SAVE_CONFIG_TO_DB_ERROR), e.getMessage());
+
+        }
     }
 
     public void saveCurrentUserId(final int pUserId) {
         SPUtils.saveCurrentUserId(this, pUserId);
     }
 
-    public UserModel forceGetCurrentUser() {
-        mCurrentUser = getUserByUserId(getCurrentUserId());
+    public UserModelR forceGetCurrentUser() {
+        try {
+            mCurrentUser = getUserByUserId(getCurrentUserId());
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_LOAD_ERROR));
+        }
 
         return mCurrentUser;
     }
 
-    public UserModel getCurrentUser() {
+    public UserModelR getCurrentUser() {
         if (mCurrentUser == null) {
-            mCurrentUser = getUserByUserId(getCurrentUserId());
+            try {
+                mCurrentUser = getUserByUserId(getCurrentUserId());
+            } catch (Exception e) {
+                showToast(getString(R.string.DB_LOAD_ERROR));
+            }
         }
 
         return mCurrentUser;
@@ -332,7 +430,12 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     public void saveUser(final String pLogin, final String pPassword, final AuthResponseModel pModel, final ConfigModel pConfigModel) throws Exception {
-        new Delete().from(UserModel.class).where(UserModel.USER_ID + " = ?", pModel.getUserId()).execute();
+
+        try {
+            getDao().deleteUserByUserId(pModel.getUserId());
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_CLEAR_ERROR));
+        }
 
         final ReserveChannelModel reserveChannelModel = pConfigModel.getProjectInfo().getReserveChannel();
 
@@ -340,20 +443,28 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
             reserveChannelModel.selectPhone(0);
         }
 
-        final UserModel userModel = new UserModel();
-        userModel.login = pLogin;
-        userModel.password = pPassword;
-        userModel.config_id = pModel.getConfigId();
-        userModel.role_id = pModel.getRoleId();
-        userModel.user_id = pModel.getUserId();
-        userModel.user_project_id = pModel.getUserProjectId();
-        userModel.config = new GsonBuilder().create().toJson(pConfigModel);
-        userModel.save();
+        final UserModelR userModelR = new UserModelR();
+        userModelR.setLogin(pLogin);
+        userModelR.setPassword(pPassword);
+        userModelR.setConfig_id(pModel.getConfigId());
+        userModelR.setRole_id(pModel.getRoleId());
+        userModelR.setUser_id(pModel.getUserId());
+        userModelR.setUser_project_id(pModel.getUserProjectId());
+        userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
+        try {
+            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.SAVE_USER), Constants.LogResult.SENT, getString(R.string.SAVE_USER_TO_DB));
+
+            getDao().insertUser(userModelR);
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_SAVE_ERROR));
+            addLogWithData(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.SAVE_USER), Constants.LogResult.ERROR, getString(R.string.SAVE_USER_TO_DB_ERROR), e.getMessage());
+        }
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        showQuestionnaireList();
     }
 
     @Override
@@ -384,6 +495,17 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     public void startMainActivity(final boolean pIsAfterAuth) {
         final Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(IS_AFTER_AUTH, pIsAfterAuth);
+        startActivity(intent);
+    }
+
+    public void startLogsActivity() {
+        final Intent intent = new Intent(this, LogsActivity.class);
+        startActivity(intent);
+    }
+
+    public void startUserLogActivity(final String login) {
+        final Intent intent = new Intent(this, UserLogActivity.class);
+        intent.putExtra("login", login);
         startActivity(intent);
     }
 
@@ -462,7 +584,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     public void showExitAlertDialog() {
         if (!isFinishing()) {
-            if (!Internet.hasConnection(this)) {
+            if (AVIA && !Internet.hasConnection(this)) {
                 showToast(getString(R.string.TOAST_CANNOT_EXIT_WITHOUT_INTERNET_CONNECTION));
                 return;
             }
@@ -534,6 +656,55 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         return this;
     }
 
+    public static QuizerDao getDao() {
+        return CoreApplication.getQuizerDatabase().getQuizerDao();
+    }
+
+    public static void addLog(String login,
+                              String type,
+                              String object,
+                              String action,
+                              String result,
+                              String desc) {
+        AppLogsR appLogsR = new AppLogsR();
+        appLogsR.setLogin(login);
+        appLogsR.setDevice(DeviceUtils.getDeviceInfo());
+        appLogsR.setAppversion(DeviceUtils.getAppVersion());
+        appLogsR.setAndroid(DeviceUtils.getAndroidVersion());
+        appLogsR.setDate(String.valueOf(DateUtils.getCurrentTimeMillis()));
+        appLogsR.setType(type);
+        appLogsR.setObject(object);
+        appLogsR.setAction(action);
+        appLogsR.setResult(result);
+        appLogsR.setDescription(desc);
+
+        getDao().insertAppLogsR(appLogsR);
+    }
+
+    public static void addLogWithData(String login,
+                                      String type,
+                                      String object,
+                                      String action,
+                                      String result,
+                                      String desc,
+                                      String data) {
+        AppLogsR appLogsR = new AppLogsR();
+        appLogsR.setLogin(login);
+        appLogsR.setDevice(DeviceUtils.getDeviceInfo());
+        appLogsR.setAppversion(DeviceUtils.getAppVersion());
+        appLogsR.setAndroid(DeviceUtils.getAndroidVersion());
+        appLogsR.setDate(String.valueOf(DateUtils.getCurrentTimeMillis()));
+        appLogsR.setType(type);
+        appLogsR.setObject(object);
+        appLogsR.setAction(action);
+        appLogsR.setResult(result);
+        appLogsR.setDescription(desc);
+        if (data != null)
+            appLogsR.setData(data.substring(0, Math.min(data.length(), 5000)));
+
+        getDao().insertAppLogsR(appLogsR);
+    }
+
     @Override
     public void onBackPressed() {
         if (!getSupportFragmentManager().popBackStackImmediate()) {
@@ -541,4 +712,425 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         }
     }
 
+    /**
+     * Для тестов
+     */
+    public static void makeCrash() {
+        throw new RuntimeException("This is a crash");
+    }
+
+    public static void showQuestionnaireList() {
+        List<QuestionnaireDatabaseModelR> list = getDao().getAllQuestionnaires();
+        for (int i = 0; i < list.size(); i++) {
+            Log.d(TAG, "showQuestionnaireList: " + list.get(i).getToken() + " " + list.get(i).getSurvey_status() + " " + list.get(i).getProject_id());
+        }
+    }
+
+    class AlertSmsTask extends TimerTask {
+
+        @Override
+        public void run() {
+            if (ElementActivity.CurrentlyRunning) {
+
+                if (!isFinishing() && getDao().getQuestionnaireForStage(
+                        getCurrentUserId(),
+                        QuestionnaireStatus.NOT_SENT,
+                        Constants.QuestionnaireStatuses.COMPLITED,
+                        false).size() > 0) {
+
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            try {
+                                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                                r.play();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            if (!isFinishing()) {
+                                try {
+                                    new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
+                                            .setCancelable(false)
+                                            .setTitle(R.string.DIALOG_SENDING_WAVES_VIA_SMS)
+                                            .setMessage(R.string.DIALOG_SENDING_WAVES_REQUEST)
+                                            .setPositiveButton(R.string.VIEW_YES, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(final DialogInterface dialog, final int which) {
+                                                    showSmsFragment();
+                                                }
+                                            })
+                                            .setNegativeButton(R.string.VIEW_CANCEL, new DialogInterface.OnClickListener() {
+
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.cancel();
+                                                }
+                                            })
+                                            .show();
+                                } catch (Exception e) {
+                                    if (getCurrentUser() != null)
+                                        addLogWithData(getCurrentUser().getLogin(), Constants.LogType.DIALOG, Constants.LogObject.SMS, getString(R.string.SHOW_SMS_DIALOG), Constants.LogResult.ERROR, getString(R.string.CANT_SHOW_DIALOG), e.toString());
+                                    else
+                                        addLogWithData("android", Constants.LogType.DIALOG, Constants.LogObject.SMS, getString(R.string.SHOW_SMS_DIALOG), Constants.LogResult.ERROR, getString(R.string.CANT_SHOW_DIALOG), e.toString());
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    public void activateExitReminder() {
+        if (EXIT && getReserveChannel() != null) {
+
+            if (mTimer != null) {
+                mTimer.cancel();
+            }
+
+            List<StagesModel> stages = getReserveChannel().getStages();
+            List<Integer> datesList = new ArrayList<>();
+            Long startDate = null;
+            Date startDateForDialog = null;
+
+
+            if (stages != null) {
+                if (stages.size() > 0) {
+
+                    for (int i = 0; i < stages.size(); i++) {
+                        datesList.add(stages.get(i).getTimeTo());
+                    }
+                    Collections.sort(datesList);
+
+                    for (int i = 0; i < datesList.size(); i++) {
+                        if (datesList.get(i) > System.currentTimeMillis() / 1000) {
+                            startDate = Long.valueOf(datesList.get(i)) * 1000;
+                            startDateForDialog = new Date(Long.valueOf(datesList.get(i)) * 1000);
+                            break;
+                        }
+                    }
+
+                    if (startDate != null) {
+                        mTimer = new Timer();
+                        mAlertSmsTask = new AlertSmsTask();
+                        mTimer.schedule(mAlertSmsTask, startDateForDialog);
+
+                        startSMS(startDate);
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean hasReserveChannel() {
+        return getReserveChannel() != null;
+    }
+
+    public void startSMS(Long startTime) {
+
+        final AlarmManager am = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(getContext(), StartSmsSender.class);
+        final PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, i, 0);
+
+        if (EXIT) {
+            am.set(AlarmManager.RTC_WAKEUP, startTime, pendingIntent);
+        }
+    }
+
+    public void reloadConfig() {
+        showProgressBar();
+
+        String mLogin = getCurrentUser().getLogin();
+        String mPass = getCurrentUser().getPassword();
+
+        AuthRequestModel post = new AuthRequestModel(getLoginAdmin(), mPass, mLogin);
+        Gson gsonAuth = new Gson();
+        String jsonAuth = gsonAuth.toJson(post);
+
+        addLogWithData(mLogin, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.USER_AUTH), Constants.LogResult.SENT, getString(R.string.SENDING_REQUEST), jsonAuth);
+
+        QuizerAPI.authUser(getServer(), jsonAuth, responseBody -> {
+            if (responseBody == null) {
+                showToast(getString(R.string.NOTIFICATION_SERVER_CONNECTION_ERROR) + " " + getString(R.string.ERROR_401));
+                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.USER_AUTH), Constants.LogResult.ERROR, getString(R.string.ERROR_401_DESC));
+
+                return;
+            }
+
+            String responseJson;
+            try {
+                responseJson = responseBody.string();
+            } catch (IOException e) {
+                e.printStackTrace();
+                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.USER_AUTH), Constants.LogResult.ERROR, getString(R.string.ERROR_402_DESC));
+                responseJson = null;
+            }
+
+            AuthResponseModel authResponseModel = null;
+            try {
+                authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
+            } catch (final Exception pE) {
+                addLogWithData(mLogin, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.USER_AUTH), Constants.LogResult.ERROR, getString(R.string.ERROR_403_DESC), responseJson);
+            }
+
+            String mConfigId = null;
+            if (authResponseModel != null) {
+                mConfigId = authResponseModel.getConfigId();
+            } else return;
+
+            if (mConfigId != null) {
+                final ConfigRequestModel configRequestModel = new ConfigRequestModel(
+                        getLoginAdmin(),
+                        mLogin,
+                        mPass,
+                        mConfigId
+                );
+
+                Gson gson = new Gson();
+                String json = gson.toJson(configRequestModel);
+
+                addLogWithData(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.GET_CONFIG), Constants.LogResult.SENT, getString(R.string.TRY_TO_GET_CONFIG), json);
+
+                QuizerAPI.getConfig(getServer(), json, configResponseBody -> {
+
+                    hideProgressBar();
+
+                    if (configResponseBody == null) {
+                        showToast(getString(R.string.NOTIFICATION_SERVER_CONNECTION_ERROR) + " " + getString(R.string.ERROR_601));
+                        addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.GET_CONFIG), Constants.LogResult.ERROR, getString(R.string.ERROR_601_DESC));
+
+                        return;
+                    }
+
+                    String configResponseJson = null;
+                    try {
+                        configResponseJson = configResponseBody.string();
+                    } catch (IOException e) {
+                        showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " " + getString(R.string.ERROR_602));
+                        addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.GET_CONFIG), Constants.LogResult.ERROR, getString(R.string.ERROR_602_DESC));
+
+                    }
+                    final GsonBuilder gsonBuilder = new GsonBuilder();
+                    ConfigResponseModel configResponseModel = null;
+
+                    try {
+                        configResponseModel = gsonBuilder.create().fromJson(configResponseJson, ConfigResponseModel.class);
+                    } catch (final Exception pE) {
+                        showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " " + getString(R.string.ERROR_603));
+                        addLogWithData(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.GET_CONFIG), Constants.LogResult.ERROR, getString(R.string.ERROR_603_DESC), configResponseJson);
+                    }
+
+                    if (configResponseModel != null) {
+                        if (configResponseModel.getResult() != 0) {
+                            addLogWithData(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.GET_CONFIG), Constants.LogResult.SUCCESS, getString(R.string.GET_CONFIG_DONE), configResponseJson);
+
+                            addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.LOADING_FILES), Constants.LogResult.SENT, getString(R.string.TRY_TO_LOAD_MEDIA_FILES));
+
+                            updateConfig(getCurrentUser(), configResponseModel.getConfig());
+                            showToast(getString(R.string.CONFIG_UPDATED));
+
+                            final String[] fileUris = getCurrentUser().getConfigR().getProjectInfo().getMediaFiles();
+
+                            if (fileUris == null || fileUris.length == 0) {
+                                Log.d(TAG, "reloadConfig: file list empty");
+                            } else {
+                                showProgressBar();
+
+                                FileLoader.multiFileDownload(this)
+                                        .fromDirectory(Constants.Strings.EMPTY, FileLoader.DIR_EXTERNAL_PRIVATE)
+                                        .progressListener(new MultiFileDownloadListener() {
+                                            @Override
+                                            public void onProgress(final File downloadedFile, final int progress, final int totalFiles) {
+                                                FileUtils.renameFile(downloadedFile, FileUtils.getFileName(fileUris[progress - 1]));
+
+                                                if (progress == totalFiles) {
+                                                    hideProgressBar();
+                                                    showToast(String.format(getString(R.string.LOAD_FILES_COMPLITE)));
+                                                }
+                                                showToast(String.format(getString(R.string.NOTIFICATION_DOWNLOADED_COUNT_FILES), String.valueOf(progress)));
+                                            }
+
+                                            @Override
+                                            public void onError(final Exception e, final int progress) {
+                                                super.onError(e, progress);
+                                                showToast(getString(R.string.NOTIFICATION_DOWNLOADING_FILES_ERROR));
+                                                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.LOADING_FILES), Constants.LogResult.ERROR, getString(R.string.NOTIFICATION_DOWNLOADING_FILES_ERROR));
+                                                hideProgressBar();
+                                            }
+                                        }).loadMultiple(fileUris);
+                            }
+                        } else {
+                            showToast(configResponseModel.getError());
+                            addLogWithData(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.GET_CONFIG), Constants.LogResult.ERROR, configResponseModel.getError(), configResponseJson);
+                        }
+                    } else {
+                        showToast(getString(R.string.NOTIFICATION_SERVER_RESPONSE_ERROR) + " " + getString(R.string.ERROR_606));
+                    }
+
+                });
+            } else return;
+
+        });
+
+
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+        int currentFont = getFontSizePosition();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    if (getFontSizePosition() < 4) {
+                        setFontSizePosition(currentFont + 1);
+                        changeFontCallback.onChangeFont();
+                    }
+                }
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    if (getFontSizePosition() > 0) {
+                        setFontSizePosition(currentFont - 1);
+                        changeFontCallback.onChangeFont();
+                    }
+                }
+                return true;
+            default:
+                return super.dispatchKeyEvent(event);
+        }
+    }
+
+    public interface ChangeFontCallback {
+        void onChangeFont();
+    }
+
+    public void setChangeFontCallback(ChangeFontCallback listener) {
+        changeFontCallback = listener;
+    }
+
+    public boolean checkPermission() {
+        final int location = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
+        final int camera = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
+        final int audio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
+        final int sms = ContextCompat.checkSelfPermission(getApplicationContext(), SEND_SMS);
+        final int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+        final int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+        final int phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_STATE);
+
+        return (location == PackageManager.PERMISSION_GRANTED || !getCurrentUser().getConfigR().isGps()) &&
+                camera == PackageManager.PERMISSION_GRANTED &&
+                audio == PackageManager.PERMISSION_GRANTED &&
+                (sms == PackageManager.PERMISSION_GRANTED || !getCurrentUser().getConfigR().hasReserveChannels()) &&
+                writeStorage == PackageManager.PERMISSION_GRANTED &&
+                readStorage == PackageManager.PERMISSION_GRANTED &&
+                (phoneState == PackageManager.PERMISSION_GRANTED || !getCurrentUser().getConfigR().hasReserveChannels());
+    }
+
+    public void requestPermission() {
+        if (!mIsPermDialogShow)
+            ActivityCompat.requestPermissions(this, new String[]{
+                    ACCESS_FINE_LOCATION,
+                    CAMERA,
+                    RECORD_AUDIO,
+                    WRITE_EXTERNAL_STORAGE,
+                    READ_EXTERNAL_STORAGE,
+                    SEND_SMS,
+                    READ_PHONE_STATE
+            }, 200);
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
+        switch (requestCode) {
+            case 200:
+                if (grantResults.length > 0) {
+                    final boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    final boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    final boolean audioAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                    final boolean writeStorageAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+                    final boolean readStorageAccepted = grantResults[4] == PackageManager.PERMISSION_GRANTED;
+                    final boolean sendSms = grantResults[5] == PackageManager.PERMISSION_GRANTED;
+                    final boolean phoneState = grantResults[6] == PackageManager.PERMISSION_GRANTED;
+
+                    if (!locationAccepted
+                            || !cameraAccepted
+                            || !audioAccepted
+                            || !writeStorageAccepted
+                            || !readStorageAccepted
+                            || (getCurrentUser().getConfigR().hasReserveChannels() && !sendSms)
+                            || (getCurrentUser().getConfigR().hasReserveChannels() && !phoneState)) {
+
+                        showPermissionDialog();
+                        return;
+                    }
+                }
+                break;
+        }
+    }
+
+    private void showPermissionDialog() {
+        mIsPermDialogShow = true;
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
+        alertDialog.setCancelable(false);
+        alertDialog.setTitle(R.string.DIALOG_PLEASE_GIVE_PERM);
+        alertDialog.setMessage(R.string.DIALOG_YOU_NEED_TO_TURN_ON_PERM);
+        alertDialog.setPositiveButton(R.string.DIALOG_PERM_ON, new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + BuildConfig.APPLICATION_ID));
+                startActivity(intent);
+                if (alertDialog != null) {
+                    dialog.dismiss();
+                    mIsPermDialogShow = false;
+                }
+
+            }
+        });
+
+        alertDialog.show();
+    }
+
+    public void sendCrashLogs() {
+        Log.d(TAG, "Crash logs: " + getDao().getCrashLogs().size());
+        if (getDao().getCrashLogs().size() > 0) {
+            List<Crash> crashList = new ArrayList<>();
+            List<CrashLogs> crashLogsList = null;
+            try {
+                crashLogsList = getDao().getCrashLogs();
+            } catch (Exception e) {
+                addLogWithData(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.LOG, getString(R.string.LOAD_CRASHLOG_FROM_DB), Constants.LogResult.ERROR, getString(R.string.DB_LOAD_ERROR), e.getMessage());
+            }
+            if (crashLogsList != null && crashLogsList.size() > 0) {
+                for (CrashLogs crash : crashLogsList) {
+                    crashList.add(new Crash(getCurrentUser().getLogin(), crash.getLog(), crash.isFrom_questionnaire()));
+                }
+            }
+
+            Log.d(TAG, "Sending Crash Logs: " + crashList.size());
+            CrashRequestModel crashRequestModel = new CrashRequestModel(getLoginAdmin(), crashList);
+            Gson gson = new Gson();
+            String json = gson.toJson(crashRequestModel);
+            QuizerAPI.sendCrash(getServer(), json, new QuizerAPI.SendCrashCallback() {
+                @Override
+                public void onSendCrash(boolean ok, String message) {
+                    if (ok) {
+                        try {
+                            getDao().clearCrashLogs();
+                            Log.d(TAG, "Crash Logs Cleared");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.d(TAG, "Crash Logs Clear Error: " + e);
+                        }
+                    } else {
+                        Log.d(TAG, "Crash Logs Not Sent: " + message);
+                    }
+                }
+            });
+        }
+    }
 }

@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,22 +17,25 @@ import pro.quizer.quizerexit.BuildConfig;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizerexit.executable.SyncInfoExecutable;
 import pro.quizer.quizerexit.listener.QuotasClickListener;
 import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ProjectInfoModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.view.SyncViewModel;
 import pro.quizer.quizerexit.utils.SystemUtils;
 import pro.quizer.quizerexit.utils.UiUtils;
 
 import static pro.quizer.quizerexit.activity.BaseActivity.IS_AFTER_AUTH;
+import static pro.quizer.quizerexit.activity.BaseActivity.TAG;
+import static pro.quizer.quizerexit.activity.BaseActivity.getDao;
+import static pro.quizer.quizerexit.activity.BaseActivity.makeCrash;
 
 public class HomeFragment extends BaseFragment implements ICallback {
 
-    private UserModel mUserModel;
+    private UserModelR mUserModel;
     private BaseActivity mBaseActivity;
 
     public static Fragment newInstance(final boolean pIsCanShowUpdateDialog) {
@@ -58,10 +62,20 @@ public class HomeFragment extends BaseFragment implements ICallback {
         final Bundle bundle = getArguments();
 
         if (bundle != null && bundle.getBoolean(IS_AFTER_AUTH)) {
-            checkUpdates(bundle, mUserModel.getConfig());
+            checkUpdates(bundle, mUserModel.getConfigR());
         }
 
         new SendQuestionnairesByUserModelExecutable(getBaseActivity(), mUserModel, this, false).execute();
+
+        mBaseActivity.sendCrashLogs();
+
+        mBaseActivity.setChangeFontCallback(new BaseActivity.ChangeFontCallback() {
+            @Override
+            public void onChangeFont() {
+                Log.d(TAG, "onChangeFont: ");
+                refreshFragment();
+            }
+        });
     }
 
     private void checkUpdates(final Bundle bundle, final ConfigModel configModel) {
@@ -116,9 +130,10 @@ public class HomeFragment extends BaseFragment implements ICallback {
         if (mBaseActivity == null) {
             return;
         }
+        mBaseActivity.activateExitReminder();
 
         mUserModel = mBaseActivity.getCurrentUser();
-        final ConfigModel config = mUserModel.getConfig();
+        final ConfigModel config = mUserModel.getConfigR();
         final ProjectInfoModel projectInfo = config.getProjectInfo();
 
         final TextView configAgreement = pView.findViewById(R.id.config_agreement);
@@ -135,6 +150,7 @@ public class HomeFragment extends BaseFragment implements ICallback {
             @Override
             public void onStarting() {
                 showProgressBar();
+                mBaseActivity.addLog(getBaseActivity().getCurrentUser().getLogin(), Constants.LogType.BUTTON, Constants.LogObject.LOG, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.VIEW_START));
             }
 
             @Override
@@ -158,7 +174,12 @@ public class HomeFragment extends BaseFragment implements ICallback {
         }
 
         final Button quotasBtn = pView.findViewById(R.id.quotas);
-        quotasBtn.setOnClickListener(new QuotasClickListener(getBaseActivity()));
+        if (projectInfo.getReserveChannel() == null) {
+            quotasBtn.setVisibility(View.VISIBLE);
+            quotasBtn.setOnClickListener(new QuotasClickListener(getBaseActivity()));
+        } else {
+            quotasBtn.setVisibility(View.GONE);
+        }
     }
 
     private void initSyncInfoViews() {
@@ -189,6 +210,14 @@ public class HomeFragment extends BaseFragment implements ICallback {
     }
 
     private void start() {
+
+        try {
+            getDao().updateQuestionnaireStart(true, mUserModel.getUser_id());
+            Log.d(TAG, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<< saveQuestionnaireToDatabase: true " + mUserModel.getUser_id());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         hideProgressBar();
 
         getBaseActivity().finish();
@@ -202,6 +231,9 @@ public class HomeFragment extends BaseFragment implements ICallback {
 
     @Override
     public void onSuccess() {
+
+
+
         initSyncInfoViews();
 //        hideProgressBar();
 
@@ -216,6 +248,14 @@ public class HomeFragment extends BaseFragment implements ICallback {
 
         if (isAdded()) {
 //            showToast(getString(R.string.NOTIFICATION_NO_CONNECTION_SAVING_QUIZ));
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!mBaseActivity.checkPermission()) {
+            mBaseActivity.requestPermission();
         }
     }
 }

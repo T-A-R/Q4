@@ -15,20 +15,8 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import pro.quizer.quizerexit.BuildConfig;
 import pro.quizer.quizerexit.R;
-import pro.quizer.quizerexit.activity.BaseActivity;
-import pro.quizer.quizerexit.executable.ICallback;
-import pro.quizer.quizerexit.executable.SettingViewModelExecutable;
-import pro.quizer.quizerexit.model.FontSizeModel;
-import pro.quizer.quizerexit.model.config.ConfigModel;
-import pro.quizer.quizerexit.model.config.PhoneModel;
-import pro.quizer.quizerexit.model.config.ReserveChannelModel;
-import pro.quizer.quizerexit.model.database.UserModel;
-import pro.quizer.quizerexit.model.view.SettingsViewModel;
 import pro.quizer.quizerexit.utils.EmailUtils;
 import pro.quizer.quizerexit.utils.PhoneUtils;
 import pro.quizer.quizerexit.utils.UiUtils;

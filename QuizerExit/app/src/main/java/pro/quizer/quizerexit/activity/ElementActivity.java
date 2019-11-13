@@ -2,14 +2,21 @@ package pro.quizer.quizerexit.activity;
 
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.Parcel;
 import android.os.RemoteException;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
@@ -24,6 +31,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +41,11 @@ import pro.quizer.quizerexit.AudioService;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.database.QuizerDao;
+import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
+import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
+import pro.quizer.quizerexit.database.model.UserModelR;
+import pro.quizer.quizerexit.database.model.WarningsR;
 import pro.quizer.quizerexit.fragment.ElementFragment;
 import pro.quizer.quizerexit.model.ElementDatabaseType;
 import pro.quizer.quizerexit.model.ElementType;
@@ -41,9 +54,6 @@ import pro.quizer.quizerexit.model.config.ConfigModel;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
 import pro.quizer.quizerexit.model.config.ProjectInfoModel;
-import pro.quizer.quizerexit.model.database.ElementDatabaseModel;
-import pro.quizer.quizerexit.model.database.QuestionnaireDatabaseModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.utils.ConditionUtils;
 import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.FileUtils;
@@ -66,7 +76,8 @@ public class ElementActivity extends BaseActivity {
 
     public static final int FIRST_ELEMENT = Integer.MIN_VALUE;
     public static final int ONE_SEC = 1000;
-    UserModel mUser;
+    public static boolean CurrentlyRunning = false;
+    UserModelR mUser;
     ConfigModel mConfig;
     ProjectInfoModel mProjectInfo;
     List<ElementModel> mElements;
@@ -86,9 +97,13 @@ public class ElementActivity extends BaseActivity {
     private GPSModel mGPSModel;
     private String mUserLogin;
     private String mGpsString;
+    private String mGpsNetworkString;
+    private boolean mIsUsedFakeGps = false;
     private long mGpsTime;
+    private long mGpsTimeNetwork;
     private long mStartDateInterview;
     private boolean mIsMediaConnected;
+    private boolean mIsTimeDialogShow = false;
     private int mAudioRelativeId;
 
     // recording
@@ -145,33 +160,6 @@ public class ElementActivity extends BaseActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 200;
 
-    private boolean checkPermission() {
-        final int location = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
-        final int camera = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
-        final int audio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
-        final int sms = ContextCompat.checkSelfPermission(getApplicationContext(), SEND_SMS);
-        final int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
-        final int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
-
-        return (location == PackageManager.PERMISSION_GRANTED || !mConfig.isGps()) &&
-                camera == PackageManager.PERMISSION_GRANTED &&
-                audio == PackageManager.PERMISSION_GRANTED &&
-                (sms == PackageManager.PERMISSION_GRANTED || !mConfig.hasReserveChannels()) &&
-                writeStorage == PackageManager.PERMISSION_GRANTED &&
-                readStorage == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{
-                ACCESS_FINE_LOCATION,
-                CAMERA,
-                RECORD_AUDIO,
-                WRITE_EXTERNAL_STORAGE,
-                READ_EXTERNAL_STORAGE,
-                SEND_SMS
-        }, PERMISSION_REQUEST_CODE);
-    }
-
     @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
@@ -206,6 +194,7 @@ public class ElementActivity extends BaseActivity {
     }
 
     public void stopRecording() {
+        Log.d(TAG, "******************* stopRecording: **********************");
         if (mIsMediaConnected && mStop != null && mStop.getVisibility() == View.VISIBLE) {
             mStop.performClick();
         }
@@ -213,6 +202,7 @@ public class ElementActivity extends BaseActivity {
 
     public void startRecording() {
         if (mIsMediaConnected && mStart != null && mStart.getVisibility() == View.VISIBLE) {
+            Log.d(TAG, "******************* startRecording: **********************");
             mStart.performClick();
 
             Log.d("Timer", "Limit: " + mAudioRecordLimitTime + " - tick: " + ONE_SEC);
@@ -220,7 +210,7 @@ public class ElementActivity extends BaseActivity {
             mCountDownTimer = new CountDownTimer(mAudioRecordLimitTime, ONE_SEC) {
 
                 public void onTick(long millisUntilFinished) {
-                    Log.d("Timer", "onTick: " + String.valueOf(millisUntilFinished));
+//                    Log.d("Timer", "onTick: " + String.valueOf(millisUntilFinished));
                 }
 
                 public void onFinish() {
@@ -234,6 +224,7 @@ public class ElementActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        CurrentlyRunning = true;
     }
 
     public void pauseRecording() {
@@ -269,13 +260,17 @@ public class ElementActivity extends BaseActivity {
         mStop = findViewById(R.id.ibStop);
         mStatus = findViewById(R.id.tvState);
 
-        // GOOD
         mUser = getCurrentUser();
-        mConfig = mUser.getConfig();
+        mConfig = mUser.getConfigR();
         mAudioRecordLimitTime = mConfig.getAudioRecordLimitTime() * 60 * 1000;
         mProjectInfo = mConfig.getProjectInfo();
         mElements = mProjectInfo.getElements();
         mMap = getMap();
+
+        if (!mIsTimeDialogShow)
+            checkTIme();
+
+        activateExitReminder();
     }
 
     private void startGps() {
@@ -284,7 +279,10 @@ public class ElementActivity extends BaseActivity {
                 mGPSModel = GpsUtils.getCurrentGps(this, mConfig.isForceGps());
                 if (mGPSModel != null) {
                     mGpsString = mGPSModel.getGPS();
+                    mGpsNetworkString = mGPSModel.getGPSNetwork();
+                    mIsUsedFakeGps = mGPSModel.isFakeGPS();
                     mGpsTime = mGPSModel.getTime();
+                    mGpsTimeNetwork = mGPSModel.getTimeNetwork();
 
                     if (!StringUtils.isEmpty(mGpsString)) {
 //                    showToast(getString(R.string.NOTIFICATION_CURRENT_GPS) + mGpsString);
@@ -295,7 +293,8 @@ public class ElementActivity extends BaseActivity {
                     initStartValues();
                 }
             } catch (final Exception e) {
-                Log.d(TAG, "startGps: " + e);
+                e.printStackTrace();
+                Log.d(TAG, "startGps: " + e.getMessage());
                 if (mConfig.isForceGps()) {
 //                    showToast(getString(R.string.NOTIFICATION_FORCE_GPS_ERROR));
 
@@ -305,14 +304,25 @@ public class ElementActivity extends BaseActivity {
                     initStartValues();
                 }
             }
+
+            if (mIsUsedFakeGps) {
+                try {
+                    getDao().insertWarning(new WarningsR(Constants.Warnings.FAKE_GPS, mGpsTime));
+                    addLog(mUserLogin, Constants.LogType.BUTTON, Constants.LogObject.CONFIG, getString(R.string.CONFIG_ERROR), Constants.LogResult.PRESSED, getString(R.string.FAKE_GPS_ON));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                showFakeGPSAlertDialog();
+            }
         } else {
             initStartValues();
         }
     }
 
     @SuppressLint("MissingPermission")
-    private void initStartValues() {
+    public void initStartValues() {
         if (StringUtils.isEmpty(mToken)) {
+
             mStartDateInterview = DateUtils.getCurrentTimeMillis();
 
             mStop.setVisibility(View.INVISIBLE);
@@ -327,14 +337,14 @@ public class ElementActivity extends BaseActivity {
             setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
             mLoginAdmin = mConfig.getLoginAdmin();
-            mLogin = mUser.login;
-            mPassword = mUser.password;
+            mLogin = mUser.getLogin();
+            mPassword = mUser.getPassword();
             mQuestionnaireId = mProjectInfo.getQuestionnaireId();
             mProjectId = mProjectInfo.getProjectId();
             mBillingQuestions = mProjectInfo.getBillingQuestions();
-            mUserLogin = mUser.login;
-            mUserProjectId = mUser.user_project_id;
-            mUserId = mUser.user_id;
+            mUserLogin = mUser.getLogin();
+            mUserProjectId = mUser.getUser_project_id();
+            mUserId = mUser.getUser_id();
             mToken = StringUtils.generateToken();
 
             showFirstElement();
@@ -344,13 +354,14 @@ public class ElementActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
 //        pauseRecording();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
+        CurrentlyRunning = true;
 
         if (!checkPermission()) {
             requestPermission();
@@ -362,11 +373,11 @@ public class ElementActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-//        resumeRecording();
+        if (!mIsTimeDialogShow)
+            checkTIme();
     }
 
-    private void showFirstElement() {
+    public void showFirstElement() {
         showNextElement(FIRST_ELEMENT, false, null);
     }
 
@@ -375,6 +386,7 @@ public class ElementActivity extends BaseActivity {
 
             if (mConfig.isSaveAborted()) {
                 showProgressBar();
+                addLog(mUserLogin, Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.SAVE_ABORTED_QUEST));
                 saveQuestionnaireToDatabase(true);
                 showToast(getString(R.string.QUESTIONS_SAVED));
             }
@@ -394,6 +406,7 @@ public class ElementActivity extends BaseActivity {
                 UiUtils.setButtonEnabled(pForwardView, false);
             }
             showProgressBar();
+            addLog(mUserLogin, Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.SAVE_COMPLITED_QUEST));
             saveQuestionnaireToDatabase(false);
             showToast(getString(R.string.NOTIFICATION_QUIZ_IS_FINISHED));
 
@@ -418,6 +431,8 @@ public class ElementActivity extends BaseActivity {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 ? !isDestroyed() : !isFinishing()) {
+
+            addLog(mUserLogin, Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.NEXT_BUTTON) + " " + nextElement.getRelativeID());
 
             final FragmentTransaction fragmentTransaction = getSupportFragmentManager()
                     .beginTransaction()
@@ -461,12 +476,15 @@ public class ElementActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+        addLog(mUserLogin, Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.BACK_BUTTON));
         if (!getSupportFragmentManager().popBackStackImmediate()) {
             showExitPoolAlertDialog();
         }
     }
 
     public void showExitPoolAlertDialog() {
+
+        addLog(mUserLogin, Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.EXIT_BUTTON));
         if (!isFinishing()) {
             new AlertDialog.Builder(this, R.style.AlertDialogTheme)
                     .setCancelable(false)
@@ -489,44 +507,103 @@ public class ElementActivity extends BaseActivity {
         }
     }
 
+    public void showFakeGPSAlertDialog() {
+
+        saveQuestionnaireToDatabase(true);
+
+        if (!isFinishing()) {
+            new AlertDialog.Builder(this, R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.VIEW_FAKE_GPS_HEADER)
+                    .setMessage(R.string.VIEW_FAKE_GPS_BODY)
+                    .setPositiveButton(R.string.VIEW_APPLY, new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(final DialogInterface dialog, final int which) {
+                            finish();
+                        }
+                    })
+                    .show();
+        }
+    }
+
     private void saveQuestionnaireToDatabase(boolean aborted) {
         final long endTime = DateUtils.getCurrentTimeMillis();
         final long durationTimeQuestionnaire = endTime - mStartDateInterview;
 
-        final QuestionnaireDatabaseModel questionnaireDatabaseModel = new QuestionnaireDatabaseModel();
-        questionnaireDatabaseModel.status = QuestionnaireStatus.NOT_SENT;
-        questionnaireDatabaseModel.token = mToken;
-        questionnaireDatabaseModel.login_admin = mLoginAdmin;
-        questionnaireDatabaseModel.login = mLogin;
-        questionnaireDatabaseModel.user_id = mUserId;
-        questionnaireDatabaseModel.passw = mPassword;
-        questionnaireDatabaseModel.questionnaire_id = mQuestionnaireId;
-        questionnaireDatabaseModel.project_id = mProjectId;
-        questionnaireDatabaseModel.billing_questions = mBillingQuestions;
-        questionnaireDatabaseModel.user_project_id = mUserProjectId;
-        questionnaireDatabaseModel.gps = mGpsString;
-        questionnaireDatabaseModel.gps_time = mGpsTime;
-        questionnaireDatabaseModel.date_interview = mStartDateInterview;
-        questionnaireDatabaseModel.has_photo = getHasPhoto();
+        final QuestionnaireDatabaseModelR questionnaireDatabaseModel = new QuestionnaireDatabaseModelR();
+        questionnaireDatabaseModel.setStatus(QuestionnaireStatus.NOT_SENT);
+        questionnaireDatabaseModel.setToken(mToken);
+        questionnaireDatabaseModel.setLogin_admin(mLoginAdmin);
+        questionnaireDatabaseModel.setLogin(mLogin);
+        questionnaireDatabaseModel.setUser_id(mUserId);
+        questionnaireDatabaseModel.setPassw(mPassword);
+        questionnaireDatabaseModel.setQuestionnaire_id(mQuestionnaireId);
+        questionnaireDatabaseModel.setProject_id(mProjectId);
+        questionnaireDatabaseModel.setBilling_questions(mBillingQuestions);
+        questionnaireDatabaseModel.setUser_project_id(mUserProjectId);
+        questionnaireDatabaseModel.setGps(mGpsString);
+        questionnaireDatabaseModel.setGps_network(mGpsNetworkString);
+        questionnaireDatabaseModel.setGps_time(mGpsTime);
+        questionnaireDatabaseModel.setGps_time_network(mGpsTimeNetwork);
+        questionnaireDatabaseModel.setDate_interview(mStartDateInterview);
+        questionnaireDatabaseModel.setHas_photo(getHasPhoto());
+
+        boolean isFakeGPS = false;
+        Long fakeGPSTime = null;
+
+        List<WarningsR> warnings = null;
+        try {
+            warnings = BaseActivity.getDao().getWarningsByStatus(Constants.Warnings.FAKE_GPS, Constants.LogStatus.NOT_SENT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (warnings != null && warnings.size() > 0) {
+            isFakeGPS = true;
+            fakeGPSTime = warnings.get(warnings.size() - 1).getWarningTime();
+        } else {
+            isFakeGPS = false;
+            fakeGPSTime = 0L;
+        }
+        questionnaireDatabaseModel.setUsed_fake_gps(isFakeGPS);
+        questionnaireDatabaseModel.setGps_time_fk(fakeGPSTime);
+
+        try {
+            BaseActivity.getDao().clearWarningsR();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (aborted)
-            questionnaireDatabaseModel.survey_status = Constants.QuestionnaireStatuses.ABORTED;
+            questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.ABORTED);
         else
-            questionnaireDatabaseModel.survey_status = Constants.QuestionnaireStatuses.COMPLITED;
-
+            questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.COMPLITED);
 
         final int showingScreensCount = saveScreenElements();
         final int answersCount = saveAnswersElements();
 
-        questionnaireDatabaseModel.questions_passed = getCountOfShowingQuestions();
-        questionnaireDatabaseModel.screens_passed = showingScreensCount;
-        questionnaireDatabaseModel.selected_questions = answersCount;
-        questionnaireDatabaseModel.duration_time_questionnaire = (int) durationTimeQuestionnaire;
-        questionnaireDatabaseModel.auth_time_difference = SPUtils.getAuthTimeDifference(this);
-        questionnaireDatabaseModel.quota_time_difference = SPUtils.getQuotaTimeDifference(this);
-        questionnaireDatabaseModel.send_time_difference = SPUtils.getSendTimeDifference(this);
+        questionnaireDatabaseModel.setQuestions_passed(getCountOfShowingQuestions());
+        questionnaireDatabaseModel.setScreens_passed(showingScreensCount);
+        questionnaireDatabaseModel.setSelected_questions(answersCount);
+        questionnaireDatabaseModel.setDuration_time_questionnaire((int) durationTimeQuestionnaire);
+        questionnaireDatabaseModel.setAuth_time_difference(SPUtils.getAuthTimeDifference(this));
+        questionnaireDatabaseModel.setQuota_time_difference(SPUtils.getQuotaTimeDifference(this));
+        questionnaireDatabaseModel.setSend_time_difference(SPUtils.getSendTimeDifference(this));
 
-        questionnaireDatabaseModel.save();
+        try {
+            BaseActivity.getDao().insertQuestionnaire(questionnaireDatabaseModel);
+            BaseActivity.addLog(mLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SAVE_QUESTION_TO_DB), Constants.LogResult.SUCCESS, getString(R.string.SAVE_QUESTION_TO_DB_SUCCESS));
+        } catch (Exception e) {
+            showToast(getString(R.string.DB_SAVE_ERROR));
+            BaseActivity.addLogWithData(mLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SAVE_QUESTION_TO_DB), Constants.LogResult.ERROR, getString(R.string.SAVE_QUESTION_TO_DB_ERROR), e.toString());
+        }
+
+        try {
+            BaseActivity.getDao().updateQuestionnaireStart(false, mUserId);
+        } catch (Exception e) {
+            BaseActivity.addLogWithData(mLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SAVE_FINISH_FLAG_TO_DB), Constants.LogResult.ERROR, getString(R.string.SAVE_QUESTION_TO_DB_ERROR), e.toString());
+        }
     }
 
     private int saveScreenElements() {
@@ -536,17 +613,22 @@ public class ElementActivity extends BaseActivity {
             final ElementModel element = elementModel.getValue();
 
             if (element != null && element.isScreenShowing()) {
-                final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
-                elementDatabaseModel.token = mToken;
-                elementDatabaseModel.relative_id = element.getRelativeID();
-                elementDatabaseModel.relative_parent_id = element.getRelativeParentID();
-                elementDatabaseModel.item_order = element.getOptions().getOrder();
-                elementDatabaseModel.duration = element.getDuration();
-                elementDatabaseModel.type = ElementDatabaseType.SCREEN;
+
+                final ElementDatabaseModelR elementDatabaseModelR = new ElementDatabaseModelR();
+                elementDatabaseModelR.setToken(mToken);
+                elementDatabaseModelR.setRelative_id(element.getRelativeID());
+                elementDatabaseModelR.setRelative_parent_id(element.getRelativeParentID());
+                elementDatabaseModelR.setItem_order(element.getOptions().getOrder());
+                elementDatabaseModelR.setDuration(element.getDuration());
+                elementDatabaseModelR.setType(ElementDatabaseType.SCREEN);
 
                 LogUtils.logAction("saveScreenElement " + element.getRelativeID());
 
-                elementDatabaseModel.save();
+                try {
+                    getDao().insertElement(elementDatabaseModelR);
+                } catch (Exception e) {
+                    showToast(getString(R.string.DB_SAVE_ERROR));
+                }
                 count++;
             }
         }
@@ -570,19 +652,24 @@ public class ElementActivity extends BaseActivity {
     }
 
     private void saveElement(final ElementModel element) {
-        final ElementDatabaseModel elementDatabaseModel = new ElementDatabaseModel();
+        final ElementDatabaseModelR elementDatabaseModel = new ElementDatabaseModelR();
         final int parentId = element.getRelativeParentID();
 
-        elementDatabaseModel.token = mToken;
-        elementDatabaseModel.value = element.getTextAnswer();
-        elementDatabaseModel.relative_id = element.getRelativeID();
-        elementDatabaseModel.relative_parent_id = parentId;
-        elementDatabaseModel.item_order = element.getOptions().getOrder();
-        elementDatabaseModel.type = ElementDatabaseType.ELEMENT;
+        elementDatabaseModel.setToken(mToken);
+        elementDatabaseModel.setValue(element.getTextAnswer());
+        elementDatabaseModel.setRelative_id(element.getRelativeID());
+        elementDatabaseModel.setRelative_parent_id(parentId);
+        elementDatabaseModel.setItem_order(element.getOptions().getOrder());
+        elementDatabaseModel.setType(ElementDatabaseType.ELEMENT);
 
         LogUtils.logAction("saveElement " + element.getRelativeID());
 
-        elementDatabaseModel.save();
+        try {
+            getDao().insertElement(elementDatabaseModel);
+        } catch (Exception e) {
+            addLogWithData(mUserLogin, Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SAVE_QUESTION_TO_DB), Constants.LogResult.ERROR, getString(R.string.DIALOG_PLEASE_TURN_ON_AUTO_TIME), e.toString());
+            showToast(getString(R.string.DB_SAVE_ERROR));
+        }
     }
 
     private int getCountOfShowingQuestions() {
@@ -1081,4 +1168,56 @@ public class ElementActivity extends BaseActivity {
             }
         }
     };
+
+    private void showTimeDialog() {
+        mIsTimeDialogShow = true;
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
+        alertDialog.setCancelable(false);
+        alertDialog.setTitle(R.string.DIALOG_PLEASE_TURN_ON_AUTO_TIME);
+        alertDialog.setMessage(R.string.DIALOG_YOU_NEED_TO_TURN_ON_AUTO_TIME);
+        alertDialog.setPositiveButton(R.string.DIALOG_TURN_ON, new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_DATE_SETTINGS);
+                startActivity(intent);
+                if (alertDialog != null) {
+                    dialog.dismiss();
+                    mIsTimeDialogShow = false;
+                }
+
+            }
+        });
+
+        alertDialog.show();
+    }
+
+    private boolean isTimeAutomatic() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME, 0) == 1;
+        } else {
+            return android.provider.Settings.System.getInt(getContentResolver(), android.provider.Settings.System.AUTO_TIME, 0) == 1;
+        }
+    }
+
+    private void checkTIme() {
+
+        if (!isTimeAutomatic() && mConfig.isForceTime()) {
+            try {
+                addLog(mUserLogin, Constants.LogType.DIALOG, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SHOW_DIALOG), Constants.LogResult.SUCCESS, getString(R.string.DIALOG_PLEASE_TURN_ON_AUTO_TIME));
+                showTimeDialog();
+            } catch (Exception e) {
+                addLogWithData(mUserLogin, Constants.LogType.DIALOG, Constants.LogObject.QUESTIONNAIRE, getString(R.string.SHOW_DIALOG), Constants.LogResult.ERROR, getString(R.string.DIALOG_PLEASE_TURN_ON_AUTO_TIME), e.toString());
+
+            }
+        }
+    }
+
+    public QuizerDao getElementDao() {
+        return getDao();
+    }
+
+    public boolean isForceGPS() {
+        return mConfig.isForceGps();
+    }
 }

@@ -22,13 +22,9 @@ import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.DialogCallback;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
-import pro.quizer.quizerexit.model.ElementSubtype;
-import pro.quizer.quizerexit.model.ElementType;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
-import pro.quizer.quizerexit.model.database.UserModel;
-import pro.quizer.quizerexit.utils.CollectionUtils;
-import pro.quizer.quizerexit.utils.DateUtils;
 
 public class QuestionSelectiveDialogFragment extends BaseFragment {
 
@@ -51,7 +47,7 @@ public class QuestionSelectiveDialogFragment extends BaseFragment {
     private FragmentManager mFragmentManger;
     private NavigationCallback mCallback;
     private DialogCallback mDialogCallback;
-    private UserModel mUser;
+    private UserModelR mUser;
     private boolean mIsButtonsVisible = true;
     private long mStartTime;
     private boolean mIsFromDialog = false;
@@ -77,7 +73,7 @@ public class QuestionSelectiveDialogFragment extends BaseFragment {
             final String pUserLogin,
             final boolean pIsPhotoQuestionnaire,
             final int pProjectId,
-            final UserModel user,
+            final UserModelR user,
             final HashMap<Integer, ElementModel> pMap) {
         final QuestionSelectiveDialogFragment fragment = new QuestionSelectiveDialogFragment();
 

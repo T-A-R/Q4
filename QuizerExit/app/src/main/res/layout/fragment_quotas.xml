@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -29,7 +30,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1"
-                    android:hint="@string/TEXT_HINT_SEARCH" />
+                    android:hint="@string/TEXT_HINT_SEARCH"
+                    android:maxLength="30"
+                    android:maxLines="1" />
 
                 <ImageView
                     android:id="@+id/clear_search_icon"
@@ -43,10 +46,10 @@
             </LinearLayout>
 
             <pro.quizer.quizerexit.view.resizeble.customswitch.ResizableSwitch
-                android:padding="4dp"
                 android:id="@+id/not_completed_only_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="4dp"
                 android:text="@string/VIEW_TOGGLE_SHOW_NOT_COMPLETED_QUOTAS"
                 android:textSize="16sp" />
 
@@ -61,14 +64,75 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
+        <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
+            android:id="@+id/quota_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/QUOTA_NOT_RENEWED_AFTER_SEND"
+            android:textColor="@android:color/holo_red_dark"
+            android:visibility="gone"/>
+
+        <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
+            android:id="@+id/quota_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/QUOTA_NOT_RENEWED_AFTER_FINISH"
+            android:textColor="@android:color/holo_red_dark"
+            android:visibility="gone"/>
+
+        <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
+            android:id="@+id/quota_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/QUOTA_RENEW_TIME"
+            android:textColor="@android:color/black"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/info_quotas"
+                style="@style/ButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="8dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/VIEW_BUTTON_INFO"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/details_quotas"
+                style="@style/ButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="8dp"
+                android:maxLines="1"
+                android:layout_weight="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/QUOTA_HIDE_DETAILS"
+                android:layout_marginStart="8dp" />
+
+        </LinearLayout>
+
+        <Button
             android:id="@+id/refresh_quotas"
             style="@style/ButtonStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_36sdp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
+            android:maxLines="1"
+            android:textSize="@dimen/_12ssp"
             android:text="@string/VIEW_BUTTON_REFRESH" />
 
         <FrameLayout

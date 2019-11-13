@@ -16,9 +16,9 @@ import java.util.HashMap;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.NavigationCallback;
 import pro.quizer.quizerexit.R;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.config.ElementModel;
 import pro.quizer.quizerexit.model.config.OptionsModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 
 public class BoxFragment extends AbstractContentElementFragment {
 
@@ -33,7 +33,7 @@ public class BoxFragment extends AbstractContentElementFragment {
 
     private OptionsModel mAttributes;
     private ElementModel mCurrentElement;
-    private UserModel mUser;
+    private UserModelR mUser;
     private HashMap<Integer, ElementModel> mMap;
     private FragmentManager mFragmentManger;
     private NavigationCallback mCallback;
@@ -55,7 +55,7 @@ public class BoxFragment extends AbstractContentElementFragment {
             final String pUserLogin,
             final boolean pIsPhotoQuestionnaire,
             final int pProjectId,
-            final UserModel user,
+            final UserModelR user,
             final HashMap<Integer, ElementModel> pMap) {
         final Fragment fragment = new BoxFragment();
 
@@ -87,27 +87,32 @@ public class BoxFragment extends AbstractContentElementFragment {
         final Activity activity = getActivity();
 
         if (activity != null) {
-            mFragmentManger = ((FragmentActivity) activity).getSupportFragmentManager();
+//            mFragmentManger = ((FragmentActivity) activity).getSupportFragmentManager();
+            mFragmentManger = getChildFragmentManager();
         }
 
         if (bundle != null) {
-            mUser = getBaseActivity().getCurrentUser();
-            mMap = getBaseActivity().getMap();
-            mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
-            mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
-            mAttributes = mCurrentElement.getOptions();
-            mIsPhotoQuestionnaire = bundle.getBoolean(BUNDLE_IS_PHOTO_QUESTIONNAIRE);
-            mUserLogin = bundle.getString(BUNDLE_USER_LOGIN);
-            mProjectId = bundle.getInt(BUNDLE_PROJECT_ID);
-            mLoginAdmin = bundle.getString(BUNDLE_LOGIN_ADMIN);
-            mToken = bundle.getString(BUNDLE_TOKEN);
-            mUserId = bundle.getInt(BUNDLE_USER_ID);
-            mIsButtonsVisible = bundle.getBoolean(BUNDLE_IS_BUTTON_VISIBLE);
-            initHeader(view);
-            initView();
-            handleButtonsVisibility();
+            try {
+                mUser = getBaseActivity().getCurrentUser();
+                mMap = getBaseActivity().getMap();
+                mCurrentElement = (ElementModel) bundle.getSerializable(BUNDLE_CURRENT_QUESTION);
+                mCallback = (NavigationCallback) bundle.getSerializable(BUNDLE_CALLBACK);
+                mAttributes = mCurrentElement.getOptions();
+                mIsPhotoQuestionnaire = bundle.getBoolean(BUNDLE_IS_PHOTO_QUESTIONNAIRE);
+                mUserLogin = bundle.getString(BUNDLE_USER_LOGIN);
+                mProjectId = bundle.getInt(BUNDLE_PROJECT_ID);
+                mLoginAdmin = bundle.getString(BUNDLE_LOGIN_ADMIN);
+                mToken = bundle.getString(BUNDLE_TOKEN);
+                mUserId = bundle.getInt(BUNDLE_USER_ID);
+                mIsButtonsVisible = bundle.getBoolean(BUNDLE_IS_BUTTON_VISIBLE);
+                initHeader(view);
+                initView();
+                handleButtonsVisibility();
+            } catch (Exception e) {
+                showToast(getString(R.string.NOTIFICATION_INTERNAL_APP_ERROR) + "1001.1");
+            }
         } else {
-            showToast(getString(R.string.NOTIFICATION_INTERNAL_APP_ERROR) + "1001");
+            showToast(getString(R.string.NOTIFICATION_INTERNAL_APP_ERROR) + "1001.2");
         }
     }
 

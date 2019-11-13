@@ -1,15 +1,13 @@
 package pro.quizer.quizerexit.executable;
 
-import com.activeandroid.query.Select;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import pro.quizer.quizerexit.activity.BaseActivity;
+import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.model.config.ElementModel;
-import pro.quizer.quizerexit.model.database.UserModel;
 import pro.quizer.quizerexit.model.quota.QuotaModel;
 import pro.quizer.quizerexit.model.view.QuotasViewModel;
 import pro.quizer.quizerexit.utils.StringUtils;
@@ -38,8 +36,8 @@ public class QuotasViewModelExecutable extends BaseModelExecutable<QuotasViewMod
         final QuotasViewModel quotasViewModel = new QuotasViewModel();
         quotasViewModel.setQuery(mQuery);
 
-        final UserModel currentUser = mBaseActivity.forceGetCurrentUser();
-        List<QuotaModel> quotas = currentUser.getQuotas();
+        final UserModelR currentUser = mBaseActivity.forceGetCurrentUser();
+        List<QuotaModel> quotas = currentUser.getQuotasR();
 
         if (quotas == null || quotas.isEmpty()) {
             return quotasViewModel;

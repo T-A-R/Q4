@@ -349,10 +349,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
 //            Log.d(TAG, "==================== initQuestion: " + currentElement.getRelative_id());
 //            showElementsQuery();
+        } else {
+            Log.d(TAG, "initQuestions: ERROR! (empty list)");
         }
     }
 
     private void setQuestionType() {
+        Log.d(TAG, "???????????? setQuestionType: " + currentElement.getRelative_id());
         if (currentElement.getSubtype().equals(ElementSubtype.LIST)) {
             answerType = ElementSubtype.LIST;
         } else if (currentElement.getSubtype().equals(ElementSubtype.SELECT)) {
@@ -413,6 +416,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
                 }
             }
+        }
+
+        if (getCurrentUser().getConfigR().isPhotoQuestionnaire() && currentElement.getElementOptionsR().isTake_photo()) {
+            shotPicture(getLoginAdmin(), getQuestionnaire().getToken(), currentElement.getRelative_id(), getCurrentUserId(), getQuestionnaire().getProject_id(), getCurrentUser().getLogin());
         }
     }
 

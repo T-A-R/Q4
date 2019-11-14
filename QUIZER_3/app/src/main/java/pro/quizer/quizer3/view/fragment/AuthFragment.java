@@ -222,7 +222,29 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     private void onLoggedInWithoutUpdateLocalData(final int pUserId) {
         saveCurrentUserId(pUserId);
+        rebuildElementsDatabase();
+        updateQuotas();
         replaceFragment(new HomeFragment());
+    }
+
+    private void updateQuotas() {
+        new UpdateQuotasExecutable(getActivity(), new ICallback() {
+            @Override
+            public void onStarting() {
+                showScreensaver(false);
+            }
+
+            @Override
+            public void onSuccess() {
+                hideScreensaver();
+            }
+
+            @Override
+            public void onError(Exception pException) {
+                hideScreensaver();
+                showToast(pException.toString());
+            }
+        }).execute();
     }
 
     private void saveUserAndLogin(final ConfigResponseModel pConfigResponseModel,
@@ -232,27 +254,22 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         try {
             saveUser(pLogin, pPassword, pAuthResponseModel, pConfigResponseModel.getConfig());
             saveCurrentUserId(pAuthResponseModel.getUserId());
-            rebuildElementsDatabase();
+//            rebuildElementsDatabase();
         } catch (final Exception e) {
             showToast(getString(R.string.server_response_error) + "\n" + e);
-
             return;
         }
 
         //TODO Создание базы СМС для квизера.
 //        makeSmsDatabase();
 
-        //TODO Сделать загрузку квот.
         downloadQuotas(pAuthResponseModel, pLogin, pPassword);
-
-        //TODO Убрать эти строки после загрузки квот.
-//        hideScreensaver();
-//        onLoggedIn(pLogin, pPassword, pAuthResponseModel);
     }
 
     private void downloadQuotas(final AuthResponseModel pAuthResponseModel,
                                 final String pLogin,
                                 final String pPassword) {
+        Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!!  downloadQuotas: 1");
         new UpdateQuotasExecutable(getContext(), new ICallback() {
 
             @Override
@@ -277,10 +294,11 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     private void onLoggedIn(final String pLogin,
                             final String pPassword,
                             final AuthResponseModel pAuthResponseModel) {
+
         SPUtils.resetSendedQInSession(getContext());
 
         updateDatabaseUserByUserId(pLogin, pPassword, pAuthResponseModel.getConfigId(), pAuthResponseModel.getUserId(), pAuthResponseModel.getRoleId(), pAuthResponseModel.getUserProjectId());
-
+//        rebuildElementsDatabase();
         onLoggedInWithoutUpdateLocalData(pAuthResponseModel.getUserId());
     }
 

@@ -117,11 +117,19 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
     private void cancelAlert() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             if (!mBaseActivity.isDestroyed() && mAlertDialog != null) {
-                mAlertDialog.cancel();
+                try {
+                    mAlertDialog.cancel();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         } else {
             if (!mBaseActivity.isFinishing() && mAlertDialog != null) {
-                mAlertDialog.cancel();
+                try {
+                    mAlertDialog.cancel();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

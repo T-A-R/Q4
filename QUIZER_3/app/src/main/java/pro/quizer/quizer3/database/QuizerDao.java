@@ -251,6 +251,9 @@ public interface QuizerDao {
     @Query("UPDATE CurrentQuestionnaireR SET paused = :paused ")
     void setCurrentQuestionnairePaused(boolean paused);
 
+    @Query("UPDATE CurrentQuestionnaireR SET has_photo = :has_photo ")
+    void setCurrentQuestionnairePhoto(boolean has_photo);
+
     @Query("DELETE FROM CurrentQuestionnaireR")
     void clearCurrentQuestionnaireR();
 }

@@ -1,7 +1,9 @@
 package pro.quizer.quizer3.view.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +15,14 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.androidhiddencamera.CameraConfig;
+import com.androidhiddencamera.CameraError;
+import com.androidhiddencamera.HiddenCameraFragment;
+import com.androidhiddencamera.config.CameraFacing;
+import com.androidhiddencamera.config.CameraImageFormat;
+import com.androidhiddencamera.config.CameraResolution;
+import com.androidhiddencamera.config.CameraRotation;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -68,7 +78,7 @@ import static pro.quizer.quizer3.utils.FileUtils.AMR;
 import static pro.quizer.quizer3.utils.FileUtils.JPEG;
 
 @SuppressWarnings("unused")
-public abstract class SmartFragment extends Fragment {
+public abstract class SmartFragment extends HiddenCameraFragment {
 
     protected Listener listener;
     private UserModelR mCurrentUser;
@@ -77,6 +87,12 @@ public abstract class SmartFragment extends Fragment {
     private Integer countElements;
     private Integer countScreens;
     private Integer countQuestions;
+    private String mUserLogin = Constants.Strings.UNKNOWN;
+    private String mLoginAdmin = Constants.Strings.UNKNOWN;
+    private String mToken = Constants.Strings.UNKNOWN;
+    private int mRelativeId = -1;
+    private int mUserId = -1;
+    private int mProjectId = -1;
 
     private CurrentQuestionnaireR currentQuestionnaire = null;
     List<ElementItemR> elementItemRList = null;
@@ -341,9 +357,9 @@ public abstract class SmartFragment extends Fragment {
     public HashMap<Integer, ElementModelNew> getMap(boolean rebuild) {
         if (mMap == null) {
             mMap = new HashMap<>();
-
+            Log.d(TAG, "???????????? getMap: 1");
             generateMap(getElements(), rebuild);
-
+            Log.d(TAG, "???????????? getMap: " + mMap.size());
             return mMap;
         } else {
             return mMap;
@@ -456,6 +472,11 @@ public abstract class SmartFragment extends Fragment {
         try {
             elementItemRList = getDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
             currentQuestionnaire = getDao().getCurrentQuestionnaireR();
+            List<ElementItemR> allElements = getDao().getAllElementItemR();
+            Log.d(TAG, "============ " + getCurrentUserId() + " / " + getCurrentUser().getConfigR().getProjectInfo().getProjectId() + " ============");
+            for (ElementItemR elementItemR : allElements) {
+                Log.d(TAG, "initCurrentElements: " + elementItemR.getUserId() + " / " + elementItemR.getProjectId());
+            }
         } catch (Exception e) {
             Log.d(TAG, "initCurrentElements: ERROR");
             e.printStackTrace();
@@ -660,7 +681,7 @@ public abstract class SmartFragment extends Fragment {
         }
         if (elements != null && elements.size() > 0) {
             for (ElementPassedR element : elements) {
-                if(!saveElement(currentQuiz, element)) {
+                if (!saveElement(currentQuiz, element)) {
                     showToast("Ошибка сохранения элемента анкеты");
                     Log.d(TAG, "saveQuestionnaireToDatabase: Elements List is empty");
                     return false;
@@ -717,7 +738,7 @@ public abstract class SmartFragment extends Fragment {
             saved = false;
         }
 
-        if(saved) {
+        if (saved) {
             try {
                 getDao().clearCurrentQuestionnaireR();
                 getDao().clearElementPassedR();
@@ -771,5 +792,97 @@ public abstract class SmartFragment extends Fragment {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void onImageCapture(@NonNull File pImageFile) {
+        if (FileUtils.renameFile(getContext(),
+                pImageFile,
+                getCurrentUserId(),
+                FileUtils.generatePhotoFileName(mLoginAdmin, mProjectId, mUserLogin, mToken, mRelativeId))) {
+        }
+    }
+
+    @Override
+    public void onCameraError(int errorCode) {
+        switch (errorCode) {
+            case CameraError.ERROR_CAMERA_OPEN_FAILED:
+                //Camera open failed. Probably because another application
+                //is using the camera
+                break;
+            case CameraError.ERROR_IMAGE_WRITE_FAILED:
+                //Image write failed. Please check if you have provided WRITE_EXTERNAL_STORAGE permission
+//                showToast("Не удается сохранить фото");
+                break;
+            case CameraError.ERROR_CAMERA_PERMISSION_NOT_AVAILABLE:
+                //camera permission is not available
+                //Ask for the camera permission before initializing it.
+                showToast(getString(R.string.no_camera_access));
+
+                break;
+            case CameraError.ERROR_DOES_NOT_HAVE_OVERDRAW_PERMISSION:
+                //Display information dialog to the user with steps to grant "Draw over other app"
+                //permission for the app.
+
+                break;
+            case CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA:
+                showToast(getString(R.string.no_front_camera));
+
+                break;
+        }
+    }
+
+
+    @SuppressLint("MissingPermission")
+    public void shotPicture(final String pLoginAdmin,
+                            final String pToken,
+                            final int pRelativeId,
+                            final int pUserId,
+                            final int pProjectId,
+                            final String pUserLogin) {
+        Log.d(TAG, ">>> Taking Hidden Picture <<<");
+        try {
+            startCamera(new CameraConfig()
+                    .getBuilder(getContext())
+                    .setCameraFacing(CameraFacing.FRONT_FACING_CAMERA)
+                    .setCameraResolution(CameraResolution.LOW_RESOLUTION)
+                    .setImageFormat(CameraImageFormat.FORMAT_JPEG)
+                    .setImageRotation(CameraRotation.ROTATION_270)
+                    .build());
+        } catch (final Exception pException) {
+            showToast("Не удается стартануть камеру");
+            pException.printStackTrace();
+            return;
+        }
+
+        mProjectId = pProjectId;
+        mUserLogin = pUserLogin;
+        mLoginAdmin = pLoginAdmin;
+        mToken = pToken;
+        mRelativeId = pRelativeId;
+        mUserId = pUserId;
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    takePicture();
+                    try {
+                        getDao().setCurrentQuestionnairePhoto(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    onCameraError(CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA);
+                    try {
+                        getDao().setCurrentQuestionnairePhoto(false);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        }, 1000);
     }
 }

@@ -120,11 +120,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         new SendQuestionnairesByUserModelExecutable((MainActivity) getActivity(), mUserModel, new ICallback() {
             @Override
             public void onStarting() {
-
+                Log.d(TAG, "SendQuestionnairesByUserModelExecutable onStarting: ");
             }
 
             @Override
             public void onSuccess() {
+                Log.d(TAG, "SendQuestionnairesByUserModelExecutable onSuccess: ");
                 initSyncInfoViews();
             }
 
@@ -154,8 +155,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             e.printStackTrace();
         }
         if (currentQuestionnaire != null) {
-            btnContinue.setVisibility(View.VISIBLE);
-            btnContinue.setOnClickListener(this);
+            if(currentQuestionnaire.getUser_project_id() == mUserModel.getUser_project_id()) {
+                btnContinue.setVisibility(View.VISIBLE);
+                btnContinue.setOnClickListener(this);
+            } else {
+
+            }
         } else {
             btnContinue.setVisibility(View.GONE);
         }

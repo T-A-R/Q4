@@ -85,6 +85,7 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
         final String done = String.valueOf(doneInt);
         final String limit = String.valueOf(limitInt);
 
+        Log.d(TAG, "???????????????? onBindViewHolder: " + mMap.size());
         final QuotasTimeLineAdapter mAdapter = new QuotasTimeLineAdapter(quotaModel.getStringSet(mMainActivity, mMap), mMainActivity);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mMainActivity, LinearLayoutManager.VERTICAL, false);
         holder.mRecyclerView.setLayoutManager(mLayoutManager);

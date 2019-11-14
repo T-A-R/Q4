@@ -93,6 +93,8 @@
     <string name="save_question_to_db_success">Анкета сохранена в базе данных</string>
     <string name="save_question_to_db_error">Ошибка сохранения анкеты в базе данных</string>
     <string name="show_dialog">Показ диалогового окна</string>
+    <string name="no_camera_access">Нет доступа на камеру</string>
+    <string name="no_front_camera">Нет передней камеры</string>
 
     <string name="toast_cant_exit">Подключение к интернету отсутствует, выход из аккаунта невозможен  Для выхода используйте кнопку Назад</string>
 

@@ -28,6 +28,7 @@ import pro.quizer.quizer3.adapter.QuotasAdapter;
 import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.QuotasViewModelExecutable;
+import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
 import pro.quizer.quizer3.listener.QuotasClickListener;
 import pro.quizer.quizer3.listener.SimpleTextWatcher;
 import pro.quizer.quizer3.model.config.ElementModelNew;
@@ -78,13 +79,8 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
         MainFragment.enableSideMenu(true);
         initViews();
         refresh();
+        updateQuotas();
 
-//        etKey.setTypeface(Fonts.getFuturaPtMedium());
-//        btnSend.setTypeface(Fonts.getFuturaPtBook());
-//        btnSend.setTransformationMethod(null);
-
-        getUser().setFirstStart(false);
-        getUser().setDelegateMode(false);
     }
 
     @Override
@@ -105,7 +101,9 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
 
         mToolbar = findViewById(R.id.toolbar);
         mMainActivity = (MainActivity) getActivity();
-        mMap = mMainActivity.getMap();
+//        mMap = mMainActivity.getMap();
+        mMap = getMap(true);
+        Log.d(TAG, "??????????? initViews: " + mMap.size());
         mSearchEditTextView = findViewById(R.id.search_edit_text);
         mNotCompletedOnlySwitch = findViewById(R.id.not_completed_only_switch);
         mClearSearchBtn = findViewById(R.id.clear_search_icon);
@@ -145,36 +143,9 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
             }
         });
 
-        mRefreshBtn.setOnClickListener(new QuotasClickListener(mMainActivity, new ICallback() {
+        mRefreshBtn.setOnClickListener(v -> updateQuotas());
 
-            @Override
-            public void onStarting() {
-//                showProgressBar();
-                showScreensaver(false);
-            }
-
-            @Override
-            public void onSuccess() {
-//                hideProgressBar();
-                hideScreensaver();
-                refresh(mSearchEditTextView.getText().toString());
-                checkQuotasLogs();
-            }
-
-            @Override
-            public void onError(Exception pException) {
-//                hideProgressBar();
-                hideScreensaver();
-                showToast(pException.toString());
-            }
-        }));
-
-        mInfoBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showInfoDialog();
-            }
-        });
+        mInfoBtn.setOnClickListener(v -> showInfoDialog());
 
         mDetailsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,6 +164,28 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
         });
 
         checkQuotasLogs();
+    }
+
+    private void updateQuotas() {
+        new UpdateQuotasExecutable(mMainActivity, new ICallback() {
+            @Override
+            public void onStarting() {
+                showScreensaver(false);
+            }
+
+            @Override
+            public void onSuccess() {
+                hideScreensaver();
+                refresh(mSearchEditTextView.getText().toString());
+                checkQuotasLogs();
+            }
+
+            @Override
+            public void onError(Exception pException) {
+                hideScreensaver();
+                showToast(pException.toString());
+            }
+        }).execute();
     }
 
     private void updateData(final QuotasViewModel pQuotasViewModel) {
@@ -215,6 +208,7 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
                 hideEmptyView();
 
                 final MainActivity mainActivity = (MainActivity) getActivity();
+                Log.d(TAG, "???????????? updateData: " + mMap.size());
                 mAdapter = new QuotasAdapter(mainActivity, quotas, mMap);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mainActivity);
                 mQuotasRecyclerView.setLayoutManager(mLayoutManager);

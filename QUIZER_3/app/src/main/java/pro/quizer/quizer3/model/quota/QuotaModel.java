@@ -1,5 +1,7 @@
 package pro.quizer.quizer3.model.quota;
 
+import android.util.Log;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -14,6 +16,8 @@ import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.executable.QuestionnairesCountBySequenceExecutable;
 import pro.quizer.quizer3.model.config.ElementModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
+
+import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class QuotaModel implements Serializable {
 
@@ -83,12 +87,16 @@ public class QuotaModel implements Serializable {
         if (mStringList == null) {
             final Set<Integer> pSet = getSet();
             final List<QuotaTimeLineModel> quotaTimeLineModels = new ArrayList<>();
-
+            Log.d(TAG, "???????????????????? getStringSet: " + mMap.size());
             for (final int relativeId : pSet) {
                 final ElementModelNew element = mMap.get(relativeId);
-
+                Log.d(TAG, "getStringSet: " + element + " " + pSet);
 //                quotaTimeLineModels.add(new QuotaTimeLineModel(element.getOptions().getTitle(mMainActivity, mMap)));
-                quotaTimeLineModels.add(new QuotaTimeLineModel(element.getOptions().getTitle()));
+                try {
+                    quotaTimeLineModels.add(new QuotaTimeLineModel(element.getOptions().getTitle()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             mStringList = quotaTimeLineModels;

@@ -16,6 +16,7 @@ import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizer3.executable.SyncInfoExecutable;
 import pro.quizer.quizer3.executable.files.CleanUpFilesExecutable;
+import pro.quizer.quizer3.executable.files.PhotosSendingByUserModelExecutable;
 import pro.quizer.quizer3.model.view.SyncViewModel;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
@@ -178,8 +179,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
                             return;
                         }
 
-                        //TODO SEND PHOTO
-//                        new PhotosSendingByUserModelExecutable(getBaseActivity(), mUserModel, SyncFragment.this).execute();
+                        new PhotosSendingByUserModelExecutable((MainActivity) getActivity(), mUserModel, SyncFragment.this).execute();
                     }
                 });
 

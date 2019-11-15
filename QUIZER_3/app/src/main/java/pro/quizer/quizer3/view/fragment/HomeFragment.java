@@ -155,7 +155,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             e.printStackTrace();
         }
         if (currentQuestionnaire != null) {
-            if(currentQuestionnaire.getUser_project_id() == mUserModel.getUser_project_id()) {
+            if (currentQuestionnaire.getUser_project_id() == mUserModel.getUser_project_id()) {
                 btnContinue.setVisibility(View.VISIBLE);
                 btnContinue.setOnClickListener(this);
             } else {
@@ -207,6 +207,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 int counter = currentQuestionnaire.getCount_interrupted() + 1;
                 getDao().setInterruptedCounter(counter);
                 showToast("Продолжение прерванной анкеты");
+                startRecording();
                 replaceFragment(new ElementFragment());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -304,6 +305,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 if (result) {
                     try {
                         Log.d(TAG, "startQuestionnaire: insertCurrentQuestionnaireR() completed.");
+                        startRecording();
                         hideScreensaver();
                         replaceFragment(new ElementFragment());
                         return true;
@@ -322,12 +324,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         saveQuestionnaireToDatabase(currentQuestionnaire, true);
                         new SendQuestionnairesByUserModelExecutable((MainActivity) getActivity(), mUserModel, null, false).execute();
                         MainActivity activity = (MainActivity) getActivity();
-                        if(activity != null)
-                        activity.runOnUiThread(new Runnable(){
-                            public void run() {
-                                showFakeGPSAlertDialog();
-                            }
-                        });
+                        if (activity != null)
+                            activity.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    showFakeGPSAlertDialog();
+                                }
+                            });
                     }
                 }
                 return true;
@@ -460,7 +462,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     public void showExitAlertDialog() {
         MainActivity activity = (MainActivity) getActivity();
-        if (activity!= null && !activity.isFinishing()) {
+        if (activity != null && !activity.isFinishing()) {
             if (AVIA && !Internet.hasConnection(getContext())) {
                 showToast(getString(R.string.toast_cant_exit));
                 return;
@@ -477,6 +479,19 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         }
                     })
                     .setNegativeButton(R.string.view_no, null).show();
+        }
+    }
+
+    private void startRecording() {
+        if (getCurrentUser().getConfigR().isAudio() && getCurrentUser().getConfigR().isAudioRecordAll()) {
+            MainActivity activity = (MainActivity) getActivity();
+            try {
+                addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.start_audio_recording), Constants.LogResult.ATTEMPT, getString(R.string.start_audio_recording_attempt), null);
+                activity.startRecording(0);
+            } catch (Exception e) {
+                addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.start_audio_recording), Constants.LogResult.ERROR, getString(R.string.start_audio_recording_error), e.toString());
+                e.printStackTrace();
+            }
         }
     }
 }

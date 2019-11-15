@@ -205,6 +205,14 @@
     <string name="log_error_602_desc">Ошибка 6.02 (Ошибка получения JSON из ответа сервера)</string>
     <string name="log_error_603_desc">Ошибка 6.03 (Ошибка парсинга JSON.)</string>
 
+    <string name="record_audio_vsl_data_written">Visualization data saved to JSON and XML at </string>
+    <string name="record_audio_error_vsl_data">Visualization data not saved</string>
+    <string name="record_audio_playing">Playing..</string>
+    <string name="record_audio_error_player_start">Can\'t start player</string>
+    <string name="record_audio_recording">Recording..</string>
+    <string name="record_audio_error_recorder_start">Can\'t start recorder</string>
+    <string name="record_audio_error_recorder_stop">No valid audio/video data has been received</string>
+
     <string name="exit_message">Для выхода нажмите \"Назад\" еще раз</string>
     <string name="button_press">Нажатие на кнопку</string>
     <string name="button_version">Кнопка версия на экране авторизации</string>
@@ -326,5 +334,11 @@
     <string name="send_logs_error">Ошибка отправки журнала событий</string>
     <string name="send_logs_empty">Новых событий для отправки нет</string>
     <string name="warning_clear_current_quiz_error">Ошибка очистки данных анкеты</string>
+    <string name="start_audio_recording">Запись аудио</string>
+    <string name="start_audio_recording_error">Ошибка старта записи аудио</string>
+    <string name="start_audio_recording_attempt">Попытка старта записи аудио</string>
+    <string name="stop_audio_recording">Завершение записи аудио</string>
+    <string name="stop_audio_recording_error">Ошибка завершения записи аудио</string>
+    <string name="stop_audio_recording_attempt">Попытка завершения записи аудио</string>
 
 </resources>

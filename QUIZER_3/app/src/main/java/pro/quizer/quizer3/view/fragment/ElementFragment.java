@@ -26,6 +26,7 @@ import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.ListQuestionAdapter;
@@ -283,6 +284,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 isExitBtnPressed = false;
                 e.printStackTrace();
             }
+            stopRecording();
             replaceFragment(new HomeFragment());
 //            }
         } else if (view == closeImage1) {
@@ -487,8 +489,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             List<AnswerState> answerStates = adapterList.getAnswers();
             if (answerStates != null && notEmpty(answerStates)) {
 
-                for(AnswerState answerState : answerStates) {
-                    if(answerState.isChecked()) {
+                for (AnswerState answerState : answerStates) {
+                    if (answerState.isChecked()) {
                         nextElementId = getElement(answerState.getRelative_id()).getElementOptionsR().getJump();
                     }
                 }
@@ -921,12 +923,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     @Override
     public void onDestroy() {
         super.onDestroy();
+
         //TODO save startTime
     }
 
     @Override
     public boolean onBackPressed() {
         if (isExit) {
+            stopRecording();
             replaceFragment(new HomeFragment());
         } else {
             Toast.makeText(getContext(), getString(R.string.exit_questionaire_warning), Toast.LENGTH_SHORT).show();
@@ -936,6 +940,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     public boolean saveQuestionnaire() {
+        stopRecording();
         if (saveQuestionnaireToDatabase(getQuestionnaire(), false)) {
             showToast("Анкета сохранена");
             replaceFragment(new HomeFragment());
@@ -947,9 +952,19 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     public void exitQuestionnaire() {
         showToast("Выход без сохранения.");
+        stopRecording();
         replaceFragment(new HomeFragment());
     }
 
-
+    private void stopRecording() {
+        MainActivity activity = (MainActivity) getActivity();
+        try {
+            addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.stop_audio_recording), Constants.LogResult.ATTEMPT, getString(R.string.stop_audio_recording_attempt), null);
+            activity.stopRecording();
+        } catch (Exception e) {
+            addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.stop_audio_recording), Constants.LogResult.ERROR, getString(R.string.stop_audio_recording_error), e.toString());
+            e.printStackTrace();
+        }
+    }
 }
 

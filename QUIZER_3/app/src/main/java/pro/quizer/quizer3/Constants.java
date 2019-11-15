@@ -95,6 +95,7 @@ public final class Constants {
         String SMS = "sms";
         String LOG = "log";
         String WARNINGS = "warnings";
+        String AUDIO = "audio";
     }
 
     public interface LogResult {
@@ -102,6 +103,7 @@ public final class Constants {
         String SENT = "sent";
         String PRESSED = "pressed";
         String ERROR = "error";
+        String ATTEMPT = "attempt";
 
     }
 

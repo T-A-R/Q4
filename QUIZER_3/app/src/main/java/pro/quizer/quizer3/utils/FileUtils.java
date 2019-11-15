@@ -265,6 +265,7 @@ public class FileUtils {
 
         createFolderIfNotExist(pCurrentFilePath);
 
+//        return String.format(AUDIO_NAME_AMR_TEMPLATE, pUserId, mLoginAdmin, mProjectId, mUserLogin, mToken, mRelativeId, DateUtils.getCurrentTimeMillis());
         return String.format(AUDIO_NAME_AMR_TEMPLATE, pUserId, mLoginAdmin, mProjectId, mUserLogin, mToken, mRelativeId);
     }
 

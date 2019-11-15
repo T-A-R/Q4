@@ -1,16 +1,24 @@
 package pro.quizer.quizer3;
 
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -36,6 +44,7 @@ import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.SPUtils;
+import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.fragment.MainFragment;
 
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
@@ -57,12 +66,28 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     static public boolean AVIA = false;
     public static final String IS_AFTER_AUTH = "IS_AFTER_AUTH";
     static public boolean DEBUG_MODE = true;
-    static public final int MAX_LOGO_SIZE = 200;
+    static public boolean RECORDING = false;
     public boolean mIsPermDialogShow = false;
+    private int mAudioRecordLimitTime;
+    private int mAudioRelativeId = 0;
+    private boolean mIsMediaConnected;
+    private MediaBrowserCompat mMediaBrowser;
+    public static final int ONE_SEC = 1000;
+    public CountDownTimer mCountDownTimer;
     private UserModelR mCurrentUser;
     private HashMap<Integer, ElementModelNew> mMap;
     private HashMap<Integer, ElementModelNew> mTempMap;
     private MainFragment mainFragment;
+
+    private String mToken;
+    private String mLoginAdmin;
+    private String mLogin;
+    private String mPassword;
+    private int mQuestionnaireId;
+    private int mProjectId;
+    private int mBillingQuestions;
+    private int mUserProjectId;
+    private int mUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +98,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
         Preferences preferences = new Preferences(getApplicationContext());
         getUser().setPreferences(preferences);
+
+        mMediaBrowser = new MediaBrowserCompat(this, new ComponentName(this, AudioService.class), mConnCallbacks, null); // optional bundle
+
+        if (!mMediaBrowser.isConnected()) {
+            mMediaBrowser.connect();
+        }
+
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         if (savedInstanceState == null) {
             mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.main);
@@ -203,14 +236,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public UserModelR getCurrentUser() {
-        if (mCurrentUser == null) {
-            try {
-                mCurrentUser = getUserByUserId(getCurrentUserId());
-            } catch (Exception e) {
-                Toast.makeText(this, getString(R.string.db_load_error), Toast.LENGTH_SHORT).show();
-            }
-        }
-
+//        if (mCurrentUser == null) {
+//            try {
+//                mCurrentUser = getUserByUserId(getCurrentUserId());
+//            } catch (Exception e) {
+//                Toast.makeText(this, getString(R.string.db_load_error), Toast.LENGTH_SHORT).show();
+//            }
+//        }
+        mCurrentUser = getUserByUserId(getCurrentUserId());
         return mCurrentUser;
     }
 
@@ -363,9 +396,9 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         alertDialog.show();
     }
 
-    public boolean isForceGPS() {
-        return getCurrentUser().getConfigR().isForceGps();
-    }
+//    public boolean isForceGPS() {
+//        return getCurrentUser().getConfigR().isForceGps();
+//    }
 
     public static void addLog(String login,
                               String type,
@@ -391,5 +424,193 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         getStaticDao().insertAppLogsR(appLogsR);
     }
 
+    public void startRecording(int relativeId) {
+//        if (!RECORDING && mIsMediaConnected) {
+        if (!RECORDING) {
+            Log.d(TAG, "******************* startRecording: **********************");
 
+            mAudioRelativeId = relativeId;
+            final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
+            if (mediaCntrlr == null) {
+//                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
+                return;
+            }
+            final String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
+            if (mediaID == null) {
+//                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
+                return;
+            }
+            final int pbState = mediaCntrlr.getPlaybackState().getState();
+
+            if (pbState == PlaybackStateCompat.STATE_ERROR) {
+                callStopReady();
+                callRecord();
+                return;
+            }
+
+            // current state -> new state
+            switch (mediaID) {
+                case AudioService.SOURCE_NONE:
+                case AudioService.SOURCE_MIC:
+                    switch (pbState) {
+                        case PlaybackStateCompat.STATE_PLAYING:
+                            callPauseRecording(); // maybe should again check is pause rec able
+                            break;
+                        case PlaybackStateCompat.STATE_NONE:
+                        case PlaybackStateCompat.STATE_PAUSED:
+                        case PlaybackStateCompat.STATE_STOPPED:
+                            callRecord();
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case AudioService.SOURCE_AUDIO:
+                    switch (pbState) {
+                        case PlaybackStateCompat.STATE_PLAYING:
+                        case PlaybackStateCompat.STATE_PAUSED:
+                            callStopReady();
+                            callRecord();
+                            break;
+                        case PlaybackStateCompat.STATE_NONE:
+                        case PlaybackStateCompat.STATE_STOPPED:
+                            callRecord();
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+//                    UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
+                    break;
+            }
+
+            mAudioRecordLimitTime = getCurrentUser().getConfigR().getAudioRecordLimitTime() * 60 * 1000;
+
+            Log.d("Timer", "Limit: " + mAudioRecordLimitTime + " - tick: " + ONE_SEC);
+
+            mCountDownTimer = new CountDownTimer(mAudioRecordLimitTime, ONE_SEC) {
+
+                public void onTick(long millisUntilFinished) {
+                    Log.d("Timer", "onTick: " + String.valueOf(millisUntilFinished));
+                }
+
+                public void onFinish() {
+                    Log.d("Timer", "FINISH");
+                    stopRecording();
+                }
+            }.start();
+        }
+        RECORDING = true;
+    }
+
+    public void stopRecording() {
+        Log.d(TAG, "******************* stopRecording: **********************");
+//        if (RECORDING && mIsMediaConnected) {
+        if (RECORDING) {
+            final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
+            if (mediaCntrlr == null) {
+//                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
+                return;
+            }
+            final String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
+            if (mediaID == null) {
+//                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
+                return;
+            }
+            final int pbState = mediaCntrlr.getPlaybackState().getState();
+
+            if (pbState == PlaybackStateCompat.STATE_ERROR) {
+//                setLocalStateError();
+                //setStateStoppedReady(); // to do not hide error
+                return;
+            }
+
+            // current state -> new state
+            switch (mediaID) {
+                case AudioService.SOURCE_AUDIO:
+                case AudioService.SOURCE_MIC:
+                    switch (pbState) {
+                        case PlaybackStateCompat.STATE_PLAYING:
+                        case PlaybackStateCompat.STATE_PAUSED:
+                            callStopReady();
+                            break;
+                        case PlaybackStateCompat.STATE_NONE:
+                        case PlaybackStateCompat.STATE_STOPPED:
+                        default:
+                            break;
+                    }
+                    break;
+                case AudioService.SOURCE_NONE:
+                default:
+                    break;
+            }
+        }
+        RECORDING = false;
+    }
+
+    private void callRecord() {
+        AudioService.mFileName = FileUtils.generateAudioFileName(this, mUserId, mLoginAdmin, mProjectId, mLogin, mToken, mAudioRelativeId);
+
+        final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
+        if (mediaCntrlr != null) {
+            mediaCntrlr.getTransportControls().playFromMediaId(AudioService.SOURCE_MIC, null);
+        }
+    }
+
+    private void callPauseRecording() {
+        final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
+        if (mediaCntrlr != null) {
+            mediaCntrlr.getTransportControls().pause();
+        }
+    }
+
+    private void callStopReady() {
+        final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
+        if (mediaCntrlr != null) {
+            mediaCntrlr.getTransportControls().stop();
+            mediaCntrlr.sendCommand(AudioService.SOURCE_NONE, null, null);
+        }
+    }
+
+    private final MediaBrowserCompat.ConnectionCallback mConnCallbacks = new MediaBrowserCompat.ConnectionCallback() {
+
+        @Override
+        public void onConnected() {
+            mIsMediaConnected = true;
+
+            mMediaBrowser.subscribe(mMediaBrowser.getRoot(), new Bundle(), mSubscriptCallback);
+
+            final MediaSessionCompat.Token sesTok = mMediaBrowser.getSessionToken();
+
+            try {
+                final MediaControllerCompat mediaCntrlr = new MediaControllerCompat(ElementActivity.this, sesTok);
+                MediaControllerCompat.setMediaController(ElementActivity.this, mediaCntrlr);
+            } catch (final RemoteException ignored) {
+
+            }
+
+            buildTransportControls();
+
+            if (isRecordFullQuestionnaire()) {
+                mAudioRelativeId = 0;
+
+                startRecording();
+            }
+        }
+
+        @Override
+        public void onConnectionSuspended() {
+            mIsMediaConnected = false;
+
+            super.onConnectionSuspended();
+        }
+
+        @Override
+        public void onConnectionFailed() {
+            mIsMediaConnected = false;
+
+            super.onConnectionFailed();
+        }
+    };
 }

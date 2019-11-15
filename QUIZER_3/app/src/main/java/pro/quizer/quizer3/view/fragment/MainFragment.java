@@ -16,6 +16,7 @@ import android.widget.TextView;
 //import com.yandex.metrica.profile.Attribute;
 //import com.yandex.metrica.profile.UserProfile;
 
+import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.model.User;
@@ -322,6 +323,15 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
 
     @Override
     public void onClick(View view) {
+        MainActivity activity = (MainActivity) getActivity();
+        try {
+            addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.stop_audio_recording), Constants.LogResult.ATTEMPT, getString(R.string.stop_audio_recording_attempt), null);
+            activity.stopRecording();
+        } catch (Exception e) {
+            addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.stop_audio_recording), Constants.LogResult.ERROR, getString(R.string.stop_audio_recording_error), e.toString());
+            e.printStackTrace();
+        }
+
         if (view == mHomeBtn) {
             hide();
             openScreen(new HomeFragment());

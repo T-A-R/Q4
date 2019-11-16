@@ -40,14 +40,12 @@ import pro.quizer.quizer3.database.QuizerDao;
 import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.model.User;
-import pro.quizer.quizer3.model.config.ElementModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.SPUtils;
-import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.fragment.MainFragment;
 
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
@@ -61,7 +59,6 @@ import static android.Manifest.permission.SEND_SMS;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static pro.quizer.quizer3.utils.FileUtils.AMR;
 import static pro.quizer.quizer3.utils.FileUtils.JPEG;
-
 
 public class MainActivity extends AppCompatActivity implements ViewTreeObserver.OnGlobalLayoutListener {
 
@@ -85,11 +82,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private String mToken;
     private String mLoginAdmin;
     private String mLogin;
-    private String mPassword;
-    private int mQuestionnaireId;
     private int mProjectId;
-    private int mBillingQuestions;
-    private int mUserProjectId;
     private int mUserId;
 
     @Override
@@ -102,15 +95,11 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         Preferences preferences = new Preferences(getApplicationContext());
         getUser().setPreferences(preferences);
 
-        Log.d(TAG, "????????????????????????? onCreate: START");
         mMediaBrowser = new MediaBrowserCompat(this, new ComponentName(this, AudioService.class), mConnCallbacks, null); // optional bundle
-        Log.d(TAG, "????????????????????????? onCreate: " + mMediaBrowser);
+
         if (!mMediaBrowser.isConnected()) {
-            Log.d(TAG, "????????????????????????? onCreate: Connecting...");
             mMediaBrowser.connect();
         }
-        Log.d(TAG, "????????????????????????? onCreate: " + mMediaBrowser.isConnected());
-
 
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
@@ -243,7 +232,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public UserModelR getCurrentUser() {
-        Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>> getCurrentUser: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 //        if (mCurrentUser == null) {
 //            try {
 //                mCurrentUser = getUserByUserId(getCurrentUserId());
@@ -429,7 +417,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public void startRecording(int relativeId, String token) {
-//        if (mIsMediaConnected && !RECORDING) {
         if (mIsMediaConnected) {
             Log.d(TAG, "******************* startRecording: **********************");
 
@@ -437,12 +424,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             mAudioRelativeId = relativeId;
             final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
             if (mediaCntrlr == null) {
-//                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
                 return;
             }
             final String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
             if (mediaID == null) {
-//                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
                 return;
             }
             final int pbState = mediaCntrlr.getPlaybackState().getState();
@@ -453,13 +438,12 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 return;
             }
 
-            // current state -> new state
             switch (mediaID) {
                 case AudioService.SOURCE_NONE:
                 case AudioService.SOURCE_MIC:
                     switch (pbState) {
                         case PlaybackStateCompat.STATE_PLAYING:
-                            callPauseRecording(); // maybe should again check is pause rec able
+                            callPauseRecording();
                             break;
                         case PlaybackStateCompat.STATE_NONE:
                         case PlaybackStateCompat.STATE_PAUSED:
@@ -486,7 +470,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                     }
                     break;
                 default:
-//                    UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
                     break;
             }
 
@@ -517,29 +500,22 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public void stopRecording() {
-        Log.d(TAG, "stopRecording: " + mIsMediaConnected + RECORDING);
-//        if (mIsMediaConnected && RECORDING) {
         if (mIsMediaConnected) {
             Log.d(TAG, "******************* stopRecording: **********************");
             final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
             if (mediaCntrlr == null) {
-//                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
                 return;
             }
             final String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
             if (mediaID == null) {
-//                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
                 return;
             }
             final int pbState = mediaCntrlr.getPlaybackState().getState();
 
             if (pbState == PlaybackStateCompat.STATE_ERROR) {
-//                setLocalStateError();
-                //setStateStoppedReady(); // to do not hide error
                 return;
             }
 
-            // current state -> new state
             switch (mediaID) {
                 case AudioService.SOURCE_AUDIO:
                 case AudioService.SOURCE_MIC:
@@ -563,7 +539,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     private void callRecord() {
-        Log.d(TAG, "??????????????????? callRecord: " + mUserId + " " + mLoginAdmin + " " + mProjectId + " " + mLogin + " " + mToken);
         mUserId = mCurrentUser.getUser_id();
         mLoginAdmin = mCurrentUser.getConfigR().getLoginAdmin();
         mProjectId = mCurrentUser.getConfigR().getProjectInfo().getProjectId();
@@ -591,16 +566,11 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         }
     }
 
-    public void setIsMediaConnected(boolean connected) {
-        mIsMediaConnected = connected;
-    }
-
     private final MediaBrowserCompat.ConnectionCallback mConnCallbacks = new MediaBrowserCompat.ConnectionCallback() {
 
         @Override
         public void onConnected() {
             mIsMediaConnected = true;
-            Log.d(TAG, "onConnected mIsMediaConnected 1: " + mIsMediaConnected);
             mMediaBrowser.subscribe(mMediaBrowser.getRoot(), new Bundle(), mSubscriptCallback);
 
             final MediaSessionCompat.Token sesTok = mMediaBrowser.getSessionToken();
@@ -613,25 +583,17 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             }
 
             buildTransportControls();
-
-//            if (isRecordFullQuestionnaire()) {
-//                mAudioRelativeId = 0;
-//
-//                startRecording();
-//            }
         }
 
         @Override
         public void onConnectionSuspended() {
             mIsMediaConnected = false;
-            Log.d(TAG, "onConnected mIsMediaConnected 2: " + mIsMediaConnected);
             super.onConnectionSuspended();
         }
 
         @Override
         public void onConnectionFailed() {
             mIsMediaConnected = false;
-            Log.d(TAG, "onConnected mIsMediaConnected 3: " + mIsMediaConnected);
             super.onConnectionFailed();
         }
     };
@@ -648,9 +610,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                                      @NonNull final List<MediaBrowserCompat.MediaItem> children,
                                      @NonNull final Bundle options) {
 
-//            if (children.size() == 0) {
-//                setLocalStateStoppedReady();
-//            }
         }
 
         @Override
@@ -661,7 +620,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         @Override
         public void onError(@NonNull final String parentId, @NonNull final Bundle options) {
             callStopReady();
-//            setLocalStateError();
         }
     };
 
@@ -669,67 +627,20 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
 
         if (mediaCntrlr == null) {
-//            UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
-
             return;
         }
-        mediaCntrlr.registerCallback(mCntrlrCallback); // can pass Handler for worker thread
+        mediaCntrlr.registerCallback(mCntrlrCallback);
 
         final String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
         if (mediaID == null) {
-//            UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
             return;
         }
 
         final int pbState = mediaCntrlr.getPlaybackState().getState();
 
-        // set initial UI state
-//        mStart.setVisibility(View.VISIBLE);
-//        mStart.setOnClickListener(mIbRecordOCL);
-//        mStop.setOnClickListener(mStopOCL);
-
         if (pbState == PlaybackStateCompat.STATE_ERROR) {
-//            setLocalStateError();
             return;
         }
-/*
-        // can call onPBStateChanged callback instead
-        switch (mediaID) {
-            case AudioService.SOURCE_NONE:
-//                setLocalStateStoppedReady();
-                break;
-            case AudioService.SOURCE_AUDIO:
-                switch (pbState) {
-                    case PlaybackStateCompat.STATE_PLAYING:
-//                        setLocalStatePlaying();
-                        break;
-                    case PlaybackStateCompat.STATE_PAUSED:
-//                        setLocalStatePausedPlaying();
-                        break;
-                    case PlaybackStateCompat.STATE_NONE:
-                    case PlaybackStateCompat.STATE_STOPPED:
-//                        setLocalStateStoppedReady();
-                        break;
-                }
-                break;
-            case AudioService.SOURCE_MIC:
-                switch (pbState) {
-                    case PlaybackStateCompat.STATE_PLAYING:
-//                        setLocalStateRecording();
-                        break;
-                    case PlaybackStateCompat.STATE_PAUSED:
-//                        setLocalStatePausedRecording();
-                        break;
-                    case PlaybackStateCompat.STATE_NONE:
-                    case PlaybackStateCompat.STATE_STOPPED:
-//                        setLocalStateStoppedReady();
-                        break;
-                }
-                break;
-            default:
-//                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
-        }
-        */
     }
 
     private final MediaControllerCompat.Callback mCntrlrCallback = new MediaControllerCompat.Callback() {
@@ -738,15 +649,11 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         public void onPlaybackStateChanged(final PlaybackStateCompat state) {
             final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(MainActivity.this);
             if (mediaCntrlr == null) {
-//                setLocalStateError();
-//                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
                 return;
             }
 
             final String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
             if (mediaID == null) {
-//                setLocalStateError();
-//                UiUtils.setTextOrHide(mStatus, getString(R.string.RECORD_AUDIO_SERVICE_CONNECTION_ERROR));
                 return;
             }
 
@@ -763,35 +670,29 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 }
             }
 
-            switch (state.getState()) {
-                case PlaybackStateCompat.STATE_ERROR:
-//                    setLocalStateError();
-                    break;
-                case PlaybackStateCompat.STATE_STOPPED:
-                case PlaybackStateCompat.STATE_NONE:
-//                    setLocalStateStoppedReady();
-                    break;
-                case PlaybackStateCompat.STATE_PAUSED:
-                    switch (mediaID) {
-                        case AudioService.SOURCE_AUDIO:
-//                            setLocalStatePausedPlaying();
-                            break;
-                        case AudioService.SOURCE_MIC:
-//                            setLocalStatePausedRecording();
-                            break;
-                    }
-                    break;
-                case PlaybackStateCompat.STATE_PLAYING:
-                    switch (mediaID) {
-                        case AudioService.SOURCE_AUDIO:
-//                            setLocalStatePlaying();
-                            break;
-                        case AudioService.SOURCE_MIC:
-//                            setLocalStateRecording();
-                            break;
-                    }
-                    break;
-            }
+//            switch (state.getState()) {
+//                case PlaybackStateCompat.STATE_ERROR:
+//                    break;
+//                case PlaybackStateCompat.STATE_STOPPED:
+//                case PlaybackStateCompat.STATE_NONE:
+//                    break;
+//                case PlaybackStateCompat.STATE_PAUSED:
+//                    switch (mediaID) {
+//                        case AudioService.SOURCE_AUDIO:
+//                            break;
+//                        case AudioService.SOURCE_MIC:
+//                            break;
+//                    }
+//                    break;
+//                case PlaybackStateCompat.STATE_PLAYING:
+//                    switch (mediaID) {
+//                        case AudioService.SOURCE_AUDIO:
+//                            break;
+//                        case AudioService.SOURCE_MIC:
+//                            break;
+//                    }
+//                    break;
+//            }
         }
 
         @Override

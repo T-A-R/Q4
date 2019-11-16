@@ -2,12 +2,8 @@ package pro.quizer.quizer3.view.fragment;
 
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
@@ -15,11 +11,10 @@ import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizer3.executable.SyncInfoExecutable;
+import pro.quizer.quizer3.executable.files.AudiosSendingByUserModelExecutable;
 import pro.quizer.quizer3.executable.files.CleanUpFilesExecutable;
 import pro.quizer.quizer3.executable.files.PhotosSendingByUserModelExecutable;
 import pro.quizer.quizer3.model.view.SyncViewModel;
-import pro.quizer.quizer3.utils.Fonts;
-import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
@@ -75,17 +70,6 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
         mQUnsendedView = findViewById(R.id.unsended_q);
         mAUnsendedView = findViewById(R.id.unsended_audio);
         mPUnsendedView = findViewById(R.id.unsended_photo);
-
-//        etKey.setTypeface(Fonts.getFuturaPtMedium());
-//        mSendDataButton.setTypeface(Fonts.getFuturaPtBook());
-//        mSendAudioButton.setTypeface(Fonts.getFuturaPtBook());
-//        mSendPhotoButton.setTypeface(Fonts.getFuturaPtBook());
-//        mSyncSms.setTypeface(Fonts.getFuturaPtBook());
-//
-//        mSendDataButton.setTransformationMethod(null);
-//        mSendAudioButton.setTransformationMethod(null);
-//        mSendPhotoButton.setTransformationMethod(null);
-//        mSyncSms.setTransformationMethod(null);
 
         mSyncSms.setOnClickListener(this);
 
@@ -193,8 +177,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
                             return;
                         }
 
-                        //TODO SEND AUIDIO
-//                        new AudiosSendingByUserModelExecutable(getBaseActivity(), mUserModel, SyncFragment.this).execute();
+                        new AudiosSendingByUserModelExecutable((MainActivity) getActivity(), mUserModel, SyncFragment.this).execute();
                     }
                 });
             }

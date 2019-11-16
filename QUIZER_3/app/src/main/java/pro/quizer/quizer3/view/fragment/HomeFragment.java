@@ -291,8 +291,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         getDao().insertCurrentQuestionnaireR(questionnaire);
                         getDao().clearWasElementShown(false);
 
+                        currentQuestionnaire = questionnaire;
                         if (mIsUsedFakeGps) {
-                            currentQuestionnaire = questionnaire;
                             return false;
                         }
                         return true;
@@ -487,7 +487,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             MainActivity activity = (MainActivity) getActivity();
             try {
                 addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.start_audio_recording), Constants.LogResult.ATTEMPT, getString(R.string.start_audio_recording_attempt), null);
-                activity.startRecording(0);
+                activity.startRecording(0, currentQuestionnaire.getToken());
             } catch (Exception e) {
                 addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.start_audio_recording), Constants.LogResult.ERROR, getString(R.string.start_audio_recording_error), e.toString());
                 e.printStackTrace();

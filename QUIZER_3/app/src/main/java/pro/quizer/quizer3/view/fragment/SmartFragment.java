@@ -357,9 +357,9 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public HashMap<Integer, ElementModelNew> getMap(boolean rebuild) {
         if (mMap == null) {
             mMap = new HashMap<>();
-            Log.d(TAG, "???????????? getMap: 1");
+//            Log.d(TAG, "???????????? getMap: 1");
             generateMap(getElements(), rebuild);
-            Log.d(TAG, "???????????? getMap: " + mMap.size());
+//            Log.d(TAG, "???????????? getMap: " + mMap.size());
             return mMap;
         } else {
             return mMap;
@@ -778,7 +778,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 countScreens++;
             }
 
-            LogUtils.logAction("saveElement " + element.getRelative_id());
+//            LogUtils.logAction("saveElement " + element.getRelative_id());
 
             try {
                 getDao().insertElement(elementDatabaseModel);

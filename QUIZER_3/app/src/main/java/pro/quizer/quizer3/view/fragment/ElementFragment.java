@@ -357,7 +357,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void setQuestionType() {
-        Log.d(TAG, "???????????? setQuestionType: " + currentElement.getRelative_id());
+//        Log.d(TAG, "???????????? setQuestionType: " + currentElement.getRelative_id());
         if (currentElement.getSubtype().equals(ElementSubtype.LIST)) {
             answerType = ElementSubtype.LIST;
         } else if (currentElement.getSubtype().equals(ElementSubtype.SELECT)) {

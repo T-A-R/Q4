@@ -4,12 +4,15 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
+import android.util.Log;
 
 import java.util.List;
 
 import pro.quizer.quizer3.database.ElementContentsRConverter;
 import pro.quizer.quizer3.database.ElementOptionsRConverter;
+import pro.quizer.quizer3.utils.DateUtils;
 
+import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.view.fragment.SmartFragment.getDao;
 
 @Entity
@@ -52,6 +55,12 @@ public class ElementItemR {
     @ColumnInfo(name = "enabled")
     private boolean enabled;
 
+    @ColumnInfo(name = "done")
+    private Integer done;
+
+    @ColumnInfo(name = "limit")
+    private Integer limit;
+
     @ColumnInfo(name = "elementOptionsR")
     @TypeConverters({ElementOptionsRConverter.class})
     private ElementOptionsR elementOptionsR;
@@ -63,6 +72,8 @@ public class ElementItemR {
     public ElementItemR() {
         this.was_shown = false;
         this.enabled = true;
+        this.done = 0;
+        this.limit = 999999;
     }
 
     public ElementItemR(String configId, int userId, int projectId, int questionnaireId, String type, String subtype, Integer relative_id, Integer relative_parent_id, ElementOptionsR elementOptionsR, List<ElementContentsR> elementContentsR) {
@@ -195,5 +206,21 @@ public class ElementItemR {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Integer getDone() {
+        return done;
+    }
+
+    public void setDone(Integer done) {
+        this.done = done;
+    }
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
     }
 }

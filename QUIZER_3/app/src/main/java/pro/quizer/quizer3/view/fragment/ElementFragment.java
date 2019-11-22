@@ -36,6 +36,7 @@ import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.ElementType;
+import pro.quizer.quizer3.model.quota.QuotaUtils;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.Fonts;
@@ -275,8 +276,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
 
         } else if (view == btnExit) {
-//            if (!isExitBtnPressed) {
-//                isExitBtnPressed = true;
             try {
                 getDao().clearCurrentQuestionnaireR();
                 getDao().clearElementPassedR();
@@ -348,6 +347,24 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
             }
 
+            if(getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
+                ElementItemR[][] quotaTree = QuotaUtils.getQuotaTree(getQuotasElements(), (MainActivity) getActivity());
+                if(quotaTree != null) {
+                    Log.d(TAG, "=============== Final Quotas ======================");
+                    for(int i = 0; i < quotaTree[0].length; i++) {
+                        Log.d(TAG, quotaTree[0][i].getElementOptionsR().getTitle() + " " + quotaTree[0][i].getDone() + "/" + quotaTree[0][i].getLimit() + "/" + quotaTree[0][i].isEnabled() + " | " +
+                                        quotaTree[1][i].getElementOptionsR().getTitle() + " " + quotaTree[1][i].getDone() + "/" + quotaTree[1][i].getLimit() + "/" + quotaTree[1][i].isEnabled() + " | " +
+                                        quotaTree[2][i].getElementOptionsR().getTitle() + " " + quotaTree[2][i].getDone() + "/" + quotaTree[2][i].getLimit() + "/" + quotaTree[2][i].isEnabled() + " | "
+
+                                );
+//                        for(int k =0; k < quotaTree.length; k++) {
+//                            System.out.print(quotaTree[k][i].getElementOptionsR().getTitle() + " " + quotaTree[k][i].getDone() + "/" + quotaTree[k][i].getLimit() + "/" + quotaTree[k][i].isEnabled() + " | ");
+////                            Log.d(TAG,  quotaTree[i][k].isEnabled() + " | ");
+//                        }
+//                        System.out.println("");
+                    }
+                }
+            }
 
 //            Log.d(TAG, "==================== initQuestion: " + currentElement.getRelative_id());
 //            showElementsQuery();

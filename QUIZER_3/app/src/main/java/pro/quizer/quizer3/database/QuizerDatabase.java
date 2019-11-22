@@ -33,7 +33,7 @@ import pro.quizer.quizer3.database.models.WarningsR;
         CurrentQuestionnaireR.class,
         ElementPassedR.class,
         PrevElementsR.class,
-        SmsItemR.class}, version = 1)
+        SmsItemR.class}, version = 2)
 public abstract class QuizerDatabase extends RoomDatabase {
     public abstract QuizerDao getQuizerDao();
 }

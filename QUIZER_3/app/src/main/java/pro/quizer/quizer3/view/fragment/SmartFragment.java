@@ -58,6 +58,7 @@ import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.database.models.WarningsR;
 import pro.quizer.quizer3.model.ElementDatabaseType;
+import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.config.ConfigModel;
@@ -495,6 +496,35 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             e.printStackTrace();
         }
         return elementItemR;
+    }
+
+    public List<ElementItemR> getQuotasElements() {
+
+        List<ElementItemR> quotaList = new ArrayList<>();
+
+        if (elementItemRList == null) {
+            try {
+                elementItemRList = getDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (elementItemRList != null) {
+
+            for (ElementItemR element : elementItemRList) {
+                if (element.getRelative_parent_id() != null && element.getRelative_parent_id() != 0) {
+                    if (getElement(element.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
+                        quotaList.add(element);
+                        for (ElementItemR answer : element.getElements()) {
+                            quotaList.add(answer);
+                        }
+                    }
+                }
+            }
+        }
+
+        return quotaList;
     }
 
     public List<File> getAllPhotos() {

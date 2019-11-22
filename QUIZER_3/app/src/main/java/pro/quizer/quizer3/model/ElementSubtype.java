@@ -30,4 +30,5 @@ public @interface ElementSubtype {
     String STATUS_IMAGE = "status_image";
     String VIDEO = "video";
     String SLIDER = "slider";
+    String QUOTA = "quota";
 }

@@ -67,6 +67,7 @@ import pro.quizer.quizer3.model.config.ElementModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.model.config.OptionsModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
+import pro.quizer.quizer3.model.quota.QuotaUtils;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
@@ -525,6 +526,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         }
 
         return quotaList;
+    }
+
+    public ElementItemR[][] getTree() {
+        return QuotaUtils.getQuotaTree(getQuotasElements(), (MainActivity) getActivity());
     }
 
     public List<File> getAllPhotos() {

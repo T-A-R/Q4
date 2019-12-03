@@ -58,7 +58,7 @@ public class QuotaUtils {
             int counter = 0;
 
             for (int k = 0; k < answersTotal; k++) {
-                tree[i][k] = answers.get(n);
+                tree[i][k] = ElementItemR.clone(answers.get(n));
                 counter++;
                 if (counter == (answersTotal / answersMultiple)) {
                     n++;
@@ -82,14 +82,16 @@ public class QuotaUtils {
         for (int q = 0; q < quotas.size(); q++) {
             Integer[] sequence = quotas.get(q).getArray();
 
-            Log.d(TAG, "sequence: " + q + " / " + sequence.length);
-            for (int t = 0; t < sequence.length; t++) {
-                Log.d(TAG, "sequence[" + t + "] = " + sequence[t]);
-            }
-
+//            Log.d(TAG, "sequence: " + q + " / " + sequence.length);
+//            for (int t = 0; t < sequence.length; t++) {
+//                Log.d(TAG, "sequence[" + t + "] = " + sequence[t]);
+//            }
+//            Log.d(TAG, "  ");
+//            Log.d(TAG, "============== Quota: " + q);
 
             for (int i = 0; i < tree.length; i++) {
                 for (int k = 0; k < tree[i].length; k++) {
+//                    Log.d(TAG, "============== Tree: " + i + "|" + k);
                     if (sequence[0] == tree[i][k].getRelative_id()) {
                         int temp = i + 1;
                         if (sequence.length > 1) {
@@ -100,14 +102,15 @@ public class QuotaUtils {
                                         if (tree[temp][k].getLimit() > quotas.get(q).getLimit()) {
                                             tree[temp][k].setLimit(quotas.get(q).getLimit());
                                             //TODO: ADD OFFLINE QUOTA
+//                                            Log.d(TAG, "setDone 1: " + quotas.get(q).getDone());
                                             tree[temp][k].setDone(quotas.get(q).getDone());
                                             if ((tree[temp][k].getDone() + getLocalQuotas(activity, sequence)) >= tree[temp][k].getLimit()) {
 
-                                                Log.d(TAG, "set false 1: " + tree[temp][k].getElementOptionsR().getTitle() + " " + temp + "|" + k);
+//                                                Log.d(TAG, "set false 1: " + tree[temp][k].getElementOptionsR().getTitle() + " " + temp + "|" + k);
                                                 tree[temp][k].setEnabled(false);
                                                 for (int x = temp - 1; x >= 0; x--) {
 
-                                                    Log.d(TAG, "set false 2: " + tree[x][k].getElementOptionsR().getTitle() + " " + x + "|" + k);
+//                                                    Log.d(TAG, "set false 2: " + tree[x][k].getElementOptionsR().getTitle() + " " + x + "|" + k);
                                                     tree[x][k].setEnabled(false);
                                                 }
                                             }
@@ -125,7 +128,7 @@ public class QuotaUtils {
                                 tree[i][k].setDone(quotas.get(q).getDone());
                                 if ((tree[i][k].getDone() + getLocalQuotas(activity, sequence)) >= tree[i][k].getLimit()) {
 
-                                    Log.d(TAG, "set false 3: " + tree[i][k].getElementOptionsR().getTitle() + " " + i + "|" + k);
+//                                    Log.d(TAG, "set false 3: " + tree[i][k].getElementOptionsR().getTitle() + " " + i + "|" + k);
                                     tree[i][k].setEnabled(false);
                                 }
                             }
@@ -164,7 +167,46 @@ public class QuotaUtils {
             e.printStackTrace();
             MainActivity.addLog(activity.getCurrentUser().getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, activity.getString(R.string.get_quotas), Constants.LogResult.ERROR, activity.getString(R.string.log_error_102_desc), e.toString());
         }
-
+        Log.d(TAG, "getLocalQuotas: " + counter);
         return counter;
+    }
+
+    public static boolean canShow(ElementItemR[][] tree, List<Integer> passedElementsId, int relativeId) {
+//        boolean canShowElement = true;
+//        int positiveCounter = 0;
+//        int negativeCounter = 0;
+
+        if (tree == null || passedElementsId == null || passedElementsId.size() == 0) {
+            return true;
+        }
+
+
+        for (int k = 0; k < tree[0].length; k++) {
+            for (int i = 0; i < passedElementsId.size(); ) {
+                if (tree[i][k].getRelative_id() == passedElementsId.get(i)) {
+                    if (i == (passedElementsId.size() - 1))
+                        if (tree[i + 1][k].getRelative_id() == relativeId) {
+                            if (tree[i + 1][k].isEnabled())
+                                return true;
+                            else return false;
+                        } else break;
+
+
+//                    if (i == (passedElementsId.size() - 1) && tree[i][k].isEnabled()) {
+//                        positiveCounter++;
+//                    } else if (i == (passedElementsId.size() - 1) && !tree[i][k].isEnabled()) {
+//                        negativeCounter++;
+//                    }
+                    i++;
+                } else {
+                    break;
+                }
+            }
+        }
+
+//        canShowElement = positiveCounter > 0;
+//
+//        return canShowElement;
+        return true;
     }
 }

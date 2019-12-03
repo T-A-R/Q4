@@ -107,6 +107,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private ArrayAdapter adapterSpinner;
     private TableQuestionAdapter adapterTable;
     private List<AnswerState> savedAnswerStates;
+    private List<Integer> quotaBlock;
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
 
@@ -347,22 +348,20 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
             }
 
-            if(getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
-                ElementItemR[][] quotaTree = QuotaUtils.getQuotaTree(getQuotasElements(), (MainActivity) getActivity());
-                if(quotaTree != null) {
+            if (getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
+                ElementItemR[][] quotaTree = getTree();
+                if (quotaTree != null) {
                     Log.d(TAG, "=============== Final Quotas ======================");
-                    for(int i = 0; i < quotaTree[0].length; i++) {
+                    for (int i = 0; i < quotaTree[0].length; i++) {
                         Log.d(TAG, quotaTree[0][i].getElementOptionsR().getTitle() + " " + quotaTree[0][i].getDone() + "/" + quotaTree[0][i].getLimit() + "/" + quotaTree[0][i].isEnabled() + " | " +
-                                        quotaTree[1][i].getElementOptionsR().getTitle() + " " + quotaTree[1][i].getDone() + "/" + quotaTree[1][i].getLimit() + "/" + quotaTree[1][i].isEnabled() + " | " +
-                                        quotaTree[2][i].getElementOptionsR().getTitle() + " " + quotaTree[2][i].getDone() + "/" + quotaTree[2][i].getLimit() + "/" + quotaTree[2][i].isEnabled() + " | "
+                                quotaTree[1][i].getElementOptionsR().getTitle() + " " + quotaTree[1][i].getDone() + "/" + quotaTree[1][i].getLimit() + "/" + quotaTree[1][i].isEnabled() + " | " +
+                                quotaTree[2][i].getElementOptionsR().getTitle() + " " + quotaTree[2][i].getDone() + "/" + quotaTree[2][i].getLimit() + "/" + quotaTree[2][i].isEnabled() + " | "
 
-                                );
-//                        for(int k =0; k < quotaTree.length; k++) {
-//                            System.out.print(quotaTree[k][i].getElementOptionsR().getTitle() + " " + quotaTree[k][i].getDone() + "/" + quotaTree[k][i].getLimit() + "/" + quotaTree[k][i].isEnabled() + " | ");
-////                            Log.d(TAG,  quotaTree[i][k].isEnabled() + " | ");
-//                        }
-//                        System.out.println("");
+                        );
                     }
+
+                    quotaBlock = getQuestionnaire().getQuota_block();
+
                 }
             }
 
@@ -385,6 +384,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             answerType = ElementSubtype.SCALE;
         } else if (currentElement.getSubtype().equals(ElementSubtype.HTML)) {
             answerType = ElementSubtype.HTML;
+        } else if (getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
+            answerType = ElementSubtype.QUOTA;
         }
     }
 
@@ -446,7 +447,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         answersList = new ArrayList<>();
         List<String> itemsList = new ArrayList<>();
 
-        if (answerType.equals(ElementSubtype.LIST)) {
+        if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.QUOTA)) {
             rvAnswers.setVisibility(View.VISIBLE);
         } else if (answerType.equals(ElementSubtype.SELECT)) {
             spinnerCont.setVisibility(View.VISIBLE);
@@ -466,7 +467,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         }
 
         if (answerType.equals(ElementSubtype.LIST)) {
-            adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList, this);
+            adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList,
+                    null, null, this);
+            rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
+            rvAnswers.setAdapter(adapterList);
+        } else if (answerType.equals(ElementSubtype.QUOTA)) {
+            adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList,
+                    getQuestionnaire().getQuota_block(), getTree(), this);
             rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
             rvAnswers.setAdapter(adapterList);
         } else if (answerType.equals(ElementSubtype.SELECT)) {
@@ -502,10 +509,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     private boolean saveElement() {
         boolean saved = false;
-        if (answerType.equals(ElementSubtype.LIST)) {
+        if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.QUOTA)) {
             List<AnswerState> answerStates = adapterList.getAnswers();
             if (answerStates != null && notEmpty(answerStates)) {
-
                 for (AnswerState answerState : answerStates) {
                     if (answerState.isChecked()) {
                         nextElementId = getElement(answerState.getRelative_id()).getElementOptionsR().getJump();
@@ -855,7 +861,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     public void loadSavedData() {
-        if (answerType.equals(ElementSubtype.LIST)) {
+        if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.QUOTA)) {
             List<AnswerState> answerStatesAdapter = adapterList.getAnswers();
             List<AnswerState> answerStatesRestored = new ArrayList<>();
             int lastSelectedPosition = 0;

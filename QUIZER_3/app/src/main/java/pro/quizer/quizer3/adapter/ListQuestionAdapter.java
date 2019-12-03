@@ -27,6 +27,7 @@ import java.util.*;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.ElementItemR;
+import pro.quizer.quizer3.model.quota.QuotaUtils;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.utils.Fonts;
 
@@ -52,10 +53,15 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     public boolean isPressed = false;
     private String openType;
     private MainActivity mActivity;
+    private List<Integer> quotaBlock;
+    private ElementItemR[][] quotaTree;
 
-    public ListQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, OnAnswerClickListener onAnswerClickListener) {
+    public ListQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> quotaBlock, ElementItemR[][] quotaTree, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
         this.question = question;
+        this.quotaBlock = quotaBlock;
+        this.quotaTree = quotaTree;
+
         if (question.getElementOptionsR() != null && question.getElementOptionsR().isRotation()) {
             List<ElementItemR> shuffleList = new ArrayList<>();
             for (ElementItemR elementItemR : answersList) {
@@ -222,8 +228,12 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 //                Log.d(TAG, "bind disable: " + position);
             }
 
+            if (QuotaUtils.canShow(quotaTree, quotaBlock, item.getRelative_id())) {
+                showDisableToLog(item.getElementOptionsR().getTitle());
+            }
+
 //            setEnabled(item, position);
-            setChecked(item, position);
+                setChecked(item, position);
 
         }
 
@@ -273,11 +283,13 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 if (answersState.get(position).isChecked()) {
                     for (int i = 0; i < answersState.size(); i++) {
                         if (i != position) {
+                            Log.d(TAG, "set false 4: " + i);
                             answersList.get(i).setEnabled(false);
                         }
                     }
                 } else {
                     for (int i = 0; i < answersState.size(); i++) {
+                        Log.d(TAG, "set false 5: " + i);
                         answersList.get(i).setEnabled(true);
                     }
                 }
@@ -405,6 +417,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 if (answersList.get(i).getElementOptionsR().isUnchecker() && answers.get(i).isChecked()) {
                     for (int k = 0; k < answersList.size(); k++) {
                         if (k != i) {
+                            Log.d(TAG, "set false 5: " + k);
                             answersList.get(k).setEnabled(false);
                         }
                     }
@@ -473,5 +486,9 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         for (int i = 0; i < answersState.size(); i++) {
             Log.d(TAG, "answer: (" + i + ") " + answersState.get(i).isChecked() + " " + answersState.get(i).getData());
         }
+    }
+
+    private void showDisableToLog(String name) {
+        Log.d(TAG, "XXXXXX Disabled: " + name);
     }
 }

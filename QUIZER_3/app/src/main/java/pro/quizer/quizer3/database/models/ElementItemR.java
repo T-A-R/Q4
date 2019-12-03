@@ -92,6 +92,28 @@ public class ElementItemR {
         this.enabled = true;
     }
 
+    public static ElementItemR clone(ElementItemR item) {
+        if (item == null) {
+            return null;
+        }
+        ElementItemR newItem = new ElementItemR();
+        newItem.configId = item.getConfigId();
+        newItem.userId = item.getUserId();
+        newItem.projectId = item.getProjectId();
+        newItem.questionnaireId = item.getQuestionnaireId();
+        newItem.type = item.getType();
+        newItem.subtype = item.getSubtype();
+        newItem.relative_id = item.getRelative_id();
+        newItem.relative_parent_id = item.getRelative_parent_id();
+        newItem.elementOptionsR = item.getElementOptionsR();
+        newItem.elementContentsR = item.getElementContentsR();
+        newItem.was_shown = false;
+        newItem.checked = false;
+        newItem.enabled = true;
+
+        return newItem;
+    }
+
     public int getId() {
         return id;
     }

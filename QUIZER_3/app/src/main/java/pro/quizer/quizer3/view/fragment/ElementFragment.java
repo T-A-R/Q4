@@ -347,23 +347,28 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
                 }
             }
+            if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0)
+                if (getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
+                    ElementItemR[][] quotaTree = getTree();
+                    if (quotaTree != null) {
 
-            if (getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
-                ElementItemR[][] quotaTree = getTree();
-                if (quotaTree != null) {
-                    Log.d(TAG, "=============== Final Quotas ======================");
-                    for (int i = 0; i < quotaTree[0].length; i++) {
-                        Log.d(TAG, quotaTree[0][i].getElementOptionsR().getTitle() + " " + quotaTree[0][i].getDone() + "/" + quotaTree[0][i].getLimit() + "/" + quotaTree[0][i].isEnabled() + " | " +
-                                quotaTree[1][i].getElementOptionsR().getTitle() + " " + quotaTree[1][i].getDone() + "/" + quotaTree[1][i].getLimit() + "/" + quotaTree[1][i].isEnabled() + " | " +
-                                quotaTree[2][i].getElementOptionsR().getTitle() + " " + quotaTree[2][i].getDone() + "/" + quotaTree[2][i].getLimit() + "/" + quotaTree[2][i].isEnabled() + " | "
+                        Log.d(TAG, "=============== Final Quotas ======================");
+                        try {
+                            for (int i = 0; i < quotaTree[0].length; i++) {
+                                Log.d(TAG, quotaTree[0][i].getElementOptionsR().getTitle() + " " + quotaTree[0][i].getDone() + "/" + quotaTree[0][i].getLimit() + "/" + quotaTree[0][i].isEnabled() + " | " +
+                                        quotaTree[1][i].getElementOptionsR().getTitle() + " " + quotaTree[1][i].getDone() + "/" + quotaTree[1][i].getLimit() + "/" + quotaTree[1][i].isEnabled() + " | " +
+                                        quotaTree[2][i].getElementOptionsR().getTitle() + " " + quotaTree[2][i].getDone() + "/" + quotaTree[2][i].getLimit() + "/" + quotaTree[2][i].isEnabled() + " | "
 
-                        );
+                                );
+                            }
+                        } catch (Exception e) {
+                            Log.d(TAG, "Не тестовый проект!");
+                        }
+
+                        quotaBlock = getQuestionnaire().getPassed_quota_block();
+
                     }
-
-                    quotaBlock = getQuestionnaire().getQuota_block();
-
                 }
-            }
 
 //            Log.d(TAG, "==================== initQuestion: " + currentElement.getRelative_id());
 //            showElementsQuery();
@@ -373,9 +378,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void setQuestionType() {
-//        Log.d(TAG, "???????????? setQuestionType: " + currentElement.getRelative_id());
         if (currentElement.getSubtype().equals(ElementSubtype.LIST)) {
-            answerType = ElementSubtype.LIST;
+            if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0 &&
+                    getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
+                answerType = ElementSubtype.QUOTA;
+            } else {
+                answerType = ElementSubtype.LIST;
+            }
         } else if (currentElement.getSubtype().equals(ElementSubtype.SELECT)) {
             answerType = ElementSubtype.SELECT;
         } else if (currentElement.getSubtype().equals(ElementSubtype.TABLE)) {
@@ -384,8 +393,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             answerType = ElementSubtype.SCALE;
         } else if (currentElement.getSubtype().equals(ElementSubtype.HTML)) {
             answerType = ElementSubtype.HTML;
-        } else if (getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
-            answerType = ElementSubtype.QUOTA;
         }
     }
 
@@ -465,7 +472,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 itemsList.add(element.getElementOptionsR().getTitle());
             }
         }
-
+        Log.d(TAG, "?????????? initRecyclerView: " + answerType);
         if (answerType.equals(ElementSubtype.LIST)) {
             adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList,
                     null, null, this);
@@ -473,7 +480,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             rvAnswers.setAdapter(adapterList);
         } else if (answerType.equals(ElementSubtype.QUOTA)) {
             adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList,
-                    getQuestionnaire().getQuota_block(), getTree(), this);
+                    getPassedQuotasBlock(), getTree(), this);
             rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
             rvAnswers.setAdapter(adapterList);
         } else if (answerType.equals(ElementSubtype.SELECT)) {
@@ -531,6 +538,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 elementPassedR.setToken(getQuestionnaire().getToken());
                 elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
 
+                elementPassedR.setFrom_quotas_block(false);
+
                 try {
                     getDao().insertElementPassedR(elementPassedR);
                     getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
@@ -548,6 +557,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         answerPassedR.setProject_id(currentElement.getProjectId());
                         answerPassedR.setToken(getQuestionnaire().getToken());
                         answerPassedR.setValue(answerStates.get(i).getData());
+                        if (answerType.equals(ElementSubtype.QUOTA)) {
+                            answerPassedR.setFrom_quotas_block(true);
+                        } else {
+                            answerPassedR.setFrom_quotas_block(false);
+                        }
 
                         try {
                             getDao().insertElementPassedR(answerPassedR);

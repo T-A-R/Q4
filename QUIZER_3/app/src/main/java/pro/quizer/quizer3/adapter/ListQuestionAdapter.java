@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -53,14 +54,15 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     public boolean isPressed = false;
     private String openType;
     private MainActivity mActivity;
-    private List<Integer> quotaBlock;
+    private List<Integer> passedQuotaBlock;
     private ElementItemR[][] quotaTree;
 
-    public ListQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> quotaBlock, ElementItemR[][] quotaTree, OnAnswerClickListener onAnswerClickListener) {
+    public ListQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> passedQuotaBlock, ElementItemR[][] quotaTree, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
         this.question = question;
-        this.quotaBlock = quotaBlock;
+        this.passedQuotaBlock = passedQuotaBlock;
         this.quotaTree = quotaTree;
+
 
         if (question.getElementOptionsR() != null && question.getElementOptionsR().isRotation()) {
             List<ElementItemR> shuffleList = new ArrayList<>();
@@ -220,6 +222,11 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 openAnswerCont.setVisibility(View.VISIBLE);
             }
 
+            if(!QuotaUtils.canShow(quotaTree, passedQuotaBlock, item.getRelative_id())) {
+                answerTitle.setTextColor(Color.parseColor("#AAAAAA"));
+                item.setEnabled(false);
+            }
+
             if (item.isEnabled()) {
 //                Log.d(TAG, "bind enable: " + position);
                 cont.setOnClickListener(this);
@@ -228,9 +235,12 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 //                Log.d(TAG, "bind disable: " + position);
             }
 
-            if (QuotaUtils.canShow(quotaTree, quotaBlock, item.getRelative_id())) {
-                showDisableToLog(item.getElementOptionsR().getTitle());
-            }
+            Log.d(TAG, "XXXXX ENABLED: " + item.getElementOptionsR().getTitle() + " : " +
+                    QuotaUtils.canShow(quotaTree, passedQuotaBlock, item.getRelative_id()));
+
+//            if (!QuotaUtils.canShow(quotaTree, passedQuotaBlock, item.getRelative_id())) {
+//                showDisableToLog(item.getElementOptionsR().getTitle());
+//            }
 
 //            setEnabled(item, position);
                 setChecked(item, position);

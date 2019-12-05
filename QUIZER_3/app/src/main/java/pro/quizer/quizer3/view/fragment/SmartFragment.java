@@ -528,6 +528,21 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         return quotaList;
     }
 
+    public List<Integer> getPassedQuotasBlock() {
+        List<Integer> passedQuotasBlock = new ArrayList<>();
+        List<ElementPassedR> passedElements = getDao().getAllElementsPassedR(getQuestionnaire().getToken());
+        if (passedElements == null || passedElements.size() == 0) {
+            return null;
+        }
+
+        for (int k = 0; k < passedElements.size(); k++) {
+            if (passedElements.get(k).isFrom_quotas_block()) {
+                passedQuotasBlock.add(passedElements.get(k).getRelative_id());
+            }
+        }
+        return passedQuotasBlock;
+    }
+
     public ElementItemR[][] getTree() {
         return QuotaUtils.getQuotaTree(getQuotasElements(), (MainActivity) getActivity());
     }

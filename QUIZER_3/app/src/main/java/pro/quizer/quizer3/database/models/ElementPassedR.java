@@ -37,10 +37,14 @@ public class ElementPassedR {
     @ColumnInfo(name = "click_rank")
     private Integer click_rank;
 
+    @ColumnInfo(name = "from_quotas_block")
+    private boolean from_quotas_block;
+
     public ElementPassedR() {
     }
 
-    public ElementPassedR(Integer relative_id, Integer project_id, String token, Long duration, String value, boolean send_sms, Integer rank, Integer click_rank) {
+    public ElementPassedR(Integer relative_id, Integer project_id, String token, Long duration,
+                          String value, boolean send_sms, Integer rank, Integer click_rank, boolean from_quotas_block) {
         this.relative_id = relative_id;
         this.project_id = project_id;
         this.token = token;
@@ -49,6 +53,7 @@ public class ElementPassedR {
         this.send_sms = send_sms;
         this.rank = rank;
         this.click_rank = click_rank;
+        this.from_quotas_block = from_quotas_block;
     }
 
     public int getId() {
@@ -121,5 +126,13 @@ public class ElementPassedR {
 
     public void setClick_rank(Integer click_rank) {
         this.click_rank = click_rank;
+    }
+
+    public boolean isFrom_quotas_block() {
+        return from_quotas_block;
+    }
+
+    public void setFrom_quotas_block(boolean from_quotas_block) {
+        this.from_quotas_block = from_quotas_block;
     }
 }

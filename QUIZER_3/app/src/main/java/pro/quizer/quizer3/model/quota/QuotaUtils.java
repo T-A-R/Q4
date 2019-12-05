@@ -19,20 +19,8 @@ import static pro.quizer.quizer3.MainActivity.TAG;
 public class QuotaUtils {
 
     public static ElementItemR[][] getQuotaTree(List<ElementItemR> quotaList, MainActivity activity) {
-
         return fillQuotas(getTree(quotaList), activity);
     }
-
-//    public static List<ElementItemR> getQuotaList(List<ElementItemR> questionnaire) {
-//
-//        List<ElementItemR> quotaList = null;
-//
-//        for (ElementItemR element : questionnaire) {
-//            if(element.getRelative_parent_id())
-//        }
-//
-//        return quotaList;
-//    }
 
     public static ElementItemR[][] getTree(List<ElementItemR> quotasBlock) {
 
@@ -78,6 +66,7 @@ public class QuotaUtils {
         int qn = 8;
         List<QuotaModel> quotas = activity.getCurrentUser().getQuotasR();
         if (quotas == null || quotas.isEmpty()) return tree;
+        Log.d(TAG, "fillQuotas: tree: " + tree.length + "/" + tree[0].length);
         Log.d(TAG, "Quotas size: " + quotas.size());
         for (int q = 0; q < quotas.size(); q++) {
             Integer[] sequence = quotas.get(q).getArray();
@@ -91,7 +80,6 @@ public class QuotaUtils {
 
             for (int i = 0; i < tree.length; i++) {
                 for (int k = 0; k < tree[i].length; k++) {
-//                    Log.d(TAG, "============== Tree: " + i + "|" + k);
                     if (sequence[0] == tree[i][k].getRelative_id()) {
                         int temp = i + 1;
                         if (sequence.length > 1) {
@@ -101,16 +89,10 @@ public class QuotaUtils {
                                     if (s == sequence.length - 1) {
                                         if (tree[temp][k].getLimit() > quotas.get(q).getLimit()) {
                                             tree[temp][k].setLimit(quotas.get(q).getLimit());
-                                            //TODO: ADD OFFLINE QUOTA
-//                                            Log.d(TAG, "setDone 1: " + quotas.get(q).getDone());
                                             tree[temp][k].setDone(quotas.get(q).getDone());
                                             if ((tree[temp][k].getDone() + getLocalQuotas(activity, sequence)) >= tree[temp][k].getLimit()) {
-
-//                                                Log.d(TAG, "set false 1: " + tree[temp][k].getElementOptionsR().getTitle() + " " + temp + "|" + k);
                                                 tree[temp][k].setEnabled(false);
                                                 for (int x = temp - 1; x >= 0; x--) {
-
-//                                                    Log.d(TAG, "set false 2: " + tree[x][k].getElementOptionsR().getTitle() + " " + x + "|" + k);
                                                     tree[x][k].setEnabled(false);
                                                 }
                                             }
@@ -124,11 +106,8 @@ public class QuotaUtils {
                         } else {
                             if (tree[i][k].getLimit() > quotas.get(q).getLimit()) {
                                 tree[i][k].setLimit(quotas.get(q).getLimit());
-                                //TODO: ADD OFFLINE QUOTA
                                 tree[i][k].setDone(quotas.get(q).getDone());
                                 if ((tree[i][k].getDone() + getLocalQuotas(activity, sequence)) >= tree[i][k].getLimit()) {
-
-//                                    Log.d(TAG, "set false 3: " + tree[i][k].getElementOptionsR().getTitle() + " " + i + "|" + k);
                                     tree[i][k].setEnabled(false);
                                 }
                             }
@@ -176,37 +155,59 @@ public class QuotaUtils {
 //        int positiveCounter = 0;
 //        int negativeCounter = 0;
 
-        if (tree == null || passedElementsId == null || passedElementsId.size() == 0) {
+//        Log.d(TAG, "canShow: Relative_ID = " + relativeId);
+
+        if (tree == null) {
+            Log.d(TAG, "canShow: Tree is NULL!");
             return true;
         }
 
+        if (passedElementsId == null || passedElementsId.size() == 0) {
+            Log.d(TAG, "canShow: Passed Elements is NULL!");
+            for (int k = 0; k < tree[0].length; k++) {
+                if (tree[0][k].getRelative_id() == relativeId) {
+                    if (tree[0][k].isEnabled())
+                        return true;
+                }
+            }
+            return false;
+        } else {
+            Log.d(TAG, "canShow: Passed size: " + passedElementsId.size());
 
-        for (int k = 0; k < tree[0].length; k++) {
-            for (int i = 0; i < passedElementsId.size(); ) {
-                if (tree[i][k].getRelative_id() == passedElementsId.get(i)) {
-                    if (i == (passedElementsId.size() - 1))
-                        if (tree[i + 1][k].getRelative_id() == relativeId) {
-                            if (tree[i + 1][k].isEnabled())
-                                return true;
-                            else return false;
-                        } else break;
+            for (Integer id : passedElementsId) {
+                Log.d(TAG, "id: " + id);
+            }
 
 
-//                    if (i == (passedElementsId.size() - 1) && tree[i][k].isEnabled()) {
-//                        positiveCounter++;
-//                    } else if (i == (passedElementsId.size() - 1) && !tree[i][k].isEnabled()) {
-//                        negativeCounter++;
-//                    }
-                    i++;
-                } else {
-                    break;
+            for (int k = 0; k < tree[0].length; k++) {
+                for (int i = 0; i < passedElementsId.size(); ) {
+//                    Log.d(TAG, "canShow: lines " + k + " | " + i + " : " + tree[i][k].getRelative_id() + "/" + passedElementsId.get(i));
+                    if (tree[i][k].getRelative_id() == passedElementsId.get(i)) {
+//                        Log.d(TAG, "Нашел: " + tree[i][k].getElementOptionsR().getTitle());
+                        if (i == (passedElementsId.size() - 1)) { // Если последний, то
+//                            Log.d(TAG, "Он последний");
+                            if (tree[i + 1][k].getRelative_id() == relativeId) { // Если следующий за последним равен Relative ID
+//                                Log.d(TAG, "Следующий элемент совпал с Relative ID");
+                                if (tree[i + 1][k].isEnabled()) {
+//                                    Log.d(TAG, "Он включен: ");
+                                    return true;
+                                } else {
+//                                    Log.d(TAG, "Он выключен: ");
+                                }
+                            } else {
+//                                Log.d(TAG, "Следующий элемент не совпал");
+                            }
+                        } else {
+//                            Log.d(TAG, "Он не последний");
+                        }
+                        i++;
+                    } else break;
                 }
             }
         }
-
 //        canShowElement = positiveCounter > 0;
 //
 //        return canShowElement;
-        return true;
+        return false;
     }
 }

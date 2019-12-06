@@ -237,10 +237,20 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             CompletableFuture.supplyAsync(() -> {
                 Log.d(TAG, "startQuestionnaire: START...");
                 if (currentQuestionnaire != null) {
-                    boolean saved = saveQuestionnaireToDatabase(currentQuestionnaire, true);
-                    if (!saved) {
-                        hideScreensaver();
+                    boolean saved = true;
+                    if(currentQuestionnaire.getUser_project_id().equals(getCurrentUser().getUser_project_id())) {
+                        saved = saveQuestionnaireToDatabase(currentQuestionnaire, true);
+                        Log.d(TAG, "startQuestionnaire: MID 1 " + saved);
+//                        if (!saved) {
+//                            hideScreensaver();
+//                        } else {
+//                            hideScreensaver();
+//                            Toast.makeText(getContext(), "Ошибка сохранения прерванной анкеты", Toast.LENGTH_SHORT).show();
+//                        }
+                    } else {
+                        return true;
                     }
+                    Log.d(TAG, "startQuestionnaire: END " + saved);
                     return saved;
                 } else return true;
             }).thenApplyAsync(result -> {

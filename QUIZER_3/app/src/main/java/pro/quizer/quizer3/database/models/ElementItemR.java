@@ -219,7 +219,18 @@ public class ElementItemR {
     }
 
     public List<ElementItemR> getElements() {
-        return getDao().getChildElements(relative_id, userId, projectId);
+        List<ElementItemR> elements = null;
+        try {
+            elements = getDao().getChildElements(relative_id, userId, projectId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (elements != null)
+            Log.d(TAG, "getElements in model: answers size= " + elements.size());
+        for(ElementItemR elementItemR : elements) {
+            Log.d(TAG, "Element: " + elementItemR.getId() + "/" + elementItemR.getRelative_id());
+        }
+        return elements;
     }
 
     public boolean isEnabled() {

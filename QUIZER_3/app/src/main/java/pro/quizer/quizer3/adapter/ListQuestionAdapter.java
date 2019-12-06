@@ -73,6 +73,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             }
             Collections.shuffle(shuffleList, new Random());
             int k = 0;
+
             for (int i = 0; i < answersList.size(); i++) {
                 if (answersList.get(i).getElementOptionsR() != null && !answersList.get(i).getElementOptionsR().isFixed_order()) {
                     answersList.set(i, shuffleList.get(k));
@@ -81,6 +82,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             }
         }
         this.answersList = answersList;
+        Log.d(TAG, "ListQuestionAdapter: answers size= " + this.answersList.size());
 
         this.onAnswerClickListener = onAnswerClickListener;
         if (question.getElementOptionsR().getOpen_type() != null) {

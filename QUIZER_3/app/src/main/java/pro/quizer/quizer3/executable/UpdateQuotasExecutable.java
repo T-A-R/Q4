@@ -94,6 +94,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
 
                 }
                 MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.SUCCESS, mContext.getString(R.string.quotas_renew), null);
+                mainActivity.getTree();
                 onSuccess();
             } else {
                 onError(new Exception(mContext.getString(R.string.load_quotas_error) + " " + mContext.getString(R.string.error_104)));

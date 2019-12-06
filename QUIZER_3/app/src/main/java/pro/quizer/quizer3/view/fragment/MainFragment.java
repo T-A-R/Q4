@@ -1,5 +1,6 @@
 package pro.quizer.quizer3.view.fragment;
 
+import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -349,7 +350,10 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
             openScreen(new AboutFragment());
         } else if (view == mChangeUserBtn) {
             hide();
-            openScreen(new AuthFragment());
+//            openScreen(new AuthFragment());
+//            Intent intent = new Intent(getContext(), MainActivity.class);
+//            intent.setFlag(Intent.CLEAR_TASK);
+            startActivity(new Intent(getContext(), MainActivity.class));
         }
 //        if (view == imgMarker || view == txtCity || view == imgDrop) {
 //            if (getUser().isDelegateMode()) {

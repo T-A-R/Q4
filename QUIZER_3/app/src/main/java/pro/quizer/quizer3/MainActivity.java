@@ -33,14 +33,19 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import pro.quizer.quizer3.database.QuizerDao;
 import pro.quizer.quizer3.database.models.AppLogsR;
+import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.UserModelR;
+import pro.quizer.quizer3.executable.QuotasTreeMaker;
+import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.User;
 import pro.quizer.quizer3.model.config.ElementModelNew;
+import pro.quizer.quizer3.model.quota.QuotaUtils;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
@@ -84,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private String mLogin;
     private int mProjectId;
     private int mUserId;
+    private ElementItemR[][] tree;
+    List<ElementItemR> elementItemRList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -725,5 +732,54 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             mMediaBrowser.unsubscribe(mMediaBrowser.getRoot());
             mMediaBrowser.disconnect();
         }
+    }
+
+    public ElementItemR[][] getTree() {
+        Log.d(TAG, "getTree: START");
+//        ElementItemR[][] tree;
+        if(tree == null)
+            tree = new QuotasTreeMaker(getQuotasElements(), this).execute();
+//            tree = QuotaUtils.getQuotaTree(getQuotasElements(), this);
+        Log.d(TAG, "getTree: DONE");
+        return tree;
+    }
+
+    public List<ElementItemR> getQuotasElements() {
+
+        List<ElementItemR> quotaList = new ArrayList<>();
+
+        if (elementItemRList == null) {
+            try {
+                elementItemRList = getStaticDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+            if (elementItemRList != null) {
+
+                for (ElementItemR element : elementItemRList) {
+                    if (element.getRelative_parent_id() != null && element.getRelative_parent_id() != 0) {
+                        if (getElement(element.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
+                            quotaList.add(element);
+                            for (ElementItemR answer : element.getElements()) {
+                                quotaList.add(answer);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return quotaList;
+        }
+
+    public ElementItemR getElement(Integer id) {
+        ElementItemR elementItemR = null;
+        try {
+            elementItemR = getStaticDao().getElementById(id, getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return elementItemR;
     }
 }

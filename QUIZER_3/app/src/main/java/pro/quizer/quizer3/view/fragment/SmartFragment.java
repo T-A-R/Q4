@@ -95,6 +95,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     private int mRelativeId = -1;
     private int mUserId = -1;
     private int mProjectId = -1;
+//    private ElementItemR[][] tree;
 
     private CurrentQuestionnaireR currentQuestionnaire = null;
     List<ElementItemR> elementItemRList = null;
@@ -359,16 +360,22 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public HashMap<Integer, ElementModelNew> getMap(boolean rebuild) {
         if (mMap == null) {
             mMap = new HashMap<>();
+            if(rebuild) {
+                getDao().clearElementItemR();
+            }
 //            Log.d(TAG, "???????????? getMap: 1");
             generateMap(getElements(), rebuild);
-//            Log.d(TAG, "???????????? getMap: " + mMap.size());
+            Log.d(TAG, "???????????? getMap: " + mMap.size());
             return mMap;
         } else {
+            Log.d(TAG, "???????????? getMap: " + mMap.size());
             return mMap;
         }
     }
 
     private void generateMap(final List<ElementModelNew> elements, boolean rebuild) {
+        Log.d(TAG, "generateMap: ELEMENTSNEW " + elements.size());
+
         for (final ElementModelNew element : elements) {
             mMap.put(element.getRelativeID(), element);
 
@@ -443,6 +450,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
             final List<ElementModelNew> nestedList = element.getElements();
             if (nestedList != null && !nestedList.isEmpty()) {
+                Log.d(TAG, "generateMap:  nestedList rebuild");
                 generateMap(nestedList, rebuild);
             }
         }
@@ -472,13 +480,14 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public void initCurrentElements() {
         try {
+//            Log.d(TAG, "====== initCurrentElements: ");
             elementItemRList = getDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
             currentQuestionnaire = getDao().getCurrentQuestionnaireR();
             List<ElementItemR> allElements = getDao().getAllElementItemR();
-            Log.d(TAG, "============ " + getCurrentUserId() + " / " + getCurrentUser().getConfigR().getProjectInfo().getProjectId() + " ============");
-            for (ElementItemR elementItemR : allElements) {
-                Log.d(TAG, "initCurrentElements: " + elementItemR.getUserId() + " / " + elementItemR.getProjectId());
-            }
+//            Log.d(TAG, "============ " + getCurrentUserId() + " / " + getCurrentUser().getConfigR().getProjectInfo().getProjectId() + " ============");
+//            for (ElementItemR elementItemR : allElements) {
+//                Log.d(TAG, "initCurrentElements: " + elementItemR.getUserId() + " / " + elementItemR.getProjectId());
+//            }
         } catch (Exception e) {
             Log.d(TAG, "initCurrentElements: ERROR");
             e.printStackTrace();
@@ -499,34 +508,34 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         return elementItemR;
     }
 
-    public List<ElementItemR> getQuotasElements() {
-
-        List<ElementItemR> quotaList = new ArrayList<>();
-
-        if (elementItemRList == null) {
-            try {
-                elementItemRList = getDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (elementItemRList != null) {
-
-            for (ElementItemR element : elementItemRList) {
-                if (element.getRelative_parent_id() != null && element.getRelative_parent_id() != 0) {
-                    if (getElement(element.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
-                        quotaList.add(element);
-                        for (ElementItemR answer : element.getElements()) {
-                            quotaList.add(answer);
-                        }
-                    }
-                }
-            }
-        }
-
-        return quotaList;
-    }
+//    public List<ElementItemR> getQuotasElements() {
+//
+//        List<ElementItemR> quotaList = new ArrayList<>();
+//
+//        if (elementItemRList == null) {
+//            try {
+//                elementItemRList = getDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        if (elementItemRList != null) {
+//
+//            for (ElementItemR element : elementItemRList) {
+//                if (element.getRelative_parent_id() != null && element.getRelative_parent_id() != 0) {
+//                    if (getElement(element.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
+//                        quotaList.add(element);
+//                        for (ElementItemR answer : element.getElements()) {
+//                            quotaList.add(answer);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        return quotaList;
+//    }
 
     public List<Integer> getPassedQuotasBlock() {
         List<Integer> passedQuotasBlock = new ArrayList<>();
@@ -543,9 +552,14 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         return passedQuotasBlock;
     }
 
-    public ElementItemR[][] getTree() {
-        return QuotaUtils.getQuotaTree(getQuotasElements(), (MainActivity) getActivity());
-    }
+//    public ElementItemR[][] getTree() {
+//        Log.d(TAG, "getTree: START");
+////        ElementItemR[][] tree;
+//        if(tree == null)
+//        tree = QuotaUtils.getQuotaTree(getQuotasElements(), (MainActivity) getActivity());
+//        Log.d(TAG, "getTree: DONE");
+//        return tree;
+//    }
 
     public List<File> getAllPhotos() {
         return FileUtils.getFilesRecursion(JPEG, FileUtils.getPhotosStoragePath(getContext()));
@@ -717,6 +731,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public boolean saveQuestionnaireToDatabase(CurrentQuestionnaireR currentQuiz, boolean aborted) {
+
+        Log.d(TAG, "saveQuestionnaireToDatabase: 1");
         boolean saved = true;
         countElements = 0;
         countScreens = 0;
@@ -725,11 +741,15 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         List<ElementPassedR> elements = null;
 
         try {
+            Log.d(TAG, "saveQuestionnaireToDatabase: 2");
             elements = getDao().getAllElementsPassedR(currentQuiz.getToken());
+            Log.d(TAG, "saveQuestionnaireToDatabase: 2.1 " + elements.size());
         } catch (Exception e) {
+            Log.d(TAG, "saveQuestionnaireToDatabase: 2.2");
             e.printStackTrace();
         }
         if (elements != null && elements.size() > 0) {
+            Log.d(TAG, "saveQuestionnaireToDatabase: 2.3");
             for (ElementPassedR element : elements) {
                 if (!saveElement(currentQuiz, element)) {
                     showToast("Ошибка сохранения элемента анкеты");
@@ -738,88 +758,110 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 }
             }
         }
-
+        Log.d(TAG, "saveQuestionnaireToDatabase: 2");
         final long endTime = DateUtils.getCurrentTimeMillis();
         final long durationTimeQuestionnaire = endTime - currentQuiz.getStart_date();
-
+        Log.d(TAG, "saveQuestionnaireToDatabase: 3");
         final QuestionnaireDatabaseModelR questionnaireDatabaseModel = new QuestionnaireDatabaseModelR();
         questionnaireDatabaseModel.setStatus(QuestionnaireStatus.NOT_SENT);
         questionnaireDatabaseModel.setToken(currentQuiz.getToken());
         questionnaireDatabaseModel.setLogin_admin(getLoginAdmin());
+        Log.d(TAG, "saveQuestionnaireToDatabase: 3");
         questionnaireDatabaseModel.setLogin(getCurrentUser().getLogin());
         questionnaireDatabaseModel.setUser_id(getCurrentUserId());
         questionnaireDatabaseModel.setPassw(getCurrentUser().getPassword());
+        Log.d(TAG, "saveQuestionnaireToDatabase: 4");
         questionnaireDatabaseModel.setQuestionnaire_id(getCurrentUser().getConfigR().getProjectInfo().getQuestionnaireId());
         questionnaireDatabaseModel.setProject_id(getCurrentUser().getConfigR().getProjectInfo().getProjectId());
 //        questionnaireDatabaseModel.setBilling_questions(mBillingQuestions); //TODO Узнать надо или нет!
         questionnaireDatabaseModel.setUser_project_id(getCurrentUser().getUser_project_id());
+        Log.d(TAG, "saveQuestionnaireToDatabase: 5");
         questionnaireDatabaseModel.setGps(currentQuiz.getGps());
         questionnaireDatabaseModel.setGps_network(currentQuiz.getGps_network());
         questionnaireDatabaseModel.setGps_time(currentQuiz.getGps_time());
+        Log.d(TAG, "saveQuestionnaireToDatabase: 6");
         questionnaireDatabaseModel.setGps_time_network(currentQuiz.getGps_time_network());
         questionnaireDatabaseModel.setDate_interview(currentQuiz.getStart_date());
         questionnaireDatabaseModel.setHas_photo(currentQuiz.getHas_photo());
+        Log.d(TAG, "saveQuestionnaireToDatabase: 6");
         questionnaireDatabaseModel.setUsed_fake_gps(currentQuiz.isUsed_fake_gps());
         questionnaireDatabaseModel.setGps_time_fk(currentQuiz.getFake_gps_time());
 
         if (aborted) {
+            Log.d(TAG, "saveQuestionnaireToDatabase: 7");
             if (currentQuiz.isPaused())
                 questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.UNFINISHED);
             else
                 questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.ABORTED);
         } else {
+            Log.d(TAG, "saveQuestionnaireToDatabase: 8");
             questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.COMPLETED);
         }
-
+        Log.d(TAG, "saveQuestionnaireToDatabase: 9");
         questionnaireDatabaseModel.setQuestions_passed(countQuestions);
         questionnaireDatabaseModel.setScreens_passed(countScreens); //TODO сделать подсчет экранов.
         questionnaireDatabaseModel.setSelected_questions(countElements);
+        Log.d(TAG, "saveQuestionnaireToDatabase: 10");
         questionnaireDatabaseModel.setDuration_time_questionnaire((int) durationTimeQuestionnaire);
         questionnaireDatabaseModel.setAuth_time_difference(SPUtils.getAuthTimeDifference(getContext()));
         questionnaireDatabaseModel.setQuota_time_difference(SPUtils.getQuotaTimeDifference(getContext()));
         questionnaireDatabaseModel.setSend_time_difference(SPUtils.getSendTimeDifference(getContext()));
 
         try {
+            Log.d(TAG, "saveQuestionnaireToDatabase: 11");
             getDao().insertQuestionnaire(questionnaireDatabaseModel);
             addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.SUCCESS, getString(R.string.save_question_to_db_success), null);
         } catch (Exception e) {
+            Log.d(TAG, "saveQuestionnaireToDatabase: 12");
             showToast(getString(R.string.db_save_error));
             addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.ERROR, getString(R.string.save_question_to_db_error), e.toString());
             saved = false;
         }
 
         if (saved) {
+            Log.d(TAG, "saveQuestionnaireToDatabase: 14");
             try {
                 getDao().clearCurrentQuestionnaireR();
                 getDao().clearElementPassedR();
+                Log.d(TAG, "saveQuestionnaireToDatabase: 15");
             } catch (Exception e) {
+                Log.d(TAG, "saveQuestionnaireToDatabase: 16");
                 showToast(getString(R.string.warning_clear_current_quiz_error));
                 addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.ERROR, getString(R.string.warning_clear_current_quiz_error), e.toString());
             }
         }
+        Log.d(TAG, "saveQuestionnaireToDatabase: 17 " + saved);
         return saved;
     }
 
     private boolean saveElement(CurrentQuestionnaireR currentQuiz, final ElementPassedR element) {
         try {
+//            Log.d(TAG, "saveQuestionnaireToDatabase: 3.1");
             final ElementDatabaseModelR elementDatabaseModel = new ElementDatabaseModelR();
             ElementItemR elementItemR = null;
             elementItemR = getDao().getElementById(element.getRelative_id(), getCurrentUserId(), currentQuiz.getProject_id());
-
+//            Log.d(TAG, "saveQuestionnaireToDatabase: 3.2");
             Integer parentId;
             if (elementItemR != null) {
+//                Log.d(TAG, "saveQuestionnaireToDatabase: 3.2.1");
                 parentId = elementItemR.getRelative_parent_id();
-            } else return false;
+            } else {
+//                Log.d(TAG, "saveQuestionnaireToDatabase: 3.2.2");
+                return false;
+            }
+//            Log.d(TAG, "saveQuestionnaireToDatabase: 3");
             elementDatabaseModel.setToken(element.getToken());
-
+//            Log.d(TAG, "saveQuestionnaireToDatabase: 3.3");
             elementDatabaseModel.setRelative_id(element.getRelative_id());
             elementDatabaseModel.setRelative_parent_id(parentId);
             elementDatabaseModel.setItem_order(elementItemR.getElementOptionsR().getOrder());
             if (ElementType.ANSWER.equals(elementItemR.getType())) {
+//                Log.d(TAG, "saveQuestionnaireToDatabase: 3.4");
                 elementDatabaseModel.setValue(element.getValue());
                 elementDatabaseModel.setType(ElementDatabaseType.ELEMENT);
                 countElements++;
             } else {
+//                Log.d(TAG, "saveQuestionnaireToDatabase: 3.5");
                 if (ElementType.QUESTION.equals(elementItemR.getType())) {
                     countQuestions++;
                 }
@@ -827,20 +869,24 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 elementDatabaseModel.setType(ElementDatabaseType.SCREEN);
                 countScreens++;
             }
-
+//            Log.d(TAG, "saveQuestionnaireToDatabase: 3.6");
 //            LogUtils.logAction("saveElement " + element.getRelative_id());
 
             try {
                 getDao().insertElement(elementDatabaseModel);
+//                Log.d(TAG, "saveQuestionnaireToDatabase: 3.7");
             } catch (Exception e) {
+//                Log.d(TAG, "saveQuestionnaireToDatabase: 3.8");
                 addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.ERROR, getString(R.string.db_save_error), e.toString());
                 showToast(getString(R.string.db_save_error));
             }
         } catch (Exception e) {
+//            Log.d(TAG, "saveQuestionnaireToDatabase: 3.9");
             e.printStackTrace();
             showToast(getString(R.string.db_load_error));
             return false;
         }
+//        Log.d(TAG, "saveQuestionnaireToDatabase: 3.10");
         return true;
     }
 

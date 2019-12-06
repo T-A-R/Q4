@@ -73,13 +73,6 @@ public class QuotaUtils {
         for (int q = 0; q < quotas.size(); q++) {
             Integer[] sequence = quotas.get(q).getArray();
 
-//            Log.d(TAG, "sequence: " + q + " / " + sequence.length);
-//            for (int t = 0; t < sequence.length; t++) {
-//                Log.d(TAG, "sequence[" + t + "] = " + sequence[t]);
-//            }
-//            Log.d(TAG, "  ");
-//            Log.d(TAG, "============== Quota: " + q);
-
             for (int i = 0; i < tree.length; i++) {
                 for (int k = 0; k < tree[i].length; k++) {
                     if (sequence[0] == tree[i][k].getRelative_id()) {
@@ -174,19 +167,32 @@ public class QuotaUtils {
             }
             return false;
         } else {
+
+            //TODO: MULTISELECT!!!!!
+
             Log.d(TAG, "canShow: Passed size: " + passedElementsId.size());
 
             for (Integer id : passedElementsId) {
                 Log.d(TAG, "id: " + id);
             }
 
+            int endPassedElement = passedElementsId.size();
+//            for(int p = 0; p < endPassedElement; p++) {
+//                if(passedElementsId.get(p).equals(relativeId)) {
+//                    endPassedElement = p;
+//                    break;
+//                }
+//            }
 
             for (int k = 0; k < tree[0].length; k++) {
-                for (int i = 0; i < passedElementsId.size(); ) {
+                for (int i = 0; i < endPassedElement; ) {
+//                    if(tree[i][k].getRelative_id().equals(relativeId)) {
+//                        endPassedElement = i;
+//                    }
 //                    Log.d(TAG, "canShow: lines " + k + " | " + i + " : " + tree[i][k].getRelative_id() + "/" + passedElementsId.get(i));
                     if (tree[i][k].getRelative_id() == passedElementsId.get(i)) {
-//                        Log.d(TAG, "Нашел: " + tree[i][k].getElementOptionsR().getTitle());
-                        if (i == (passedElementsId.size() - 1)) { // Если последний, то
+                        Log.d(TAG, "Нашел: " + tree[i][k].getElementOptionsR().getTitle() + "/id=" +tree[i][k].getRelative_id()+"/relative="+ relativeId);
+                        if (i == (endPassedElement - 1)) { // Если последний, то
 //                            Log.d(TAG, "Он последний");
                             if (tree[i + 1][k].getRelative_id() == relativeId) { // Если следующий за последним равен Relative ID
 //                                Log.d(TAG, "Следующий элемент совпал с Relative ID");
@@ -201,17 +207,17 @@ public class QuotaUtils {
                             }
                         } else {
 //                            Log.d(TAG, "Он не последний");
-                            if (tree[i][k].getRelative_id() == relativeId) { // Если следующий за последним равен Relative ID
-//                                Log.d(TAG, "Следующий элемент совпал с Relative ID");
-                                if (tree[i][k].isEnabled()) {
-//                                    Log.d(TAG, "Он включен: ");
-                                    return true;
-                                } else {
-//                                    Log.d(TAG, "Он выключен: ");
-                                }
-                            } else {
-//                                Log.d(TAG, "Следующий элемент не совпал");
-                            }
+//                            if (tree[i][k].getRelative_id() == relativeId) { // Если следующий за последним равен Relative ID
+//////                                Log.d(TAG, "Следующий элемент совпал с Relative ID");
+////                                if (tree[i][k].isEnabled()) {
+//////                                    Log.d(TAG, "Он включен: ");
+////                                    return true;
+////                                } else {
+//////                                    Log.d(TAG, "Он выключен: ");
+////                                }
+////                            } else {
+//////                                Log.d(TAG, "Следующий элемент не совпал");
+////                            }
                         }
                         i++;
                     } else break;

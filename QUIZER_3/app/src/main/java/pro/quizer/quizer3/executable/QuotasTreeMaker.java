@@ -133,7 +133,27 @@ public class QuotasTreeMaker extends BaseModelExecutable<ElementItemR[][]> {
             }
         }
 
+        showTree(tree);
+
         return tree;
+    }
+
+    private static void showTree(ElementItemR[][] tree) {
+        if (tree != null) {
+
+            Log.d(TAG, "=============== Final Quotas ======================");
+            try {
+                for (int i = 0; i < tree[0].length; i++) {
+                    Log.d(TAG, tree[0][i].getElementOptionsR().getTitle() + " " + tree[0][i].getDone() + "/" + tree[0][i].getLimit() + "/" + tree[0][i].isEnabled() + " | " +
+                            tree[1][i].getElementOptionsR().getTitle() + " " + tree[1][i].getDone() + "/" + tree[1][i].getLimit() + "/" + tree[1][i].isEnabled() + " | " +
+                            tree[2][i].getElementOptionsR().getTitle() + " " + tree[2][i].getDone() + "/" + tree[2][i].getLimit() + "/" + tree[2][i].isEnabled() + " | "
+
+                    );
+                }
+            } catch (Exception e) {
+                Log.d(TAG, "Не тестовый проект!");
+            }
+        }
     }
 
     public static int getLocalQuotas(MainActivity activity, Integer[] sequence) {

@@ -359,9 +359,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //            if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0) {
 //                if (getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
 //                    Log.d(TAG, "initQuestion: 2");
-//                    ElementItemR[][] quotaTree = getTree();
+//            MainActivity activity = (MainActivity) getActivity();
+//                    ElementItemR[][] quotaTree = activity.getTree();
 //                    if (quotaTree != null) {
-
+//
 //                        Log.d(TAG, "=============== Final Quotas ======================");
 //                        try {
 //                            for (int i = 0; i < quotaTree[0].length; i++) {
@@ -374,6 +375,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //                        } catch (Exception e) {
 //                            Log.d(TAG, "Не тестовый проект!");
 //                        }
+//                    }
 //
 //                        quotaBlock = getQuestionnaire().getPassed_quota_block();
 

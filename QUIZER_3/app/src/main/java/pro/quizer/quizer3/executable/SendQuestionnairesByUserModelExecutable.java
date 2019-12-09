@@ -211,6 +211,23 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                         MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.WARNINGS, mBaseActivity.getString(R.string.clear_warnings_db), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.db_clear_error), e.getMessage());
                     }
 
+                    mBaseActivity.getTreeForce(null);
+//                    mBaseActivity.getTreeForce(new ICallback() {
+//                        @Override
+//                        public void onStarting() {
+//
+//                        }
+//
+//                        @Override
+//                        public void onSuccess() {
+//                            onSuccess();
+//                        }
+//
+//                        @Override
+//                        public void onError(Exception pException) {
+//                            onError(new Exception("Ошибка расчета квот. " + mBaseActivity.getString(R.string.error_108)));
+//                        }
+//                    });
                     onSuccess();
                 }
             } else {

@@ -132,6 +132,7 @@
     <string name="error_104">Ошибка 1.04</string>
     <string name="error_105">Ошибка 1.05</string>
     <string name="error_107">Ошибка: 1.07</string>
+    <string name="error_108">Ошибка: 1.08</string>
 
     <string name="error_201">Ошибка 2.01</string>
     <string name="error_202">Ошибка 2.02</string>
@@ -139,6 +140,7 @@
     <string name="error_204">Ошибка 2.04</string>
     <string name="error_205">Ошибка: 2.05</string>
     <string name="error_206">Ошибка: 2.06</string>
+    <string name="error_207">Ошибка: 2.07</string>
 
     <string name="error_301">Ошибка 3.01</string>
     <string name="error_302">Ошибка 3.02</string>

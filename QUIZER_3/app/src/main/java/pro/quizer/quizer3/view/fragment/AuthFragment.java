@@ -223,7 +223,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     private void onLoggedInWithoutUpdateLocalData(final int pUserId) {
         saveCurrentUserId(pUserId);
         rebuildElementsDatabase();
-        updateQuotas();
+//        updateQuotas();
         replaceFragment(new HomeFragment());
     }
 

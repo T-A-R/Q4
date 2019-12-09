@@ -41,6 +41,7 @@ import pro.quizer.quizer3.database.QuizerDao;
 import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.UserModelR;
+import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.QuotasTreeMaker;
 import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.User;
@@ -734,12 +735,19 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         }
     }
 
-    public ElementItemR[][] getTree() {
+    public ElementItemR[][] getTree(final ICallback pCallback) {
         Log.d(TAG, "getTree: START");
 //        ElementItemR[][] tree;
-        if(tree == null)
-            tree = new QuotasTreeMaker(getQuotasElements(), this).execute();
+        if (tree == null)
+            tree = new QuotasTreeMaker(getQuotasElements(), this, pCallback).execute();
 //            tree = QuotaUtils.getQuotaTree(getQuotasElements(), this);
+        Log.d(TAG, "getTree: DONE");
+        return tree;
+    }
+
+    public ElementItemR[][] getTreeForce(final ICallback pCallback) {
+        Log.d(TAG, "getTree: START");
+        tree = new QuotasTreeMaker(getQuotasElements(), this, pCallback).execute();
         Log.d(TAG, "getTree: DONE");
         return tree;
     }
@@ -756,22 +764,22 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             }
         }
 
-            if (elementItemRList != null) {
+        if (elementItemRList != null) {
 
-                for (ElementItemR element : elementItemRList) {
-                    if (element.getRelative_parent_id() != null && element.getRelative_parent_id() != 0) {
-                        if (getElement(element.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
-                            quotaList.add(element);
-                            for (ElementItemR answer : element.getElements()) {
-                                quotaList.add(answer);
-                            }
+            for (ElementItemR element : elementItemRList) {
+                if (element.getRelative_parent_id() != null && element.getRelative_parent_id() != 0) {
+                    if (getElement(element.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
+                        quotaList.add(element);
+                        for (ElementItemR answer : element.getElements()) {
+                            quotaList.add(answer);
                         }
                     }
                 }
             }
-
-            return quotaList;
         }
+
+        return quotaList;
+    }
 
     public ElementItemR getElement(Integer id) {
         ElementItemR elementItemR = null;

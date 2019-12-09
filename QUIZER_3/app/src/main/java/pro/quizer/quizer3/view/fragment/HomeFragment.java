@@ -120,18 +120,41 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         new SendQuestionnairesByUserModelExecutable((MainActivity) getActivity(), mUserModel, new ICallback() {
             @Override
             public void onStarting() {
+                showScreensaver(true);
                 Log.d(TAG, "SendQuestionnairesByUserModelExecutable onStarting: ");
             }
 
             @Override
             public void onSuccess() {
+//                MainActivity activity = (MainActivity) getActivity();
+//                if (activity != null)
+//                    activity.getTree(new ICallback() {
+//                        @Override
+//                        public void onStarting() {
+//
+//                        }
+//
+//                        @Override
+//                        public void onSuccess() {
+//                            Log.d(TAG, "onSuccess: Дерево квот создано");
+//                            hideScreensaver();
+//                        }
+//
+//                        @Override
+//                        public void onError(Exception pException) {
+//                            showToast("Ошибка расчета квот. " + activity.getString(R.string.error_108));
+//                            hideScreensaver();
+//                        }
+//                    });
+
+                hideScreensaver();
                 Log.d(TAG, "SendQuestionnairesByUserModelExecutable onSuccess: ");
                 initSyncInfoViews();
             }
 
             @Override
             public void onError(Exception pException) {
-
+                hideScreensaver();
             }
         }, false).execute();
 
@@ -238,7 +261,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 Log.d(TAG, "startQuestionnaire: START...");
                 if (currentQuestionnaire != null) {
                     boolean saved = true;
-                    if(currentQuestionnaire.getUser_project_id().equals(getCurrentUser().getUser_project_id())) {
+                    if (currentQuestionnaire.getUser_project_id().equals(getCurrentUser().getUser_project_id())) {
                         saved = saveQuestionnaireToDatabase(currentQuestionnaire, true);
                         Log.d(TAG, "startQuestionnaire: MID 1 " + saved);
 //                        if (!saved) {

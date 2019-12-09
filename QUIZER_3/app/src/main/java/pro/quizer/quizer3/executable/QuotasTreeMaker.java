@@ -17,14 +17,14 @@ import pro.quizer.quizer3.model.quota.QuotaModel;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class QuotasTreeMaker extends BaseModelExecutable<ElementItemR[][]> {
+public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItemR[][]> {
 
     private List<ElementItemR> quotaList;
     private MainActivity activity;
 
 
-    public QuotasTreeMaker(List<ElementItemR> quotaList, MainActivity activity) {
-        super();
+    public QuotasTreeMaker(List<ElementItemR> quotaList, MainActivity activity, final ICallback pCallback) {
+        super(pCallback);
 
         this.quotaList = quotaList;
         this.activity = activity;
@@ -32,11 +32,12 @@ public class QuotasTreeMaker extends BaseModelExecutable<ElementItemR[][]> {
 
     @Override
     public ElementItemR[][] execute() {
+        Log.d(TAG, "====== PREPARING QUOTAS TREE ======");
         return fillQuotas(getTree(quotaList), activity);
     }
 
     public static ElementItemR[][] getTree(List<ElementItemR> quotasBlock) {
-        Log.d(TAG, "initQuestion: 3");
+
         List<ElementItemR> questions = new ArrayList<>();
         int answersTotal = 1;
         int answersMultiple = 1;
@@ -74,7 +75,7 @@ public class QuotasTreeMaker extends BaseModelExecutable<ElementItemR[][]> {
         return tree;
     }
 
-    private static ElementItemR[][] fillQuotas(ElementItemR[][] tree, MainActivity activity) {
+    private ElementItemR[][] fillQuotas(ElementItemR[][] tree, MainActivity activity) {
         Log.d(TAG, "initQuestion: 4");
         Log.d(TAG, "============== fillQuotas ======================= ");
         int qn = 8;
@@ -132,7 +133,7 @@ public class QuotasTreeMaker extends BaseModelExecutable<ElementItemR[][]> {
         }
 
         showTree(tree); // Для отладки
-
+        onSuccess();
         return tree;
     }
 

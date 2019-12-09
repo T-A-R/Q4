@@ -225,11 +225,11 @@ public class ElementItemR {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (elements != null)
-            Log.d(TAG, "getElements in model: answers size= " + elements.size());
-        for(ElementItemR elementItemR : elements) {
-            Log.d(TAG, "Element: " + elementItemR.getId() + "/" + elementItemR.getRelative_id());
-        }
+//        if (elements != null)
+//            Log.d(TAG, "getElements in model: answers size= " + elements.size());
+//        for(ElementItemR elementItemR : elements) {
+//            Log.d(TAG, "Element: " + elementItemR.getId() + "/" + elementItemR.getRelative_id());
+//        }
         return elements;
     }
 

@@ -188,6 +188,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
     public void onStarting() {
         if (isAdded()) {
             showToast(getString(R.string.notification_sending));
+            showScreensaver(true);
         }
     }
 
@@ -195,6 +196,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
     public void onSuccess() {
         if (isAdded()) {
             updateData(new SyncInfoExecutable(getContext()).execute());
+            hideScreensaver();
         }
     }
 
@@ -203,6 +205,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
         if (isAdded()) {
             showToast(pException.toString());
             updateData(new SyncInfoExecutable(getContext()).execute());
+            hideScreensaver();
         }
     }
 }

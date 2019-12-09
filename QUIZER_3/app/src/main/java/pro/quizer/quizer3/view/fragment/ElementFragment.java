@@ -502,7 +502,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             Log.d(TAG, "initRecyclerView: quota answers size= " + answersList.size());
             MainActivity activity = (MainActivity) getActivity();
             adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList,
-                    getPassedQuotasBlock(), activity.getTree(), this);
+                    getPassedQuotasBlock(), activity.getTree(null), this);
             rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
             rvAnswers.setAdapter(adapterList);
         } else if (answerType.equals(ElementSubtype.SELECT)) {

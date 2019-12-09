@@ -145,7 +145,7 @@ public class QuotaUtils {
         return counter;
     }
 
-    public static boolean canShow(ElementItemR[][] tree, List<Integer> passedElementsId, int relativeId) {
+    public static boolean canShow(ElementItemR[][] tree, List<Integer> passedElementsId, int relativeId, int order) {
 //        boolean canShowElement = true;
 //        int positiveCounter = 0;
 //        int negativeCounter = 0;
@@ -157,7 +157,8 @@ public class QuotaUtils {
             return true;
         }
 
-        if (passedElementsId == null || passedElementsId.size() == 0) {
+//        if (passedElementsId == null || passedElementsId.size() == 0) {
+        if (order == 1) {
             Log.d(TAG, "canShow: Passed Elements is NULL!");
             for (int k = 0; k < tree[0].length; k++) {
                 if (tree[0][k].getRelative_id() == relativeId) {
@@ -168,15 +169,14 @@ public class QuotaUtils {
             return false;
         } else {
 
-            //TODO: MULTISELECT!!!!!
-
             Log.d(TAG, "canShow: Passed size: " + passedElementsId.size());
 
             for (Integer id : passedElementsId) {
                 Log.d(TAG, "id: " + id);
             }
 
-            int endPassedElement = passedElementsId.size();
+
+            int endPassedElement = order - 1;
 //            for(int p = 0; p < endPassedElement; p++) {
 //                if(passedElementsId.get(p).equals(relativeId)) {
 //                    endPassedElement = p;
@@ -191,22 +191,22 @@ public class QuotaUtils {
 //                    }
 //                    Log.d(TAG, "canShow: lines " + k + " | " + i + " : " + tree[i][k].getRelative_id() + "/" + passedElementsId.get(i));
                     if (tree[i][k].getRelative_id() == passedElementsId.get(i)) {
-                        Log.d(TAG, "Нашел: " + tree[i][k].getElementOptionsR().getTitle() + "/id=" +tree[i][k].getRelative_id()+"/relative="+ relativeId);
+                        Log.d(TAG, "Нашел: " + tree[i][k].getElementOptionsR().getTitle() + "/id=" + tree[i][k].getRelative_id() + "/relative=" + relativeId);
                         if (i == (endPassedElement - 1)) { // Если последний, то
-//                            Log.d(TAG, "Он последний");
+                            Log.d(TAG, "Он последний");
                             if (tree[i + 1][k].getRelative_id() == relativeId) { // Если следующий за последним равен Relative ID
-//                                Log.d(TAG, "Следующий элемент совпал с Relative ID");
+                                Log.d(TAG, "Следующий элемент совпал с Relative ID");
                                 if (tree[i + 1][k].isEnabled()) {
-//                                    Log.d(TAG, "Он включен: ");
+                                    Log.d(TAG, "Он включен: ");
                                     return true;
                                 } else {
-//                                    Log.d(TAG, "Он выключен: ");
+                                    Log.d(TAG, "Он выключен: ");
                                 }
                             } else {
-//                                Log.d(TAG, "Следующий элемент не совпал");
+                                Log.d(TAG, "Следующий элемент не совпал");
                             }
                         } else {
-//                            Log.d(TAG, "Он не последний");
+                            Log.d(TAG, "Он не последний");
 //                            if (tree[i][k].getRelative_id() == relativeId) { // Если следующий за последним равен Relative ID
 //////                                Log.d(TAG, "Следующий элемент совпал с Relative ID");
 ////                                if (tree[i][k].isEnabled()) {

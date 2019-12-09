@@ -3,9 +3,7 @@ package pro.quizer.quizer3.executable;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
@@ -133,7 +131,7 @@ public class QuotasTreeMaker extends BaseModelExecutable<ElementItemR[][]> {
             }
         }
 
-        showTree(tree);
+        showTree(tree); // Для отладки
 
         return tree;
     }

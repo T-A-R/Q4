@@ -224,7 +224,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 openAnswerCont.setVisibility(View.VISIBLE);
             }
 
-            if(!QuotaUtils.canShow(quotaTree, passedQuotaBlock, item.getRelative_id())) {
+            if (!QuotaUtils.canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder())) {
                 answerTitle.setTextColor(Color.parseColor("#AAAAAA"));
                 item.setEnabled(false);
             }
@@ -238,14 +238,14 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             }
 
             Log.d(TAG, "XXXXX ENABLED: " + item.getElementOptionsR().getTitle() + " : " +
-                    QuotaUtils.canShow(quotaTree, passedQuotaBlock, item.getRelative_id()));
+                    QuotaUtils.canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder()));
 
 //            if (!QuotaUtils.canShow(quotaTree, passedQuotaBlock, item.getRelative_id())) {
 //                showDisableToLog(item.getElementOptionsR().getTitle());
 //            }
 
 //            setEnabled(item, position);
-                setChecked(item, position);
+            setChecked(item, position);
 
         }
 

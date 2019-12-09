@@ -192,6 +192,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                         @Override
                         public void onSuccess() {
                             Toast.makeText(mBaseActivity, R.string.quotas_renew, Toast.LENGTH_SHORT).show();
+//                            mBaseActivity.getTree();
                             MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.quotas_renew), null);
                         }
 

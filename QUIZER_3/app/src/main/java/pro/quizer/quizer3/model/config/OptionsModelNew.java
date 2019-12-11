@@ -7,10 +7,13 @@ import android.arch.persistence.room.TypeConverters;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
+import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.database.ElementStatusImageRConverter;
 import pro.quizer.quizer3.database.models.ElementStatusImageR;
 import pro.quizer.quizer3.model.OptionsOpenType;
+import pro.quizer.quizer3.utils.ConditionUtils;
 import pro.quizer.quizer3.utils.StringUtils;
 
 import static pro.quizer.quizer3.model.OptionsOpenType.CHECKBOX;
@@ -189,6 +192,10 @@ public class OptionsModelNew implements Serializable {
 //    public boolean isMedia() {
 //        return is_media;
 //    }
+
+    public String getTitle(final MainActivity pBaseActivity, final HashMap<Integer, ElementModelNew> pMap) {
+        return ConditionUtils.formatTitle(pBaseActivity, title, pMap);
+    }
 
     public String getTitle() {
         return title;

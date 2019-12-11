@@ -790,4 +790,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         }
         return elementItemR;
     }
+
+    public void setTree(ElementItemR[][] tree) {
+        this.tree = tree;
+    }
 }

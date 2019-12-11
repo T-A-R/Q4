@@ -7,10 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 
 //import pro.quizer.quizer3.activity.BaseActivity;
+import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.model.OptionsOpenType;
 import pro.quizer.quizer3.model.quota.QuotaModel;
 //import pro.quizer.quizer3.utils.ConditionUtils;
 //import pro.quizer.quizer3.utils.QuotasUtils;
+import pro.quizer.quizer3.utils.ConditionUtils;
 import pro.quizer.quizer3.utils.StringUtils;
 
 import static pro.quizer.quizer3.model.OptionsOpenType.CHECKBOX;
@@ -111,9 +113,9 @@ public class OptionsModel implements Serializable {
         return pre_condition;
     }
 
-//    public String getTitle(final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> pMap) {
-//        return ConditionUtils.formatTitle(pBaseActivity, title, pMap);
-//    }
+    public String getTitle(final MainActivity pBaseActivity, final HashMap<Integer, ElementModelNew> pMap) {
+        return ConditionUtils.formatTitle(pBaseActivity, title, pMap);
+    }
 
 
     public String getTitle() {

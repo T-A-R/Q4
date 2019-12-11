@@ -227,6 +227,11 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             if (!QuotaUtils.canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder())) {
                 answerTitle.setTextColor(Color.parseColor("#AAAAAA"));
                 item.setEnabled(false);
+                Log.d(TAG, "ELEMENT DISABLED: " + item.getElementOptionsR().getTitle());
+            } else {
+                answerTitle.setTextColor(Color.parseColor("#000000"));
+                item.setEnabled(true);
+                Log.d(TAG, "ELEMENT ENABLED: " + item.getElementOptionsR().getTitle());
             }
 
             if (item.isEnabled()) {
@@ -237,8 +242,8 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 //                Log.d(TAG, "bind disable: " + position);
             }
 
-            Log.d(TAG, "XXXXX ENABLED: " + item.getElementOptionsR().getTitle() + " : " +
-                    QuotaUtils.canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder()));
+//            Log.d(TAG, "XXXXX ENABLED: " + item.getElementOptionsR().getTitle() + " : " +
+//                    QuotaUtils.canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder()));
 
 //            if (!QuotaUtils.canShow(quotaTree, passedQuotaBlock, item.getRelative_id())) {
 //                showDisableToLog(item.getElementOptionsR().getTitle());

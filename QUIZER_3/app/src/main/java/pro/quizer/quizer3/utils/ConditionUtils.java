@@ -184,8 +184,6 @@ public final class ConditionUtils {
             e.printStackTrace();
         }
 
-        Log.d(TAG, "!@!@!@!@!@!@ formatCondition 1: " + elementsPassed.size());
-
         ElementPassedR elementItemR = null;
         if (elementsPassed != null && elementsPassed.size() > 0) {
             for (ElementPassedR elementPassedR : elementsPassed) {
@@ -194,9 +192,6 @@ public final class ConditionUtils {
                 }
             }
         }
-
-
-        Log.d(TAG, "!@!@!@!@!@!@ formatCondition 2: " + index + " " + elementItemR);
 
         final String replaceString = getReplaceString(field, element, elementItemR, pBaseActivity, pMap);
 

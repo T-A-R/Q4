@@ -265,7 +265,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
     }
 
     public void showQuotasFragment() {
-        addLog("android", Constants.LogType.BUTTON, Constants.LogObject.LOG, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.VIEW_START));
+        addLog(getCurrentUser().getLogin(), Constants.LogType.BUTTON, Constants.LogObject.LOG, getString(R.string.PRESS_BUTTON), Constants.LogResult.PRESSED, getString(R.string.VIEW_QUOTAS_TITLE));
         showFragmentWithBackstack(QuotasFragment.newInstance());
     }
 

@@ -22,7 +22,9 @@ import android.widget.Toast;
 import android.widget.Spinner;
 
 import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +33,7 @@ import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.ListQuestionAdapter;
 import pro.quizer.quizer3.adapter.TableQuestionAdapter;
+import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementOptionsR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
@@ -42,7 +45,9 @@ import pro.quizer.quizer3.model.quota.QuotaUtils;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.utils.ConditionUtils;
 import pro.quizer.quizer3.utils.DateUtils;
+import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
+import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
@@ -439,6 +444,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         tvTitleDesc2.setText(parentElement.getElementOptionsR().getDescription());
                     }
 
+                    showContent(parentElement, titleImagesCont1);
+
                     if (parentElement.getRelative_parent_id() != null) {
                         ElementItemR parentElement2 = null;
                         try {
@@ -456,6 +463,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                     tvTitleDesc1.setVisibility(View.VISIBLE);
                                     tvTitleDesc1.setText(parentElement2.getElementOptionsR().getDescription());
                                 }
+
+                                showContent(parentElement2, titleImagesCont2);
                             }
                         }
 
@@ -464,9 +473,55 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             }
         }
 
+        showContent(currentElement, questionImagesCont);
+
         if (getCurrentUser().getConfigR().isPhotoQuestionnaire() && currentElement.getElementOptionsR().isTake_photo()) {
             shotPicture(getLoginAdmin(), getQuestionnaire().getToken(), currentElement.getRelative_id(), getCurrentUserId(), getQuestionnaire().getProject_id(), getCurrentUser().getLogin());
         }
+    }
+
+    private void showContent(ElementItemR element, View cont) {
+        final List<ElementContentsR> contents = element.getElementContentsR();
+
+        if (contents != null && !contents.isEmpty()) {
+            String data1 = null;
+            String data2 = null;
+            String data3 = null;
+            data1 = contents.get(0).getData();
+            if (contents.size() > 1)
+                data2 = contents.get(1).getData();
+            if (contents.size() > 2)
+                data3 = contents.get(2).getData();
+
+            if (cont.equals(questionImagesCont)) {
+                if (data1 != null) showPic(questionImagesCont, questionImage1, data1);
+                if (data2 != null) showPic(questionImagesCont, questionImage2, data2);
+                if (data3 != null) showPic(questionImagesCont, questionImage3, data3);
+            } else if (cont.equals(titleImagesCont1)) {
+                if (data1 != null) showPic(titleImagesCont1, title1Image1, data1);
+                if (data2 != null) showPic(titleImagesCont1, title1Image2, data2);
+                if (data3 != null) showPic(titleImagesCont1, title1Image3, data3);
+            } else if (cont.equals(titleImagesCont2)) {
+                if (data1 != null) showPic(titleImagesCont2, title2Image1, data1);
+                if (data2 != null) showPic(titleImagesCont2, title2Image2, data2);
+                if (data3 != null) showPic(titleImagesCont2, title2Image3, data3);
+            }
+        }
+    }
+
+    private void showPic(View cont, ImageView view, String data) {
+        final String filePhotooPath = getFilePath(data);
+
+        if (StringUtils.isEmpty(filePhotooPath)) {
+            return;
+        }
+
+        cont.setVisibility(View.VISIBLE);
+        view.setVisibility(View.VISIBLE);
+
+        Picasso.with(getActivity())
+                .load(new File(filePhotooPath))
+                .into(view);
     }
 
     private void initRecyclerView() {
@@ -930,7 +985,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             }
             spinnerSelection = position;
         }
-
     }
 
     @Override
@@ -957,7 +1011,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     @Override
     public void onAnswerClick(int row, int column) {
         if (isRestored) {
-//            int id = currentElement.getId();
             try {
                 isRestored = false;
                 int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
@@ -977,33 +1030,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             UiUtils.hideKeyboard(getContext(), getView());
         }
     };
-
-
-//    @Override
-//    public void onSaveInstanceState(@NonNull Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        Parcelable listState = Objects.requireNonNull(rvAnswers.getLayoutManager()).onSaveInstanceState();
-//        outState.putParcelable(KEY_RECYCLER_STATE, listState);
-//        outState.putSerializable("LIST", (ArrayList<AnswerState>) adapterList.getAnswers());
-//        outState.putLong("startTime", startTime);
-//        outState.putInt("startElementId", startElementId);
-//        Log.d(TAG, "onSaveInstanceState: " + nextElementId);
-//        if (nextElementId != null)
-//            outState.putInt("nextElementId", nextElementId);
-//        outState.putInt("prevElementId", prevElementId);
-//        outState.putString("answerType", answerType);
-//        outState.putBoolean("isTitle1Hided", isTitle1Hided);
-//        outState.putBoolean("isTitle2Hided", isTitle2Hided);
-//        outState.putInt("spinnerSelection", spinnerSelection);
-//        outState.putInt("lastSelectedPosition", adapterList.getLastSelectedPosition());
-//    }
-//
-//    @Override
-//    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-//        super.onViewStateRestored(savedInstanceState);
-//        restoreViews(savedInstanceState);
-//        restoreData(savedInstanceState);
-//    }
 
     public void restoreViews(Bundle bundle) {
         if (bundle != null) {
@@ -1029,10 +1055,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     public void loadResumedData() {
-        List<PrevElementsR> prevList = getQuestionnaire().getPrev_element_id();
-        if (prevList != null && prevList.size() > 0) {
-            PrevElementsR lastPassedElement = prevList.get(prevList.size() - 1);
-            startElementId = lastPassedElement.getNextId();
+        try {
+            List<PrevElementsR> prevList = getQuestionnaire().getPrev_element_id();
+            if (prevList != null && prevList.size() > 0) {
+                PrevElementsR lastPassedElement = prevList.get(prevList.size() - 1);
+                startElementId = lastPassedElement.getNextId();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -1164,6 +1194,19 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.stop_audio_recording), Constants.LogResult.ERROR, getString(R.string.stop_audio_recording_error), e.toString());
             e.printStackTrace();
         }
+    }
+
+    private String getFilePath(final String data) {
+        final String path = FileUtils.getFilesStoragePath((MainActivity) getActivity());
+        final String url = data;
+
+        if (StringUtils.isEmpty(url)) {
+            return Constants.Strings.EMPTY;
+        }
+
+        final String fileName = FileUtils.getFileName(url);
+
+        return path + FileUtils.FOLDER_DIVIDER + fileName;
     }
 }
 

@@ -22,8 +22,8 @@ public class AppLogsR {
     @ColumnInfo(name = "appversion")
     private String appversion;
 
-    @ColumnInfo(name = "android")
-    private String android;
+    @ColumnInfo(name = "platform")
+    private String platform;
 
     @ColumnInfo(name = "date")
     private String date;
@@ -43,8 +43,8 @@ public class AppLogsR {
     @ColumnInfo(name = "description")
     private String description;
 
-    @ColumnInfo(name = "data")
-    private String data;
+    @ColumnInfo(name = "info")
+    private String info;
 
     @ColumnInfo(name = "status")
     private String status;
@@ -53,33 +53,33 @@ public class AppLogsR {
         this.status = Constants.LogStatus.NOT_SENT;
     }
 
-    public AppLogsR(String login, String device, String appversion, String android, String date, String type, String object, String action, String result, String description) {
+    public AppLogsR(String login, String device, String appversion, String platform, String date, String type, String object, String action, String result, String description) {
         this.login = login;
         this.device = device;
         this.appversion = appversion;
-        this.android = android;
+        this.platform = platform;
         this.date = date;
         this.type = type;
         this.object = object;
         this.action = action;
         this.result = result;
         this.description = description;
-        this.data = null;
+        this.info = null;
         this.status = Constants.LogStatus.NOT_SENT;
     }
 
-    public AppLogsR(String login, String device, String appversion, String android, String date, String type, String object, String action, String result, String description, String data) {
+    public AppLogsR(String login, String device, String appversion, String platform, String date, String type, String object, String action, String result, String description, String info) {
         this.login = login;
         this.device = device;
         this.appversion = appversion;
-        this.android = android;
+        this.platform = platform;
         this.date = date;
         this.type = type;
         this.object = object;
         this.action = action;
         this.result = result;
         this.description = description;
-        this.data = data;
+        this.info = info;
         this.status = Constants.LogStatus.NOT_SENT;
     }
 
@@ -115,12 +115,12 @@ public class AppLogsR {
         this.appversion = appversion;
     }
 
-    public String getAndroid() {
-        return android;
+    public String getPlatform() {
+        return platform;
     }
 
-    public void setAndroid(String android) {
-        this.android = android;
+    public void setPlatform(String platform) {
+        this.platform = platform;
     }
 
     public String getDate() {
@@ -171,12 +171,12 @@ public class AppLogsR {
         this.description = description;
     }
 
-    public String getData() {
-        return data;
+    public String getInfo() {
+        return info;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setInfo(String info) {
+        this.info = info;
     }
 
     public String getStatus() {

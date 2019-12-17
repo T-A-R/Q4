@@ -104,7 +104,6 @@ public final class Constants {
         String PRESSED = "pressed";
         String ERROR = "error";
         String ATTEMPT = "attempt";
-
     }
 
     public interface SmsStatus {

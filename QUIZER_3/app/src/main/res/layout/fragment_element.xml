@@ -144,28 +144,34 @@
                     android:orientation="horizontal"
                     android:visibility="gone">
 
-                    <ImageView
+                    <com.zolad.zoominimageview.ZoomInImageView
                         android:id="@+id/title_1_image_1"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/_80sdp"
+                        android:scaleType="centerCrop"
                         android:adjustViewBounds="true"
                         android:src="@drawable/q_icon"
+                        android:layout_weight="1"
                         android:visibility="visible" />
 
-                    <ImageView
+                    <com.zolad.zoominimageview.ZoomInImageView
                         android:id="@+id/title_1_image_2"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/_80sdp"
+                        android:scaleType="centerCrop"
                         android:adjustViewBounds="true"
                         android:src="@drawable/q_icon"
+                        android:layout_weight="1"
                         android:visibility="visible" />
 
-                    <ImageView
+                    <com.zolad.zoominimageview.ZoomInImageView
                         android:id="@+id/title_1_image_3"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/_80sdp"
+                        android:scaleType="centerCrop"
                         android:adjustViewBounds="true"
                         android:src="@drawable/q_icon"
+                        android:layout_weight="1"
                         android:visibility="visible" />
 
                 </LinearLayout>
@@ -233,28 +239,34 @@
                     android:orientation="horizontal"
                     android:visibility="gone">
 
-                    <ImageView
+                    <com.zolad.zoominimageview.ZoomInImageView
                         android:id="@+id/title_2_image_1"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/_80sdp"
+                        android:scaleType="centerCrop"
                         android:adjustViewBounds="true"
                         android:src="@drawable/q_icon"
+                        android:layout_weight="1"
                         android:visibility="visible" />
 
-                    <ImageView
+                    <com.zolad.zoominimageview.ZoomInImageView
                         android:id="@+id/title_2_image_2"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/_80sdp"
+                        android:scaleType="centerCrop"
                         android:adjustViewBounds="true"
                         android:src="@drawable/q_icon"
+                        android:layout_weight="1"
                         android:visibility="visible" />
 
-                    <ImageView
+                    <com.zolad.zoominimageview.ZoomInImageView
                         android:id="@+id/title_2_image_3"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/_80sdp"
+                        android:scaleType="centerCrop"
                         android:adjustViewBounds="true"
                         android:src="@drawable/q_icon"
+                        android:layout_weight="1"
                         android:visibility="visible" />
 
                 </LinearLayout>
@@ -295,28 +307,34 @@
                 android:orientation="horizontal"
                 android:visibility="gone">
 
-                <ImageView
+                <com.zolad.zoominimageview.ZoomInImageView
                     android:id="@+id/question_image_1"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/_80sdp"
+                    android:scaleType="centerCrop"
                     android:adjustViewBounds="true"
                     android:src="@drawable/q_icon"
+                    android:layout_weight="1"
                     android:visibility="visible" />
 
-                <ImageView
+                <com.zolad.zoominimageview.ZoomInImageView
                     android:id="@+id/question_image_2"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/_80sdp"
+                    android:scaleType="centerCrop"
                     android:adjustViewBounds="true"
                     android:src="@drawable/q_icon"
+                    android:layout_weight="1"
                     android:visibility="visible" />
 
-                <ImageView
+                <com.zolad.zoominimageview.ZoomInImageView
                     android:id="@+id/question_image_3"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/_80sdp"
+                    android:scaleType="centerCrop"
                     android:adjustViewBounds="true"
                     android:src="@drawable/q_icon"
+                    android:layout_weight="1"
                     android:visibility="visible" />
 
             </LinearLayout>

@@ -18,7 +18,7 @@ import static pro.quizer.quizer3.MainActivity.TAG;
 public class ElementContentsRConverter {
     @TypeConverter
     public static List<ElementContentsR> fromSting(String value) {
-        Type listType = new TypeToken<ArrayList<String>>() {}.getType();
+        Type listType = new TypeToken<ArrayList<ElementContentsR>>() {}.getType();
 //        final GsonBuilder gsonBuilder = new GsonBuilder();
 //        ElementContentsR elementContentsR = null;
 //
@@ -29,6 +29,7 @@ public class ElementContentsRConverter {
 //        }
 //
 //        return elementContentsR;
+//        Log.d(TAG, "???????????????: " + value);
         return new Gson().fromJson(value, listType);
     }
     @TypeConverter

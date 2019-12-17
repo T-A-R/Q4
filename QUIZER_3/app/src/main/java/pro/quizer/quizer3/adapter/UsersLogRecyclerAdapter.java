@@ -73,10 +73,10 @@ public class UsersLogRecyclerAdapter extends RecyclerView.Adapter<UsersLogRecycl
             mObject.setText("Объект: " + item.getObject());
             mResult.setText("Результат: " + item.getResult());
             mDesc.setText("Описание: " + item.getDescription());
-            if(item.getData() != null)
+            if(item.getInfo() != null)
             {
                 mData.setVisibility(View.VISIBLE);
-                mData.setText("Запрос: " + StringUtils.cutString(item.getData(), 500) + "...");
+                mData.setText("Запрос: " + StringUtils.cutString(item.getInfo(), 500) + "...");
             } else {
                 mData.setVisibility(View.GONE);
             }

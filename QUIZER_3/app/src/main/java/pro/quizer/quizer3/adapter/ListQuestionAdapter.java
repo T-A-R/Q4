@@ -22,15 +22,20 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.model.quota.QuotaUtils;
 import pro.quizer.quizer3.model.state.AnswerState;
+import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
+import pro.quizer.quizer3.utils.StringUtils;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.model.OptionsOpenType.CHECKBOX;
@@ -41,6 +46,8 @@ import static pro.quizer.quizer3.model.OptionsOpenType.TIME;
 
 import android.util.Log;
 import android.widget.TimePicker;
+
+import com.squareup.picasso.Picasso;
 
 public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapter.ListObjectViewHolder> {
 
@@ -175,8 +182,12 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         public EditText answerEditText;
         ImageView button;
         ImageView editButton;
+        ImageView image1;
+        ImageView image2;
+        ImageView image3;
         RelativeLayout openQuestionCont;
         RelativeLayout openAnswerCont;
+        LinearLayout contentCont;
         LinearLayout cont;
         boolean isChecked = false;
 
@@ -191,9 +202,13 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             answerEditText = (EditText) itemView.findViewById(R.id.edit_answer);
             button = (ImageView) itemView.findViewById(R.id.radio_button);
             editButton = (ImageView) itemView.findViewById(R.id.edit_button);
+            image1 = (ImageView) itemView.findViewById(R.id.answer_image_1);
+            image2 = (ImageView) itemView.findViewById(R.id.answer_image_2);
+            image3 = (ImageView) itemView.findViewById(R.id.answer_image_3);
             openQuestionCont = (RelativeLayout) itemView.findViewById(R.id.open_question);
             openAnswerCont = (RelativeLayout) itemView.findViewById(R.id.open_cont);
             cont = (LinearLayout) itemView.findViewById(R.id.answer_cont);
+            contentCont = (LinearLayout) itemView.findViewById(R.id.answer_images_cont);
 
             answerTitle.setTypeface(Fonts.getFuturaPtBook());
             answerDesc.setTypeface(Fonts.getFuturaPtBook());
@@ -217,6 +232,8 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             } else {
                 answerDesc.setVisibility(View.GONE);
             }
+
+            showContent(item, contentCont);
 
             if (item.getElementOptionsR().getOpen_type().equals(CHECKBOX)) {
                 openAnswerCont.setVisibility(View.GONE);
@@ -252,6 +269,61 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 //            setEnabled(item, position);
             setChecked(item, position);
 
+        }
+
+        private void showContent(ElementItemR element, View cont) {
+            final List<ElementContentsR> contents = element.getElementContentsR();
+
+            if (contents != null && !contents.isEmpty()) {
+                String data1 = null;
+                String data2 = null;
+                String data3 = null;
+                data1 = contents.get(0).getData();
+                if (contents.size() > 1)
+                    data2 = contents.get(1).getData();
+                if (contents.size() > 2)
+                    data3 = contents.get(2).getData();
+
+                    if (data1 != null) showPic(contentCont, image1, data1);
+                    if (data2 != null) showPic(contentCont, image2, data2);
+                    if (data3 != null) showPic(contentCont, image3, data3);
+
+            } else {
+                contentCont.setVisibility(View.GONE);
+                image1.setVisibility(View.GONE);
+                image2.setVisibility(View.GONE);
+                image3.setVisibility(View.GONE);
+            }
+        }
+
+        private void showPic(View cont, ImageView view, String data) {
+
+            final String filePhotooPath = getFilePath(data);
+
+            Log.d(TAG, "initViews: PICTURES: " + data + " " + filePhotooPath);
+            if (StringUtils.isEmpty(filePhotooPath)) {
+                return;
+            }
+
+            cont.setVisibility(View.VISIBLE);
+            view.setVisibility(View.VISIBLE);
+
+            Picasso.with(mActivity)
+                    .load(new File(filePhotooPath))
+                    .into(view);
+        }
+
+        private String getFilePath(final String data) {
+            final String path = FileUtils.getFilesStoragePath(mActivity);
+            final String url = data;
+
+            if (StringUtils.isEmpty(url)) {
+                return Constants.Strings.EMPTY;
+            }
+
+            final String fileName = FileUtils.getFileName(url);
+
+            return path + FileUtils.FOLDER_DIVIDER + fileName;
         }
 
         public void setChecked(final ElementItemR item, int position) {

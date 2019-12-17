@@ -199,7 +199,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         appLogsR.setLogin(login);
         appLogsR.setDevice(DeviceUtils.getDeviceInfo());
         appLogsR.setAppversion(DeviceUtils.getAppVersion());
-        appLogsR.setAndroid(DeviceUtils.getAndroidVersion());
+        appLogsR.setPlatform(DeviceUtils.getAndroidVersion());
         appLogsR.setDate(String.valueOf(DateUtils.getCurrentTimeMillis()));
         appLogsR.setType(type);
         appLogsR.setObject(object);
@@ -207,7 +207,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         appLogsR.setResult(result);
         appLogsR.setDescription(desc);
         if (data != null)
-            appLogsR.setData(data.substring(0, Math.min(data.length(), 5000)));
+            appLogsR.setInfo(data.substring(0, Math.min(data.length(), 5000)));
 
         try {
             getDao().insertAppLogsR(appLogsR);

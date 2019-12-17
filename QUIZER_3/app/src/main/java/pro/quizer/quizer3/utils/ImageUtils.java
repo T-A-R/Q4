@@ -168,14 +168,15 @@ public class ImageUtils {
             @Override
             protected Bitmap doInBackground(Void... voids) {
                 System.gc();
-                try {
-                    Bitmap bitmap = Picasso.get().load(url).get();
-//                    bitmap = ServerAPI.cropBmpToServer(bitmap);
-                    return bitmap;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
+//                try {
+//                    Bitmap bitmap = Picasso.get().load(url).get();
+////                    bitmap = ServerAPI.cropBmpToServer(bitmap);
+//                    return bitmap;
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    return null;
+//                }
+                return null;
             }
 
             @Override

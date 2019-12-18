@@ -11,6 +11,7 @@ import pro.quizer.quizerexit.database.model.ActivationModelR;
 import pro.quizer.quizerexit.database.model.AppLogsR;
 import pro.quizer.quizerexit.database.model.CrashLogs;
 import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
+import pro.quizer.quizerexit.database.model.OptionsR;
 import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.database.model.SmsItemR;
 import pro.quizer.quizerexit.database.model.UserModelR;
@@ -179,4 +180,12 @@ public interface QuizerDao {
     @Query("SELECT * FROM WarningsR WHERE warning = :warning AND warningStatus = :status")
     List<WarningsR> getWarningsByStatus(String warning, String status);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertOption(OptionsR option);
+
+    @Query("SELECT * FROM OptionsR WHERE name = :name LIMIT 1")
+    OptionsR getOption(String name);
+
+    @Query("UPDATE OptionsR SET data = :data WHERE name = :name")
+    void setOption(String name, String data);
 }

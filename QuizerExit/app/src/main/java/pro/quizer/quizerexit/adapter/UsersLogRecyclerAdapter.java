@@ -5,14 +5,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.List;
 
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.database.model.AppLogsR;
-import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.utils.DateUtils;
 import pro.quizer.quizerexit.utils.StringUtils;
 
@@ -75,10 +73,10 @@ public class UsersLogRecyclerAdapter extends RecyclerView.Adapter<UsersLogRecycl
             mObject.setText("Объект: " + item.getObject());
             mResult.setText("Результат: " + item.getResult());
             mDesc.setText("Описание: " + item.getDescription());
-            if(item.getData() != null)
+            if(item.getInfo() != null)
             {
                 mData.setVisibility(View.VISIBLE);
-                mData.setText("Запрос: " + StringUtils.cutString(item.getData(), 500) + "...");
+                mData.setText("Запрос: " + StringUtils.cutString(item.getInfo(), 500) + "...");
             } else {
                 mData.setVisibility(View.GONE);
             }

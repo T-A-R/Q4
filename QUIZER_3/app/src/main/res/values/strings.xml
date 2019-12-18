@@ -342,5 +342,6 @@
     <string name="stop_audio_recording">Завершение записи аудио</string>
     <string name="stop_audio_recording_error">Ошибка завершения записи аудио</string>
     <string name="stop_audio_recording_attempt">Попытка завершения записи аудио</string>
+    <string name="load_crash_log_from_db">Чтение краш-лога из базы данных</string>
 
 </resources>

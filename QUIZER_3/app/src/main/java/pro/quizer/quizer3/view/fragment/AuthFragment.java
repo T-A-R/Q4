@@ -443,7 +443,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             return;
         }
 
-        //TODO Отправка крашей.
 //        sendCrashLogs();
 
         String responseJson;

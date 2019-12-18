@@ -15,6 +15,7 @@ import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
+import pro.quizer.quizer3.database.models.OptionsR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.SmsItemR;
@@ -256,4 +257,13 @@ public interface QuizerDao {
 
     @Query("DELETE FROM CurrentQuestionnaireR")
     void clearCurrentQuestionnaireR();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertOption(OptionsR option);
+
+    @Query("SELECT * FROM OptionsR WHERE name = :name LIMIT 1")
+    OptionsR getOption(String name);
+
+    @Query("UPDATE OptionsR SET data = :data WHERE name = :name")
+    void setOption(String name, String data);
 }

@@ -132,6 +132,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
 
         initViews();
+        sendCrashLogs();
         makeQuotaTree();
         new SendQuestionnairesByUserModelExecutable((MainActivity) getActivity(), mUserModel, new ICallback() {
             @Override
@@ -359,6 +360,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     try {
                         Log.d(TAG, "startQuestionnaire: insertCurrentQuestionnaireR() completed.");
                         startRecording();
+
+                        getDao().updateQuestionnaireStart(true, getCurrentUserId());
+                        getDao().setOption(Constants.OptionName.QUIZ_STARTED, "true");
                         hideScreensaver();
                         replaceFragment(new ElementFragment());
                         return true;

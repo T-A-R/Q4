@@ -38,6 +38,7 @@ import java.util.List;
 import pro.quizer.quizer3.API.QuizerAPI;
 import pro.quizer.quizer3.API.models.request.AuthRequestModel;
 import pro.quizer.quizer3.API.models.request.ConfigRequestModel;
+import pro.quizer.quizer3.API.models.request.CrashRequestModel;
 import pro.quizer.quizer3.API.models.response.AuthResponseModel;
 import pro.quizer.quizer3.API.models.response.ConfigResponseModel;
 import pro.quizer.quizer3.Constants;
@@ -47,6 +48,7 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.QuizerDao;
 import pro.quizer.quizer3.database.models.ActivationModelR;
 import pro.quizer.quizer3.database.models.AppLogsR;
+import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
@@ -54,6 +56,7 @@ import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementOptionsR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.ElementStatusImageR;
+import pro.quizer.quizer3.database.models.OptionsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.database.models.WarningsR;
@@ -67,6 +70,7 @@ import pro.quizer.quizer3.model.config.ElementModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.model.config.OptionsModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
+import pro.quizer.quizer3.model.logs.Crash;
 import pro.quizer.quizer3.model.quota.QuotaUtils;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
@@ -313,8 +317,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
         try {
             addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.SENT, getString(R.string.save_user_to_db), "login: " + userModelR.getLogin());
-
             getDao().insertUser(userModelR);
+            getDao().insertOption(new OptionsR(Constants.OptionName.QUIZ_STARTED,"false"));
         } catch (Exception e) {
             showToast(getString(R.string.db_save_error));
             addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.ERROR, getString(R.string.save_user_to_db_error), e.getMessage());
@@ -831,6 +835,12 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             }
         }
         Log.d(TAG, "saveQuestionnaireToDatabase: 17 " + saved);
+
+        try {
+            getDao().updateQuestionnaireStart(false, getCurrentUserId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return saved;
     }
 
@@ -980,5 +990,55 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 }
             }
         }, 1000);
+    }
+
+    public void sendCrashLogs() {
+        Log.d(TAG, "Crash logs: " + getDao().getCrashLogs().size());
+        List<Crash> crashList = new ArrayList<>();
+        OptionsR optionsR = null;
+        boolean wasStarted = false;
+        List<CrashLogs> crashLogsList = null;
+        try {
+            crashLogsList = getDao().getCrashLogs();
+
+            wasStarted = getCurrentUser().isQuestionnaire_opened();
+        } catch (Exception e) {
+            e.printStackTrace();
+            addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.LOG, getString(R.string.load_crash_log_from_db), Constants.LogResult.ERROR, getString(R.string.db_load_error), e.getMessage());
+        }
+//        if ((crashLogsList != null && crashLogsList.size() > 0) || (optionsR != null && optionsR.getData().equals("true"))) {
+        if (crashLogsList != null && crashLogsList.size() > 0) {
+
+            if (crashLogsList != null && crashLogsList.size() > 0) {
+                for (CrashLogs crash : crashLogsList) {
+                    crashList.add(new Crash(getCurrentUser().getLogin(), crash.getLog(), crash.isFrom_questionnaire()));
+                }
+            }
+
+//            if(optionsR != null && optionsR.getData().equals("true")) {
+//                crashList.add(new Crash(getCurrentUser().getLogin(),"Приложение зависло во время анкеты. Лога нет", true));
+//            }
+
+            Log.d(TAG, "Sending Crash Logs: " + crashList.size());
+            CrashRequestModel crashRequestModel = new CrashRequestModel(getLoginAdmin(), crashList);
+            Gson gson = new Gson();
+            String json = gson.toJson(crashRequestModel);
+            QuizerAPI.sendCrash(getServer(), json, new QuizerAPI.SendCrashCallback() {
+                @Override
+                public void onSendCrash(boolean ok, String message) {
+                    if (ok) {
+                        try {
+                            getDao().clearCrashLogs();
+                            Log.d(TAG, "Crash Logs Cleared");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.d(TAG, "Crash Logs Clear Error: " + e);
+                        }
+                    } else {
+                        Log.d(TAG, "Crash Logs Not Sent: " + message);
+                    }
+                }
+            });
+        }
     }
 }

@@ -1171,6 +1171,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     public boolean saveQuestionnaire() {
         stopRecording();
         if (saveQuestionnaireToDatabase(getQuestionnaire(), false)) {
+            try {
+                getDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             showToast("Анкета сохранена");
             replaceFragment(new HomeFragment());
         } else {

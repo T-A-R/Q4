@@ -25,7 +25,7 @@ public class CoreApplication extends Application {
 
     @Override
     public void onCreate() {
-//        Thread.setDefaultUncaughtExceptionHandler(new TryMe());
+        Thread.setDefaultUncaughtExceptionHandler(new CrashLogSender());
         super.onCreate();
         ActiveAndroid.initialize(this);
 

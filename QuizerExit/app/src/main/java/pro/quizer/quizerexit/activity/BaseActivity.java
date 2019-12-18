@@ -1099,22 +1099,28 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         boolean wasStarted = false;
         List<CrashLogs> crashLogsList = null;
         try {
-            crashLogsList = getDao().getCrashLogs();
             optionsR = getDao().getOption(Constants.OptionName.QUIZ_STARTED);
-            wasStarted = getCurrentUser().isQuestionnaire_opened();
+
         } catch (Exception e) {
             addLogWithData(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.LOG, getString(R.string.LOAD_CRASHLOG_FROM_DB), Constants.LogResult.ERROR, getString(R.string.DB_LOAD_ERROR), e.getMessage());
         }
-        if ((crashLogsList != null && crashLogsList.size() > 0) || (optionsR != null && optionsR.getData().equals("true"))) {
+
+        if(optionsR != null && optionsR.getData().equals("true")) {
+            getDao().insertCrashLog(new CrashLogs("Приложение зависло или было закрыто во время анкеты. Лога нет", true));
+        }
+
+        try {
+            crashLogsList = getDao().getCrashLogs();
+        } catch (Exception e) {
+            addLogWithData(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.LOG, getString(R.string.LOAD_CRASHLOG_FROM_DB), Constants.LogResult.ERROR, getString(R.string.DB_LOAD_ERROR), e.getMessage());
+        }
+
+        if (crashLogsList != null && crashLogsList.size() > 0) {
 
             if (crashLogsList != null && crashLogsList.size() > 0) {
                 for (CrashLogs crash : crashLogsList) {
                     crashList.add(new Crash(getCurrentUser().getLogin(), crash.getLog(), crash.isFrom_questionnaire()));
                 }
-            }
-
-            if(optionsR != null && optionsR.getData().equals("true")) {
-                crashList.add(new Crash(getCurrentUser().getLogin(),"Приложение зависло во время анкеты. Лога нет", true));
             }
 
             Log.d(TAG, "Sending Crash Logs: " + crashList.size());

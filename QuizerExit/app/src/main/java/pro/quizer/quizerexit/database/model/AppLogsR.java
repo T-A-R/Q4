@@ -43,8 +43,8 @@ public class AppLogsR {
     @ColumnInfo(name = "description")
     private String description;
 
-    @ColumnInfo(name = "data")
-    private String data;
+    @ColumnInfo(name = "info")
+    private String info;
 
     @ColumnInfo(name = "status")
     private String status;
@@ -64,11 +64,11 @@ public class AppLogsR {
         this.action = action;
         this.result = result;
         this.description = description;
-        this.data = null;
+        this.info = null;
         this.status = Constants.LogStatus.NOT_SENT;
     }
 
-    public AppLogsR(String login, String device, String appversion, String android, String date, String type, String object, String action, String result, String description, String data) {
+    public AppLogsR(String login, String device, String appversion, String android, String date, String type, String object, String action, String result, String description, String info) {
         this.login = login;
         this.device = device;
         this.appversion = appversion;
@@ -79,7 +79,7 @@ public class AppLogsR {
         this.action = action;
         this.result = result;
         this.description = description;
-        this.data = data;
+        this.info = info;
         this.status = Constants.LogStatus.NOT_SENT;
     }
 
@@ -171,12 +171,12 @@ public class AppLogsR {
         this.description = description;
     }
 
-    public String getData() {
-        return data;
+    public String getInfo() {
+        return info;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setInfo(String info) {
+        this.info = info;
     }
 
     public String getStatus() {

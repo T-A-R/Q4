@@ -4,43 +4,43 @@ import pro.quizer.quizerexit.utils.DeviceUtils;
 
 public class Crash {
     private final String login;
-    private final String app_version;
-    private final String device_info;
-    private final String android_version;
+    private final String appversion;
+    private final String device;
+    private final String platform;
     private final boolean from_questionnaire;
-    private String message;
+    private String info;
 
-    public Crash(String login, String message, boolean status) {
+    public Crash(String login, String info, boolean status) {
 
-        this.message = message;
+        this.info = info;
         this.login = login;
-        this.app_version = DeviceUtils.getAppVersion();
-        this.device_info = DeviceUtils.getDeviceInfo();
-        this.android_version = DeviceUtils.getAndroidVersion();
+        this.appversion = DeviceUtils.getAppVersion();
+        this.device = DeviceUtils.getDeviceInfo();
+        this.platform = DeviceUtils.getAndroidVersion();
         this.from_questionnaire = status;
     }
 
-    public String getMessage() {
-        return message;
+    public String getInfo() {
+        return info;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setInfo(String info) {
+        this.info = info;
     }
 
     public String getLogin() {
         return login;
     }
 
-    public String getApp_version() {
-        return app_version;
+    public String getAppversion() {
+        return appversion;
     }
 
-    public String getDevice_info() {
-        return device_info;
+    public String getDevice() {
+        return device;
     }
 
-    public String getAndroid_version() {
-        return android_version;
+    public String getPlatform() {
+        return platform;
     }
 }

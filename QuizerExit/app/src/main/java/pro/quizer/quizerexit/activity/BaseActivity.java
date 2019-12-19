@@ -1,6 +1,5 @@
 package pro.quizer.quizerexit.activity;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -13,10 +12,8 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -28,7 +25,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -57,6 +53,7 @@ import pro.quizer.quizerexit.broadcast.StartSmsSender;
 import pro.quizer.quizerexit.database.QuizerDao;
 import pro.quizer.quizerexit.database.model.ActivationModelR;
 import pro.quizer.quizerexit.database.model.CrashLogs;
+import pro.quizer.quizerexit.database.model.OptionsR;
 import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.database.model.AppLogsR;
 import pro.quizer.quizerexit.database.model.UserModelR;
@@ -453,8 +450,8 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
         try {
             addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.SAVE_USER), Constants.LogResult.SENT, getString(R.string.SAVE_USER_TO_DB));
-
             getDao().insertUser(userModelR);
+            getDao().insertOption(new OptionsR(Constants.OptionName.QUIZ_STARTED,"false"));
         } catch (Exception e) {
             showToast(getString(R.string.DB_SAVE_ERROR));
             addLogWithData(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.SAVE_USER), Constants.LogResult.ERROR, getString(R.string.SAVE_USER_TO_DB_ERROR), e.getMessage());
@@ -700,7 +697,7 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
         appLogsR.setResult(result);
         appLogsR.setDescription(desc);
         if (data != null)
-            appLogsR.setData(data.substring(0, Math.min(data.length(), 5000)));
+            appLogsR.setInfo(data.substring(0, Math.min(data.length(), 5000)));
 
         getDao().insertAppLogsR(appLogsR);
     }
@@ -1097,14 +1094,29 @@ public class BaseActivity extends AppCompatActivity implements Serializable {
 
     public void sendCrashLogs() {
         Log.d(TAG, "Crash logs: " + getDao().getCrashLogs().size());
-        if (getDao().getCrashLogs().size() > 0) {
-            List<Crash> crashList = new ArrayList<>();
-            List<CrashLogs> crashLogsList = null;
-            try {
-                crashLogsList = getDao().getCrashLogs();
-            } catch (Exception e) {
-                addLogWithData(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.LOG, getString(R.string.LOAD_CRASHLOG_FROM_DB), Constants.LogResult.ERROR, getString(R.string.DB_LOAD_ERROR), e.getMessage());
-            }
+        List<Crash> crashList = new ArrayList<>();
+        OptionsR optionsR = null;
+        boolean wasStarted = false;
+        List<CrashLogs> crashLogsList = null;
+        try {
+            optionsR = getDao().getOption(Constants.OptionName.QUIZ_STARTED);
+
+        } catch (Exception e) {
+            addLogWithData(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.LOG, getString(R.string.LOAD_CRASHLOG_FROM_DB), Constants.LogResult.ERROR, getString(R.string.DB_LOAD_ERROR), e.getMessage());
+        }
+
+        if(optionsR != null && optionsR.getData().equals("true")) {
+            getDao().insertCrashLog(new CrashLogs("Приложение зависло или было закрыто во время анкеты. Лога нет", true));
+        }
+
+        try {
+            crashLogsList = getDao().getCrashLogs();
+        } catch (Exception e) {
+            addLogWithData(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.LOG, getString(R.string.LOAD_CRASHLOG_FROM_DB), Constants.LogResult.ERROR, getString(R.string.DB_LOAD_ERROR), e.getMessage());
+        }
+
+        if (crashLogsList != null && crashLogsList.size() > 0) {
+
             if (crashLogsList != null && crashLogsList.size() > 0) {
                 for (CrashLogs crash : crashLogsList) {
                     crashList.add(new Crash(getCurrentUser().getLogin(), crash.getLog(), crash.isFrom_questionnaire()));

@@ -120,4 +120,8 @@ public final class Constants {
     public interface Warnings {
         String FAKE_GPS = "Подмена координат";
     }
+
+    public interface OptionName {
+        String QUIZ_STARTED = "quiz_started";
+    }
 }

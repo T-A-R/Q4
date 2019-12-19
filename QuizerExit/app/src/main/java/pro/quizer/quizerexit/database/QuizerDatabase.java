@@ -9,6 +9,7 @@ import pro.quizer.quizerexit.database.model.CategoryR;
 import pro.quizer.quizerexit.database.model.CrashLogs;
 import pro.quizer.quizerexit.database.model.ElementDatabaseModelR;
 import pro.quizer.quizerexit.database.model.ItemR;
+import pro.quizer.quizerexit.database.model.OptionsR;
 import pro.quizer.quizerexit.database.model.QuestionnaireDatabaseModelR;
 import pro.quizer.quizerexit.database.model.SmsItemR;
 import pro.quizer.quizerexit.database.model.UserModelR;
@@ -24,7 +25,8 @@ import pro.quizer.quizerexit.database.model.WarningsR;
         AppLogsR.class,
         CrashLogs.class,
         WarningsR.class,
-        SmsItemR.class}, version = 10)
+        OptionsR.class,
+        SmsItemR.class}, version = 11)
 public abstract class QuizerDatabase extends RoomDatabase {
     public abstract QuizerDao getQuizerDao();
 }

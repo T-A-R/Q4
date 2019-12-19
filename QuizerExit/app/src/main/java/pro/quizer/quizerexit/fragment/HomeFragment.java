@@ -210,7 +210,11 @@ public class HomeFragment extends BaseFragment implements ICallback {
     }
 
     private void start() {
-
+        try {
+            getDao().setOption(Constants.OptionName.QUIZ_STARTED, "true");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         try {
             getDao().updateQuestionnaireStart(true, mUserModel.getUser_id());
             Log.d(TAG, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<< saveQuestionnaireToDatabase: true " + mUserModel.getUser_id());
@@ -231,7 +235,6 @@ public class HomeFragment extends BaseFragment implements ICallback {
 
     @Override
     public void onSuccess() {
-
 
 
         initSyncInfoViews();

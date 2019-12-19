@@ -9,9 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.activeandroid.query.Select;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.krishna.fileloader.FileLoader;
@@ -28,21 +26,17 @@ import pro.quizer.quizerexit.API.QuizerAPI;
 import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.R;
 import pro.quizer.quizerexit.database.model.AppLogsR;
-import pro.quizer.quizerexit.database.model.CrashLogs;
 import pro.quizer.quizerexit.database.model.SmsItemR;
 import pro.quizer.quizerexit.database.model.UserModelR;
 import pro.quizer.quizerexit.executable.ICallback;
 import pro.quizer.quizerexit.executable.UpdateQuotasExecutable;
 import pro.quizer.quizerexit.model.config.QuestionsMatchesModel;
 import pro.quizer.quizerexit.model.config.StagesModel;
-import pro.quizer.quizerexit.model.logs.Crash;
 import pro.quizer.quizerexit.model.request.AuthRequestModel;
 import pro.quizer.quizerexit.model.request.ConfigRequestModel;
-import pro.quizer.quizerexit.model.request.CrashRequestModel;
 import pro.quizer.quizerexit.model.response.AuthResponseModel;
 import pro.quizer.quizerexit.model.response.ConfigResponseModel;
 import pro.quizer.quizerexit.utils.DateUtils;
-import pro.quizer.quizerexit.utils.DeviceUtils;
 import pro.quizer.quizerexit.utils.FileUtils;
 import pro.quizer.quizerexit.utils.FontUtils;
 import pro.quizer.quizerexit.utils.MD5Utils;
@@ -153,7 +147,7 @@ public class AuthActivity extends BaseActivity implements QuizerAPI.AuthUserCall
                         + " action: " + logs.get(i).getAction()
                         + " result: " + logs.get(i).getResult()
                         + " desc: " + logs.get(i).getDescription() + "\n"
-                        + " data: " + logs.get(i).getData() + "\n";
+                        + " data: " + logs.get(i).getInfo() + "\n";
                 Log.d(TAG, log);
                 Log.d(TAG, "____________________________________________________________");
             }

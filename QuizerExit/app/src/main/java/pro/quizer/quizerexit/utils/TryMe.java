@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import pro.quizer.quizerexit.Constants;
 import pro.quizer.quizerexit.CoreApplication;
 //import pro.quizer.quizerexit.database.QuizerDatabase;
 import pro.quizer.quizerexit.database.model.CrashLogs;
@@ -85,6 +86,7 @@ public class TryMe implements Thread.UncaughtExceptionHandler {
                 flag = true;
                 for(UserModelR user : userList) {
                     CoreApplication.getQuizerDatabase().getQuizerDao().updateQuestionnaireStart(false, user.getUser_id());
+                    CoreApplication.getQuizerDatabase().getQuizerDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");
                 }
             }
         } catch (Exception e) {

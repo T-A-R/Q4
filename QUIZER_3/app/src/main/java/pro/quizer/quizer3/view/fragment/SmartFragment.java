@@ -434,6 +434,9 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                         elementOptionsR.setUnchecker(optionsModelNew.isUnchecker());
                         elementOptionsR.setStart_value(optionsModelNew.getStart_value());
                         elementOptionsR.setEnd_value(optionsModelNew.getEnd_value());
+                        elementOptionsR.setType_behavior(optionsModelNew.getType_behavior());
+                        elementOptionsR.setShow_scale(optionsModelNew.isShow_scale());
+                        elementOptionsR.setShow_images(optionsModelNew.isShow_images());
                         if (optionsModelNew.getStatusImage() != null) {
                             ElementStatusImageR elementStatusImageR = new ElementStatusImageR();
                             elementStatusImageR.setType(optionsModelNew.getStatusImage().getType());
@@ -993,20 +996,29 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public void sendCrashLogs() {
-        Log.d(TAG, "Crash logs: " + getDao().getCrashLogs().size());
+        Log.d(TAG, "Crash logs: " + getDao().getCrashLogs().size() + " quiz started: " + getCurrentUser().isQuestionnaire_opened());
         List<Crash> crashList = new ArrayList<>();
-        OptionsR optionsR = null;
+//        OptionsR optionsR = null;
         boolean wasStarted = false;
         List<CrashLogs> crashLogsList = null;
         try {
-            crashLogsList = getDao().getCrashLogs();
-
             wasStarted = getCurrentUser().isQuestionnaire_opened();
         } catch (Exception e) {
             e.printStackTrace();
             addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.LOG, getString(R.string.load_crash_log_from_db), Constants.LogResult.ERROR, getString(R.string.db_load_error), e.getMessage());
         }
-//        if ((crashLogsList != null && crashLogsList.size() > 0) || (optionsR != null && optionsR.getData().equals("true"))) {
+
+        if(wasStarted) {
+            getDao().insertCrashLog(new CrashLogs("Приложение зависло или было закрыто во время анкеты. Лога нет", true));
+        }
+
+        try {
+            crashLogsList = getDao().getCrashLogs();
+        } catch (Exception e) {
+            e.printStackTrace();
+            addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.LOG, getString(R.string.load_crash_log_from_db), Constants.LogResult.ERROR, getString(R.string.db_load_error), e.getMessage());
+        }
+
         if (crashLogsList != null && crashLogsList.size() > 0) {
 
             if (crashLogsList != null && crashLogsList.size() > 0) {
@@ -1014,10 +1026,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                     crashList.add(new Crash(getCurrentUser().getLogin(), crash.getLog(), crash.isFrom_questionnaire()));
                 }
             }
-
-//            if(optionsR != null && optionsR.getData().equals("true")) {
-//                crashList.add(new Crash(getCurrentUser().getLogin(),"Приложение зависло во время анкеты. Лога нет", true));
-//            }
 
             Log.d(TAG, "Sending Crash Logs: " + crashList.size());
             CrashRequestModel crashRequestModel = new CrashRequestModel(getLoginAdmin(), crashList);

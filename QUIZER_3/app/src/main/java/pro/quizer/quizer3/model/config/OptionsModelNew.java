@@ -96,6 +96,15 @@ public class OptionsModelNew implements Serializable {
     @SerializedName("is_media")
     private boolean is_media;
 
+    @SerializedName("type_behavior")
+    private String type_behavior;
+
+    @SerializedName("show_scale")
+    private boolean show_scale;
+
+    @SerializedName("show_images")
+    private boolean show_images;
+
     public String getData() {
         return data;
     }
@@ -251,5 +260,29 @@ public class OptionsModelNew implements Serializable {
 
     public boolean isIs_media() {
         return is_media;
+    }
+
+    public String getType_behavior() {
+        return type_behavior;
+    }
+
+    public void setType_behavior(String type_behavior) {
+        this.type_behavior = type_behavior;
+    }
+
+    public boolean isShow_scale() {
+        return show_scale;
+    }
+
+    public void setShow_scale(boolean show_scale) {
+        this.show_scale = show_scale;
+    }
+
+    public boolean isShow_images() {
+        return show_images;
+    }
+
+    public void setShow_images(boolean show_images) {
+        this.show_images = show_images;
     }
 }

@@ -334,21 +334,27 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
         }
 
         if (view == mHomeBtn) {
+            getDao().updateQuestionnaireStart(false, getCurrentUserId());
             hide();
             openScreen(new HomeFragment());
         } else if (view == mSyncBtn) {
+            getDao().updateQuestionnaireStart(false, getCurrentUserId());
             hide();
             openScreen(new SyncFragment());
         } else if (view == mSettingsBtn) {
+            getDao().updateQuestionnaireStart(false, getCurrentUserId());
             hide();
             openScreen(new SettingsFragment());
         } else if (view == mQuotasBtn) {
+            getDao().updateQuestionnaireStart(false, getCurrentUserId());
             hide();
             openScreen(new QuotasFragment());
         } else if (view == mAboutBtn) {
+            getDao().updateQuestionnaireStart(false, getCurrentUserId());
             hide();
             openScreen(new AboutFragment());
         } else if (view == mChangeUserBtn) {
+            getDao().updateQuestionnaireStart(false, getCurrentUserId());
             hide();
 //            openScreen(new AuthFragment());
 //            Intent intent = new Intent(getContext(), MainActivity.class);

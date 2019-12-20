@@ -248,8 +248,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         } else if (view == btnContinue) {
             try {
                 getDao().setCurrentQuestionnairePaused(false);
+                currentQuestionnaire.setPaused(false);
                 int counter = currentQuestionnaire.getCount_interrupted() + 1;
                 getDao().setInterruptedCounter(counter);
+                getDao().updateQuestionnaireStart(true, getCurrentUserId());
                 showToast("Продолжение прерванной анкеты");
                 startRecording();
                 replaceFragment(new ElementFragment());

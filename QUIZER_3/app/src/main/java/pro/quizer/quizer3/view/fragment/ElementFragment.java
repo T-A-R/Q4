@@ -32,6 +32,7 @@ import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.ListQuestionAdapter;
+import pro.quizer.quizer3.adapter.ScaleQuestionAdapter;
 import pro.quizer.quizer3.adapter.TableQuestionAdapter;
 import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
@@ -54,7 +55,7 @@ import pro.quizer.quizer3.view.Toolbar;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class ElementFragment extends ScreenFragment implements View.OnClickListener, ListQuestionAdapter.OnAnswerClickListener, TableQuestionAdapter.OnTableAnswerClickListener, AdapterView.OnItemSelectedListener {
+public class ElementFragment extends ScreenFragment implements View.OnClickListener, ListQuestionAdapter.OnAnswerClickListener, ScaleQuestionAdapter.OnAnswerClickListener, TableQuestionAdapter.OnTableAnswerClickListener, AdapterView.OnItemSelectedListener {
 
     private Toolbar toolbar;
     private Button btnNext;
@@ -80,6 +81,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private TextView tvQuestionDesc;
     private WebView infoText;
     private RecyclerView rvAnswers;
+    private RecyclerView rvScale;
     private Spinner spinnerAnswers;
     private AdaptiveTableLayout tableLayout;
     private ImageView title1Image1;
@@ -112,6 +114,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private boolean isRestored = false;
 
     private ListQuestionAdapter adapterList;
+    private ScaleQuestionAdapter adapterScale;
     private ArrayAdapter adapterSpinner;
     private TableQuestionAdapter adapterTable;
     private List<AnswerState> savedAnswerStates;
@@ -150,6 +153,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         infoCont = (LinearLayout) findViewById(R.id.info_cont);
         tableCont = (FrameLayout) findViewById(R.id.table_cont);
         rvAnswers = (RecyclerView) findViewById(R.id.answers_recyclerview);
+        rvScale = (RecyclerView) findViewById(R.id.scale_recyclerview);
         spinnerAnswers = (Spinner) findViewById(R.id.answers_spinner);
         tableLayout = (AdaptiveTableLayout) findViewById(R.id.table_question_layout);
         tvUnhide = (TextView) findViewById(R.id.unhide_title);
@@ -538,6 +542,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             questionCont.setVisibility(View.GONE);
             infoCont.setVisibility(View.VISIBLE);
             infoText.loadData(currentElement.getElementOptionsR().getData(), "text/html; charset=UTF-8", null);
+        } else if(answerType.equals(ElementSubtype.SCALE)) {
+            rvScale.setVisibility(View.VISIBLE);
         }
 
 //        for (ElementItemR element : getCurrentElements()) {
@@ -609,6 +615,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             adapterTable = new TableQuestionAdapter(currentElement, getActivity(), mRefreshRecyclerViewRunnable, this);
             tableLayout.setAdapter(adapterTable);
             tableLayout.setDrawingCacheEnabled(true);
+        } else if (answerType.equals(ElementSubtype.SCALE)) {
+            adapterScale = new ScaleQuestionAdapter(getActivity(), currentElement, answersList,
+                     this);
+            rvScale.setLayoutManager(new LinearLayoutManager(getContext()));
+            rvScale.setAdapter(adapterScale);
         }
     }
 
@@ -667,8 +678,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private boolean saveElement() {
         boolean saved = false;
 //        if(!isRestored) {
-        if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.QUOTA)) {
-            List<AnswerState> answerStates = adapterList.getAnswers();
+        if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.QUOTA) || answerType.equals(ElementSubtype.SCALE)) {
+            List<AnswerState> answerStates = null;
+            if(answerType.equals(ElementSubtype.SCALE)) {
+                answerStates = adapterScale.getAnswers();
+            } else {
+                answerStates = adapterList.getAnswers();
+            }
             if (answerStates != null && notEmpty(answerStates)) {
                 for (AnswerState answerState : answerStates) {
                     if (answerState.isChecked()) {
@@ -1131,6 +1147,33 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
             adapterTable.setmAnswersState(answersTableState);
 //            adapterTable.
+        } else if (answerType.equals(ElementSubtype.SCALE)) {
+            List<AnswerState> answerStatesAdapter = adapterScale.getAnswers();
+            List<AnswerState> answerStatesRestored = new ArrayList<>();
+            int lastSelectedPosition = 0;
+            for (int i = 0; i < answerStatesAdapter.size(); i++) {
+                AnswerState answerStateNew = new AnswerState();
+                ElementPassedR answerStateRestored = null;
+                try {
+                    answerStateRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answerStatesAdapter.get(i).getRelative_id());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (answerStateRestored != null) {
+                    answerStateNew.setChecked(true);
+                    answerStateNew.setData(answerStateRestored.getValue());
+                    lastSelectedPosition = i;
+                } else {
+                    answerStateNew.setChecked(false);
+                    answerStateNew.setData("");
+                }
+
+                answerStateNew.setRelative_id(answerStatesAdapter.get(i).getRelative_id());
+                answerStatesRestored.add(answerStateNew);
+            }
+            adapterScale.setAnswers(answerStatesRestored);
+            adapterScale.setLastSelectedPosition(lastSelectedPosition);
+            adapterScale.notifyDataSetChanged();
         }
     }
 

@@ -301,7 +301,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
 
         } else if (view == btnExit) {
-            makeCrash();
             try {
                 getDao().clearCurrentQuestionnaireR();
                 getDao().clearElementPassedR();

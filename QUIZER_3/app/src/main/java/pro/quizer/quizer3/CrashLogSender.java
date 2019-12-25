@@ -21,7 +21,6 @@ public class CrashLogSender implements Thread.UncaughtExceptionHandler {
     Thread.UncaughtExceptionHandler oldHandler;
 
     private CrashLogSender(Context context, boolean chained) {
-
         if (chained)
             oldHandler = Thread.getDefaultUncaughtExceptionHandler();
         else
@@ -50,8 +49,7 @@ public class CrashLogSender implements Thread.UncaughtExceptionHandler {
 
         StringBuilder reportBuilder = new StringBuilder();
         reportBuilder
-//                .append("\n")
-                .append(formatter.format(dumpDate)).append("\n")
+                .append(String.format("Date: %s \n", DateUtils.getCurrentFormattedDate(DateUtils.PATTERN_FULL)))
                 .append(String.format("Version: %s \n", DeviceUtils.getAppVersion()))
                 .append(String.format("Device: %s \n", DeviceUtils.getDeviceInfo()))
                 .append(thread.toString()).append("\n");

@@ -151,57 +151,60 @@ public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdap
 
         private void showContent(ElementItemR element, View cont, View text, String type, int position) {
             final List<ElementContentsR> contents = element.getElementContentsR();
+            String data1 = null;
+            String data2 = null;
+            String data3 = null;
+
             if (contents != null && !contents.isEmpty()) {
-                String data1 = null;
-                String data2 = null;
-                String data3 = null;
                 data1 = contents.get(0).getData();
                 if (contents.size() > 1)
                     data2 = contents.get(1).getData();
                 if (contents.size() > 2)
                     data3 = contents.get(2).getData();
 
-                if (lastSelectedPosition == -1) {
+            } else {
+                scaleImage.setVisibility(View.GONE);
+            }
+
+            if (lastSelectedPosition == -1) {
+                text.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_background_gray));
+                if (data1 != null) {
+                    showPic(cont, scaleImage, data1);
+                }
+            } else if (answersState.get(position).isChecked()) {
+                text.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_background_green));
+                if (data2 != null) {
+                    showPic(cont, scaleImage, data2);
+                }
+            } else {
+                if (typeBehavior.equals("state")) {
                     text.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_background_gray));
-                    if (data1 != null) {
+                    if (data3 != null) {
+                        showPic(cont, scaleImage, data3);
+                    } else if (data1 != null) {
                         showPic(cont, scaleImage, data1);
                     }
-                } else if (answersState.get(position).isChecked()) {
-                    text.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_background_green));
-                    if (data2 != null) {
-                        showPic(cont, scaleImage, data2);
-                    }
-                } else {
-                    if (typeBehavior.equals("state")) {
+                } else if (typeBehavior.equals("progress")) {
+                    if (position < lastSelectedPosition) {
+                        text.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_background_green));
+                        if (data2 != null)
+                            showPic(cont, scaleImage, data2);
+                    } else {
                         text.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_background_gray));
                         if (data3 != null) {
                             showPic(cont, scaleImage, data3);
                         } else if (data1 != null) {
                             showPic(cont, scaleImage, data1);
                         }
-                    } else if (typeBehavior.equals("progress")) {
-                        if (position < lastSelectedPosition) {
-                            text.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_background_green));
-                            if (data2 != null)
-                                showPic(cont, scaleImage, data2);
-                        } else {
-                            text.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_background_gray));
-                            if (data3 != null) {
-                                showPic(cont, scaleImage, data3);
-                            } else if (data1 != null) {
-                                showPic(cont, scaleImage, data1);
-                            }
-                        }
                     }
-
                 }
-            } else {
-                scaleImage.setVisibility(View.GONE);
+
             }
+
         }
 
         private void showPic(View cont, ImageView view, String data) {
-            if(show_images) {
+            if (show_images) {
 
                 final String filePhotooPath = getFilePath(data);
                 if (StringUtils.isEmpty(filePhotooPath)) {

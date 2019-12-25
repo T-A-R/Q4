@@ -794,4 +794,11 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public void setTree(ElementItemR[][] tree) {
         this.tree = tree;
     }
+
+    /**
+     * Для тестов
+     */
+    public static void makeCrash() {
+        throw new RuntimeException("This is a crash");
+    }
 }

@@ -54,6 +54,7 @@ import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
+import static pro.quizer.quizer3.MainActivity.makeCrash;
 
 public class ElementFragment extends ScreenFragment implements View.OnClickListener, ListQuestionAdapter.OnAnswerClickListener, ScaleQuestionAdapter.OnAnswerClickListener, TableQuestionAdapter.OnTableAnswerClickListener, AdapterView.OnItemSelectedListener {
 
@@ -300,6 +301,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
 
         } else if (view == btnExit) {
+            makeCrash();
             try {
                 getDao().clearCurrentQuestionnaireR();
                 getDao().clearElementPassedR();

@@ -10,36 +10,18 @@ import java.util.List;
 
 import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.UserModelR;
+import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
-
-//import android.content.pm.PackageInfo;
-//import android.content.pm.PackageManager;
-//import android.os.Build;
-//import android.util.Log;
-//import pro.quizer.quizerexit.database.QuizerDatabase;
 
 public class CrashLogSender implements Thread.UncaughtExceptionHandler {
 
     private final DateFormat formatter = new SimpleDateFormat("dd.MM.yy HH:mm");
-//    private final DateFormat fileFormatter = new SimpleDateFormat("dd-MM-yy");
-//    private String versionName = "0";
-//    private int versionCode = 0;
     private String stacktraceDir;
-//    private final Thread.UncaughtExceptionHandler previousHandler;
 
     Thread.UncaughtExceptionHandler oldHandler;
 
     private CrashLogSender(Context context, boolean chained) {
 
-//        PackageManager mPackManager = context.getPackageManager();
-//        PackageInfo mPackInfo;
-//        try {
-//            mPackInfo = mPackManager.getPackageInfo(context.getPackageName(), 0);
-//            versionName = mPackInfo.versionName;
-//            versionCode = mPackInfo.versionCode;
-//        } catch (PackageManager.NameNotFoundException e) {
-//            // ignore
-//        }
         if (chained)
             oldHandler = Thread.getDefaultUncaughtExceptionHandler();
         else
@@ -82,9 +64,9 @@ public class CrashLogSender implements Thread.UncaughtExceptionHandler {
 
         try {
             userList = CoreApplication.getQuizerDatabase().getQuizerDao().getUserWithAbortedQUestionnaire(true);
-            if(userList != null && userList.size() > 0) {
+            if (userList != null && userList.size() > 0) {
                 flag = true;
-                for(UserModelR user : userList) {
+                for (UserModelR user : userList) {
                     CoreApplication.getQuizerDatabase().getQuizerDao().updateQuestionnaireStart(false, user.getUser_id());
                     CoreApplication.getQuizerDatabase().getQuizerDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");
                 }
@@ -92,9 +74,9 @@ public class CrashLogSender implements Thread.UncaughtExceptionHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        CoreApplication.getQuizerDatabase().getQuizerDao().insertCrashLog(new CrashLogs(log, flag));
-
+//        Log.d(TAG, "BEFORE uncaughtException: " + CoreApplication.getQuizerDatabase().getQuizerDao().getCrashLogs().size());
+        CoreApplication.getQuizerDatabase().getQuizerDao().insertCrashLog(new CrashLogs(DateUtils.getCurrentTimeMillis(), log, flag));
+//        Log.d(TAG, "AFTER uncaughtException: " + CoreApplication.getQuizerDatabase().getQuizerDao().getCrashLogs().size());
 
         if (oldHandler != null) // если есть ранее установленный...
             oldHandler.uncaughtException(thread, throwable); // ...вызовем его

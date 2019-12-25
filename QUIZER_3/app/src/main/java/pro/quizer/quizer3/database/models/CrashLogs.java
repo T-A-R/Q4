@@ -7,9 +7,12 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity
 public class CrashLogs {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private int id;
+
+    @ColumnInfo(name = "date")
+    private Long date;
 
     @ColumnInfo(name = "log")
     private String log;
@@ -20,7 +23,8 @@ public class CrashLogs {
     public CrashLogs() {
     }
 
-    public CrashLogs(String log, boolean from_questionnaire) {
+    public CrashLogs(Long date, String log, boolean from_questionnaire) {
+        this.date = date;
         this.log = log;
         this.from_questionnaire = from_questionnaire;
     }
@@ -47,5 +51,13 @@ public class CrashLogs {
 
     public void setFrom_questionnaire(boolean from_questionnaire) {
         this.from_questionnaire = from_questionnaire;
+    }
+
+    public Long getDate() {
+        return date;
+    }
+
+    public void setDate(Long date) {
+        this.date = date;
     }
 }

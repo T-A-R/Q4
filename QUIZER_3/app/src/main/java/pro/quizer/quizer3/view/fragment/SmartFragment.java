@@ -318,7 +318,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         try {
             addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.SENT, getString(R.string.save_user_to_db), "login: " + userModelR.getLogin());
             getDao().insertUser(userModelR);
-            getDao().insertOption(new OptionsR(Constants.OptionName.QUIZ_STARTED,"false"));
+            getDao().insertOption(new OptionsR(Constants.OptionName.QUIZ_STARTED, "false"));
         } catch (Exception e) {
             showToast(getString(R.string.db_save_error));
             addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.ERROR, getString(R.string.save_user_to_db_error), e.getMessage());
@@ -364,7 +364,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public HashMap<Integer, ElementModelNew> getMap(boolean rebuild) {
         if (mMap == null) {
             mMap = new HashMap<>();
-            if(rebuild) {
+            if (rebuild) {
                 getDao().clearElementItemR();
             }
 //            Log.d(TAG, "???????????? getMap: 1");
@@ -998,7 +998,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public void sendCrashLogs() {
         Log.d(TAG, "Crash logs: " + getDao().getCrashLogs().size() + " quiz started: " + getCurrentUser().isQuestionnaire_opened());
         List<Crash> crashList = new ArrayList<>();
-//        OptionsR optionsR = null;
         boolean wasStarted = false;
         List<CrashLogs> crashLogsList = null;
         try {
@@ -1008,8 +1007,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.LOG, getString(R.string.load_crash_log_from_db), Constants.LogResult.ERROR, getString(R.string.db_load_error), e.getMessage());
         }
 
-        if(wasStarted) {
-            getDao().insertCrashLog(new CrashLogs("Приложение зависло или было закрыто во время анкеты. Лога нет", true));
+        if (wasStarted) {
+            getDao().insertCrashLog(new CrashLogs(DateUtils.getCurrentTimeMillis(), "Приложение зависло или было закрыто во время анкеты. Лога нет", true));
         }
 
         try {
@@ -1019,15 +1018,13 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.LOG, getString(R.string.load_crash_log_from_db), Constants.LogResult.ERROR, getString(R.string.db_load_error), e.getMessage());
         }
 
-        if (crashLogsList != null && crashLogsList.size() > 0) {
 
-            if (crashLogsList != null && crashLogsList.size() > 0) {
-                for (CrashLogs crash : crashLogsList) {
-                    crashList.add(new Crash(getCurrentUser().getLogin(), crash.getLog(), crash.isFrom_questionnaire()));
-                }
+        if (crashLogsList != null && crashLogsList.size() > 0) {
+            Log.d(TAG, "sendCrashLogs: " + crashLogsList.size());
+            for (CrashLogs crash : crashLogsList) {
+                crashList.add(new Crash(getCurrentUser().getLogin(), crash.getLog(), crash.isFrom_questionnaire()));
             }
 
-            Log.d(TAG, "Sending Crash Logs: " + crashList.size());
             CrashRequestModel crashRequestModel = new CrashRequestModel(getLoginAdmin(), crashList);
             Gson gson = new Gson();
             String json = gson.toJson(crashRequestModel);

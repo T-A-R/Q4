@@ -60,7 +60,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private MainActivity mContext;
     private OnTableAnswerClickListener mOnTableAnswerClickListener;
 
-    public TableQuestionAdapter(final ElementItemR pCurrentElement, final Context context, final Runnable pRefreshRunnable, OnTableAnswerClickListener pOnTableAnswerClickListener) {
+    public TableQuestionAdapter(final ElementItemR pCurrentElement, List<ElementItemR> questions, final Context context, final Runnable pRefreshRunnable, OnTableAnswerClickListener pOnTableAnswerClickListener) {
         mCurrentElement = pCurrentElement;
         mOnTableAnswerClickListener = pOnTableAnswerClickListener;
         setOnItemClickListener(this);
@@ -71,7 +71,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         mIsFlipColsAndRows = optionsModel.isFlip_cols_and_rows();
         mContext = (MainActivity) context;
 
-        mQuestions = pCurrentElement.getElements();
+//        mQuestions = pCurrentElement.getElements();
+        mQuestions = questions;
         if (mQuestions != null)
             mAnswers = mQuestions.get(0).getElements();
 

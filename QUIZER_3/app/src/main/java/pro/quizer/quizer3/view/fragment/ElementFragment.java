@@ -27,6 +27,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
@@ -219,26 +220,27 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         btnExit.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
         MainFragment.enableSideMenu(false);
-        Log.d(TAG, "====== initCurrentElements()");
+        Log.d(TAG, "====== initCurrentElements() for: " + startElementId);
         initCurrentElements();
         Log.d(TAG, "====== loadResumedData()");
         loadResumedData();
         Log.d(TAG, "====== initQuestion();\n");
         initQuestion();
         Log.d(TAG, "====== checkConditions()");
-        checkConditions(currentElement);
-        Log.d(TAG, "====== setQuestionType()");
-        setQuestionType();
-        Log.d(TAG, "====== initViews()");
-        initViews();
-        Log.d(TAG, "====== updateCurrentQuestionnaire()");
-        updateCurrentQuestionnaire();
-        Log.d(TAG, "====== initRecyclerView()");
-        initRecyclerView();
-        if (isRestored || wasReloaded()) {
-            Log.d(TAG, "====== loadSavedData()");
-            loadSavedData();
-        }
+        if (checkConditions(currentElement)) {
+            Log.d(TAG, "====== setQuestionType()");
+            setQuestionType();
+            Log.d(TAG, "====== initViews()");
+            initViews();
+            Log.d(TAG, "====== updateCurrentQuestionnaire()");
+            updateCurrentQuestionnaire();
+            Log.d(TAG, "====== initRecyclerView()");
+            initRecyclerView();
+            if (isRestored || wasReloaded()) {
+                Log.d(TAG, "====== loadSavedData()");
+                loadSavedData();
+            }
+        } // else showNextFragment(nextElementId);
     }
 
     public boolean wasReloaded() {
@@ -543,7 +545,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             questionCont.setVisibility(View.GONE);
             infoCont.setVisibility(View.VISIBLE);
             infoText.loadData(currentElement.getElementOptionsR().getData(), "text/html; charset=UTF-8", null);
-        } else if(answerType.equals(ElementSubtype.SCALE)) {
+        } else if (answerType.equals(ElementSubtype.SCALE)) {
             rvScale.setVisibility(View.VISIBLE);
         }
 
@@ -613,12 +615,15 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             spinnerAnswers.setSelection(itemsList.size() - 1);
             spinnerAnswers.setOnItemSelectedListener(this);
         } else if (answerType.equals(ElementSubtype.TABLE)) {
-            adapterTable = new TableQuestionAdapter(currentElement, getActivity(), mRefreshRecyclerViewRunnable, this);
+//            List<ElementItemR> questions = null;
+//            questions = currentElement.getElements();
+            //answersList = questionsList for TABLE
+            adapterTable = new TableQuestionAdapter(currentElement, answersList, getActivity(), mRefreshRecyclerViewRunnable, this);
             tableLayout.setAdapter(adapterTable);
             tableLayout.setDrawingCacheEnabled(true);
         } else if (answerType.equals(ElementSubtype.SCALE)) {
             adapterScale = new ScaleQuestionAdapter(getActivity(), currentElement, answersList,
-                     this);
+                    this);
             rvScale.setLayoutManager(new LinearLayoutManager(getContext()));
             rvScale.setAdapter(adapterScale);
         }
@@ -642,14 +647,19 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             if (showValue != ConditionUtils.CAN_SHOW) {
                 if (showValue != ConditionUtils.CANT_SHOW) {
                     nextElementId = showValue;
+                    Log.d(TAG, "checkConditions: 1");
                 } else {
+                    Log.d(TAG, "checkConditions: 2");
                     if (!element.equals(currentElement)) {
+                        Log.d(TAG, "checkConditions: 3");
                         return false;
                     }
                     nextElementId = options.getJump();
                     if (nextElementId == null) {
+                        Log.d(TAG, "checkConditions: 4");
                         List<ElementItemR> answers = element.getElements();
                         if (answers != null && answers.size() > 0) {
+                            Log.d(TAG, "checkConditions: 5");
                             try {
                                 nextElementId = answers.get(0).getElementOptionsR().getJump();
                             } catch (Exception e) {
@@ -657,23 +667,36 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             }
                         }
                         if (nextElementId == null) {
+                            Log.d(TAG, "checkConditions: 6");
                             nextElementId = 0;
                         }
                     }
                 }
                 if (nextElementId == 0) {
+                    Log.d(TAG, "checkConditions: 7");
                     saveQuestionnaire();
                     exitQuestionnaire();
+                    return false;
                 } else if (nextElementId == -1) {
+                    Log.d(TAG, "checkConditions: 8");
                     exitQuestionnaire();
+                    return false;
                 } else {
-                    TransFragment fragment = new TransFragment();
-                    fragment.setStartElement(nextElementId);
-                    replaceFragment(fragment);
+                    Log.d(TAG, "checkConditions: 9 / " + nextElementId);
+//                    onClick(btnNext);
+//                    Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction().remove(this).commit();
+                    showNextFragment(nextElementId);
+                    return false;
                 }
             }
         }
         return true;
+    }
+
+    private void showNextFragment(int id) {
+        TransFragment fragment = new TransFragment();
+        fragment.setStartElement(id);
+        replaceFragment(fragment);
     }
 
     private boolean saveElement() {
@@ -681,7 +704,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //        if(!isRestored) {
         if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.QUOTA) || answerType.equals(ElementSubtype.SCALE)) {
             List<AnswerState> answerStates = null;
-            if(answerType.equals(ElementSubtype.SCALE)) {
+            if (answerType.equals(ElementSubtype.SCALE)) {
                 answerStates = adapterScale.getAnswers();
             } else {
                 answerStates = adapterList.getAnswers();
@@ -782,7 +805,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 elementPassedR.setProject_id(currentElement.getProjectId());
                 elementPassedR.setToken(getQuestionnaire().getToken());
                 elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
-                elementPassedR.setDuration(startTime - DateUtils.getCurrentTimeMillis());
 
                 try {
                     if (!isRestored) {
@@ -833,7 +855,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 elementPassedR.setProject_id(currentElement.getProjectId());
                 elementPassedR.setToken(getQuestionnaire().getToken());
                 elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
-                elementPassedR.setDuration(startTime - DateUtils.getCurrentTimeMillis());
                 try {
                     if (!isRestored) {
                         getDao().insertElementPassedR(elementPassedR);
@@ -1072,14 +1093,16 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     public void loadResumedData() {
-        try {
-            List<PrevElementsR> prevList = getQuestionnaire().getPrev_element_id();
-            if (prevList != null && prevList.size() > 0) {
-                PrevElementsR lastPassedElement = prevList.get(prevList.size() - 1);
-                startElementId = lastPassedElement.getNextId();
+        if (isRestored) {
+            try {
+                List<PrevElementsR> prevList = getQuestionnaire().getPrev_element_id();
+                if (prevList != null && prevList.size() > 0) {
+                    PrevElementsR lastPassedElement = prevList.get(prevList.size() - 1);
+                    startElementId = lastPassedElement.getNextId();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

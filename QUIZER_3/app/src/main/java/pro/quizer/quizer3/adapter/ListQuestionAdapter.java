@@ -89,7 +89,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             }
         }
         this.answersList = answersList;
-        Log.d(TAG, "ListQuestionAdapter: answers size= " + this.answersList.size());
+//        Log.d(TAG, "ListQuestionAdapter: answers size= " + this.answersList.size());
 
         this.onAnswerClickListener = onAnswerClickListener;
         if (question.getElementOptionsR().getOpen_type() != null) {
@@ -244,11 +244,11 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             if (!QuotaUtils.canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder())) {
                 answerTitle.setTextColor(Color.parseColor("#AAAAAA"));
                 item.setEnabled(false);
-                Log.d(TAG, "ELEMENT DISABLED: " + item.getElementOptionsR().getTitle());
+//                Log.d(TAG, "ELEMENT DISABLED: " + item.getElementOptionsR().getTitle());
             } else {
                 answerTitle.setTextColor(Color.parseColor("#000000"));
                 item.setEnabled(true);
-                Log.d(TAG, "ELEMENT ENABLED: " + item.getElementOptionsR().getTitle());
+//                Log.d(TAG, "ELEMENT ENABLED: " + item.getElementOptionsR().getTitle());
             }
 
             if (item.isEnabled()) {
@@ -300,7 +300,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
             final String filePhotooPath = getFilePath(data);
 
-            Log.d(TAG, "initViews: PICTURES: " + data + " " + filePhotooPath);
+//            Log.d(TAG, "initViews: PICTURES: " + data + " " + filePhotooPath);
             if (StringUtils.isEmpty(filePhotooPath)) {
                 return;
             }
@@ -372,13 +372,13 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 if (answersState.get(position).isChecked()) {
                     for (int i = 0; i < answersState.size(); i++) {
                         if (i != position) {
-                            Log.d(TAG, "set false 4: " + i);
+//                            Log.d(TAG, "set false 4: " + i);
                             answersList.get(i).setEnabled(false);
                         }
                     }
                 } else {
                     for (int i = 0; i < answersState.size(); i++) {
-                        Log.d(TAG, "set false 5: " + i);
+//                        Log.d(TAG, "set false 5: " + i);
                         answersList.get(i).setEnabled(true);
                     }
                 }
@@ -487,7 +487,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
     public void setLastSelectedPosition(int lastSelectedPosition) {
         this.lastSelectedPosition = lastSelectedPosition;
-        Log.d(TAG, "setLastSelectedPosition: " + lastSelectedPosition);
+//        Log.d(TAG, "setLastSelectedPosition: " + lastSelectedPosition);
     }
 
     public int getLastSelectedPosition() {

@@ -220,24 +220,24 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         btnExit.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
         MainFragment.enableSideMenu(false);
-        Log.d(TAG, "====== initCurrentElements() for: " + startElementId);
+//        Log.d(TAG, "====== initCurrentElements() for: " + startElementId);
         initCurrentElements();
-        Log.d(TAG, "====== loadResumedData()");
+//        Log.d(TAG, "====== loadResumedData()");
         loadResumedData();
-        Log.d(TAG, "====== initQuestion();\n");
+//        Log.d(TAG, "====== initQuestion();\n");
         initQuestion();
-        Log.d(TAG, "====== checkConditions()");
+//        Log.d(TAG, "====== checkConditions()");
         if (checkConditions(currentElement)) {
-            Log.d(TAG, "====== setQuestionType()");
+//            Log.d(TAG, "====== setQuestionType()");
             setQuestionType();
-            Log.d(TAG, "====== initViews()");
+//            Log.d(TAG, "====== initViews()");
             initViews();
-            Log.d(TAG, "====== updateCurrentQuestionnaire()");
+//            Log.d(TAG, "====== updateCurrentQuestionnaire()");
             updateCurrentQuestionnaire();
-            Log.d(TAG, "====== initRecyclerView()");
+//            Log.d(TAG, "====== initRecyclerView()");
             initRecyclerView();
             if (isRestored || wasReloaded()) {
-                Log.d(TAG, "====== loadSavedData()");
+//                Log.d(TAG, "====== loadSavedData()");
                 loadSavedData();
             }
         } // else showNextFragment(nextElementId);
@@ -267,7 +267,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //            if (!isNextBtnPressed) {
 //                isNextBtnPressed = true;
             if (saveElement()) {
-                Log.d(TAG, "onClick NEXT: " + nextElementId);
+//                Log.d(TAG, "onClick NEXT: " + nextElementId);
                 if (nextElementId == 0) {
                     saveQuestionnaire();
                 } else if (nextElementId == -1) {
@@ -278,7 +278,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     replaceFragment(fragment);
                 }
             } else {
-                Log.d(TAG, "saveElement: FALSE");
+//                Log.d(TAG, "saveElement: FALSE");
 //                showToast("Выберите ответ.");
             }
 //            }
@@ -373,7 +373,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
                 }
             }
-            Log.d(TAG, "initQuestion: 1");
+//            Log.d(TAG, "initQuestion: 1");
 //            if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0) {
 //                if (getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
 //                    Log.d(TAG, "initQuestion: 2");
@@ -561,12 +561,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
         for (int a = 0; a < answersList.size(); a++) {
             boolean check = checkConditions(answersList.get(a));
-            Log.d(TAG, "check: " + check);
+//            Log.d(TAG, "check: " + check);
             if (check) {
                 checkedAnswersList.add(answersList.get(a));
             }
         }
-        Log.d(TAG, "checkedAnswersList: " + checkedAnswersList.size());
+//        Log.d(TAG, "checkedAnswersList: " + checkedAnswersList.size());
 
         if (checkedAnswersList == null || checkedAnswersList.size() == 0) {
             nextElementId = currentElement.getElementOptionsR().getJump();
@@ -578,7 +578,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 exitQuestionnaire();
             }
         } else {
-            Log.d(TAG, "answersList: " + answersList.size());
+//            Log.d(TAG, "answersList: " + answersList.size());
             answersList = checkedAnswersList;
         }
 
@@ -586,14 +586,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             itemsList.add(element.getElementOptionsR().getTitle());
         }
 
-        Log.d(TAG, "?????????? initRecyclerView: " + answerType);
+//        Log.d(TAG, "?????????? initRecyclerView: " + answerType);
         if (answerType.equals(ElementSubtype.LIST)) {
             adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList,
                     null, null, this);
             rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
             rvAnswers.setAdapter(adapterList);
         } else if (answerType.equals(ElementSubtype.QUOTA)) {
-            Log.d(TAG, "initRecyclerView: quota answers size= " + answersList.size());
+//            Log.d(TAG, "initRecyclerView: quota answers size= " + answersList.size());
             MainActivity activity = (MainActivity) getActivity();
             adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList,
                     getPassedQuotasBlock(), activity.getTree(null), this);
@@ -639,27 +639,27 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private boolean checkConditions(ElementItemR element) {
-        Log.d(TAG, "checkConditions: " + element);
+//        Log.d(TAG, "checkConditions: " + element);
         final ElementOptionsR options = element.getElementOptionsR();
         if (options != null && options.getPre_condition() != null) {
             final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMap(true), (MainActivity) getActivity());
-            Log.d(TAG, "!!!!!!!!!!!!!!!!!! showValue: " + showValue);
+//            Log.d(TAG, "!!!!!!!!!!!!!!!!!! showValue: " + showValue);
             if (showValue != ConditionUtils.CAN_SHOW) {
                 if (showValue != ConditionUtils.CANT_SHOW) {
                     nextElementId = showValue;
-                    Log.d(TAG, "checkConditions: 1");
+//                    Log.d(TAG, "checkConditions: 1");
                 } else {
-                    Log.d(TAG, "checkConditions: 2");
+//                    Log.d(TAG, "checkConditions: 2");
                     if (!element.equals(currentElement)) {
-                        Log.d(TAG, "checkConditions: 3");
+//                        Log.d(TAG, "checkConditions: 3");
                         return false;
                     }
                     nextElementId = options.getJump();
                     if (nextElementId == null) {
-                        Log.d(TAG, "checkConditions: 4");
+//                        Log.d(TAG, "checkConditions: 4");
                         List<ElementItemR> answers = element.getElements();
                         if (answers != null && answers.size() > 0) {
-                            Log.d(TAG, "checkConditions: 5");
+//                            Log.d(TAG, "checkConditions: 5");
                             try {
                                 nextElementId = answers.get(0).getElementOptionsR().getJump();
                             } catch (Exception e) {
@@ -667,22 +667,22 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             }
                         }
                         if (nextElementId == null) {
-                            Log.d(TAG, "checkConditions: 6");
+//                            Log.d(TAG, "checkConditions: 6");
                             nextElementId = 0;
                         }
                     }
                 }
                 if (nextElementId == 0) {
-                    Log.d(TAG, "checkConditions: 7");
+//                    Log.d(TAG, "checkConditions: 7");
                     saveQuestionnaire();
                     exitQuestionnaire();
                     return false;
                 } else if (nextElementId == -1) {
-                    Log.d(TAG, "checkConditions: 8");
+//                    Log.d(TAG, "checkConditions: 8");
                     exitQuestionnaire();
                     return false;
                 } else {
-                    Log.d(TAG, "checkConditions: 9 / " + nextElementId);
+//                    Log.d(TAG, "checkConditions: 9 / " + nextElementId);
 //                    onClick(btnNext);
 //                    Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction().remove(this).commit();
                     showNextFragment(nextElementId);
@@ -1054,7 +1054,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
                 getDao().deleteOldElementsPassedR(id);
                 showToast("Deleted!");
-                showPassed();
+//                showPassed();
             } catch (Exception e) {
                 e.printStackTrace();
                 showToast("Ошибка очистки таблицы элементов.");

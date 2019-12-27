@@ -1,5 +1,6 @@
 package pro.quizer.quizer3.view.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -546,7 +547,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             MainActivity activity = (MainActivity) getActivity();
             try {
                 addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.start_audio_recording), Constants.LogResult.ATTEMPT, getString(R.string.start_audio_recording_attempt), null);
-                activity.startRecording(0, currentQuestionnaire.getToken());
+                Objects.requireNonNull(activity).startRecording(0, currentQuestionnaire.getToken());
             } catch (Exception e) {
                 addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.start_audio_recording), Constants.LogResult.ERROR, getString(R.string.start_audio_recording_error), e.toString());
                 e.printStackTrace();
@@ -554,6 +555,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class UpdateQuotasTree extends AsyncTask<List<ElementItemR>, Integer, ElementItemR[][]> {
 
         float progress = 0;
@@ -566,13 +568,18 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             UiUtils.setButtonEnabled(btnContinue, false);
         }
 
-        protected ElementItemR[][] doInBackground(List<ElementItemR>... quotaList) {
+        @SafeVarargs
+        protected final ElementItemR[][] doInBackground(List<ElementItemR>... quotaList) {
             Log.d(TAG, "====== PREPARING QUOTAS TREE ======");
             return fillQuotas(getTree(quotaList[0]));
         }
 
         protected void onProgressUpdate(Integer... progress) {
-            pb.setProgress(progress[0]);
+            try {
+                pb.setProgress(progress[0]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         protected void onPostExecute(ElementItemR[][] result) {

@@ -1008,7 +1008,11 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         }
 
         if (wasStarted) {
-            getDao().insertCrashLog(new CrashLogs(DateUtils.getCurrentTimeMillis(), "Приложение зависло или было закрыто во время анкеты. Лога нет", true));
+            getDao().insertCrashLog(new CrashLogs(DateUtils.getCurrentTimeMillis(),
+                    "Date: " + DateUtils.getCurrentFormattedDate(DateUtils.PATTERN_FULL) +
+                            "\nVersion: " + DeviceUtils.getAppVersion() +
+                            "\nDevice: " + DeviceUtils.getDeviceInfo() +
+                            "\nПриложение зависло или было закрыто во время анкеты. Лога нет", true));
         }
 
         try {

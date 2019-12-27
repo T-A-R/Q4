@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,7 +130,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
         }, null);
 
-
+        try {
+            hideScreensaver();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         initViews();
         sendCrashLogs();
         makeQuotaTree();

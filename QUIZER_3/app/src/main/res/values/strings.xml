@@ -91,6 +91,7 @@
     <string name="save_config_to_db_error">Ошибка сохранения конфига в базу данных</string>
     <string name="save_question_to_db">Сохранение анкеты</string>
     <string name="save_question_to_db_success">Анкета сохранена в базе данных</string>
+    <string name="save_questionnaire">Анкета сохранена</string>
     <string name="save_question_to_db_error">Ошибка сохранения анкеты в базе данных</string>
     <string name="show_dialog">Показ диалогового окна</string>
     <string name="no_camera_access">Нет доступа на камеру</string>
@@ -232,6 +233,7 @@
     <string name="about_screen">О нас</string>
     <string name="make_elements_error">Ошибка создания модели анкеты</string>
     <string name="exit_questionaire_warning">Вы уверены, что хотите принудительно прервать анкету? \nЕё содержимое будет потеряно.</string>
+    <string name="exit_quiz_header">Завершить анкету</string>
     <string name="fill_input_warning">Заполните текстовое поле в выбранных вариантах ответа.</string>
     <string name="set_last_element_error">Ошибка обновления таблицы переходов</string>
     <string name="select_spinner">Выбрать…</string>
@@ -287,6 +289,7 @@
     <string name="button_ftp_upload_data">Отправка через FTP</string>
     <string name="button_send_quiz">Отправить анкеты</string>
     <string name="button_logs">Журнал событий</string>
+    <string name="button_exit">Выход</string>
     <string name="button_send_audio">Отправить аудио</string>
     <string name="button_send_photo">Отправить фото</string>
     <string name="button_send_log">Отправить журнал на сервер</string>
@@ -343,5 +346,7 @@
     <string name="stop_audio_recording_error">Ошибка завершения записи аудио</string>
     <string name="stop_audio_recording_attempt">Попытка завершения записи аудио</string>
     <string name="load_crash_log_from_db">Чтение краш-лога из базы данных</string>
+    <string name="dialog_change_user">Вы уверены, что хотите сменить пользователя?</string>
+    <string name="view_exit">Выйти</string>
 
 </resources>

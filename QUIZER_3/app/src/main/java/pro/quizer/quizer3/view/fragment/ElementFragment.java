@@ -1,8 +1,10 @@
 package pro.quizer.quizer3.view.fragment;
 
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -298,20 +300,24 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 fragment.setStartElement(prevElementId, true);
                 replaceFragmentBack(fragment);
             } else {
-                onClick(btnExit);
+                showExitPoolAlertDialog();
             }
 
 
         } else if (view == btnExit) {
-            try {
-                getDao().clearCurrentQuestionnaireR();
-                getDao().clearElementPassedR();
-            } catch (Exception e) {
-                isExitBtnPressed = false;
-                e.printStackTrace();
-            }
-            stopRecording();
-            replaceFragment(new HomeFragment());
+            showExitPoolAlertDialog();
+//            if(!isExitBtnPressed) {
+//
+//            } else {
+//            try {
+//                getDao().clearCurrentQuestionnaireR();
+//                getDao().clearElementPassedR();
+//            } catch (Exception e) {
+//                isExitBtnPressed = false;
+//                e.printStackTrace();
+//            }
+//            stopRecording();
+//            replaceFragment(new HomeFragment());
 //            }
         } else if (view == closeImage1) {
             titleCont1.setVisibility(View.GONE);
@@ -1211,6 +1217,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     public void onResume() {
         super.onResume();
         MainActivity mActivity = (MainActivity) getActivity();
+        assert mActivity != null;
         if (!mActivity.checkPermission()) {
             mActivity.requestPermission();
         }
@@ -1225,13 +1232,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     @Override
     public boolean onBackPressed() {
-        if (isExit) {
-            stopRecording();
-            replaceFragment(new HomeFragment());
-        } else {
-            Toast.makeText(getContext(), getString(R.string.exit_questionaire_warning), Toast.LENGTH_SHORT).show();
-            isExit = true;
-        }
+        onClick(btnPrev);
+//        if (isExit) {
+//            stopRecording();
+//            replaceFragment(new HomeFragment());
+//        } else {
+//            Toast.makeText(getContext(), getString(R.string.exit_questionaire_warning), Toast.LENGTH_SHORT).show();
+//            isExit = true;
+//        }
         return true;
     }
 
@@ -1252,7 +1260,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     public void exitQuestionnaire() {
-        showToast("Выход без сохранения.");
         stopRecording();
         replaceFragment(new HomeFragment());
     }
@@ -1279,6 +1286,37 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         final String fileName = FileUtils.getFileName(url);
 
         return path + FileUtils.FOLDER_DIVIDER + fileName;
+    }
+
+    public void showExitPoolAlertDialog() {
+        MainActivity activity = (MainActivity) getActivity();
+        addLog(getCurrentUser().getLogin(), Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_exit), null);
+        if (activity != null && !activity.isFinishing()) {
+            new AlertDialog.Builder(Objects.requireNonNull(getContext()), R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.exit_quiz_header)
+                    .setMessage(R.string.exit_questionaire_warning)
+                    .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(final DialogInterface dialog, final int which) {
+                            if (getCurrentUser().getConfigR().isSaveAborted()) {
+                                showScreensaver(true);
+                                saveQuestionnaire();
+                                showToast(getString(R.string.save_questionnaire));
+                            }
+                            try {
+                                getDao().clearCurrentQuestionnaireR();
+                                getDao().clearElementPassedR();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            dialog.dismiss();
+                            exitQuestionnaire();
+                        }
+                    })
+                    .setNegativeButton(R.string.view_no, null).show();
+        }
     }
 }
 

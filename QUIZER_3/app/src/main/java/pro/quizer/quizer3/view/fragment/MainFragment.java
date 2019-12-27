@@ -1,7 +1,9 @@
 package pro.quizer.quizer3.view.fragment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -356,52 +358,8 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
         } else if (view == mChangeUserBtn) {
             getDao().updateQuestionnaireStart(false, getCurrentUserId());
             hide();
-//            openScreen(new AuthFragment());
-//            Intent intent = new Intent(getContext(), MainActivity.class);
-//            intent.setFlag(Intent.CLEAR_TASK);
-            startActivity(new Intent(getContext(), MainActivity.class));
+            showChangeAccountAlertDialog();
         }
-//        if (view == imgMarker || view == txtCity || view == imgDrop) {
-//            if (getUser().isDelegateMode()) {
-//                hide();
-//                sideMenuDrawer.closeDrawer(Gravity.LEFT);
-//                User.getUser().setDelegateMode(!User.getUser().isDelegateMode());
-//            } else {
-//                hide();
-//            }
-////            openScreen(new MapFragment().setNeedEnterCity(true), true);
-//        } else if (view == txtContacts || view == txtContactsDelegate) {
-//            hide();
-////            openScreen(new ContactsFragment().setDelegateScreen(view == txtContactsDelegate));
-//        } else if (view == txtPromo) {
-//            hide();
-////            openScreen(new PromoFragment());
-//        } else if (view == txtTariffs) {
-//            hide();
-////            openScreen(new ChooseTariffFragment());
-//        } else if (view == txtCalculator) {
-//            hide();
-////            openScreen(new CalculatorFragment());
-//        } else if (view == lineNotify) {
-//            getUser().setNotify(!getUser().isNotify());
-//            txtNotufy.setText(getUser().isNotify() ? R.string.side_menu_notify_off : R.string.side_menu_notify_on);
-//        } else if (view == lineDelegate) {
-////            openScreen(new DelegateFragment()); ????
-//        } else if (view == lineExit) {
-//            hide();
-//            disableSideMenu();
-//            getUser().logout();
-////            openScreen(new KeyFragment().setEnter(true));
-//        } else if (view == txtEdit) {
-//            hide();
-//            if (!getUser().isAuthorized()) {
-////                openScreen(new Reg1Fragment().setEnter(true));
-//            } else if (!getUser().isDelegateMode()) {
-////                openScreen(new ProfileFragment());
-//            } else {
-////                openScreen(new EditPlaceFragment());
-//            }
-//        }
     }
 
     private void hide() {
@@ -457,58 +415,7 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
 //        }
     }
 
-//    private void setPhoto(Bitmap bitmap) {
-//        if (bitmap == null) {
-//            img.setImageResource(R.drawable.bg_circle_gray);
-//            ico.setVisibility(View.VISIBLE);
-//            return;
-//        }
-//
-//        int size = Math.min(Math.min(bitmap.getWidth(), bitmap.getHeight()), MainActivity.MAX_LOGO_SIZE);
-//        Bitmap cropedBitmap = ImageUtils.getCropedBitmap(bitmap, size, size);
-//        Bitmap rounded = ImageUtils.getRoundedCornerBitmap(cropedBitmap, size / 2);
-//        img.setImageBitmap(rounded);
-//
-//        ico.setVisibility(View.GONE);
-//    }
-
     private void setSideMenu() {
-//        txtCity.setText(getUser().getCityName());
-////        lineExit.setVisibility(getUser().isAuthorized() ? View.VISIBLE : View.GONE);
-//
-//        if (!getUser().isAuthorized()) {
-//            txtId.setText("");
-//            txtName.setText(getString(R.string.side_menu_unknown_name));
-//        } else if (!getUser().isDelegateMode()) {
-//            String digitalId = null;
-//            if (getUser().getCurrentUser() != null)
-//                digitalId = getUser().getCurrentUser().getUuid();
-//            txtId.setText(getString(R.string.side_menu_id, digitalId != null ? digitalId : getUser().getUserUuid()));
-//            txtName.setText(getUser().getCurrentUser() != null ? getUser().getCurrentUser().getName() : getString(R.string.side_menu_unknown_name));
-//        } else {
-////            txtId.setText(getString(R.string.side_menu_id, getUser().getRestaurantContractId()));
-////            txtName.setText(restaurant != null ? restaurant.getLegalName() : "");
-////
-////            if (restaurant == null || restaurant.getTariff() == null) {
-////                txtRaffles.setText(R.string.side_menu_no_tariff);
-////                txtDate.setVisibility(View.GONE);
-////            } else {
-////                Tariff tariff = restaurant.getTariff();
-////                int numEvents = tariff.getCount().intValue();
-////                txtRaffles.setText(String.format("Осталось %s", getResources().getQuantityString(R.plurals.raffles, numEvents, numEvents)));
-////
-////                if (tariff.getTitle().equals("Простой")) {
-////                    txtDate.setVisibility(View.GONE);
-////                } else {
-////                    int days = (int) (30f / tariff.getAmout() * restaurant.getBalance());
-////                    Calendar c = Calendar.getInstance();
-////                    c.add(Calendar.DATE, days);
-////                    SimpleDateFormat sdf1 = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
-////                    String date = sdf1.format(c.getTime());
-////                    txtDate.setText(String.format("%s %s", getString(R.string.side_menu_date), date));
-////                }
-////            }
-//        }
 
         bg.clearAnimation();
         panel.clearAnimation();
@@ -546,5 +453,22 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
 
     public interface ToolBarListener {
         void onToolBarClick();
+    }
+
+    public void showChangeAccountAlertDialog() {
+        MainActivity activity = (MainActivity) getActivity();
+        if (!activity.isFinishing()) {
+            new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.view_exit)
+                    .setMessage(R.string.dialog_change_user)
+                    .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialog, final int which) {
+                            startActivity(new Intent(getContext(), MainActivity.class));
+                        }
+                    })
+                    .setNegativeButton(R.string.view_no, null).show();
+        }
     }
 }

@@ -31,6 +31,7 @@ import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.view.KeyEvent;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ import pro.quizer.quizer3.model.quota.QuotaUtils;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
+import pro.quizer.quizer3.utils.FontUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.view.fragment.MainFragment;
@@ -92,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private int mUserId;
     private ElementItemR[][] tree;
     List<ElementItemR> elementItemRList;
+    ChangeFontCallback changeFontCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +123,20 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             else
                 view.post(() -> view.getViewTreeObserver().addOnGlobalLayoutListener(MainActivity.this));
         }
+
+//        setChangeFontCallback(new ChangeFontCallback() {
+//            @Override
+//            public void onChangeFont() {
+//                Toast.makeText(MainActivity.this, getString(R.string.setted) + " " + FontUtils.getCurrentFontName(getFontSizePosition()), Toast.LENGTH_SHORT).show();
+//                finish();
+//                overridePendingTransition(0, 0);
+//                startActivity(getIntent());
+//                overridePendingTransition(0, 0);
+//
+//            }
+//        });
+
+
     }
 
     @Override
@@ -800,5 +817,40 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
      */
     public static void makeCrash() {
         throw new RuntimeException("This is a crash");
+    }
+
+    public interface ChangeFontCallback {
+        void onChangeFont();
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+        int currentFont = getFontSizePosition();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    if (getFontSizePosition() < 4) {
+                        setFontSizePosition(currentFont + 1);
+                        changeFontCallback.onChangeFont();
+                    }
+                }
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    if (getFontSizePosition() > 0) {
+                        setFontSizePosition(currentFont - 1);
+                        changeFontCallback.onChangeFont();
+                    }
+                }
+                return true;
+            default:
+                return super.dispatchKeyEvent(event);
+        }
+    }
+
+    public void setChangeFontCallback(ChangeFontCallback listener) {
+        changeFontCallback = listener;
     }
 }

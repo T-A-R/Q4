@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
@@ -99,7 +100,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         tvCountSent = (TextView) findViewById(R.id.count_sent);
         tvCurrentUser = (TextView) findViewById(R.id.current_user);
         tvPbText = (TextView) findViewById(R.id.tv_pb_text);
-        pb = (ProgressBar) findViewById(R.id.progressBar);
+        pb = (ProgressBar) findViewById(R.id.progressBarQuota);
 
         MainFragment.enableSideMenu(true);
 

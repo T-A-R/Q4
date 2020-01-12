@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -75,6 +76,7 @@ import pro.quizer.quizer3.model.quota.QuotaUtils;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
+import pro.quizer.quizer3.utils.FontUtils;
 import pro.quizer.quizer3.utils.LogUtils;
 import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.utils.UiUtils;
@@ -117,6 +119,47 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         onReady();
+
+        MainActivity mainActivity = (MainActivity) getActivity();
+
+        if (mainActivity != null && !mainActivity.isFinishing()) {
+            mainActivity.setChangeFontCallback(new MainActivity.ChangeFontCallback() {
+                @Override
+                public void onChangeFont() {
+                    refreshFragment();
+                }
+            });
+        }
+    }
+
+    public void refreshFragment() {
+        Log.d(TAG, "refreshFragment: " + getVisibleFragment().getClass());
+        if (getVisibleFragment() instanceof SettingsFragment) {
+            Log.d(TAG, "refreshFragment: SETTINGS");
+        } else {
+            if (!getMainActivity().isFinishing()) {
+                Log.d(TAG, "refreshFragment: RANDOM");
+                showToast(getString(R.string.setted) + " " + FontUtils.getCurrentFontName(getMainActivity().getFontSizePosition()));
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.detach(this).attach(this).commit();
+            }
+        }
+    }
+
+    public Fragment getVisibleFragment() {
+        FragmentManager fragmentManager = getMainActivity().getSupportFragmentManager();
+        List<Fragment> fragments = fragmentManager.getFragments();
+        if (fragments != null) {
+            for (Fragment fragment : fragments) {
+                if (fragment != null && fragment.isVisible())
+                    return fragment;
+            }
+        }
+        return null;
+    }
+
+    public MainActivity getMainActivity() {
+        return (MainActivity) getActivity();
     }
 
     /**

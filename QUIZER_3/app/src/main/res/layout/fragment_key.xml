@@ -27,7 +27,7 @@
 
         android:orientation="vertical">
 
-        <EditText
+        <pro.quizer.quizer3.view.element.edittext.ResizableEditText
             android:id="@+id/et_activation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

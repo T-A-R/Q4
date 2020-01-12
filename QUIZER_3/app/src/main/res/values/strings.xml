@@ -348,5 +348,6 @@
     <string name="load_crash_log_from_db">Чтение краш-лога из базы данных</string>
     <string name="dialog_change_user">Вы уверены, что хотите сменить пользователя?</string>
     <string name="view_exit">Выйти</string>
+    <string name="setted">Установлен</string>
 
 </resources>

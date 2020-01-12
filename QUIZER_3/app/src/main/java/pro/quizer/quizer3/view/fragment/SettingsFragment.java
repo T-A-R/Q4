@@ -34,7 +34,7 @@ import pro.quizer.quizer3.view.Toolbar;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class SettingsFragment extends ScreenFragment implements View.OnClickListener {
+public class SettingsFragment extends ScreenFragment implements View.OnClickListener, ICallback {
 
     public static final List<FontSizeModel> FONT_SIZE_MODELS = new ArrayList<FontSizeModel>() {
         {
@@ -105,8 +105,8 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         mDeleteUser = findViewById(R.id.delete_user);
         mUpdateConfig = findViewById(R.id.update_config);
 
-        LinearLayout textSettingsCont = findViewById(R.id.text_settings_cont);
-        textSettingsCont.setVisibility(View.GONE);
+//        LinearLayout textSettingsCont = findViewById(R.id.text_settings_cont);
+//        textSettingsCont.setVisibility(View.GONE);
 
         mDeleteUser.setOnClickListener(this);
         mUpdateConfig.setOnClickListener(this);
@@ -154,6 +154,8 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         for (final FontSizeModel fontSizeModel : FONT_SIZE_MODELS) {
             fontString.add(fontSizeModel.getName());
         }
+
+//        showToast("SIZE: " + selectedPosition);
 
         ArrayAdapter<String> fontSizeAdapter = new ArrayAdapter<>(getContext(), R.layout.adapter_spinner, fontString);
         fontSizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -311,5 +313,28 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
     public boolean onBackPressed() {
         replaceFragment(new HomeFragment());
         return true;
+    }
+
+    @Override
+    public void onStarting() {
+        if (isAdded()) {
+            showToast(getString(R.string.notification_updating));
+        }
+    }
+
+    @Override
+    public void onSuccess() {
+
+        if (isAdded()) {
+            updateData(new SettingViewModelExecutable(getContext()).execute());
+        }
+    }
+
+    @Override
+    public void onError(final Exception pException) {
+
+        if (isAdded()) {
+            updateData(new SettingViewModelExecutable(getContext()).execute());
+        }
     }
 }

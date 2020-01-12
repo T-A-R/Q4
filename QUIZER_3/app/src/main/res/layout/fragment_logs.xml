@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <TextView
+    <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
         android:id="@+id/users"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
 
     </android.support.v7.widget.RecyclerView>
 
-    <TextView
+    <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
         android:id="@+id/no_users"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

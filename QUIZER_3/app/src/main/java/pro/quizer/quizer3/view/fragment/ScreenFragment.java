@@ -178,5 +178,4 @@ public abstract class ScreenFragment extends SmartFragment {
 //        }
 //    }
 
-
 }

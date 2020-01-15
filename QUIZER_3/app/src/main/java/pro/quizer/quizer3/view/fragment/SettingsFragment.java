@@ -8,10 +8,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -51,6 +54,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
     private View mUpdateConfig;
     private TextView mConfigIdView;
     private TextView mAnswerMarginView;
+    private TextView mSpinnerTitle;
     private View mDeleteUser;
     private String mConfigDateString;
     private String mAnswerMarginString;
@@ -59,6 +63,8 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
     private Spinner mSmsNumberSpinner;
     private AppCompatSeekBar mMarginSeekBar;
     private View mSmsSection;
+    private FrameLayout mSpinnerFrame;
+    private Switch mAutoZoomSwitch;
 
     private MainActivity mBaseActivity;
     private int answerMargin;
@@ -86,7 +92,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
     }
 
     private void updateAnswerMarginString(final int pValue) {
-        UiUtils.setTextOrHide(mAnswerMarginView, String.format(mAnswerMarginString, pValue));
+//        UiUtils.setTextOrHide(mAnswerMarginView, String.format(mAnswerMarginString, pValue));
     }
 
     private void initViews() {
@@ -100,10 +106,14 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         mAnswerMarginView = findViewById(R.id.settings_space_between_answers);
         mMarginSeekBar = findViewById(R.id.margin_seekbar);
         mSmsSection = findViewById(R.id.sms_section);
+        mSpinnerFrame = findViewById(R.id.spinner_frame);
         mConfigDateView = findViewById(R.id.settings_date);
         mConfigIdView = findViewById(R.id.settings_id);
+        mSpinnerTitle = findViewById(R.id.spinner_title);
         mDeleteUser = findViewById(R.id.delete_user);
         mUpdateConfig = findViewById(R.id.update_config);
+        mAutoZoomSwitch = findViewById(R.id.auto_zoom_switch);
+
 
 //        LinearLayout textSettingsCont = findViewById(R.id.text_settings_cont);
 //        textSettingsCont.setVisibility(View.GONE);
@@ -155,28 +165,45 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
             fontString.add(fontSizeModel.getName());
         }
 
-//        showToast("SIZE: " + selectedPosition);
-
-        ArrayAdapter<String> fontSizeAdapter = new ArrayAdapter<>(getContext(), R.layout.adapter_spinner, fontString);
-        fontSizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        mFontSizeSpinner.setAdapter(fontSizeAdapter);
-        mFontSizeSpinner.setSelection(selectedPosition);
-        mFontSizeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mAutoZoomSwitch.setChecked(mBaseActivity.isAutoZoom());
+        mAutoZoomSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mBaseActivity.setFontSizePosition(position);
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 
-                if (position != selectedPosition) {
-                    refreshFragment();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-
+                mBaseActivity.setAutoZoom(b);
+                replaceFragment(new SettingsFragment());
             }
         });
+
+        if(!mBaseActivity.isAutoZoom()) {
+
+            mSpinnerTitle.setVisibility(View.VISIBLE);
+            mSpinnerFrame.setVisibility(View.VISIBLE);
+
+            ArrayAdapter<String> fontSizeAdapter = new ArrayAdapter<>(getContext(), R.layout.adapter_spinner, fontString);
+            fontSizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            mFontSizeSpinner.setAdapter(fontSizeAdapter);
+            mFontSizeSpinner.setSelection(selectedPosition);
+            mFontSizeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    mBaseActivity.setFontSizePosition(position);
+
+                    if (position != selectedPosition) {
+                        refreshFragment();
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> arg0) {
+
+                }
+            });
+        } else {
+            mSpinnerTitle.setVisibility(View.GONE);
+            mSpinnerFrame.setVisibility(View.GONE);
+        }
 
         final UserModelR currentUser = mBaseActivity.getCurrentUser();
         final ConfigModel configModel = currentUser.getConfigR();

@@ -32,6 +32,7 @@ public final class Constants {
         String AUTH_TIME_DIFFERENCE = "auth_time_difference";
         String SEND_TIME_DIFFERENCE = "send_time_difference";
         String QUOTA_TIME_DIFFERENCE = "quota_time_difference";
+        String AUTO_ZOOM = "AUTO_ZOOM";
 
     }
 

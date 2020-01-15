@@ -14,7 +14,7 @@
         android:layout_alignParentRight="true"
         android:src="@drawable/ic_fullscreen" />
 
-    <TextView
+    <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
         android:layout_width="1dp"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
@@ -26,7 +26,7 @@
         android:layout_width="2dp"
         android:layout_height="match_parent" />
 
-    <TextView
+    <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
         android:id="@+id/table_header_column_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
         android:textSize="14sp"
         android:text="text" />
 
-    <TextView
+    <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
         android:id="@+id/table_header_column_description_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

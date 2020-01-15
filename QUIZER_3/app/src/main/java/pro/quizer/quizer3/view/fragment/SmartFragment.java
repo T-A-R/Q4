@@ -112,6 +112,29 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        boolean isAutoZoom = getMainActivity().isAutoZoom();
+        if (isAutoZoom)
+            switch (layoutSrc) {
+                case R.layout.fragment_settings:
+                    layoutSrc = R.layout.fragment_settings_auto;
+                    break;
+                case R.layout.fragment_auth:
+                    layoutSrc = R.layout.fragment_auth_auto;
+                    break;
+                case R.layout.fragment_home:
+                    layoutSrc = R.layout.fragment_home_auto;
+                    break;
+                case R.layout.fragment_sync:
+                    layoutSrc = R.layout.fragment_sync_auto;
+                    break;
+                case R.layout.fragment_service:
+                    layoutSrc = R.layout.fragment_service_auto;
+                    break;
+                case R.layout.fragment_quotas:
+                    layoutSrc = R.layout.fragment_quotas_auto;
+                    break;
+                default:
+            }
         return inflater.inflate(layoutSrc, container, false);
     }
 

@@ -183,13 +183,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         btnPrev = (Button) findViewById(R.id.back_btn);
         btnExit = (Button) findViewById(R.id.exit_btn);
 
-        tvUnhide.setTypeface(Fonts.getFuturaPtBook());
-        tvTitle1.setTypeface(Fonts.getFuturaPtBook());
-        tvTitle2.setTypeface(Fonts.getFuturaPtBook());
-        tvQuestion.setTypeface(Fonts.getFuturaPtBook());
-        btnNext.setTypeface(Fonts.getFuturaPtBook());
-        btnPrev.setTypeface(Fonts.getFuturaPtBook());
-        btnExit.setTypeface(Fonts.getFuturaPtBook());
+//        tvUnhide.setTypeface(Fonts.getFuturaPtBook());
+//        tvTitle1.setTypeface(Fonts.getFuturaPtBook());
+//        tvTitle2.setTypeface(Fonts.getFuturaPtBook());
+//        tvQuestion.setTypeface(Fonts.getFuturaPtBook());
+//        btnNext.setTypeface(Fonts.getFuturaPtBook());
+//        btnPrev.setTypeface(Fonts.getFuturaPtBook());
+//        btnExit.setTypeface(Fonts.getFuturaPtBook());
         btnNext.setTransformationMethod(null);
         btnPrev.setTransformationMethod(null);
         btnExit.setTransformationMethod(null);
@@ -849,11 +849,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     nextElementId = getElement(answerStates[0][0].getRelative_id()).getElementOptionsR().getJump();
 
                 ElementItemR nextElement = getElement(nextElementId);
-                final ElementOptionsR options = nextElement.getElementOptionsR();
-                final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMap(false), (MainActivity) getActivity());
+                if(nextElementId != 0 && nextElementId != -1) {
+                    final ElementOptionsR options = nextElement.getElementOptionsR();
+                    final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMap(false), (MainActivity) getActivity());
 
-                if (showValue != ConditionUtils.CAN_SHOW) {
-                    nextElementId = options.getJump();
+                    if (showValue != ConditionUtils.CAN_SHOW) {
+                        nextElementId = options.getJump();
+                    }
                 }
 
                 ElementPassedR elementPassedR = new ElementPassedR();

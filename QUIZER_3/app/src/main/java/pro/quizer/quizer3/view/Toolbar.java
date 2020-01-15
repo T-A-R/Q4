@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.io.Serializable;
 
+import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 
 
@@ -23,17 +24,17 @@ public class Toolbar extends RelativeLayout implements Serializable {
 
     public Toolbar(final Context context) {
         super(context);
-        init();
+        init(context);
     }
 
     public Toolbar(final Context context, final AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context);
     }
 
     public Toolbar(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        init(context);
     }
 
     public void setTitle(final String pTitle) {
@@ -55,8 +56,13 @@ public class Toolbar extends RelativeLayout implements Serializable {
         return result == flagSet;
     }
 
-    private void inflate() {
-        inflate(getContext(), R.layout.view_toolbar, this);
+    private void inflate(Context context) {
+        MainActivity activity = (MainActivity) context;
+        if (activity.isAutoZoom()) {
+            inflate(getContext(), R.layout.view_toolbar_auto, this);
+        } else {
+            inflate(getContext(), R.layout.view_toolbar, this);
+        }
 
         mLogo = findViewById(R.id.toolbar_view_logo);
         mIcon = findViewById(R.id.icon);
@@ -66,8 +72,8 @@ public class Toolbar extends RelativeLayout implements Serializable {
         mOptionsView = findViewById(R.id.toolbar_view_options);
     }
 
-    private void init() {
-        inflate();
+    private void init(Context context) {
+        inflate(context);
     }
 
     public void showOptionsView(final OnClickListener pOnClickListener, final OnClickListener pOnInfoClickListener) {

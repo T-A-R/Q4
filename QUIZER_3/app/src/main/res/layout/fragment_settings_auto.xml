@@ -20,35 +20,35 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="@dimen/_12ssp">
 
-            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="@dimen/_12sdp"
                 android:gravity="center_horizontal"
                 android:text="@string/view_config_title"
                 android:textColor="@android:color/black"
-                android:textSize="14sp"
+                android:textSize="@dimen/_12ssp"
                 android:textStyle="bold" />
 
-            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+            <TextView
                 android:id="@+id/settings_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 android:textColor="@android:color/black"
-                android:textSize="16sp"
+                android:textSize="@dimen/_12ssp"
                 tools:text="@string/view_id" />
 
-            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+            <TextView
                 android:id="@+id/settings_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="@dimen/_10sdp"
                 android:text="@string/view_date"
                 android:textColor="@android:color/black"
-                android:textSize="16sp" />
+                android:textSize="@dimen/_12ssp" />
 
             <include layout="@layout/view_divider" />
 
@@ -58,30 +58,30 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginBottom="16dp"
                     android:gravity="center_horizontal"
                     android:text="@string/view_display_settings_title"
                     android:textColor="@android:color/black"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/_12ssp"
                     android:textStyle="bold" />
 
-                <pro.quizer.quizer3.view.element.customswitch.ResizableSwitch
+                <Switch
                     android:id="@+id/auto_zoom_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginBottom="@dimen/_6sdp"
                     android:text="@string/view_switch_auto_zoom"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/_12ssp" />
 
-                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                <TextView
                     android:id="@+id/spinner_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginBottom="@dimen/_6sdp"
                     android:text="@string/view_settings_font_size"
                     android:textColor="@android:color/black" />
 
@@ -89,7 +89,7 @@
                     android:id="@+id/spinner_frame"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginBottom="@dimen/_6sdp"
                     android:background="@drawable/picker_border"
                     android:padding="8dp">
 
@@ -100,14 +100,14 @@
 
                 </FrameLayout>
 
-                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                <TextView
                     android:id="@+id/settings_space_between_answers"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginBottom="@dimen/_6sdp"
                     android:text="@string/view_settings_spacing"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/_12ssp"
                     android:visibility="gone" />
 
                 <android.support.v7.widget.AppCompatSeekBar
@@ -135,21 +135,21 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginBottom="@dimen/_12sdp"
                     android:gravity="center_horizontal"
                     android:text="@string/view_exit_poll_number_title"
                     android:textColor="@android:color/black"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/_12ssp"
                     android:textStyle="bold" />
 
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginBottom="@dimen/_6sdp"
                     android:background="@drawable/picker_border"
                     android:padding="8dp">
 
@@ -170,7 +170,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/_12sdp"
                 android:maxLines="1"
                 android:text="@string/button_update_config"
                 android:textSize="@dimen/_12ssp" />
@@ -182,7 +182,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/_12sdp"
                 android:maxLines="1"
                 android:text="@string/button_delete_user"
                 android:textSize="@dimen/_12ssp" />

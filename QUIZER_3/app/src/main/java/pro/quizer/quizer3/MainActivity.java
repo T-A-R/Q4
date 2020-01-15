@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private ElementItemR[][] tree;
     List<ElementItemR> elementItemRList;
     ChangeFontCallback changeFontCallback;
+    private boolean mAutoZoom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +123,12 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 Log.d(TAG, "MainActivity.onCreate() WTF? view == null");
             else
                 view.post(() -> view.getViewTreeObserver().addOnGlobalLayoutListener(MainActivity.this));
+        }
+
+        if (getZoomMode() == 1) {
+            mAutoZoom = true;
+        } else {
+            mAutoZoom = false;
         }
 
 //        setChangeFontCallback(new ChangeFontCallback() {
@@ -316,6 +323,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public int getFontSizePosition() {
         return SPUtils.getFontSizePosition(this);
+    }
+
+    public int getZoomMode() {
+        return SPUtils.getZoomMode(this);
     }
 
     public int getAnswerMargin() {
@@ -830,7 +841,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         int currentFont = getFontSizePosition();
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
-                if (action == KeyEvent.ACTION_DOWN) {
+                if (action == KeyEvent.ACTION_DOWN && !mAutoZoom) {
                     if (getFontSizePosition() < 4) {
                         setFontSizePosition(currentFont + 1);
                         changeFontCallback.onChangeFont();
@@ -838,7 +849,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
-                if (action == KeyEvent.ACTION_DOWN) {
+                if (action == KeyEvent.ACTION_DOWN && !mAutoZoom) {
                     if (getFontSizePosition() > 0) {
                         setFontSizePosition(currentFont - 1);
                         changeFontCallback.onChangeFont();
@@ -852,5 +863,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void setChangeFontCallback(ChangeFontCallback listener) {
         changeFontCallback = listener;
+    }
+
+    public boolean isAutoZoom() {
+        return mAutoZoom;
+    }
+
+    public void setAutoZoom(boolean mAutoZoom) {
+        this.mAutoZoom = mAutoZoom;
+        SPUtils.saveZoomMode(this, mAutoZoom ? 1 : 0);
     }
 }

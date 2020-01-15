@@ -17,16 +17,23 @@ import pro.quizer.quizer3.utils.StringUtils;
 public class UsersLogRecyclerAdapter extends RecyclerView.Adapter<UsersLogRecyclerAdapter.ListObjectViewHolder> {
 
     private List<AppLogsR> mItemList;
+    private boolean mAutoZoom;
 
-    public UsersLogRecyclerAdapter(List<AppLogsR> mItemList) {
+    public UsersLogRecyclerAdapter(List<AppLogsR> mItemList, boolean pAutoZoom) {
         this.mItemList = mItemList;
+        this.mAutoZoom = pAutoZoom;
 
     }
 
     @NonNull
     @Override
     public ListObjectViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.holder_user_log, viewGroup, false);
+        View view;
+        if(mAutoZoom) {
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.holder_user_log_auto, viewGroup, false);
+        } else {
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.holder_user_log, viewGroup, false);
+        }
         return new ListObjectViewHolder(view);
     }
 

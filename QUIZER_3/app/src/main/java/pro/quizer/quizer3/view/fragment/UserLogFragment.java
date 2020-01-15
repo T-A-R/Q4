@@ -139,7 +139,12 @@ public class UserLogFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void initRecyclerView() {
-        pAdapter = new UsersLogRecyclerAdapter(mLogs);
+        MainActivity activity = getMainActivity();
+        boolean mAutoZoom;
+        if(activity != null) {
+           mAutoZoom = activity.isAutoZoom();
+        } else mAutoZoom = true;
+        pAdapter = new UsersLogRecyclerAdapter(mLogs, mAutoZoom);
         mUserLogRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mUserLogRecyclerView.setAdapter(pAdapter);
     }

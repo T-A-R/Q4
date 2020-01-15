@@ -260,6 +260,7 @@
     <string name="view_button_refresh">Обновить</string>
     <string name="view_button_info">INFO</string>
     <string name="view_switch_hide_completed_quotas">Скрыть выполненные</string>
+    <string name="view_switch_auto_zoom">Автоматическое маштабирование шрифтов</string>
     <string name="view_hint_search">Поиск</string>
     <string name="quota_not_renew_after_send">Квота не обновлена после последней отправки анкеты.</string>
     <string name="quota_not_renew_after_finish">Квота не обновлена после последнего завершения анкеты.</string>

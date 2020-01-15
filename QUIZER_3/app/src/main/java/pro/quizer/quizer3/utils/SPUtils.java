@@ -55,6 +55,13 @@ public class SPUtils {
         editor.apply();
     }
 
+    public static void saveZoomMode(final Context pContext, final int pZoomMode) {
+        final SharedPreferences.Editor editor = getSharedPreferences(pContext).edit();
+
+        editor.putInt(Constants.SP.AUTO_ZOOM, pZoomMode);
+        editor.apply();
+    }
+
     public static void addSendedQInSession(final Context pContext, final int pCount) {
         final SharedPreferences.Editor editor = getSharedPreferences(pContext).edit();
         final int savedSendedCount = getSendedQInSession(pContext);
@@ -88,6 +95,10 @@ public class SPUtils {
 
     public static int getFontSizePosition(final Context pContext) {
         return getFontSizePosition(getSharedPreferences(pContext));
+    }
+
+    public static int getZoomMode(final Context pContext) {
+        return getZoomMode(getSharedPreferences(pContext));
     }
 
     public static int getAnswerMargin(final Context pContext) {
@@ -138,6 +149,10 @@ public class SPUtils {
 
     private static int getAnswerMargin(final SharedPreferences pSharedPreferences) {
         return getInt(pSharedPreferences, Constants.SP.ANSWER_MARGIN, 0);
+    }
+
+    private static int getZoomMode(final SharedPreferences pSharedPreferences) {
+        return getInt(pSharedPreferences, Constants.SP.AUTO_ZOOM, 1);
     }
 
     private static int getSendedQInSession(final SharedPreferences pSharedPreferences) {

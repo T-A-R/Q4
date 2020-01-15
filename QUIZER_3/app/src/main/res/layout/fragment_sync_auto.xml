@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/sync_cont">
+
+    <pro.quizer.quizer3.view.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_60sdp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/_12sdp">
+
+            <TextView
+                android:id="@+id/user_name_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_12sdp"
+                android:gravity="center_horizontal"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold"
+                tools:text="user4" />
+
+            <include layout="@layout/view_divider"/>
+
+            <TextView
+                android:layout_marginTop="@dimen/_9sdp"
+                android:id="@+id/sended_q_from_this_device"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_12ssp"
+                tools:text="ПУСТО" />
+
+            <TextView
+                android:id="@+id/sended_q_in_session"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_12ssp"
+                tools:text="ПУСТО" />
+
+            <TextView
+                android:id="@+id/unsended_q"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_12ssp"
+                tools:text="ПУСТО" />
+
+            <Button
+                android:layout_marginBottom="12dp"
+                android:id="@+id/send_q"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/button_send_quiz" />
+
+            <include layout="@layout/view_divider"/>
+
+            <TextView
+                android:layout_marginTop="@dimen/_9sdp"
+                android:id="@+id/unsended_audio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_12ssp"
+                tools:text="ПУСТО" />
+
+            <Button
+                android:layout_marginBottom="@dimen/_9sdp"
+                android:id="@+id/send_audio"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/button_send_audio" />
+
+            <include layout="@layout/view_divider"/>
+
+            <TextView
+                android:layout_marginTop="@dimen/_9sdp"
+                android:id="@+id/unsended_photo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_12ssp"
+                tools:text="ПУСТО" />
+
+            <Button
+                android:id="@+id/send_photo"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/button_send_photo" />
+
+            <Button
+                android:id="@+id/sync_sms"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/button_sms" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <include layout="@layout/view_progress" />
+
+</RelativeLayout>

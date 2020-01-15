@@ -63,13 +63,14 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     private MainActivity mActivity;
     private List<Integer> passedQuotaBlock;
     private ElementItemR[][] quotaTree;
+    private Context mContext;
 
     public ListQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> passedQuotaBlock, ElementItemR[][] quotaTree, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
         this.question = question;
         this.passedQuotaBlock = passedQuotaBlock;
         this.quotaTree = quotaTree;
-
+        this.mContext = context;
 
         if (question.getElementOptionsR() != null && question.getElementOptionsR().isRotation()) {
             List<ElementItemR> shuffleList = new ArrayList<>();
@@ -107,7 +108,16 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     @Override
     public ListObjectViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.holder_answer_list, viewGroup, false);
+        MainActivity activity = (MainActivity) mContext;
+        boolean mAutoZoom = true;
+        if (activity != null) {
+            mAutoZoom = activity.isAutoZoom();
+        }
+        View view;
+        if (mAutoZoom)
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.holder_answer_list_auto, viewGroup, false);
+        else
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.holder_answer_list, viewGroup, false);
         ListObjectViewHolder vh = new ListObjectViewHolder(view, onAnswerClickListener);
         return vh;
     }
@@ -284,9 +294,9 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 if (contents.size() > 2)
                     data3 = contents.get(2).getData();
 
-                    if (data1 != null) showPic(contentCont, image1, data1);
-                    if (data2 != null) showPic(contentCont, image2, data2);
-                    if (data3 != null) showPic(contentCont, image3, data3);
+                if (data1 != null) showPic(contentCont, image1, data1);
+                if (data2 != null) showPic(contentCont, image2, data2);
+                if (data3 != null) showPic(contentCont, image3, data3);
 
             } else {
                 contentCont.setVisibility(View.GONE);

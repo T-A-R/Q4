@@ -58,7 +58,7 @@
                     android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginBottom="@dimen/_8sdp">
 
-                    <TextView
+                    <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
                         android:id="@+id/unhide_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
                     android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginBottom="@dimen/_8sdp">
 
-                    <TextView
+                    <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
                         android:id="@+id/title_1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -121,7 +121,7 @@
 
                 </android.support.constraint.ConstraintLayout>
 
-                <TextView
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                     android:id="@+id/title_desc_1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -191,7 +191,7 @@
                     android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginBottom="@dimen/_8sdp">
 
-                    <TextView
+                    <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
                         android:id="@+id/title_2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -213,7 +213,7 @@
 
                 </android.support.constraint.ConstraintLayout>
 
-                <TextView
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                     android:id="@+id/title_desc_2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -269,7 +269,7 @@
 
             </LinearLayout>
 
-            <TextView
+            <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
                 android:id="@+id/question"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -278,7 +278,7 @@
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/_16ssp" />
 
-            <TextView
+            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                 android:id="@+id/question_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

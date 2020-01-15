@@ -7,7 +7,7 @@
     android:orientation="horizontal"
     android:visibility="visible">
 
-    <TextView
+    <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
         android:id="@+id/scale_text"
         android:layout_width="@dimen/_50sdp"
         android:layout_height="match_parent"

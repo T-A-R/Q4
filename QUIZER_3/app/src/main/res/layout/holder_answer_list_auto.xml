@@ -58,7 +58,7 @@
             android:layout_toLeftOf="@+id/radio_button"
             android:orientation="vertical">
 
-            <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+            <TextView
                 android:id="@+id/answer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/_14ssp" />
 
-            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+            <TextView
                 android:id="@+id/answer_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

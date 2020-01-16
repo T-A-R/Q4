@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <pro.quizer.quizer3.view.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/quizer_logo"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_90sdp"
+            android:layout_marginLeft="@dimen/_40sdp"
+            android:layout_marginRight="@dimen/_40sdp"
+            android:layout_marginTop="@dimen/_102sdp"
+            android:src="@drawable/quizer" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/_40sdp"
+        android:layout_marginRight="@dimen/_40sdp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/contacts_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:gravity="center"
+            android:textSize="@dimen/_20ssp"
+            android:textColor="@android:color/black"
+            android:text="@string/_7_909_214_48_33" />
+
+        <TextView
+            android:id="@+id/contacts_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:gravity="center"
+            android:textSize="@dimen/_20ssp"
+            android:textColor="@android:color/black"
+            android:text="@string/e_mail_sales_quizer_pro" />
+
+        <TextView
+            android:id="@+id/version_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/_14sdp"
+            android:textSize="@dimen/_20ssp"
+            tools:text="Версия 3.0.1" />
+
+    </LinearLayout>
+
+</FrameLayout>

@@ -1,5 +1,6 @@
 package pro.quizer.quizer3.adapter;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,9 +51,10 @@ public class QuotasTimeLineAdapter extends RecyclerView.Adapter<QuotasTimeLineAd
         mAnswers = pAnswers;
     }
 
+    @NonNull
     @Override
-    public QuotaTimeLineViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(mainActivity).inflate(R.layout.adapter_quota_time_line, parent, false);
+    public QuotaTimeLineViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(mainActivity).inflate(mainActivity.isAutoZoom() ? R.layout.adapter_quota_time_line_auto : R.layout.adapter_quota_time_line, parent, false);
         return new QuotaTimeLineViewHolder(itemView, viewType);
     }
 

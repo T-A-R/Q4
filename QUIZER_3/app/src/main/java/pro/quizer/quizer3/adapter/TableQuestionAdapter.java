@@ -146,19 +146,19 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     @NonNull
     @Override
     public ViewHolderImpl onCreateColumnHeaderViewHolder(@NonNull final ViewGroup parent) {
-        return new TableHeaderColumnViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item_header_column, parent, false));
+        return new TableHeaderColumnViewHolder(mLayoutInflater.inflate(mContext.isAutoZoom() ? R.layout.adapter_table_item_header_column_auto : R.layout.adapter_table_item_header_column, parent, false));
     }
 
     @NonNull
     @Override
     public ViewHolderImpl onCreateRowHeaderViewHolder(@NonNull final ViewGroup parent) {
-        return new TableHeaderRowViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item_header_row, parent, false));
+        return new TableHeaderRowViewHolder(mLayoutInflater.inflate(mContext.isAutoZoom() ? R.layout.adapter_table_item_header_row_auto : R.layout.adapter_table_item_header_row, parent, false));
     }
 
     @NonNull
     @Override
     public ViewHolderImpl onCreateLeftTopHeaderViewHolder(@NonNull final ViewGroup parent) {
-        return new TableHeaderLeftTopViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item_header_left_top, parent, false));
+        return new TableHeaderLeftTopViewHolder(mLayoutInflater.inflate(mContext.isAutoZoom() ? R.layout.adapter_table_item_header_left_top_auto : R.layout.adapter_table_item_header_left_top, parent, false));
     }
 
     @Override
@@ -378,7 +378,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         if (!OptionsOpenType.CHECKBOX.equals(openType)) {
             final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mContext);
-            final View mView = layoutInflaterAndroid.inflate(R.layout.dialog_user_input_box, null);
+            final View mView = layoutInflaterAndroid.inflate(mContext.isAutoZoom() ? R.layout.dialog_user_input_box_auto : R.layout.dialog_user_input_box, null);
             final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
             dialog.setView(mView);
 

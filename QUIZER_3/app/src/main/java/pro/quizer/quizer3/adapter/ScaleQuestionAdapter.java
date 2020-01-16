@@ -77,7 +77,7 @@ public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdap
     @Override
     public ScaleObjectViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.holder_answer_scale, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(mActivity.isAutoZoom() ? R.layout.holder_answer_scale_auto : R.layout.holder_answer_scale, viewGroup, false);
         ScaleObjectViewHolder vh = new ScaleObjectViewHolder(view, onAnswerClickListener);
         return vh;
     }

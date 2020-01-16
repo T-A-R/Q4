@@ -325,7 +325,7 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
 
     private void showInfoDialog() {
         dialogBuilder = new AlertDialog.Builder(mMainActivity);
-        View layoutView = getLayoutInflater().inflate(R.layout.dialog_info, null);
+        View layoutView = getLayoutInflater().inflate(mMainActivity.isAutoZoom() ? R.layout.dialog_info_auto : R.layout.dialog_info, null);
         TextView dQuota1 = layoutView.findViewById(R.id.quota_1);
         TextView dQuota2 = layoutView.findViewById(R.id.quota_2);
         TextView dQuota3 = layoutView.findViewById(R.id.quota_3);

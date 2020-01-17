@@ -145,6 +145,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 case R.layout.fragment_element:
                     layoutSrc = R.layout.fragment_element_auto;
                     break;
+
                 default:
             }
         return inflater.inflate(layoutSrc, container, false);

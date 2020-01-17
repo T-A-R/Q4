@@ -351,4 +351,22 @@
     <string name="view_exit">Выйти</string>
     <string name="setted">Установлен</string>
 
+    <string name="view_button_send_finished">Отправить завершенные стадии</string>
+    <string name="view_button_send">Отправить</string>
+    <string name="sms_list_empty">Нет неотправленных СМС по завершенным стадиям</string>
+    <string name="sms_notification_title">Отправка отчётов с помощью СМС.</string>
+    <string name="sms_notification_text">У вас есть неотправленные анкеты за прошедший период. Необходимо отправить отчёт с результатами с помощью СМС.</string>
+
+    <string name="dialog_sms_sending">Отправка СМС</string>
+    <string name="dialog_sms_sending_confirmation">Вы уверены, что хотите отправить СМС номер %1$s ?</string>
+    <string name="dialog_all_sms_sending_confirmation">Вы уверены, что хотите отправить все неотправленные СМС?</string>
+    <string name="dialog_sms_sending_request">У вас есть неотправленные анкеты за период %1$s , вы хотите отправить волну?</string>
+    <string name="view_empty_sms">Список СМС волн пуст</string>
+    <string name="view_sms_time_interval">%1$s - %2$s</string>
+    <string name="view_button_resend">Повторить отправку</string>
+    <string name="notification_sms_copied">Сообщение скопированно.</string>
+    <string name="show_sms_dialog">Показ диалога об отправке СМС</string>
+    <string name="cant_show_dialog">Невозможно отобразить диалог</string>
+
+
 </resources>

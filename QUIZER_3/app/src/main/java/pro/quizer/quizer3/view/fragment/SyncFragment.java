@@ -107,6 +107,13 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
 
     private void showSmsButton() {
         mSyncSms.setVisibility(View.VISIBLE);
+
+        mSyncSms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                replaceFragment(new SmsFragment());
+            }
+        });
     }
 
     private void initStrings() {

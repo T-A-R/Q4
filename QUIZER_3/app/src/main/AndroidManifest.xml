@@ -64,6 +64,12 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".broadcast.StartSmsSender"
+            android:enabled="true"
+            android:exported="false" >
+        </receiver>
+
     </application>
 
 </manifest>

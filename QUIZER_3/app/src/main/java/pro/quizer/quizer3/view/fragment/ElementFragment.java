@@ -243,6 +243,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 loadSavedData();
             }
         } // else showNextFragment(nextElementId);
+
+
+        try {
+            getMainActivity().activateExitReminder();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean wasReloaded() {

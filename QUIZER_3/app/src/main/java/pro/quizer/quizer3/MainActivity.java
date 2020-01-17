@@ -1,6 +1,8 @@
 package pro.quizer.quizer3;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,6 +10,8 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -35,9 +39,14 @@ import android.view.KeyEvent;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import pro.quizer.quizer3.broadcast.StartSmsSender;
 import pro.quizer.quizer3.database.QuizerDao;
 import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
@@ -45,8 +54,11 @@ import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.QuotasTreeMaker;
 import pro.quizer.quizer3.model.ElementSubtype;
+import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.User;
 import pro.quizer.quizer3.model.config.ElementModelNew;
+import pro.quizer.quizer3.model.config.ReserveChannelModel;
+import pro.quizer.quizer3.model.config.StagesModel;
 import pro.quizer.quizer3.model.quota.QuotaUtils;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
@@ -57,6 +69,7 @@ import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.view.fragment.MainFragment;
 
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
+import pro.quizer.quizer3.view.fragment.SmsFragment;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CAMERA;
@@ -72,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     static public String TAG = "TARLOGS";
     static public boolean AVIA = false;
+    static public boolean EXIT = true;
     public static final String IS_AFTER_AUTH = "IS_AFTER_AUTH";
     static public boolean DEBUG_MODE = true;
     static public boolean RECORDING = false;
@@ -96,6 +110,9 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     List<ElementItemR> elementItemRList;
     ChangeFontCallback changeFontCallback;
     private boolean mAutoZoom;
+
+    private Timer mTimer;
+    private AlertSmsTask mAlertSmsTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -872,5 +889,123 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public void setAutoZoom(boolean mAutoZoom) {
         this.mAutoZoom = mAutoZoom;
         SPUtils.saveZoomMode(this, mAutoZoom ? 1 : 0);
+    }
+
+    class AlertSmsTask extends TimerTask {
+
+        @Override
+        public void run() {
+            if (!isFinishing()) {
+
+                if (!isFinishing() && getStaticDao().getQuestionnaireForStage(
+                        getCurrentUserId(),
+                        QuestionnaireStatus.NOT_SENT,
+                        Constants.QuestionnaireStatuses.COMPLETED,
+                        false).size() > 0) {
+
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            try {
+                                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                                r.play();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            if (!isFinishing()) {
+                                try {
+                                    new AlertDialog.Builder(getApplicationContext(), R.style.AlertDialogTheme)
+                                            .setCancelable(false)
+                                            .setTitle(R.string.dialog_sending_waves_via_sms)
+                                            .setMessage(R.string.sms_notification_text)
+                                            .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(final DialogInterface dialog, final int which) {
+//                                                    showSmsFragment();
+                                                    mainFragment.openScreen(new SmsFragment());
+                                                }
+                                            })
+                                            .setNegativeButton(R.string.view_cancel, new DialogInterface.OnClickListener() {
+
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.cancel();
+                                                }
+                                            })
+                                            .show();
+                                } catch (Exception e) {
+                                    if (getCurrentUser() != null)
+                                        addLog(getCurrentUser().getLogin(), Constants.LogType.DIALOG, Constants.LogObject.SMS, getString(R.string.show_sms_dialog), Constants.LogResult.ERROR, getString(R.string.cant_show_dialog), e.toString());
+                                    else
+                                        addLog("android", Constants.LogType.DIALOG, Constants.LogObject.SMS, getString(R.string.show_sms_dialog), Constants.LogResult.ERROR, getString(R.string.cant_show_dialog), e.toString());
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    public void activateExitReminder() {
+        if (EXIT && getReserveChannel() != null) {
+
+            if (mTimer != null) {
+                mTimer.cancel();
+            }
+
+            List<StagesModel> stages = getReserveChannel().getStages();
+            List<Integer> datesList = new ArrayList<>();
+            Long startDate = null;
+            Date startDateForDialog = null;
+
+
+            if (stages != null) {
+                if (stages.size() > 0) {
+
+                    for (int i = 0; i < stages.size(); i++) {
+                        datesList.add(stages.get(i).getTimeTo());
+                    }
+                    Collections.sort(datesList);
+
+                    for (int i = 0; i < datesList.size(); i++) {
+                        if (datesList.get(i) > System.currentTimeMillis() / 1000) {
+                            startDate = Long.valueOf(datesList.get(i)) * 1000;
+                            startDateForDialog = new Date(Long.valueOf(datesList.get(i)) * 1000);
+                            break;
+                        }
+                    }
+
+                    if (startDate != null) {
+                        mTimer = new Timer();
+                        mAlertSmsTask = new AlertSmsTask();
+                        mTimer.schedule(mAlertSmsTask, startDateForDialog);
+
+                        startSMS(startDate);
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean hasReserveChannel() {
+        return getReserveChannel() != null;
+    }
+
+    private ReserveChannelModel getReserveChannel() {
+        return getCurrentUser().getConfigR().getProjectInfo().getReserveChannel();
+    }
+
+    public void startSMS(Long startTime) {
+
+        final AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(this, StartSmsSender.class);
+        final PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, i, 0);
+
+        if (EXIT) {
+            am.set(AlarmManager.RTC_WAKEUP, startTime, pendingIntent);
+        }
     }
 }

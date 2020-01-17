@@ -181,6 +181,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         }, false).execute();
 
 //        showElementsDB();
+        try {
+            getMainActivity().activateExitReminder();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void makeQuotaTree() {
@@ -257,6 +262,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 int counter = currentQuestionnaire.getCount_interrupted() + 1;
                 getDao().setInterruptedCounter(counter);
                 getDao().updateQuestionnaireStart(true, getCurrentUserId());
+                getDao().setOption(Constants.OptionName.QUIZ_STARTED, "true");
                 showToast("Продолжение прерванной анкеты");
                 startRecording();
                 replaceFragment(new ElementFragment());

@@ -125,6 +125,14 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
         screensManager.setListener(this);
         setSideMenu();
 
+        MainActivity activity = getMainActivity();
+        if(activity != null) {
+            if(activity.hasReserveChannel()) {
+                mQuotasBtn.setVisibility(View.GONE);
+            }
+        } else {
+            mQuotasBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -156,7 +164,7 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
         return User.getUser();
     }
 
-    private void openScreen(ScreenFragment screen) {
+    public void openScreen(ScreenFragment screen) {
         newActivityScreen = null;
         screensManager.openScreen(screen);
     }

@@ -29,8 +29,6 @@ public class TempFragment extends ScreenFragment implements View.OnClickListener
         initViews();
         MainFragment.disableSideMenu();
 
-
-
     }
 
     public void initViews() {

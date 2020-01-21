@@ -111,7 +111,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         mSavedUserModels = getSavedUserModels();
         mSavedUsers = getSavedUserLogins();
 
-        final ListAdapter adapter = new ArrayAdapter<>(getContext(), R.layout.adapter_spinner, mSavedUsers);
+        final ListAdapter adapter = new ArrayAdapter<>(getContext(), getMainActivity().isAutoZoom() ? R.layout.adapter_spinner_auto : R.layout.adapter_spinner, mSavedUsers);
         esLogin.setAdapter(adapter);
 
         if (mSavedUserModels != null && !mSavedUserModels.isEmpty()) {

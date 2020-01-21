@@ -181,6 +181,15 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         }, false).execute();
 
 //        showElementsDB();
+        MainActivity activity = getMainActivity();
+        if (activity != null) {
+            if (activity.hasReserveChannel()) {
+                btnQuotas.setVisibility(View.GONE);
+            } else {
+                btnQuotas.setVisibility(View.VISIBLE);
+            }
+        }
+
         try {
             getMainActivity().activateExitReminder();
         } catch (Exception e) {

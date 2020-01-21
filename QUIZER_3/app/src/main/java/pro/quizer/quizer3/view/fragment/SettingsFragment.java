@@ -175,12 +175,12 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
             }
         });
 
-        if(!mBaseActivity.isAutoZoom()) {
+        if (!mBaseActivity.isAutoZoom()) {
 
             mSpinnerTitle.setVisibility(View.VISIBLE);
             mSpinnerFrame.setVisibility(View.VISIBLE);
 
-            ArrayAdapter<String> fontSizeAdapter = new ArrayAdapter<>(getContext(), R.layout.adapter_spinner, fontString);
+            ArrayAdapter<String> fontSizeAdapter = new ArrayAdapter<>(getContext(), mBaseActivity.isAutoZoom() ? R.layout.adapter_spinner_auto : R.layout.adapter_spinner, fontString);
             fontSizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
             mFontSizeSpinner.setAdapter(fontSizeAdapter);
@@ -227,7 +227,8 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
                 smsNumbers.add(i, phoneModel.getNumber());
             }
 
-            ArrayAdapter<String> smsNumberAdapter = new ArrayAdapter<>(getContext(), R.layout.adapter_spinner, smsNumbers);
+            ArrayAdapter<String> smsNumberAdapter = new ArrayAdapter<>(getContext(), mBaseActivity.isAutoZoom() ? R.layout.adapter_spinner_auto : R.layout.adapter_spinner, smsNumbers);
+//            smsNumberAdapter.setDropDownViewResource(R.layout.auto_spinner);
             smsNumberAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
             mSmsNumberSpinner.setAdapter(smsNumberAdapter);

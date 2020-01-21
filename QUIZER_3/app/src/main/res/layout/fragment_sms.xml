@@ -5,6 +5,11 @@
     android:background="@color/lightGray"
     android:orientation="vertical">
 
+    <pro.quizer.quizer3.view.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <LinearLayout
         android:paddingTop="@dimen/_6sdp"
         android:layout_width="match_parent"

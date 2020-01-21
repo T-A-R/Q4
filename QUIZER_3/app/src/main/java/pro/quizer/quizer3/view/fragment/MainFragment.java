@@ -126,12 +126,12 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
         setSideMenu();
 
         MainActivity activity = getMainActivity();
-        if(activity != null) {
-            if(activity.hasReserveChannel()) {
-                mQuotasBtn.setVisibility(View.GONE);
+        if (activity != null) {
+            if (activity.hasReserveChannel()) {
+                mQuotasBtnCont.setVisibility(View.GONE);
+            } else {
+                mQuotasBtnCont.setVisibility(View.VISIBLE);
             }
-        } else {
-            mQuotasBtn.setVisibility(View.VISIBLE);
         }
     }
 
@@ -140,6 +140,14 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
         super.onResume();
         getUser().setModeChangeListener(this);
         sideMenuDrawer = (DrawerLayout) findViewById(R.id.drawer_cont);
+        MainActivity activity = getMainActivity();
+        if (activity != null) {
+            if (activity.hasReserveChannel()) {
+                mQuotasBtnCont.setVisibility(View.GONE);
+            } else {
+                mQuotasBtnCont.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     public void startScreens() {
@@ -439,7 +447,7 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
 
     public static void enableSideMenu(boolean full) {
         sideMenuDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        if(full) {
+        if (full) {
             mHomeBtnCont.setVisibility(View.VISIBLE);
             mSyncBtnCont.setVisibility(View.VISIBLE);
         } else {

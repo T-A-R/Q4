@@ -79,8 +79,8 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
     private Integer prevElementId;
     private String answerType;
     private int spinnerSelection = -1;
-    private boolean isTitle1Hided = false;
-    private boolean isTitle2Hided = false;
+    private Boolean[] isTitle1Hided = {false, false, false, false, false};
+    private Boolean[] isTitle2Hided = {false, false, false, false, false};
     private boolean isRestored = false;
 
     private ListQuestionAdapter adapterList;
@@ -95,6 +95,9 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
     public PageElementFragment() {
         super(R.layout.fragment_page_element);
     }
+//    public PageElementFragment() {
+//        super(R.layout.fragment_element);
+//    }
 
     public PageElementFragment setStartElement(Integer startElementId) {
         this.startElementId = startElementId;
@@ -109,6 +112,8 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
 
     @Override
     protected void onReady() {
+
+        viewsArray = new View[5][33];
 
 //        initPageCont1();
         initCurrentElements();
@@ -129,10 +134,6 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
         btnNext.setOnClickListener(this);
         btnPrev.setOnClickListener(this);
         btnExit.setOnClickListener(this);
-
-        closeImage1.setOnClickListener(this);
-        closeImage2.setOnClickListener(this);
-        unhideCont.setOnClickListener(this);
 
         toolbar.setTitle(getCurrentUser().getConfigR().getProjectInfo().getName());
         toolbar.showOptionsView(new View.OnClickListener() {
@@ -156,17 +157,23 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
 
         MainFragment.enableSideMenu(false);
 
-        if (checkConditions(currentElement)) {
-            setQuestionType();
-            initViews();
+        for (int i = 0; i < pageElementsList.size(); i++) {
+            initPageElement(pageElementsList.get(i), i);
+        }
+
+        initExitReminder();
+    }
+
+    private void initPageElement(ElementItemR element, int position) {
+        if (checkConditions(element)) {
+            answerType = setQuestionType(element);
+            initPageViews(element, position);
             updateCurrentQuestionnaire();
             initRecyclerView();
             if (isRestored || wasReloaded()) {
                 loadSavedData();
             }
         }
-
-        initExitReminder();
     }
 
     private void initExitReminder() {
@@ -238,29 +245,30 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
 
         } else if (view == btnExit) {
             showExitPoolAlertDialog();
-        } else if (view == closeImage1) {
-            titleCont1.setVisibility(View.GONE);
-            unhideCont.setVisibility(View.VISIBLE);
-            isTitle1Hided = true;
-        } else if (view == closeImage2) {
-            titleCont2.setVisibility(View.GONE);
-            unhideCont.setVisibility(View.VISIBLE);
-            isTitle2Hided = true;
-        } else if (view == unhideCont) {
-            if (isTitle1Hided) {
-                isTitle1Hided = false;
-                titleCont1.setVisibility(View.VISIBLE);
-            }
-            if (isTitle2Hided) {
-                isTitle2Hided = false;
-                titleCont2.setVisibility(View.VISIBLE);
-            }
-            unhideCont.setVisibility(View.GONE);
         }
+//        else if (view == viewsArray[0][31]) {
+//            titleCont1.setVisibility(View.GONE);
+//            unhideCont.setVisibility(View.VISIBLE);
+//            isTitle1Hided = true;
+//        } else if (view == viewsArray[0][32]) {
+//            titleCont2.setVisibility(View.GONE);
+//            unhideCont.setVisibility(View.VISIBLE);
+//            isTitle2Hided = true;
+//        } else if (view == viewsArray[0][0]) {
+//            if (isTitle1Hided) {
+//                isTitle1Hided = false;
+//                titleCont1.setVisibility(View.VISIBLE);
+//            }
+//            if (isTitle2Hided) {
+//                isTitle2Hided = false;
+//                titleCont2.setVisibility(View.VISIBLE);
+//            }
+//            unhideCont.setVisibility(View.GONE);
+//        }
     }
 
     private void initPage() {
-        if(pageElementsList == null) {
+        if (pageElementsList == null) {
             pageElementsList = new ArrayList<>();
             pageElementsList.add(currentElement);
         }
@@ -316,6 +324,8 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
             currentElement = getQuestion(currentElement);
             startElementId = currentElement.getRelative_id();
 
+            Log.d(TAG, "??????? CURRENT initQuestion: " + currentElement.getRelative_id());
+
 //            boolean found = false;
 //
 //            for (int i = 0; i < getCurrentElements().size(); i++) {
@@ -363,35 +373,63 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
         return question;
     }
 
-    private void setQuestionType() {
-        if (currentElement.getSubtype().equals(ElementSubtype.LIST)) {
-            if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0 &&
-                    getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
-                answerType = ElementSubtype.QUOTA;
+    private String setQuestionType(ElementItemR element) {
+        String pageQuestionType = null;
+
+        if (element.getSubtype().equals(ElementSubtype.LIST)) {
+            if (element.getRelative_parent_id() != null && element.getRelative_parent_id() != 0 &&
+                    getElement(element.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
+                pageQuestionType = ElementSubtype.QUOTA;
             } else {
-                answerType = ElementSubtype.LIST;
+                pageQuestionType = ElementSubtype.LIST;
             }
-        } else if (currentElement.getSubtype().equals(ElementSubtype.SELECT)) {
-            answerType = ElementSubtype.SELECT;
-        } else if (currentElement.getSubtype().equals(ElementSubtype.TABLE)) {
-            answerType = ElementSubtype.TABLE;
-        } else if (currentElement.getSubtype().equals(ElementSubtype.SCALE)) {
-            answerType = ElementSubtype.SCALE;
-        } else if (currentElement.getSubtype().equals(ElementSubtype.HTML)) {
-            answerType = ElementSubtype.HTML;
+        } else if (element.getSubtype().equals(ElementSubtype.SELECT)) {
+            pageQuestionType = ElementSubtype.SELECT;
+        } else if (element.getSubtype().equals(ElementSubtype.TABLE)) {
+            pageQuestionType = ElementSubtype.TABLE;
+        } else if (element.getSubtype().equals(ElementSubtype.SCALE)) {
+            pageQuestionType = ElementSubtype.SCALE;
+        } else if (element.getSubtype().equals(ElementSubtype.HTML)) {
+            pageQuestionType = ElementSubtype.HTML;
         }
+        return pageQuestionType;
     }
 
-    private void initViews() {
-        tvQuestion.setText(currentElement.getElementOptionsR().getTitle());
-        if (currentElement.getElementOptionsR().getDescription() != null) {
+    private void initPageViews(ElementItemR element, int position) {
+        viewsArray[position][31].setOnClickListener(v -> {
+            viewsArray[position][1].setVisibility(View.GONE);
+            viewsArray[position][0].setVisibility(View.VISIBLE);
+            isTitle1Hided[position] = true;
+        });
+        viewsArray[position][32].setOnClickListener(v -> {
+            viewsArray[position][2].setVisibility(View.GONE);
+            viewsArray[position][0].setVisibility(View.VISIBLE);
+            isTitle2Hided[position] = true;
+        });
+        viewsArray[position][0].setOnClickListener(v -> {
+            if (isTitle1Hided[position]) {
+                isTitle1Hided[position] = false;
+                viewsArray[position][1].setVisibility(View.VISIBLE);
+            }
+            if (isTitle2Hided[position]) {
+                isTitle2Hided[position] = false;
+                viewsArray[position][2].setVisibility(View.VISIBLE);
+            }
+            viewsArray[position][0].setVisibility(View.GONE);
+        });
+
+        TextView tvQuestion = (TextView) viewsArray[position][19];
+        tvQuestion.setText(element.getElementOptionsR().getTitle());
+
+        if (element.getElementOptionsR().getDescription() != null) {
+            TextView tvQuestionDesc = (TextView) viewsArray[position][20];
             tvQuestionDesc.setVisibility(View.VISIBLE);
-            tvQuestionDesc.setText(currentElement.getElementOptionsR().getDescription());
+            tvQuestionDesc.setText(element.getElementOptionsR().getDescription());
         }
-        if (currentElement.getRelative_parent_id() != null) {
+        if (element.getRelative_parent_id() != null) {
             ElementItemR parentElement = null;
             try {
-                parentElement = getElement(currentElement.getRelative_parent_id());
+                parentElement = getElement(element.getRelative_parent_id());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -400,7 +438,6 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
                     getDao().setWasElementShown(true, parentElement.getRelative_id(), parentElement.getUserId(), parentElement.getProjectId());
                     titleCont2.setVisibility(View.VISIBLE);
                     UiUtils.setTextOrHide(tvTitle2, parentElement.getElementOptionsR().getTitle());
-//                    tvTitle2.setText(parentElement.getElementOptionsR().getTitle());
                     if (parentElement.getElementOptionsR().getDescription() != null) {
                         tvTitleDesc2.setVisibility(View.VISIBLE);
                         tvTitleDesc2.setText(parentElement.getElementOptionsR().getDescription());
@@ -420,7 +457,6 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
                                 getDao().setWasElementShown(true, parentElement2.getRelative_id(), parentElement2.getUserId(), parentElement2.getProjectId());
                                 titleCont1.setVisibility(View.VISIBLE);
                                 UiUtils.setTextOrHide(tvTitle1, parentElement2.getElementOptionsR().getTitle());
-//                                tvTitle1.setText(parentElement2.getElementOptionsR().getTitle());
                                 if (parentElement2.getElementOptionsR().getDescription() != null) {
                                     tvTitleDesc1.setVisibility(View.VISIBLE);
                                     tvTitleDesc1.setText(parentElement2.getElementOptionsR().getDescription());
@@ -435,7 +471,7 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
             }
         }
 
-        showContent(currentElement, questionImagesCont);
+        showContent(element, questionImagesCont);
 
         if (getCurrentUser().getConfigR().isPhotoQuestionnaire() && currentElement.getElementOptionsR().isTake_photo()) {
             shotPicture(getLoginAdmin(), getQuestionnaire().getToken(), currentElement.getRelative_id(), getCurrentUserId(), getQuestionnaire().getProject_id(), getCurrentUser().getLogin());
@@ -574,6 +610,7 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
 //            questions = currentElement.getElements();
             //answersList = questionsList for TABLE
             adapterTable = new TableQuestionAdapter(currentElement, answersList, getActivity(), mRefreshRecyclerViewRunnable, this);
+            Log.d(TAG, "??????? answers initRecyclerView: " + answersList.size());
             tableLayout.setAdapter(adapterTable);
             tableLayout.setDrawingCacheEnabled(true);
         } else if (answerType.equals(ElementSubtype.SCALE)) {
@@ -1043,8 +1080,8 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
             Log.d(TAG, "restoreData: " + nextElementId);
             prevElementId = bundle.getInt("prevElementId");
             spinnerSelection = bundle.getInt("spinnerSelection");
-            isTitle1Hided = bundle.getBoolean("isTitle1Hided");
-            isTitle2Hided = bundle.getBoolean("isTitle2Hided");
+//            isTitle1Hided = bundle.getBoolean("isTitle1Hided");
+//            isTitle2Hided = bundle.getBoolean("isTitle2Hided");
             answerType = bundle.getString("answerType");
         }
     }

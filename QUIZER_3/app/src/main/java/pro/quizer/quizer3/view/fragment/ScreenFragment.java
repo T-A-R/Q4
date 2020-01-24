@@ -209,6 +209,8 @@ public abstract class ScreenFragment extends SmartFragment {
     protected ImageView closeImage1_5;
     protected ImageView closeImage2_5;
 
+    protected View[][] viewsArray;
+
     final int RequestCameraPermissionID = 1001;
 
     public ScreenFragment(int layoutSrc) {
@@ -346,39 +348,39 @@ public abstract class ScreenFragment extends SmartFragment {
     }
 
     protected void initPageCont1() {
-        unhideCont = (LinearLayout) findViewById(R.id.unhide_cont);
-        titleCont1 = (LinearLayout) findViewById(R.id.title_cont_1);
-        titleCont2 = (LinearLayout) findViewById(R.id.title_cont_2);
-        titleImagesCont1 = (LinearLayout) findViewById(R.id.title_images_cont_1);
-        titleImagesCont2 = (LinearLayout) findViewById(R.id.title_images_cont_2);
-        questionCont = (LinearLayout) findViewById(R.id.question_cont);
-        questionImagesCont = (LinearLayout) findViewById(R.id.question_images_cont);
-        spinnerCont = (LinearLayout) findViewById(R.id.spinner_cont);
-        infoCont = (LinearLayout) findViewById(R.id.info_cont);
-        tableCont = (FrameLayout) findViewById(R.id.table_cont);
-        rvAnswers = (RecyclerView) findViewById(R.id.answers_recyclerview);
-        rvScale = (RecyclerView) findViewById(R.id.scale_recyclerview);
-        spinnerAnswers = (Spinner) findViewById(R.id.answers_spinner);
-        tableLayout = (AdaptiveTableLayout) findViewById(R.id.table_question_layout);
-        tvUnhide = (TextView) findViewById(R.id.unhide_title);
-        tvTitle1 = (TextView) findViewById(R.id.title_1);
-        tvTitle2 = (TextView) findViewById(R.id.title_2);
-        tvTitleDesc1 = (TextView) findViewById(R.id.title_desc_1);
-        tvTitleDesc2 = (TextView) findViewById(R.id.title_desc_2);
-        tvQuestion = (TextView) findViewById(R.id.question);
-        tvQuestionDesc = (TextView) findViewById(R.id.question_desc);
-        infoText = (WebView) findViewById(R.id.info_text);
-        title1Image1 = (ImageView) findViewById(R.id.title_1_image_1);
-        title1Image2 = (ImageView) findViewById(R.id.title_1_image_2);
-        title1Image3 = (ImageView) findViewById(R.id.title_1_image_3);
-        title2Image1 = (ImageView) findViewById(R.id.title_2_image_1);
-        title2Image2 = (ImageView) findViewById(R.id.title_2_image_2);
-        title2Image3 = (ImageView) findViewById(R.id.title_2_image_3);
-        questionImage1 = (ImageView) findViewById(R.id.question_image_1);
-        questionImage2 = (ImageView) findViewById(R.id.question_image_2);
-        questionImage3 = (ImageView) findViewById(R.id.question_image_3);
-        closeImage1 = (ImageView) findViewById(R.id.image_close_1);
-        closeImage2 = (ImageView) findViewById(R.id.image_close_2);
+        viewsArray[0][0] = (LinearLayout) findViewById(R.id.unhide_cont); // unhideCont
+        viewsArray[0][1] = (LinearLayout) findViewById(R.id.title_cont_1); // titleCont1
+        viewsArray[0][2] = (LinearLayout) findViewById(R.id.title_cont_2); // titleCont2
+        viewsArray[0][3] = (LinearLayout) findViewById(R.id.title_images_cont_1); // titleImagesCont1
+        viewsArray[0][4] = (LinearLayout) findViewById(R.id.title_images_cont_2); // titleImagesCont2
+        viewsArray[0][5] = (LinearLayout) findViewById(R.id.question_cont); // questionCont
+        viewsArray[0][6] = (LinearLayout) findViewById(R.id.question_images_cont); // questionImagesCont
+        viewsArray[0][7] = (LinearLayout) findViewById(R.id.spinner_cont); // spinnerCont
+        viewsArray[0][8] = (LinearLayout) findViewById(R.id.info_cont); // infoCont
+        viewsArray[0][9] = (FrameLayout) findViewById(R.id.table_cont); // tableCont
+        viewsArray[0][10] = (RecyclerView) findViewById(R.id.answers_recyclerview); // rvAnswers
+        viewsArray[0][11] = (RecyclerView) findViewById(R.id.scale_recyclerview); // rvScale
+        viewsArray[0][12] = (Spinner) findViewById(R.id.answers_spinner); // spinnerAnswers
+        viewsArray[0][13] = (AdaptiveTableLayout) findViewById(R.id.table_question_layout); // tableLayout
+        viewsArray[0][14] = (TextView) findViewById(R.id.unhide_title); // tvUnhide
+        viewsArray[0][15] = (TextView) findViewById(R.id.title_1); // tvTitle1
+        viewsArray[0][16] = (TextView) findViewById(R.id.title_2); // tvTitle2
+        viewsArray[0][17] = (TextView) findViewById(R.id.title_desc_1); // tvTitleDesc1
+        viewsArray[0][18] = (TextView) findViewById(R.id.title_desc_2); // tvTitleDesc2
+        viewsArray[0][19] = (TextView) findViewById(R.id.question); // tvQuestion
+        viewsArray[0][20] = (TextView) findViewById(R.id.question_desc); // tvQuestionDesc
+        viewsArray[0][21] = (WebView) findViewById(R.id.info_text); // infoText
+        viewsArray[0][22] = (ImageView) findViewById(R.id.title_1_image_1); // title1Image1
+        viewsArray[0][23] = (ImageView) findViewById(R.id.title_1_image_2); // title1Image2
+        viewsArray[0][24] = (ImageView) findViewById(R.id.title_1_image_3); // title1Image3
+        viewsArray[0][25] = (ImageView) findViewById(R.id.title_2_image_1); // title2Image1
+        viewsArray[0][26] = (ImageView) findViewById(R.id.title_2_image_2); // title2Image2
+        viewsArray[0][27] = (ImageView) findViewById(R.id.title_2_image_3); // title2Image3
+        viewsArray[0][28] = (ImageView) findViewById(R.id.question_image_1); // questionImage1
+        viewsArray[0][29] = (ImageView) findViewById(R.id.question_image_2); // questionImage2
+        viewsArray[0][30] = (ImageView) findViewById(R.id.question_image_3); // questionImage3
+        viewsArray[0][31] = (ImageView) findViewById(R.id.image_close_1); // closeImage1
+        viewsArray[0][32] = (ImageView) findViewById(R.id.image_close_2); // closeImage2
     }
 
     protected void initPageCont2() {

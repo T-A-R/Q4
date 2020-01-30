@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
@@ -259,7 +260,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         if (view == btnStart) {
             if (!isStartBtnPressed) {
                 isStartBtnPressed = true;
-
+                deactivateButtons();
                 startQuestionnaire();
             }
         } else if (view == btnQuotas) {
@@ -410,11 +411,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                 }
                             });
                     }
+                } else {
+                    activateButtons();
                 }
                 return true;
             });
         } else {
             isStartBtnPressed = false;
+            activateButtons();
         }
     }
 
@@ -761,6 +765,42 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
 //            Log.d(TAG, "getLocalQuotas: " + counter);
             return counter;
+        }
+    }
+
+    private void activateButtons() {
+        btnContinue.setEnabled(true);
+        btnStart.setEnabled(true);
+        btnQuotas.setEnabled(true);
+
+        final int sdk = android.os.Build.VERSION.SDK_INT;
+
+        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            btnContinue.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+            btnStart.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+            btnQuotas.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+        } else {
+            btnContinue.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+            btnStart.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_red));
+            btnQuotas.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+        }
+    }
+
+    private void deactivateButtons() {
+        btnContinue.setEnabled(false);
+        btnStart.setEnabled(false);
+        btnQuotas.setEnabled(false);
+
+        final int sdk = android.os.Build.VERSION.SDK_INT;
+
+        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            btnContinue.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            btnStart.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            btnQuotas.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+        } else {
+            btnContinue.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            btnStart.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            btnQuotas.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
         }
     }
 }

@@ -1,6 +1,7 @@
 package pro.quizer.quizer3.view.fragment;
 
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -22,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import okhttp3.ResponseBody;
 import pro.quizer.quizer3.API.QuizerAPI;
@@ -130,6 +132,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onClick(View view) {
         if (view == btnSend) {
+            deactivateButtons();
             showScreensaver(false);
             onLoginClick();
         } else if (view == tvVersionView) {
@@ -193,12 +196,14 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         if (StringUtils.isEmpty(login) || StringUtils.isEmpty(password)) {
             showToast(getString(R.string.notification_empty_login_or_pass));
             hideScreensaver();
+            activateButtons();
             return;
         }
 
         if (login.length() < 3) {
             showToast(getString(R.string.notification_short_login));
             hideScreensaver();
+            activateButtons();
             return;
         }
 
@@ -206,6 +211,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             showToast(String.format(getString(R.string.notification_max_users), String.valueOf(MAX_USERS)));
             addLog(null, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.notification_max_users), "");
             hideScreensaver();
+            activateButtons();
             return;
         }
 
@@ -423,7 +429,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onAuthUser(ResponseBody responseBody) {
         hideScreensaver();
-//        replaceFragment(new PageFragment());
 
         if (responseBody == null) {
             showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_401));
@@ -440,6 +445,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.wrong_login_or_pass), "login: " + login + " pass: " + password);
             }
 
+            activateButtons();
             return;
         }
 
@@ -454,12 +460,14 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_402_desc), e.getMessage());
 
             responseJson = null;
+            activateButtons();
         }
 
         AuthResponseModel authResponseModel = null;
         try {
             authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
         } catch (final Exception pE) {
+            activateButtons();
             addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_403_desc), responseJson);
         }
 
@@ -475,6 +483,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.wrong_login_or_pass), "login: " + login + " pass: " + password);
             }
 
+            activateButtons();
             return;
         }
 
@@ -482,6 +491,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             SPUtils.saveAuthTimeDifference(getContext(), authResponseModel.getServerTime());
         } else {
             showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_404));
+            activateButtons();
             addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_404_desc), responseJson);
         }
 
@@ -497,6 +507,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             }
         } else {
             showToast(authResponseModel.getError());
+            activateButtons();
             addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, authResponseModel.getError(),"");
 
         }
@@ -508,6 +519,30 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         MainActivity mBaseActivity = (MainActivity) getActivity();
         if (!mBaseActivity.checkPermission()) {
             mBaseActivity.requestPermission();
+        }
+    }
+
+    private void activateButtons() {
+        btnSend.setEnabled(true);
+
+        final int sdk = android.os.Build.VERSION.SDK_INT;
+
+        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            btnSend.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+        } else {
+            btnSend.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+        }
+    }
+
+    private void deactivateButtons() {
+        btnSend.setEnabled(false);
+
+        final int sdk = android.os.Build.VERSION.SDK_INT;
+
+        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            btnSend.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+        } else {
+            btnSend.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
         }
     }
 }

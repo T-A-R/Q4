@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -201,6 +202,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         closeImage2.setOnClickListener(this);
         unhideCont.setOnClickListener(this);
 
+        deactivateButtons();
+
         toolbar.setTitle(getCurrentUser().getConfigR().getProjectInfo().getName());
         toolbar.showOptionsView(new View.OnClickListener() {
             @Override
@@ -244,7 +247,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             }
         } // else showNextFragment(nextElementId);
 
-
+        activateButtons();
         try {
             getMainActivity().activateExitReminder();
         } catch (Exception e) {
@@ -272,6 +275,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        deactivateButtons();
         if (view == btnNext) {
 //            if (!isNextBtnPressed) {
 //                isNextBtnPressed = true;
@@ -287,8 +291,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     replaceFragment(fragment);
                 }
             } else {
-//                Log.d(TAG, "saveElement: FALSE");
-//                showToast("Выберите ответ.");
+                activateButtons();
             }
 //            }
         } else if (view == btnPrev) {
@@ -856,7 +859,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     nextElementId = getElement(answerStates[0][0].getRelative_id()).getElementOptionsR().getJump();
 
                 ElementItemR nextElement = getElement(nextElementId);
-                if(nextElementId != 0 && nextElementId != -1) {
+                if (nextElementId != 0 && nextElementId != -1) {
                     final ElementOptionsR options = nextElement.getElementOptionsR();
                     final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMap(false), (MainActivity) getActivity());
 
@@ -1298,6 +1301,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     public void showExitPoolAlertDialog() {
+        activateButtons();
         MainActivity activity = (MainActivity) getActivity();
         addLog(getCurrentUser().getLogin(), Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_exit), null);
         if (activity != null && !activity.isFinishing()) {
@@ -1325,6 +1329,42 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         }
                     })
                     .setNegativeButton(R.string.view_no, null).show();
+        }
+    }
+
+    private void activateButtons() {
+        btnPrev.setEnabled(true);
+        btnExit.setEnabled(true);
+        btnNext.setEnabled(true);
+
+        final int sdk = android.os.Build.VERSION.SDK_INT;
+
+        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            btnPrev.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+            btnExit.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_red));
+            btnNext.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+        } else {
+            btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+            btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_red));
+            btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+        }
+    }
+
+    private void deactivateButtons() {
+        btnPrev.setEnabled(false);
+        btnExit.setEnabled(false);
+        btnNext.setEnabled(false);
+
+        final int sdk = android.os.Build.VERSION.SDK_INT;
+
+        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            btnPrev.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            btnExit.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            btnNext.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+        } else {
+            btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
         }
     }
 }

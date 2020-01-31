@@ -315,20 +315,20 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
 
         } else if (view == btnExit) {
-            showExitPoolAlertDialog();
-//            if(!isExitBtnPressed) {
-//
-//            } else {
-//            try {
-//                getDao().clearCurrentQuestionnaireR();
-//                getDao().clearElementPassedR();
-//            } catch (Exception e) {
-//                isExitBtnPressed = false;
-//                e.printStackTrace();
-//            }
-//            stopRecording();
-//            replaceFragment(new HomeFragment());
-//            }
+            checkAbortedBox();
+            if (getCurrentUser().getConfigR().isSaveAborted() && hasAbortedBox() && !getQuestionnaire().isIn_aborted_box()) {
+                try {
+                    getDao().setCurrentQuestionnaireInAbortedBox(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                TransFragment fragment = new TransFragment();
+                fragment.setStartElement(getAbortedBoxRelativeId());
+                replaceFragment(fragment);
+            } else {
+                showExitPoolAlertDialog();
+            }
         } else if (view == closeImage1) {
             titleCont1.setVisibility(View.GONE);
             unhideCont.setVisibility(View.VISIBLE);
@@ -810,12 +810,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             if (spinnerSelection != -1) {
                 ElementPassedR elementPassedR = new ElementPassedR();
                 nextElementId = answersList.get(spinnerSelection).getElementOptionsR().getJump();
-                ElementItemR nextElement = getElement(nextElementId);
-                final ElementOptionsR options = nextElement.getElementOptionsR();
-                final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMap(false), (MainActivity) getActivity());
+                if(nextElementId != 0 && nextElementId != -1) {
+                    ElementItemR nextElement = getElement(nextElementId);
+                    final ElementOptionsR options = nextElement.getElementOptionsR();
+                    final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMap(false), (MainActivity) getActivity());
 
-                if (showValue != ConditionUtils.CAN_SHOW) {
-                    nextElementId = options.getJump();
+                    if (showValue != ConditionUtils.CAN_SHOW) {
+                        nextElementId = options.getJump();
+                    }
                 }
                 elementPassedR.setRelative_id(currentElement.getRelative_id());
                 elementPassedR.setProject_id(currentElement.getProjectId());
@@ -1302,33 +1304,47 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     public void showExitPoolAlertDialog() {
         activateButtons();
-        MainActivity activity = (MainActivity) getActivity();
-        addLog(getCurrentUser().getLogin(), Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_exit), null);
-        if (activity != null && !activity.isFinishing()) {
-            new AlertDialog.Builder(Objects.requireNonNull(getContext()), R.style.AlertDialogTheme)
-                    .setCancelable(false)
-                    .setTitle(R.string.exit_quiz_header)
-                    .setMessage(R.string.exit_questionaire_warning)
-                    .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
+        if (!getCurrentUser().getConfigR().isSaveAborted()) {
+            MainActivity activity = (MainActivity) getActivity();
+            addLog(getCurrentUser().getLogin(), Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_exit), null);
+            if (activity != null && !activity.isFinishing()) {
+                new AlertDialog.Builder(Objects.requireNonNull(getContext()), R.style.AlertDialogTheme)
+                        .setCancelable(false)
+                        .setTitle(R.string.exit_quiz_header)
+                        .setMessage(R.string.exit_questionaire_warning)
+                        .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
 
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
-                            if (getCurrentUser().getConfigR().isSaveAborted()) {
-                                showScreensaver(true);
-                                saveQuestionnaire();
-                                showToast(getString(R.string.save_questionnaire));
+                            @Override
+                            public void onClick(final DialogInterface dialog, final int which) {
+
+//                                showScreensaver(true);
+//                                saveQuestionnaire();
+//                                showToast(getString(R.string.save_questionnaire));
+
+                                try {
+                                    getDao().clearCurrentQuestionnaireR();
+                                    getDao().clearElementPassedR();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                dialog.dismiss();
+                                exitQuestionnaire();
                             }
-                            try {
-                                getDao().clearCurrentQuestionnaireR();
-                                getDao().clearElementPassedR();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            dialog.dismiss();
-                            exitQuestionnaire();
-                        }
-                    })
-                    .setNegativeButton(R.string.view_no, null).show();
+                        })
+                        .setNegativeButton(R.string.view_no, null).show();
+            }
+        } else {
+            showScreensaver(true);
+            saveQuestionnaire();
+            showToast(getString(R.string.save_questionnaire));
+
+            try {
+                getDao().clearCurrentQuestionnaireR();
+                getDao().clearElementPassedR();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            exitQuestionnaire();
         }
     }
 

@@ -101,7 +101,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     private int mRelativeId = -1;
     private int mUserId = -1;
     private int mProjectId = -1;
-//    private ElementItemR[][] tree;
+    private int abortedBoxRelativeId = 0;
+    private boolean hasAbortedBox = false;
 
     private CurrentQuestionnaireR currentQuestionnaire = null;
     List<ElementItemR> elementItemRList = null;
@@ -566,6 +567,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public void initCurrentElements() {
         try {
+            //TODO REFACTOR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //            Log.d(TAG, "====== initCurrentElements: ");
             elementItemRList = getDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
             currentQuestionnaire = getDao().getCurrentQuestionnaireR();
@@ -582,6 +584,26 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public List<ElementItemR> getCurrentElements() {
         return elementItemRList;
+    }
+
+    public void checkAbortedBox() {
+        if(elementItemRList != null) {
+            for(ElementItemR element : elementItemRList) {
+                if(element.getSubtype() != null && element.getSubtype().equals(ElementSubtype.ABORTED)) {
+                    hasAbortedBox = true;
+                    abortedBoxRelativeId = element.getRelative_id();
+                    return;
+                }
+            }
+        }
+    }
+
+    public int getAbortedBoxRelativeId() {
+        return abortedBoxRelativeId;
+    }
+
+    public boolean hasAbortedBox() {
+        return hasAbortedBox;
     }
 
     public ElementItemR getElement(Integer id) {

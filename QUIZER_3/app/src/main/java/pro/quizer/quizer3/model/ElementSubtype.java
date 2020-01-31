@@ -31,4 +31,5 @@ public @interface ElementSubtype {
     String VIDEO = "video";
     String SLIDER = "slider";
     String QUOTA = "quota";
+    String ABORTED = "aborted";
 }

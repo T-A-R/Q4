@@ -76,6 +76,9 @@ public class CurrentQuestionnaireR {
     @ColumnInfo(name = "paused")
     private boolean paused;
 
+    @ColumnInfo(name = "in_aborted_box")
+    private boolean in_aborted_box;
+
     @ColumnInfo(name = "has_photo")
     private String has_photo;
 
@@ -109,6 +112,7 @@ public class CurrentQuestionnaireR {
         this.current_element_id = current_element_id;
         this.count_interrupted = 0;
         this.paused = false;
+        this.in_aborted_box = false;
     }
 
     public int getId() {
@@ -277,5 +281,13 @@ public class CurrentQuestionnaireR {
 
     public void setPassed_quota_block(List<Integer> passed_quota_block) {
         this.passed_quota_block = passed_quota_block;
+    }
+
+    public boolean isIn_aborted_box() {
+        return in_aborted_box;
+    }
+
+    public void setIn_aborted_box(boolean in_aborted_box) {
+        this.in_aborted_box = in_aborted_box;
     }
 }

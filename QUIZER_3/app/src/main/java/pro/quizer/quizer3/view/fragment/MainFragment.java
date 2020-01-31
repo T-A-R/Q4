@@ -125,14 +125,15 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
         screensManager.setListener(this);
         setSideMenu();
 
-        MainActivity activity = getMainActivity();
-        if (activity != null) {
-            if (activity.hasReserveChannel()) {
-                mQuotasBtnCont.setVisibility(View.GONE);
-            } else {
-                mQuotasBtnCont.setVisibility(View.VISIBLE);
-            }
-        }
+//        MainActivity activity = getMainActivity();
+//        if (activity != null) {
+//            Log.d(TAG, "ERROR 2: ");
+//            if (activity.hasReserveChannel()) {
+//                mQuotasBtnCont.setVisibility(View.GONE);
+//            } else {
+//                mQuotasBtnCont.setVisibility(View.VISIBLE);
+//            }
+//        }
     }
 
     @Override
@@ -140,14 +141,16 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
         super.onResume();
         getUser().setModeChangeListener(this);
         sideMenuDrawer = (DrawerLayout) findViewById(R.id.drawer_cont);
-        MainActivity activity = getMainActivity();
-        if (activity != null) {
-            if (activity.hasReserveChannel()) {
-                mQuotasBtnCont.setVisibility(View.GONE);
-            } else {
-                mQuotasBtnCont.setVisibility(View.VISIBLE);
-            }
-        }
+//        MainActivity activity = getMainActivity();
+//        if (activity != null) {
+//            Log.d(TAG, "ERROR 3: ");
+//
+//            if (activity.hasReserveChannel()) {
+//                mQuotasBtnCont.setVisibility(View.GONE);
+//            } else {
+//                mQuotasBtnCont.setVisibility(View.VISIBLE);
+//            }
+//        }
     }
 
     public void startScreens() {

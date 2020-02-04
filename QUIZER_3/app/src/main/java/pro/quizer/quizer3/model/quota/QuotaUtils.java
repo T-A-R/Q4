@@ -153,7 +153,7 @@ public class QuotaUtils {
 //        Log.d(TAG, "canShow: Relative_ID = " + relativeId);
 
         if (tree == null) {
-            Log.d(TAG, "canShow: Tree is NULL!");
+//            Log.d(TAG, "canShow: Tree is NULL!");
             return true;
         }
 

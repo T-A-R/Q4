@@ -24,8 +24,11 @@ import com.cleveroad.adaptivetablelayout.OnItemClickListener;
 import com.cleveroad.adaptivetablelayout.ViewHolderImpl;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.database.models.ElementItemR;
@@ -82,6 +85,24 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 List<ElementItemR> pAnswers = mQuestions.get(i).getElements();
                 for (int k = 0; k < pAnswers.size(); k++) {
                     mAnswersState[i][k] = new AnswerState(pAnswers.get(k).getRelative_id(), false, "");
+                }
+            }
+        }
+
+        if(mCurrentElement != null && mCurrentElement.getElementOptionsR() != null && mCurrentElement.getElementOptionsR().isRotation()) {
+            List<ElementItemR> shuffleList = new ArrayList<>();
+            for (ElementItemR elementItemR : mQuestions) {
+                if (elementItemR.getElementOptionsR() != null && !elementItemR.getElementOptionsR().isFixed_order()) {
+                    shuffleList.add(elementItemR);
+                }
+            }
+            Collections.shuffle(shuffleList, new Random());
+            int k = 0;
+
+            for (int i = 0; i < mQuestions.size(); i++) {
+                if (mQuestions.get(i).getElementOptionsR() != null && !mQuestions.get(i).getElementOptionsR().isFixed_order()) {
+                    mQuestions.set(i, shuffleList.get(k));
+                    k++;
                 }
             }
         }

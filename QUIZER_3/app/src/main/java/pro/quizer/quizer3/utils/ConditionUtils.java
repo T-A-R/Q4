@@ -1,6 +1,5 @@
 package pro.quizer.quizer3.utils;
 
-import android.util.Log;
 
 import java.util.HashMap;
 import java.util.List;
@@ -8,13 +7,9 @@ import java.util.List;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
-import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
-import pro.quizer.quizer3.model.config.ElementModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.utils.Evaluator.TreeBooleanEvaluator;
-
-import static pro.quizer.quizer3.MainActivity.TAG;
 
 public final class ConditionUtils {
 
@@ -81,7 +76,7 @@ public final class ConditionUtils {
 
     public static int evaluateCondition(final String pShowCondition, final HashMap<Integer, ElementModelNew> pModel, final MainActivity pBaseActivity) {
         if (StringUtils.isEmpty(pShowCondition)) {
-            Log.d(TAG, "evaluateCondition: 1");
+//            Log.d(TAG, "evaluateCondition: 1");
             return CAN_SHOW;
         }
 
@@ -89,11 +84,11 @@ public final class ConditionUtils {
 
         final TreeBooleanEvaluator evaluator = new TreeBooleanEvaluator();
 
-        Log.d(TAG, "************************************");
-        for (int i = 0; i < conditionArray.length; i++) {
-            Log.d(TAG, "evaluateCondition: " + i + " = " + conditionArray[i]);
-        }
-        Log.d(TAG, "************************************");
+//        Log.d(TAG, "************************************");
+//        for (int i = 0; i < conditionArray.length; i++) {
+//            Log.d(TAG, "evaluateCondition: " + i + " = " + conditionArray[i]);
+//        }
+//        Log.d(TAG, "************************************");
 
         for (final String conditionElement : conditionArray) {
             if (conditionElement.contains(IF)) {
@@ -101,11 +96,11 @@ public final class ConditionUtils {
 
                 if (condition.contains(DisplayConditionType.SHOW)) {
                     condition = condition.replace(LEFT_BRACKET + DisplayConditionType.SHOW + RIGHT_BRACKET, Constants.Strings.EMPTY);
-                    Log.d(TAG, "evaluateCondition: 2.1 " + formatCondition(condition, pModel, pBaseActivity));
+//                    Log.d(TAG, "evaluateCondition: 2.1 " + formatCondition(condition, pModel, pBaseActivity));
                     final boolean isCanShow = TreeBooleanEvaluator.evaluateBoolean(evaluator, formatCondition(condition, pModel, pBaseActivity));
-                    Log.d(TAG, "evaluateCondition: 2.2 " + isCanShow);
+//                    Log.d(TAG, "evaluateCondition: 2.2 " + isCanShow);
                     if (isCanShow) {
-                        Log.d(TAG, "evaluateCondition: 2.3");
+//                        Log.d(TAG, "evaluateCondition: 2.3");
                         return CAN_SHOW;
                     }
                 } else if (condition.contains(DisplayConditionType.JUMP)) {
@@ -115,7 +110,7 @@ public final class ConditionUtils {
                     final boolean isNeedJump = TreeBooleanEvaluator.evaluateBoolean(evaluator, formatCondition(condition, pModel, pBaseActivity));
 
                     if (isNeedJump) {
-                        Log.d(TAG, "evaluateCondition: 3");
+//                        Log.d(TAG, "evaluateCondition: 3");
                         return jump;
                     }
                 } else if (condition.contains(DisplayConditionType.HIDE)) {
@@ -123,22 +118,22 @@ public final class ConditionUtils {
                     final boolean isCantShow = TreeBooleanEvaluator.evaluateBoolean(evaluator, formatCondition(condition, pModel, pBaseActivity));
 
                     if (isCantShow) {
-                        Log.d(TAG, "evaluateCondition: 4");
+//                        Log.d(TAG, "evaluateCondition: 4");
                         return CANT_SHOW;
                     }
                 }
             } else if (conditionElement.contains(DisplayConditionType.SHOW)) {
-                Log.d(TAG, "evaluateCondition: 5");
+//                Log.d(TAG, "evaluateCondition: 5");
                 return CAN_SHOW;
             } else if (conditionElement.contains(DisplayConditionType.JUMP)) {
-                Log.d(TAG, "evaluateCondition: 6");
+//                Log.d(TAG, "evaluateCondition: 6");
                 return Integer.valueOf(conditionElement.substring(conditionElement.indexOf(DisplayConditionType.JUMP) + DisplayConditionType.JUMP.length(), conditionElement.indexOf(RIGHT_BRACKET)));
             } else if (conditionElement.contains(DisplayConditionType.HIDE)) {
-                Log.d(TAG, "evaluateCondition: 7");
+//                Log.d(TAG, "evaluateCondition: 7");
                 return CANT_SHOW;
             }
         }
-        Log.d(TAG, "evaluateCondition: 8");
+//        Log.d(TAG, "evaluateCondition: 8");
         return CAN_SHOW;
     }
 

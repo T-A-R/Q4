@@ -49,7 +49,7 @@ public class SmsFragment extends ScreenFragment implements ICallback {
 
     private void initViews() {
         mBaseActivity = (MainActivity) getMainActivity();
-        mMap = mBaseActivity.getMap();
+        mMap = mBaseActivity.getMap(false);
         mSmsRecyclerView = findViewById(R.id.sms_recycler_view);
         mSendAllSmsBtn = findViewById(R.id.sms_finished_btn);
         mSendAllSmsBtn.setOnClickListener(new View.OnClickListener() {

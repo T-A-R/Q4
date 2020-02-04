@@ -43,20 +43,27 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import pro.quizer.quizer3.broadcast.StartSmsSender;
 import pro.quizer.quizer3.database.QuizerDao;
 import pro.quizer.quizer3.database.models.AppLogsR;
+import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
+import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
+import pro.quizer.quizer3.database.models.ElementOptionsR;
+import pro.quizer.quizer3.database.models.ElementStatusImageR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.QuotasTreeMaker;
 import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.User;
+import pro.quizer.quizer3.model.config.Contents;
 import pro.quizer.quizer3.model.config.ElementModelNew;
+import pro.quizer.quizer3.model.config.OptionsModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.model.config.StagesModel;
 import pro.quizer.quizer3.model.quota.QuotaUtils;
@@ -99,6 +106,9 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private UserModelR mCurrentUser;
     private HashMap<Integer, ElementModelNew> mMap;
     private HashMap<Integer, ElementModelNew> mTempMap;
+    private CurrentQuestionnaireR currentQuestionnaire = null;
+    private HashMap<Integer, ElementModelNew> mNewMap;
+    private List<ElementItemR> elementItemRList = null;
     private MainFragment mainFragment;
 
     private String mToken;
@@ -107,7 +117,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private int mProjectId;
     private int mUserId;
     private ElementItemR[][] tree;
-    List<ElementItemR> elementItemRList;
     ChangeFontCallback changeFontCallback;
     private boolean mAutoZoom;
 
@@ -234,15 +243,21 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public HashMap<Integer, ElementModelNew> getMap() {
-        if (mMap == null) {
+    public HashMap<Integer, ElementModelNew> getMap(boolean rebuild) {
+        if (rebuild) {
             mMap = new HashMap<>();
-
-            generateMap(getElements());
-
+            getStaticDao().clearElementItemR();
+            generateMap(getElements(), rebuild);
             return mMap;
         } else {
-            return mMap;
+            if (mMap == null) {
+                mMap = new HashMap<>();
+                getStaticDao().clearElementItemR();
+                generateMap(getElements(), false);
+                return mMap;
+            } else {
+                return mMap;
+            }
         }
     }
 
@@ -269,13 +284,148 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         return getCurrentUser().getConfigR().getProjectInfo().getElements();
     }
 
-    private void generateMap(final List<ElementModelNew> elements) {
+//    private void generateMap(final List<ElementModelNew> elements) {
+//        for (final ElementModelNew element : elements) {
+//            mMap.put(element.getRelativeID(), element);
+//
+//            final List<ElementModelNew> nestedList = element.getElements();
+//            if (nestedList != null && !nestedList.isEmpty()) {
+//                generateMap(nestedList);
+//            }
+//        }
+//    }
+
+    private void generateMap(final List<ElementModelNew> elements, boolean rebuild) {
+//        Log.d(TAG, "============================================== generateMap: ELEMENTSNEW " + elements.size());
+
         for (final ElementModelNew element : elements) {
             mMap.put(element.getRelativeID(), element);
 
+//            if (rebuild)
+            try {
+                ElementItemR elementItemR = new ElementItemR();
+                elementItemR.setConfigId(getCurrentUser().getConfig_id());
+                elementItemR.setUserId(getCurrentUser().getUser_id());
+                elementItemR.setProjectId(getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+                elementItemR.setType(element.getType());
+                elementItemR.setSubtype(element.getSubtype());
+                elementItemR.setRelative_id(element.getRelativeID());
+                elementItemR.setRelative_parent_id(element.getRelativeParentID());
+//                elementItemR.setShuffeled(element.isShuffeled());
+
+                final List<Contents> contentsList = element.getContents();
+                List<ElementContentsR> elementContentsRList = new ArrayList<>();
+                if (contentsList != null && !contentsList.isEmpty()) {
+                    for (Contents contents : contentsList) {
+                        elementContentsRList.add(new ElementContentsR(contents.getType(), contents.getData(), contents.getOrder()));
+                    }
+                }
+                if (elementContentsRList.size() > 0) {
+                    elementItemR.setElementContentsR(elementContentsRList);
+                }
+
+                final OptionsModelNew optionsModelNew = element.getOptions();
+                if (optionsModelNew != null) {
+                    ElementOptionsR elementOptionsR = new ElementOptionsR();
+                    elementOptionsR.setData(optionsModelNew.getData());
+                    elementOptionsR.setTitle(optionsModelNew.getTitle());
+                    if (optionsModelNew.getJump() != null)
+                        elementOptionsR.setJump(optionsModelNew.getJump());
+                    elementOptionsR.setSearch(optionsModelNew.isSearch());
+                    elementOptionsR.setPre_condition(optionsModelNew.getPre_condition());
+                    elementOptionsR.setPost_condition(optionsModelNew.getPost_condition());
+                    elementOptionsR.setOrder(optionsModelNew.getOrder());
+                    if (optionsModelNew.getNumber() != null)
+                        elementOptionsR.setNumber(optionsModelNew.getNumber());
+                    elementOptionsR.setPolyanswer(optionsModelNew.isPolyanswer());
+                    elementOptionsR.setRecord_sound(optionsModelNew.isRecordSound());
+                    elementOptionsR.setTake_photo(optionsModelNew.isTakePhoto());
+                    elementOptionsR.setDescription(optionsModelNew.getDescription());
+                    elementOptionsR.setFlip_cols_and_rows(optionsModelNew.isFlipColsAndRows());
+                    elementOptionsR.setRotation(optionsModelNew.isRotation());
+                    elementOptionsR.setFixed_order(optionsModelNew.isFixedOrder());
+                    if (optionsModelNew.getMinAnswers() != null)
+                        elementOptionsR.setMin_answers(optionsModelNew.getMinAnswers());
+                    if (optionsModelNew.getMaxAnswers() != null)
+                        elementOptionsR.setMax_answers(optionsModelNew.getMaxAnswers());
+                    elementOptionsR.setOpen_type(optionsModelNew.getOpenType());
+                    elementOptionsR.setPlaceholder(optionsModelNew.getPlaceholder());
+                    elementOptionsR.setUnchecker(optionsModelNew.isUnchecker());
+                    elementOptionsR.setStart_value(optionsModelNew.getStart_value());
+                    elementOptionsR.setEnd_value(optionsModelNew.getEnd_value());
+                    elementOptionsR.setType_behavior(optionsModelNew.getType_behavior());
+                    elementOptionsR.setShow_scale(optionsModelNew.isShow_scale());
+                    elementOptionsR.setShow_images(optionsModelNew.isShow_images());
+                    if (optionsModelNew.getStatusImage() != null) {
+                        ElementStatusImageR elementStatusImageR = new ElementStatusImageR();
+                        elementStatusImageR.setType(optionsModelNew.getStatusImage().getType());
+                        elementStatusImageR.setData(optionsModelNew.getStatusImage().getData());
+                        elementStatusImageR.setData_on(optionsModelNew.getStatusImage().getData_on());
+                        elementStatusImageR.setData_off(optionsModelNew.getStatusImage().getData_off());
+
+                        elementOptionsR.setStatus_image(elementStatusImageR);
+                    }
+
+                    elementItemR.setElementOptionsR(elementOptionsR);
+                }
+//                Log.d(TAG, "generateMap: " + elementItemR.getRelative_id());
+                getStaticDao().insertElementItemR(elementItemR);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             final List<ElementModelNew> nestedList = element.getElements();
             if (nestedList != null && !nestedList.isEmpty()) {
-                generateMap(nestedList);
+                if (element.getSubtype().equals(ElementSubtype.CONTAINER)
+                        && element.getOptions() != null
+                        && element.getOptions().isRotation()) {
+//                    Log.d(TAG, "??????????? SHUFFLE !!!!!!!!!!!!!: ");
+//                    try {
+//                        Log.d(TAG, "shuffeMap 1: " + nestedList.get(0).getRelativeID()
+//                                + " " + nestedList.get(1).getRelativeID()
+//                                + " " + nestedList.get(2).getRelativeID()
+//                                + " " + nestedList.get(3).getRelativeID()
+//                                + " " + nestedList.get(4).getRelativeID());
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+                    List<ElementModelNew> shuffleList = new ArrayList<>();
+                    for (ElementModelNew subElement : nestedList) {
+                        if (subElement.getOptions() != null && !subElement.getOptions().isFixed_order()) {
+                            shuffleList.add(subElement);
+                        }
+                    }
+                    Collections.shuffle(shuffleList, new Random());
+                    int k = 0;
+
+                    for (int i = 0; i < nestedList.size(); i++) {
+                        if (nestedList.get(i).getOptions() != null && !nestedList.get(i).getOptions().isFixed_order()) {
+                            nestedList.set(i, shuffleList.get(k));
+                            k++;
+                        }
+                    }
+                    for (int i = 0; i < nestedList.size(); i++) {
+                        if (i != nestedList.size() - 1) {
+                            nestedList.get(i).getOptions().setJump(nestedList.get(i + 1).getRelativeID());
+                        } else {
+                            nestedList.get(nestedList.size() - 1).getOptions().setJump(-2);
+                        }
+//                        nestedList.get(i).setShuffeled(true);
+                    }
+
+//                    try {
+//                        Log.d(TAG, "shuffeMap 2: " + nestedList.get(0).getRelativeID()
+//                                + " " + nestedList.get(1).getRelativeID()
+//                                + " " + nestedList.get(2).getRelativeID()
+//                                + " " + nestedList.get(3).getRelativeID()
+//                                + " " + nestedList.get(4).getRelativeID());
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+                }
+
+//                Log.d(TAG, "generateMap:  nestedList rebuild");
+                generateMap(nestedList, rebuild);
             }
         }
     }

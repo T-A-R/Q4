@@ -275,8 +275,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        deactivateButtons();
+
         if (view == btnNext) {
+            deactivateButtons();
 //            if (!isNextBtnPressed) {
 //                isNextBtnPressed = true;
             if (saveElement()) {
@@ -295,6 +296,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             }
 //            }
         } else if (view == btnPrev) {
+            deactivateButtons();
             TransFragment fragment = new TransFragment();
             List<PrevElementsR> prevList;
             if (prevElementId != 0) {
@@ -315,6 +317,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
 
         } else if (view == btnExit) {
+            deactivateButtons();
             checkAbortedBox();
             if (getCurrentUser().getConfigR().isSaveAborted() && hasAbortedBox() && !getQuestionnaire().isIn_aborted_box()) {
                 try {
@@ -658,7 +661,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //        Log.d(TAG, "checkConditions: " + element);
         final ElementOptionsR options = element.getElementOptionsR();
         if (options != null && options.getPre_condition() != null) {
-            final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMap(true), (MainActivity) getActivity());
+            final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), (MainActivity) getActivity());
 //            Log.d(TAG, "!!!!!!!!!!!!!!!!!! showValue: " + showValue);
             if (showValue != ConditionUtils.CAN_SHOW) {
                 if (showValue != ConditionUtils.CANT_SHOW) {
@@ -732,33 +735,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
                 }
 
-//                    ElementItemR nextElement = getElement(nextElementId);
-//                    final ElementOptionsR options = nextElement.getElementOptionsR();
-//                    final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMap(true), (MainActivity) getActivity());
-//                    Log.d(TAG, "!!!!!!!!!!!!!!!!!! showValue: " + showValue);
-//                    if (showValue != ConditionUtils.CAN_SHOW) {
-//                        nextElementId = options.getJump();
-//                        if(nextElementId == null) {
-//                            List<ElementItemR> answers = nextElement.getElements();
-//                            if(answers != null && answers.size() >0) {
-//                                try {
-//                                    nextElementId = answers.get(0).getElementOptionsR().getJump();
-//                                } catch (Exception e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//                            if(nextElementId == null) {
-//                                nextElementId = 0;
-//                            }
-//                        }
-//                    }
-
-//                if (currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
-//                    //TODO Переход из контейнера с ротацией
-//                    nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
-//                } else if (nextElementId == null || nextElementId == 0) {
-//                    nextElementId = getElement(answerStates.get(0).getRelative_id()).getElementOptionsR().getJump();
-//                }
+                if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+                    nextElementId = currentElement.getElementOptionsR().getJump();
+                    if(nextElementId == -2) {
+                        nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                    }
+                }
 
                 ElementPassedR elementPassedR = new ElementPassedR();
                 elementPassedR.setRelative_id(currentElement.getRelative_id());
@@ -810,15 +792,24 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             if (spinnerSelection != -1) {
                 ElementPassedR elementPassedR = new ElementPassedR();
                 nextElementId = answersList.get(spinnerSelection).getElementOptionsR().getJump();
+                if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+                    nextElementId = currentElement.getElementOptionsR().getJump();
+                    if(nextElementId == -2) {
+                        nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                    }
+                }
                 if(nextElementId != 0 && nextElementId != -1) {
                     ElementItemR nextElement = getElement(nextElementId);
                     final ElementOptionsR options = nextElement.getElementOptionsR();
-                    final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMap(false), (MainActivity) getActivity());
+                    final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), (MainActivity) getActivity());
 
                     if (showValue != ConditionUtils.CAN_SHOW) {
                         nextElementId = options.getJump();
                     }
                 }
+
+
+
                 elementPassedR.setRelative_id(currentElement.getRelative_id());
                 elementPassedR.setProject_id(currentElement.getProjectId());
                 elementPassedR.setToken(getQuestionnaire().getToken());
@@ -860,10 +851,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 else
                     nextElementId = getElement(answerStates[0][0].getRelative_id()).getElementOptionsR().getJump();
 
+                if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+                    nextElementId = currentElement.getElementOptionsR().getJump();
+                    if(nextElementId == -2) {
+                        nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                    }
+                }
+
                 ElementItemR nextElement = getElement(nextElementId);
                 if (nextElementId != 0 && nextElementId != -1) {
                     final ElementOptionsR options = nextElement.getElementOptionsR();
-                    final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMap(false), (MainActivity) getActivity());
+                    final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), (MainActivity) getActivity());
 
                     if (showValue != ConditionUtils.CAN_SHOW) {
                         nextElementId = options.getJump();
@@ -912,10 +910,16 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } else if (answerType.equals(ElementSubtype.HTML)) {
             ElementPassedR elementPassedR = new ElementPassedR();
             nextElementId = currentElement.getElementOptionsR().getJump();
+            if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+                nextElementId = currentElement.getElementOptionsR().getJump();
+                if(nextElementId == -2) {
+                    nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                }
+            }
 
             ElementItemR nextElement = getElement(nextElementId);
             final ElementOptionsR options = nextElement.getElementOptionsR();
-            final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMap(false), (MainActivity) getActivity());
+            final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), (MainActivity) getActivity());
 
             if (showValue != ConditionUtils.CAN_SHOW) {
                 nextElementId = options.getJump();
@@ -1247,13 +1251,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     @Override
     public boolean onBackPressed() {
         onClick(btnPrev);
-//        if (isExit) {
-//            stopRecording();
-//            replaceFragment(new HomeFragment());
-//        } else {
-//            Toast.makeText(getContext(), getString(R.string.exit_questionaire_warning), Toast.LENGTH_SHORT).show();
-//            isExit = true;
-//        }
         return true;
     }
 
@@ -1290,7 +1287,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private String getFilePath(final String data) {
-        final String path = FileUtils.getFilesStoragePath((MainActivity) getActivity());
+        final String path = FileUtils.getFilesStoragePath(getMainActivity());
         final String url = data;
 
         if (StringUtils.isEmpty(url)) {
@@ -1316,10 +1313,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
                             @Override
                             public void onClick(final DialogInterface dialog, final int which) {
-
-//                                showScreensaver(true);
-//                                saveQuestionnaire();
-//                                showToast(getString(R.string.save_questionnaire));
 
                                 try {
                                     getDao().clearCurrentQuestionnaireR();

@@ -33,8 +33,10 @@ import com.krishna.fileloader.listener.MultiFileDownloadListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import pro.quizer.quizer3.API.QuizerAPI;
 import pro.quizer.quizer3.API.models.request.AuthRequestModel;
@@ -91,7 +93,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     protected Listener listener;
     private UserModelR mCurrentUser;
     private int layoutSrc;
-    private HashMap<Integer, ElementModelNew> mMap;
     private Integer countElements;
     private Integer countScreens;
     private Integer countQuestions;
@@ -104,8 +105,9 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     private int abortedBoxRelativeId = 0;
     private boolean hasAbortedBox = false;
 
+//    private HashMap<Integer, ElementModelNew> mMap;
     private CurrentQuestionnaireR currentQuestionnaire = null;
-    List<ElementItemR> elementItemRList = null;
+    private List<ElementItemR> elementItemRList = null;
 
     public SmartFragment(int layoutSrc) {
         this.layoutSrc = layoutSrc;
@@ -441,107 +443,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         return getCurrentUser().getConfigR().getProjectInfo().getElements();
     }
 
-    public HashMap<Integer, ElementModelNew> getMap(boolean rebuild) {
-        if (mMap == null) {
-            mMap = new HashMap<>();
-            if (rebuild) {
-                getDao().clearElementItemR();
-            }
-//            Log.d(TAG, "???????????? getMap: 1");
-            generateMap(getElements(), rebuild);
-//            Log.d(TAG, "???????????? getMap: " + mMap.size());
-            return mMap;
-        } else {
-//            Log.d(TAG, "???????????? getMap: " + mMap.size());
-            return mMap;
-        }
-    }
-
-    private void generateMap(final List<ElementModelNew> elements, boolean rebuild) {
-        Log.d(TAG, "generateMap: ELEMENTSNEW " + elements.size());
-
-        for (final ElementModelNew element : elements) {
-            mMap.put(element.getRelativeID(), element);
-
-            if (rebuild)
-                try {
-                    ElementItemR elementItemR = new ElementItemR();
-                    elementItemR.setConfigId(getCurrentUser().getConfig_id());
-                    elementItemR.setUserId(getCurrentUser().getUser_id());
-                    elementItemR.setProjectId(getCurrentUser().getConfigR().getProjectInfo().getProjectId());
-                    elementItemR.setType(element.getType());
-                    elementItemR.setSubtype(element.getSubtype());
-                    elementItemR.setRelative_id(element.getRelativeID());
-                    elementItemR.setRelative_parent_id(element.getRelativeParentID());
-
-                    final List<Contents> contentsList = element.getContents();
-                    List<ElementContentsR> elementContentsRList = new ArrayList<>();
-                    if (contentsList != null && !contentsList.isEmpty()) {
-                        for (Contents contents : contentsList) {
-                            elementContentsRList.add(new ElementContentsR(contents.getType(), contents.getData(), contents.getOrder()));
-                        }
-                    }
-                    if (elementContentsRList.size() > 0) {
-                        elementItemR.setElementContentsR(elementContentsRList);
-                    }
-
-                    final OptionsModelNew optionsModelNew = element.getOptions();
-                    if (optionsModelNew != null) {
-                        ElementOptionsR elementOptionsR = new ElementOptionsR();
-                        elementOptionsR.setData(optionsModelNew.getData());
-                        elementOptionsR.setTitle(optionsModelNew.getTitle());
-                        if (optionsModelNew.getJump() != null)
-                            elementOptionsR.setJump(optionsModelNew.getJump());
-                        elementOptionsR.setSearch(optionsModelNew.isSearch());
-                        elementOptionsR.setPre_condition(optionsModelNew.getPre_condition());
-                        elementOptionsR.setPost_condition(optionsModelNew.getPost_condition());
-                        elementOptionsR.setOrder(optionsModelNew.getOrder());
-                        if (optionsModelNew.getNumber() != null)
-                            elementOptionsR.setNumber(optionsModelNew.getNumber());
-                        elementOptionsR.setPolyanswer(optionsModelNew.isPolyanswer());
-                        elementOptionsR.setRecord_sound(optionsModelNew.isRecordSound());
-                        elementOptionsR.setTake_photo(optionsModelNew.isTakePhoto());
-                        elementOptionsR.setDescription(optionsModelNew.getDescription());
-                        elementOptionsR.setFlip_cols_and_rows(optionsModelNew.isFlipColsAndRows());
-                        elementOptionsR.setRotation(optionsModelNew.isRotation());
-                        elementOptionsR.setFixed_order(optionsModelNew.isFixedOrder());
-                        if (optionsModelNew.getMinAnswers() != null)
-                            elementOptionsR.setMin_answers(optionsModelNew.getMinAnswers());
-                        if (optionsModelNew.getMaxAnswers() != null)
-                            elementOptionsR.setMax_answers(optionsModelNew.getMaxAnswers());
-                        elementOptionsR.setOpen_type(optionsModelNew.getOpenType());
-                        elementOptionsR.setPlaceholder(optionsModelNew.getPlaceholder());
-                        elementOptionsR.setUnchecker(optionsModelNew.isUnchecker());
-                        elementOptionsR.setStart_value(optionsModelNew.getStart_value());
-                        elementOptionsR.setEnd_value(optionsModelNew.getEnd_value());
-                        elementOptionsR.setType_behavior(optionsModelNew.getType_behavior());
-                        elementOptionsR.setShow_scale(optionsModelNew.isShow_scale());
-                        elementOptionsR.setShow_images(optionsModelNew.isShow_images());
-                        if (optionsModelNew.getStatusImage() != null) {
-                            ElementStatusImageR elementStatusImageR = new ElementStatusImageR();
-                            elementStatusImageR.setType(optionsModelNew.getStatusImage().getType());
-                            elementStatusImageR.setData(optionsModelNew.getStatusImage().getData());
-                            elementStatusImageR.setData_on(optionsModelNew.getStatusImage().getData_on());
-                            elementStatusImageR.setData_off(optionsModelNew.getStatusImage().getData_off());
-
-                            elementOptionsR.setStatus_image(elementStatusImageR);
-                        }
-
-                        elementItemR.setElementOptionsR(elementOptionsR);
-                    }
-
-                    getDao().insertElementItemR(elementItemR);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            final List<ElementModelNew> nestedList = element.getElements();
-            if (nestedList != null && !nestedList.isEmpty()) {
-                Log.d(TAG, "generateMap:  nestedList rebuild");
-                generateMap(nestedList, rebuild);
-            }
-        }
-    }
 
     public void rebuildElementsDatabase() {
 
@@ -549,7 +450,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             Log.d(TAG, "Clearing Elements Database............. ");
             getDao().clearElementItemR();
             Log.d(TAG, "Rebuilding Elements Database............. ");
-            getMap(true);
+            getMainActivity().getMap(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -568,14 +469,9 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public void initCurrentElements() {
         try {
             //TODO REFACTOR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//            Log.d(TAG, "====== initCurrentElements: ");
+
             elementItemRList = getDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
             currentQuestionnaire = getDao().getCurrentQuestionnaireR();
-            List<ElementItemR> allElements = getDao().getAllElementItemR();
-//            Log.d(TAG, "============ " + getCurrentUserId() + " / " + getCurrentUser().getConfigR().getProjectInfo().getProjectId() + " ============");
-//            for (ElementItemR elementItemR : allElements) {
-//                Log.d(TAG, "initCurrentElements: " + elementItemR.getUserId() + " / " + elementItemR.getProjectId());
-//            }
         } catch (Exception e) {
             Log.d(TAG, "initCurrentElements: ERROR");
             e.printStackTrace();
@@ -587,9 +483,9 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public void checkAbortedBox() {
-        if(elementItemRList != null) {
-            for(ElementItemR element : elementItemRList) {
-                if(element.getSubtype() != null && element.getSubtype().equals(ElementSubtype.ABORTED)) {
+        if (elementItemRList != null) {
+            for (ElementItemR element : elementItemRList) {
+                if (element.getSubtype() != null && element.getSubtype().equals(ElementSubtype.ABORTED)) {
                     hasAbortedBox = true;
                     abortedBoxRelativeId = element.getRelative_id();
                     return;
@@ -840,7 +736,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public boolean saveQuestionnaireToDatabase(CurrentQuestionnaireR currentQuiz, boolean aborted) {
 
-        Log.d(TAG, "saveQuestionnaireToDatabase: 1");
+//        Log.d(TAG, "saveQuestionnaireToDatabase: 1");
         boolean saved = true;
         countElements = 0;
         countScreens = 0;
@@ -849,15 +745,15 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         List<ElementPassedR> elements = null;
 
         try {
-            Log.d(TAG, "saveQuestionnaireToDatabase: 2");
+//            Log.d(TAG, "saveQuestionnaireToDatabase: 2");
             elements = getDao().getAllElementsPassedR(currentQuiz.getToken());
-            Log.d(TAG, "saveQuestionnaireToDatabase: 2.1 " + elements.size());
+//            Log.d(TAG, "saveQuestionnaireToDatabase: 2.1 " + elements.size());
         } catch (Exception e) {
-            Log.d(TAG, "saveQuestionnaireToDatabase: 2.2");
+//            Log.d(TAG, "saveQuestionnaireToDatabase: 2.2");
             e.printStackTrace();
         }
         if (elements != null && elements.size() > 0) {
-            Log.d(TAG, "saveQuestionnaireToDatabase: 2.3");
+//            Log.d(TAG, "saveQuestionnaireToDatabase: 2.3");
             for (ElementPassedR element : elements) {
                 if (!saveElement(currentQuiz, element)) {
                     showToast("Ошибка сохранения элемента анкеты");
@@ -866,79 +762,79 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 }
             }
         }
-        Log.d(TAG, "saveQuestionnaireToDatabase: 2");
+//        Log.d(TAG, "saveQuestionnaireToDatabase: 2");
         final long endTime = DateUtils.getCurrentTimeMillis();
         final long durationTimeQuestionnaire = endTime - currentQuiz.getStart_date();
-        Log.d(TAG, "saveQuestionnaireToDatabase: 3");
+//        Log.d(TAG, "saveQuestionnaireToDatabase: 3");
         final QuestionnaireDatabaseModelR questionnaireDatabaseModel = new QuestionnaireDatabaseModelR();
         questionnaireDatabaseModel.setStatus(QuestionnaireStatus.NOT_SENT);
         questionnaireDatabaseModel.setToken(currentQuiz.getToken());
         questionnaireDatabaseModel.setLogin_admin(getLoginAdmin());
-        Log.d(TAG, "saveQuestionnaireToDatabase: 3");
+//        Log.d(TAG, "saveQuestionnaireToDatabase: 3");
         questionnaireDatabaseModel.setLogin(getCurrentUser().getLogin());
         questionnaireDatabaseModel.setUser_id(getCurrentUserId());
         questionnaireDatabaseModel.setPassw(getCurrentUser().getPassword());
-        Log.d(TAG, "saveQuestionnaireToDatabase: 4");
+//        Log.d(TAG, "saveQuestionnaireToDatabase: 4");
         questionnaireDatabaseModel.setQuestionnaire_id(getCurrentUser().getConfigR().getProjectInfo().getQuestionnaireId());
         questionnaireDatabaseModel.setProject_id(getCurrentUser().getConfigR().getProjectInfo().getProjectId());
 //        questionnaireDatabaseModel.setBilling_questions(mBillingQuestions); //TODO Узнать надо или нет!
         questionnaireDatabaseModel.setUser_project_id(getCurrentUser().getUser_project_id());
-        Log.d(TAG, "saveQuestionnaireToDatabase: 5");
+//        Log.d(TAG, "saveQuestionnaireToDatabase: 5");
         questionnaireDatabaseModel.setGps(currentQuiz.getGps());
         questionnaireDatabaseModel.setGps_network(currentQuiz.getGps_network());
         questionnaireDatabaseModel.setGps_time(currentQuiz.getGps_time());
-        Log.d(TAG, "saveQuestionnaireToDatabase: 6");
+//        Log.d(TAG, "saveQuestionnaireToDatabase: 6");
         questionnaireDatabaseModel.setGps_time_network(currentQuiz.getGps_time_network());
         questionnaireDatabaseModel.setDate_interview(currentQuiz.getStart_date());
         questionnaireDatabaseModel.setHas_photo(currentQuiz.getHas_photo());
-        Log.d(TAG, "saveQuestionnaireToDatabase: 6");
+//        Log.d(TAG, "saveQuestionnaireToDatabase: 6");
         questionnaireDatabaseModel.setUsed_fake_gps(currentQuiz.isUsed_fake_gps());
         questionnaireDatabaseModel.setGps_time_fk(currentQuiz.getFake_gps_time());
 
         if (aborted) {
-            Log.d(TAG, "saveQuestionnaireToDatabase: 7");
+//            Log.d(TAG, "saveQuestionnaireToDatabase: 7");
             if (currentQuiz.isPaused())
                 questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.UNFINISHED);
             else
                 questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.ABORTED);
         } else {
-            Log.d(TAG, "saveQuestionnaireToDatabase: 8");
+//            Log.d(TAG, "saveQuestionnaireToDatabase: 8");
             questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.COMPLETED);
         }
-        Log.d(TAG, "saveQuestionnaireToDatabase: 9");
+//        Log.d(TAG, "saveQuestionnaireToDatabase: 9");
         questionnaireDatabaseModel.setQuestions_passed(countQuestions);
         questionnaireDatabaseModel.setScreens_passed(countScreens); //TODO сделать подсчет экранов.
         questionnaireDatabaseModel.setSelected_questions(countElements);
-        Log.d(TAG, "saveQuestionnaireToDatabase: 10");
+//        Log.d(TAG, "saveQuestionnaireToDatabase: 10");
         questionnaireDatabaseModel.setDuration_time_questionnaire((int) durationTimeQuestionnaire);
         questionnaireDatabaseModel.setAuth_time_difference(SPUtils.getAuthTimeDifference(getContext()));
         questionnaireDatabaseModel.setQuota_time_difference(SPUtils.getQuotaTimeDifference(getContext()));
         questionnaireDatabaseModel.setSend_time_difference(SPUtils.getSendTimeDifference(getContext()));
 
         try {
-            Log.d(TAG, "saveQuestionnaireToDatabase: 11");
+//            Log.d(TAG, "saveQuestionnaireToDatabase: 11");
             getDao().insertQuestionnaire(questionnaireDatabaseModel);
             addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.SUCCESS, getString(R.string.save_question_to_db_success), null);
         } catch (Exception e) {
-            Log.d(TAG, "saveQuestionnaireToDatabase: 12");
+//            Log.d(TAG, "saveQuestionnaireToDatabase: 12");
             showToast(getString(R.string.db_save_error));
             addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.ERROR, getString(R.string.save_question_to_db_error), e.toString());
             saved = false;
         }
 
         if (saved) {
-            Log.d(TAG, "saveQuestionnaireToDatabase: 14");
+//            Log.d(TAG, "saveQuestionnaireToDatabase: 14");
             try {
                 getDao().clearCurrentQuestionnaireR();
                 getDao().clearElementPassedR();
-                Log.d(TAG, "saveQuestionnaireToDatabase: 15");
+//                Log.d(TAG, "saveQuestionnaireToDatabase: 15");
             } catch (Exception e) {
-                Log.d(TAG, "saveQuestionnaireToDatabase: 16");
+//                Log.d(TAG, "saveQuestionnaireToDatabase: 16");
                 showToast(getString(R.string.warning_clear_current_quiz_error));
                 addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.ERROR, getString(R.string.warning_clear_current_quiz_error), e.toString());
             }
         }
-        Log.d(TAG, "saveQuestionnaireToDatabase: 17 " + saved);
+//        Log.d(TAG, "saveQuestionnaireToDatabase: 17 " + saved);
 
         try {
             getDao().updateQuestionnaireStart(false, getCurrentUserId());

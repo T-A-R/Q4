@@ -634,7 +634,7 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
 //        Log.d(TAG, "checkConditions: " + element);
         final ElementOptionsR options = element.getElementOptionsR();
         if (options != null && options.getPre_condition() != null) {
-            final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMap(true), (MainActivity) getActivity());
+            final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(true), (MainActivity) getActivity());
 //            Log.d(TAG, "!!!!!!!!!!!!!!!!!! showValue: " + showValue);
             if (showValue != ConditionUtils.CAN_SHOW) {
                 if (showValue != ConditionUtils.CANT_SHOW) {
@@ -788,7 +788,7 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
                 nextElementId = answersList.get(spinnerSelection).getElementOptionsR().getJump();
                 ElementItemR nextElement = getElement(nextElementId);
                 final ElementOptionsR options = nextElement.getElementOptionsR();
-                final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMap(false), (MainActivity) getActivity());
+                final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), (MainActivity) getActivity());
 
                 if (showValue != ConditionUtils.CAN_SHOW) {
                     nextElementId = options.getJump();
@@ -837,7 +837,7 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
                 ElementItemR nextElement = getElement(nextElementId);
                 if (nextElementId != 0 && nextElementId != -1) {
                     final ElementOptionsR options = nextElement.getElementOptionsR();
-                    final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMap(false), (MainActivity) getActivity());
+                    final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), (MainActivity) getActivity());
 
                     if (showValue != ConditionUtils.CAN_SHOW) {
                         nextElementId = options.getJump();
@@ -889,7 +889,7 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
 
             ElementItemR nextElement = getElement(nextElementId);
             final ElementOptionsR options = nextElement.getElementOptionsR();
-            final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMap(false), (MainActivity) getActivity());
+            final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), (MainActivity) getActivity());
 
             if (showValue != ConditionUtils.CAN_SHOW) {
                 nextElementId = options.getJump();

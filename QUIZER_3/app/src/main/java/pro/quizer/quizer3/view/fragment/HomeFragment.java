@@ -382,11 +382,16 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 if (result) {
                     try {
                         Log.d(TAG, "startQuestionnaire: insertCurrentQuestionnaireR() completed.");
+                        getMainActivity().getMap(true);
+
                         startRecording();
 
                         getDao().updateQuestionnaireStart(true, getCurrentUserId());
                         getDao().setOption(Constants.OptionName.QUIZ_STARTED, "true");
                         hideScreensaver();
+//                        for(ElementItemR elem : getCurrentElements()) {
+//                            Log.d(TAG, "!!!!!!!!!!!! elements check: " + elem.getRelative_id());
+//                        }
                         replaceFragment(new ElementFragment());
                         return true;
                     } catch (Exception e) {

@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private ElementItemR[][] tree;
     ChangeFontCallback changeFontCallback;
     private boolean mAutoZoom;
+    private boolean hasRotationContainer = false;
 
     private Timer mTimer;
     private AlertSmsTask mAlertSmsTask;
@@ -414,6 +415,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                     elementOptionsR.setFlip_cols_and_rows(optionsModelNew.isFlipColsAndRows());
 //                    Log.d(TAG, "time 28: " + (DateUtils.getCurrentTimeMillis() - currentTime));
 //                    currentTime = DateUtils.getCurrentTimeMillis();
+                    boolean isRotation = optionsModelNew.isRotation();
+                    if(isRotation && element.getSubtype() != null && element.getSubtype().equals(ElementSubtype.CONTAINER)) {
+                        hasRotationContainer = true;
+                    }
                     elementOptionsR.setRotation(optionsModelNew.isRotation());
 //                    Log.d(TAG, "time 29: " + (DateUtils.getCurrentTimeMillis() - currentTime));
 //                    currentTime = DateUtils.getCurrentTimeMillis();
@@ -1274,5 +1279,9 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         if (EXIT) {
             am.set(AlarmManager.RTC_WAKEUP, startTime, pendingIntent);
         }
+    }
+
+    public boolean hasRotationContainer() {
+        return hasRotationContainer;
     }
 }

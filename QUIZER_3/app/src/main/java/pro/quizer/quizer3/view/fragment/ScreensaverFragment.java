@@ -3,6 +3,7 @@ package pro.quizer.quizer3.view.fragment;
 import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ public class ScreensaverFragment extends SmartFragment implements View.OnClickLi
     private View bg;
     private View bgFull;
     private TextView title;
+    private LinearLayout imageCont;
     private ArrayList<ImageView> imgs = new ArrayList<>();
 
     private Timer timer;
@@ -37,6 +39,7 @@ public class ScreensaverFragment extends SmartFragment implements View.OnClickLi
         cont = findViewById(R.id.cont);
         bg = findViewById(R.id.bg);
         bgFull = findViewById(R.id.bg_full);
+        imageCont = findViewById(R.id.cont_image);
         title = (TextView) findViewById(R.id.title);
         imgs.add((ImageView) findViewById(R.id.img1));
         imgs.add((ImageView) findViewById(R.id.img2));
@@ -81,9 +84,11 @@ public class ScreensaverFragment extends SmartFragment implements View.OnClickLi
             if (full) {
                 cont.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
                 bgFull.setVisibility(View.VISIBLE);
+                imageCont.setVisibility(View.VISIBLE);
             } else {
                 cont.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
                 bgFull.setVisibility(View.GONE);
+                imageCont.setVisibility(View.GONE);
             }
 
             turn = 0;

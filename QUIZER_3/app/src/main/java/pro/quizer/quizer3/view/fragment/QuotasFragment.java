@@ -102,7 +102,7 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
         mToolbar = findViewById(R.id.toolbar);
         mMainActivity = (MainActivity) getActivity();
 //        mMap = mMainActivity.getMap();
-        mMap = getMainActivity().getMap(true);
+        mMap = getMainActivity().getMap(false);
         Log.d(TAG, "??????????? initViews: " + mMap.size());
         mSearchEditTextView = findViewById(R.id.search_edit_text);
         mNotCompletedOnlySwitch = findViewById(R.id.not_completed_only_switch);

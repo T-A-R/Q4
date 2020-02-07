@@ -631,21 +631,21 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             rvAnswers.setAdapter(adapterList);
         } else if (answerType.equals(ElementSubtype.SELECT)) {
 
-//            String[] array = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
-            MultiSelectionSpinner multiSelectionSpinner = (MultiSelectionSpinner) findViewById(R.id.answers_spinner);
-            multiSelectionSpinner.setItems(itemsList);
-//            multiSelectionSpinner.setSelection(new int[]{2, 6});
-            multiSelectionSpinner.setListener(new MultiSelectionSpinner.OnMultipleItemsSelectedListener() {
-                @Override
-                public void selectedIndices(List<Integer> indices) {
-
-                }
-
-                @Override
-                public void selectedStrings(List<String> strings) {
-                    Toast.makeText(getContext(), strings.toString(), Toast.LENGTH_LONG).show();
-                }
-            });
+////            String[] array = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
+//            MultiSelectionSpinner multiSelectionSpinner = (MultiSelectionSpinner) findViewById(R.id.answers_spinner);
+//            multiSelectionSpinner.setItems(itemsList);
+////            multiSelectionSpinner.setSelection(new int[]{2, 6});
+//            multiSelectionSpinner.setListener(new MultiSelectionSpinner.OnMultipleItemsSelectedListener() {
+//                @Override
+//                public void selectedIndices(List<Integer> indices) {
+//
+//                }
+//
+//                @Override
+//                public void selectedStrings(List<String> strings) {
+//                    Toast.makeText(getContext(), strings.toString(), Toast.LENGTH_LONG).show();
+//                }
+//            });
 
 
 
@@ -682,21 +682,21 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //                }
 //            });
 
+            itemsList.add(getString(R.string.select_spinner));
+            Log.d(TAG, "initRecyclerView: " + itemsList.size());
+            adapterSpinner = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, itemsList) {
+                public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                    return super.getDropDownView(position + 1, convertView, parent);
+                }
 
-//            itemsList.add(getString(R.string.select_spinner));
-//            adapterSpinner = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, itemsList) {
-//                public View getDropDownView(int position, View convertView, ViewGroup parent) {
-//                    return super.getDropDownView(position + 1, convertView, parent);
-//                }
-//
-//                public int getCount() {
-//                    return (itemsList.size() - 1);
-//                }
-//            };
-//            adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//            spinnerAnswers.setAdapter(adapterSpinner);
-//            spinnerAnswers.setSelection(itemsList.size() - 1);
-//            spinnerAnswers.setOnItemSelectedListener(this);
+                public int getCount() {
+                    return (itemsList.size() - 1);
+                }
+            };
+            adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerAnswers.setAdapter(adapterSpinner);
+            spinnerAnswers.setSelection(itemsList.size() - 1);
+            spinnerAnswers.setOnItemSelectedListener(this);
         } else if (answerType.equals(ElementSubtype.TABLE)) {
 //            List<ElementItemR> questions = null;
 //            questions = currentElement.getElements();

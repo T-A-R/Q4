@@ -383,19 +383,27 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 if (result) {
                     try {
                         Log.d(TAG, "startQuestionnaire: insertCurrentQuestionnaireR() completed.");
-                        for (ElementItemR elementItemR : getCurrentElements()) {
-                            if (elementItemR.getSubtype() != null && elementItemR.getElementOptionsR() != null)
-                                if (elementItemR.getSubtype().equals(ElementSubtype.CONTAINER) && elementItemR.getElementOptionsR().isRotation()) {
-                                    getMainActivity().getMap(true);
-                                    break;
-                                }
+//                        for (ElementItemR elementItemR : getCurrentElements()) {
+//                            if (elementItemR.getSubtype() != null && elementItemR.getElementOptionsR() != null)
+//                                if (elementItemR.getSubtype().equals(ElementSubtype.CONTAINER) && elementItemR.getElementOptionsR().isRotation()) {
+//                                    getMainActivity().getMap(true);
+//                                    break;
+//                                }
+//                        }
+                        if (activity.hasRotationContainer()) {
+                            activity.getMap(true);
                         }
-
+                        Log.d(TAG, "??????????????????????????: 1");
 
                         startRecording();
 
+                        Log.d(TAG, "??????????????????????????: 2");
                         getDao().updateQuestionnaireStart(true, getCurrentUserId());
+
+                        Log.d(TAG, "??????????????????????????: 3");
                         getDao().setOption(Constants.OptionName.QUIZ_STARTED, "true");
+
+                        Log.d(TAG, "??????????????????????????: 4");
                         hideScreensaver();
 //                        for(ElementItemR elem : getCurrentElements()) {
 //                            Log.d(TAG, "!!!!!!!!!!!! elements check: " + elem.getRelative_id());
@@ -602,6 +610,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             btnStart.setEnabled(false);
             UiUtils.setButtonEnabled(btnStart, false);
             UiUtils.setButtonEnabled(btnContinue, false);
+            UiUtils.setButtonEnabled(btnQuotas, false);
         }
 
         @SafeVarargs
@@ -624,6 +633,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             btnStart.setEnabled(true);
             UiUtils.setButtonEnabled(btnStart, true);
             UiUtils.setButtonEnabled(btnContinue, true);
+            UiUtils.setButtonEnabled(btnQuotas, true);
 
             try {
                 if (activity != null)
@@ -679,39 +689,38 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 //            int qn = 8;
             List<QuotaModel> quotas = activity.getCurrentUser().getQuotasR();
             if (quotas == null || quotas.isEmpty()) return tree;
-            Log.d(TAG, "fillQuotas: tree: " + tree.length + "/" + tree[0].length);
-            Log.d(TAG, "Quotas size: " + quotas.size());
+//            Log.d(TAG, "fillQuotas: tree: " + tree.length + "/" + tree[0].length);
+//            Log.d(TAG, "Quotas size: " + quotas.size());
             for (int q = 0; q < quotas.size(); q++) {
                 Integer[] sequence = quotas.get(q).getArray();
-                String seq = sequence[0].toString();
-                for(int i = 1; i < sequence.length; i++) {
-                    seq=seq.concat(" " + sequence[i].toString());
-                }
-                Log.d(TAG, "================== START Sequence: " + seq);
+//                String seq = sequence[0].toString();
+//                for (int i = 1; i < sequence.length; i++) {
+//                    seq = seq.concat(" " + sequence[i].toString());
+//                }
+//                if (q == 5) Log.d(TAG, "================== START Sequence: " + seq);
 //                for(Integer seq : sequence) {
 //                    Log.d(TAG, "fillQuotas: " + seq);
 //                }
-                if (q == 1)
-                    Log.d(TAG, "fillQuotas done/limit: " + quotas.get(q).getDone() + "/" + quotas.get(q).getLimit());
+//                if (q == 5) Log.d(TAG, "fillQuotas done/limit: " + quotas.get(q).getDone() + "/" + quotas.get(q).getLimit());
 
                 for (int i = 0; i < tree.length; i++) {
                     for (int k = 0; k < tree[i].length; k++) {
-                        if (sequence[0] == tree[i][k].getRelative_id()) {
-                            if (q == 1) Log.d(TAG, "fillQuotas: 0");
+                        if (sequence[0].equals(tree[i][k].getRelative_id())) {
+//                            if (q == 5) Log.d(TAG, "fillQuotas: 0");
                             int temp = i + 1;
                             if (sequence.length > 1) {
-                                for (int s = 1; s < sequence.length; s++) {
-                                    Log.d(TAG, "fillQuotas: " + sequence[s] + " / " + tree[temp][k].getRelative_id());
-                                    if (sequence[s] == tree[temp][k].getRelative_id()) { //Вываливается здесь!!!
-                                        if (q == 1) Log.d(TAG, "fillQuotas: 1");
+                                for (int s = 1; s < sequence.length; ) {
+//                                    if (q == 5) Log.d(TAG, "fillQuotas: " + sequence[s] + " / " + tree[temp][k].getRelative_id());
+                                    if (sequence[s].equals(tree[temp][k].getRelative_id())) { //Вываливается здесь!!!
+//                                        if (q == 5) Log.d(TAG, "fillQuotas: 1");
                                         if (s == sequence.length - 1) {
-                                            if (q == 1) Log.d(TAG, "fillQuotas: 2");
+//                                            if (q == 5) Log.d(TAG, "fillQuotas: 2");
                                             if (tree[temp][k].getLimit() > quotas.get(q).getLimit()) {
-                                                if (q == 1) Log.d(TAG, "fillQuotas: 3");
+//                                                if (q == 5) Log.d(TAG, "fillQuotas: 3");
                                                 tree[temp][k].setLimit(quotas.get(q).getLimit());
                                                 tree[temp][k].setDone(quotas.get(q).getDone());
                                                 if ((tree[temp][k].getDone() + getLocalQuotas(activity, sequence)) >= tree[temp][k].getLimit()) {
-                                                    if (q == 1) Log.d(TAG, "fillQuotas: 4");
+//                                                    if (q == 5) Log.d(TAG, "fillQuotas: 4");
                                                     tree[temp][k].setEnabled(false);
                                                     for (int x = temp - 1; x >= 0; x--) {
                                                         tree[x][k].setEnabled(false);
@@ -719,20 +728,25 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                                 }
                                             }
                                         }
-                                        temp++;
+//                                        temp++;
+                                        s++;
                                     } else {
-                                        if (q == 1) Log.d(TAG, "fillQuotas: 5");
-                                        break;
+//                                        if (q == 5) Log.d(TAG, "fillQuotas: 5");
+//                                        break;
+                                        temp++;
+                                        if (temp == tree.length) {
+                                            break;
+                                        }
                                     }
                                 }
                             } else {
-                                if (q == 1) Log.d(TAG, "fillQuotas: 6");
+//                                if (q == 5) Log.d(TAG, "fillQuotas: 6");
                                 if (tree[i][k].getLimit() > quotas.get(q).getLimit()) {
-                                    if (q == 1) Log.d(TAG, "fillQuotas: 7");
+//                                    if (q == 5) Log.d(TAG, "fillQuotas: 7");
                                     tree[i][k].setLimit(quotas.get(q).getLimit());
                                     tree[i][k].setDone(quotas.get(q).getDone());
                                     if ((tree[i][k].getDone() + getLocalQuotas(activity, sequence)) >= tree[i][k].getLimit()) {
-                                        if (q == 1) Log.d(TAG, "fillQuotas: 8");
+//                                        if (q == 5) Log.d(TAG, "fillQuotas: 8");
                                         tree[i][k].setEnabled(false);
                                     }
                                 }
@@ -746,7 +760,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 publishProgress((int) progress);
             }
 
-            showTree(tree); // Для отладки
+//            showTree(tree); // Для отладки
             publishProgress(100);
             return tree;
         }
@@ -756,13 +770,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
                 Log.d(TAG, "=============== Final Quotas ======================");
                 try {
-//                    for (int i = 0; i < tree[0].length; i++) {
-                    for (int i = 0; i < 6; i++) {
+                    for (int i = 0; i < tree[0].length; i++) {
+//                    for (int i = 0; i < 6; i++) {
                         Log.d(TAG, tree[0][i].getElementOptionsR().getTitle() + " " + tree[0][i].getRelative_id() + " " + tree[0][i].getDone() + "/" + tree[0][i].getLimit() + "/" + tree[0][i].isEnabled() + " | "
-                                + tree[1][i].getElementOptionsR().getTitle() + " " + tree[1][i].getRelative_id() + " " + tree[1][i].getDone() + "/" + tree[1][i].getLimit() + "/" + tree[1][i].isEnabled() + " | "
-                                + tree[2][i].getElementOptionsR().getTitle() + " " + tree[2][i].getRelative_id() + " " + tree[2][i].getDone() + "/" + tree[2][i].getLimit() + "/" + tree[2][i].isEnabled() + " | "
-                                + tree[3][i].getElementOptionsR().getTitle() + " " + tree[3][i].getRelative_id() + " " + tree[3][i].getDone() + "/" + tree[3][i].getLimit() + "/" + tree[3][i].isEnabled() + " | "
-                                + tree[4][i].getElementOptionsR().getTitle() + " " + tree[4][i].getRelative_id() + " " + tree[4][i].getDone() + "/" + tree[4][i].getLimit() + "/" + tree[4][i].isEnabled() + " | "
+                                        + tree[1][i].getElementOptionsR().getTitle() + " " + tree[1][i].getRelative_id() + " " + tree[1][i].getDone() + "/" + tree[1][i].getLimit() + "/" + tree[1][i].isEnabled() + " | "
+                                        + tree[2][i].getElementOptionsR().getTitle() + " " + tree[2][i].getRelative_id() + " " + tree[2][i].getDone() + "/" + tree[2][i].getLimit() + "/" + tree[2][i].isEnabled() + " | "
+//                                + tree[3][i].getElementOptionsR().getTitle() + " " + tree[3][i].getRelative_id() + " " + tree[3][i].getDone() + "/" + tree[3][i].getLimit() + "/" + tree[3][i].isEnabled() + " | "
+//                                + tree[4][i].getElementOptionsR().getTitle() + " " + tree[4][i].getRelative_id() + " " + tree[4][i].getDone() + "/" + tree[4][i].getLimit() + "/" + tree[4][i].isEnabled() + " | "
 
                         );
                     }

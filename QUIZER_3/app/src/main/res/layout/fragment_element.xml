@@ -338,11 +338,10 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <com.androidbuts.multispinnerfilter.MultiSpinnerSearch
+                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
                     android:id="@+id/answers_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:hintText="Выберите варианты ответа"
                     android:padding="5dp"/>
 
             </LinearLayout>

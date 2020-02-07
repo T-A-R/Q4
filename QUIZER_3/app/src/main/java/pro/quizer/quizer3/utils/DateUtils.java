@@ -11,8 +11,8 @@ public final class DateUtils {
     public static String PATTERN_FULL_SMS = "HH:mm dd.MM.yyyy";
 
     public static long getCurrentTimeMillis() {
-//        return System.currentTimeMillis() / 1000;
-        return System.currentTimeMillis();
+        return System.currentTimeMillis() / 1000;
+//        return System.currentTimeMillis();
     }
 
     public static Date getDate() {

@@ -20,6 +20,22 @@
 
         </RelativeLayout>
 
+        <LinearLayout
+            android:id="@+id/cont_image"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_90sdp"
+            android:layout_marginTop="@dimen/_40sdp"
+            android:layout_marginLeft="@dimen/_40sdp"
+            android:layout_marginRight="@dimen/_40sdp"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/quizer" />
+
+        </LinearLayout>
+
         <RelativeLayout
             android:id="@+id/bg"
             android:layout_width="match_parent"

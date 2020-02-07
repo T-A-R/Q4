@@ -37,11 +37,17 @@ public interface QuizerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertElementItemR(ElementItemR elementItemR);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertListElementItemR(List<ElementItemR> elementItemR);
+
     @Query("SELECT * FROM ElementItemR")
     List<ElementItemR> getAllElementItemR();
 
     @Query("SELECT * FROM ElementItemR WHERE userId =:user_id AND projectId = :project_id")
     List<ElementItemR> getCurrentElements(Integer user_id, Integer project_id);
+
+    @Query("SELECT * FROM ElementItemR WHERE userId =:user_id AND projectId = :project_id AND relative_parent_id =:quotaBlockId")
+    List<ElementItemR> getQuotaElements(Integer user_id, Integer project_id, Integer quotaBlockId);
 
     @Query("UPDATE ElementItemR SET was_shown =:was_shown WHERE relative_id =:id AND userId =:user_id AND projectId = :project_id")
     void setWasElementShown(boolean was_shown, Integer id, Integer user_id, Integer project_id);

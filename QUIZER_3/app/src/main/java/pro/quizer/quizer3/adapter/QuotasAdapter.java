@@ -85,7 +85,7 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
         final String done = String.valueOf(doneInt);
         final String limit = String.valueOf(limitInt);
 
-        Log.d(TAG, "???????????????? onBindViewHolder: " + mMap.size());
+//        Log.d(TAG, "???????????????? onBindViewHolder: " + mMap.size());
         final QuotasTimeLineAdapter mAdapter = new QuotasTimeLineAdapter(quotaModel.getStringSet(mMainActivity, mMap), mMainActivity);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mMainActivity, LinearLayoutManager.VERTICAL, false);
         holder.mRecyclerView.setLayoutManager(mLayoutManager);
@@ -109,11 +109,11 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
             } else {
                 holder.mCount.setBackground(ContextCompat.getDrawable(mMainActivity, R.drawable.button_background_gray_light));
             }
-            Log.d(TAG, "onBindViewHolder: VISIBLE");
+//            Log.d(TAG, "onBindViewHolder: VISIBLE");
         } else {
             holder.mRecyclerView.setVisibility(View.GONE);
             holder.mCount.setBackgroundColor(0xFFFFFF);
-            Log.d(TAG, "onBindViewHolder: GONE");
+//            Log.d(TAG, "onBindViewHolder: GONE");
         }
 
         holder.mCont.setOnClickListener(v -> onHolderClick(position));

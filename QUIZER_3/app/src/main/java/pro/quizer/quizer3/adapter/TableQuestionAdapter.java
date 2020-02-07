@@ -76,18 +76,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
 //        mQuestions = pCurrentElement.getElements();
         mQuestions = questions;
-        if (mQuestions != null)
-            mAnswers = mQuestions.get(0).getElements();
-
-        this.mAnswersState = new AnswerState[mQuestions.size()][mAnswers.size()];
-        if (mQuestions != null) {
-            for (int i = 0; i < mQuestions.size(); i++) {
-                List<ElementItemR> pAnswers = mQuestions.get(i).getElements();
-                for (int k = 0; k < pAnswers.size(); k++) {
-                    mAnswersState[i][k] = new AnswerState(pAnswers.get(k).getRelative_id(), false, "");
-                }
-            }
-        }
 
         if(mCurrentElement != null && mCurrentElement.getElementOptionsR() != null && mCurrentElement.getElementOptionsR().isRotation()) {
             List<ElementItemR> shuffleList = new ArrayList<>();
@@ -106,6 +94,21 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 }
             }
         }
+
+        if (mQuestions != null)
+            mAnswers = mQuestions.get(0).getElements();
+
+        this.mAnswersState = new AnswerState[mQuestions.size()][mAnswers.size()];
+        if (mQuestions != null) {
+            for (int i = 0; i < mQuestions.size(); i++) {
+                List<ElementItemR> pAnswers = mQuestions.get(i).getElements();
+                for (int k = 0; k < pAnswers.size(); k++) {
+                    mAnswersState[i][k] = new AnswerState(pAnswers.get(k).getRelative_id(), false, "");
+                }
+            }
+        }
+
+
 
 //        if (optionsModel.isRotation()) {
 //            CollectionUtils.shuffleElements(mCurrentElement, mQuestions);

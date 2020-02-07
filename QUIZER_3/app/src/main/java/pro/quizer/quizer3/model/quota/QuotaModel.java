@@ -87,10 +87,10 @@ public class QuotaModel implements Serializable {
         if (mStringList == null) {
             final Set<Integer> pSet = getSet();
             final List<QuotaTimeLineModel> quotaTimeLineModels = new ArrayList<>();
-            Log.d(TAG, "???????????????????? getStringSet: " + mMap.size());
+//            Log.d(TAG, "???????????????????? getStringSet: " + mMap.size());
             for (final int relativeId : pSet) {
                 final ElementModelNew element = mMap.get(relativeId);
-                Log.d(TAG, "getStringSet: " + element + " " + pSet);
+//                Log.d(TAG, "getStringSet: " + element + " " + pSet);
 //                quotaTimeLineModels.add(new QuotaTimeLineModel(element.getOptions().getTitle(mMainActivity, mMap)));
                 try {
                     quotaTimeLineModels.add(new QuotaTimeLineModel(element.getOptions().getTitle()));

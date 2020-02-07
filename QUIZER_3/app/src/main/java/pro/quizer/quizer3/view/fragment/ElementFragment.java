@@ -24,7 +24,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Spinner;
 
+import com.androidbuts.multispinnerfilter.KeyPairBoolData;
+import com.androidbuts.multispinnerfilter.MultiSpinnerSearch;
+import com.androidbuts.multispinnerfilter.SpinnerListener;
 import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
+import com.guna.libmultispinner.MultiSelectionSpinner;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -122,6 +126,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private ScaleQuestionAdapter adapterScale;
     private ArrayAdapter adapterSpinner;
     private TableQuestionAdapter adapterTable;
+    private MultiSpinnerSearch searchSpinner;
     private List<AnswerState> savedAnswerStates;
     private List<Integer> quotaBlock;
 
@@ -201,6 +206,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         closeImage1.setOnClickListener(this);
         closeImage2.setOnClickListener(this);
         unhideCont.setOnClickListener(this);
+        cont.setOnClickListener(this);
 
         deactivateButtons();
 
@@ -372,6 +378,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
         if (getCurrentElements() != null && getCurrentElements().size() > 0) {
 
+//            for(ElementItemR elementItemR : getCurrentElements()) {
+//                Log.d(TAG, "??????: element " + elementItemR.getRelative_id());
+//            }
+
             if (startElementId != 0) {
                 currentElement = getElement(startElementId);
             } else {
@@ -428,6 +438,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void setQuestionType() {
+        Log.d(TAG, "???????????: " + currentElement.getRelative_id());
         if (currentElement.getSubtype().equals(ElementSubtype.LIST)) {
             if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0 &&
                     getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
@@ -619,20 +630,73 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
             rvAnswers.setAdapter(adapterList);
         } else if (answerType.equals(ElementSubtype.SELECT)) {
-            itemsList.add(getString(R.string.select_spinner));
-            adapterSpinner = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, itemsList) {
-                public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                    return super.getDropDownView(position + 1, convertView, parent);
+
+//            String[] array = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
+            MultiSelectionSpinner multiSelectionSpinner = (MultiSelectionSpinner) findViewById(R.id.answers_spinner);
+            multiSelectionSpinner.setItems(itemsList);
+//            multiSelectionSpinner.setSelection(new int[]{2, 6});
+            multiSelectionSpinner.setListener(new MultiSelectionSpinner.OnMultipleItemsSelectedListener() {
+                @Override
+                public void selectedIndices(List<Integer> indices) {
+
                 }
 
-                public int getCount() {
-                    return (itemsList.size() - 1);
+                @Override
+                public void selectedStrings(List<String> strings) {
+                    Toast.makeText(getContext(), strings.toString(), Toast.LENGTH_LONG).show();
                 }
-            };
-            adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinnerAnswers.setAdapter(adapterSpinner);
-            spinnerAnswers.setSelection(itemsList.size() - 1);
-            spinnerAnswers.setOnItemSelectedListener(this);
+            });
+
+
+
+//
+//            searchSpinner = (MultiSpinnerSearch) findViewById(R.id.answers_spinner);
+//            final List<KeyPairBoolData> listArray = new ArrayList<KeyPairBoolData>();
+//
+//            for (int i = 0; i < itemsList.size(); i++) {
+//                KeyPairBoolData h = new KeyPairBoolData();
+//                h.setId(i + 1);
+//                h.setName(itemsList.get(i));
+////                Log.d(TAG, "?????: " + h.getName() + " " + itemsList.get(i));
+//                h.setSelected(false);
+//                listArray.add(h);
+//            }
+//
+//            searchSpinner.setEmptyTitle("Не найдено");
+//            searchSpinner.setSearchHint("Поиск");
+//            searchSpinner.setItems(listArray, -1, new SpinnerListener() {
+//
+//                @Override
+//                public void onItemsSelected(List<KeyPairBoolData> items) {
+//                    for (int i = 0; i < items.size(); i++) {
+//                        if (items.get(i).isSelected()) {
+////                            Toast.makeText(getContext(), i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected(), Toast.LENGTH_SHORT).show();
+//                            Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
+//
+//                        }
+//                    }
+//                    searchSpinner.requestFocus();
+////                    searchSpinner.setVisibility(View.GONE);
+////                    searchSpinner.setVisibility(View.VISIBLE);
+////                    cont.performClick();
+//                }
+//            });
+
+
+//            itemsList.add(getString(R.string.select_spinner));
+//            adapterSpinner = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, itemsList) {
+//                public View getDropDownView(int position, View convertView, ViewGroup parent) {
+//                    return super.getDropDownView(position + 1, convertView, parent);
+//                }
+//
+//                public int getCount() {
+//                    return (itemsList.size() - 1);
+//                }
+//            };
+//            adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//            spinnerAnswers.setAdapter(adapterSpinner);
+//            spinnerAnswers.setSelection(itemsList.size() - 1);
+//            spinnerAnswers.setOnItemSelectedListener(this);
         } else if (answerType.equals(ElementSubtype.TABLE)) {
 //            List<ElementItemR> questions = null;
 //            questions = currentElement.getElements();
@@ -737,7 +801,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
                 if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
                     nextElementId = currentElement.getElementOptionsR().getJump();
-                    if(nextElementId == -2) {
+                    if (nextElementId == -2) {
                         nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
                     }
                 }
@@ -794,11 +858,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 nextElementId = answersList.get(spinnerSelection).getElementOptionsR().getJump();
                 if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
                     nextElementId = currentElement.getElementOptionsR().getJump();
-                    if(nextElementId == -2) {
+                    if (nextElementId == -2) {
                         nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
                     }
                 }
-                if(nextElementId != 0 && nextElementId != -1) {
+                if (nextElementId != 0 && nextElementId != -1) {
                     ElementItemR nextElement = getElement(nextElementId);
                     final ElementOptionsR options = nextElement.getElementOptionsR();
                     final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), (MainActivity) getActivity());
@@ -807,7 +871,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         nextElementId = options.getJump();
                     }
                 }
-
 
 
                 elementPassedR.setRelative_id(currentElement.getRelative_id());
@@ -853,7 +916,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
                 if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
                     nextElementId = currentElement.getElementOptionsR().getJump();
-                    if(nextElementId == -2) {
+                    if (nextElementId == -2) {
                         nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
                     }
                 }
@@ -912,7 +975,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             nextElementId = currentElement.getElementOptionsR().getJump();
             if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
                 nextElementId = currentElement.getElementOptionsR().getJump();
-                if(nextElementId == -2) {
+                if (nextElementId == -2) {
                     nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
                 }
             }

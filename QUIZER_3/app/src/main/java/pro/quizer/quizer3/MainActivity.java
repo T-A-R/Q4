@@ -245,9 +245,13 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public HashMap<Integer, ElementModelNew> getMap(boolean rebuild) {
         if (rebuild) {
+            Log.d(TAG, "Rebuilding Elements Database............. 2");
             mMap = new HashMap<>();
+            Log.d(TAG, "Rebuilding Elements Database............. 3");
             getStaticDao().clearElementItemR();
+            Log.d(TAG, "Rebuilding Elements Database............. 4");
             generateMap(getElements(), rebuild);
+            Log.d(TAG, "Rebuilding Elements Database............. END");
             return mMap;
         } else {
             if (mMap == null) {
@@ -297,79 +301,184 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     private void generateMap(final List<ElementModelNew> elements, boolean rebuild) {
 //        Log.d(TAG, "============================================== generateMap: ELEMENTSNEW " + elements.size());
+        Long currentTime = DateUtils.getCurrentTimeMillis();
+//        Long timeDifference = DateUtils.getCurrentTimeMillis() - currentTime;
+
+//        Log.d(TAG, "time 1: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//        currentTime = DateUtils.getCurrentTimeMillis() - currentTime;
+        List<ElementItemR> allElements = new ArrayList<>();
+        int projectId = getCurrentUser().getConfigR().getProjectInfo().getProjectId();
+        int userId = getCurrentUser().getUser_id();
+        String configId = getCurrentUser().getConfig_id();
+
+
 
         for (final ElementModelNew element : elements) {
+//            Log.d(TAG, "time 1: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//            currentTime = DateUtils.getCurrentTimeMillis();
             mMap.put(element.getRelativeID(), element);
 
 //            if (rebuild)
             try {
                 ElementItemR elementItemR = new ElementItemR();
-                elementItemR.setConfigId(getCurrentUser().getConfig_id());
-                elementItemR.setUserId(getCurrentUser().getUser_id());
-                elementItemR.setProjectId(getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+//                Log.d(TAG, "time 2: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                currentTime = DateUtils.getCurrentTimeMillis();
+                elementItemR.setConfigId(configId);
+//                Log.d(TAG, "time 3: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                currentTime = DateUtils.getCurrentTimeMillis();
+                elementItemR.setUserId(userId);
+//                Log.d(TAG, "time 4: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                currentTime = DateUtils.getCurrentTimeMillis();
+                elementItemR.setProjectId(projectId);
+//                Log.d(TAG, "time 5: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                currentTime = DateUtils.getCurrentTimeMillis();
                 elementItemR.setType(element.getType());
+//                Log.d(TAG, "time 6: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                currentTime = DateUtils.getCurrentTimeMillis();
                 elementItemR.setSubtype(element.getSubtype());
+//                Log.d(TAG, "time 7: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                currentTime = DateUtils.getCurrentTimeMillis();
                 elementItemR.setRelative_id(element.getRelativeID());
+//                Log.d(TAG, "time 8: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                currentTime = DateUtils.getCurrentTimeMillis();
                 elementItemR.setRelative_parent_id(element.getRelativeParentID());
+//                Log.d(TAG, "time 9: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                currentTime = DateUtils.getCurrentTimeMillis();
 //                elementItemR.setShuffeled(element.isShuffeled());
 
                 final List<Contents> contentsList = element.getContents();
+//                Log.d(TAG, "time 10: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                currentTime = DateUtils.getCurrentTimeMillis();
                 List<ElementContentsR> elementContentsRList = new ArrayList<>();
+//                Log.d(TAG, "time 11: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                currentTime = DateUtils.getCurrentTimeMillis();
                 if (contentsList != null && !contentsList.isEmpty()) {
                     for (Contents contents : contentsList) {
                         elementContentsRList.add(new ElementContentsR(contents.getType(), contents.getData(), contents.getOrder()));
+//                        Log.d(TAG, "time 12: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                        currentTime = DateUtils.getCurrentTimeMillis();
                     }
                 }
                 if (elementContentsRList.size() > 0) {
                     elementItemR.setElementContentsR(elementContentsRList);
+//                    Log.d(TAG, "time 13: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                 }
 
                 final OptionsModelNew optionsModelNew = element.getOptions();
+//                Log.d(TAG, "time 14: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                currentTime = DateUtils.getCurrentTimeMillis();
                 if (optionsModelNew != null) {
                     ElementOptionsR elementOptionsR = new ElementOptionsR();
+//                    Log.d(TAG, "time 15: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setData(optionsModelNew.getData());
+//                    Log.d(TAG, "time 16: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setTitle(optionsModelNew.getTitle());
-                    if (optionsModelNew.getJump() != null)
+//                    Log.d(TAG, "time 17: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
+                    if (optionsModelNew.getJump() != null) {
                         elementOptionsR.setJump(optionsModelNew.getJump());
+//                        Log.d(TAG, "time 18: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                        currentTime = DateUtils.getCurrentTimeMillis();
+                    }
                     elementOptionsR.setSearch(optionsModelNew.isSearch());
+//                    Log.d(TAG, "time 19: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setPre_condition(optionsModelNew.getPre_condition());
+//                    Log.d(TAG, "time 20: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setPost_condition(optionsModelNew.getPost_condition());
+//                    Log.d(TAG, "time 21: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setOrder(optionsModelNew.getOrder());
+//                    Log.d(TAG, "time 22: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     if (optionsModelNew.getNumber() != null)
                         elementOptionsR.setNumber(optionsModelNew.getNumber());
+//                    Log.d(TAG, "time 23: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setPolyanswer(optionsModelNew.isPolyanswer());
+//                    Log.d(TAG, "time 24: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setRecord_sound(optionsModelNew.isRecordSound());
+//                    Log.d(TAG, "time 25: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setTake_photo(optionsModelNew.isTakePhoto());
+//                    Log.d(TAG, "time 26: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setDescription(optionsModelNew.getDescription());
+//                    Log.d(TAG, "time 27: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setFlip_cols_and_rows(optionsModelNew.isFlipColsAndRows());
+//                    Log.d(TAG, "time 28: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setRotation(optionsModelNew.isRotation());
+//                    Log.d(TAG, "time 29: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setFixed_order(optionsModelNew.isFixedOrder());
                     if (optionsModelNew.getMinAnswers() != null)
                         elementOptionsR.setMin_answers(optionsModelNew.getMinAnswers());
+//                    Log.d(TAG, "time 30: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     if (optionsModelNew.getMaxAnswers() != null)
                         elementOptionsR.setMax_answers(optionsModelNew.getMaxAnswers());
                     elementOptionsR.setOpen_type(optionsModelNew.getOpenType());
+//                    Log.d(TAG, "time 31: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setPlaceholder(optionsModelNew.getPlaceholder());
+//                    Log.d(TAG, "time 32: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setUnchecker(optionsModelNew.isUnchecker());
+//                    Log.d(TAG, "time 33: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setStart_value(optionsModelNew.getStart_value());
+//                    Log.d(TAG, "time 34: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setEnd_value(optionsModelNew.getEnd_value());
+//                    Log.d(TAG, "time 35: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setType_behavior(optionsModelNew.getType_behavior());
+//                    Log.d(TAG, "time 36: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setShow_scale(optionsModelNew.isShow_scale());
+//                    Log.d(TAG, "time 37: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     elementOptionsR.setShow_images(optionsModelNew.isShow_images());
+//                    Log.d(TAG, "time 38: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                     if (optionsModelNew.getStatusImage() != null) {
                         ElementStatusImageR elementStatusImageR = new ElementStatusImageR();
+//                        Log.d(TAG, "time 39: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                        currentTime = DateUtils.getCurrentTimeMillis();
                         elementStatusImageR.setType(optionsModelNew.getStatusImage().getType());
+//                        Log.d(TAG, "time 40: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                        currentTime = DateUtils.getCurrentTimeMillis();
                         elementStatusImageR.setData(optionsModelNew.getStatusImage().getData());
+//                        Log.d(TAG, "time 41: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                        currentTime = DateUtils.getCurrentTimeMillis();
                         elementStatusImageR.setData_on(optionsModelNew.getStatusImage().getData_on());
+//                        Log.d(TAG, "time 42: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                        currentTime = DateUtils.getCurrentTimeMillis();
                         elementStatusImageR.setData_off(optionsModelNew.getStatusImage().getData_off());
+//                        Log.d(TAG, "time 43: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                        currentTime = DateUtils.getCurrentTimeMillis();
 
                         elementOptionsR.setStatus_image(elementStatusImageR);
+//                        Log.d(TAG, "time 44: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                        currentTime = DateUtils.getCurrentTimeMillis();
                     }
 
                     elementItemR.setElementOptionsR(elementOptionsR);
+//                    Log.d(TAG, "time 45: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                    currentTime = DateUtils.getCurrentTimeMillis();
                 }
 //                Log.d(TAG, "generateMap: " + elementItemR.getRelative_id());
                 getStaticDao().insertElementItemR(elementItemR);
+//                Log.d(TAG, "time 46: " + (DateUtils.getCurrentTimeMillis() - currentTime));
+//                currentTime = DateUtils.getCurrentTimeMillis();
+//                allElements.add(elementItemR);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -379,16 +488,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 if (element.getSubtype().equals(ElementSubtype.CONTAINER)
                         && element.getOptions() != null
                         && element.getOptions().isRotation()) {
-//                    Log.d(TAG, "??????????? SHUFFLE !!!!!!!!!!!!!: ");
-//                    try {
-//                        Log.d(TAG, "shuffeMap 1: " + nestedList.get(0).getRelativeID()
-//                                + " " + nestedList.get(1).getRelativeID()
-//                                + " " + nestedList.get(2).getRelativeID()
-//                                + " " + nestedList.get(3).getRelativeID()
-//                                + " " + nestedList.get(4).getRelativeID());
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
+
                     List<ElementModelNew> shuffleList = new ArrayList<>();
                     for (ElementModelNew subElement : nestedList) {
                         if (subElement.getOptions() != null && !subElement.getOptions().isFixed_order()) {
@@ -428,6 +528,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 generateMap(nestedList, rebuild);
             }
         }
+
+//        for (ElementItemR element : allElements) {
+//            getMainDao().insertElementItemR(element);
+//        }
     }
 
     public UserModelR getCurrentUser() {
@@ -948,8 +1052,9 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public List<ElementItemR> getQuotasElements() {
-
-        List<ElementItemR> quotaList = new ArrayList<>();
+        Log.d(TAG, "======== getQuotasElements: 1");
+//        List<ElementItemR> quotaList = new ArrayList<>();
+        List<ElementItemR> quotaList = null;
 
         if (elementItemRList == null) {
             try {
@@ -960,19 +1065,31 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         }
 
         if (elementItemRList != null) {
+            int quotaBlockID = -2;
 
             for (ElementItemR element : elementItemRList) {
-                if (element.getRelative_parent_id() != null && element.getRelative_parent_id() != 0) {
-                    if (getElement(element.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
-                        quotaList.add(element);
-                        for (ElementItemR answer : element.getElements()) {
-                            quotaList.add(answer);
-                        }
-                    }
+
+                if (element.getSubtype() != null && element.getSubtype().equals(ElementSubtype.QUOTA)) {
+                    quotaBlockID = element.getRelative_id();
+                    break;
                 }
+
+//                if (element.getRelative_parent_id() != null && element.getRelative_parent_id() != 0) {
+//                    if (getElement(element.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
+//                        quotaList.add(element);
+//                        for (ElementItemR answer : element.getElements()) {
+//                            quotaList.add(answer);
+//                        }
+//                    }
+//                }
+            }
+            if (quotaBlockID != -2) {
+                quotaList = getMainDao().getQuotaElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId(), quotaBlockID);
+            } else {
+                quotaList = new ArrayList<>();
             }
         }
-
+        Log.d(TAG, "======== getQuotasElements: 2");
         return quotaList;
     }
 

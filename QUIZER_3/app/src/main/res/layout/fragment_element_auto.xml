@@ -338,11 +338,12 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                <com.guna.libmultispinner.MultiSelectionSpinner
                     android:id="@+id/answers_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="5dp" />
+                    app:hintText="Выберите варианты ответа"
+                    android:padding="5dp"/>
 
             </LinearLayout>
 

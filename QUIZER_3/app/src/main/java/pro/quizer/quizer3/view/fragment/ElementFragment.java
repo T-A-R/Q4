@@ -30,6 +30,7 @@ import com.androidbuts.multispinnerfilter.SpinnerListener;
 import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
 import com.guna.libmultispinner.MultiSelectionSpinner;
 import com.squareup.picasso.Picasso;
+import com.thomashaertel.widget.MultiSpinner;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -121,14 +122,16 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private boolean isTitle1Hided = false;
     private boolean isTitle2Hided = false;
     private boolean isRestored = false;
+    private boolean isMultiSpinner = false;
 
     private ListQuestionAdapter adapterList;
     private ScaleQuestionAdapter adapterScale;
     private ArrayAdapter adapterSpinner;
     private TableQuestionAdapter adapterTable;
-    private MultiSpinnerSearch searchSpinner;
+    private MultiSelectionSpinner multiSelectionSpinner;
     private List<AnswerState> savedAnswerStates;
     private List<Integer> quotaBlock;
+
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
 
@@ -164,7 +167,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         tableCont = (FrameLayout) findViewById(R.id.table_cont);
         rvAnswers = (RecyclerView) findViewById(R.id.answers_recyclerview);
         rvScale = (RecyclerView) findViewById(R.id.scale_recyclerview);
-        spinnerAnswers = (Spinner) findViewById(R.id.answers_spinner);
+//        spinnerAnswers = (Spinner) findViewById(R.id.answers_spinner);
         tableLayout = (AdaptiveTableLayout) findViewById(R.id.table_question_layout);
         tvUnhide = (TextView) findViewById(R.id.unhide_title);
         tvTitle1 = (TextView) findViewById(R.id.title_1);
@@ -649,24 +652,24 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
             rvAnswers.setAdapter(adapterList);
         } else if (answerType.equals(ElementSubtype.SELECT)) {
+            if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isPolyanswer()) {
+                isMultiSpinner = true;
+                multiSelectionSpinner = (MultiSelectionSpinner) findViewById(R.id.answers_multi_spinner);
+                multiSelectionSpinner.setItems(itemsList);
+                multiSelectionSpinner.setSelection(new int[]{});
+                multiSelectionSpinner.setListener(new MultiSelectionSpinner.OnMultipleItemsSelectedListener() {
+                    @Override
+                    public void selectedIndices(List<Integer> indices) {
 
-////            String[] array = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
-//            MultiSelectionSpinner multiSelectionSpinner = (MultiSelectionSpinner) findViewById(R.id.answers_spinner);
-//            multiSelectionSpinner.setItems(itemsList);
-////            multiSelectionSpinner.setSelection(new int[]{2, 6});
-//            multiSelectionSpinner.setListener(new MultiSelectionSpinner.OnMultipleItemsSelectedListener() {
-//                @Override
-//                public void selectedIndices(List<Integer> indices) {
-//
-//                }
-//
-//                @Override
-//                public void selectedStrings(List<String> strings) {
-//                    Toast.makeText(getContext(), strings.toString(), Toast.LENGTH_LONG).show();
-//                }
-//            });
+                    }
 
-
+                    @Override
+                    public void selectedStrings(List<String> strings) {
+                        Toast.makeText(getContext(), strings.toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            } else {
+                isMultiSpinner = false;
 //
 //            searchSpinner = (MultiSpinnerSearch) findViewById(R.id.answers_spinner);
 //            final List<KeyPairBoolData> listArray = new ArrayList<KeyPairBoolData>();
@@ -700,21 +703,24 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //                }
 //            });
 
-            itemsList.add(getString(R.string.select_spinner));
-            Log.d(TAG, "initRecyclerView: " + itemsList.size());
-            adapterSpinner = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, itemsList) {
-                public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                    return super.getDropDownView(position + 1, convertView, parent);
-                }
+//            ===============================================================================================
+                itemsList.add(getString(R.string.select_spinner));
+                Log.d(TAG, "initRecyclerView: " + itemsList.size());
+                adapterSpinner = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, itemsList) {
+                    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                        return super.getDropDownView(position + 1, convertView, parent);
+                    }
 
-                public int getCount() {
-                    return (itemsList.size() - 1);
-                }
-            };
-            adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinnerAnswers.setAdapter(adapterSpinner);
-            spinnerAnswers.setSelection(itemsList.size() - 1);
-            spinnerAnswers.setOnItemSelectedListener(this);
+                    public int getCount() {
+                        return (itemsList.size() - 1);
+                    }
+                };
+                adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinnerAnswers.setAdapter(adapterSpinner);
+                spinnerAnswers.setSelection(itemsList.size() - 1);
+                spinnerAnswers.setOnItemSelectedListener(this);
+//            ===============================================================================================
+            }
         } else if (answerType.equals(ElementSubtype.TABLE)) {
 //            List<ElementItemR> questions = null;
 //            questions = currentElement.getElements();

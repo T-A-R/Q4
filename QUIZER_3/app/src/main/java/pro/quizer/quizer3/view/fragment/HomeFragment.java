@@ -79,6 +79,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private boolean mIsUsedFakeGps;
     private boolean mIsTimeDialogShow = false;
     private boolean isForceGps = false;
+    private boolean canContWithZeroGps = false;
     private Long mFakeGpsTime;
     private GPSModel mGPSModel;
 
@@ -276,7 +277,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 getDao().setOption(Constants.OptionName.QUIZ_STARTED, "true");
                 showToast("Продолжение прерванной анкеты");
                 startRecording();
-                replaceFragment(new ElementFragment());
+                TransFragment fragment = new TransFragment();
+                fragment.setStartElement(currentQuestionnaire.getPrev_element_id().get(currentQuestionnaire.getPrev_element_id().size()-1).getNextId(), true);
+                replaceFragment(fragment);
             } catch (Exception e) {
                 e.printStackTrace();
                 showToast("Ошибка продолжения прерванной анкеты");
@@ -301,7 +304,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     private void startQuestionnaire() {
         if (checkTime() && checkGps()) {
-            showScreensaver(false);
+            showScreensaver("Подождите, \nидет запуск анкеты", true);
             CompletableFuture.supplyAsync(() -> {
                 Log.d(TAG, "startQuestionnaire: START...");
                 if (currentQuestionnaire != null) {
@@ -393,17 +396,17 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         if (activity.hasRotationContainer()) {
                             activity.getMap(true);
                         }
-                        Log.d(TAG, "??????????????????????????: 1");
+//                        Log.d(TAG, "??????????????????????????: 1");
 
                         startRecording();
 
-                        Log.d(TAG, "??????????????????????????: 2");
+//                        Log.d(TAG, "??????????????????????????: 2");
                         getDao().updateQuestionnaireStart(true, getCurrentUserId());
 
-                        Log.d(TAG, "??????????????????????????: 3");
+//                        Log.d(TAG, "??????????????????????????: 3");
                         getDao().setOption(Constants.OptionName.QUIZ_STARTED, "true");
 
-                        Log.d(TAG, "??????????????????????????: 4");
+//                        Log.d(TAG, "??????????????????????????: 4");
                         hideScreensaver();
 //                        for(ElementItemR elem : getCurrentElements()) {
 //                            Log.d(TAG, "!!!!!!!!!!!! elements check: " + elem.getRelative_id());
@@ -488,12 +491,16 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private boolean checkGps() {
+        boolean zeroCoordinates = false;
+        mGPSModel = null;
         isForceGps = getCurrentUser().getConfigR().isForceGps();
         if (getCurrentUser().getConfigR().isGps() && mGPSModel == null) {
             try {
                 mGPSModel = GpsUtils.getCurrentGps(getActivity(), isForceGps);
                 if (mGPSModel == null || mGPSModel.isNoGps()) {
-                    showNoGpsAlert();
+                    Log.d(TAG, "checkGps: NO GPS DIALOG");
+//                    showNoGpsAlert();
+                    zeroCoordinates = true;
                 } else {
                     mGpsString = mGPSModel.getGPS();
                     mGpsNetworkString = mGPSModel.getGPSNetwork();
@@ -501,20 +508,59 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 //                    mIsUsedFakeGps = true; // For tests!
                     mGpsTime = mGPSModel.getTime();
                     mGpsTimeNetwork = mGPSModel.getTimeNetwork();
-                    return true;
+//                    return true;
+                    zeroCoordinates = false;
                 }
             } catch (final Exception e) {
                 e.printStackTrace();
                 Log.d(TAG, "startGps: " + e.getMessage());
             }
 
+            Log.d(TAG, "=== GPS: " + getCurrentUser().getConfigR().isForceGps() + " " + zeroCoordinates);
             if (getCurrentUser().getConfigR().isForceGps()) {
-                return false;
+                if (mGPSModel == null) {
+                    showSettingsAlert();
+                    return false;
+                } else if (mGPSModel.isNoGps()) {
+                    showNoGpsAlert();
+                    return false;
+                } else {
+                    return true;
+                }
             } else {
+                if (mGPSModel == null) {
+                    showSettingsAlert();
+                    return false;
+                } else if (mGPSModel.isNoGps()) {
+                    if (canContWithZeroGps) {
+                        return true;
+                    } else {
+                        showNoGpsAlert();
+                        return false;
+                    }
+                }
                 return true;
             }
         } else {
             return true;
+        }
+    }
+
+    public void showSettingsAlert() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity, R.style.AlertDialogTheme);
+        alertDialog.setCancelable(false);
+        alertDialog.setTitle(R.string.dialog_please_turn_on_gps);
+        alertDialog.setMessage(R.string.dialog_you_need_to_turn_on_gps);
+        alertDialog.setPositiveButton(R.string.dialog_turn_on, new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                activity.startActivity(intent);
+            }
+        });
+
+        if (!activity.isFinishing()) {
+            alertDialog.show();
         }
     }
 
@@ -523,10 +569,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         alertDialog.setCancelable(false);
         alertDialog.setTitle(R.string.dialog_no_gps);
         if (isForceGps) {
-            alertDialog.setMessage(R.string.dialog_no_gps_text);
-            alertDialog.setPositiveButton(R.string.dialog_next, new DialogInterface.OnClickListener() {
+            alertDialog.setMessage(R.string.dialog_no_gps_empty_text);
+            alertDialog.setPositiveButton(R.string.view_retry, new DialogInterface.OnClickListener() {
 
                 public void onClick(DialogInterface dialog, int which) {
+                    canContWithZeroGps = false;
                     dialog.dismiss();
                 }
             });
@@ -535,12 +582,22 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             alertDialog.setPositiveButton(R.string.dialog_next, new DialogInterface.OnClickListener() {
 
                 public void onClick(DialogInterface dialog, int which) {
+                    canContWithZeroGps = true;
+                    dialog.dismiss();
+                }
+            });
+
+            alertDialog.setNegativeButton(R.string.view_retry, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    canContWithZeroGps = false;
                     dialog.dismiss();
                 }
             });
         }
         MainActivity activity = (MainActivity) getActivity();
         if (activity != null && !activity.isFinishing()) {
+            canContWithZeroGps = false;
             alertDialog.show();
         }
     }
@@ -607,7 +664,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         protected void onPreExecute() {
             pb.setVisibility(View.VISIBLE);
             tvPbText.setVisibility(View.VISIBLE);
+            btnContinue.setEnabled(false);
             btnStart.setEnabled(false);
+            btnQuotas.setEnabled(false);
             UiUtils.setButtonEnabled(btnStart, false);
             UiUtils.setButtonEnabled(btnContinue, false);
             UiUtils.setButtonEnabled(btnQuotas, false);
@@ -630,7 +689,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         protected void onPostExecute(ElementItemR[][] result) {
             pb.setVisibility(View.GONE);
             tvPbText.setVisibility(View.GONE);
+            btnContinue.setEnabled(true);
             btnStart.setEnabled(true);
+            btnQuotas.setEnabled(true);
             UiUtils.setButtonEnabled(btnStart, true);
             UiUtils.setButtonEnabled(btnContinue, true);
             UiUtils.setButtonEnabled(btnQuotas, true);
@@ -693,11 +754,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 //            Log.d(TAG, "Quotas size: " + quotas.size());
             for (int q = 0; q < quotas.size(); q++) {
                 Integer[] sequence = quotas.get(q).getArray();
-//                String seq = sequence[0].toString();
-//                for (int i = 1; i < sequence.length; i++) {
-//                    seq = seq.concat(" " + sequence[i].toString());
-//                }
-//                if (q == 5) Log.d(TAG, "================== START Sequence: " + seq);
+                String seq = sequence[0].toString();
+                for (int i = 1; i < sequence.length; i++) {
+                    seq = seq.concat(" " + sequence[i].toString());
+                }
+                Log.d(TAG, "================== START Sequence: " + seq);
 //                for(Integer seq : sequence) {
 //                    Log.d(TAG, "fillQuotas: " + seq);
 //                }
@@ -775,8 +836,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         Log.d(TAG, tree[0][i].getElementOptionsR().getTitle() + " " + tree[0][i].getRelative_id() + " " + tree[0][i].getDone() + "/" + tree[0][i].getLimit() + "/" + tree[0][i].isEnabled() + " | "
                                         + tree[1][i].getElementOptionsR().getTitle() + " " + tree[1][i].getRelative_id() + " " + tree[1][i].getDone() + "/" + tree[1][i].getLimit() + "/" + tree[1][i].isEnabled() + " | "
                                         + tree[2][i].getElementOptionsR().getTitle() + " " + tree[2][i].getRelative_id() + " " + tree[2][i].getDone() + "/" + tree[2][i].getLimit() + "/" + tree[2][i].isEnabled() + " | "
-//                                + tree[3][i].getElementOptionsR().getTitle() + " " + tree[3][i].getRelative_id() + " " + tree[3][i].getDone() + "/" + tree[3][i].getLimit() + "/" + tree[3][i].isEnabled() + " | "
-//                                + tree[4][i].getElementOptionsR().getTitle() + " " + tree[4][i].getRelative_id() + " " + tree[4][i].getDone() + "/" + tree[4][i].getLimit() + "/" + tree[4][i].isEnabled() + " | "
+                                + tree[3][i].getElementOptionsR().getTitle() + " " + tree[3][i].getRelative_id() + " " + tree[3][i].getDone() + "/" + tree[3][i].getLimit() + "/" + tree[3][i].isEnabled() + " | "
+                                + tree[4][i].getElementOptionsR().getTitle() + " " + tree[4][i].getRelative_id() + " " + tree[4][i].getDone() + "/" + tree[4][i].getLimit() + "/" + tree[4][i].isEnabled() + " | "
 
                         );
                     }
@@ -830,7 +891,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             btnQuotas.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
         } else {
             btnContinue.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-            btnStart.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_red));
+            btnStart.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
             btnQuotas.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
         }
     }

@@ -28,6 +28,7 @@ public class GPSTracker extends Service implements LocationListener {
     boolean isNetworkEnabled = false;
     // flag for GPS status
     boolean canGetLocation = false;
+    boolean continueWithZeroLocation = false;
     Location location; // location
     double latitude = 0; // latitude
     double longitude = 0; // longitude
@@ -60,7 +61,8 @@ public class GPSTracker extends Service implements LocationListener {
             // getting network status
             isNetworkEnabled = locationManager
                     .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            if (!isGPSEnabled && !isNetworkEnabled) {
+//            if (!isGPSEnabled && !isNetworkEnabled) {
+            if (!isGPSEnabled) {
                 // no network provider is enabled
             } else {
                 this.canGetLocation = true;
@@ -159,6 +161,47 @@ public class GPSTracker extends Service implements LocationListener {
             }
         });
 
+        if (!mActivity.isFinishing()) {
+            alertDialog.show();
+        }
+    }
+
+    public void showNoGpsAlert(boolean isForceGps) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity, R.style.AlertDialogTheme);
+        alertDialog.setCancelable(false);
+        alertDialog.setTitle(R.string.dialog_no_gps);
+        if (isForceGps) {
+            alertDialog.setMessage(R.string.dialog_no_gps_empty_text);
+            alertDialog.setPositiveButton(R.string.dialog_next, new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+                    continueWithZeroLocation = true;
+                    dialog.dismiss();
+                }
+            });
+            alertDialog.setNegativeButton(R.string.view_yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+        } else {
+            alertDialog.setMessage(R.string.dialog_no_gps_text_warning);
+            alertDialog.setPositiveButton(R.string.dialog_next, new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+                    continueWithZeroLocation = true;
+                    dialog.dismiss();
+                }
+            });
+        }
+        alertDialog.setNegativeButton(R.string.view_retry, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                getLocation();
+                dialog.dismiss();
+            }
+        });
         if (!mActivity.isFinishing()) {
             alertDialog.show();
         }

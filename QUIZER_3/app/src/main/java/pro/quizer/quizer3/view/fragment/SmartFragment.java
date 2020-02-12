@@ -791,7 +791,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         questionnaireDatabaseModel.setUsed_fake_gps(currentQuiz.isUsed_fake_gps());
         questionnaireDatabaseModel.setGps_time_fk(currentQuiz.getFake_gps_time());
 
-        if (aborted) {
+        if (aborted || getQuestionnaire().isIn_aborted_box()) {
 //            Log.d(TAG, "saveQuestionnaireToDatabase: 7");
             if (currentQuiz.isPaused())
                 questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.UNFINISHED);
@@ -841,6 +841,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Log.d(TAG, "saveQuestionnaireToDatabase finished: " + saved);
         return saved;
     }
 

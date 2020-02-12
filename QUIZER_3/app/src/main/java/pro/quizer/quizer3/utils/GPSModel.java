@@ -13,10 +13,11 @@ public class GPSModel {
     private long time;
     private long timeN;
     private boolean isFakeGPS;
+    private boolean isConZeroLoc;
 
     private static String GPS_FORMAT = "%1$s:%2$s";
 
-    public GPSModel(double lon, double lat, double lonN, double latN, long time, long timeN, boolean isFakeGPS) {
+    public GPSModel(double lon, double lat, double lonN, double latN, long time, long timeN, boolean isFakeGPS, boolean isConZeroLoc) {
         this.lon = lon;
         this.lat = lat;
         this.lonN = lonN;
@@ -24,6 +25,7 @@ public class GPSModel {
         this.time = time;
         this.timeN = timeN;
         this.isFakeGPS = isFakeGPS;
+        this.isConZeroLoc = isConZeroLoc;
     }
 
     public long getTime() {
@@ -51,11 +53,19 @@ public class GPSModel {
     }
 
     public boolean isNoGps() {
-        if (lat == 0 && latN == 0) return true;
+        if (lat == 0) return true;
         else return false;
     }
 
     public boolean isFakeGPS() {
         return isFakeGPS;
+    }
+
+    public boolean isConZeroLoc() {
+        return isConZeroLoc;
+    }
+
+    public void setConZeroLoc(boolean conZeroLoc) {
+        isConZeroLoc = conZeroLoc;
     }
 }

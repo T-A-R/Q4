@@ -18,6 +18,7 @@ public final class GpsUtils {
         long time = DEFAULT_GPS_VALUE;
         long timeNetwork = DEFAULT_GPS_VALUE;
         boolean isFakeGPS = false;
+        boolean isConZeroLoc = false;
 
         final GPSTracker gps = new GPSTracker(pContext);
 
@@ -35,8 +36,13 @@ public final class GpsUtils {
                 Log.d(TAG, "getCurrentGps: " + e.getMessage());
                 throw new Exception();
             }
+//            Log.d(TAG, "getCurrentGps: LAT: " + lat);
+//            if (lat == 0) {
+//                gps.showNoGpsAlert(pIsForceGps);
+//            }
         } else {
-            gps.showSettingsAlert();
+            Log.d(TAG, "checkGps: GPS SETTINGS DIALOG");
+//            gps.showSettingsAlert();
             return null;
         }
 
@@ -45,6 +51,6 @@ public final class GpsUtils {
 //            return null;
 //        }
 
-        return new GPSModel(lon, lat, lonN, latN, time, timeNetwork, isFakeGPS);
+        return new GPSModel(lon, lat, lonN, latN, time, timeNetwork, isFakeGPS, isConZeroLoc);
     }
 }

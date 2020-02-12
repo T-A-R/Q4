@@ -162,7 +162,7 @@ public class QuotaUtils {
         if (order == 1) {
 //            Log.d(TAG, "canShow: Passed Elements is NULL!");
             for (int k = 0; k < tree[0].length; k++) {
-                if (tree[0][k].getRelative_id() == relativeId) {
+                if (tree[0][k].getRelative_id().equals(relativeId)) {
                     if (tree[0][k].isEnabled())
                         return true;
                 }
@@ -191,11 +191,11 @@ public class QuotaUtils {
 //                        endPassedElement = i;
 //                    }
 //                    Log.d(TAG, "canShow: lines " + k + " | " + i + " : " + tree[i][k].getRelative_id() + "/" + passedElementsId.get(i));
-                    if (tree[i][k].getRelative_id() == passedElementsId.get(i)) {
+                    if (tree[i][k].getRelative_id().equals(passedElementsId.get(i))) {
 //                        Log.d(TAG, "Нашел: " + tree[i][k].getElementOptionsR().getTitle() + "/id=" + tree[i][k].getRelative_id() + "/relative=" + relativeId);
                         if (i == (endPassedElement - 1)) { // Если последний, то
 //                            Log.d(TAG, "Он последний");
-                            if (tree[i + 1][k].getRelative_id() == relativeId) { // Если следующий за последним равен Relative ID
+                            if (tree[i + 1][k].getRelative_id().equals(relativeId)) { // Если следующий за последним равен Relative ID
 //                                Log.d(TAG, "Следующий элемент совпал с Relative ID");
                                 if (tree[i + 1][k].isEnabled()) {
 //                                    Log.d(TAG, "Он включен: ");

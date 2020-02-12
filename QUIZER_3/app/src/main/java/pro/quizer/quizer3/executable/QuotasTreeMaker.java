@@ -95,11 +95,11 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
 
             for (int i = 0; i < tree.length; i++) {
                 for (int k = 0; k < tree[i].length; k++) {
-                    if (sequence[0] == tree[i][k].getRelative_id()) {
+                    if (sequence[0].equals(tree[i][k].getRelative_id())) {
                         int temp = i + 1;
                         if (sequence.length > 1) {
                             for (int s = 1; s < sequence.length; s++) {
-                                if (sequence[s] == tree[temp][k].getRelative_id()) {
+                                if (sequence[s].equals(tree[temp][k].getRelative_id())) {
 
                                     if (s == sequence.length - 1) {
                                         if (tree[temp][k].getLimit() > quotas.get(q).getLimit()) {

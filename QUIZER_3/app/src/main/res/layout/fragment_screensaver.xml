@@ -20,21 +20,6 @@
 
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/cont_image"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_90sdp"
-            android:layout_marginTop="@dimen/_40sdp"
-            android:layout_marginLeft="@dimen/_40sdp"
-            android:layout_marginRight="@dimen/_40sdp"
-            android:orientation="vertical">
-
-            <android.support.v7.widget.AppCompatImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/quizer" />
-
-        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/bg"
@@ -42,53 +27,67 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true">
 
+            <LinearLayout
+                android:id="@+id/cont_image"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_90sdp"
+                android:layout_marginLeft="@dimen/_40sdp"
+                android:layout_marginRight="@dimen/_40sdp"
+                android:orientation="vertical">
 
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/quizer" />
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            </LinearLayout>
 
-            android:gravity="center"
-            android:text="@string/screensaver"
-            android:textColor="@android:color/black"
-            android:textSize="32sp" />
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/cont_image"
+                android:layout_marginTop="@dimen/_30sdp"
+                android:gravity="center"
+                android:text="@string/screensaver"
+                android:textColor="@android:color/black"
+                android:textSize="32sp" />
 
-        <ImageView
-            android:id="@+id/img1"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:layout_below="@+id/title"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            app:srcCompat="@drawable/img_anim_wait" />
+            <ImageView
+                android:id="@+id/img1"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:layout_below="@+id/title"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                app:srcCompat="@drawable/img_anim_wait" />
 
-        <ImageView
-            android:id="@+id/img2"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:layout_below="@+id/title"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            app:srcCompat="@drawable/img_anim_wait" />
+            <ImageView
+                android:id="@+id/img2"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:layout_below="@+id/title"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                app:srcCompat="@drawable/img_anim_wait" />
 
-        <ImageView
-            android:id="@+id/img3"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:layout_below="@+id/title"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            app:srcCompat="@drawable/img_anim_wait" />
+            <ImageView
+                android:id="@+id/img3"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:layout_below="@+id/title"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                app:srcCompat="@drawable/img_anim_wait" />
 
-        <ImageView
-            android:id="@+id/img4"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:layout_below="@+id/title"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            app:srcCompat="@drawable/img_anim_wait" />
+            <ImageView
+                android:id="@+id/img4"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:layout_below="@+id/title"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                app:srcCompat="@drawable/img_anim_wait" />
         </RelativeLayout>
     </RelativeLayout>
 

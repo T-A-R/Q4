@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private int mAudioRecordLimitTime;
     private int mAudioRelativeId = 0;
     private boolean mIsMediaConnected;
+    private boolean canContZeroLoc = false;
     private MediaBrowserCompat mMediaBrowser;
     public static final int ONE_SEC = 1000;
     public CountDownTimer mCountDownTimer;
@@ -1283,5 +1284,13 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public boolean hasRotationContainer() {
         return hasRotationContainer;
+    }
+
+    public boolean canContZeroLoc() {
+        return canContZeroLoc;
+    }
+
+    public void setContZeroLoc(boolean canContZeroLoc) {
+        this.canContZeroLoc = canContZeroLoc;
     }
 }

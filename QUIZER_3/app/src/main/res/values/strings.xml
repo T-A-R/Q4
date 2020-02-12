@@ -119,6 +119,7 @@
     <string name="dialog_please_turn_on_gps">Пожалуйста, включите GPS для продолжения работы.</string>
     <string name="dialog_no_gps">Устройство не может определить Ваше местоположение.</string>
     <string name="dialog_no_gps_text">Свяжитесь со службой поддержки QUIZER.</string>
+    <string name="dialog_no_gps_empty_text"> </string>
     <string name="dialog_no_gps_text_warning">Координаты определить невозможно, пожалуйста, предупредите Вашего организатора</string>
     <string name="dialog_show_error">Невозможно отобразить диалог</string>
     <string name="dialog_fake_gps_title">Обнаружено нарушение.</string>
@@ -333,6 +334,7 @@
     <string name="ftp_upload">Отправка через FTP</string>
     <string name="dialog_clear_db_warning">Внимание! Все данные из базы будут удалены, включая неотосланные анкеты, аудио и фото. Вам необходимо будет заново ввести ключ при наличии подключения к Интернет! Вы действительно хотите удалить данные?</string>
     <string name="view_yes">Да</string>
+    <string name="view_retry">Повторить попытку</string>
     <string name="view_no">Нет</string>
     <string name="view_cancel">Отмена</string>
     <string name="log_empty">Журнал событий пуст</string>

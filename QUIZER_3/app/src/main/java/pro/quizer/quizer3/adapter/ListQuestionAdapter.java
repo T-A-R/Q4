@@ -256,8 +256,8 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 item.setEnabled(false);
 //                Log.d(TAG, "ELEMENT DISABLED: " + item.getElementOptionsR().getTitle());
             } else {
-                answerTitle.setTextColor(Color.parseColor("#000000"));
-                item.setEnabled(true);
+//                answerTitle.setTextColor(Color.parseColor("#000000"));
+//                item.setEnabled(true);
 //                Log.d(TAG, "ELEMENT ENABLED: " + item.getElementOptionsR().getTitle());
             }
 

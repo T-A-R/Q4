@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     @Override
     public void onBackPressed() {
-        if (mainFragment.onBackPressed())
+        if (mainFragment != null && mainFragment.onBackPressed())
             return;
 
         super.onBackPressed();

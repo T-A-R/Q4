@@ -63,7 +63,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/_8sdp"
-                        android:text="Развернуть..."
+                        android:text="@string/view_reopen"
                         android:textColor="@android:color/white"
                         android:textSize="@dimen/_16ssp"
                         android:visibility="visible"
@@ -269,14 +269,34 @@
 
             </LinearLayout>
 
-            <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
-                android:id="@+id/question"
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_8sdp"
-                android:text="Question"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/_16ssp" />
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_8sdp">
+
+                <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+                    android:id="@+id/question"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_8sdp"
+                    android:text="Question"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/_16ssp"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteX="10dp"
+                    />
+
+                <ImageView
+                    android:id="@+id/question_close"
+                    android:layout_width="@dimen/_12sdp"
+                    android:layout_height="@dimen/_12sdp"
+                    android:src="@drawable/ico_close_white"
+                    app:layout_constraintEnd_toEndOf="@+id/question"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteY="2dp" />
+
+            </android.support.constraint.ConstraintLayout>
 
             <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                 android:id="@+id/question_desc"
@@ -338,11 +358,20 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                <Spinner
                     android:id="@+id/answers_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"/>
+                    android:padding="5dp"
+                    android:visibility="gone"/>
+
+                <com.guna.libmultispinner.MultiSelectionSpinner
+                    android:id="@+id/answers_multi_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:hintText="Выберите варианты ответа"
+                    android:padding="5dp"
+                    android:visibility="gone"/>
 
             </LinearLayout>
 

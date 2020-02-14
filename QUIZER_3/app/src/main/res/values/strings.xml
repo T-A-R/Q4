@@ -369,6 +369,7 @@
     <string name="notification_sms_copied">Сообщение скопированно.</string>
     <string name="show_sms_dialog">Показ диалога об отправке СМС</string>
     <string name="cant_show_dialog">Невозможно отобразить диалог</string>
+    <string name="view_reopen">Развернуть...</string>
 
 
 </resources>

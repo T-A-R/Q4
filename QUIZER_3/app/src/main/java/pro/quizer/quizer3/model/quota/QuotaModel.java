@@ -126,7 +126,11 @@ public class QuotaModel implements Serializable {
             final Integer[] integers = new Integer[strings.length];
 
             for (int i = 0; i < strings.length; i++) {
-                integers[i] = Integer.parseInt(strings[i]);
+                try {
+                    integers[i] = Integer.parseInt(strings[i]);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
             }
 
             mArray = integers;

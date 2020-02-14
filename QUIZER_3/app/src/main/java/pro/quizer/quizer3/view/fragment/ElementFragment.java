@@ -1,6 +1,8 @@
 package pro.quizer.quizer3.view.fragment;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -24,13 +26,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Spinner;
 
-import com.androidbuts.multispinnerfilter.KeyPairBoolData;
-import com.androidbuts.multispinnerfilter.MultiSpinnerSearch;
-import com.androidbuts.multispinnerfilter.SpinnerListener;
 import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
 import com.guna.libmultispinner.MultiSelectionSpinner;
 import com.squareup.picasso.Picasso;
-import com.thomashaertel.widget.MultiSpinner;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -65,7 +63,7 @@ import pro.quizer.quizer3.view.Toolbar;
 import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.MainActivity.makeCrash;
 
-public class ElementFragment extends ScreenFragment implements View.OnClickListener, ListQuestionAdapter.OnAnswerClickListener, ScaleQuestionAdapter.OnAnswerClickListener, TableQuestionAdapter.OnTableAnswerClickListener, AdapterView.OnItemSelectedListener {
+public class ElementFragment extends ScreenFragment implements View.OnClickListener, ListQuestionAdapter.OnAnswerClickListener, ScaleQuestionAdapter.OnAnswerClickListener, TableQuestionAdapter.OnTableAnswerClickListener {
 
     private Toolbar toolbar;
     private Button btnNext;
@@ -105,9 +103,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private ImageView questionImage3;
     private ImageView closeImage1;
     private ImageView closeImage2;
+    private ImageView closeQuestion;
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog infoDialog;
 
-    private boolean isNextBtnPressed = false;
-    private boolean isExitBtnPressed = false;
+    private boolean isQuestionHided = false;
+    private boolean hasQuestionImage = false;
     private boolean isPrevBtnPressed = false;
     private boolean isExit = false;
     private int currentQuestionId;
@@ -119,6 +120,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private Integer prevElementId;
     private String answerType;
     private int spinnerSelection = -1;
+    private List<Integer> spinnerMultipleSelection;
     private boolean isTitle1Hided = false;
     private boolean isTitle2Hided = false;
     private boolean isRestored = false;
@@ -167,7 +169,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         tableCont = (FrameLayout) findViewById(R.id.table_cont);
         rvAnswers = (RecyclerView) findViewById(R.id.answers_recyclerview);
         rvScale = (RecyclerView) findViewById(R.id.scale_recyclerview);
-//        spinnerAnswers = (Spinner) findViewById(R.id.answers_spinner);
+        spinnerAnswers = (Spinner) findViewById(R.id.answers_spinner);
         tableLayout = (AdaptiveTableLayout) findViewById(R.id.table_question_layout);
         tvUnhide = (TextView) findViewById(R.id.unhide_title);
         tvTitle1 = (TextView) findViewById(R.id.title_1);
@@ -188,6 +190,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         questionImage3 = (ImageView) findViewById(R.id.question_image_3);
         closeImage1 = (ImageView) findViewById(R.id.image_close_1);
         closeImage2 = (ImageView) findViewById(R.id.image_close_2);
+        closeQuestion = (ImageView) findViewById(R.id.question_close);
         btnNext = (Button) findViewById(R.id.next_btn);
         btnPrev = (Button) findViewById(R.id.back_btn);
         btnExit = (Button) findViewById(R.id.exit_btn);
@@ -208,12 +211,15 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         btnExit.setOnClickListener(this);
         closeImage1.setOnClickListener(this);
         closeImage2.setOnClickListener(this);
+        closeQuestion.setOnClickListener(this);
         unhideCont.setOnClickListener(this);
         cont.setOnClickListener(this);
+        tvQuestion.setOnClickListener(this);
 
         deactivateButtons();
 
-        toolbar.setTitle(getCurrentUser().getConfigR().getProjectInfo().getName());
+//        toolbar.setTitle(getCurrentUser().getConfigR().getProjectInfo().getName());
+        toolbar.setTitle(getString(R.string.app_name));
         toolbar.showOptionsView(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -222,11 +228,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         }, new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                titleCont1.setVisibility(View.VISIBLE);
-                titleCont2.setVisibility(View.VISIBLE);
-                toolbar.hideInfoView();
+                showInfoDialog();
             }
         });
+        toolbar.showInfoView();
 
         cont.startAnimation(Anim.getAppear(getContext()));
         btnNext.startAnimation(Anim.getAppearSlide(getContext(), 500));
@@ -369,6 +374,30 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 titleCont2.setVisibility(View.VISIBLE);
             }
             unhideCont.setVisibility(View.GONE);
+        } else if (view == closeQuestion) {
+            if (!isQuestionHided) {
+                closeQuestion.setImageResource(R.drawable.arrow_down_white);
+                tvQuestion.setText(getString(R.string.view_reopen));
+                questionImagesCont.setVisibility(View.GONE);
+                tvQuestionDesc.setVisibility(View.GONE);
+                isQuestionHided = true;
+            } else {
+                tvQuestion.setText(currentElement.getElementOptionsR().getTitle());
+                closeQuestion.setImageResource(R.drawable.ico_close_white);
+                if (hasQuestionImage) questionImagesCont.setVisibility(View.VISIBLE);
+                if (currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().getDescription() != null)
+                    tvQuestionDesc.setVisibility(View.VISIBLE);
+                isQuestionHided = false;
+            }
+        } else if (view == tvQuestion) {
+            if (isQuestionHided) {
+                tvQuestion.setText(currentElement.getElementOptionsR().getTitle());
+                closeQuestion.setImageResource(R.drawable.ico_close_white);
+                if (hasQuestionImage) questionImagesCont.setVisibility(View.VISIBLE);
+                if (currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().getDescription() != null)
+                    tvQuestionDesc.setVisibility(View.VISIBLE);
+                isQuestionHided = false;
+            }
         }
     }
 
@@ -551,6 +580,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             if (contents.size() > 2)
                 data3 = contents.get(2).getData();
 
+            hasQuestionImage = true;
             if (cont.equals(questionImagesCont)) {
                 if (data1 != null) showPic(questionImagesCont, questionImage1, data1);
                 if (data2 != null) showPic(questionImagesCont, questionImage2, data2);
@@ -655,71 +685,105 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isPolyanswer()) {
                 isMultiSpinner = true;
                 multiSelectionSpinner = (MultiSelectionSpinner) findViewById(R.id.answers_multi_spinner);
+                multiSelectionSpinner.setVisibility(View.VISIBLE);
                 multiSelectionSpinner.setItems(itemsList);
                 multiSelectionSpinner.setSelection(new int[]{});
                 multiSelectionSpinner.setListener(new MultiSelectionSpinner.OnMultipleItemsSelectedListener() {
                     @Override
                     public void selectedIndices(List<Integer> indices) {
+//                        String text = "";
+//                        for (Integer index : indices) {
+//                            text = text.concat(index + ",");
+//                        }
+//                        Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show();
 
+                        if (isRestored) {
+                            if (!indices.equals(spinnerMultipleSelection)) {
+                                try {
+                                    isRestored = false;
+                                    int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
+                                    getDao().deleteOldElementsPassedR(id);
+                                    showToast("Данные изменены");
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+//                        showToast("Ошибка очистки таблицы элементов.");
+                                }
+                            }
+                        }
+                        spinnerMultipleSelection = indices;
                     }
 
                     @Override
                     public void selectedStrings(List<String> strings) {
-                        Toast.makeText(getContext(), strings.toString(), Toast.LENGTH_LONG).show();
+
                     }
                 });
             } else {
                 isMultiSpinner = false;
-//
-//            searchSpinner = (MultiSpinnerSearch) findViewById(R.id.answers_spinner);
-//            final List<KeyPairBoolData> listArray = new ArrayList<KeyPairBoolData>();
-//
-//            for (int i = 0; i < itemsList.size(); i++) {
-//                KeyPairBoolData h = new KeyPairBoolData();
-//                h.setId(i + 1);
-//                h.setName(itemsList.get(i));
-////                Log.d(TAG, "?????: " + h.getName() + " " + itemsList.get(i));
-//                h.setSelected(false);
-//                listArray.add(h);
-//            }
-//
-//            searchSpinner.setEmptyTitle("Не найдено");
-//            searchSpinner.setSearchHint("Поиск");
-//            searchSpinner.setItems(listArray, -1, new SpinnerListener() {
-//
-//                @Override
-//                public void onItemsSelected(List<KeyPairBoolData> items) {
-//                    for (int i = 0; i < items.size(); i++) {
-//                        if (items.get(i).isSelected()) {
-////                            Toast.makeText(getContext(), i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected(), Toast.LENGTH_SHORT).show();
-//                            Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
-//
-//                        }
-//                    }
-//                    searchSpinner.requestFocus();
-////                    searchSpinner.setVisibility(View.GONE);
-////                    searchSpinner.setVisibility(View.VISIBLE);
-////                    cont.performClick();
-//                }
-//            });
-
 //            ===============================================================================================
-                itemsList.add(getString(R.string.select_spinner));
-                Log.d(TAG, "initRecyclerView: " + itemsList.size());
+                itemsList.add(0, getString(R.string.select_spinner));
+//                Log.d(TAG, "initRecyclerView: " + itemsList.size());
                 adapterSpinner = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, itemsList) {
-                    public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                        return super.getDropDownView(position + 1, convertView, parent);
-                    }
 
                     public int getCount() {
-                        return (itemsList.size() - 1);
+                        return (itemsList.size());
                     }
+
+                    @Override
+                    public boolean isEnabled(int position) {
+                        if (position == 0) {
+                            // Disable the first item from Spinner
+                            // First item will be use for hint
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public View getDropDownView(int position, View convertView,
+                                                ViewGroup parent) {
+                        View view = super.getDropDownView(position, convertView, parent);
+                        TextView tv = (TextView) view;
+                        if (position == 0) {
+                            // Set the hint text color gray
+                            tv.setTextColor(Color.GRAY);
+                        } else {
+                            tv.setTextColor(Color.BLACK);
+                        }
+                        return view;
+                    }
+
                 };
                 adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinnerAnswers.setVisibility(View.VISIBLE);
                 spinnerAnswers.setAdapter(adapterSpinner);
-                spinnerAnswers.setSelection(itemsList.size() - 1);
-                spinnerAnswers.setOnItemSelectedListener(this);
-//            ===============================================================================================
+                spinnerAnswers.setSelection(0);
+                spinnerAnswers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long selectionId) {
+                        if (position > 0) {
+                            if (isRestored) {
+                                if (position != spinnerSelection) {
+                                    try {
+                                        isRestored = false;
+                                        int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
+                                        getDao().deleteOldElementsPassedR(id);
+                                        showToast("Данные изменены");
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                            spinnerSelection = position;
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        showToast("Выберите ответ (не выбрано)");
+                    }
+                });
             }
         } else if (answerType.equals(ElementSubtype.TABLE)) {
 //            List<ElementItemR> questions = null;
@@ -879,57 +943,96 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
             }
         } else if (answerType.equals(ElementSubtype.SELECT)) {
-            if (spinnerSelection != -1) {
-                ElementPassedR elementPassedR = new ElementPassedR();
-                nextElementId = answersList.get(spinnerSelection).getElementOptionsR().getJump();
-                if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+            if (isMultiSpinner) {
+                if (checkMultipleSpinner()) {
+                    ElementPassedR elementPassedR = new ElementPassedR();
                     nextElementId = currentElement.getElementOptionsR().getJump();
-                    if (nextElementId == -2) {
-                        nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                    if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+                        nextElementId = currentElement.getElementOptionsR().getJump();
+                        if (nextElementId == -2) {
+                            nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                        }
+                    }
+
+                    elementPassedR.setRelative_id(currentElement.getRelative_id());
+                    elementPassedR.setProject_id(currentElement.getProjectId());
+                    elementPassedR.setToken(getQuestionnaire().getToken());
+                    elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
+
+                    try {
+                        if (!isRestored) {
+                            getDao().insertElementPassedR(elementPassedR);
+                            getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
+                        }
+                        saved = true;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        saved = false;
+                        return saved;
+                    }
+                    for (int i = 0; i < spinnerMultipleSelection.size(); i++) {
+
+                        ElementPassedR answerPassedR = new ElementPassedR();
+                        answerPassedR.setRelative_id(answersList.get(spinnerMultipleSelection.get(i)).getRelative_id());
+                        answerPassedR.setProject_id(currentElement.getProjectId());
+                        answerPassedR.setToken(getQuestionnaire().getToken());
+
+                        try {
+                            if (!isRestored) {
+                                getDao().insertElementPassedR(answerPassedR);
+                            }
+                            saved = true;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            saved = false;
+                            return saved;
+                        }
                     }
                 }
-//                if (nextElementId != 0 && nextElementId != -1) {
-//                    ElementItemR nextElement = getElement(nextElementId);
-//                    final ElementOptionsR options = nextElement.getElementOptionsR();
-//                    final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), (MainActivity) getActivity());
-//
-//                    if (showValue != ConditionUtils.CAN_SHOW) {
-//                        nextElementId = options.getJump();
-//                    }
-//                }
 
-
-                elementPassedR.setRelative_id(currentElement.getRelative_id());
-                elementPassedR.setProject_id(currentElement.getProjectId());
-                elementPassedR.setToken(getQuestionnaire().getToken());
-                elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
-
-                try {
-                    if (!isRestored) {
-                        getDao().insertElementPassedR(elementPassedR);
-                        getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
+            } else {
+                if (spinnerSelection != -1) {
+                    ElementPassedR elementPassedR = new ElementPassedR();
+                    nextElementId = answersList.get(spinnerSelection).getElementOptionsR().getJump();
+                    if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+                        nextElementId = currentElement.getElementOptionsR().getJump();
+                        if (nextElementId == -2) {
+                            nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                        }
                     }
-                    saved = true;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    saved = false;
-                    return saved;
-                }
 
-                ElementPassedR answerPassedR = new ElementPassedR();
-                answerPassedR.setRelative_id(answersList.get(spinnerSelection).getRelative_id());
-                answerPassedR.setProject_id(currentElement.getProjectId());
-                answerPassedR.setToken(getQuestionnaire().getToken());
+                    elementPassedR.setRelative_id(currentElement.getRelative_id());
+                    elementPassedR.setProject_id(currentElement.getProjectId());
+                    elementPassedR.setToken(getQuestionnaire().getToken());
+                    elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
 
-                try {
-                    if (!isRestored) {
-                        getDao().insertElementPassedR(answerPassedR);
+                    try {
+                        if (!isRestored) {
+                            getDao().insertElementPassedR(elementPassedR);
+                            getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
+                        }
+                        saved = true;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        saved = false;
+                        return saved;
                     }
-                    saved = true;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    saved = false;
-                    return saved;
+
+                    ElementPassedR answerPassedR = new ElementPassedR();
+                    answerPassedR.setRelative_id(answersList.get(spinnerSelection).getRelative_id());
+                    answerPassedR.setProject_id(currentElement.getProjectId());
+                    answerPassedR.setToken(getQuestionnaire().getToken());
+
+                    try {
+                        if (!isRestored) {
+                            getDao().insertElementPassedR(answerPassedR);
+                        }
+                        saved = true;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        saved = false;
+                        return saved;
+                    }
                 }
             }
         } else if (answerType.equals(ElementSubtype.TABLE)) {
@@ -1058,6 +1161,25 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         return saved;
     }
 
+    private boolean checkMultipleSpinner() {
+        if (spinnerMultipleSelection == null || spinnerMultipleSelection.size() < 1) {
+            return false;
+        }
+        if (currentElement.getElementOptionsR().getMin_answers() != null) {
+            if (spinnerMultipleSelection.size() < currentElement.getElementOptionsR().getMin_answers()) {
+                Toast.makeText(getContext(), "Выберите минимум " + currentElement.getElementOptionsR().getMin_answers() + " ответов", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        if (currentElement.getElementOptionsR().getMax_answers() != null) {
+            if (spinnerMultipleSelection.size() > currentElement.getElementOptionsR().getMax_answers()) {
+                Toast.makeText(getContext(), "Выберите максимум " + currentElement.getElementOptionsR().getMax_answers() + " ответов", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean notEmpty(List<AnswerState> answerStates) {
 
         int counter = 0;
@@ -1133,31 +1255,31 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long selectionId) {
+//    @Override
+//    public void onItemSelected(AdapterView<?> parent, View view, int position, long selectionId) {
+//
+//        if (position != answersList.size()) {
+//            if (isRestored) {
+//                if (position != spinnerSelection) {
+//                    try {
+//                        isRestored = false;
+//                        int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
+//                        getDao().deleteOldElementsPassedR(id);
+//                        showToast("Данные изменены");
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+////                        showToast("Ошибка очистки таблицы элементов.");
+//                    }
+//                }
+//            }
+//            spinnerSelection = position;
+//        }
+//    }
 
-        if (position != answersList.size()) {
-            if (isRestored) {
-                if (position != spinnerSelection) {
-                    try {
-                        isRestored = false;
-                        int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
-                        getDao().deleteOldElementsPassedR(id);
-                        showToast("Данные изменены");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-//                        showToast("Ошибка очистки таблицы элементов.");
-                    }
-                }
-            }
-            spinnerSelection = position;
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        showToast("Выберите ответ (не выбрано)");
-    }
+//    @Override
+//    public void onNothingSelected(AdapterView<?> parent) {
+//        showToast("Выберите ответ (не выбрано)");
+//    }
 
     @Override
     public void onAnswerClick(int position, boolean enabled, String answer) {
@@ -1265,7 +1387,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             adapterList.notifyDataSetChanged();
 
         } else if (answerType.equals(ElementSubtype.SELECT)) {
+
             spinnerSelection = -1;
+            spinnerMultipleSelection = new ArrayList<>();
 
             for (int i = 0; i < answersList.size(); i++) {
                 ElementPassedR answerStateRestored = null;
@@ -1275,11 +1399,22 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     e.printStackTrace();
                 }
                 if (answerStateRestored != null) {
-                    spinnerSelection = i;
-                    spinnerAnswers.setSelection(spinnerSelection);
+                    if (isMultiSpinner) {
+                        spinnerMultipleSelection.add(i);
+                    } else {
+                        spinnerSelection = i;
+                        spinnerAnswers.setSelection(spinnerSelection);
+                    }
                 }
-            }
 
+            }
+            if (isMultiSpinner) {
+                int[] array = new int[spinnerMultipleSelection.size()];
+                for (int i = 0; i < spinnerMultipleSelection.size(); i++) {
+                    array[i] = spinnerMultipleSelection.get(i);
+                }
+                multiSelectionSpinner.setSelection(array);
+            }
         } else if (answerType.equals(ElementSubtype.TABLE)) {
             AnswerState[][] answersTableState = adapterTable.getmAnswersState();
 
@@ -1487,6 +1622,34 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
             btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
         }
+    }
+
+    private void showInfoDialog() {
+        dialogBuilder = new AlertDialog.Builder(getMainActivity());
+        View layoutView = getLayoutInflater().inflate(getMainActivity().isAutoZoom() ? R.layout.dialog_info_auto : R.layout.dialog_info, null);
+        TextView dQuota1 = layoutView.findViewById(R.id.quota_1);
+        TextView dQuota2 = layoutView.findViewById(R.id.quota_2);
+        TextView dQuota3 = layoutView.findViewById(R.id.quota_3);
+        LinearLayout cont = layoutView.findViewById(R.id.cont);
+        LinearLayout quota1Cont = layoutView.findViewById(R.id.quota_1_cont);
+        LinearLayout quota2Cont = layoutView.findViewById(R.id.quota_2_cont);
+
+        cont.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                infoDialog.dismiss();
+            }
+        });
+
+        dQuota3.setText(getCurrentUser().getConfigR().getProjectInfo().getName());
+        quota1Cont.setVisibility(View.GONE);
+        quota2Cont.setVisibility(View.GONE);
+
+        dialogBuilder.setView(layoutView);
+        infoDialog = dialogBuilder.create();
+        infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+        infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        infoDialog.show();
     }
 }
 

@@ -89,7 +89,7 @@
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_copy"
+                    android:src="@drawable/info_white"
                     android:tint="@android:color/white"
                     android:visibility="gone"
                     tools:visibility="visible" />

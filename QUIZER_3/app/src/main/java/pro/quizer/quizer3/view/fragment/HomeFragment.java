@@ -615,6 +615,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         @Override
                         public void onClick(final DialogInterface dialog, final int which) {
                             dialog.dismiss();
+                            activateButtons();
                         }
                     })
                     .show();

@@ -32,8 +32,10 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
@@ -682,6 +684,31 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
             rvAnswers.setAdapter(adapterList);
         } else if (answerType.equals(ElementSubtype.SELECT)) {
+
+            if(currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isRotation()) {
+                List<ElementItemR> shuffleList = new ArrayList<>();
+                for (ElementItemR elementItemR : answersList) {
+                    if (elementItemR.getElementOptionsR() != null && !elementItemR.getElementOptionsR().isFixed_order()) {
+                        shuffleList.add(elementItemR);
+                    }
+                }
+                Collections.shuffle(shuffleList, new Random());
+                int k = 0;
+
+                for (int i = 0; i < answersList.size(); i++) {
+                    if (answersList.get(i).getElementOptionsR() != null && !answersList.get(i).getElementOptionsR().isFixed_order()) {
+                        answersList.set(i, shuffleList.get(k));
+                        k++;
+                    }
+                }
+            }
+
+            itemsList.clear();
+
+            for (ElementItemR element : answersList) {
+                itemsList.add(element.getElementOptionsR().getTitle());
+            }
+
             if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isPolyanswer()) {
                 isMultiSpinner = true;
                 multiSelectionSpinner = (MultiSelectionSpinner) findViewById(R.id.answers_multi_spinner);

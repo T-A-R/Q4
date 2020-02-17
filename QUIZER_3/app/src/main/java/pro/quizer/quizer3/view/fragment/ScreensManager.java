@@ -61,7 +61,7 @@ public class ScreensManager implements ScreenFragment.ScreenListener {
         }
     }
 
-    private void removeFragment(boolean fromBackPress) {
+    public void removeFragment(boolean fromBackPress) {
         if (curFragment == null)
             return;
 

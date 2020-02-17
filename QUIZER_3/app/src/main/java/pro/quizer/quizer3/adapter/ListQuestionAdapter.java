@@ -468,6 +468,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
     private class MyCustomEditTextListener implements TextWatcher {
         private int position;
+        private boolean canDelete = false;
 
         public void updatePosition(int position) {
             this.position = position;
@@ -475,14 +476,24 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
+            if (charSequence.length() == 1) canDelete = true;
+            else canDelete = false;
         }
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            if (lastSelectedPosition != -1 && isPressed)
+            if (lastSelectedPosition != -1 && isPressed && charSequence != null && charSequence.length() > 0) {
                 answersState.get(lastSelectedPosition).setData(charSequence.toString());
+            }
+            if (charSequence == null || charSequence.length() == 0)
+                if (canDelete) {
+                    answersState.get(lastSelectedPosition).setData(charSequence.toString());
+                }
 //            mDataset[position] = charSequence.toString();
+//            if (lastSelectedPosition != -1) {
+//                Log.d(TAG, "onTextChanged_1: " + lastSelectedPosition + " " + charSequence.toString() + " " + charSequence.length());
+//                Log.d(TAG, "onTextChanged_2: " + lastSelectedPosition + " " + answersState.get(lastSelectedPosition).getData());
+//            }
         }
 
         @Override

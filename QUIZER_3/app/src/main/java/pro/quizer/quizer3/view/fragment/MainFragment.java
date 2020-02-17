@@ -177,6 +177,7 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
 
     public void openScreen(ScreenFragment screen) {
         newActivityScreen = null;
+        screensManager.removeFragment(false);
         screensManager.openScreen(screen);
     }
 

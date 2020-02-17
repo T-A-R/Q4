@@ -736,7 +736,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public boolean saveQuestionnaireToDatabase(CurrentQuestionnaireR currentQuiz, boolean aborted) {
 
-//        Log.d(TAG, "saveQuestionnaireToDatabase: 1");
+//        Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!!!!!!111 saveQuestionnaireToDatabase: 1");
         boolean saved = true;
         countElements = 0;
         countScreens = 0;

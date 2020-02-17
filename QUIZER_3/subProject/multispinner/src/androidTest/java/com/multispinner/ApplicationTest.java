@@ -1,4 +1,4 @@
-package com.guna.libmultispinner;
+package com.multispinner;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

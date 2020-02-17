@@ -759,7 +759,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 for (int i = 1; i < sequence.length; i++) {
                     seq = seq.concat(" " + sequence[i].toString());
                 }
-                Log.d(TAG, "================== START Sequence: " + seq);
+//                Log.d(TAG, "================== START Sequence: " + seq);
 //                for(Integer seq : sequence) {
 //                    Log.d(TAG, "fillQuotas: " + seq);
 //                }

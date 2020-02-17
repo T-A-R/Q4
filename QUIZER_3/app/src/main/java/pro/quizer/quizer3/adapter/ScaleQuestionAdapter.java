@@ -70,7 +70,6 @@ public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdap
         for (int i = 0; i < answersList.size(); i++) {
             this.answersState.add(new AnswerState(answersList.get(i).getRelative_id(), false, ""));
         }
-        Log.d(TAG, "?????? ScaleQuestionAdapter: " + show_images + " " + show_scale);
     }
 
     @NonNull

@@ -358,14 +358,14 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <Spinner
+                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
                     android:id="@+id/answers_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
                     android:visibility="gone"/>
 
-                <com.guna.libmultispinner.MultiSelectionSpinner
+                <com.multispinner.MultiSelectSpinner
                     android:id="@+id/answers_multi_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

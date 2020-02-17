@@ -1,72 +1,150 @@
-package com.guna.libmultispinner;
+package com.multispinner;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnMultiChoiceClickListener;
+import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MultiSelectionSpinner extends Spinner implements
-        OnMultiChoiceClickListener {
-
-    public interface OnMultipleItemsSelectedListener{
+/**
+ * Created by DELL-PC on 29-06-2016.
+ */
+public class MultiSelectSpinner extends Spinner implements DialogInterface.OnMultiChoiceClickListener {
+    public interface OnMultipleItemsSelectedListener {
         void selectedIndices(List<Integer> indices);
+
         void selectedStrings(List<String> strings);
     }
+
     private OnMultipleItemsSelectedListener listener;
 
     String[] _items = null;
     boolean[] mSelection = null;
+    boolean[] mEnabled = null;
     boolean[] mSelectionAtStart = null;
     String _itemsAtStart = null;
-
+    Context c;
     ArrayAdapter<String> simple_adapter;
+    private boolean hasNone = false;
+    private int uncheckerIndex = -101;
+    private TextView item;
 
-    public MultiSelectionSpinner(Context context) {
+    public MultiSelectSpinner(Context context) {
         super(context);
-
-        simple_adapter = new ArrayAdapter<>(context,
-                android.R.layout.simple_spinner_item);
+        Log.d("TARLOGS", "ADAPTER 1");
+        c = context;
+        simple_adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (!mEnabled[position]) {
+                    Log.d("TARLOGS", "ADAPTER 1 isEnabled: false " + position);
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    Log.d("TARLOGS", "ADAPTER 1 isEnabled: true " + position);
+                    return true;
+                }
+            }
+        };
+        simple_adapter.setDropDownViewResource(R.layout.spinner_selector);
         super.setAdapter(simple_adapter);
     }
 
-    public MultiSelectionSpinner(Context context, AttributeSet attrs) {
+    public MultiSelectSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-        simple_adapter = new ArrayAdapter<>(context,
-                android.R.layout.simple_spinner_item);
+        Log.d("TARLOGS", "ADAPTER 2");
+        simple_adapter = new ArrayAdapter<String>(context,
+                android.R.layout.simple_spinner_item) {
+            @Override
+            public boolean isEnabled(int position) {
+//                if (!mEnabled[position]) {
+                if (!mEnabled[position]) {
+                    Log.d("TARLOGS", "ADAPTER 2 isEnabled: false " + position);
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    Log.d("TARLOGS", "ADAPTER 2 isEnabled: true " + position);
+                    return true;
+                }
+            }
+        };
+        simple_adapter.setDropDownViewResource(R.layout.spinner_selector);
+        item = (TextView) findViewById(R.id.spinnerText);
         super.setAdapter(simple_adapter);
     }
 
-    public void setListener(OnMultipleItemsSelectedListener listener){
+    public void setListener(OnMultipleItemsSelectedListener listener) {
         this.listener = listener;
     }
 
-    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-        if (mSelection != null && which < mSelection.length) {
-            mSelection[which] = isChecked;
+    public void onClick(DialogInterface dialog, int position, boolean isChecked) {
+        if (mSelection != null && position < mSelection.length) {
+            if (hasNone) {
+                Log.d("TARLOGS", "??? onClick ENABLED: " + mEnabled[position]);
+                if (position == uncheckerIndex && isChecked && mSelection.length > 1) {
+                    for (int i = 0; i < mSelection.length; i++) {
+                        if (i != uncheckerIndex)
+                            mSelection[i] = false;
+                        mEnabled[i] = false;
+                        ((AlertDialog) dialog).getListView().setItemChecked(i, false);
+                    }
+                } else if (position == uncheckerIndex && !isChecked && mSelection.length > 1) {
+                    for (int i = 0; i < mSelection.length; i++) {
+                        mEnabled[i] = true;
+                    }
+//                    simple_adapter.notifyDataSetChanged();
+                } else if (position != uncheckerIndex && mSelection[uncheckerIndex] && isChecked) {
+//                    mSelection[uncheckerIndex] = false;
+//                    ((AlertDialog) dialog).getListView().setItemChecked(uncheckerIndex, false);
+//                    ((AlertDialog) dialog).getListView().setItemChecked(position, false);
+                    for (int i = 0; i < mSelection.length; i++) {
+                        if (i != uncheckerIndex) {
+                            mSelection[i] = false;
+                            ((AlertDialog) dialog).getListView().setItemChecked(i, false);
+                        }
+                    }
+                }
+            }
+            if (mEnabled[position])
+                mSelection[position] = isChecked;
+//            simple_adapter.notifyDataSetChanged();
+//            super.setAdapter(simple_adapter);
             simple_adapter.clear();
             simple_adapter.add(buildSelectedItemString());
         } else {
             throw new IllegalArgumentException(
                     "Argument 'which' is out of bounds.");
         }
+        for (int i = 0; i < mEnabled.length; i++) {
+            Log.d("TARLOGS", "ENALED: (" + i + ") " + mEnabled[i]);
+        }
     }
 
     @Override
     public boolean performClick() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Выберите ответы");
+        builder.setTitle("Выберите:");
         builder.setMultiChoiceItems(_items, mSelection, this);
         _itemsAtStart = getSelectedItemsAsString();
-        builder.setPositiveButton("ОК", new DialogInterface.OnClickListener() {
+//        builder.setNeutralButton("Clear", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                setSelection(0);
+//            }
+//        });
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 System.arraycopy(mSelection, 0, mSelectionAtStart, 0, mSelection.length);
@@ -88,17 +166,40 @@ public class MultiSelectionSpinner extends Spinner implements
 
     @Override
     public void setAdapter(SpinnerAdapter adapter) {
+//        super.setAdapter(adapter);
         throw new RuntimeException(
                 "setAdapter is not supported by MultiSelectSpinner.");
+    }
+
+    public void setAdapter(Context context) {
+
+        c = context;
+        simple_adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (!mEnabled[position]) {
+                    Log.d("TARLOGS", "ADAPTER 1 isEnabled: false " + position);
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    Log.d("TARLOGS", "ADAPTER 1 isEnabled: true " + position);
+                    return true;
+                }
+            }
+        };
+        super.setAdapter(simple_adapter);
     }
 
     public void setItems(String[] items) {
         _items = items;
         mSelection = new boolean[_items.length];
+        mEnabled = new boolean[_items.length];
         mSelectionAtStart = new boolean[_items.length];
         simple_adapter.clear();
         simple_adapter.add(_items[0]);
         Arrays.fill(mSelection, false);
+        Arrays.fill(mEnabled, true);
         mSelection[0] = true;
         mSelectionAtStart[0] = true;
     }
@@ -106,17 +207,20 @@ public class MultiSelectionSpinner extends Spinner implements
     public void setItems(List<String> items) {
         _items = items.toArray(new String[items.size()]);
         mSelection = new boolean[_items.length];
-        mSelectionAtStart  = new boolean[_items.length];
+        mEnabled = new boolean[_items.length];
+        mSelectionAtStart = new boolean[_items.length];
         simple_adapter.clear();
         simple_adapter.add(_items[0]);
         Arrays.fill(mSelection, false);
+        Arrays.fill(mEnabled, true);
         mSelection[0] = true;
     }
 
     public void setSelection(String[] selection) {
         for (int i = 0; i < mSelection.length; i++) {
-                mSelection[i] = false;
-                mSelectionAtStart[i] = false;
+            mSelection[i] = false;
+//            mEnabled[i] = true;
+            mSelectionAtStart[i] = false;
         }
         for (String cell : selection) {
             for (int j = 0; j < _items.length; ++j) {
@@ -146,6 +250,7 @@ public class MultiSelectionSpinner extends Spinner implements
         simple_adapter.clear();
         simple_adapter.add(buildSelectedItemString());
     }
+
 
     public void setSelection(int index) {
         for (int i = 0; i < mSelection.length; i++) {
@@ -232,5 +337,17 @@ public class MultiSelectionSpinner extends Spinner implements
             }
         }
         return sb.toString();
+    }
+
+    public void hasNoneOption(boolean val, int uncheckerIndex) {
+        hasNone = val;
+        this.uncheckerIndex = uncheckerIndex;
+    }
+
+    @Override
+    public boolean performItemClick(View view, int position, long id) {
+
+
+        return super.performItemClick(view, position, id);
     }
 }

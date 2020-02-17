@@ -1058,7 +1058,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public List<ElementItemR> getQuotasElements() {
-        Log.d(TAG, "======== getQuotasElements: 1");
+//        Log.d(TAG, "======== getQuotasElements: 1");
 //        List<ElementItemR> quotaList = new ArrayList<>();
         List<ElementItemR> quotaList = null;
 
@@ -1095,7 +1095,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 quotaList = new ArrayList<>();
             }
         }
-        Log.d(TAG, "======== getQuotasElements: 2");
+//        Log.d(TAG, "======== getQuotasElements: 2");
         return quotaList;
     }
 

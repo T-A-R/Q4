@@ -1,1 +1,1 @@
-include ':app', ':subProject:libmultispinner'
+include ':app', ':subProject:multispinner'

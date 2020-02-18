@@ -127,10 +127,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private ScaleQuestionAdapter adapterScale;
     private ArrayAdapter adapterSpinner;
     private TableQuestionAdapter adapterTable;
-    //    private MultiSelectionSpinner multiSelectionSpinner;
     private MultiSelectSpinner multiSelectionSpinner;
-    private List<AnswerState> savedAnswerStates;
-    private List<Integer> quotaBlock;
 
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
@@ -193,13 +190,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         btnPrev = (Button) findViewById(R.id.back_btn);
         btnExit = (Button) findViewById(R.id.exit_btn);
 
-//        tvUnhide.setTypeface(Fonts.getFuturaPtBook());
-//        tvTitle1.setTypeface(Fonts.getFuturaPtBook());
-//        tvTitle2.setTypeface(Fonts.getFuturaPtBook());
-//        tvQuestion.setTypeface(Fonts.getFuturaPtBook());
-//        btnNext.setTypeface(Fonts.getFuturaPtBook());
-//        btnPrev.setTypeface(Fonts.getFuturaPtBook());
-//        btnExit.setTypeface(Fonts.getFuturaPtBook());
         btnNext.setTransformationMethod(null);
         btnPrev.setTransformationMethod(null);
         btnExit.setTransformationMethod(null);
@@ -306,7 +296,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             } else {
                 activateButtons();
             }
-//            }
         } else if (view == btnPrev) {
             deactivateButtons();
             TransFragment fragment = new TransFragment();
@@ -326,8 +315,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             } else {
                 showExitPoolAlertDialog();
             }
-
-
         } else if (view == btnExit) {
             deactivateButtons();
             checkAbortedBox();
@@ -457,8 +444,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 e.printStackTrace();
             }
             if (parentElement != null) {
-                if (parentElement.getType().equals(ElementType.BOX) && !parentElement.isWas_shown()) {
+//                if (parentElement.getType().equals(ElementType.BOX) && !parentElement.isWas_shown()) {
+                if (parentElement.getType().equals(ElementType.BOX) && (parentElement.getShown_at_id().equals(-102) || parentElement.getShown_at_id().equals(currentElement.getRelative_id()))) {
                     getDao().setWasElementShown(true, parentElement.getRelative_id(), parentElement.getUserId(), parentElement.getProjectId());
+                    getDao().setShownId(currentElement.getRelative_id(), parentElement.getRelative_id(), parentElement.getUserId(), parentElement.getProjectId());
                     titleCont2.setVisibility(View.VISIBLE);
                     UiUtils.setTextOrHide(tvTitle2, parentElement.getElementOptionsR().getTitle());
                     if (parentElement.getElementOptionsR().getDescription() != null) {
@@ -476,8 +465,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             e.printStackTrace();
                         }
                         if (parentElement2 != null) {
-                            if (parentElement2.getType().equals(ElementType.BOX) && !parentElement2.isWas_shown()) {
+//                            if (parentElement2.getType().equals(ElementType.BOX) && !parentElement2.isWas_shown()) {
+                            if (parentElement2.getType().equals(ElementType.BOX) && (parentElement2.getShown_at_id().equals(-102) || parentElement2.getShown_at_id().equals(currentElement.getRelative_id()))) {
                                 getDao().setWasElementShown(true, parentElement2.getRelative_id(), parentElement2.getUserId(), parentElement2.getProjectId());
+                                getDao().setShownId(currentElement.getRelative_id(), parentElement2.getRelative_id(), parentElement2.getUserId(), parentElement2.getProjectId());
                                 titleCont1.setVisibility(View.VISIBLE);
                                 UiUtils.setTextOrHide(tvTitle1, parentElement2.getElementOptionsR().getTitle());
 //                                tvTitle1.setText(parentElement2.getElementOptionsR().getTitle());
@@ -680,19 +671,16 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
 
                     @Override
-                    public View getDropDownView(int position, View convertView,
-                                                ViewGroup parent) {
+                    public View getDropDownView(int position, View convertView, ViewGroup parent) {
                         View view = super.getDropDownView(position + 1, convertView, parent);
                         TextView tv = (TextView) view;
                         if (position == itemsList.size() - 1) {
-                            // Set the hint text color gray
                             tv.setTextColor(Color.GRAY);
                         } else {
                             tv.setTextColor(Color.BLACK);
                         }
                         return view;
                     }
-
                 };
                 adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinnerAnswers.setVisibility(View.VISIBLE);
@@ -725,9 +713,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 });
             }
         } else if (answerType.equals(ElementSubtype.TABLE)) {
-//            List<ElementItemR> questions = null;
-//            questions = currentElement.getElements();
-            //answersList = questionsList for TABLE
             adapterTable = new TableQuestionAdapter(currentElement, answersList, getActivity(), mRefreshRecyclerViewRunnable, this);
             tableLayout.setAdapter(adapterTable);
             tableLayout.setDrawingCacheEnabled(true);
@@ -750,27 +735,20 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     private boolean checkConditions(ElementItemR element) {
         if (element != null) {
-//            Log.d(TAG, "checkConditions: " + element.getRelative_id());
             final ElementOptionsR options = element.getElementOptionsR();
             if (options != null && options.getPre_condition() != null) {
                 final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), (MainActivity) getActivity());
-//                Log.d(TAG, "!!!!!!!!!!!!!!!!!! showValue: " + showValue);
                 if (showValue != ConditionUtils.CAN_SHOW) {
                     if (showValue != ConditionUtils.CANT_SHOW) {
                         nextElementId = showValue;
-//                        Log.d(TAG, "checkConditions: 1 " + showValue);
                     } else {
-//                        Log.d(TAG, "checkConditions: 2");
                         if (!element.equals(currentElement)) {
-//                            Log.d(TAG, "checkConditions: 3");
                             return false;
                         }
                         nextElementId = options.getJump();
                         if (nextElementId == null) {
-//                            Log.d(TAG, "checkConditions: 4");
                             List<ElementItemR> answers = element.getElements();
                             if (answers != null && answers.size() > 0) {
-//                                Log.d(TAG, "checkConditions: 5");
                                 try {
                                     nextElementId = answers.get(0).getElementOptionsR().getJump();
                                 } catch (Exception e) {
@@ -778,7 +756,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                 }
                             }
                             if (nextElementId == null) {
-//                                Log.d(TAG, "checkConditions: 6");
                                 nextElementId = 0;
                             }
                         }
@@ -788,13 +765,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         exitQuestionnaire();
                         return false;
                     } else if (nextElementId.equals(-1)) {
-//                        Log.d(TAG, "checkConditions: 8");
                         exitQuestionnaire();
                         return false;
                     } else {
-//                        Log.d(TAG, "checkConditions: 9 / " + nextElementId);
-//                    onClick(btnNext);
-//                    Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction().remove(this).commit();
                         showNextFragment(nextElementId);
                         return false;
                     }
@@ -996,23 +969,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
                 }
 
-//                Log.d(TAG, "saveElement NEXT ELEMENT BEFORE: " + nextElementId);
-//
-//                if (!nextElementId.equals(0) && !nextElementId.equals(-1)) {
-//                    Log.d(TAG, "conditions: " + checkConditions(getElement((nextElementId))));
-//                    if(!checkConditions(getElement((nextElementId)))){
-//                        ElementItemR nextElement = getElement(nextElementId);
-//                        final ElementOptionsR options = nextElement.getElementOptionsR();
-//                        final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), getMainActivity());
-//                        Log.d(TAG, "saveElement CHECK TABLE: " + showValue);
-//                        if (showValue != ConditionUtils.CAN_SHOW) {
-//                            nextElementId = showValue;
-//                        }
-//                    }
-//                }
-//
-//                Log.d(TAG, "saveElement NEXT ELEMENT AFTER: " + nextElementId);
-
                 ElementPassedR elementPassedR = new ElementPassedR();
                 elementPassedR.setRelative_id(currentElement.getRelative_id());
                 elementPassedR.setProject_id(currentElement.getProjectId());
@@ -1087,9 +1043,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 return saved;
             }
         }
-//        } else {
-//            saved = true;
-//        }
 
         if (saved) {
             updatePrevElement();
@@ -1134,7 +1087,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 e.printStackTrace();
             }
 
-//            Log.d(TAG, "notEmpty: " + openType + " " +  state.getData());
             if (state.isChecked() && openType) {
                 Log.d(TAG, "STATE: " + state.getRelative_id() + " " + state.getData());
                 if (state.getData().equals("") || state.getData() == null) {
@@ -1194,32 +1146,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         }
     }
 
-//    @Override
-//    public void onItemSelected(AdapterView<?> parent, View view, int position, long selectionId) {
-//
-//        if (position != answersList.size()) {
-//            if (isRestored) {
-//                if (position != spinnerSelection) {
-//                    try {
-//                        isRestored = false;
-//                        int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
-//                        getDao().deleteOldElementsPassedR(id);
-//                        showToast("Данные изменены");
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-////                        showToast("Ошибка очистки таблицы элементов.");
-//                    }
-//                }
-//            }
-//            spinnerSelection = position;
-//        }
-//    }
-
-//    @Override
-//    public void onNothingSelected(AdapterView<?> parent) {
-//        showToast("Выберите ответ (не выбрано)");
-//    }
-
     @Override
     public void onAnswerClick(int position, boolean enabled, String answer) {
         if (isRestored) {
@@ -1231,7 +1157,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 showToast("Данные изменены");
             } catch (Exception e) {
                 e.printStackTrace();
-//                showToast("Ошибка очистки таблицы элементов.");
             }
         }
     }

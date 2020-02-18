@@ -49,6 +49,9 @@ public class ElementItemR {
     @ColumnInfo(name = "was_shown")
     private boolean was_shown;
 
+    @ColumnInfo(name = "shown_at_id")
+    private Integer shown_at_id;
+
     @ColumnInfo(name = "checked")
     private boolean checked;
 
@@ -74,6 +77,7 @@ public class ElementItemR {
         this.enabled = true;
         this.done = 0;
         this.limit = 999999;
+        this.shown_at_id = -102;
     }
 
     public ElementItemR(String configId, int userId, int projectId, int questionnaireId, String type, String subtype, Integer relative_id, Integer relative_parent_id, ElementOptionsR elementOptionsR, List<ElementContentsR> elementContentsR) {
@@ -90,6 +94,7 @@ public class ElementItemR {
         this.was_shown = false;
         this.checked = false;
         this.enabled = true;
+        this.shown_at_id = -102;
     }
 
     public static ElementItemR clone(ElementItemR item) {
@@ -255,5 +260,13 @@ public class ElementItemR {
 
     public void setLimit(Integer limit) {
         this.limit = limit;
+    }
+
+    public Integer getShown_at_id() {
+        return shown_at_id;
+    }
+
+    public void setShown_at_id(Integer shown_at_id) {
+        this.shown_at_id = shown_at_id;
     }
 }

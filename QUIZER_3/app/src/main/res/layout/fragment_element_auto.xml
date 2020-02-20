@@ -65,7 +65,7 @@
                         android:layout_margin="@dimen/_8sdp"
                         android:text="Развернуть..."
                         android:textColor="@android:color/white"
-                        android:textSize="@dimen/_16ssp"
+                        android:textSize="@dimen/_12ssp"
                         android:visibility="visible"
                         tools:ignore="MissingConstraints"
                         tools:layout_editor_absoluteX="10dp" />
@@ -106,7 +106,7 @@
                         android:layout_margin="@dimen/_8sdp"
                         android:text="Title 1"
                         android:textColor="@android:color/white"
-                        android:textSize="@dimen/_16ssp"
+                        android:textSize="@dimen/_12ssp"
                         tools:ignore="MissingConstraints"
                         tools:layout_editor_absoluteX="10dp" />
 
@@ -198,7 +198,7 @@
                         android:layout_margin="@dimen/_8sdp"
                         android:text="Title 1"
                         android:textColor="@android:color/white"
-                        android:textSize="@dimen/_16ssp"
+                        android:textSize="@dimen/_12ssp"
                         tools:ignore="MissingConstraints"
                         tools:layout_editor_absoluteX="10dp" />
 
@@ -270,6 +270,7 @@
             </LinearLayout>
 
             <android.support.constraint.ConstraintLayout
+                android:id="@+id/question_box"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_8sdp"
@@ -279,20 +280,24 @@
                     android:id="@+id/question"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/_8sdp"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginRight="@dimen/_20sdp"
+                    android:layout_marginEnd="@dimen/_20sdp"
                     android:text="Question"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/_16ssp"
+                    android:textSize="@dimen/_12ssp"
                     tools:ignore="MissingConstraints"
-                    tools:layout_editor_absoluteX="10dp"
-                    />
+                    tools:layout_editor_absoluteX="10dp"/>
 
                 <ImageView
                     android:id="@+id/question_close"
                     android:layout_width="@dimen/_12sdp"
                     android:layout_height="@dimen/_12sdp"
                     android:src="@drawable/ico_close_white"
-                    app:layout_constraintEnd_toEndOf="@+id/question"
+                    app:layout_constraintEnd_toEndOf="@+id/question_box"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
                     tools:ignore="MissingConstraints"
                     tools:layout_editor_absoluteY="2dp" />
 
@@ -307,7 +312,7 @@
                 android:layout_marginBottom="@dimen/_8sdp"
                 android:text="Question desc"
                 android:textColor="@android:color/white"
-                android:textSize="@dimen/_10ssp"
+                android:textSize="@dimen/_8ssp"
                 android:textStyle="italic"
                 android:visibility="gone" />
 

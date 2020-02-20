@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private CurrentQuestionnaireR currentQuestionnaire = null;
     private HashMap<Integer, ElementModelNew> mNewMap;
     private List<ElementItemR> elementItemRList = null;
+    private List<ElementItemR> currentElementsList = null;
     private MainFragment mainFragment;
 
     private String mToken;
@@ -121,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     ChangeFontCallback changeFontCallback;
     private boolean mAutoZoom;
     private boolean hasRotationContainer = false;
+    private static Long alphaTime = 0L;
 
     private Timer mTimer;
     private AlertSmsTask mAlertSmsTask;
@@ -226,7 +228,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public void showToastfromActivity(String text) {
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+        runOnUiThread(() -> Toast.makeText(MainActivity.this, text, Toast.LENGTH_SHORT).show());
+//        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
     public QuizerDao getMainDao() {
@@ -1292,5 +1295,24 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void setContZeroLoc(boolean canContZeroLoc) {
         this.canContZeroLoc = canContZeroLoc;
+    }
+
+    public static void showTime(String notes) {
+        Log.d("TIME", "deltaTime (" + notes + ") :" + (DateUtils.getFullCurrentTime() - alphaTime));
+        alphaTime = DateUtils.getFullCurrentTime();
+    }
+
+    public List<ElementItemR> getElementItemRList() {
+        if(currentElementsList == null) {
+            currentElementsList = getStaticDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+        }
+        return currentElementsList;
+    }
+
+    public CurrentQuestionnaireR getCurrentQuestionnaire() {
+        if(currentQuestionnaire == null) {
+            currentQuestionnaire = getStaticDao().getCurrentQuestionnaireR();
+        }
+        return currentQuestionnaire;
     }
 }

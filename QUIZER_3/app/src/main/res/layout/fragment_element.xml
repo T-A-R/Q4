@@ -270,6 +270,7 @@
             </LinearLayout>
 
             <android.support.constraint.ConstraintLayout
+                android:id="@+id/question_box"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_8sdp"
@@ -279,7 +280,10 @@
                     android:id="@+id/question"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/_8sdp"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginRight="@dimen/_20sdp"
+                    android:layout_marginEnd="@dimen/_20sdp"
                     android:text="Question"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/_16ssp"
@@ -292,7 +296,9 @@
                     android:layout_width="@dimen/_12sdp"
                     android:layout_height="@dimen/_12sdp"
                     android:src="@drawable/ico_close_white"
-                    app:layout_constraintEnd_toEndOf="@+id/question"
+                    app:layout_constraintEnd_toEndOf="@+id/question_box"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
                     tools:ignore="MissingConstraints"
                     tools:layout_editor_absoluteY="2dp" />
 

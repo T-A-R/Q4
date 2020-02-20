@@ -56,6 +56,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     private List<ElementItemR> answersList;
     private List<AnswerState> answersState;
     private int lastSelectedPosition = -1;
+    private int lastCheckedElement = -103;
     public boolean isOpen = false;
     public boolean isMulti;
     public boolean isPressed = false;
@@ -340,13 +341,9 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             if (answersState.get(position).isChecked()) {
                 editButton.setVisibility(View.GONE);
                 answerEditText.setVisibility(View.VISIBLE);
-//                showAnswers();
-//                Log.d(TAG, "(2) !!!===!!!: " + position + " " + answersState.get(position).getData());
                 answerEditText.setText(answersState.get(position).getData());
                 if (isPressed) {
                     if (position == lastSelectedPosition) {
-
-
                         if (item.getElementOptionsR().getOpen_type().equals(TEXT)) {
                             answerEditText.setEnabled(true);
                             answerEditText.requestFocus();
@@ -420,11 +417,13 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
                     } else {
                         answersState.get(lastSelectedPosition).setChecked(true);
+                        lastCheckedElement = lastSelectedPosition;
                     }
                 } else if (isMulti && answersList.get(lastSelectedPosition).getElementOptionsR().isUnchecker()) {
                     notifyDataSetChanged();
                     if (!answersState.get(lastSelectedPosition).isChecked()) {
                         answersState.get(lastSelectedPosition).setChecked(true);
+                        lastCheckedElement = lastSelectedPosition;
                         unselectOther(lastSelectedPosition);
                     } else {
                         answersState.get(lastSelectedPosition).setChecked(false);
@@ -433,6 +432,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 } else {
                     notifyDataSetChanged();
                     answersState.get(lastSelectedPosition).setChecked(true);
+                    lastCheckedElement = lastSelectedPosition;
                     unselectOther(lastSelectedPosition);
                 }
 
@@ -514,6 +514,11 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     public int getLastSelectedPosition() {
         Log.d(TAG, "getLastSelectedPosition: " + lastSelectedPosition);
         return lastSelectedPosition;
+    }
+
+    public int getLastCheckedElement() {
+//        Log.d(TAG, "getLastSelectedPosition: " + lastSelectedPosition);
+        return lastCheckedElement;
     }
 
     public void setAnswers(List<AnswerState> answers) {

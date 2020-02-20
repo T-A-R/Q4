@@ -15,6 +15,10 @@ public final class DateUtils {
 //        return System.currentTimeMillis();
     }
 
+    public static long getFullCurrentTime() {
+        return System.currentTimeMillis();
+    }
+
     public static Date getDate() {
         return new Date(getCurrentTimeMillis());
     }

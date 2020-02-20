@@ -11,7 +11,7 @@
     <FrameLayout
         android:id="@+id/second_background_toolbar_view"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_60sdp" />
+        android:layout_height="85dp" />
 
     <FrameLayout
         android:id="@+id/toolbar_view_container"
@@ -35,10 +35,11 @@
                 <ImageView
                     android:id="@+id/icon"
                     android:src="@drawable/q_icon"
-                    android:visibility="gone"
                     android:tint="@android:color/white"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_width="@dimen/_26sdp"
+                    android:layout_height="@dimen/_26sdp"
+                    android:layout_gravity="center_vertical"
+                    android:visibility="gone"/>
 
             </FrameLayout>
 

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Process;
 import android.provider.Settings;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -217,6 +218,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         try {
             currentQuestionnaire = getDao().getCurrentQuestionnaireR();
+            activity.getElementItemRList();
+            activity.getCurrentQuestionnaire();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -278,7 +281,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 showToast("Продолжение прерванной анкеты");
                 startRecording();
                 TransFragment fragment = new TransFragment();
-                fragment.setStartElement(currentQuestionnaire.getPrev_element_id().get(currentQuestionnaire.getPrev_element_id().size()-1).getNextId(), true);
+                fragment.setStartElement(currentQuestionnaire.getPrev_element_id().get(currentQuestionnaire.getPrev_element_id().size() - 1).getNextId(), true);
                 replaceFragment(fragment);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -303,6 +306,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void startQuestionnaire() {
+        Log.d(TAG, "startQuestionnaire: ZERO");
         if (checkTime() && checkGps()) {
             showScreensaver("Подождите, \nидет запуск анкеты", true);
             CompletableFuture.supplyAsync(() -> {
@@ -405,7 +409,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
 //                        Log.d(TAG, "??????????????????????????: 3");
                         getDao().setOption(Constants.OptionName.QUIZ_STARTED, "true");
-
+//                        activity.getElementItemRList();
+//                        activity.getCurrentQuestionnaire();
 //                        Log.d(TAG, "??????????????????????????: 4");
                         hideScreensaver();
 //                        for(ElementItemR elem : getCurrentElements()) {
@@ -637,7 +642,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(final DialogInterface dialog, final int which) {
-                            activity.finish();
+//                            activity.finish();
+                            activity.finishAffinity();
+                            Process.killProcess(Process.myPid());
                         }
                     })
                     .setNegativeButton(R.string.view_no, null).show();
@@ -835,8 +842,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     for (int i = 0; i < tree[0].length; i++) {
 //                    for (int i = 0; i < 6; i++) {
                         Log.d(TAG, tree[0][i].getElementOptionsR().getTitle() + " " + tree[0][i].getRelative_id() + " " + tree[0][i].getDone() + "/" + tree[0][i].getLimit() + "/" + tree[0][i].isEnabled() + " | "
-                                        + tree[1][i].getElementOptionsR().getTitle() + " " + tree[1][i].getRelative_id() + " " + tree[1][i].getDone() + "/" + tree[1][i].getLimit() + "/" + tree[1][i].isEnabled() + " | "
-                                        + tree[2][i].getElementOptionsR().getTitle() + " " + tree[2][i].getRelative_id() + " " + tree[2][i].getDone() + "/" + tree[2][i].getLimit() + "/" + tree[2][i].isEnabled() + " | "
+                                + tree[1][i].getElementOptionsR().getTitle() + " " + tree[1][i].getRelative_id() + " " + tree[1][i].getDone() + "/" + tree[1][i].getLimit() + "/" + tree[1][i].isEnabled() + " | "
+                                + tree[2][i].getElementOptionsR().getTitle() + " " + tree[2][i].getRelative_id() + " " + tree[2][i].getDone() + "/" + tree[2][i].getLimit() + "/" + tree[2][i].isEnabled() + " | "
                                 + tree[3][i].getElementOptionsR().getTitle() + " " + tree[3][i].getRelative_id() + " " + tree[3][i].getDone() + "/" + tree[3][i].getLimit() + "/" + tree[3][i].isEnabled() + " | "
                                 + tree[4][i].getElementOptionsR().getTitle() + " " + tree[4][i].getRelative_id() + " " + tree[4][i].getDone() + "/" + tree[4][i].getLimit() + "/" + tree[4][i].isEnabled() + " | "
 
@@ -880,6 +887,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void activateButtons() {
+        Log.d(TAG, "=== activateButtons ===");
+        isStartBtnPressed = false;
         btnContinue.setEnabled(true);
         btnStart.setEnabled(true);
         btnQuotas.setEnabled(true);
@@ -898,6 +907,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void deactivateButtons() {
+        Log.d(TAG, "=== deactivateButtons ===");
         btnContinue.setEnabled(false);
         btnStart.setEnabled(false);
         btnQuotas.setEnabled(false);

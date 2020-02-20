@@ -303,7 +303,12 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public void showToast(String text) {
-        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+        getMainActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+            }
+        });
+//        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
     }
 
     public boolean isActivated() {
@@ -317,7 +322,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         try {
             list = getDao().getActivationModelR();
         } catch (Exception e) {
-            Toast.makeText(getContext(), getString(R.string.db_load_error), Toast.LENGTH_SHORT).show();
+            showToast(getString(R.string.db_load_error));
         }
 
         if (list != null && !list.isEmpty())
@@ -468,10 +473,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public void initCurrentElements() {
         try {
-            //TODO REFACTOR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-            elementItemRList = getDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
-            currentQuestionnaire = getDao().getCurrentQuestionnaireR();
+            elementItemRList = getMainActivity().getElementItemRList();
+            currentQuestionnaire = getMainActivity().getCurrentQuestionnaire();
         } catch (Exception e) {
             Log.d(TAG, "initCurrentElements: ERROR");
             e.printStackTrace();

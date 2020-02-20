@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/_8ssp"
         android:layout_marginRight="@dimen/_8ssp"
-        android:layout_marginBottom="@dimen/_8ssp"
         android:orientation="horizontal"
         android:visibility="gone">
 
@@ -48,6 +47,7 @@
         android:id="@+id/open_question"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_3sdp"
         android:visibility="visible">
 
 
@@ -56,16 +56,18 @@
             android:layout_height="wrap_content"
             android:layout_toStartOf="@+id/radio_button"
             android:layout_toLeftOf="@+id/radio_button"
+            android:layout_centerVertical="true"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/answer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_8sdp"
+                android:layout_marginLeft="@dimen/_8sdp"
+                android:layout_marginRight="@dimen/_8sdp"
                 android:text="Answer"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/_14ssp" />
+                android:textSize="@dimen/_10ssp" />
 
             <TextView
                 android:id="@+id/answer_desc"
@@ -73,19 +75,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/_8sdp"
                 android:layout_marginRight="@dimen/_8sdp"
-                android:layout_marginBottom="@dimen/_6sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
                 android:text="Answer"
                 android:textColor="@android:color/darker_gray"
                 android:textStyle="italic"
-                android:textSize="@dimen/_12ssp"
+                android:textSize="@dimen/_8ssp"
                 android:visibility="gone" />
 
         </LinearLayout>
 
         <ImageView
             android:id="@+id/radio_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_16sdp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
@@ -100,7 +102,8 @@
     <RelativeLayout
         android:id="@+id/open_cont"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="visible">
 
         <EditText
             android:id="@+id/edit_answer"
@@ -110,14 +113,16 @@
             android:layout_marginRight="@dimen/_8sdp"
             android:maxLines="1"
             android:inputType="text"
-            android:textSize="@dimen/_12ssp" />
+            android:textSize="@dimen/_10ssp"
+            android:layout_marginBottom="@dimen/_3sdp"/>
 
         <ImageView
             android:id="@+id/edit_button"
-            android:layout_margin="@dimen/_4sdp"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_22sdp"
-            android:src="@drawable/button_background_transparent"/>
+            android:layout_height="@dimen/_20sdp"
+            android:layout_margin="@dimen/_4sdp"
+            android:src="@drawable/button_background_transparent"
+            android:layout_marginBottom="@dimen/_3sdp"/>
 
 
     </RelativeLayout>

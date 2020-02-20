@@ -95,8 +95,8 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         MainFragment.disableSideMenu();
 //        MainFragment.hideToolbar();
 
-        esLogin.setTypeface(Fonts.getFuturaPtMedium());
-        etPass.setTypeface(Fonts.getFuturaPtMedium());
+//        esLogin.setTypeface(Fonts.getFuturaPtMedium());
+//        etPass.setTypeface(Fonts.getFuturaPtMedium());
 //        btnSend.setTypeface(Fonts.getFuturaPtBook());
 //        btnSend.setTransformationMethod(null);
 
@@ -147,6 +147,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     public boolean onBackPressed() {
         if (isExit) {
             getActivity().finish();
+            android.os.Process.killProcess(android.os.Process.myPid());
         } else {
             Toast.makeText(getContext(), getString(R.string.exit_message), Toast.LENGTH_SHORT).show();
             isExit = true;

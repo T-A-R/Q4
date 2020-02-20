@@ -960,7 +960,7 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
                 return false;
             }
             if (max != null && counter > max) {
-                showToast("Выберите максимум " + min + " ответа.");
+                showToast("Выберите максимум " + max + " ответ(а).");
                 return false;
             }
         } else {

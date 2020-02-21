@@ -333,6 +333,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     try {
                         Log.d(TAG, "startQuestionnaire: clearCurrentQuestionnaireR() started.");
                         getDao().clearCurrentQuestionnaireR();
+                        getMainActivity().setCurrentQuestionnaireNull();
                         return true;
                     } catch (Exception e) {
                         Log.d(TAG, "startQuestionnaire: clearCurrentQuestionnaireR() error.");

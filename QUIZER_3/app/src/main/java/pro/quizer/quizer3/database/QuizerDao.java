@@ -227,6 +227,9 @@ public interface QuizerDao {
     @Query("SELECT * FROM ElementPassedR WHERE token =:token")
     List<ElementPassedR> getAllElementsPassedR(String token);
 
+    @Query("SELECT * FROM ElementPassedR")
+    List<ElementPassedR> getAllElementsPassedRNoToken();
+
     @Query("SELECT * FROM ElementPassedR WHERE token =:token AND relative_id =:relative_id LIMIT 1")
     ElementPassedR getElementPassedR(String token, int relative_id);
 

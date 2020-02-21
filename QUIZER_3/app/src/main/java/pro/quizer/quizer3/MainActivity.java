@@ -1315,4 +1315,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         }
         return currentQuestionnaire;
     }
+
+    public void setCurrentQuestionnaireNull() {
+        currentQuestionnaire = null;
+    }
 }

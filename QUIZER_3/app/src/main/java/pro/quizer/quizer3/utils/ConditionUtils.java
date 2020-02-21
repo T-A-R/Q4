@@ -1,6 +1,8 @@
 package pro.quizer.quizer3.utils;
 
 
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,6 +12,8 @@ import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.utils.Evaluator.TreeBooleanEvaluator;
+
+import static pro.quizer.quizer3.MainActivity.TAG;
 
 public final class ConditionUtils {
 
@@ -98,7 +102,7 @@ public final class ConditionUtils {
                     condition = condition.replace(LEFT_BRACKET + DisplayConditionType.SHOW + RIGHT_BRACKET, Constants.Strings.EMPTY);
 //                    Log.d(TAG, "evaluateCondition: 2.1 " + formatCondition(condition, pModel, pBaseActivity));
                     final boolean isCanShow = TreeBooleanEvaluator.evaluateBoolean(evaluator, formatCondition(condition, pModel, pBaseActivity));
-//                    Log.d(TAG, "evaluateCondition: 2.2 " + isCanShow);
+                    Log.d(TAG, "evaluateCondition: 2.2 " + isCanShow);
                     if (isCanShow) {
 //                        Log.d(TAG, "evaluateCondition: 2.3");
                         return CAN_SHOW;
@@ -163,27 +167,37 @@ public final class ConditionUtils {
 
         final Integer index = Integer.parseInt(array[0]);
         final String field = array[1];
-
+//        Log.d(TAG, "formatCondition: index: " + index);
         final ElementModelNew element = pMap.get(index);
-
+//        Log.d(TAG, "formatCondition element: " + element);
         if (element == null) {
             return pExpression;
         }
 
         List<ElementPassedR> elementsPassed = null;
         try {
-            final CurrentQuestionnaireR questionnaireR = pBaseActivity.getMainDao().getCurrentQuestionnaireR();
+            final CurrentQuestionnaireR questionnaireR = pBaseActivity.getCurrentQuestionnaire();
             final String token = questionnaireR.getToken();
-            elementsPassed = pBaseActivity.getMainDao().getAllElementsPassedR(token);
+//            Log.d(TAG, "formatCondition: TOKEN " + token);
+            elementsPassed = MainActivity.getStaticDao().getAllElementsPassedR(token);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+//        for(ElementPassedR el : MainActivity.getStaticDao().getAllElementsPassedRNoToken()) {
+//            Log.d(TAG, "formatCondition: " + el.getRelative_id() + " / " + el.getToken());
+//        }
+
+//        if(elementsPassed != null)  Log.d(TAG, "formatCondition PASSED LIST: " + elementsPassed.size());
+//        else Log.d(TAG, "formatCondition PASSED LIST: " + elementsPassed);
+
         ElementPassedR elementItemR = null;
         if (elementsPassed != null && elementsPassed.size() > 0) {
             for (ElementPassedR elementPassedR : elementsPassed) {
+//                Log.d(TAG, "formatCondition: " + elementPassedR.getRelative_id());
                 if (elementPassedR.getRelative_id().equals(index)) {
                     elementItemR = elementPassedR;
+//                    Log.d(TAG, "formatCondition: FOUND! " + elementItemR.getRelative_id());
                 }
             }
         }

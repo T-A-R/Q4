@@ -28,17 +28,17 @@
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:minWidth="?attr/actionBarSize"
-                android:padding="12dp">
+                android:layout_alignParentLeft="true">
 
                 <ImageView
                     android:id="@+id/icon"
-                    android:src="@drawable/q_icon"
+                    android:src="@drawable/quizer_icon_white"
                     android:tint="@android:color/white"
-                    android:layout_width="@dimen/_26sdp"
-                    android:layout_height="@dimen/_26sdp"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/_4sdp"
+                    android:layout_marginStart="@dimen/_4sdp"
                     android:visibility="gone"/>
 
             </FrameLayout>

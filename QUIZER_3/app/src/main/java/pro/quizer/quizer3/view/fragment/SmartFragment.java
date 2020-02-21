@@ -830,6 +830,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             try {
                 getDao().clearCurrentQuestionnaireR();
                 getDao().clearElementPassedR();
+                getMainActivity().setCurrentQuestionnaireNull();
 //                Log.d(TAG, "saveQuestionnaireToDatabase: 15");
             } catch (Exception e) {
 //                Log.d(TAG, "saveQuestionnaireToDatabase: 16");

@@ -317,7 +317,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         String configId = getCurrentUser().getConfig_id();
 
 
-
         for (final ElementModelNew element : elements) {
 //            Log.d(TAG, "time 1: " + (DateUtils.getCurrentTimeMillis() - currentTime));
 //            currentTime = DateUtils.getCurrentTimeMillis();
@@ -420,7 +419,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 //                    Log.d(TAG, "time 28: " + (DateUtils.getCurrentTimeMillis() - currentTime));
 //                    currentTime = DateUtils.getCurrentTimeMillis();
                     boolean isRotation = optionsModelNew.isRotation();
-                    if(isRotation && element.getSubtype() != null && element.getSubtype().equals(ElementSubtype.CONTAINER)) {
+                    if (isRotation && element.getSubtype() != null && element.getSubtype().equals(ElementSubtype.CONTAINER)) {
                         hasRotationContainer = true;
                     }
                     elementOptionsR.setRotation(optionsModelNew.isRotation());
@@ -1303,16 +1302,21 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public List<ElementItemR> getElementItemRList() {
-        if(currentElementsList == null) {
+        if (currentElementsList == null) {
             currentElementsList = getStaticDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
         }
         return currentElementsList;
     }
 
     public CurrentQuestionnaireR getCurrentQuestionnaire() {
-        if(currentQuestionnaire == null) {
+        if (currentQuestionnaire == null) {
             currentQuestionnaire = getStaticDao().getCurrentQuestionnaireR();
         }
+        return currentQuestionnaire;
+    }
+
+    public CurrentQuestionnaireR getCurrentQuestionnaireForce() {
+        currentQuestionnaire = getStaticDao().getCurrentQuestionnaireR();
         return currentQuestionnaire;
     }
 

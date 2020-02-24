@@ -454,7 +454,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                             final String answer = mEditText.getText().toString();
 
                             if (StringUtils.isEmpty(answer)) {
-                                mContext.showToastfromActivity(mContext.getString(R.string.fill_input_warning));
+                                mContext.showToastfromActivity(mContext.getString(R.string.empty_string_warning));
 
                                 return;
                             }

@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/cont_home_fragment">
+    android:id="@+id/cont_home_fragment"
+    android:keepScreenOn="true">
 
     <pro.quizer.quizer3.view.Toolbar
         android:id="@+id/toolbar"

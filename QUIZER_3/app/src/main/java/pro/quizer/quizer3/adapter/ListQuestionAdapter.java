@@ -60,11 +60,14 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     public boolean isOpen = false;
     public boolean isMulti;
     public boolean isPressed = false;
+    public boolean isRestored = false;
     private String openType;
     private MainActivity mActivity;
     private List<Integer> passedQuotaBlock;
     private ElementItemR[][] quotaTree;
     private Context mContext;
+    private String textBefore;
+    private String textAfter;
 
     public ListQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> passedQuotaBlock, ElementItemR[][] quotaTree, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
@@ -404,7 +407,6 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
         @Override
         public void onClick(View v) {
-//            Log.d(TAG, "onClick: OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOKKKKKKKKKKKKKKKK!!!!!!!!!!!!");
             isPressed = true;
             lastSelectedPosition = getAdapterPosition();
             if (answersList.get(lastSelectedPosition).isEnabled()) {
@@ -478,27 +480,35 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
             if (charSequence.length() == 1) canDelete = true;
             else canDelete = false;
+            if (lastSelectedPosition != -1) {
+                textBefore = answersState.get(lastSelectedPosition).getData();
+            }
         }
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            Log.d(TAG, "onTextChanged isPressed: " + isPressed + " " + charSequence.length());
             if (lastSelectedPosition != -1 && isPressed && charSequence != null && charSequence.length() > 0) {
                 answersState.get(lastSelectedPosition).setData(charSequence.toString());
+//                clearOldPassed();
             }
             if (charSequence == null || charSequence.length() == 0)
                 if (canDelete) {
                     answersState.get(lastSelectedPosition).setData(charSequence.toString());
                 }
 //            mDataset[position] = charSequence.toString();
-//            if (lastSelectedPosition != -1) {
-//                Log.d(TAG, "onTextChanged_1: " + lastSelectedPosition + " " + charSequence.toString() + " " + charSequence.length());
-//                Log.d(TAG, "onTextChanged_2: " + lastSelectedPosition + " " + answersState.get(lastSelectedPosition).getData());
-//            }
+            if (lastSelectedPosition != -1) {
+                Log.d(TAG, "onTextChanged canDelete: " + canDelete);
+                Log.d(TAG, "onTextChanged charSequence: " + lastSelectedPosition + " " + charSequence.toString());
+                Log.d(TAG, "onTextChanged answersState: " + lastSelectedPosition + " " + answersState.get(lastSelectedPosition).getData());
+            }
         }
 
         @Override
         public void afterTextChanged(Editable editable) {
-
+            if (lastSelectedPosition != -1 && !answersState.get(lastSelectedPosition).getData().equals(textBefore)) {
+                clearOldPassed();
+            }
         }
     }
 
@@ -541,6 +551,10 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         } else {
             Log.d(TAG, "setAnswers: NULL");
         }
+    }
+
+    public void setPressed(boolean pressed) {
+        isPressed = pressed;
     }
 
     private Calendar mCalendar = Calendar.getInstance();
@@ -605,5 +619,22 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
     private void showDisableToLog(String name) {
         Log.d(TAG, "XXXXXX Disabled: " + name);
+    }
+
+    public void setRestored(boolean restored) {
+        isRestored = restored;
+    }
+
+    private void clearOldPassed() {
+        if (isRestored) {
+            try {
+                int id = mActivity.getMainDao().getElementPassedR(mActivity.getCurrentQuestionnaire().getToken(), question.getRelative_id()).getId();
+                mActivity.getMainDao().deleteOldElementsPassedR(id);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            isRestored = false;
+        }
     }
 }

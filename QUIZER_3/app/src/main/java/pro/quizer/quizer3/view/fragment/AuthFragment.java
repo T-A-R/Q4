@@ -68,6 +68,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     private Button btnSend;
 
     private boolean isExit;
+    private boolean isCanBackPress = true;
     private int mVersionTapCount = 0;
 
     String login;
@@ -145,14 +146,16 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     @Override
     public boolean onBackPressed() {
-        if (isExit) {
-            getActivity().finish();
-            android.os.Process.killProcess(android.os.Process.myPid());
-        } else {
-            Toast.makeText(getContext(), getString(R.string.exit_message), Toast.LENGTH_SHORT).show();
-            isExit = true;
+        if(isCanBackPress) {
+            if (isExit) {
+                getActivity().finish();
+                android.os.Process.killProcess(android.os.Process.myPid());
+            } else {
+                Toast.makeText(getContext(), getString(R.string.exit_message), Toast.LENGTH_SHORT).show();
+                isExit = true;
+            }
         }
-        return true;
+            return true;
     }
 
     private void checkVersion() {
@@ -243,6 +246,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             super.onPreExecute();
             showScreensaver("Подождите,\nидет подготовка анкеты", true);
             UiUtils.setButtonEnabled(btnSend, false);
+            isCanBackPress = false;
         }
 
         @Override

@@ -63,14 +63,14 @@ public class MultiSelectSpinner extends Spinner implements DialogInterface.OnMul
 
     public MultiSelectSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Log.d("TARLOGS", "ADAPTER 2");
+//        Log.d("TARLOGS", "ADAPTER 2");
         simple_adapter = new ArrayAdapter<String>(context,
                 android.R.layout.simple_spinner_item) {
             @Override
             public boolean isEnabled(int position) {
 //                if (!mEnabled[position]) {
                 if (!mEnabled[position]) {
-                    Log.d("TARLOGS", "ADAPTER 2 isEnabled: false " + position);
+//                    Log.d("TARLOGS", "ADAPTER 2 isEnabled: false " + position);
                     // Disable the first item from Spinner
                     // First item will be use for hint
                     return false;

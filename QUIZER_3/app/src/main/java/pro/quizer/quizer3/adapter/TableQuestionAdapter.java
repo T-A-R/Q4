@@ -232,7 +232,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final ElementOptionsR optionsModel = mTopSide.get(column - 1).getElementOptionsR();
 
         UiUtils.setTextOrHide(vh.mHeaderColumnTextView, optionsModel.getTitle());
-        UiUtils.setTextOrHide(vh.mHeaderColumnDescriptionTextView, optionsModel.getDescription());
+//        UiUtils.setTextOrHide(vh.mHeaderColumnDescriptionTextView, optionsModel.getDescription());
     }
 
     @Override
@@ -252,7 +252,14 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     @Override
+    public int getHeaderRowWidth() {
+        return mHeaderWidth;
+    }
+
+    @Override
     public int getColumnWidth(final int column) {
+        if(column == 0) return mColumnWidth;
+        else return mRowHeight;
 //        if (mIsFlipColsAndRows) {
 //            final ElementItemR question = mQuestions.get(column);
 //            if (!question.getElementOptionsR().isCanShow(mBaseActivity, mMap, question)) {
@@ -263,7 +270,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 //                return mColumnWidth;
 //            }
 //        } else {
-        return mColumnWidth;
+//        return mColumnWidth;
 //        }
     }
 
@@ -286,11 +293,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 //        } else {
         return mRowHeight;
 //        }
-    }
-
-    @Override
-    public int getHeaderRowWidth() {
-        return mHeaderWidth;
     }
 
     private ElementItemR getElement(final int row, final int column) {
@@ -592,12 +594,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private static class TableHeaderColumnViewHolder extends ViewHolderImpl {
 
         TextView mHeaderColumnTextView;
-        TextView mHeaderColumnDescriptionTextView;
+//        TextView mHeaderColumnDescriptionTextView;
 
         private TableHeaderColumnViewHolder(@NonNull final View itemView) {
             super(itemView);
             mHeaderColumnTextView = itemView.findViewById(R.id.table_header_column_text_view);
-            mHeaderColumnDescriptionTextView = itemView.findViewById(R.id.table_header_column_description_text_view);
+//            mHeaderColumnDescriptionTextView = itemView.findViewById(R.id.table_header_column_description_text_view);
         }
     }
 

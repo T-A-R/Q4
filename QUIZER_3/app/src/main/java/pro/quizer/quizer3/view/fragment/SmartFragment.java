@@ -105,7 +105,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     private int abortedBoxRelativeId = 0;
     private boolean hasAbortedBox = false;
 
-//    private HashMap<Integer, ElementModelNew> mMap;
+    //    private HashMap<Integer, ElementModelNew> mMap;
     private CurrentQuestionnaireR currentQuestionnaire = null;
     private List<ElementItemR> elementItemRList = null;
 
@@ -738,6 +738,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public boolean saveQuestionnaireToDatabase(CurrentQuestionnaireR currentQuiz, boolean aborted) {
+//        Log.d(TAG, "!!!!!!!!1 saveQuestionnaireToDatabase: " + getCurrentUser().getConfigR().isSaveAborted());
+//        if (aborted && !getCurrentUser().getConfigR().isSaveAborted()) {
+//            return true;
+//        }
 
 //        Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!!!!!!111 saveQuestionnaireToDatabase: 1");
         boolean saved = true;
@@ -847,6 +851,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         }
         Log.d(TAG, "saveQuestionnaireToDatabase finished: " + saved);
         return saved;
+
     }
 
     private boolean saveElement(CurrentQuestionnaireR currentQuiz, final ElementPassedR element) {

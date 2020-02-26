@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:layout_height="96dp"
-    tools:layout_width="196dp">
+    tools:layout_height="130dp"
+    tools:layout_width="50dp">
 
     <ImageView
         android:id="@+id/fullscreen"
@@ -40,9 +40,10 @@
         android:maxLines="2"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
+        android:rotation="90"
+        android:text="text"
         android:textColor="@android:color/black"
-        android:textSize="14sp"
-        android:text="text" />
+        android:textSize="14sp" />
 
     <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
         android:id="@+id/table_header_column_description_text_view"

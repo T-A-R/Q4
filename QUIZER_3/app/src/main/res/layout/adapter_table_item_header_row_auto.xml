@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:layout_height="@dimen/_76sdp"
-    tools:layout_width="@dimen/_152sdp">
+    tools:layout_height="@dimen/_40sdp"
+    tools:layout_width="@dimen/_120sdp">
 
     <ImageView
         android:id="@+id/fullscreen"

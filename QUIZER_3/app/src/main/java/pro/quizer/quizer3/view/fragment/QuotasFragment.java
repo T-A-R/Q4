@@ -103,7 +103,7 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
         mMainActivity = (MainActivity) getActivity();
 //        mMap = mMainActivity.getMap();
         mMap = getMainActivity().getMap(false);
-        Log.d(TAG, "??????????? initViews: " + mMap.size());
+//        Log.d(TAG, "??????????? initViews: " + mMap.size());
         mSearchEditTextView = findViewById(R.id.search_edit_text);
         mNotCompletedOnlySwitch = findViewById(R.id.not_completed_only_switch);
         mClearSearchBtn = findViewById(R.id.clear_search_icon);
@@ -208,7 +208,7 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
                 hideEmptyView();
 
                 final MainActivity mainActivity = (MainActivity) getActivity();
-                Log.d(TAG, "???????????? updateData: " + mMap.size());
+//                Log.d(TAG, "???????????? updateData: " + mMap.size());
                 mAdapter = new QuotasAdapter(mainActivity, quotas, mMap);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mainActivity);
                 mQuotasRecyclerView.setLayoutManager(mLayoutManager);

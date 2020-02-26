@@ -653,7 +653,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                     isRestored = false;
                                     int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
                                     getDao().deleteOldElementsPassedR(id);
-                                    showToast("Данные изменены");
+                                    showToast(getString(R.string.data_changed));
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -713,7 +713,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                         isRestored = false;
                                         int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
                                         getDao().deleteOldElementsPassedR(id);
-                                        showToast("Данные изменены");
+                                        showToast(getString(R.string.data_changed));
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
@@ -812,7 +812,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private boolean saveElement() {
-        st("init SAVE");
+//        st("init SAVE");
         boolean saved = false;
 //        if(!isRestored) {
         if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.QUOTA) || answerType.equals(ElementSubtype.SCALE)) {
@@ -821,7 +821,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 answerStates = adapterScale.getAnswers();
             } else {
                 answerStates = adapterList.getAnswers();
-                Log.d(TAG, "saveElement: " + answerStates.get(0).getData());
+//                Log.d(TAG, "saveElement: " + answerStates.get(0).getData());
             }
             st("init SAVE 1");
             if (answerStates != null && notEmpty(answerStates)) {
@@ -863,7 +863,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 st("init SAVE 6");
                 elementPassedR.setToken(getQuestionnaire().getToken());
                 st("init SAVE 7");
-                Log.d(TAG, "saveElementTIME: " + startTime);
+//                Log.d(TAG, "saveElementTIME: " + startTime);
                 elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
                 st("init SAVE 8");
                 elementPassedR.setFrom_quotas_block(false);
@@ -871,9 +871,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //                Log.d(TAG, "saveElement: TOKEN " + elementPassedR.getToken());
                 try {
 //                    if (!isRestored) {
-                        getDao().insertElementPassedR(elementPassedR);
-                        st("init SAVE 10");
-                        getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
+                    getDao().insertElementPassedR(elementPassedR);
+                    st("init SAVE 10");
+                    getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
 //                    }
                     saved = true;
                 } catch (Exception e) {
@@ -897,7 +897,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
                         try {
 //                            if (!isRestored) {
-                                getDao().insertElementPassedR(answerPassedR);
+                            getDao().insertElementPassedR(answerPassedR);
 //                            }
                             saved = true;
                         } catch (Exception e) {
@@ -1133,7 +1133,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         int counter = 0;
 
         for (AnswerState state : answerStates) {
-            Log.d(TAG, "???? Empty: " + state.getRelative_id() + " " + state.isChecked() + " " + state.getData());
+//            Log.d(TAG, "???? Empty: " + state.getRelative_id() + " " + state.isChecked() + " " + state.getData());
             if (state.isChecked()) {
                 ElementItemR element = null;
                 boolean openType = false;
@@ -1148,10 +1148,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
 //                if (state.isChecked() && openType) {
                 if (openType) {
-                    Log.d(TAG, "STATE: " + state.getRelative_id() + " " + state.getData());
+//                    Log.d(TAG, "STATE: " + state.getRelative_id() + " " + state.getData());
                     if (state.getData().equals("") || state.getData() == null) {
                         showToast(getString(R.string.empty_string_warning));
-                        Log.d(TAG, "Empty: " + state.getRelative_id() + " " + state.getData());
+//                        Log.d(TAG, "Empty: " + state.getRelative_id() + " " + state.getData());
                         return false;
                     }
                 }
@@ -1209,15 +1209,15 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     @Override
     public void onAnswerClick(int position, boolean enabled, String answer) {
-        Log.d(TAG, "onAnswerClick 2: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//        Log.d(TAG, "onAnswerClick 2: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         if (isRestored) {
 //            int id = currentElement.getId();
             try {
                 isRestored = false;
                 int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
-                Log.d(TAG, "onAnswerClick DELETE: " + id);
+//                Log.d(TAG, "onAnswerClick DELETE: " + id);
                 getDao().deleteOldElementsPassedR(id);
-                showToast("Данные изменены");
+                showToast(getString(R.string.data_changed));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1226,13 +1226,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     @Override
     public void onAnswerClick(int row, int column) {
-        Log.d(TAG, "onAnswerClick 1: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//        Log.d(TAG, "onAnswerClick 1: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         if (isRestored) {
             try {
                 isRestored = false;
                 int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
                 getDao().deleteOldElementsPassedR(id);
-                showToast("Данные изменены");
+                showToast(getString(R.string.data_changed));
 //                showPassed();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1289,7 +1289,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.QUOTA)) {
             List<AnswerState> answerStatesAdapter = adapterList.getAnswers();
             List<AnswerState> answerStatesRestored = new ArrayList<>();
-            int lastSelectedPosition = 0;
+            int lastSelectedPosition = -1;
             for (int i = 0; i < answerStatesAdapter.size(); i++) {
                 AnswerState answerStateNew = new AnswerState();
                 ElementPassedR answerStateRestored = null;
@@ -1427,17 +1427,20 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     public boolean saveQuestionnaire(boolean aborted) {
         stopRecording();
 //        Log.d(TAG, "!!!!!!!!!!!!!!!!11111111 saveQuestionnaire: ");
-        if (saveQuestionnaireToDatabase(getQuestionnaire(), aborted)) {
-            try {
-                getDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");
-            } catch (Exception e) {
-                e.printStackTrace();
+        if (!aborted || (getCurrentUser().getConfigR().isSaveAborted() && aborted)) {
+            if (saveQuestionnaireToDatabase(getQuestionnaire(), aborted)) {
+                try {
+                    getDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                showToast("Анкета сохранена");
+                replaceFragment(new HomeFragment());
+
+            } else {
+                showToast("Ошибка сохранения анкеты. Попробуйте еще раз");
+                return false;
             }
-            showToast("Анкета сохранена");
-            replaceFragment(new HomeFragment());
-        } else {
-            showToast("Ошибка сохранения анкеты. Попробуйте еще раз");
-            return false;
         }
         return true;
     }
@@ -1665,7 +1668,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void st(String notes) {
-        MainActivity.showTime(notes);
+//        MainActivity.showTime(notes);
     }
 }
 

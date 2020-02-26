@@ -370,6 +370,7 @@
     <string name="show_sms_dialog">Показ диалога об отправке СМС</string>
     <string name="cant_show_dialog">Невозможно отобразить диалог</string>
     <string name="view_reopen">Развернуть...</string>
+    <string name="data_changed">Данные изменены</string>
 
 
 </resources>

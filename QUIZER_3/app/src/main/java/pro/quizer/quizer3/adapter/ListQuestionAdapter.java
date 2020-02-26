@@ -407,50 +407,63 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
         @Override
         public void onClick(View v) {
-            isPressed = true;
-            lastSelectedPosition = getAdapterPosition();
-            if (answersList.get(lastSelectedPosition).isEnabled()) {
-                notifyItemChanged(lastSelectedPosition);
+            boolean emptyAnswersState = true;
+//            int i = 0;
+            for (AnswerState answer : answersState) {
+                if (answer.isChecked()) emptyAnswersState = false;
+//                Log.d(TAG, "???????: " + i + " / " + answer.isChecked() + " / " + answer.getRelative_id() + " " + answer.getData());
+//                i++;
+            }
+            Log.d(TAG, "========: " + getAdapterPosition() + " " + answersState.get(getAdapterPosition()).isChecked() + " " + isFilled());
+            if (emptyAnswersState || answersState.get(getAdapterPosition()).isChecked() || isFilled()) {
+//                Log.d(TAG, "???????: FIRST IF OK");
+                isPressed = true;
+                lastSelectedPosition = getAdapterPosition();
+                if (answersList.get(lastSelectedPosition).isEnabled()) {
+                    notifyItemChanged(lastSelectedPosition);
 
-                if (isMulti && !answersList.get(lastSelectedPosition).getElementOptionsR().isUnchecker()) {
+                    if (isMulti && !answersList.get(lastSelectedPosition).getElementOptionsR().isUnchecker()) {
 
-                    if (answersState.get(lastSelectedPosition).isChecked()) {
-                        answersState.get(lastSelectedPosition).setChecked(false);
+                        if (answersState.get(lastSelectedPosition).isChecked()) {
+                            answersState.get(lastSelectedPosition).setChecked(false);
 
+                        } else {
+                            answersState.get(lastSelectedPosition).setChecked(true);
+                            lastCheckedElement = lastSelectedPosition;
+                        }
+                    } else if (isMulti && answersList.get(lastSelectedPosition).getElementOptionsR().isUnchecker()) {
+                        notifyDataSetChanged();
+                        if (!answersState.get(lastSelectedPosition).isChecked()) {
+                            answersState.get(lastSelectedPosition).setChecked(true);
+                            lastCheckedElement = lastSelectedPosition;
+                            unselectOther(lastSelectedPosition);
+                        } else {
+                            answersState.get(lastSelectedPosition).setChecked(false);
+                        }
+                        setEnabled(lastSelectedPosition);
                     } else {
-                        answersState.get(lastSelectedPosition).setChecked(true);
-                        lastCheckedElement = lastSelectedPosition;
-                    }
-                } else if (isMulti && answersList.get(lastSelectedPosition).getElementOptionsR().isUnchecker()) {
-                    notifyDataSetChanged();
-                    if (!answersState.get(lastSelectedPosition).isChecked()) {
+                        notifyDataSetChanged();
                         answersState.get(lastSelectedPosition).setChecked(true);
                         lastCheckedElement = lastSelectedPosition;
                         unselectOther(lastSelectedPosition);
-                    } else {
-                        answersState.get(lastSelectedPosition).setChecked(false);
                     }
-                    setEnabled(lastSelectedPosition);
-                } else {
-                    notifyDataSetChanged();
-                    answersState.get(lastSelectedPosition).setChecked(true);
-                    lastCheckedElement = lastSelectedPosition;
-                    unselectOther(lastSelectedPosition);
-                }
 
-                if (isChecked) {
-                    isChecked = false;
+                    if (isChecked) {
+                        isChecked = false;
 //                button.setImageResource( R.drawable.radio_button_unchecked);
-                } else {
-                    isChecked = true;
+                    } else {
+                        isChecked = true;
 //                button.setImageResource( R.drawable.radio_button_checked);
 //                answerEditText.requestFocus();
-                }
+                    }
 
-                String answer = null;
-                if (answerEditText.getText() != null)
-                    answer = answerEditText.getText().toString();
-                onUserClickListener.onAnswerClick(lastSelectedPosition, isChecked, answer);
+                    String answer = null;
+                    if (answerEditText.getText() != null)
+                        answer = answerEditText.getText().toString();
+                    onUserClickListener.onAnswerClick(lastSelectedPosition, isChecked, answer);
+                }
+            } else {
+                mActivity.showToastfromActivity(mActivity.getString(R.string.empty_string_warning));
             }
         }
     }
@@ -481,14 +494,21 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             if (charSequence.length() == 1) canDelete = true;
             else canDelete = false;
             if (lastSelectedPosition != -1) {
+//                for(int k =0; k < answersState.size();k++) {
+//                    Log.d(TAG, "state: " + k + " " + answersState.get(k).getData());
+//                }
+//                Log.d(TAG, "beforeTextChanged: " + lastSelectedPosition);
+//                Log.d(TAG, "beforeTextChanged: textBefore 1" + answersState.get(lastSelectedPosition).getData());
                 textBefore = answersState.get(lastSelectedPosition).getData();
+
             }
+//            Log.d(TAG, "beforeTextChanged: textBefore 2" + textBefore);
         }
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            Log.d(TAG, "onTextChanged isPressed: " + isPressed + " " + charSequence.length());
-            if (lastSelectedPosition != -1 && isPressed && charSequence != null && charSequence.length() > 0) {
+//            Log.d(TAG, "onTextChanged isPressed: " + isPressed + " " + charSequence.length());
+            if (isOpen && lastSelectedPosition != -1 && isPressed && charSequence != null && charSequence.length() > 0) {
                 answersState.get(lastSelectedPosition).setData(charSequence.toString());
 //                clearOldPassed();
             }
@@ -497,16 +517,19 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                     answersState.get(lastSelectedPosition).setData(charSequence.toString());
                 }
 //            mDataset[position] = charSequence.toString();
-            if (lastSelectedPosition != -1) {
-                Log.d(TAG, "onTextChanged canDelete: " + canDelete);
-                Log.d(TAG, "onTextChanged charSequence: " + lastSelectedPosition + " " + charSequence.toString());
-                Log.d(TAG, "onTextChanged answersState: " + lastSelectedPosition + " " + answersState.get(lastSelectedPosition).getData());
-            }
+//            if (lastSelectedPosition != -1) {
+//                Log.d(TAG, "onTextChanged canDelete: " + canDelete);
+//                Log.d(TAG, "onTextChanged charSequence: " + lastSelectedPosition + " " + charSequence.toString());
+//                Log.d(TAG, "onTextChanged answersState: " + lastSelectedPosition + " " + answersState.get(lastSelectedPosition).getData());
+//            }
         }
 
         @Override
         public void afterTextChanged(Editable editable) {
-            if (lastSelectedPosition != -1 && !answersState.get(lastSelectedPosition).getData().equals(textBefore)) {
+//            if (lastSelectedPosition != -1)
+//            Log.d(TAG, "afterTextChanged: " + lastSelectedPosition + " " + textBefore + " / " + answersState.get(lastSelectedPosition).getData());
+            if (lastSelectedPosition != -1 && !answersState.get(lastSelectedPosition).getData().equals(textBefore) && !answersList.get(lastSelectedPosition).getElementOptionsR().getOpen_type().equals("checkbox")) {
+//                Log.d(TAG, "afterTextChanged: CLEAR");
                 clearOldPassed();
             }
         }
@@ -630,11 +653,43 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             try {
                 int id = mActivity.getMainDao().getElementPassedR(mActivity.getCurrentQuestionnaire().getToken(), question.getRelative_id()).getId();
                 mActivity.getMainDao().deleteOldElementsPassedR(id);
-
+                mActivity.showToastfromActivity(mActivity.getString(R.string.data_changed));
             } catch (Exception e) {
                 e.printStackTrace();
             }
             isRestored = false;
         }
+    }
+
+    public boolean isFilled() {
+        Log.d(TAG, "isFilled: " + isOpen + " " + lastSelectedPosition);
+        if (!isOpen) {
+            return true;
+        }
+        if (!isMulti) {
+            return true;
+        }
+        if (lastSelectedPosition == -1) {
+            return true;
+        }
+//        Log.d(TAG, "isFilled: " + answersList.get(lastSelectedPosition).getElementOptionsR().getOpen_type() +
+//                " " + answersList.get(lastSelectedPosition).getRelative_id() +
+//                " " + answersState.get(lastSelectedPosition).getRelative_id());
+//        if (answersList.get(lastSelectedPosition).getElementOptionsR().getOpen_type().equals("checkbox") || answersState.get(lastCheckedElement).getData().length() > 0) {
+        if (answersList.get(lastSelectedPosition).getElementOptionsR().getOpen_type().equals("checkbox") || isAllHaveData()) {
+            return true;
+        } else return false;
+    }
+
+    private boolean isAllHaveData() {
+        boolean ok = true;
+        for (int i = 0; i < answersState.size(); i++) {
+            if (!answersList.get(i).getElementOptionsR().getOpen_type().equals("checkbox")
+                    && answersState.get(i).isChecked()
+                    && (answersState.get(i).getData() == null || answersState.get(i).getData().length() == 0)) {
+                ok = false;
+            }
+        }
+        return ok;
     }
 }

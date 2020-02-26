@@ -324,7 +324,7 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
             currentElement = getQuestion(currentElement);
             startElementId = currentElement.getRelative_id();
 
-            Log.d(TAG, "??????? CURRENT initQuestion: " + currentElement.getRelative_id());
+//            Log.d(TAG, "??????? CURRENT initQuestion: " + currentElement.getRelative_id());
 
 //            boolean found = false;
 //
@@ -610,7 +610,7 @@ public class PageElementFragment extends ScreenFragment implements View.OnClickL
 //            questions = currentElement.getElements();
             //answersList = questionsList for TABLE
             adapterTable = new TableQuestionAdapter(currentElement, answersList, getActivity(), mRefreshRecyclerViewRunnable, this);
-            Log.d(TAG, "??????? answers initRecyclerView: " + answersList.size());
+//            Log.d(TAG, "??????? answers initRecyclerView: " + answersList.size());
             tableLayout.setAdapter(adapterTable);
             tableLayout.setDrawingCacheEnabled(true);
         } else if (answerType.equals(ElementSubtype.SCALE)) {

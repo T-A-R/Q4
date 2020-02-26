@@ -147,7 +147,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             @Override
             public void onStarting() {
                 showScreensaver(true);
-                Log.d(TAG, "SendQuestionnairesByUserModelExecutable onStarting: ");
+//                Log.d(TAG, "SendQuestionnairesByUserModelExecutable onStarting: ");
             }
 
             @Override
@@ -174,7 +174,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 //                    });
 
                 hideScreensaver();
-                Log.d(TAG, "SendQuestionnairesByUserModelExecutable onSuccess: ");
+//                Log.d(TAG, "SendQuestionnairesByUserModelExecutable onSuccess: ");
                 initSyncInfoViews();
             }
 
@@ -314,7 +314,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 if (currentQuestionnaire != null) {
                     boolean saved = true;
                     if (currentQuestionnaire.getUser_project_id().equals(getCurrentUser().getUser_project_id())) {
-                        saved = saveQuestionnaireToDatabase(currentQuestionnaire, true);
+                        if(getCurrentUser().getConfigR().isSaveAborted()) {
+                            saved = saveQuestionnaireToDatabase(currentQuestionnaire, true);
+                        } else {
+                            saved = true;
+                        }
                         Log.d(TAG, "startQuestionnaire: MID 1 " + saved);
 //                        if (!saved) {
 //                            hideScreensaver();

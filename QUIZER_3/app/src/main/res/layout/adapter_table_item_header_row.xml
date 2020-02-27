@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:layout_height="50dp"
-    tools:layout_width="130dp">
+    tools:layout_width="130dp"
+    android:id="@+id/row_cont">
 
     <ImageView
         android:id="@+id/fullscreen"

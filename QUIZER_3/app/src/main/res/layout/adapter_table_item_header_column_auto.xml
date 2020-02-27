@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/column_cont"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-
-    >
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/fullscreen"
@@ -30,19 +29,18 @@
         android:id="@+id/table_header_column_text_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_toStartOf="@+id/fullscreen"
-        android:layout_toLeftOf="@+id/fullscreen"
-        android:gravity="bottom"
-        android:maxLines="2"
         android:layout_marginStart="@dimen/_4sdp"
         android:layout_marginLeft="@dimen/_4sdp"
         android:layout_marginTop="@dimen/_4sdp"
         android:layout_marginBottom="@dimen/_4sdp"
+        android:layout_toStartOf="@+id/fullscreen"
+        android:layout_toLeftOf="@+id/fullscreen"
+        android:gravity="bottom"
+        android:maxLines="2"
         android:text="Барсуков Ибрагим Исаевич"
         android:textColor="@android:color/black"
         android:textSize="@dimen/_11ssp"
-        android:visibility="visible"/>
-
+        android:visibility="visible" />
 
 
 </RelativeLayout>

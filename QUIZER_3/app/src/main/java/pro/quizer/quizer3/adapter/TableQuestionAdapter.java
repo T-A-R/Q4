@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -74,11 +73,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         mLayoutInflater = LayoutInflater.from(context);
         final Resources res = context.getResources();
         final ElementOptionsR optionsModel = pCurrentElement.getElementOptionsR();
-//        mIsFlipColsAndRows = optionsModel.isFlip_cols_and_rows();
-        mIsFlipColsAndRows = false;
+        mIsFlipColsAndRows = optionsModel.isFlip_cols_and_rows();
         mContext = (MainActivity) context;
-
-//        mQuestions = pCurrentElement.getElements();
         mQuestions = questions;
         mLine = new boolean[mQuestions.size()];
         for (int i = 0; i < mLine.length; i++) {
@@ -118,29 +114,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         setLine();
 
-//        if (optionsModel.isRotation()) {
-//            CollectionUtils.shuffleElements(mCurrentElement, mQuestions);
-//        }
-//
-//        if (optionsModel.isRotationAnswers()) {
-//            CollectionUtils.shuffleTableAnswers(mCurrentElement, mQuestions);
-//        }
-
-//        if (mQuestions.get(0) != null) {
-//            mQuestions.add(0, null);
-//        }
-
-//        for (final ElementItemR question : mQuestions) {
-//            if (question != null) {
-//                final List<ElementItemR> answers = question.getElements();
-//                Log.d(TAG, "TableQuestionAdapter: " + question.getRelative_id());
-//                if (answers.get(0) != null) {
-//                    answers.add(0, null);
-//                }
-//            }
-//        }
-
-
         if (mIsFlipColsAndRows) {
             mTopSide = mQuestions;
             mLeftSide = mAnswers;
@@ -178,7 +151,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     @NonNull
     @Override
     public ViewHolderImpl onCreateColumnHeaderViewHolder(@NonNull final ViewGroup parent) {
-        return new TableHeaderColumnViewHolder(mLayoutInflater.inflate(mContext.isAutoZoom() ? R.layout.adapter_table_item_header_column_auto : R.layout.adapter_table_item_header_column, parent, false));
+//        return new TableHeaderColumnViewHolder(mLayoutInflater.inflate(mContext.isAutoZoom() ? R.layout.adapter_table_item_header_column_auto : R.layout.adapter_table_item_header_column, parent, false));
+        return new TableHeaderColumnViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item_header_column_auto, parent, false));
     }
 
     @NonNull
@@ -215,40 +189,21 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 vh.mTableItemCheckBox.setVisibility(View.GONE);
                 vh.mTableItemRadioButton.setVisibility(View.VISIBLE);
             }
-
-            setChecked(vh, mAnswersState[row - 1][column - 1].isChecked());
-
             if (!mIsFlipColsAndRows) {
+                setChecked(vh, mAnswersState[row - 1][column - 1].isChecked());
                 if (mLine[row - 1]) {
                     vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
                 } else {
                     vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.white));
                 }
             } else {
+                setChecked(vh, mAnswersState[column - 1][row - 1].isChecked());
                 if (mLine[column - 1]) {
                     vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
                 } else {
                     vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.white));
                 }
             }
-//                for (int i = 0; i < mAnswersState.length; i++) {
-//                    for (int k = 0; k < mAnswersState[0].length; k++) {
-//                        if (mAnswersState[i][k].isChecked()) {
-//                            vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray));
-//                        } else {
-////                            vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.white));
-//                        }
-//                    }
-//                }
-
-
-            //TODO Отключение элементов
-
-//            if (currentElement.getElementOptionsR().isCanShow(mBaseActivity, mMap, currentElement)) {
-//                vh.mDisableFrame.setVisibility(View.GONE);
-//            } else {
-//                vh.mDisableFrame.setVisibility(View.VISIBLE);
-//            }
         }
     }
 
@@ -258,20 +213,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         vh.mOpenAnswerEditText.setText(pIsChecked ? "✓" : "");
     }
 
-    private void setLine(final TableItemViewHolder vh, final boolean pIsChecked) {
-//        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-//            vh.mCont.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bg_gray_shadow));
-//        } else {
-//            vh.mCont.setBackground(ContextCompat.getColor(mContext, R.color.gray));
-//        }
-        if (pIsChecked) {
-            vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.gray));
-        } else {
-            vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.white));
-        }
-
-    }
-
     @Override
     public void onBindHeaderColumnViewHolder(@NonNull final ViewHolderImpl viewHolder, final int column) {
         final TableHeaderColumnViewHolder vh = (TableHeaderColumnViewHolder) viewHolder;
@@ -279,6 +220,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         UiUtils.setTextOrHide(vh.mHeaderColumnTextView, optionsModel.getTitle());
 //        UiUtils.setTextOrHide(vh.mHeaderColumnDescriptionTextView, optionsModel.getDescription());
+        if (mIsFlipColsAndRows) {
+            if (mLine[column - 1]) {
+                vh.mColumnCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
+            } else {
+                vh.mColumnCont.setBackgroundColor(mContext.getResources().getColor(R.color.white));
+            }
+        }
     }
 
     @Override
@@ -313,18 +261,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     public int getColumnWidth(final int column) {
         if (column == 0) return mColumnWidth;
         else return mRowHeight;
-//        if (mIsFlipColsAndRows) {
-//            final ElementItemR question = mQuestions.get(column);
-//            if (!question.getElementOptionsR().isCanShow(mBaseActivity, mMap, question)) {
-//                return 0;
-//            } else {
-//                question.setQuestionShowing(true);
-//
-//                return mColumnWidth;
-//            }
-//        } else {
-//        return mColumnWidth;
-//        }
     }
 
     @Override
@@ -334,18 +270,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     @Override
     public int getRowHeight(final int row) {
-//        if (!mIsFlipColsAndRows) {
-//            final ElementModel question = mQuestions.get(row);
-//            if (!question.getOptions().isCanShow(mBaseActivity, mMap, question)) {
-//                return 0;
-//            } else {
-//                question.setQuestionShowing(true);
-//
-//                return mRowHeight;
-//            }
-//        } else {
         return mRowHeight;
-//        }
     }
 
     private ElementItemR getElement(final int row, final int column) {
@@ -382,7 +307,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     private Calendar mCalendar = Calendar.getInstance();
 
-    // отображаем диалоговое окно для выбора даты
     public void setDate(final EditText pEditText) {
         if (!mContext.isFinishing()) {
             new DatePickerDialog(mContext, new DatePickerDialog.OnDateSetListener() {
@@ -400,7 +324,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         }
     }
 
-    // отображаем диалоговое окно для выбора времени
     public void setTime(final EditText pEditText) {
         if (!mContext.isFinishing()) {
             new TimePickerDialog(mContext, new TimePickerDialog.OnTimeSetListener() {
@@ -439,19 +362,10 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             Log.d(TAG, "onItemClick: element NULL!");
             return;
         }
-
-        mOnTableAnswerClickListener.onAnswerClick(row, column);
-
+        mOnTableAnswerClickListener.onAnswerClick(row, column); //Тут нас обмен строк и столбцов не интересует. Передается в ElementFragment для очистки прохождения
         final ElementItemR clickedQuestion = getQuestion(row, column);
         final boolean isPolyanswer = clickedQuestion.getElementOptionsR().isPolyanswer();
-
-//        if (!clickedElement.getElementOptionsR().isCanShow(mBaseActivity, mMap, clickedElement)) {
-//            mBaseActivity.showToast(mBaseActivity.getString(R.string.NOTIFICATION_ANSWER_NOT_AVAILABLE_TABLE_QUESTION));
-//
-//            return;
-//        }
-
-        final boolean isElementChecked = mAnswersState[row - 1][column - 1].isChecked();
+        final boolean isElementChecked = mIsFlipColsAndRows ? mAnswersState[column - 1][row - 1].isChecked() : mAnswersState[row - 1][column - 1].isChecked();
         final ElementOptionsR options = clickedElement.getElementOptionsR();
         final String openType = options.getOpen_type();
 
@@ -463,7 +377,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
             final EditText mEditText = mView.findViewById(R.id.answer_edit_text);
             final String placeholder = options.getPlaceholder();
-            final String textAnswer = mAnswersState[row - 1][column - 1].getData();
+            final String textAnswer = mIsFlipColsAndRows ? mAnswersState[column - 1][row - 1].getData() : mAnswersState[row - 1][column - 1].getData();
 
             mEditText.setVisibility(View.VISIBLE);
             mEditText.setHint(StringUtils.isEmpty(placeholder) ? mContext.getString(R.string.default_placeholder) : placeholder);
@@ -514,18 +428,25 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                                 return;
                             }
 
-                            mAnswersState[row - 1][column - 1].setChecked(true);
-                            setLine();
-                            mAnswersState[row - 1][column - 1].setData(answer);
-                            if (!isPolyanswer && mAnswersState[row - 1][column - 1].isChecked()) {
-                                unselectOther(row, column, clickedQuestion, clickedElement);
+                            if (!mIsFlipColsAndRows) {
+                                mAnswersState[row - 1][column - 1].setChecked(true);
+                                setLine();
+                                mAnswersState[row - 1][column - 1].setData(answer);
+                                if (!isPolyanswer && mAnswersState[row - 1][column - 1].isChecked()) {
+                                    unselectOther(row, column, clickedQuestion, clickedElement);
+                                }
+                                notifyRowChanged(row);
+                                notifyItemChanged(row, 0);
+                            } else {
+                                mAnswersState[column - 1][row - 1].setChecked(true);
+                                setLine();
+                                mAnswersState[column - 1][row - 1].setData(answer);
+                                if (!isPolyanswer && mAnswersState[column - 1][row - 1].isChecked()) {
+                                    unselectOther(row, column, clickedQuestion, clickedElement);
+                                }
+                                notifyColumnChanged(column);
+                                notifyItemChanged(0, column);
                             }
-//                            notifyItemChanged(row, column);
-                            notifyRowChanged(row);
-                            notifyItemChanged(row, 0);
-//                            for (int i = 0; i < mAnswersState.length; i++) {
-//                                notifyItemChanged(i + 1, column);
-//                            }
                             mRefreshRunnable.run();
 
                         }
@@ -535,17 +456,21 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                             new DialogInterface.OnClickListener() {
 
                                 public void onClick(final DialogInterface dialogBox, final int id) {
-
-                                    mAnswersState[row - 1][column - 1].setChecked(false);
-                                    setLine();
-                                    mAnswersState[row - 1][column - 1].setData(Constants.Strings.EMPTY);
-                                    dialogBox.cancel();
-//                                    notifyItemChanged(row, column);
-                                    notifyRowChanged(row);
-//                                    for (int i = 0; i < mAnswersState.length; i++) {
-//                                        notifyItemChanged(i + 1, column);
-//                                    }
-                                    notifyItemChanged(row, 0);
+                                    if (!mIsFlipColsAndRows) {
+                                        mAnswersState[row - 1][column - 1].setChecked(false);
+                                        setLine();
+                                        mAnswersState[row - 1][column - 1].setData(Constants.Strings.EMPTY);
+                                        dialogBox.cancel();
+                                        notifyRowChanged(row);
+                                        notifyItemChanged(row, 0);
+                                    } else {
+                                        mAnswersState[column - 1][row - 1].setChecked(false);
+                                        setLine();
+                                        mAnswersState[column - 1][row - 1].setData(Constants.Strings.EMPTY);
+                                        dialogBox.cancel();
+                                        notifyColumnChanged(column);
+                                        notifyItemChanged(0, column);
+                                    }
                                     mRefreshRunnable.run();
                                 }
                             });
@@ -556,22 +481,31 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 alertDialog.show();
             }
         } else {
-            mAnswersState[row - 1][column - 1].setChecked(!isElementChecked);
+            if (!mIsFlipColsAndRows) {
+                mAnswersState[row - 1][column - 1].setChecked(!isElementChecked);
+            } else {
+                mAnswersState[column - 1][row - 1].setChecked(!isElementChecked);
+            }
             setLine();
         }
 
-        //TODO Добавить ответы.
-//        if (!isPolyanswer && clickedElement.isFullySelected()) {
-        if (!isPolyanswer && mAnswersState[row - 1][column - 1].isChecked()) {
-            unselectOther(row, column, clickedQuestion, clickedElement);
+        if (!mIsFlipColsAndRows) {
+            if (!isPolyanswer && mAnswersState[row - 1][column - 1].isChecked()) {
+                unselectOther(row, column, clickedQuestion, clickedElement);
+            }
+            for (int i = 0; i < mAnswersState[0].length; i++) {
+                notifyItemChanged(row, i + 1);
+            }
+            notifyItemChanged(row, 0);
+        } else {
+            if (!isPolyanswer && mAnswersState[column - 1][row - 1].isChecked()) {
+                unselectOther(row, column, clickedQuestion, clickedElement);
+            }
+            for (int i = 0; i < mAnswersState[0].length; i++) {
+                notifyItemChanged(i + 1, column);
+            }
+            notifyItemChanged(0, column);
         }
-//        notifyItemChanged(row, column);
-//        notifyRowChanged(row);
-        for (int i = 0; i < mAnswersState[0].length; i++) {
-            notifyItemChanged(row, i + 1);
-        }
-        notifyItemChanged(row, 0);
-
     }
 
     private void unselectOther(final int row, final int column, final ElementItemR pQuestion, final ElementItemR pClickedElement) {
@@ -579,30 +513,26 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final int clickedRelativeId = pClickedElement.getRelative_id();
 
         List<ElementItemR> answersList = pQuestion.getElements();
-        for (int i = 0; i < answersList.size(); i++) {
-            if (clickedRelativeId != mAnswersState[row - 1][i].getRelative_id()) {
-                mAnswersState[row - 1][i].setChecked(false);
-                setLine();
+        if (!mIsFlipColsAndRows) {
+            for (int i = 0; i < answersList.size(); i++) {
+                if (clickedRelativeId != mAnswersState[row - 1][i].getRelative_id()) {
+                    mAnswersState[row - 1][i].setChecked(false);
+                    setLine();
+                }
             }
+            notifyRowChanged(row - 1);
+            notifyItemChanged(row - 1, 0);
+        } else {
+            for (int i = 0; i < answersList.size(); i++) {
+                if (clickedRelativeId != mAnswersState[column - 1][i].getRelative_id()) {
+                    mAnswersState[column - 1][i].setChecked(false);
+                    setLine();
+                }
+            }
+            notifyColumnChanged(column - 1);
+            notifyItemChanged(0, column - 1);
         }
 
-        notifyRowChanged(row - 1);
-        notifyItemChanged(row-1, 0);
-//        for (int i = 0; i < mAnswersState[0].length; i++) {
-//            notifyItemChanged(row - 1, i);
-//        }
-
-//        final int answersSize = mAnswers.size();
-//
-//        if (mIsFlipColsAndRows) {
-//            for (int i = 0; i < answersSize; i++) {
-//                notifyItemChanged(i, column);
-//            }
-//        } else {
-//            for (int i = 0; i < answersSize; i++) {
-//                notifyItemChanged(row, i);
-//            }
-//        }
     }
 
     public void setLine() {
@@ -688,11 +618,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private static class TableHeaderColumnViewHolder extends ViewHolderImpl {
 
         TextView mHeaderColumnTextView;
+        RelativeLayout mColumnCont;
 //        TextView mHeaderColumnDescriptionTextView;
 
         private TableHeaderColumnViewHolder(@NonNull final View itemView) {
             super(itemView);
             mHeaderColumnTextView = itemView.findViewById(R.id.table_header_column_text_view);
+            mColumnCont = itemView.findViewById(R.id.column_cont);
 //            mHeaderColumnDescriptionTextView = itemView.findViewById(R.id.table_header_column_description_text_view);
         }
     }
@@ -729,46 +661,40 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     public void setmAnswersState(AnswerState[][] mAnswersState) {
         this.mAnswersState = mAnswersState;
         setLine();
-//        notifyDataSetChanged();
     }
 
     public boolean isCompleted() {
         boolean completed = false;
-        if (!mIsFlipColsAndRows) {
-            for (int i = 0; i < mAnswersState.length; i++) {
-                int answersCounter = 0;
-                for (int k = 0; k < mAnswersState[i].length; k++) {
+        for (int i = 0; i < mAnswersState.length; i++) {
+            int answersCounter = 0;
+            for (int k = 0; k < mAnswersState[i].length; k++) {
 
-                    if (mAnswersState[i][k].isChecked()) {
-                        answersCounter++;
-                    }
-                }
-                if (answersCounter > 0) {
-                    Integer min = mQuestions.get(i).getElementOptionsR().getMin_answers();
-                    Integer max = mQuestions.get(i).getElementOptionsR().getMax_answers();
-                    if (min != null && answersCounter < min) {
-                        completed = false;
-                        mContext.showToastfromActivity("В строке " + (i + 1) + " выберите минимум " + min + " ответа");
-                        return completed;
-                    } else {
-                        completed = true;
-                    }
-                    if (max != null && answersCounter > max) {
-                        completed = false;
-                        mContext.showToastfromActivity("В строке " + (i + 1) + " выберите максимум " + max + " ответа");
-                        return completed;
-                    } else {
-                        completed = true;
-                    }
-                } else {
-                    completed = false;
-                    mContext.showToastfromActivity("Пожалуйста ответьте на все вопросы");
-                    return completed;
+                if (mAnswersState[i][k].isChecked()) {
+                    answersCounter++;
                 }
             }
-        } else {
-            completed = true;
-            //TODO Проверку на перервернутую.
+            if (answersCounter > 0) {
+                Integer min = mQuestions.get(i).getElementOptionsR().getMin_answers();
+                Integer max = mQuestions.get(i).getElementOptionsR().getMax_answers();
+                if (min != null && answersCounter < min) {
+                    completed = false;
+                    mContext.showToastfromActivity("В строке " + (i + 1) + " выберите минимум " + min + " ответа");
+                    return completed;
+                } else {
+                    completed = true;
+                }
+                if (max != null && answersCounter > max) {
+                    completed = false;
+                    mContext.showToastfromActivity("В строке " + (i + 1) + " выберите максимум " + max + " ответа");
+                    return completed;
+                } else {
+                    completed = true;
+                }
+            } else {
+                completed = false;
+                mContext.showToastfromActivity("Пожалуйста ответьте на все вопросы");
+                return completed;
+            }
         }
         return completed;
     }

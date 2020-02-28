@@ -1,26 +1,16 @@
 package pro.quizer.quizer3.model.config;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverters;
-
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.HashMap;
 
 import pro.quizer.quizer3.MainActivity;
-import pro.quizer.quizer3.database.ElementStatusImageRConverter;
-import pro.quizer.quizer3.database.models.ElementStatusImageR;
 import pro.quizer.quizer3.model.OptionsOpenType;
 import pro.quizer.quizer3.utils.ConditionUtils;
 import pro.quizer.quizer3.utils.StringUtils;
 
 import static pro.quizer.quizer3.model.OptionsOpenType.CHECKBOX;
-
-//import pro.quizer.quizer3.activity.BaseActivity;
-//import pro.quizer.quizer3.utils.ConditionUtils;
-//import pro.quizer.quizer3.utils.QuotasUtils;
 
 public class OptionsModelNew implements Serializable {
 

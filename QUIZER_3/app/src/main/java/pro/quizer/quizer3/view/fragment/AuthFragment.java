@@ -69,6 +69,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     private boolean isExit;
     private boolean isCanBackPress = true;
+    private boolean isRebuildDB = false;
     private int mVersionTapCount = 0;
 
     String login;
@@ -137,6 +138,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     public void onClick(View view) {
         if (view == btnSend) {
             deactivateButtons();
+            showScreensaver("Подождите,\nидет подготовка анкеты", true);
 //            showScreensaver(false);
             onLoginClick();
         } else if (view == tvVersionView) {
@@ -235,8 +237,16 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     private void onLoggedInWithoutUpdateLocalData(final int pUserId) {
         saveCurrentUserId(pUserId);
-        UpdateQuiz updateQuiz = new UpdateQuiz();
-        updateQuiz.execute();
+        if(isRebuildDB) {
+            UpdateQuiz updateQuiz = new UpdateQuiz();
+            updateQuiz.execute();
+        } else {
+            HomeFragment fragment = new HomeFragment();
+            fragment.setStartAfterAuth();
+            replaceFragment(fragment);
+        }
+//        UpdateQuiz updateQuiz = new UpdateQuiz();
+//        updateQuiz.execute();
     }
 
     class UpdateQuiz extends AsyncTask<Void, Void, Void> {
@@ -244,7 +254,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            showScreensaver("Подождите,\nидет подготовка анкеты", true);
+//            showScreensaver("Подождите,\nидет подготовка анкеты", true);
             UiUtils.setButtonEnabled(btnSend, false);
             isCanBackPress = false;
         }
@@ -259,7 +269,9 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 //            hideScreensaver();
-            replaceFragment(new HomeFragment());
+            HomeFragment fragment = new HomeFragment();
+            fragment.setStartAfterAuth();
+            replaceFragment(fragment);
         }
     }
 
@@ -399,7 +411,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                     if (configResponseModel.getResult() != 0) {
                         addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SUCCESS, getString(R.string.get_config_success), responseJson);
 //                    createElementsItems(pLogin);
-
+                        isRebuildDB = true;
                         downloadFiles(configResponseModel, pModel, pLogin, pPassword);
                     } else {
                         showToast(configResponseModel.getError());
@@ -460,7 +472,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
         @Override
         public void onAuthUser(ResponseBody responseBody) {
-            hideScreensaver();
+//            hideScreensaver();
 
             if (responseBody == null) {
                 showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_401));
@@ -555,6 +567,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         }
 
         private void activateButtons() {
+        hideScreensaver();
             btnSend.setEnabled(true);
 
             final int sdk = android.os.Build.VERSION.SDK_INT;

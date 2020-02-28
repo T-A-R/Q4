@@ -414,7 +414,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 //                Log.d(TAG, "???????: " + i + " / " + answer.isChecked() + " / " + answer.getRelative_id() + " " + answer.getData());
 //                i++;
             }
-            Log.d(TAG, "========: " + getAdapterPosition() + " " + answersState.get(getAdapterPosition()).isChecked() + " " + isFilled());
+//            Log.d(TAG, "========: " + getAdapterPosition() + " " + answersState.get(getAdapterPosition()).isChecked() + " " + isFilled());
             if (emptyAnswersState || answersState.get(getAdapterPosition()).isChecked() || isFilled()) {
 //                Log.d(TAG, "???????: FIRST IF OK");
                 isPressed = true;
@@ -662,7 +662,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     }
 
     public boolean isFilled() {
-        Log.d(TAG, "isFilled: " + isOpen + " " + lastSelectedPosition);
+//        Log.d(TAG, "isFilled: " + isOpen + " " + lastSelectedPosition);
         if (!isOpen) {
             return true;
         }

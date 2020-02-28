@@ -102,7 +102,7 @@ public final class ConditionUtils {
                     condition = condition.replace(LEFT_BRACKET + DisplayConditionType.SHOW + RIGHT_BRACKET, Constants.Strings.EMPTY);
 //                    Log.d(TAG, "evaluateCondition: 2.1 " + formatCondition(condition, pModel, pBaseActivity));
                     final boolean isCanShow = TreeBooleanEvaluator.evaluateBoolean(evaluator, formatCondition(condition, pModel, pBaseActivity));
-                    Log.d(TAG, "evaluateCondition: 2.2 " + isCanShow);
+//                    Log.d(TAG, "evaluateCondition: 2.2 " + isCanShow);
                     if (isCanShow) {
 //                        Log.d(TAG, "evaluateCondition: 2.3");
                         return CAN_SHOW;

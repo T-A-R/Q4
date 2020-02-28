@@ -79,8 +79,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private Long mGpsTimeNetwork;
     private boolean mIsUsedFakeGps;
     private boolean mIsTimeDialogShow = false;
+    private boolean mIsStartAfterAuth = false;
     private boolean isForceGps = false;
     private boolean canContWithZeroGps = false;
+    private boolean isCanBackPress = true;
     private Long mFakeGpsTime;
     private GPSModel mGPSModel;
 
@@ -88,6 +90,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     public HomeFragment() {
         super(R.layout.fragment_home);
+    }
+
+    public HomeFragment setStartAfterAuth() {
+        this.mIsStartAfterAuth = true;
+        return this;
     }
 
     @Override
@@ -143,6 +150,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         initViews();
         sendCrashLogs();
         makeQuotaTree();
+//        UpdateQuiz updateQuiz = new UpdateQuiz();
+//        updateQuiz.execute();
+
         new SendQuestionnairesByUserModelExecutable((MainActivity) getActivity(), mUserModel, new ICallback() {
             @Override
             public void onStarting() {
@@ -301,7 +311,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     @Override
     public boolean onBackPressed() {
-        showExitAlertDialog();
+        if (isCanBackPress) {
+            showExitAlertDialog();
+        }
         return true;
     }
 
@@ -314,7 +326,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 if (currentQuestionnaire != null) {
                     boolean saved = true;
                     if (currentQuestionnaire.getUser_project_id().equals(getCurrentUser().getUser_project_id())) {
-                        if(getCurrentUser().getConfigR().isSaveAborted()) {
+                        if (getCurrentUser().getConfigR().isSaveAborted()) {
                             saved = saveQuestionnaireToDatabase(currentQuestionnaire, true);
                         } else {
                             saved = true;
@@ -402,9 +414,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 //                                    break;
 //                                }
 //                        }
-                        if (activity.hasRotationContainer()) {
-                            activity.getMap(true);
-                        }
+                        //TODO Ротацию вопросов!
+//                        if (activity.hasRotationContainer()) {
+//                            activity.getMap(true);
+//                        }
 //                        Log.d(TAG, "??????????????????????????: 1");
 
                         startRecording();
@@ -927,6 +940,31 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             btnContinue.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
             btnStart.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
             btnQuotas.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+        }
+    }
+
+    class UpdateQuiz extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showScreensaver("Подождите,\nидет подготовка анкеты", true);
+            isCanBackPress = false;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (mIsStartAfterAuth)
+                rebuildElementsDatabase();
+//                makeQuotaTree();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            hideScreensaver();
+            isCanBackPress = true;
         }
     }
 }

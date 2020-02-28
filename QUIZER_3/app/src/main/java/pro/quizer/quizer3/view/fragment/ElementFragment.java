@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Spinner;
 
 import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
+import com.google.gson.Gson;
 import com.multispinner.MultiSelectSpinner;
 import com.squareup.picasso.Picasso;
 
@@ -232,12 +233,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         MainFragment.enableSideMenu(false);
         st("after init side menu");
 
+//        Log.d(TAG, "onReady ELEMENT 1: " + currentElement.getRelative_id());
         showScreensaver("Подождите, \nидет загрузка элемента анкеты", true);
         initCurrentElements();
         st("after init elements");
         loadResumedData();
         st("after load data");
         initQuestion();
+        Log.d(TAG, "onReady ELEMENT 2: " + currentElement.getRelative_id());
         st("after init question");
 //        if (conditions) {
         if (currentElement != null) {
@@ -265,10 +268,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            Log.d(TAG, "onReady ELEMENT 3: " + currentElement.getRelative_id() + " answertype " + answerType);
         } else {
             exitQuestionnaire();
         }
 //        }
+
     }
 
     public boolean wasReloaded() {
@@ -752,13 +757,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             final ElementOptionsR options = element.getElementOptionsR();
             if (options != null && options.getPre_condition() != null) {
                 final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), getMainActivity());
-                Log.d(TAG, "checkConditions showValue: " + showValue);
+//                Log.d(TAG, "checkConditions showValue: " + showValue);
                 if (showValue != ConditionUtils.CAN_SHOW) {
                     if (showValue != ConditionUtils.CANT_SHOW) {
                         nextElementId = showValue;
                     } else {
                         if (!element.equals(currentElement)) {
-                            Log.d(TAG, "checkConditions: FALSE 1");
+//                            Log.d(TAG, "checkConditions: FALSE 1");
                             return false;
                         }
                         nextElementId = options.getJump();
@@ -782,22 +787,22 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         } else {
                             activateButtons();
                         }
-                        Log.d(TAG, "checkConditions: FALSE 2");
+//                        Log.d(TAG, "checkConditions: FALSE 2");
                         return false;
                     } else if (nextElementId.equals(-1)) {
                         exitQuestionnaire();
-                        Log.d(TAG, "checkConditions: FALSE 3");
+//                        Log.d(TAG, "checkConditions: FALSE 3");
                         return false;
                     } else {
 //                        showNextFragment(nextElementId);
-                        Log.d(TAG, "checkConditions: FALSE 4");
+//                        Log.d(TAG, "checkConditions: FALSE 4");
                         return false;
                     }
                 }
             }
             return true;
         } else {
-            Log.d(TAG, "checkConditions: FALSE 5");
+//            Log.d(TAG, "checkConditions: FALSE 5");
             return false;
         }
     }
@@ -844,13 +849,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
                 st("init SAVE 2");
 
-                if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
-                    nextElementId = currentElement.getElementOptionsR().getJump();
-                    if (nextElementId == -2) {
-                        nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
-                    }
-                    st("init SAVE 3");
-                }
+                //TODO вернуть для ротации вопросов
+//                if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+//                    nextElementId = currentElement.getElementOptionsR().getJump();
+//                    if (nextElementId == -2) {
+//                        nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+//                    }
+//                    st("init SAVE 3");
+//                }
 
                 ElementPassedR elementPassedR = new ElementPassedR();
                 st("init SAVE 4");
@@ -915,7 +921,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     nextElementId = currentElement.getElementOptionsR().getJump();
                     if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
                         nextElementId = currentElement.getElementOptionsR().getJump();
-                        if (nextElementId == -2) {
+                        if (nextElementId == null || nextElementId.equals(-2)) {
                             nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
                         }
                     }
@@ -1099,9 +1105,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             }
         }
 
-        if (saved) {
-            updatePrevElement();
-        }
+//        if (saved) {
+//            updatePrevElement();
+//        }
 //        showPassed();
         return saved;
     }
@@ -1504,25 +1510,33 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void activateButtons() {
-        getMainActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                btnPrev.setEnabled(true);
-                btnExit.setEnabled(true);
-                btnNext.setEnabled(true);
+        try {
+            getMainActivity().runOnUiThread(new Runnable() {
+                public void run() {
+                    try {
+                        btnPrev.setEnabled(true);
+                        btnExit.setEnabled(true);
+                        btnNext.setEnabled(true);
 
-                final int sdk = android.os.Build.VERSION.SDK_INT;
+                        final int sdk = android.os.Build.VERSION.SDK_INT;
 
-                if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                    btnPrev.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-                    btnExit.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_red));
-                    btnNext.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-                } else {
-                    btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-                    btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_red));
-                    btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                            btnPrev.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                            btnExit.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_red));
+                            btnNext.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                        } else {
+                            btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                            btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_red));
+                            btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        });
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void deactivateButtons() {
@@ -1606,7 +1620,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         }
                     } else {
                         checkAndLoadNext();
-
+                        updatePrevElement();
                     }
                 } catch (Exception e) {
                     activateButtons();
@@ -1622,7 +1636,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             super.onPostExecute(aVoid);
 //            hideScreensaver();
 //            st("before activate");
-//            activateButtons();
+            activateButtons();
 //            st("after activate");
         }
     }

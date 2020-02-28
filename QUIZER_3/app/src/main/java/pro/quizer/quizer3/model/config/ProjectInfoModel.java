@@ -34,6 +34,9 @@ public class ProjectInfoModel implements Serializable {
     @SerializedName("elements")
     private List<ElementModelNew> elements;
 
+    @SerializedName("flat_elements")
+    private List<ElementModelFlat> flat_elements;
+
     @SerializedName("reserve_channel")
     private ReserveChannelModel reserve_channel;
 
@@ -63,6 +66,10 @@ public class ProjectInfoModel implements Serializable {
 
     public List<ElementModelNew> getElements() {
         return elements;
+    }
+
+    public List<ElementModelFlat> getFlatElements() {
+        return flat_elements;
     }
 
     public String getThankYouText() {

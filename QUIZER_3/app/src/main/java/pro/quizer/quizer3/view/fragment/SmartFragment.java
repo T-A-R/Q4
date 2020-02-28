@@ -588,6 +588,11 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         return currentQuestionnaire;
     }
 
+    public CurrentQuestionnaireR getQuestionnaireFromDB() {
+        CurrentQuestionnaireR  quiz = getDao().getCurrentQuestionnaireR();
+        return quiz;
+    }
+
     public void showElementsQuery() {
         for (int i = 0; i < getQuestionnaire().getPrev_element_id().size(); i++) {
             Log.d(TAG, i + " element: " + getQuestionnaire().getPrev_element_id().get(i).getPrevId());
@@ -798,7 +803,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         questionnaireDatabaseModel.setUsed_fake_gps(currentQuiz.isUsed_fake_gps());
         questionnaireDatabaseModel.setGps_time_fk(currentQuiz.getFake_gps_time());
 
-        if (aborted || getQuestionnaire().isIn_aborted_box()) {
+        if (aborted || getQuestionnaire().isIn_aborted_box() || getQuestionnaireFromDB().isIn_aborted_box()) {
 //            Log.d(TAG, "saveQuestionnaireToDatabase: 7");
             if (currentQuiz.isPaused())
                 questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.UNFINISHED);

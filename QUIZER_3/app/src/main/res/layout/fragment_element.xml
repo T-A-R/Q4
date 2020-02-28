@@ -115,7 +115,7 @@
                         android:id="@+id/image_close_1"
                         android:layout_width="@dimen/_12sdp"
                         android:layout_height="@dimen/_12sdp"
-                        android:src="@drawable/ico_close_white"
+                        android:src="@drawable/arrow_up_white"
                         app:layout_constraintEnd_toEndOf="@+id/title_1"
                         tools:ignore="MissingConstraints"
                         tools:layout_editor_absoluteY="2dp" />
@@ -207,7 +207,7 @@
                         android:id="@+id/image_close_2"
                         android:layout_width="@dimen/_12sdp"
                         android:layout_height="@dimen/_12sdp"
-                        android:src="@drawable/ico_close_white"
+                        android:src="@drawable/arrow_up_white"
                         app:layout_constraintEnd_toEndOf="@+id/title_2"
                         tools:ignore="MissingConstraints"
                         tools:layout_editor_absoluteY="2dp" />
@@ -296,7 +296,7 @@
                     android:id="@+id/question_close"
                     android:layout_width="@dimen/_12sdp"
                     android:layout_height="@dimen/_12sdp"
-                    android:src="@drawable/ico_close_white"
+                    android:src="@drawable/arrow_up_white"
                     app:layout_constraintEnd_toEndOf="@+id/question_box"
                     android:layout_marginRight="@dimen/_8sdp"
                     android:layout_marginEnd="@dimen/_8sdp"

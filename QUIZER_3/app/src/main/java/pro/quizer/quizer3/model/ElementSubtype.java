@@ -12,6 +12,7 @@ import java.lang.annotation.RetentionPolicy;
         ElementSubtype.IMAGE,
         ElementSubtype.VIDEO,
         ElementSubtype.CONTAINER,
+        ElementSubtype.ABORTED,
         ElementSubtype.SLIDER})
 public @interface ElementSubtype {
 

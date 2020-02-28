@@ -4,8 +4,6 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
-//import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.Spinner;
 
 import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
@@ -1247,29 +1244,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             UiUtils.hideKeyboard(getContext(), getView());
         }
     };
-
-//    public void restoreViews(Bundle bundle) {
-//        if (bundle != null) {
-//            Parcelable listState = bundle.getParcelable(KEY_RECYCLER_STATE);
-//            rvAnswers.getLayoutManager().onRestoreInstanceState(listState);
-//            adapterList.setAnswers((List<AnswerState>) bundle.getSerializable("LIST"));
-//            adapterList.setLastSelectedPosition(bundle.getInt("lastSelectedPosition"));
-//        }
-//    }
-
-//    public void restoreData(Bundle bundle) {
-//        if (bundle != null) {
-//            startTime = bundle.getLong("startTime");
-//            startElementId = bundle.getInt("startElementId");
-//            nextElementId = bundle.getInt("nextElementId", 0);
-//            Log.d(TAG, "restoreData: " + nextElementId);
-//            prevElementId = bundle.getInt("prevElementId");
-//            spinnerSelection = bundle.getInt("spinnerSelection");
-//            isTitle1Hided = bundle.getBoolean("isTitle1Hided");
-//            isTitle2Hided = bundle.getBoolean("isTitle2Hided");
-//            answerType = bundle.getString("answerType");
-//        }
-//    }
 
     public void loadResumedData() {
         if (isRestored) {

@@ -18,7 +18,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.os.PowerManager;
 import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -44,7 +43,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -184,24 +182,14 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
         }
     };
 
-    // for ex., headphones were pulled out
     private IntentFilter intentFilter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
     final private BroadcastReceiver bnReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(LOG_TAG, "ACTION_AUDIO_BECOMING_NOISY BroadcastReceiver onReceive() : " + intent);
             if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
-                // if recording audio - do nothing
                 if (servState == ServiceState.Playing) {
-                    //decreaseVolume or pause playback
                     transCntrl.pause();
-                    /* unused yet
-                    if(audioManager != null) {
-                        audioManager.setStreamVolume(..);
-                    } else {
-                        Log.w(LOG_TAG, "ACTION_AUDIO_BECOMING_NOISY BroadcastReceiver onReceive() : audioManager == null");
-                    }
-                    */
                 }
             }
         }
@@ -226,7 +214,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                     switch (servState) {
                         case Playing:
                         case PausedPlaying:
-                            actionStopPlaying();
+//                            actionStopPlaying();
                             actionSetReady();
                             break;
                         case Recording:
@@ -251,12 +239,12 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                         case StoppedRecording:
                         case Ready:
                         default:
-                            actionPlay(null); // should be an error
+//                            actionPlay(null); // should be an error
                             break;
                         case Recording:
                         case PausedRecording:
                             actionStopRecording();
-                            actionPlay(null); // should be an error
+//                            actionPlay(null); // should be an error
                             break;
                     }
                     break;
@@ -264,7 +252,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                     switch (servState) {
                         case Playing:
                         case PausedPlaying:
-                            actionStopPlaying();
+//                            actionStopPlaying();
                             actionRecord(extras);
                             break;
                         case Recording:
@@ -288,19 +276,19 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
 
             switch (servState) {
                 case Playing:
-                    actionStopPlaying();
-                    actionPlay(uri);
+//                    actionStopPlaying();
+//                    actionPlay(uri);
                     break;
                 case Ready:
                 case PausedPlaying:
                 case StoppedPlaying:
                 case StoppedRecording:
-                    actionPlay(uri);
+//                    actionPlay(uri);
                     break;
                 case Recording:
                 case PausedRecording:
                     actionStopRecording();
-                    actionPlay(uri);
+//                    actionPlay(uri);
                     break;
                 default:
                     Log.e(LOG_TAG, "MediaSession.Callback.onPlayFromUri() : wrong service state : " + servState);
@@ -317,7 +305,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                     break;
                 case PausedPlaying:
                 case StoppedPlaying:
-                    actionPlay(null);
+//                    actionPlay(null);
                     break;
                 case Recording:
                     break;
@@ -338,7 +326,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
 
             switch (servState) {
                 case Playing:
-                    actionPausePlaying();
+//                    actionPausePlaying();
                     break;
                 case PausedPlaying:
                 case StoppedPlaying:
@@ -362,7 +350,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
             switch (servState) {
                 case Playing:
                 case PausedPlaying:
-                    actionStopPlaying();
+//                    actionStopPlaying();
                     break;
                 case StoppedPlaying:
                     break;
@@ -378,136 +366,6 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
         }
     };
 
-    private final Visualizer.OnDataCaptureListener vslrListener = new Visualizer.OnDataCaptureListener() {
-        /**
-         * see
-         * https://developer.android.com/reference/android/media/audiofx/Visualizer.html#getWaveForm(byte[])
-         * http://stackoverflow.com/questions/40584680/get-amplitude-from-mediaplayer-using-visualizer?rq=1
-         * http://stackoverflow.com/questions/32822314/how-to-compute-decibel-db-of-amplitude-from-media-player
-         * http://stackoverflow.com/questions/28215289/how-to-calculate-the-audio-amplitude-in-real-time-android
-         */
-        @Override
-        public void onWaveFormDataCapture(Visualizer visualizer, byte[] waveform, int samplingRate) {
-            // save to files
-            if (alWaveFormVal != null) {
-                for (byte b : waveform) {
-                    alWaveFormVal.add(b);
-                }
-            }
-            //--------------
-            // waveform should be unsigned 8 bit
-            int freqMin = 0;
-            int freqMax = samplingRate / 2;
-            double ampSum = 0;
-            // make unsigned
-            int[] arUWaveform = new int[waveform.length];
-            for (int byteIdx = 0; byteIdx < waveform.length; byteIdx++) {
-                arUWaveform[byteIdx] = waveform[byteIdx] & 0x00FF;
-            }
-            //double[] arAmp = new double[waveform.length / 2]; // useless
-            //double[] arAmpDB = new double[waveform.length / 2]; // useless
-            double[] arAmpDbSki = new double[waveform.length / 2];
-            double[] arFreq = new double[waveform.length / 2];
-            for (int freqIdx = 0; freqIdx < waveform.length / 2; freqIdx++) {
-                // 8 bit to 16 ;
-                int amp = Math.abs(waveform[freqIdx * 2] | (waveform[freqIdx * 2 + 1] << 8));
-                //int amp = arUWaveform[freqIdx * 2] | (arUWaveform[freqIdx * 2 + 1] << 8); // wrong?
-                // normalize to 1 ? // useless
-                //double ampN = amp / 32768.0; // useless
-                //ampSum += ampN * ampN; // useless
-                ampSum += amp * amp;
-                //arAmp[freqIdx] = amp; // useless
-                //arAmpDB[freqIdx] = 20 * Math.log10(amp / 32768.0); // useless
-                arAmpDbSki[freqIdx] = 20 * Math.log10(amp / 51805.5336 / 0.0002);
-                arFreq[freqIdx] = 1.0 * freqIdx * samplingRate / (waveform.length / 2);
-            }
-            double ampTotal = Math.sqrt(ampSum / (waveform.length / 2));
-            double ampDB = 20 * Math.log10(ampTotal / 51805.5336 / 0.0002);
-
-            // send to UI activity
-            Bundle bndl = new Bundle(2);
-            bndl.putDoubleArray(EXTRA_KEY_AR_FREQ, arFreq);
-            bndl.putDoubleArray(EXTRA_KEY_AR_AMPL, arAmpDbSki);
-            setPBState(mediaSes.getController().getPlaybackState().getState(), bndl);
-
-            /*
-            // log
-            Log.v(LOG_TAG, "Visualizer.OnDataCaptureListener.waveform ---------------- ");
-            Log.v(LOG_TAG, "freq min : max == " + freqMin + " ; " + freqMax
-                    + " ; samplingRate == " + samplingRate
-                    + " ; length == " + waveform.length
-                    + " ; freq points count == " + (waveform.length / 2)
-                    //+ " ; ampTotal == " + ampTotal // useless
-                    + " ; ampDB == " + ampDB);
-            Log.v(LOG_TAG, "waveform: " + Arrays.toString(waveform));
-            Log.v(LOG_TAG, "arUWaveform: " + Arrays.toString(arUWaveform));
-            Log.v(LOG_TAG, "arFreq: " + Arrays.toString(arFreq));
-            //Log.v(LOG_TAG, "arAmp: " + Arrays.toString(arAmp)); // useless
-            //Log.v(LOG_TAG, "arAmpDB: " + Arrays.toString(arAmpDB)); // useless
-            Log.v(LOG_TAG, "arAmpDbSki: " + Arrays.toString(arAmpDbSki));
-            */
-        }
-
-        /**
-         * see
-         * https://developer.android.com/reference/android/media/audiofx/Visualizer.html#getFft%28byte[]%29
-         * http://stackoverflow.com/questions/4720512/android-2-3-visualizer-trouble-understanding-getfft
-         * http://stackoverflow.com/questions/6620544/fast-fourier-transform-fft-input-and-output-to-analyse-the-frequency-of-audio
-         */
-        @Override
-        public void onFftDataCapture(Visualizer visualizer, byte[] fft, int samplingRate) {
-            // for writing a file
-            if (alFftVal != null) {
-                for (byte b : fft) {
-                    alFftVal.add(b);
-                }
-            }
-            //-----------------
-            int freqMin = 0;
-            int freqMax = samplingRate / 2;
-            int captureSize = fft.length; // the n
-            int freqPtsCount = captureSize / 2 + 1;
-            double[] arFreqMagnitude = new double[freqPtsCount];
-            arFreqMagnitude[0] = fft[0] & 0x00FF; // by definition
-            arFreqMagnitude[freqPtsCount - 1] = fft[1] & 0x00FF; // by definition
-            for (int freqIdx = 1; freqIdx < freqPtsCount - 1; freqIdx++) {
-                /*
-                id * 2 :: id * 2 + 1
-                1 -> 2 :: 3
-                2 -> 4 :: 5
-                3 -> 6 :: 7
-                 */
-                arFreqMagnitude[freqIdx] = Math.sqrt(Math.pow(fft[freqIdx * 2], 2)
-                        + Math.pow(fft[freqIdx * 2 + 1], 2));
-            }
-            double[] arFreq = new double[freqPtsCount];
-            double[] arSpectralDensity = new double[freqPtsCount];
-            for (int freqIdx = 0; freqIdx < arFreqMagnitude.length; freqIdx++) {
-                arFreq[freqIdx] = 1.0 * freqIdx * samplingRate / (captureSize / 2);
-                arSpectralDensity[freqIdx] = 20 * Math.log10(arFreqMagnitude[freqIdx]);
-            }
-
-            // send to UI activity
-            Bundle bndl = new Bundle(3);
-            bndl.putDoubleArray(EXTRA_KEY_AR_FREQ, arFreq);
-            bndl.putDoubleArray(EXTRA_KEY_AR_MAGN, arFreqMagnitude);
-            bndl.putDoubleArray(EXTRA_KEY_AR_DENS, arSpectralDensity);
-            setPBState(mediaSes.getController().getPlaybackState().getState(), bndl);
-
-            /*
-            // log
-            Log.v(LOG_TAG, "Visualizer.OnDataCaptureListener.fft ---------------- ");
-            Log.v(LOG_TAG, "fft: " + Arrays.toString(fft));
-            Log.v(LOG_TAG, "freq min : max == " + freqMin + " ; " + freqMax
-                    + " ; samplingRate == " + samplingRate
-                    + " ; capture size == " + captureSize + " ; freq points count == " + freqPtsCount);
-            Log.v(LOG_TAG, "arFreq: " + Arrays.toString(arFreq));
-            Log.v(LOG_TAG, "arFreqMagnitude: " + Arrays.toString(arFreqMagnitude));
-            Log.v(LOG_TAG, "arSpectralDensity: " + Arrays.toString(arSpectralDensity));
-            */
-        }
-    };
-
     private class RecAmplitudeChkAsyncTask extends AsyncTask<Void, Double, Void> {
         @Override
         protected void onProgressUpdate(Double... values) {
@@ -515,11 +373,6 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                 Log.e(LOG_TAG, "aTaskAmplitude.onProgressUpdate() : wrong args ");
                 return;
             }
-            //Log.v(LOG_TAG, "aTaskAmplitude.onProgressUpdate() : amplitude == " + Arrays.toString(values));
-            Bundle bndl = new Bundle(1);
-            bndl.putDouble(EXTRA_KEY_AMPL, values[0]);
-            // setPBState(PlaybackStateCompat.STATE_PLAYING, bndl); // think produces state violation
-            setPBState(mediaSes.getController().getPlaybackState().getState(), bndl);
         }
 
         // in release version not always works
@@ -530,21 +383,11 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                     try {
                         Thread.sleep(AMPLITUDE_CHK_RATE);
                     } catch (InterruptedException ie) {
-                        // it is normal
-                        //Log.w(LOG_TAG, "aTaskAmplitude.doInBackground() : interrupted ", ie);
                         Thread.currentThread().interrupt();
                         return null;
                     }
-                    /* try to get input amplitude.
-                        Visualizer's methods return miliVolts and are for api 19 and higher
-                        to get better results see http://stackoverflow.com/questions/10655703/what-does-androids-getmaxamplitude-function-for-the-mediarecorder-actually-gi
-                     */
-                    // integer value (unsigned 16 bit)
                     if(recorder != null) {
                         double amplitude = recorder.getMaxAmplitude();
-                        // try to calculate dB using two approaches
-                        // very inaccurate
-                        //double dbApprox = 20 * Math.log10(amplitude / 0.1);
                         double dbSki = 20 * Math.log10(amplitude / 51805.5336 / 0.0002);
                         publishProgress(dbSki);
                     }
@@ -566,11 +409,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
         Log.d(LOG_TAG, "AudioService created" + isUiMsg());
 
         hThread.start();
-        Handler hndlrBG = new Handler(hThread.getLooper()); // background thread handler
-
-        // now is initialized when defined
-        //audioFilesPath = new File(Environment.getExternalStorageDirectory(), EXT_STORAGE_DIR_NAME);
-
+        Handler hndlrBG = new Handler(hThread.getLooper());
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         // MediaSession:
         //error without receiver declared in manifest: java.lang.IllegalArgumentException: MediaButtonReceiver component may not be null
@@ -619,8 +458,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
             result.sendResult(null);
             return;
         }
-        // can call it and run execution on other thread, then send result
-        //result.detach();
+
         List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>();
         if (MEDIA_ROOT_ID.equals(parentId)) { // root
             if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
@@ -661,10 +499,6 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                                 MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
             }
         }
-        /* else { // no submenu supported
-            // submenu
-            //new MediaBrowserCompat.MediaItem(new MediaDescriptionCompat());
-        }*/
 
         result.sendResult(mediaItems);
     }
@@ -677,15 +511,6 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
     private String genNewRecordName() {
         return VOICE_REC_PREF + sDateFormat.format(new Date()) + VOICE_REC_EXT;
     }
-
-    /* redundant
-    private void setStatePrepareRecording() {
-        servState = ServiceState.PrepareRecording;
-    }
-    private void setStatePreparePlaying() {
-        servState = ServiceState.PreparePlaying;
-    }
-    */
 
     /**
      * request focus for audio playback
@@ -754,43 +579,6 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
         mediaSes.setActive(true);
         registerReceiver(bnReceiver, intentFilter);
 
-//        // foreground notification
-//        MediaControllerCompat controller = mediaSes.getController();
-//        MediaMetadataCompat metadata = controller.getMetadata();
-//        MediaDescriptionCompat description = metadata.getDescription();
-//
-//        notifBuilder = new NotificationCompat.Builder(getApplicationContext());
-//        notifBuilder.setContentTitle(description.getTitle())
-//                .setContentText(description.getSubtitle())
-//                .setSubText(description.getDescription())
-//                .setTicker(description.getSubtitle())
-//                .setLargeIcon(description.getIconBitmap())
-//                //.setContentIntent(controller.getSessionActivity()) // does not work
-//                .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 1,
-//                        new Intent(getApplicationContext(), ElementActivity.class),
-//                        PendingIntent.FLAG_UPDATE_CURRENT))
-//                .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(
-//                        AudioService.this, PlaybackStateCompat.ACTION_STOP))
-//                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-//                .setSmallIcon(R.drawable.ic_notif_record)
-//                //.setColor(ContextCompat.getColor(AudioService.this, R.color.colorPrimaryDark)) // looks bad
-//                .setStyle(new NotificationCompat.MediaStyle()
-//                        .setMediaSession(mediaSes.getSessionToken())
-//                        .setShowActionsInCompactView(0).setShowCancelButton(true)
-//                        .setCancelButtonIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(
-//                                AudioService.this, PlaybackStateCompat.ACTION_STOP)));
-//
-//        if (!SOURCE_MIC.equals(description.getMediaId()) || isPauseRecordingSupported()) {
-//            notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_PAUSE,
-//                    getString(R.string.RECORD_AUDIO_PAUSE),
-//                    MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
-//                            PlaybackStateCompat.ACTION_PAUSE)));
-//        }
-//        notifBuilder.addAction(new NotificationCompat.Action(IC_NOTIF_STOP,
-//                getString(R.string.RECORD_AUDIO_STOP),
-//                MediaButtonReceiver.buildMediaButtonPendingIntent(AudioService.this,
-//                        PlaybackStateCompat.ACTION_STOP)));
-//        startForeground(SERVICE_ID, notifBuilder.build());
     }
 
 //    private void pauseSession() {
@@ -845,40 +633,6 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
         stopForeground(true); // stop and remove notification
     }
 
-    private void startVisualizer(int audioSesId) {
-        Log.d(LOG_TAG, "startVisualizer() with audioSesId " + audioSesId);
-        try {
-            if (vslr == null) { // start new
-                alWaveFormVal = new ArrayList<>(); // prev. list may still be using
-                alFftVal = new ArrayList<>();
-                vslr = new Visualizer(audioSesId);
-                vslr.setCaptureSize(VISUALIZER_CAPTURE_SIZE); // default is 1024, min 128
-                //vslr.setScalingMode(Visualizer.SCALING_MODE_AS_PLAYED); // test
-                Log.d(LOG_TAG, "startVisualizer() : CaptureSize == " + vslr.getCaptureSize()
-                        + " / " + Arrays.toString(Visualizer.getCaptureSizeRange()));
-                Log.d(LOG_TAG, "startVisualizer() : SamplingRate == " + vslr.getSamplingRate());
-                vslr.setDataCaptureListener(vslrListener, VISUALIZER_SAMPLE_RATE, true, true);
-            } // else - resume
-            vslr.setEnabled(true);
-        } catch (IllegalStateException ise) {
-            Log.e(LOG_TAG, "startVisualizer() : IllegalStateException ", ise);
-        }
-    }
-
-    private void pauseVisualizer() {
-        Log.d(LOG_TAG, "pauseVisualizer()");
-        try {
-            if (vslr != null) {
-                //vslr.setDataCaptureListener(null, 0, false, false); // could be used
-                vslr.setEnabled(false);
-            } else {
-                Log.d(LOG_TAG, "pauseVisualizer() : visualizer == null");
-            }
-        } catch (IllegalStateException ise) {
-            Log.e(LOG_TAG, "pauseVisualizer() : IllegalStateException ", ise);
-        }
-    }
-
     private void stopVisualizer() {
         Log.d(LOG_TAG, "stopVisualizer()");
         final ArrayList<Byte> listWf = alWaveFormVal; // to save ref
@@ -896,37 +650,6 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                 saveVslData = new SaveVslDataATask();
                 // to run another (amplitude) at the same time
                 saveVslData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new VSLData(listWf, listFft));
-                /* old way
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        final StringBuilder msg = new StringBuilder();
-                        try {
-                            if(readyToWrite(listWf, listFft)) {
-                                writeJSON(listWf, listFft); // IllegalStateException, IOE
-                                writeXML(listWf, listFft); // IllegalStateException, IOE
-                                final String filesPath = "" + getExternalFilesDir(null);
-                                msg.append(getString(R.string.text_vsl_data_written)).append(filesPath);
-                                Log.i(LOG_TAG, "Visualization data written to JSON and XML : "
-                                        + filesPath);
-                            } else {
-                                Log.w(LOG_TAG, "visualization data isn't ready to write ");
-                                msg.append(getString(R.string.text_err_vsl_data));
-                            }
-                        } catch(IllegalStateException | IllegalArgumentException | IOException e) {
-                            Log.e(LOG_TAG, "writing virtualization data exception ", e);
-                            msg.append(getString(R.string.text_err_vsl_data));
-                        } finally {
-                            hndlrUI.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Log.d(LOG_TAG, "Visualization result runnable " + isUiMsg());
-                                }
-                            });
-                        }
-                    }
-                }).start();
-                */
             } else {
                 Log.d(LOG_TAG, "stopVisualizer() : visualizer == null");
             }
@@ -1100,172 +823,10 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
         xml.flush();
     }
 
-    /* can play using content resolver
-    private void playFromContentResolver() {
-        ContentResolver contentResolver = getContentResolver();
-        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Cursor crs = contentResolver.query(uri, null, null, null, null);
-        if(crs == null) {
-            // query failed
-        } else if(! crs.moveToFirst()) {
-            // no media
-        } else {
-            int titleCol = crs.getColumnIndex(MediaStore.Audio.Media.TITLE);
-            int idCol = crs.getColumnIndex(MediaStore.Audio.Media._ID);
-            do {
-                long curId = crs.getLong(idCol);
-                String curTitle = crs.getString(titleCol);
-                // proc..
-                Uri contentUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                        curId);
-                player = new MediaPlayer();
-                player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                try {
-                    player.setDataSource(getApplicationContext(), contentUri);
-                    player.prepare(); // or set onPrepListener and prepare async
-                    player.start();
-                } catch (IOException e) {
-                    // ..
-                }
-            } while (crs.moveToNext());
-        }
-    }
-    */
-
-    private void actionPlay(@Nullable Uri uri) {
-        Log.d(LOG_TAG, "actionPlay " + isUiMsg());
-        if (requestFocus()) {
-            String metaDescr = (uri == null) ?
-                    "" + mediaSes.getController().getMetadata().getDescription().getDescription() :
-                    "" + uri;
-            setMetaAndPBState(metadataBuilder
-                            .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, SOURCE_AUDIO)
-                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, getString(R.string.app_name))
-                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, getString(R.string.record_audio_playing))
-                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, metaDescr)
-                            .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON,
-                                    BitmapFactory.decodeResource(getResources(), R.drawable.ic_mic))
-                            .build(),
-                    PlaybackStateCompat.STATE_PLAYING);
-
-            startSession();
-            servState = ServiceState.Playing;
-
-            try {
-                if (player != null && uri == null) { // resume
-                    Log.d(LOG_TAG, "actionPlay : resume");
-                    player.start();
-                    startVisualizer(0); // resume
-                    return;
-                } else if (uri == null) {
-                    throw new IllegalArgumentException("actionPlay : uri == null");
-                }
-
-                Log.d(LOG_TAG, "actionPlay : play " + uri);
-
-                //MediaPlayer.create(..) // could be used, and prepare() is not needed
-                player = new MediaPlayer();
-
-                if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
-                        || Environment.MEDIA_MOUNTED_READ_ONLY.equals(Environment.getExternalStorageState())) {
-                    // IOExceptions..
-                    player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-                    player.setDataSource(getApplicationContext(), uri);
-                    // do not let device go to sleep while playing
-                    player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-                    /* if play over inet, can use this lock too to keep it active
-                    WifiManager.WifiLock wifiLock = ((WifiManager) getSystemService(WIFI_SERVICE))
-                            .createWifiLock(WifiManager.WIFI_MODE_FULL, "mylock");
-                    wifiLock.acquire();
-                    // when do not need no more
-                    wifiLock.release();
-                    */
-                    player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-                            Log.d(LOG_TAG, "MediaPlayer.OnCompletionListener ");
-                            /* unnecessary
-                            mediaSes.setPlaybackState(stateBuilder
-                                    .setState(PlaybackStateCompat.STATE_STOPPED, -1, 1)
-                                    .setExtra(null) // reset
-                                    .build());
-                            */
-                            actionStopPlaying();
-                            //actionSetReady(); // unnecessary
-                        }
-                    });
-                    player.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-                        @Override
-                        public boolean onError(MediaPlayer mp, int what, int extra) {
-                            Log.e(LOG_TAG, "MediaPlayer.OnErrorListener : " + what + "; " + extra);
-                            setPBState(PlaybackStateCompat.STATE_ERROR,
-                                    PlaybackStateCompat.ERROR_CODE_UNKNOWN_ERROR,
-                                    getString(R.string.record_audio_error_player_start), null);
-                            mp.reset(); // should be initialized then
-                            mp.release();
-                            actionSetReady();
-                            return true;
-                        }
-                    });
-                    player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                        @Override
-                        public void onPrepared(MediaPlayer mp) {
-                            startVisualizer(player.getAudioSessionId());
-                            player.start();
-                        }
-                    });
-                    //player.prepare(); // could be slow
-                    player.prepareAsync();
-                } else {
-                    throw new IOException("Wrong External Storage State: "
-                            + Environment.getExternalStorageState());
-                }
-            } catch (IOException | IllegalArgumentException e) {
-                Log.e(LOG_TAG, "actionPlay() : can't start player for uri : " + uri, e);
-                actionStopPlaying();
-                setPBState(PlaybackStateCompat.STATE_ERROR,
-                        PlaybackStateCompat.ERROR_CODE_UNKNOWN_ERROR,
-                        getString(R.string.record_audio_error_player_start), null);
-            }
-        }
-    }
-
-    private void actionPausePlaying() {
-//        pauseSession();
-        pauseVisualizer();
-        setPBState(PlaybackStateCompat.STATE_PAUSED);
-        servState = ServiceState.PausedPlaying;
-        try {
-            if (player != null) {
-                player.pause();
-            }
-        } catch (IllegalArgumentException e) {
-            Log.e(LOG_TAG, "actionPausePlaying() : IllegalArgumentException ", e);
-            actionStopPlaying();
-            setPBState(PlaybackStateCompat.STATE_ERROR);
-        }
-    }
-
-    private void actionStopPlaying() {
-        stopSession();
-        stopVisualizer();
-        setPBState(PlaybackStateCompat.STATE_STOPPED);
-        servState = ServiceState.StoppedPlaying;
-        try {
-            if (player != null) {
-                player.stop();
-                player.release();
-                player = null;
-            }
-        } catch (IllegalArgumentException e) {
-            Log.e(LOG_TAG, "actionStopPlaying() : IllegalArgumentException ", e);
-            setPBState(PlaybackStateCompat.STATE_ERROR);
-        }
-    }
-
     private void actionRecord(final Bundle extras) {
         recFilePath = audioFilesPath.getAbsolutePath() + FOLDER_DIVIDER + mFileName;
+
+        //TODO Проверить надо или нет!!! =======================================
 
         setMetaAndPBState(metadataBuilder
                         .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, SOURCE_MIC)
@@ -1276,9 +837,9 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                                 BitmapFactory.decodeResource(getResources(), R.drawable.ic_mic))
                         .build(),
                 PlaybackStateCompat.STATE_PLAYING);
+        //TODO ==================================================================
 
         startSession();
-        // startVisualizer(0);
         servState = ServiceState.Recording;
 
         try {
@@ -1298,17 +859,8 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                     aTaskAmplitude.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
 
                     if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-                        //noinspection ResultOfMethodCallIgnored
                         audioFilesPath.mkdirs();
                         recorder.setOutputFile(recFilePath);
-                    /* need to test
-                    recorder.setAudioChannels(1);
-                    recorder.setAudioSamplingRate(44100);
-                    recorder.setAudioEncodingBitRate(96000);
-                    */
-                    /* can set onInfo and onError listeners, in this case Recorder should be created
-                    on threads with Looper (Like UI thread) */
-                        // IOE
                         recorder.prepare();
                         recorder.start();
                     } else {
@@ -1329,7 +881,6 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
 
     private void actionPauseRecording() {
 //        pauseSession();
-        //pauseVisualizer();
         setPBState(PlaybackStateCompat.STATE_PAUSED);
         servState = ServiceState.PausedRecording;
         try {
@@ -1345,7 +896,6 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
 
     private void actionStopRecording() {
         stopSession();
-        //stopVisualizer();
         setPBState(PlaybackStateCompat.STATE_STOPPED);
         servState = ServiceState.StoppedRecording;
         try {

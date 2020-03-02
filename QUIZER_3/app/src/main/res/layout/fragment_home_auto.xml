@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/cont_home_fragment"
+    android:saveEnabled="false"
     android:keepScreenOn="true">
 
     <pro.quizer.quizer3.view.Toolbar

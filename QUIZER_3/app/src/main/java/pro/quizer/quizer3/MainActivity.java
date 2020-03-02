@@ -43,7 +43,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -62,17 +61,14 @@ import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.User;
 import pro.quizer.quizer3.model.config.Contents;
-import pro.quizer.quizer3.model.config.ElementModel;
 import pro.quizer.quizer3.model.config.ElementModelFlat;
 import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.model.config.OptionsModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.model.config.StagesModel;
-import pro.quizer.quizer3.model.quota.QuotaUtils;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
-import pro.quizer.quizer3.utils.FontUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.view.fragment.MainFragment;
@@ -110,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private HashMap<Integer, ElementModelNew> mMap;
     private HashMap<Integer, ElementModelNew> mTempMap;
     private CurrentQuestionnaireR currentQuestionnaire = null;
-    private HashMap<Integer, ElementModelNew> mNewMap;
     private List<ElementItemR> elementItemRList = null;
     private List<ElementItemR> currentElementsList = null;
     private List<ElementModelFlat> currentElementsFlatList = null;
@@ -235,8 +230,12 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public void showToastfromActivity(String text) {
-        runOnUiThread(() -> Toast.makeText(MainActivity.this, text, Toast.LENGTH_SHORT).show());
-//        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+        try {
+            runOnUiThread(() -> Toast.makeText(MainActivity.this, text, Toast.LENGTH_SHORT).show());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public QuizerDao getMainDao() {
@@ -256,13 +255,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public HashMap<Integer, ElementModelNew> getMap(boolean rebuild) {
-//        Log.d(TAG, "getMap NULL?: " + mCurrentUser);
 
-//        currentElementsFlatList = mCurrentUser.getConfigR().getProjectInfo().getFlatElements();
-//        Log.d(TAG, "getMap SIZE: " + currentElementsFlatList.size());
-//        for (ElementModelFlat model : currentElementsFlatList) {
-//            Log.d(TAG, "getMap FLAT: " + model.getRelativeID());
-//        }
         if (rebuild) {
             Log.d(TAG, "Rebuilding Elements Database............. 2");
             mMap = new HashMap<>();
@@ -442,13 +435,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public UserModelR getCurrentUser() {
-//        if (mCurrentUser == null) {
-//            try {
-//                mCurrentUser = getUserByUserId(getCurrentUserId());
-//            } catch (Exception e) {
-//                Toast.makeText(this, getString(R.string.db_load_error), Toast.LENGTH_SHORT).show();
-//            }
-//        }
         mCurrentUser = getUserByUserId(getCurrentUserId());
         return mCurrentUser;
     }
@@ -464,7 +450,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public int getCurrentUserId() {
-//        Log.d(TAG, "getCurrentUserId: " + SPUtils.getCurrentUserId(this));
         return SPUtils.getCurrentUserId(this);
     }
 
@@ -884,30 +869,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                     return; // handled
                 }
             }
-
-//            switch (state.getState()) {
-//                case PlaybackStateCompat.STATE_ERROR:
-//                    break;
-//                case PlaybackStateCompat.STATE_STOPPED:
-//                case PlaybackStateCompat.STATE_NONE:
-//                    break;
-//                case PlaybackStateCompat.STATE_PAUSED:
-//                    switch (mediaID) {
-//                        case AudioService.SOURCE_AUDIO:
-//                            break;
-//                        case AudioService.SOURCE_MIC:
-//                            break;
-//                    }
-//                    break;
-//                case PlaybackStateCompat.STATE_PLAYING:
-//                    switch (mediaID) {
-//                        case AudioService.SOURCE_AUDIO:
-//                            break;
-//                        case AudioService.SOURCE_MIC:
-//                            break;
-//                    }
-//                    break;
-//            }
         }
 
         @Override
@@ -927,7 +888,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         }
         stopRecording();
 
-
         final MediaControllerCompat cntrlr = MediaControllerCompat.getMediaController(this);
 
         if (cntrlr != null) {
@@ -944,10 +904,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public ElementItemR[][] getTree(final ICallback pCallback) {
         Log.d(TAG, "getTree: START");
-//        ElementItemR[][] tree;
         if (tree == null)
             tree = new QuotasTreeMaker(getQuotasElements(), this, pCallback).execute();
-//            tree = QuotaUtils.getQuotaTree(getQuotasElements(), this);
         Log.d(TAG, "getTree: DONE");
         return tree;
     }
@@ -960,8 +918,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public List<ElementItemR> getQuotasElements() {
-//        Log.d(TAG, "======== getQuotasElements: 1");
-//        List<ElementItemR> quotaList = new ArrayList<>();
         List<ElementItemR> quotaList = null;
 
         if (elementItemRList == null) {
@@ -981,15 +937,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                     quotaBlockID = element.getRelative_id();
                     break;
                 }
-
-//                if (element.getRelative_parent_id() != null && element.getRelative_parent_id() != 0) {
-//                    if (getElement(element.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
-//                        quotaList.add(element);
-//                        for (ElementItemR answer : element.getElements()) {
-//                            quotaList.add(answer);
-//                        }
-//                    }
-//                }
             }
             if (quotaBlockID != -2) {
                 quotaList = getMainDao().getQuotaElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId(), quotaBlockID);
@@ -997,7 +944,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 quotaList = new ArrayList<>();
             }
         }
-//        Log.d(TAG, "======== getQuotasElements: 2");
         return quotaList;
     }
 

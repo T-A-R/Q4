@@ -277,21 +277,6 @@ public abstract class ScreenFragment extends SmartFragment {
             main.hideScreensaver();
     }
 
-    public void showMenu() {
-        if (main != null)
-            main.showMenu();
-    }
-
-    public void hideMenu() {
-        if (main != null)
-            main.hideMenu();
-    }
-
-    public void setMenuCursor(int index) {
-        if (main != null)
-            main.setMenuCursor(index);
-    }
-
     public User getUser() {
         return User.getUser();
     }

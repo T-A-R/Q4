@@ -46,13 +46,6 @@
         android:layout_height="@dimen/_60sdp" />
 
     <fragment
-        android:id="@+id/frag_menu"
-        android:name="pro.quizer.quizer3.view.fragment.MenuFragment"
-        android:layout_width="match_parent"
-        android:layout_height="78dp"
-        android:layout_alignParentBottom="true" />
-
-    <fragment
         android:id="@+id/frag_saver"
         android:name="pro.quizer.quizer3.view.fragment.ScreensaverFragment"
         android:layout_width="match_parent"

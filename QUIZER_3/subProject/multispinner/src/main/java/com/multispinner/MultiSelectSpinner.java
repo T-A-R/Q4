@@ -63,14 +63,11 @@ public class MultiSelectSpinner extends Spinner implements DialogInterface.OnMul
 
     public MultiSelectSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
-//        Log.d("TARLOGS", "ADAPTER 2");
         simple_adapter = new ArrayAdapter<String>(context,
                 android.R.layout.simple_spinner_item) {
             @Override
             public boolean isEnabled(int position) {
-//                if (!mEnabled[position]) {
                 if (!mEnabled[position]) {
-//                    Log.d("TARLOGS", "ADAPTER 2 isEnabled: false " + position);
                     // Disable the first item from Spinner
                     // First item will be use for hint
                     return false;
@@ -104,11 +101,7 @@ public class MultiSelectSpinner extends Spinner implements DialogInterface.OnMul
                     for (int i = 0; i < mSelection.length; i++) {
                         mEnabled[i] = true;
                     }
-//                    simple_adapter.notifyDataSetChanged();
                 } else if (position != uncheckerIndex && mSelection[uncheckerIndex] && isChecked) {
-//                    mSelection[uncheckerIndex] = false;
-//                    ((AlertDialog) dialog).getListView().setItemChecked(uncheckerIndex, false);
-//                    ((AlertDialog) dialog).getListView().setItemChecked(position, false);
                     for (int i = 0; i < mSelection.length; i++) {
                         if (i != uncheckerIndex) {
                             mSelection[i] = false;
@@ -119,17 +112,14 @@ public class MultiSelectSpinner extends Spinner implements DialogInterface.OnMul
             }
             if (mEnabled[position])
                 mSelection[position] = isChecked;
-//            simple_adapter.notifyDataSetChanged();
-//            super.setAdapter(simple_adapter);
+
             simple_adapter.clear();
             simple_adapter.add(buildSelectedItemString());
         } else {
             throw new IllegalArgumentException(
                     "Argument 'which' is out of bounds.");
         }
-        for (int i = 0; i < mEnabled.length; i++) {
-            Log.d("TARLOGS", "ENALED: (" + i + ") " + mEnabled[i]);
-        }
+
     }
 
     @Override
@@ -138,12 +128,7 @@ public class MultiSelectSpinner extends Spinner implements DialogInterface.OnMul
         builder.setTitle("Выберите:");
         builder.setMultiChoiceItems(_items, mSelection, this);
         _itemsAtStart = getSelectedItemsAsString();
-//        builder.setNeutralButton("Clear", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                setSelection(0);
-//            }
-//        });
+
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

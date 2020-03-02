@@ -10,34 +10,21 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-//import com.onesignal.OneSignal;
-//import com.yandex.metrica.YandexMetrica;
-//import com.yandex.metrica.profile.Attribute;
-//import com.yandex.metrica.profile.UserProfile;
 
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.model.User;
-import pro.quizer.quizer3.utils.ImageUtils;
 import pro.quizer.quizer3.view.Anim;
-import pro.quizer.quizer3.view.Toolbar;
-import pro.quizer.quizer3.view.screens.PageFragment;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class MainFragment extends SmartFragment implements View.OnClickListener, MenuFragment.Listener, ScreensManager.Listener, User.ModeChangeListener, IMainFragment {
+public class MainFragment extends SmartFragment implements View.OnClickListener, ScreensManager.Listener, IMainFragment {
     static public NotifyType wasNotify;
     static public ScreenFragment newActivityScreen;
 
-    private RelativeLayout contSwipe;
-    private RelativeLayout line3;
     private ScreensManager screensManager;
-    private MenuFragment menu;
     private static NotificationFragment notificationFragment;
     private ScreensaverFragment screensaver;
     private static DrawerLayout sideMenuDrawer;
@@ -53,10 +40,6 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
     private ImageButton mChangeUserBtn;
     private static RelativeLayout mHomeBtnCont;
     private static RelativeLayout mSyncBtnCont;
-    private RelativeLayout mSettingsBtnCont;
-    private RelativeLayout mAboutBtnCont;
-    private RelativeLayout mQuotasBtnCont;
-    private RelativeLayout mChangeUserBtnCont;
 
     public MainFragment() {
         super(R.layout.fragment_main);
@@ -64,10 +47,7 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
 
     @Override
     protected void onReady() {
-        contSwipe = (RelativeLayout) findViewById(R.id.cont_swipe);
-        line3 = (RelativeLayout) findViewById(R.id.line3);
 
-        menu = (MenuFragment) getChildFragmentManager().findFragmentById(R.id.frag_menu);
         screensaver = (ScreensaverFragment) getChildFragmentManager().findFragmentById(R.id.frag_saver);
         notificationFragment = (NotificationFragment) getChildFragmentManager().findFragmentById(R.id.frag_notification);
 
@@ -83,13 +63,12 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
             @Override
             public void onDrawerOpened(View drawerView) {
                 isSideMenuOpen = true;
-                menu.setCursor(0);
+//                menu.setCursor(0);
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 isSideMenuOpen = false;
-                menu.setPreviousCursor();
             }
 
             @Override
@@ -108,10 +87,6 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
 
         mHomeBtnCont = findViewById(R.id.home_cont);
         mSyncBtnCont = findViewById(R.id.sync_cont);
-        mSettingsBtnCont = findViewById(R.id.settings_cont);
-        mAboutBtnCont = findViewById(R.id.about_cont);
-        mQuotasBtnCont = findViewById(R.id.quotas_cont);
-        mChangeUserBtnCont = findViewById(R.id.change_user_cont);
 
         bg.setOnClickListener(this);
         mHomeBtn.setOnClickListener(this);
@@ -121,36 +96,14 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
         mQuotasBtn.setOnClickListener(this);
         mChangeUserBtn.setOnClickListener(this);
 
-        menu.setListener(this);
         screensManager.setListener(this);
         setSideMenu();
-
-//        MainActivity activity = getMainActivity();
-//        if (activity != null) {
-//            Log.d(TAG, "ERROR 2: ");
-//            if (activity.hasReserveChannel()) {
-//                mQuotasBtnCont.setVisibility(View.GONE);
-//            } else {
-//                mQuotasBtnCont.setVisibility(View.VISIBLE);
-//            }
-//        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getUser().setModeChangeListener(this);
         sideMenuDrawer = (DrawerLayout) findViewById(R.id.drawer_cont);
-//        MainActivity activity = getMainActivity();
-//        if (activity != null) {
-//            Log.d(TAG, "ERROR 3: ");
-//
-//            if (activity.hasReserveChannel()) {
-//                mQuotasBtnCont.setVisibility(View.GONE);
-//            } else {
-//                mQuotasBtnCont.setVisibility(View.VISIBLE);
-//            }
-//        }
     }
 
     public void startScreens() {
@@ -167,7 +120,6 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
     }
 
     public void openNewAcivityScreen() {
-        Log.d(TAG, "startScreens: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         if (newActivityScreen != null) openScreen(newActivityScreen);
     }
 
@@ -186,104 +138,8 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
     }
 
     @Override
-    public void onModeChanged() {
-        onModeChangedSide();
-        menu.onModeChanged();
-    }
-
-    @Override
-    public void onMenuClick(int index) {
-        boolean delegate = getUser().isDelegateMode();
-        switch (index) {
-            case 0:
-                menu.setCursor(index);
-                if (!sideMenuDrawer.isDrawerOpen(Gravity.LEFT)) {
-                    show();
-                } else {
-                    hide();
-                }
-                break;
-
-            case 1:
-                menu.setCursor(index);
-//                openScreen(delegate ? new RafflesFragment().setDelegateScreen(true) : new MapFragment());
-                openScreen(new PageFragment());
-                hide();
-                break;
-
-            case 2:
-                if (delegate)
-                    onAddRaffleBtn();
-                else if (!getUser().isAuthorized()) {
-//                    openScreen(new Reg1Fragment().setEnter(true).setDesc(true));
-                    openScreen(new PageFragment());
-                    menu.setCursor(index);
-                } else {
-                    openScreen(new PageFragment());
-//                    if (screensManager.getCurFragment() instanceof RafflesFragment) {
-//                        ((RafflesFragment) screensManager.getCurFragment()).setTab(1);
-//                    } else
-//                        openScreen(new RafflesFragment());
-                }
-                hide();
-                break;
-
-            case 3:
-                if (delegate) {
-                    openScreen(new PageFragment());
-//                    openScreen(new WinnersFragment());
-                } else if (!getUser().isAuthorized()) {
-                    openScreen(new PageFragment());
-//                    openScreen(new Reg1Fragment().setEnter(true).setDesc(true));
-                    menu.setCursor(index);
-                } else {
-                    openScreen(new PageFragment());
-//                    if (screensManager.getCurFragment() instanceof RafflesFragment) {
-//                        ((RafflesFragment) screensManager.getCurFragment()).setTab(2);
-//                    } else
-//                        openScreen(new RafflesFragment().setWins(true));
-                }
-                hide();
-                break;
-
-            case 4:
-                if (delegate) {
-                    openScreen(new PageFragment());
-//                    openScreen(new EditPlaceFragment());
-                } else if (!getUser().isAuthorized()) {
-                    openScreen(new PageFragment());
-//                    openScreen(new Reg1Fragment().setEnter(true));
-                    menu.setCursor(index);
-                } else {
-                    openScreen(new PageFragment());
-//                    openScreen(new ProfileFragment());
-                }
-                hide();
-                break;
-        }
-    }
-
-    private void onAddRaffleBtn() {
-//        openScreen(new AddRaffleFragment());
-    }
-
-    @Override
     public void onOpenScreen(ScreenFragment screen) {
-        menu.show(screen.isMenuShown());
 
-//        if (screen instanceof MapFragment) {
-//            menu.setCursor(1);
-//        } else if (screen instanceof RafflesFragment) {
-//            menu.setCursor(screen.isDelegateScreen() ? 1 : (((RafflesFragment) screen).isWins() ? 3 : 2));
-//        } else if (screen instanceof AddRaffleFragment) {
-//            menu.setCursor(2);
-//        } else if (screen instanceof WinnersFragment) {
-//            menu.setCursor(3);
-//        } else if (screen instanceof ProfileFragment) {
-//            menu.setCursor(4);
-//        } else if (screen instanceof EditPlaceFragment) {
-//            menu.setCursor(4);
-//        }
     }
 
     @Override
@@ -297,16 +153,6 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
     }
 
     @Override
-    public void showMenu() {
-        menu.show();
-    }
-
-    @Override
-    public void hideMenu() {
-        menu.hide();
-    }
-
-    @Override
     public void showSideMenuDrawer() {
         //TODO Поменять боковое меню на эти методы
     }
@@ -314,11 +160,6 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
     @Override
     public void hideSideMenuDrawer() {
         //TODO Поменять боковое меню на эти методы
-    }
-
-    @Override
-    public void setMenuCursor(int index) {
-        menu.setCursor(index);
     }
 
     public ScreensManager getScreensManager() {
@@ -402,37 +243,6 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
 
     public static void showDrawer() {
         sideMenuDrawer.openDrawer(Gravity.LEFT);
-    }
-
-    public void onModeChangedSide() {
-        boolean delegate = User.getUser().isDelegateMode();
-
-        updatePhoto();
-
-        int colorId = delegate ? R.color.blue : R.color.green;
-        int color = getResources().getColor(colorId);
-//        txtEdit.setTextColor(color);
-//        txtCity.setTextColor(color);
-//
-//        imgMarker.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-//        imgDrop.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-//
-//        linearDelegate.setVisibility(delegate ? View.VISIBLE : View.GONE);
-//        linearPlayer.setVisibility(delegate ? View.GONE : View.VISIBLE);
-//        txtDelegate.setText(delegate ? R.string.side_menu_player : R.string.side_menu_delegate);
-
-        setSideMenu();
-
-    }
-
-    private void updatePhoto() {
-        boolean delegate = User.getUser().isDelegateMode();
-        User user = getUser();
-//        if (delegate && user.getPlace() != null && user.getPlace().getLogo() != null) {
-//            ImageUtils.getBitmap(getUser().getPlace().getLogo(), bitmap -> img.post(() -> setPhoto(bitmap)));
-//        } else {
-//            setPhoto(null);
-//        }
     }
 
     private void setSideMenu() {

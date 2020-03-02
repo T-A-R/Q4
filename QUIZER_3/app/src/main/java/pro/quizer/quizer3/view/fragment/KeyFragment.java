@@ -23,8 +23,6 @@ import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.database.models.ActivationModelR;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.view.Anim;
-import pro.quizer.quizer3.utils.Fonts;
-import pro.quizer.quizer3.view.screens.PageFragment;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 

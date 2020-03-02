@@ -46,11 +46,10 @@ public class ScreensManager implements ScreenFragment.ScreenListener {
             } else {
                 transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left);
             }
-//        mainFragment = (MainFragment) fragmentManager.findFragmentById(R.id.screen);
+
             transaction.addToBackStack(null);
             transaction.add(R.id.cont_screen, fragment).commit();
 
-//            activity.getSupportFragmentManager().beginTransaction().add(R.id.cont_screen, fragment).commit();
             curFragment = fragment;
 
             if (listener != null) {
@@ -74,10 +73,10 @@ public class ScreensManager implements ScreenFragment.ScreenListener {
                 transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_left, R.anim.exit_to_right);
             else
                 transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left);
-//        mainFragment = (MainFragment) fragmentManager.findFragmentById(R.id.screen);
+
             transaction.addToBackStack(null);
             transaction.remove(curFragment).commit();
-//            activity.getSupportFragmentManager().beginTransaction().remove(curFragment).commit();
+
         } catch (Exception e) {
             Log.d(TAG, "ScreensManager.removeFramgent() " + e);
         }

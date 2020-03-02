@@ -286,9 +286,9 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
     }
 
     public void showChangeAccountAlertDialog() {
-        MainActivity activity = (MainActivity) getActivity();
-        if (!activity.isFinishing()) {
-            new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
+        MainActivity activity = getMainActivity();
+        if (activity != null && !activity.isFinishing()) {
+            new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
                     .setCancelable(false)
                     .setTitle(R.string.view_exit)
                     .setMessage(R.string.dialog_change_user)

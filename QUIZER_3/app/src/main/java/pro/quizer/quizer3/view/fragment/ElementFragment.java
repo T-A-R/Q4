@@ -23,7 +23,6 @@ import android.widget.TextView;
 import android.widget.Spinner;
 
 import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
-import com.google.gson.Gson;
 import com.multispinner.MultiSelectSpinner;
 import com.squareup.picasso.Picasso;
 
@@ -40,6 +39,7 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.ListQuestionAdapter;
 import pro.quizer.quizer3.adapter.ScaleQuestionAdapter;
 import pro.quizer.quizer3.adapter.TableQuestionAdapter;
+import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementOptionsR;
@@ -150,7 +150,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     @Override
     protected void onReady() {
-
+        setRetainInstance(true);
         toolbar = findViewById(R.id.toolbar);
         cont = (RelativeLayout) findViewById(R.id.cont_element_fragment);
         unhideCont = (LinearLayout) findViewById(R.id.unhide_cont);
@@ -233,14 +233,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         MainFragment.enableSideMenu(false);
         st("after init side menu");
 
-//        Log.d(TAG, "onReady ELEMENT 1: " + currentElement.getRelative_id());
         showScreensaver("Подождите, \nидет загрузка элемента анкеты", true);
         initCurrentElements();
         st("after init elements");
         loadResumedData();
         st("after load data");
         initQuestion();
-        Log.d(TAG, "onReady ELEMENT 2: " + currentElement.getRelative_id());
         st("after init question");
 //        if (conditions) {
         if (currentElement != null) {
@@ -268,7 +266,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Log.d(TAG, "onReady ELEMENT 3: " + currentElement.getRelative_id() + " answertype " + answerType);
         } else {
             exitQuestionnaire();
         }
@@ -322,8 +319,19 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } else if (view == btnExit) {
             deactivateButtons();
             checkAbortedBox();
-            Log.d(TAG, "EXIT: " + getMainActivity().getCurrentQuestionnaireForce().isIn_aborted_box());
-            if (getCurrentUser().getConfigR().isSaveAborted() && hasAbortedBox() && !getMainActivity().getCurrentQuestionnaireForce().isIn_aborted_box()) {
+            MainActivity activity = getMainActivity();
+            boolean isInAbortedBox = false;
+            if(activity != null) {
+                CurrentQuestionnaireR quiz = activity.getCurrentQuestionnaireForce();
+                if(quiz != null) {
+                    isInAbortedBox = quiz.isIn_aborted_box();
+                }
+            }
+
+
+            if (getCurrentUser().getConfigR().isSaveAborted()
+                    && hasAbortedBox()
+                    && !isInAbortedBox) {
                 try {
                     getDao().setCurrentQuestionnaireInAbortedBox(true);
                 } catch (Exception e) {
@@ -379,12 +387,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         if (getQuestionnaire() == null) {
             initCurrentElements();
         }
-        if (getQuestionnaire().getPrev_element_id() != null && getQuestionnaire().getPrev_element_id().size() > 0) {
-            prevList = getQuestionnaire().getPrev_element_id();
-            prevElementId = prevList.get(prevList.size() - 1).getPrevId();
-        } else {
-            prevElementId = 0;
-        }
+        if (getQuestionnaire() != null)
+            if (getQuestionnaire().getPrev_element_id() != null && getQuestionnaire().getPrev_element_id().size() > 0) {
+                prevList = getQuestionnaire().getPrev_element_id();
+                prevElementId = prevList.get(prevList.size() - 1).getPrevId();
+            } else {
+                prevElementId = 0;
+            }
 
         if (startElementId == null) startElementId = 0;
 
@@ -394,8 +403,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             } else {
                 currentElement = getCurrentElements().get(0);
             }
-//            conditions = checkConditions(currentElement);
-//            if (conditions) {
             boolean found = false;
             for (int i = 0; i < getCurrentElements().size(); i++) {
 
@@ -1464,7 +1471,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     public void showExitPoolAlertDialog() {
         activateButtons();
         if (!getCurrentUser().getConfigR().isSaveAborted()) {
-            MainActivity activity = (MainActivity) getActivity();
+            MainActivity activity = getMainActivity();
             addLog(getCurrentUser().getLogin(), Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_exit), null);
             if (activity != null && !activity.isFinishing()) {
                 new AlertDialog.Builder(Objects.requireNonNull(getContext()), R.style.AlertDialogTheme)
@@ -1511,49 +1518,64 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     private void activateButtons() {
         try {
-            getMainActivity().runOnUiThread(new Runnable() {
-                public void run() {
-                    try {
-                        btnPrev.setEnabled(true);
-                        btnExit.setEnabled(true);
-                        btnNext.setEnabled(true);
+            final MainActivity activity = getMainActivity();
 
-                        final int sdk = android.os.Build.VERSION.SDK_INT;
+            if (activity != null) {
+                getMainActivity().runOnUiThread(new Runnable() {
+                    public void run() {
+                        try {
+                            btnPrev.setEnabled(true);
+                            btnExit.setEnabled(true);
+                            btnNext.setEnabled(true);
 
-                        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                            btnPrev.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-                            btnExit.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_red));
-                            btnNext.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-                        } else {
-                            btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-                            btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_red));
-                            btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                            final int sdk = android.os.Build.VERSION.SDK_INT;
+
+                            if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                                btnPrev.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_green));
+                                btnExit.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_red));
+                                btnNext.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_green));
+                            } else {
+                                btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_green));
+                                btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_red));
+                                btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_green));
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
-                }
-            });
+                });
+            } else {
+                Log.d(TAG, "activateButtons: ERROR! ACTIVITY = NULL");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     private void deactivateButtons() {
-        btnPrev.setEnabled(false);
-        btnExit.setEnabled(false);
-        btnNext.setEnabled(false);
+        final MainActivity activity = getMainActivity();
 
-        final int sdk = android.os.Build.VERSION.SDK_INT;
+        if (activity != null) {
+            try {
+                btnPrev.setEnabled(false);
+                btnExit.setEnabled(false);
+                btnNext.setEnabled(false);
 
-        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            btnPrev.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-            btnExit.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-            btnNext.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-        } else {
-            btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-            btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-            btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+                final int sdk = android.os.Build.VERSION.SDK_INT;
+
+                if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    btnPrev.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+                    btnExit.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+                    btnNext.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+                } else {
+                    btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+                    btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+                    btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -1582,7 +1604,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         infoDialog = dialogBuilder.create();
         infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
         infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        infoDialog.show();
+        MainActivity activity = getMainActivity();
+        if (activity != null && !activity.isFinishing())
+            infoDialog.show();
     }
 
     class DoNext extends AsyncTask<Void, Void, Void> {
@@ -1642,16 +1666,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void checkAndLoadNext() {
-//        Log.d(TAG, ">>>>> checkAndLoadNext: " + nextElementId);
-        if (checkConditions(getElement(nextElementId))) {
-//            Log.d(TAG, ">>>>> checkAndLoadNext: TRUE " + nextElementId);
-            TransFragment fragment = new TransFragment();
-            fragment.setStartElement(nextElementId);
-            replaceFragment(fragment);
-            st("calling new fragment");
+        if (nextElementId != null && !nextElementId.equals(0) && !nextElementId.equals(-1)) {
+            if (checkConditions(getElement(nextElementId))) {
+                TransFragment fragment = new TransFragment();
+                fragment.setStartElement(nextElementId);
+                replaceFragment(fragment);
+                st("calling new fragment");
+            } else {
+                checkAndLoadNext();
+            }
         } else {
-//            Log.d(TAG, ">>>>> checkAndLoadNext: FALSE " + nextElementId);
-            checkAndLoadNext();
+            activateButtons();
         }
     }
 

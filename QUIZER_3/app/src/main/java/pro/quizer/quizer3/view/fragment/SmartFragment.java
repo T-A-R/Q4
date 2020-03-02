@@ -104,8 +104,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     private int mProjectId = -1;
     private int abortedBoxRelativeId = 0;
     private boolean hasAbortedBox = false;
-
-    //    private HashMap<Integer, ElementModelNew> mMap;
     private CurrentQuestionnaireR currentQuestionnaire = null;
     private List<ElementItemR> elementItemRList = null;
 
@@ -157,18 +155,21 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setRetainInstance(true);
         onReady();
 
-        MainActivity mainActivity = (MainActivity) getActivity();
+        //TODO SET FONT CHANGE BACK!
 
-        if (mainActivity != null && !mainActivity.isFinishing()) {
-            mainActivity.setChangeFontCallback(new MainActivity.ChangeFontCallback() {
-                @Override
-                public void onChangeFont() {
-                    refreshFragment();
-                }
-            });
-        }
+//        MainActivity mainActivity = (MainActivity) getActivity();
+//
+//        if (mainActivity != null && !mainActivity.isFinishing()) {
+//            mainActivity.setChangeFontCallback(new MainActivity.ChangeFontCallback() {
+//                @Override
+//                public void onChangeFont() {
+//                    refreshFragment();
+//                }
+//            });
+//        }
     }
 
     public void refreshFragment() {
@@ -303,12 +304,13 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public void showToast(String text) {
-        getMainActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
-            }
-        });
-//        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+        final MainActivity activity = getMainActivity();
+        if (activity != null)
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
+                }
+            });
     }
 
     public boolean isActivated() {
@@ -333,7 +335,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public int getCurrentUserId() {
-        return SPUtils.getCurrentUserId(getContext());
+        MainActivity activity = getMainActivity();
+        if (activity != null)
+            return SPUtils.getCurrentUserId(activity);
+        else return 0;
     }
 
     public UserModelR getUserByUserId(final int pUserId) {
@@ -589,7 +594,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public CurrentQuestionnaireR getQuestionnaireFromDB() {
-        CurrentQuestionnaireR  quiz = getDao().getCurrentQuestionnaireR();
+        CurrentQuestionnaireR quiz = getDao().getCurrentQuestionnaireR();
         return quiz;
     }
 

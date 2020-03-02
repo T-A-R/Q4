@@ -2,6 +2,7 @@ package pro.quizer.quizer3;
 
 import android.content.Context;
 import android.os.Environment;
+import android.os.Process;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -78,6 +79,8 @@ public class CrashLogSender implements Thread.UncaughtExceptionHandler {
 
         if (oldHandler != null) // если есть ранее установленный...
             oldHandler.uncaughtException(thread, throwable); // ...вызовем его
+
+        Process.killProcess(Process.myPid());
     }
 
     private void processThrowable(Throwable exception, StringBuilder builder) {

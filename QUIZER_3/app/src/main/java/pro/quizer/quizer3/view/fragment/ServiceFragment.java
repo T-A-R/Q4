@@ -290,8 +290,9 @@ public class ServiceFragment extends ScreenFragment {
     }
 
     public void showClearDbAlertDialog() {
-        if (getActivity() != null && !getActivity().isFinishing()) {
-            new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
+        MainActivity activity = getMainActivity();
+        if (activity != null && !activity.isFinishing()) {
+            new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
                     .setCancelable(false)
                     .setTitle(R.string.clear_db_title)
                     .setMessage(R.string.dialog_clear_db_warning)

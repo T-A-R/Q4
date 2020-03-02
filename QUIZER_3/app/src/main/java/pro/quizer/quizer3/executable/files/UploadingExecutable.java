@@ -1,6 +1,7 @@
 package pro.quizer.quizer3.executable.files;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
@@ -60,7 +61,11 @@ public class UploadingExecutable extends BaseExecutable {
         moveQuestionnaires();
 
         if (mContext != null)
-            Toast.makeText(mContext, R.string.notification_uploading, Toast.LENGTH_SHORT).show();
+            try {
+                Toast.makeText(mContext, R.string.notification_uploading, Toast.LENGTH_SHORT).show();
+            } catch (Resources.NotFoundException e) {
+                e.printStackTrace();
+            }
     }
 
     private void moveQuestionnaires() {

@@ -30,9 +30,9 @@ public class ScreensManager implements ScreenFragment.ScreenListener {
 
         if (main == null) return;
 
-        if (curFragment != null) {
-            fragment.setPrevClass(curFragment.getClass());
-        }
+//        if (curFragment != null) {
+//            fragment.setPrevClass(curFragment.getClass());
+//        }
 
         fragment.setMain(main);
         fragment.setScreenListener(this);
@@ -88,7 +88,7 @@ public class ScreensManager implements ScreenFragment.ScreenListener {
     }
 
     @Override
-    public void fragmentReplace(ScreenFragment curScreen, ScreenFragment newScreen, boolean fromBackPress) {
+    public void fragmentReplace(ScreenFragment newScreen, boolean fromBackPress) {
         openScreen(newScreen, fromBackPress);
     }
 

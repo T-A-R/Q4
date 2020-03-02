@@ -374,7 +374,9 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
         infoDialog = dialogBuilder.create();
         infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
         infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        infoDialog.show();
+        if (mMainActivity != null && !mMainActivity.isFinishing()) {
+            infoDialog.show();
+        }
     }
 
     public interface DetailsCallback {

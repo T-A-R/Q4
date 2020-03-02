@@ -308,7 +308,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private Calendar mCalendar = Calendar.getInstance();
 
     public void setDate(final EditText pEditText) {
-        if (!mContext.isFinishing()) {
+        if (mContext != null && !mContext.isFinishing()) {
             new DatePickerDialog(mContext, new DatePickerDialog.OnDateSetListener() {
                 public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                     mCalendar.set(Calendar.YEAR, year);
@@ -325,7 +325,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     public void setTime(final EditText pEditText) {
-        if (!mContext.isFinishing()) {
+        if (mContext != null && !mContext.isFinishing()) {
             new TimePickerDialog(mContext, new TimePickerDialog.OnTimeSetListener() {
                 @Override
                 public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -477,7 +477,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
             final AlertDialog alertDialog = dialog.create();
 
-            if (!mContext.isFinishing()) {
+            if (mContext != null && !mContext.isFinishing()) {
                 alertDialog.show();
             }
         } else {
@@ -588,7 +588,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         final AlertDialog alertDialog = dialog.create();
 
-        if (!mContext.isFinishing()) {
+        if (mContext != null && !mContext.isFinishing()) {
             alertDialog.show();
         }
     }

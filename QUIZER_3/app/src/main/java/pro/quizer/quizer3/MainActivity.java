@@ -150,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         if (savedInstanceState == null) {
             mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.main);
 
+            assert mainFragment != null;
             View view = mainFragment.getView();
             if (mainFragment == null || view == null)
                 Log.d(TAG, "MainActivity.onCreate() WTF? view == null");
@@ -395,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-        }
+            }
 
             final List<ElementModelNew> nestedList = element.getElements();
             if (nestedList != null && !nestedList.isEmpty()) {
@@ -443,7 +444,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         try {
             mCurrentUser = getUserByUserId(getCurrentUserId());
         } catch (Exception e) {
-            Toast.makeText(this, getString(R.string.db_load_error), Toast.LENGTH_SHORT).show();
+            showToastfromActivity(getString(R.string.db_load_error));
         }
 
         return mCurrentUser;
@@ -459,7 +460,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         try {
             list = getMainDao().getUserByUserId(pUserId);
         } catch (Exception e) {
-            Toast.makeText(this, getString(R.string.db_load_error), Toast.LENGTH_SHORT).show();
+            showToastfromActivity(getString(R.string.db_load_error));
         }
 
         if (list == null || list.isEmpty()) {
@@ -589,7 +590,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             }
         });
 
-        alertDialog.show();
+        if (!isFinishing())
+            alertDialog.show();
     }
 
     public static void addLog(String login,
@@ -1175,5 +1177,9 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void setCurrentQuestionnaireNull() {
         currentQuestionnaire = null;
+    }
+
+    public MainActivity getThis() {
+        return this;
     }
 }

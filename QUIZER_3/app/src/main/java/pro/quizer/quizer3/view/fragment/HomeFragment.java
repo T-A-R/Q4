@@ -491,26 +491,29 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void showTimeDialog() {
-        mIsTimeDialogShow = true;
+        MainActivity activity = getMainActivity();
+        if (activity != null && !activity.isFinishing()) {
+            mIsTimeDialogShow = true;
 
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(Objects.requireNonNull(getContext()), R.style.AlertDialogTheme);
-        alertDialog.setCancelable(false);
-        alertDialog.setTitle(R.string.dialog_please_turn_on_auto_time);
-        alertDialog.setMessage(R.string.dialog_you_need_to_turn_on_auto_time);
-        alertDialog.setPositiveButton(R.string.dialog_turn_on, new DialogInterface.OnClickListener() {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity, R.style.AlertDialogTheme);
+            alertDialog.setCancelable(false);
+            alertDialog.setTitle(R.string.dialog_please_turn_on_auto_time);
+            alertDialog.setMessage(R.string.dialog_you_need_to_turn_on_auto_time);
+            alertDialog.setPositiveButton(R.string.dialog_turn_on, new DialogInterface.OnClickListener() {
 
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Settings.ACTION_DATE_SETTINGS);
-                startActivity(intent);
-                if (alertDialog != null) {
-                    dialog.dismiss();
-                    mIsTimeDialogShow = false;
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(Settings.ACTION_DATE_SETTINGS);
+                    startActivity(intent);
+                    if (alertDialog != null) {
+                        dialog.dismiss();
+                        mIsTimeDialogShow = false;
+                    }
+
                 }
+            });
 
-            }
-        });
-
-        alertDialog.show();
+            alertDialog.show();
+        }
     }
 
     private boolean checkGps() {
@@ -570,25 +573,28 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     public void showSettingsAlert() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity, R.style.AlertDialogTheme);
-        alertDialog.setCancelable(false);
-        alertDialog.setTitle(R.string.dialog_please_turn_on_gps);
-        alertDialog.setMessage(R.string.dialog_you_need_to_turn_on_gps);
-        alertDialog.setPositiveButton(R.string.dialog_turn_on, new DialogInterface.OnClickListener() {
+        if (activity != null && !activity.isFinishing()) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity, R.style.AlertDialogTheme);
+            alertDialog.setCancelable(false);
+            alertDialog.setTitle(R.string.dialog_please_turn_on_gps);
+            alertDialog.setMessage(R.string.dialog_you_need_to_turn_on_gps);
+            alertDialog.setPositiveButton(R.string.dialog_turn_on, new DialogInterface.OnClickListener() {
 
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                activity.startActivity(intent);
-            }
-        });
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    activity.startActivity(intent);
+                }
+            });
 
-        if (!activity.isFinishing()) {
+
             alertDialog.show();
         }
     }
 
     public void showNoGpsAlert() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
+        MainActivity activity = getMainActivity();
+        if (activity != null && !activity.isFinishing()) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity, R.style.AlertDialogTheme);
         alertDialog.setCancelable(false);
         alertDialog.setTitle(R.string.dialog_no_gps);
         if (isForceGps) {
@@ -618,8 +624,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 }
             });
         }
-        MainActivity activity = (MainActivity) getActivity();
-        if (activity != null && !activity.isFinishing()) {
+
             canContWithZeroGps = false;
             alertDialog.show();
         }
@@ -629,7 +634,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         MainActivity activity = (MainActivity) getActivity();
         if (activity != null && !activity.isFinishing()) {
-            new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
+            new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
                     .setCancelable(false)
                     .setTitle(R.string.dialog_fake_gps_title)
                     .setMessage(R.string.dialog_fake_gps_body)
@@ -646,14 +651,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     public void showExitAlertDialog() {
-        MainActivity activity = (MainActivity) getActivity();
+        MainActivity activity = getMainActivity();
         if (activity != null && !activity.isFinishing()) {
-            if (AVIA && !Internet.hasConnection(getContext())) {
+            if (AVIA && !Internet.hasConnection(activity)) {
                 showToast(getString(R.string.toast_cant_exit));
                 return;
             }
 
-            new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
+            new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
                     .setCancelable(false)
                     .setTitle(R.string.dialog_close_app_title)
                     .setMessage(R.string.dialog_close_app_body)

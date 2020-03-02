@@ -408,15 +408,11 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         @Override
         public void onClick(View v) {
             boolean emptyAnswersState = true;
-//            int i = 0;
             for (AnswerState answer : answersState) {
                 if (answer.isChecked()) emptyAnswersState = false;
-//                Log.d(TAG, "???????: " + i + " / " + answer.isChecked() + " / " + answer.getRelative_id() + " " + answer.getData());
-//                i++;
+
             }
-//            Log.d(TAG, "========: " + getAdapterPosition() + " " + answersState.get(getAdapterPosition()).isChecked() + " " + isFilled());
-            if (emptyAnswersState || answersState.get(getAdapterPosition()).isChecked() || isFilled()) {
-//                Log.d(TAG, "???????: FIRST IF OK");
+            if (emptyAnswersState || isFilled() || answersState.get(getAdapterPosition()).isChecked()) {
                 isPressed = true;
                 lastSelectedPosition = getAdapterPosition();
                 if (answersList.get(lastSelectedPosition).isEnabled()) {

@@ -163,7 +163,7 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
         if (isExit) {
             getActivity().finish();
         } else {
-            Toast.makeText(getContext(), "Для выхода нажмите \"Назад\" еще раз", Toast.LENGTH_SHORT).show();
+            showToast("Для выхода нажмите \"Назад\" еще раз");
             isExit = true;
         }
         return true;

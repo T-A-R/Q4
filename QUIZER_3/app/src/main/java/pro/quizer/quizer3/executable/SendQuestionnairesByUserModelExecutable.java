@@ -191,14 +191,14 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
 
                         @Override
                         public void onSuccess() {
-                            Toast.makeText(mBaseActivity, R.string.quotas_renew, Toast.LENGTH_SHORT).show();
+                            mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.quotas_renew));
 //                            mBaseActivity.getTree();
                             MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.quotas_renew), null);
                         }
 
                         @Override
                         public void onError(Exception pException) {
-                            Toast.makeText(mBaseActivity, R.string.load_quotas_error + " " + mBaseActivity.getString(R.string.error_107), Toast.LENGTH_SHORT).show();
+                            mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.load_quotas_error) + " " + mBaseActivity.getString(R.string.error_107));
                             MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.ERROR, " " + mBaseActivity.getString(R.string.error_107) + R.string.load_quotas_error, pException.toString());
                         }
                     }).execute();

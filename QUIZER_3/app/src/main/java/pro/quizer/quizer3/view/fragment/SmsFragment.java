@@ -94,7 +94,7 @@ public class SmsFragment extends ScreenFragment implements ICallback {
                         }
                     });
 
-                    if (!mBaseActivity.isFinishing()) {
+                    if (mBaseActivity != null && !mBaseActivity.isFinishing()) {
                         alertDialog.show();
                     }
                 } else {

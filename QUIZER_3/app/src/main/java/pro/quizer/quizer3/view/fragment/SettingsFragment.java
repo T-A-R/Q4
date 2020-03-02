@@ -291,8 +291,8 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
     }
 
     public void showRemoveUserDialog() {
-        if (!mBaseActivity.isFinishing()) {
-            new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
+        if (mBaseActivity != null && !mBaseActivity.isFinishing()) {
+            new AlertDialog.Builder(mBaseActivity, R.style.AlertDialogTheme)
                     .setCancelable(false)
                     .setTitle(R.string.dialog_remove_user_title)
                     .setMessage(R.string.dialog_remove_user_body)
@@ -322,8 +322,8 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
     }
 
     public void showErrorRemoveUserDialog() {
-        if (!mBaseActivity.isFinishing()) {
-            new AlertDialog.Builder(getContext(), R.style.AlertDialogTheme)
+        if (mBaseActivity != null && !mBaseActivity.isFinishing()) {
+            new AlertDialog.Builder(mBaseActivity, R.style.AlertDialogTheme)
                     .setCancelable(false)
                     .setTitle(R.string.dialog_error_remove_user_title)
                     .setMessage(R.string.dialog_error_remove_user_body)

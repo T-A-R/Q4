@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private CurrentQuestionnaireR currentQuestionnaire = null;
     private List<ElementItemR> elementItemRList = null;
     private List<ElementItemR> currentElementsList = null;
+    //    List<ElementItemR> elementItemsList = new ArrayList<>();
     private List<ElementModelFlat> currentElementsFlatList = null;
     private MainFragment mainFragment;
 
@@ -264,7 +265,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             getStaticDao().clearElementItemR();
             Log.d(TAG, "Rebuilding Elements Database............. 4");
             initDataForRebuild();
+            currentElementsList = new ArrayList<>();
             generateMap(getElements(), true);
+            if (currentElementsList.size() > 0) {
+                getStaticDao().insertListElementItemR(currentElementsList);
+            } else {
+                showToastfromActivity("Пустая таблица!");
+            }
+
             Log.d(TAG, "Rebuilding Elements Database............. END");
             return mMap;
         } else {
@@ -392,7 +400,9 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
                         elementItemR.setElementOptionsR(elementOptionsR);
                     }
-                    getStaticDao().insertElementItemR(elementItemR);
+//                    getStaticDao().insertElementItemR(elementItemR);
+
+                    currentElementsList.add(elementItemR);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

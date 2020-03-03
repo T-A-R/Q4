@@ -513,7 +513,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public ElementItemR getElement(Integer id) {
         ElementItemR elementItemR = null;
         try {
-            elementItemR = getDao().getElementById(id, getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+//            elementItemR = getDao().getElementById(id, getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+            elementItemR = getDao().getElementById(id);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -869,7 +870,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 //            Log.d(TAG, "saveQuestionnaireToDatabase: 3.1");
             final ElementDatabaseModelR elementDatabaseModel = new ElementDatabaseModelR();
             ElementItemR elementItemR = null;
-            elementItemR = getDao().getElementById(element.getRelative_id(), getCurrentUserId(), currentQuiz.getProject_id());
+//            elementItemR = getDao().getElementById(element.getRelative_id(), getCurrentUserId(), currentQuiz.getProject_id());
+            elementItemR = getDao().getElementById(element.getRelative_id());
 //            Log.d(TAG, "saveQuestionnaireToDatabase: 3.2");
             Integer parentId;
             if (elementItemR != null) {

@@ -2,11 +2,13 @@ package pro.quizer.quizer3.database.models;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 import pro.quizer.quizer3.Constants;
 
-@Entity
+//@Entity
+@Entity(indices = {@Index("relative_id")})
 public class ElementPassedR {
 
     @PrimaryKey(autoGenerate = true)

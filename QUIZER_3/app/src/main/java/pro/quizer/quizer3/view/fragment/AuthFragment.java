@@ -1,6 +1,5 @@
 package pro.quizer.quizer3.view.fragment;
 
-import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
@@ -13,7 +12,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -41,12 +39,8 @@ import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
-import pro.quizer.quizer3.model.config.ConfigModel;
-import pro.quizer.quizer3.model.config.ElementModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
-import pro.quizer.quizer3.model.config.ProjectInfoModel;
 import pro.quizer.quizer3.utils.FileUtils;
-import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.MD5Utils;
 import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.utils.StringUtils;
@@ -95,18 +89,11 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         tvVersionView = (TextView) findViewById(R.id.version_view);
 
         MainFragment.disableSideMenu();
-//        MainFragment.hideToolbar();
-
-//        esLogin.setTypeface(Fonts.getFuturaPtMedium());
-//        etPass.setTypeface(Fonts.getFuturaPtMedium());
-//        btnSend.setTypeface(Fonts.getFuturaPtBook());
-//        btnSend.setTransformationMethod(null);
 
         btnSend.setOnClickListener(this);
         tvVersionView.setOnClickListener(this);
 
         cont.startAnimation(Anim.getAppear(getContext()));
-//        image.startAnimation(Anim.getSlideUpDown(getContext()));
         btnSend.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
         checkVersion();
@@ -200,21 +187,18 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void onLoginClick() {
-//        showScreensaver(false);
 
         login = esLogin.getText().toString();
         password = etPass.getText().toString();
 
         if (StringUtils.isEmpty(login) || StringUtils.isEmpty(password)) {
             showToast(getString(R.string.notification_empty_login_or_pass));
-//            hideScreensaver();
             activateButtons();
             return;
         }
 
         if (login.length() < 3) {
             showToast(getString(R.string.notification_short_login));
-//            hideScreensaver();
             activateButtons();
             return;
         }
@@ -222,7 +206,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         if (mSavedUsers != null && mSavedUsers.size() >= MAX_USERS && !mSavedUsers.contains(login)) {
             showToast(String.format(getString(R.string.notification_max_users), String.valueOf(MAX_USERS)));
             addLog(null, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.notification_max_users), "");
-//            hideScreensaver();
             activateButtons();
             return;
         }
@@ -240,6 +223,11 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     private void onLoggedInWithoutUpdateLocalData(final int pUserId) {
         saveCurrentUserId(pUserId);
+        ElementItemR firstElement = getDao().getOneElement();
+        if (firstElement == null || firstElement.getUserId() != pUserId) {
+            Log.d(TAG, "onAuthUser CHECKING ID: " + pUserId + "/" + firstElement.getUserId());
+            isRebuildDB = true;
+        }
         if (isRebuildDB) {
             UpdateQuiz updateQuiz = new UpdateQuiz();
             updateQuiz.execute();
@@ -306,7 +294,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         try {
             saveUser(pLogin, pPassword, pAuthResponseModel, pConfigResponseModel.getConfig());
             saveCurrentUserId(pAuthResponseModel.getUserId());
-//            rebuildElementsDatabase();
         } catch (final Exception e) {
             showToast(getString(R.string.server_response_error) + "\n" + e);
             return;
@@ -321,17 +308,14 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     private void downloadQuotas(final AuthResponseModel pAuthResponseModel,
                                 final String pLogin,
                                 final String pPassword) {
-        Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!!  downloadQuotas: 1");
         new UpdateQuotasExecutable(getContext(), new ICallback() {
 
             @Override
             public void onStarting() {
-//                showScreensaver(false);
             }
 
             @Override
             public void onSuccess() {
-//                hideScreensaver();
                 onLoggedIn(pLogin, pPassword, pAuthResponseModel);
             }
 
@@ -350,7 +334,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         SPUtils.resetSendedQInSession(getContext());
 
         updateDatabaseUserByUserId(pLogin, pPassword, pAuthResponseModel.getConfigId(), pAuthResponseModel.getUserId(), pAuthResponseModel.getRoleId(), pAuthResponseModel.getUserProjectId());
-//        rebuildElementsDatabase();
         onLoggedInWithoutUpdateLocalData(pAuthResponseModel.getUserId());
     }
 
@@ -365,7 +348,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     }
 
     public void downloadConfig(final String pLogin, final String pPassword, final AuthResponseModel pModel) {
-//        showScreensaver(false);
 
         final ConfigRequestModel configRequestModel = new ConfigRequestModel(
                 getLoginAdmin(),
@@ -380,8 +362,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SENT, getString(R.string.try_to_get_config), json);
 
         QuizerAPI.getConfig(getServer(), json, responseBody -> {
-
-//            hideScreensaver();
 
             if (responseBody == null) {
                 showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_601));
@@ -445,7 +425,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         if (fileUris == null || fileUris.length == 0) {
             saveUserAndLogin(pConfigResponseModel, pAuthResponseModel, pLogin, pPassword);
         } else {
-//            showScreensaver(false);
 
             FileLoader.multiFileDownload(getContext())
                     .fromDirectory(Constants.Strings.EMPTY, FileLoader.DIR_EXTERNAL_PRIVATE)
@@ -547,9 +526,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             if (isNeedDownloadConfig(authResponseModel)) {
                 downloadConfig(login, passwordMD5, authResponseModel);
             } else {
-                onLoggedIn(login,
-                        passwordMD5,
-                        authResponseModel);
+                onLoggedIn(login, passwordMD5, authResponseModel);
             }
         } else {
             showToast(authResponseModel.getError());

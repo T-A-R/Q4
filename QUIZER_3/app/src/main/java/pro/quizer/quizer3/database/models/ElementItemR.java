@@ -2,6 +2,7 @@ package pro.quizer.quizer3.database.models;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.util.Log;
@@ -15,7 +16,8 @@ import pro.quizer.quizer3.utils.DateUtils;
 import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.view.fragment.SmartFragment.getDao;
 
-@Entity
+//@Entity
+@Entity(indices = {@Index("relative_id")})
 public class ElementItemR {
 
     @PrimaryKey(autoGenerate = true)
@@ -226,7 +228,8 @@ public class ElementItemR {
     public List<ElementItemR> getElements() {
         List<ElementItemR> elements = null;
         try {
-            elements = getDao().getChildElements(relative_id, userId, projectId);
+//            elements = getDao().getChildElements(relative_id, userId, projectId);
+            elements = getDao().getChildElements(relative_id);
         } catch (Exception e) {
             e.printStackTrace();
         }

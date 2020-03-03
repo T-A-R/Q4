@@ -330,6 +330,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             mMap.put(element.getRelativeID(), element);
 
             if (rebuild) {
+                Log.d(TAG, "generateMap: TRUE");
                 try {
                     ElementItemR elementItemR = new ElementItemR();
                     elementItemR.setConfigId(configId);
@@ -934,7 +935,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
         if (elementItemRList == null) {
             try {
-                elementItemRList = getStaticDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+//                elementItemRList = getStaticDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+                elementItemRList = getStaticDao().getCurrentElements();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -951,7 +953,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 }
             }
             if (quotaBlockID != -2) {
-                quotaList = getMainDao().getQuotaElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId(), quotaBlockID);
+//                quotaList = getMainDao().getQuotaElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId(), quotaBlockID);
+                quotaList = getMainDao().getQuotaElements(quotaBlockID);
             } else {
                 quotaList = new ArrayList<>();
             }
@@ -962,7 +965,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public ElementItemR getElement(Integer id) {
         ElementItemR elementItemR = null;
         try {
-            elementItemR = getStaticDao().getElementById(id, getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+//            elementItemR = getStaticDao().getElementById(id, getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+            elementItemR = getStaticDao().getElementById(id);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1161,7 +1165,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public List<ElementItemR> getElementItemRList() {
         if (currentElementsList == null) {
-            currentElementsList = getStaticDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+//            currentElementsList = getStaticDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+            currentElementsList = getStaticDao().getCurrentElements();
         }
         return currentElementsList;
     }

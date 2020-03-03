@@ -975,7 +975,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     nextElementId = answersList.get(spinnerSelection).getElementOptionsR().getJump();
                     if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
                         nextElementId = currentElement.getElementOptionsR().getJump();
-                        if (nextElementId == -2) {
+                        if (nextElementId.equals(-2)) {
                             nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
                         }
                     }

@@ -1179,7 +1179,9 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         currentQuestionnaire = null;
     }
 
-    public MainActivity getThis() {
-        return this;
+    @Override
+    protected void onSaveInstanceState(Bundle InstanceState) {
+        super.onSaveInstanceState(InstanceState);
+        InstanceState.clear();
     }
 }

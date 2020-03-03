@@ -50,6 +50,10 @@ public class ScreenActivity extends MainActivity {
         super.onBackPressed();
     }
 
-
+    @Override
+    protected void onSaveInstanceState(Bundle InstanceState) {
+        super.onSaveInstanceState(InstanceState);
+        InstanceState.clear();
+    }
 }
 

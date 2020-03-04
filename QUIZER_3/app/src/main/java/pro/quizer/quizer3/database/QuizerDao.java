@@ -97,8 +97,8 @@ public interface QuizerDao {
     @Query("SELECT * FROM UserModelR WHERE login = :login AND password = :password")
     List<UserModelR> getLocalUserModel(String login, String password);
 
-    @Query("SELECT * FROM UserModelR WHERE user_id = :userId")
-    List<UserModelR> getUserByUserId(int userId);
+    @Query("SELECT * FROM UserModelR WHERE user_id = :userId LIMIT 1")
+    UserModelR getUserByUserId(int userId);
 
     @Query("SELECT * FROM UserModelR WHERE questionnaire_opened = :status")
     List<UserModelR> getUserWithAbortedQUestionnaire(boolean status);

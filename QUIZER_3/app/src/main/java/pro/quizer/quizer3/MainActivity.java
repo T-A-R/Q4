@@ -467,18 +467,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public UserModelR getUserByUserId(final int pUserId) {
 
-        List<UserModelR> list = null;
+        UserModelR user = null;
         try {
-            list = getMainDao().getUserByUserId(pUserId);
+            user = getMainDao().getUserByUserId(pUserId);
         } catch (Exception e) {
             showToastfromActivity(getString(R.string.db_load_error));
         }
 
-        if (list == null || list.isEmpty()) {
-            return null;
-        } else {
-            return list.get(0);
-        }
+        return user;
     }
 
     public List<File> getAllPhotos() {
@@ -935,7 +931,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
         if (elementItemRList == null) {
             try {
-//                elementItemRList = getStaticDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
                 elementItemRList = getStaticDao().getCurrentElements();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -953,7 +948,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 }
             }
             if (quotaBlockID != -2) {
-//                quotaList = getMainDao().getQuotaElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId(), quotaBlockID);
                 quotaList = getMainDao().getQuotaElements(quotaBlockID);
             } else {
                 quotaList = new ArrayList<>();

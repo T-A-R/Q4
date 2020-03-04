@@ -182,26 +182,26 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                         }
                     }
 
-                    new UpdateQuotasExecutable(mBaseActivity, new ICallback() {
-
-                        @Override
-                        public void onStarting() {
-
-                        }
-
-                        @Override
-                        public void onSuccess() {
-                            mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.quotas_renew));
-//                            mBaseActivity.getTree();
-                            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.quotas_renew), null);
-                        }
-
-                        @Override
-                        public void onError(Exception pException) {
-                            mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.load_quotas_error) + " " + mBaseActivity.getString(R.string.error_107));
-                            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.ERROR, " " + mBaseActivity.getString(R.string.error_107) + R.string.load_quotas_error, pException.toString());
-                        }
-                    }).execute();
+//                    new UpdateQuotasExecutable(mBaseActivity, new ICallback() {
+//
+//                        @Override
+//                        public void onStarting() {
+//
+//                        }
+//
+//                        @Override
+//                        public void onSuccess() {
+//                            mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.quotas_renew));
+////                            mBaseActivity.getTree();
+//                            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.quotas_renew), null);
+//                        }
+//
+//                        @Override
+//                        public void onError(Exception pException) {
+//                            mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.load_quotas_error) + " " + mBaseActivity.getString(R.string.error_107));
+//                            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.ERROR, " " + mBaseActivity.getString(R.string.error_107) + R.string.load_quotas_error, pException.toString());
+//                        }
+//                    }).execute();
 
 //                    BaseActivity.sendCrashLogs();
 

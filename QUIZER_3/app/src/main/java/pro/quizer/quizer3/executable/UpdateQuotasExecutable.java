@@ -71,6 +71,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
             onError(new Exception(mContext.getString(R.string.load_quotas_error) + " " + mContext.getString(R.string.error_102)));
             return;
         }
+        Log.d(TAG, "&&&&&&&&&&&&&&^^^^^^^^^^^^^^^^^  onGetQuotasCallback: " + responseJson);
         QuotaResponseModel quotaResponseModel;
 
         try {
@@ -87,6 +88,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
             if (quotaResponseModel.getResult() != 0) {
                 try {
                     MainActivity.addLog(userModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUOTA, mContext.getString(R.string.save_quotas), Constants.LogResult.SENT, mContext.getString(R.string.save_quotas_to_db), null);
+                    Log.d(TAG, "onGetQuotasCallback: " + responseJson);
                     mainActivity.getMainDao().updateQuotas(responseJson, userProjectId);
                 } catch (Exception e) {
                     Log.d(TAG, mContext.getString(R.string.db_save_error));

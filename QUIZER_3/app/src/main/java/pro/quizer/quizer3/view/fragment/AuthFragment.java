@@ -225,7 +225,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         saveCurrentUserId(pUserId);
         ElementItemR firstElement = getDao().getOneElement();
         if (firstElement == null || firstElement.getUserId() != pUserId) {
-            Log.d(TAG, "onAuthUser CHECKING ID: " + pUserId + "/" + firstElement.getUserId());
+//            Log.d(TAG, "onAuthUser CHECKING ID: " + pUserId + "/" + firstElement.getUserId());
             isRebuildDB = true;
         }
         if (isRebuildDB) {

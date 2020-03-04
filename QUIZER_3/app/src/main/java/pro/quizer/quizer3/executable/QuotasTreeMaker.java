@@ -3,7 +3,10 @@ package pro.quizer.quizer3.executable;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
@@ -22,7 +25,6 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
     private List<ElementItemR> quotaList;
     private MainActivity activity;
 
-
     public QuotasTreeMaker(List<ElementItemR> quotaList, MainActivity activity, final ICallback pCallback) {
         super(pCallback);
 
@@ -32,7 +34,7 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
 
     @Override
     public ElementItemR[][] execute() {
-        Log.d(TAG, "====== PREPARING QUOTAS TREE ======");
+        Log.d(TAG, "====== PREPARING QUOTAS TREE MAKER ======");
         return fillQuotas(getTree(quotaList), activity);
     }
 
@@ -76,36 +78,73 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
     }
 
     private ElementItemR[][] fillQuotas(ElementItemR[][] tree, MainActivity activity) {
-        Log.d(TAG, "initQuestion: 4");
         Log.d(TAG, "============== fillQuotas ======================= ");
         int qn = 8;
         List<QuotaModel> quotas = activity.getCurrentUser().getQuotasR();
         if (quotas == null || quotas.isEmpty()) return tree;
-        Log.d(TAG, "fillQuotas: tree: " + tree.length + "/" + tree[0].length);
-        Log.d(TAG, "Quotas size: " + quotas.size());
+
+//        for (int q = 0; q < quotas.size(); q++) {
+//            Integer[] sequence = quotas.get(q).getArray();
+//
+//            for (int i = 0; i < tree.length; i++) {
+//                for (int k = 0; k < tree[i].length; k++) {
+//                    if (sequence[0].equals(tree[i][k].getRelative_id())) {
+//                        int temp = i + 1;
+//                        if (sequence.length > 1) {
+//                            for (int s = 1; s < sequence.length; s++) {
+//                                if (sequence[s].equals(tree[temp][k].getRelative_id())) {
+//
+//                                    if (s == sequence.length - 1) {
+//                                        if (tree[temp][k].getLimit() > quotas.get(q).getLimit()) {
+//                                            tree[temp][k].setLimit(quotas.get(q).getLimit());
+//                                            tree[temp][k].setDone(quotas.get(q).getDone());
+//                                            if ((tree[temp][k].getDone() + getLocalQuotas(activity, sequence)) >= tree[temp][k].getLimit()) {
+//                                                tree[temp][k].setEnabled(false);
+//                                                for (int x = temp - 1; x >= 0; x--) {
+//                                                    tree[x][k].setEnabled(false);
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+//                                    temp++;
+//                                } else {
+//                                    break;
+//                                }
+//                            }
+//                        } else {
+//                            if (tree[i][k].getLimit() > quotas.get(q).getLimit()) {
+//                                tree[i][k].setLimit(quotas.get(q).getLimit());
+//                                tree[i][k].setDone(quotas.get(q).getDone());
+//                                if ((tree[i][k].getDone() + getLocalQuotas(activity, sequence)) >= tree[i][k].getLimit()) {
+//                                    tree[i][k].setEnabled(false);
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+
         for (int q = 0; q < quotas.size(); q++) {
             Integer[] sequence = quotas.get(q).getArray();
-
-//            Log.d(TAG, "sequence: " + q + " / " + sequence.length);
-//            for (int t = 0; t < sequence.length; t++) {
-//                Log.d(TAG, "sequence[" + t + "] = " + sequence[t]);
-//            }
-//            Log.d(TAG, "  ");
-//            Log.d(TAG, "============== Quota: " + q);
 
             for (int i = 0; i < tree.length; i++) {
                 for (int k = 0; k < tree[i].length; k++) {
                     if (sequence[0].equals(tree[i][k].getRelative_id())) {
                         int temp = i + 1;
                         if (sequence.length > 1) {
-                            for (int s = 1; s < sequence.length; s++) {
+                            for (int s = 1; s < sequence.length; ) {
                                 if (sequence[s].equals(tree[temp][k].getRelative_id())) {
-
                                     if (s == sequence.length - 1) {
                                         if (tree[temp][k].getLimit() > quotas.get(q).getLimit()) {
                                             tree[temp][k].setLimit(quotas.get(q).getLimit());
                                             tree[temp][k].setDone(quotas.get(q).getDone());
-                                            if ((tree[temp][k].getDone() + getLocalQuotas(activity, sequence)) >= tree[temp][k].getLimit()) {
+                                            int done = tree[temp][k].getDone();
+//                                            int local = getLocalQuotas(activity, sequence);
+                                            int local = 0;
+                                            int total = done + local;
+                                            int limit = tree[temp][k].getLimit();
+                                            if (total >= limit) {
                                                 tree[temp][k].setEnabled(false);
                                                 for (int x = temp - 1; x >= 0; x--) {
                                                     tree[x][k].setEnabled(false);
@@ -113,16 +152,24 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
                                             }
                                         }
                                     }
-                                    temp++;
+                                    s++;
                                 } else {
-                                    break;
+                                    temp++;
+                                    if (temp == tree.length) {
+                                        break;
+                                    }
                                 }
                             }
                         } else {
                             if (tree[i][k].getLimit() > quotas.get(q).getLimit()) {
                                 tree[i][k].setLimit(quotas.get(q).getLimit());
                                 tree[i][k].setDone(quotas.get(q).getDone());
-                                if ((tree[i][k].getDone() + getLocalQuotas(activity, sequence)) >= tree[i][k].getLimit()) {
+                                int done = tree[i][k].getDone();
+                                int limit = tree[i][k].getLimit();
+//                                int local = getLocalQuotas(activity, sequence);
+                                int local = 0;
+                                int total = done + local;
+                                if (total >= limit) {
                                     tree[i][k].setEnabled(false);
                                 }
                             }
@@ -132,7 +179,7 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
             }
         }
 
-        showTree(tree); // Для отладки
+//        showTree(tree); // Для отладки
         onSuccess();
         return tree;
     }
@@ -157,22 +204,43 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
 
     public static int getLocalQuotas(MainActivity activity, Integer[] sequence) {
         int counter = 0;
+        Set<Integer> mSet = new HashSet<>(Arrays.asList(sequence));
         Log.d(TAG, "getLocalQuotas: sequence " + sequence.length);
         try {
             //TODO: Добавить проверку на завершенность анкеты!
-            List<QuestionnaireDatabaseModelR> questionnaires = MainActivity.getStaticDao().getQuestionnaireByUserIdWithStatus(activity.getCurrentUserId(), QuestionnaireStatus.NOT_SENT);
-            for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : questionnaires) {
+//            List<QuestionnaireDatabaseModelR> offlineQuestionnaires = MainActivity.getStaticDao().getQuestionnaireByUserIdWithStatus(activity.getCurrentUserId(), QuestionnaireStatus.NOT_SENT);
+            List<QuestionnaireDatabaseModelR> offlineQuestionnaires = MainActivity.getStaticDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), activity.getCurrentUser().getUser_project_id(), QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
+
+            for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : offlineQuestionnaires) {
                 final List<ElementDatabaseModelR> elements = MainActivity.getStaticDao().getElementByToken(questionnaireDatabaseModel.getToken());
-                int found = 0;
-                for (int s = 0; s < sequence.length; s++) {
-                    for (final ElementDatabaseModelR element : elements) {
-                        if (sequence[s] == element.getRelative_id()) {
-                            found++;
-                            break;
-                        }
+//                int found = 0;
+//                for (int s = 0; s < sequence.length; s++) {
+//                    for (final ElementDatabaseModelR element : elements) {
+//                        if (sequence[s].equals(element.getRelative_id())) {
+//                            found++;
+//                            break;
+//                        }
+//                    }
+//                }
+//                if (found == sequence.length) {
+//                    counter++;
+//                }
+
+                final Set<Integer> set = new HashSet<>();
+
+                for (final ElementDatabaseModelR elementDatabaseModel : elements) {
+                    set.add(elementDatabaseModel.getRelative_id());
+                }
+
+                int matchesCount = 0;
+
+                for (final Integer relativeId : mSet) {
+                    if (set.contains(relativeId)) {
+                        matchesCount++;
                     }
                 }
-                if (found == sequence.length) {
+
+                if (matchesCount == mSet.size()) {
                     counter++;
                 }
             }

@@ -3,6 +3,7 @@ package pro.quizer.quizer3.database.models;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -12,6 +13,8 @@ import java.util.List;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.quota.QuotaModel;
 import pro.quizer.quizer3.API.models.response.QuotaResponseModel;
+
+import static pro.quizer.quizer3.MainActivity.TAG;
 
 @Entity
 public class UserModelR {
@@ -68,10 +71,15 @@ public class UserModelR {
 
     public List<QuotaModel> getQuotasR() {
         try {
+            Log.d(TAG, "getQuotasR STRING: " + quotas);
             final List<QuotaModel> list = new Gson().fromJson(quotas, QuotaResponseModel.class).getQuotas();
+//            for(QuotaModel model : list) {
+//                Log.d(TAG, "getQuotasR: " + model.getDone());
+//            }
             for (QuotaModel quotaModel : list) {
                 quotaModel.setUserId(user_id);
                 quotaModel.setUserProjectId(user_project_id);
+                Log.d(TAG, "getQuotasR MODEL: " + quotaModel.getDone());
             }
 
             return list;
@@ -150,6 +158,7 @@ public class UserModelR {
 
     public void setQuotas(String quotas) {
         this.quotas = quotas;
+//        Log.d(TAG, "setQuotas: " + quotas);
     }
 
     public boolean isQuestionnaire_opened() {

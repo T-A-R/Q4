@@ -343,18 +343,14 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public UserModelR getUserByUserId(final int pUserId) {
 
-        List<UserModelR> list = null;
+        UserModelR user = null;
         try {
-            list = getDao().getUserByUserId(pUserId);
+            user = getDao().getUserByUserId(pUserId);
         } catch (Exception e) {
             showToast(getString(R.string.db_load_error));
         }
 
-        if (list == null || list.isEmpty()) {
-            return null;
-        } else {
-            return list.get(0);
-        }
+        return user;
     }
 
 

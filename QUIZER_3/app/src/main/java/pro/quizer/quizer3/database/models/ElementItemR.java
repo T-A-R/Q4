@@ -254,6 +254,7 @@ public class ElementItemR {
     }
 
     public void setDone(Integer done) {
+//        Log.d(TAG, "setDone: " + done);
         this.done = done;
     }
 

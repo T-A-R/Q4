@@ -18,8 +18,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import java9.util.concurrent.CompletableFuture;
 import pro.quizer.quizer3.Constants;
@@ -34,6 +37,7 @@ import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizer3.executable.SyncInfoExecutable;
+import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
 import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
@@ -72,6 +76,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private boolean isExit = false;
     private UserModelR mUserModel;
     CurrentQuestionnaireR currentQuestionnaire = null;
+    private List<QuestionnaireDatabaseModelR> offlineQuestionnaires;
 
     private String mGpsString;
     private String mGpsNetworkString;
@@ -83,6 +88,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private boolean isForceGps = false;
     private boolean canContWithZeroGps = false;
     private boolean isCanBackPress = true;
+    private boolean isQuotaUpdated = false;
     private Long mFakeGpsTime;
     private GPSModel mGPSModel;
 
@@ -115,13 +121,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         MainFragment.enableSideMenu(true);
 
-//        btnContinue.setTypeface(Fonts.getFuturaPtBook());
-//        btnContinue.setTransformationMethod(null);
-//        btnStart.setTypeface(Fonts.getFuturaPtBook());
-//        btnStart.setTransformationMethod(null);
         btnStart.setOnClickListener(this);
-//        btnQuotas.setTypeface(Fonts.getFuturaPtBook());
-//        btnQuotas.setTransformationMethod(null);
         btnQuotas.setOnClickListener(this);
         tvConfigAgreement.setTypeface(Fonts.getFuturaPtBook());
         tvConfigName.setTypeface(Fonts.getFuturaPtBook());
@@ -147,11 +147,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         } catch (Exception e) {
             e.printStackTrace();
         }
+        deactivateButtons();
         initViews();
         sendCrashLogs();
-        makeQuotaTree();
-//        UpdateQuiz updateQuiz = new UpdateQuiz();
-//        updateQuiz.execute();
+
+        if (mIsStartAfterAuth) {
+            quotaUpdate();
+        }
 
         new SendQuestionnairesByUserModelExecutable((MainActivity) getActivity(), mUserModel, new ICallback() {
             @Override
@@ -162,34 +164,17 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             @Override
             public void onSuccess() {
-//                MainActivity activity = (MainActivity) getActivity();
-//                if (activity != null)
-//                    activity.getTree(new ICallback() {
-//                        @Override
-//                        public void onStarting() {
-//
-//                        }
-//
-//                        @Override
-//                        public void onSuccess() {
-//                            Log.d(TAG, "onSuccess: Дерево квот создано");
-//                            hideScreensaver();
-//                        }
-//
-//                        @Override
-//                        public void onError(Exception pException) {
-//                            showToast("Ошибка расчета квот. " + activity.getString(R.string.error_108));
-//                            hideScreensaver();
-//                        }
-//                    });
+                if (!isQuotaUpdated) {
+                    quotaUpdate();
+                }
 
                 hideScreensaver();
-//                Log.d(TAG, "SendQuestionnairesByUserModelExecutable onSuccess: ");
                 initSyncInfoViews();
             }
 
             @Override
             public void onError(Exception pException) {
+                makeQuotaTree();
                 hideScreensaver();
             }
         }, false).execute();
@@ -212,6 +197,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     public void makeQuotaTree() {
+        Log.d(TAG, "====== makeQuotaTree: ========");
         new UpdateQuotasTree().execute(activity.getQuotasElements());
     }
 
@@ -594,36 +580,36 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     public void showNoGpsAlert() {
         MainActivity activity = getMainActivity();
         if (activity != null && !activity.isFinishing()) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity, R.style.AlertDialogTheme);
-        alertDialog.setCancelable(false);
-        alertDialog.setTitle(R.string.dialog_no_gps);
-        if (isForceGps) {
-            alertDialog.setMessage(R.string.dialog_no_gps_empty_text);
-            alertDialog.setPositiveButton(R.string.view_retry, new DialogInterface.OnClickListener() {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity, R.style.AlertDialogTheme);
+            alertDialog.setCancelable(false);
+            alertDialog.setTitle(R.string.dialog_no_gps);
+            if (isForceGps) {
+                alertDialog.setMessage(R.string.dialog_no_gps_empty_text);
+                alertDialog.setPositiveButton(R.string.view_retry, new DialogInterface.OnClickListener() {
 
-                public void onClick(DialogInterface dialog, int which) {
-                    canContWithZeroGps = false;
-                    dialog.dismiss();
-                }
-            });
-        } else {
-            alertDialog.setMessage(R.string.dialog_no_gps_text_warning);
-            alertDialog.setPositiveButton(R.string.dialog_next, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        canContWithZeroGps = false;
+                        dialog.dismiss();
+                    }
+                });
+            } else {
+                alertDialog.setMessage(R.string.dialog_no_gps_text_warning);
+                alertDialog.setPositiveButton(R.string.dialog_next, new DialogInterface.OnClickListener() {
 
-                public void onClick(DialogInterface dialog, int which) {
-                    canContWithZeroGps = true;
-                    dialog.dismiss();
-                }
-            });
+                    public void onClick(DialogInterface dialog, int which) {
+                        canContWithZeroGps = true;
+                        dialog.dismiss();
+                    }
+                });
 
-            alertDialog.setNegativeButton(R.string.view_retry, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    canContWithZeroGps = false;
-                    dialog.dismiss();
-                }
-            });
-        }
+                alertDialog.setNegativeButton(R.string.view_retry, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        canContWithZeroGps = false;
+                        dialog.dismiss();
+                    }
+                });
+            }
 
             canContWithZeroGps = false;
             alertDialog.show();
@@ -705,7 +691,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         @SafeVarargs
         protected final ElementItemR[][] doInBackground(List<ElementItemR>... quotaList) {
-            Log.d(TAG, "====== PREPARING QUOTAS TREE ======");
+            Log.d(TAG, "====== PREPARING QUOTAS TREE HOME======");
             return fillQuotas(getTree(quotaList[0]));
         }
 
@@ -778,41 +764,38 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         private ElementItemR[][] fillQuotas(ElementItemR[][] tree) {
             Log.d(TAG, "============== fillQuotas ======================= ");
-//            int qn = 8;
             List<QuotaModel> quotas = activity.getCurrentUser().getQuotasR();
+            offlineQuestionnaires = MainActivity.getStaticDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), activity.getCurrentUser().getUser_project_id(), QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
+//            if(offlineQuestionnaires != null) {
+//                activity.showToastfromActivity("Неотправленных анкет: " + offlineQuestionnaires.size());
+//            }
             if (quotas == null || quotas.isEmpty()) return tree;
-//            Log.d(TAG, "fillQuotas: tree: " + tree.length + "/" + tree[0].length);
-//            Log.d(TAG, "Quotas size: " + quotas.size());
+
             for (int q = 0; q < quotas.size(); q++) {
                 Integer[] sequence = quotas.get(q).getArray();
-                String seq = sequence[0].toString();
-                for (int i = 1; i < sequence.length; i++) {
-                    seq = seq.concat(" " + sequence[i].toString());
-                }
-//                Log.d(TAG, "================== START Sequence: " + seq);
-//                for(Integer seq : sequence) {
-//                    Log.d(TAG, "fillQuotas: " + seq);
+//                String seq = sequence[0].toString();
+//                for (int i = 1; i < sequence.length; i++) {
+//                    seq = seq.concat(" " + sequence[i].toString());
 //                }
-//                if (q == 5) Log.d(TAG, "fillQuotas done/limit: " + quotas.get(q).getDone() + "/" + quotas.get(q).getLimit());
 
                 for (int i = 0; i < tree.length; i++) {
                     for (int k = 0; k < tree[i].length; k++) {
                         if (sequence[0].equals(tree[i][k].getRelative_id())) {
-//                            if (q == 5) Log.d(TAG, "fillQuotas: 0");
                             int temp = i + 1;
                             if (sequence.length > 1) {
                                 for (int s = 1; s < sequence.length; ) {
-//                                    if (q == 5) Log.d(TAG, "fillQuotas: " + sequence[s] + " / " + tree[temp][k].getRelative_id());
-                                    if (sequence[s].equals(tree[temp][k].getRelative_id())) { //Вываливается здесь!!!
-//                                        if (q == 5) Log.d(TAG, "fillQuotas: 1");
+                                    if (sequence[s].equals(tree[temp][k].getRelative_id())) {
                                         if (s == sequence.length - 1) {
-//                                            if (q == 5) Log.d(TAG, "fillQuotas: 2");
                                             if (tree[temp][k].getLimit() > quotas.get(q).getLimit()) {
-//                                                if (q == 5) Log.d(TAG, "fillQuotas: 3");
                                                 tree[temp][k].setLimit(quotas.get(q).getLimit());
                                                 tree[temp][k].setDone(quotas.get(q).getDone());
-                                                if ((tree[temp][k].getDone() + getLocalQuotas(activity, sequence)) >= tree[temp][k].getLimit()) {
-//                                                    if (q == 5) Log.d(TAG, "fillQuotas: 4");
+                                                int done = tree[temp][k].getDone();
+//                                                int local = getLocalQuotas(activity, sequence);
+                                                int local = 0;
+//                                                Log.d(TAG, "QUOTA: " + sequence[s] + " done:" + done + " local: " + local);
+                                                int total = done + local;
+                                                int limit = tree[temp][k].getLimit();
+                                                if (total >= limit) {
                                                     tree[temp][k].setEnabled(false);
                                                     for (int x = temp - 1; x >= 0; x--) {
                                                         tree[x][k].setEnabled(false);
@@ -820,11 +803,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                                 }
                                             }
                                         }
-//                                        temp++;
                                         s++;
                                     } else {
-//                                        if (q == 5) Log.d(TAG, "fillQuotas: 5");
-//                                        break;
                                         temp++;
                                         if (temp == tree.length) {
                                             break;
@@ -832,13 +812,15 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                     }
                                 }
                             } else {
-//                                if (q == 5) Log.d(TAG, "fillQuotas: 6");
                                 if (tree[i][k].getLimit() > quotas.get(q).getLimit()) {
-//                                    if (q == 5) Log.d(TAG, "fillQuotas: 7");
                                     tree[i][k].setLimit(quotas.get(q).getLimit());
                                     tree[i][k].setDone(quotas.get(q).getDone());
-                                    if ((tree[i][k].getDone() + getLocalQuotas(activity, sequence)) >= tree[i][k].getLimit()) {
-//                                        if (q == 5) Log.d(TAG, "fillQuotas: 8");
+                                    int done = tree[i][k].getDone();
+                                    int limit = tree[i][k].getLimit();
+//                                    int local = getLocalQuotas(activity, sequence);
+                                    int local = 0;
+                                    int total = done + local;
+                                    if (total >= limit) {
                                         tree[i][k].setEnabled(false);
                                     }
                                 }
@@ -848,7 +830,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 }
 
                 progress = progress + ((float) 90 / (float) quotas.size());
-//                Log.d(TAG, "### progress: " + progress + " " + quotas.size() + " " + (float)70/ (float)quotas.size());
                 publishProgress((int) progress);
             }
 
@@ -880,24 +861,44 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         public int getLocalQuotas(MainActivity activity, Integer[] sequence) {
             int counter = 0;
-//            Log.d(TAG, "getLocalQuotas: sequence " + sequence.length);
+            Set<Integer> mSet = new HashSet<>(Arrays.asList(sequence));
             try {
                 //TODO: Добавить проверку на завершенность анкеты!
-                List<QuestionnaireDatabaseModelR> questionnaires = MainActivity.getStaticDao().getQuestionnaireByUserIdWithStatus(activity.getCurrentUserId(), QuestionnaireStatus.NOT_SENT);
-                for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : questionnaires) {
+
+                for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : offlineQuestionnaires) {
                     final List<ElementDatabaseModelR> elements = MainActivity.getStaticDao().getElementByToken(questionnaireDatabaseModel.getToken());
-                    int found = 0;
-                    for (int s = 0; s < sequence.length; s++) {
-                        for (final ElementDatabaseModelR element : elements) {
-                            if (sequence[s] == element.getRelative_id()) {
-                                found++;
-                                break;
-                            }
+//                    int found = 0;
+//                    for (int s = 0; s < sequence.length; s++) {
+//                        for (final ElementDatabaseModelR element : elements) {
+//                            if (sequence[s].equals(element.getRelative_id())) {
+//                                found++;
+//                                break;
+//                            }
+//                        }
+//                    }
+//                    if (found == sequence.length) {
+//                        counter++;
+//                    }
+
+                    final Set<Integer> set = new HashSet<>();
+
+                    for (final ElementDatabaseModelR elementDatabaseModel : elements) {
+                        set.add(elementDatabaseModel.getRelative_id());
+                    }
+
+                    int matchesCount = 0;
+
+                    for (final Integer relativeId : mSet) {
+                        if (set.contains(relativeId)) {
+                            matchesCount++;
                         }
                     }
-                    if (found == sequence.length) {
+
+                    if (matchesCount == mSet.size()) {
                         counter++;
                     }
+
+
                 }
 
             } catch (Exception e) {
@@ -905,6 +906,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 MainActivity.addLog(activity.getCurrentUser().getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, activity.getString(R.string.get_quotas), Constants.LogResult.ERROR, activity.getString(R.string.log_error_102_desc), e.toString());
             }
 //            Log.d(TAG, "getLocalQuotas: " + counter);
+
             return counter;
         }
     }
@@ -970,6 +972,43 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             super.onPostExecute(aVoid);
             hideScreensaver();
             isCanBackPress = true;
+        }
+    }
+
+    private void quotaUpdate() {
+        MainActivity mBaseActivity = getMainActivity();
+        if (activity != null) {
+            new UpdateQuotasExecutable(mBaseActivity, new ICallback() {
+
+                @Override
+                public void onStarting() {
+
+                }
+
+                @Override
+                public void onSuccess() {
+                    mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.quotas_renew));
+                    MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.quotas_renew), null);
+                    if(!isQuotaUpdated) {
+                        if(!mIsStartAfterAuth) {
+                            isQuotaUpdated = true;
+                        }
+                        makeQuotaTree();
+                    }
+                }
+
+                @Override
+                public void onError(Exception pException) {
+                    mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.load_quotas_error) + " " + mBaseActivity.getString(R.string.error_107));
+                    MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.ERROR, " " + mBaseActivity.getString(R.string.error_107) + R.string.load_quotas_error, pException.toString());
+                    if(!isQuotaUpdated) {
+                        if(!mIsStartAfterAuth) {
+                            isQuotaUpdated = true;
+                        }
+                        makeQuotaTree();
+                    }
+                }
+            }).execute();
         }
     }
 }

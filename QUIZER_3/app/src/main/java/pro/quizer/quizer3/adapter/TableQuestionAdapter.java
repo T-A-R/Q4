@@ -435,7 +435,11 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                                 if (!isPolyanswer && mAnswersState[row - 1][column - 1].isChecked()) {
                                     unselectOther(row, column, clickedQuestion, clickedElement);
                                 }
-                                notifyRowChanged(row);
+                                try {
+                                    notifyRowChanged(row);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                                 notifyItemChanged(row, 0);
                             } else {
                                 mAnswersState[column - 1][row - 1].setChecked(true);
@@ -444,7 +448,11 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                                 if (!isPolyanswer && mAnswersState[column - 1][row - 1].isChecked()) {
                                     unselectOther(row, column, clickedQuestion, clickedElement);
                                 }
-                                notifyColumnChanged(column);
+                                try {
+                                    notifyColumnChanged(column);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                                 notifyItemChanged(0, column);
                             }
                             mRefreshRunnable.run();
@@ -457,19 +465,31 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
                                 public void onClick(final DialogInterface dialogBox, final int id) {
                                     if (!mIsFlipColsAndRows) {
-                                        mAnswersState[row - 1][column - 1].setChecked(false);
-                                        setLine();
-                                        mAnswersState[row - 1][column - 1].setData(Constants.Strings.EMPTY);
-                                        dialogBox.cancel();
-                                        notifyRowChanged(row);
-                                        notifyItemChanged(row, 0);
+                                        if(isPolyanswer) {
+                                            mAnswersState[row - 1][column - 1].setChecked(false);
+                                            setLine();
+                                            mAnswersState[row - 1][column - 1].setData(Constants.Strings.EMPTY);
+                                            dialogBox.cancel();
+                                            try {
+                                                notifyRowChanged(row);
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                            notifyItemChanged(row, 0);
+                                        }
                                     } else {
-                                        mAnswersState[column - 1][row - 1].setChecked(false);
-                                        setLine();
-                                        mAnswersState[column - 1][row - 1].setData(Constants.Strings.EMPTY);
-                                        dialogBox.cancel();
-                                        notifyColumnChanged(column);
-                                        notifyItemChanged(0, column);
+                                        if(isPolyanswer) {
+                                            mAnswersState[column - 1][row - 1].setChecked(false);
+                                            setLine();
+                                            mAnswersState[column - 1][row - 1].setData(Constants.Strings.EMPTY);
+                                            dialogBox.cancel();
+                                            try {
+                                                notifyColumnChanged(column);
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                            notifyItemChanged(0, column);
+                                        }
                                     }
                                     mRefreshRunnable.run();
                                 }
@@ -481,12 +501,16 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 alertDialog.show();
             }
         } else {
-            if (!mIsFlipColsAndRows) {
-                mAnswersState[row - 1][column - 1].setChecked(!isElementChecked);
+            if(!isPolyanswer && isElementChecked) {
+
             } else {
-                mAnswersState[column - 1][row - 1].setChecked(!isElementChecked);
+                if (!mIsFlipColsAndRows) {
+                    mAnswersState[row - 1][column - 1].setChecked(!isElementChecked);
+                } else {
+                    mAnswersState[column - 1][row - 1].setChecked(!isElementChecked);
+                }
+                setLine();
             }
-            setLine();
         }
 
         if (!mIsFlipColsAndRows) {
@@ -520,7 +544,11 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                     setLine();
                 }
             }
-            notifyRowChanged(row - 1);
+            try {
+                notifyRowChanged(row - 1);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             notifyItemChanged(row - 1, 0);
         } else {
             for (int i = 0; i < answersList.size(); i++) {
@@ -529,7 +557,11 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                     setLine();
                 }
             }
-            notifyColumnChanged(column - 1);
+            try {
+                notifyColumnChanged(column - 1);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             notifyItemChanged(0, column - 1);
         }
 

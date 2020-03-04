@@ -4,7 +4,7 @@
     <dimen name="progress_bar_frame_size">56dp</dimen>
     <dimen name="progress_bar_size">36dp</dimen>
 
-    <dimen name="row_height">@dimen/_38sdp</dimen>
+    <dimen name="row_height">@dimen/_42sdp</dimen>
     <dimen name="column_header_height">@dimen/_80sdp</dimen>
     <dimen name="checkbox_size">36dp</dimen>
     <dimen name="button_corner_radius">4dp</dimen>

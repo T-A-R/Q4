@@ -55,6 +55,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
     private TextView mConfigIdView;
     private TextView mAnswerMarginView;
     private TextView mSpinnerTitle;
+    private TextView mClosedQuotaTitle;
     private View mDeleteUser;
     private String mConfigDateString;
     private String mAnswerMarginString;
@@ -65,6 +66,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
     private View mSmsSection;
     private FrameLayout mSpinnerFrame;
     private Switch mAutoZoomSwitch;
+    private Switch mSpeedSwitch;
 
     private MainActivity mBaseActivity;
     private int answerMargin;
@@ -113,6 +115,8 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         mDeleteUser = findViewById(R.id.delete_user);
         mUpdateConfig = findViewById(R.id.update_config);
         mAutoZoomSwitch = findViewById(R.id.auto_zoom_switch);
+        mSpeedSwitch = findViewById(R.id.speed_switch);
+        mClosedQuotaTitle = findViewById(R.id.closed_quota_title);
 
 
 //        LinearLayout textSettingsCont = findViewById(R.id.text_settings_cont);
@@ -164,6 +168,19 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         for (final FontSizeModel fontSizeModel : FONT_SIZE_MODELS) {
             fontString.add(fontSizeModel.getName());
         }
+
+        mSpeedSwitch.setChecked(mBaseActivity.isSpeedMode());
+        setClosedQuotaTitle();
+        mSpeedSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+                mBaseActivity.setSpeedMode(b);
+//                replaceFragment(new SettingsFragment());
+//                mSpeedSwitch.setChecked(mBaseActivity.isAutoZoom());
+                setClosedQuotaTitle();
+            }
+        });
 
         mAutoZoomSwitch.setChecked(mBaseActivity.isAutoZoom());
         mAutoZoomSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -363,6 +380,14 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
 
         if (isAdded()) {
             updateData(new SettingViewModelExecutable(getContext()).execute());
+        }
+    }
+
+    private void setClosedQuotaTitle() {
+        if(mBaseActivity.isSpeedMode()) {
+            mClosedQuotaTitle.setText(getString(R.string.view_settings_closed_quota_off));
+        } else {
+            mClosedQuotaTitle.setText(getString(R.string.view_settings_closed_quota_on));
         }
     }
 }

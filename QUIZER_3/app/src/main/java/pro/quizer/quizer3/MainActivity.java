@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private int mUserId;
     private ElementItemR[][] tree;
     ChangeFontCallback changeFontCallback;
+    private boolean mSpeedMode;
     private boolean mAutoZoom;
     private boolean hasRotationContainer = false;
     private static Long alphaTime = 0L;
@@ -157,6 +158,12 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 Log.d(TAG, "MainActivity.onCreate() WTF? view == null");
             else
                 view.post(() -> view.getViewTreeObserver().addOnGlobalLayoutListener(MainActivity.this));
+        }
+
+        if (getSpeedMode() == 1) {
+            mSpeedMode = true;
+        } else {
+            mSpeedMode = false;
         }
 
         if (getZoomMode() == 1) {
@@ -233,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void showToastfromActivity(String text) {
         try {
-            runOnUiThread(() -> Toast.makeText(MainActivity.this, text, Toast.LENGTH_SHORT).show());
+            runOnUiThread(() -> Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG).show());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -495,6 +502,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public int getFontSizePosition() {
         return SPUtils.getFontSizePosition(this);
+    }
+
+    public int getSpeedMode() {
+        return SPUtils.getSpeedMode(this);
     }
 
     public int getZoomMode() {
@@ -1013,8 +1024,17 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         changeFontCallback = listener;
     }
 
+    public boolean isSpeedMode() {
+        return mSpeedMode;
+    }
+
     public boolean isAutoZoom() {
         return mAutoZoom;
+    }
+
+    public void setSpeedMode(boolean mSpeedMode) {
+        this.mSpeedMode = mSpeedMode;
+        SPUtils.saveSpeedMode(this, mSpeedMode ? 1 : 0);
     }
 
     public void setAutoZoom(boolean mAutoZoom) {

@@ -225,6 +225,7 @@
     <string name="button_quotas">Квоты</string>
     <string name="collected_questions">Количество собраных анкет: %1$s</string>
     <string name="questions_sent_from_device">Отправлено анкет в рамках проекта с данного устройства: %1$s</string>
+    <string name="quotas_closed_on_device">Квот закрыто: %1$s</string>
     <string name="start_questions">Начало новой анкеты</string>
     <string name="start_question_error">Ошибка запуска анкеты. Попробуйте еще раз</string>
     <string name="home_screen">Главный экран</string>
@@ -262,6 +263,7 @@
     <string name="view_button_info">INFO</string>
     <string name="view_switch_hide_completed_quotas">Скрыть выполненные</string>
     <string name="view_switch_auto_zoom">Автоматическое маштабирование шрифтов</string>
+    <string name="view_switch_speed">Режим производительности</string>
     <string name="view_hint_search">Поиск</string>
     <string name="quota_not_renew_after_send">Квота не обновлена после последней отправки анкеты.</string>
     <string name="quota_not_renew_after_finish">Квота не обновлена после последнего завершения анкеты.</string>
@@ -301,7 +303,10 @@
     <string name="view_id">ID: %1$s</string>
     <string name="view_date">Дата: %1$s</string>
     <string name="view_display_settings_title">Настройки отображения</string>
+    <string name="view_display_settings_speed">Настройки производительности</string>
     <string name="view_settings_font_size">Размер шрифта в вопросах:</string>
+    <string name="view_settings_closed_quota_off">Показ завершенных квот (выкл)</string>
+    <string name="view_settings_closed_quota_on">Показ завершенных квот (вкл)</string>
     <string name="view_settings_spacing">Интервал между ответами: %1$s</string>
     <string name="view_exit_poll_number_title">Выбор номера (для Экзит-Пулл)</string>
     <string name="view_user_count_on_device">Количество пользователей на данном устройстве: %1$s</string>

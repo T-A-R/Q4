@@ -61,6 +61,37 @@
                 <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/view_display_settings_speed"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <pro.quizer.quizer3.view.element.customswitch.ResizableSwitch
+                    android:id="@+id/speed_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_6sdp"
+                    android:checked="true"
+                    android:text="@string/view_switch_speed"
+                    android:textSize="16sp" />
+
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                    android:id="@+id/closed_quota_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_6sdp"
+                    android:text="@string/view_settings_closed_quota_off"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="16sp"/>
+
+                <include layout="@layout/view_divider" />
+
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp"
                     android:gravity="center_horizontal"

@@ -308,7 +308,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         if (activity != null)
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, text, Toast.LENGTH_LONG).show();
                 }
             });
     }

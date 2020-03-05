@@ -35,6 +35,7 @@ import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
+import pro.quizer.quizer3.executable.QuotasViewModelExecutable;
 import pro.quizer.quizer3.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizer3.executable.SyncInfoExecutable;
 import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
@@ -44,6 +45,7 @@ import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.ProjectInfoModel;
 import pro.quizer.quizer3.model.quota.QuotaModel;
+import pro.quizer.quizer3.model.view.QuotasViewModel;
 import pro.quizer.quizer3.model.view.SyncViewModel;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.Fonts;
@@ -69,11 +71,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private TextView tvConfigName;
     private TextView tvCoountAll;
     private TextView tvCountSent;
+    private TextView tvQuotasClosed;
     private TextView tvPbText;
     private ProgressBar pb;
 
     private boolean isStartBtnPressed = false;
     private boolean isExit = false;
+    private boolean isClosedQuotasWasCounted = false;
     private UserModelR mUserModel;
     CurrentQuestionnaireR currentQuestionnaire = null;
     private List<QuestionnaireDatabaseModelR> offlineQuestionnaires;
@@ -82,6 +86,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private String mGpsNetworkString;
     private Long mGpsTime;
     private Long mGpsTimeNetwork;
+    private int mClosedQuotasCount;
     private boolean mIsUsedFakeGps;
     private boolean mIsTimeDialogShow = false;
     private boolean mIsStartAfterAuth = false;
@@ -115,6 +120,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         tvConfigName = (TextView) findViewById(R.id.config_name);
         tvCoountAll = (TextView) findViewById(R.id.count_all);
         tvCountSent = (TextView) findViewById(R.id.count_sent);
+        tvQuotasClosed = (TextView) findViewById(R.id.quotas_closed);
         tvCurrentUser = (TextView) findViewById(R.id.current_user);
         tvPbText = (TextView) findViewById(R.id.tv_pb_text);
         pb = (ProgressBar) findViewById(R.id.progressBarQuota);
@@ -127,6 +133,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         tvConfigName.setTypeface(Fonts.getFuturaPtBook());
         tvCoountAll.setTypeface(Fonts.getFuturaPtBook());
         tvCountSent.setTypeface(Fonts.getFuturaPtBook());
+        tvQuotasClosed.setTypeface(Fonts.getFuturaPtBook());
         tvCurrentUser.setTypeface(Fonts.getFuturaPtBook());
 
         cont.startAnimation(Anim.getAppear(getContext()));
@@ -252,8 +259,22 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                             .format(getString(R.string.questions_sent_from_device),
                                     String.valueOf(syncViewModel.getmSentQuestionnaireModelsFromThisDevice().size()))));
 
+
                 }
             });
+    }
+
+    private void showClosedQuotas() {
+        if (!getMainActivity().isSpeedMode()) {
+            if(!isClosedQuotasWasCounted) {
+                isClosedQuotasWasCounted = true;
+                mClosedQuotasCount = 0;
+                ShowClosedQuotas task = new ShowClosedQuotas();
+                task.execute();
+            }
+        } else {
+            tvQuotasClosed.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -719,6 +740,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            showClosedQuotas();
         }
 
         public ElementItemR[][] getTree(List<ElementItemR> quotasBlock) {
@@ -989,8 +1011,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 public void onSuccess() {
                     mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.quotas_renew));
                     MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.quotas_renew), null);
-                    if(!isQuotaUpdated) {
-                        if(!mIsStartAfterAuth) {
+                    if (!isQuotaUpdated) {
+                        if (!mIsStartAfterAuth) {
                             isQuotaUpdated = true;
                         }
                         makeQuotaTree();
@@ -1001,14 +1023,56 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 public void onError(Exception pException) {
                     mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.load_quotas_error) + " " + mBaseActivity.getString(R.string.error_107));
                     MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.ERROR, " " + mBaseActivity.getString(R.string.error_107) + R.string.load_quotas_error, pException.toString());
-                    if(!isQuotaUpdated) {
-                        if(!mIsStartAfterAuth) {
+                    if (!isQuotaUpdated) {
+                        if (!mIsStartAfterAuth) {
                             isQuotaUpdated = true;
                         }
                         makeQuotaTree();
                     }
                 }
             }).execute();
+        }
+    }
+
+    class ShowClosedQuotas extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            QuotasViewModel quotasViewModel = new QuotasViewModelExecutable(activity.getMap(false), activity, Constants.Strings.EMPTY, false).execute();
+            List<QuotaModel> pQuotasList;
+            if (quotasViewModel != null) {
+                pQuotasList = quotasViewModel.getQuotas();
+                if (pQuotasList != null) {
+                    for (QuotaModel quota : pQuotasList) {
+                        final int doneInt = quota.getDone();
+                        final int limitInt = quota.getLimit();
+                        if (doneInt == limitInt) {
+                            mClosedQuotasCount++;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (activity != null)
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        UiUtils.setTextOrHide(tvQuotasClosed, (String
+                                .format(getString(R.string.quotas_closed_on_device),
+                                        String.valueOf(mClosedQuotasCount))));
+                    }
+                });
         }
     }
 }

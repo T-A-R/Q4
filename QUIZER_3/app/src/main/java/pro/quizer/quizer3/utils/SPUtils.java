@@ -55,6 +55,13 @@ public class SPUtils {
         editor.apply();
     }
 
+    public static void saveSpeedMode(final Context pContext, final int pSpeedMode) {
+        final SharedPreferences.Editor editor = getSharedPreferences(pContext).edit();
+
+        editor.putInt(Constants.SP.SPEED, pSpeedMode);
+        editor.apply();
+    }
+
     public static void saveZoomMode(final Context pContext, final int pZoomMode) {
         final SharedPreferences.Editor editor = getSharedPreferences(pContext).edit();
 
@@ -95,6 +102,10 @@ public class SPUtils {
 
     public static int getFontSizePosition(final Context pContext) {
         return getFontSizePosition(getSharedPreferences(pContext));
+    }
+
+    public static int getSpeedMode(final Context pContext) {
+        return getSpeedMode(getSharedPreferences(pContext));
     }
 
     public static int getZoomMode(final Context pContext) {
@@ -149,6 +160,10 @@ public class SPUtils {
 
     private static int getAnswerMargin(final SharedPreferences pSharedPreferences) {
         return getInt(pSharedPreferences, Constants.SP.ANSWER_MARGIN, 0);
+    }
+
+    private static int getSpeedMode(final SharedPreferences pSharedPreferences) {
+        return getInt(pSharedPreferences, Constants.SP.SPEED, 1);
     }
 
     private static int getZoomMode(final SharedPreferences pSharedPreferences) {

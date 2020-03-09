@@ -43,6 +43,7 @@
                 android:layout_marginBottom="4dp"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
+                android:visibility="gone"
                 tools:text="ПУСТО" />
 
             <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
@@ -52,6 +53,7 @@
                 android:layout_marginBottom="4dp"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
+                android:visibility="gone"
                 tools:text="ПУСТО" />
 
             <pro.quizer.quizer3.view.element.textview.SmallResizableTextView

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/dialog_round"
+    android:orientation="vertical"
+    android:id="@+id/cont">
+
+    <LinearLayout
+        android:id="@+id/login_cont"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+            android:id="@+id/login_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:text="Данные в рамках логина:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black" />
+
+        <include layout="@layout/view_divider" />
+
+        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+            android:id="@+id/quotas_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:text="Квотных анкет: 15"
+            android:textColor="@android:color/black" />
+
+        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+            android:id="@+id/aborted_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:text="Незавершённых и прерванных: 9"
+            android:textColor="@android:color/black" />
+
+        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+            android:id="@+id/defective_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:text="Забракованных: 3"
+            android:textColor="@android:color/black" />
+
+        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+            android:id="@+id/test_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:text="Тестовых: 1"
+            android:textColor="@android:color/black" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/device_cont"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+            android:id="@+id/device_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:text="Данные по устройству:"
+            android:textStyle="bold"
+            android:textColor="@android:color/black" />
+
+        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+            android:id="@+id/device_title_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:text="(в т.ч. неполные, прерванные и забракованные)"
+            android:textColor="@android:color/black" />
+
+        <include layout="@layout/view_divider" />
+
+        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+            android:id="@+id/completed_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:text="Собрано анкет: 25"
+            android:textColor="@android:color/black" />
+
+        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+            android:id="@+id/sent_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:text="Отправлено анкет: 23"
+            android:textColor="@android:color/black" />
+
+        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+            android:id="@+id/not_sent_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:text="Неотправленных: 2"
+            android:textColor="@android:color/black" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -74,18 +74,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/_6sdp"
-                    android:checked="true"
+                    android:checked="false"
                     android:text="@string/view_switch_speed"
                     android:textSize="@dimen/_12ssp" />
-
-                <TextView
-                    android:id="@+id/closed_quota_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/_6sdp"
-                    android:text="@string/view_settings_closed_quota_off"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="@dimen/_12ssp"/>
 
                 <include layout="@layout/view_divider" />
 

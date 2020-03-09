@@ -62,6 +62,13 @@ public class SPUtils {
         editor.apply();
     }
 
+    public static void saveAborted(final Context pContext, final int pAborted) {
+        final SharedPreferences.Editor editor = getSharedPreferences(pContext).edit();
+
+        editor.putInt(Constants.SP.ABORTED, pAborted);
+        editor.apply();
+    }
+
     public static void saveZoomMode(final Context pContext, final int pZoomMode) {
         final SharedPreferences.Editor editor = getSharedPreferences(pContext).edit();
 
@@ -106,6 +113,10 @@ public class SPUtils {
 
     public static int getSpeedMode(final Context pContext) {
         return getSpeedMode(getSharedPreferences(pContext));
+    }
+
+    public static int getAborted(final Context pContext) {
+        return getAborted(getSharedPreferences(pContext));
     }
 
     public static int getZoomMode(final Context pContext) {
@@ -164,6 +175,10 @@ public class SPUtils {
 
     private static int getSpeedMode(final SharedPreferences pSharedPreferences) {
         return getInt(pSharedPreferences, Constants.SP.SPEED, 1);
+    }
+
+    private static int getAborted(final SharedPreferences pSharedPreferences) {
+        return getInt(pSharedPreferences, Constants.SP.ABORTED, -1);
     }
 
     private static int getZoomMode(final SharedPreferences pSharedPreferences) {

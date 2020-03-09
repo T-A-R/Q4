@@ -64,6 +64,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private boolean mIsFlipColsAndRows;
     private MainActivity mContext;
     private OnTableAnswerClickListener mOnTableAnswerClickListener;
+    private boolean isSpeedMode;
 
     public TableQuestionAdapter(final ElementItemR pCurrentElement, List<ElementItemR> questions, final Context context, final Runnable pRefreshRunnable, OnTableAnswerClickListener pOnTableAnswerClickListener) {
         mCurrentElement = pCurrentElement;
@@ -75,10 +76,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final ElementOptionsR optionsModel = pCurrentElement.getElementOptionsR();
         mIsFlipColsAndRows = optionsModel.isFlip_cols_and_rows();
         mContext = (MainActivity) context;
+        isSpeedMode = mContext.isTableSpeedMode();
         mQuestions = questions;
-        mLine = new boolean[mQuestions.size()];
-        for (int i = 0; i < mLine.length; i++) {
-            mLine[i] = false;
+        if(!isSpeedMode) {
+            mLine = new boolean[mQuestions.size()];
+            for (int i = 0; i < mLine.length; i++) {
+                mLine[i] = false;
+            }
         }
 
         if (mCurrentElement != null && mCurrentElement.getElementOptionsR() != null && mCurrentElement.getElementOptionsR().isRotation()) {
@@ -191,17 +195,21 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             }
             if (!mIsFlipColsAndRows) {
                 setChecked(vh, mAnswersState[row - 1][column - 1].isChecked());
-                if (mLine[row - 1]) {
-                    vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
-                } else {
-                    vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.white));
+                if(!isSpeedMode) {
+                    if (mLine[row - 1]) {
+                        vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
+                    } else {
+                        vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.white));
+                    }
                 }
             } else {
                 setChecked(vh, mAnswersState[column - 1][row - 1].isChecked());
-                if (mLine[column - 1]) {
-                    vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
-                } else {
-                    vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.white));
+                if(!isSpeedMode) {
+                    if (mLine[column - 1]) {
+                        vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
+                    } else {
+                        vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.white));
+                    }
                 }
             }
         }
@@ -220,11 +228,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         UiUtils.setTextOrHide(vh.mHeaderColumnTextView, optionsModel.getTitle());
 //        UiUtils.setTextOrHide(vh.mHeaderColumnDescriptionTextView, optionsModel.getDescription());
-        if (mIsFlipColsAndRows) {
-            if (mLine[column - 1]) {
-                vh.mColumnCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
-            } else {
-                vh.mColumnCont.setBackgroundColor(mContext.getResources().getColor(R.color.white));
+        if(!isSpeedMode) {
+            if (mIsFlipColsAndRows) {
+                if (mLine[column - 1]) {
+                    vh.mColumnCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
+                } else {
+                    vh.mColumnCont.setBackgroundColor(mContext.getResources().getColor(R.color.white));
+                }
             }
         }
     }
@@ -236,14 +246,15 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         UiUtils.setTextOrHide(vh.mHeaderRowTextView, optionsModel.getTitle());
         UiUtils.setTextOrHide(vh.mHeaderRowDescriptionTextView, optionsModel.getDescription());
-        if (!mIsFlipColsAndRows) {
-            if (mLine[row - 1]) {
-                vh.mRowCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
-            } else {
-                vh.mRowCont.setBackgroundColor(mContext.getResources().getColor(R.color.white));
+        if(!isSpeedMode) {
+            if (!mIsFlipColsAndRows) {
+                if (mLine[row - 1]) {
+                    vh.mRowCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
+                } else {
+                    vh.mRowCont.setBackgroundColor(mContext.getResources().getColor(R.color.white));
+                }
             }
         }
-
     }
 
     @Override
@@ -435,10 +446,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                                 if (!isPolyanswer && mAnswersState[row - 1][column - 1].isChecked()) {
                                     unselectOther(row, column, clickedQuestion, clickedElement);
                                 }
-                                try {
-                                    notifyRowChanged(row);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                if(!isSpeedMode) {
+                                    try {
+                                        notifyRowChanged(row);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                                 notifyItemChanged(row, 0);
                             } else {
@@ -448,10 +461,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                                 if (!isPolyanswer && mAnswersState[column - 1][row - 1].isChecked()) {
                                     unselectOther(row, column, clickedQuestion, clickedElement);
                                 }
-                                try {
-                                    notifyColumnChanged(column);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                if(!isSpeedMode) {
+                                    try {
+                                        notifyColumnChanged(column);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                                 notifyItemChanged(0, column);
                             }
@@ -544,10 +559,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                     setLine();
                 }
             }
-            try {
-                notifyRowChanged(row - 1);
-            } catch (Exception e) {
-                e.printStackTrace();
+            if(!isSpeedMode) {
+                try {
+                    notifyRowChanged(row - 1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             notifyItemChanged(row - 1, 0);
         } else {
@@ -557,10 +574,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                     setLine();
                 }
             }
-            try {
-                notifyColumnChanged(column - 1);
-            } catch (Exception e) {
-                e.printStackTrace();
+            if(!isSpeedMode) {
+                try {
+                    notifyColumnChanged(column - 1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             notifyItemChanged(0, column - 1);
         }
@@ -568,17 +587,19 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     public void setLine() {
-        for (int i = 0; i < mAnswersState.length; i++) {
-            boolean checked = false;
-            for (int k = 0; k < mAnswersState[0].length; k++) {
-                if (mAnswersState[i][k].isChecked()) {
-                    checked = true;
+        if(!isSpeedMode) {
+            for (int i = 0; i < mAnswersState.length; i++) {
+                boolean checked = false;
+                for (int k = 0; k < mAnswersState[0].length; k++) {
+                    if (mAnswersState[i][k].isChecked()) {
+                        checked = true;
+                    }
                 }
-            }
-            if (checked) {
-                mLine[i] = true;
-            } else {
-                mLine[i] = false;
+                if (checked) {
+                    mLine[i] = true;
+                } else {
+                    mLine[i] = false;
+                }
             }
         }
     }

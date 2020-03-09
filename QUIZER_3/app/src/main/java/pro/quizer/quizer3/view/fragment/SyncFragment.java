@@ -117,8 +117,8 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void initStrings() {
-        mQSendedFromThisDeviceViewString = getString(R.string.view_sent_count_quiz_from_this_device);
-        mQSendedInSessionViewString = getString(R.string.view_sent_count_quiz_from_this_session);
+//        mQSendedFromThisDeviceViewString = getString(R.string.view_sent_count_quiz_from_this_device);
+//        mQSendedInSessionViewString = getString(R.string.view_sent_count_quiz_from_this_session);
         mQUnsendedViewString = getString(R.string.view_unsent_count_quiz);
         mAUnsendedViewString = getString(R.string.view_unsent_count_audio);
         mPUnsendedViewString = getString(R.string.view_unsent_count_photo);
@@ -147,8 +147,8 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
                 } else {
                     hideSmsButton();
                 }
-                UiUtils.setTextOrHide(mQSendedFromThisDeviceView, (String.format(mQSendedFromThisDeviceViewString, mQSendedFromThisDeviceCount)));
-                UiUtils.setTextOrHide(mQSendedInSessionView, (String.format(mQSendedInSessionViewString, mQSendedInSessionCount)));
+//                UiUtils.setTextOrHide(mQSendedFromThisDeviceView, (String.format(mQSendedFromThisDeviceViewString, mQSendedFromThisDeviceCount)));
+//                UiUtils.setTextOrHide(mQSendedInSessionView, (String.format(mQSendedInSessionViewString, mQSendedInSessionCount)));
                 UiUtils.setTextOrHide(mQUnsendedView, (String.format(mQUnsendedViewString, mQUnsendedCount)));
                 UiUtils.setTextOrHide(mAUnsendedView, (String.format(mAUnsendedViewString, mAUnsendedCount)));
                 UiUtils.setTextOrHide(mPUnsendedView, (String.format(mPUnsendedViewString, mPUnsendedCount)));

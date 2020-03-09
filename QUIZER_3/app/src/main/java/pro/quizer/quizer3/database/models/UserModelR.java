@@ -71,7 +71,7 @@ public class UserModelR {
 
     public List<QuotaModel> getQuotasR() {
         try {
-            Log.d(TAG, "getQuotasR STRING: " + quotas);
+//            Log.d(TAG, "getQuotasR STRING: " + quotas);
             final List<QuotaModel> list = new Gson().fromJson(quotas, QuotaResponseModel.class).getQuotas();
 //            for(QuotaModel model : list) {
 //                Log.d(TAG, "getQuotasR: " + model.getDone());
@@ -79,7 +79,7 @@ public class UserModelR {
             for (QuotaModel quotaModel : list) {
                 quotaModel.setUserId(user_id);
                 quotaModel.setUserProjectId(user_project_id);
-                Log.d(TAG, "getQuotasR MODEL: " + quotaModel.getDone());
+//                Log.d(TAG, "getQuotasR MODEL: " + quotaModel.getDone());
             }
 
             return list;

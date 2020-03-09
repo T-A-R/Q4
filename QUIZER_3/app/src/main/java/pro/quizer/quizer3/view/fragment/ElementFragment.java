@@ -741,6 +741,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } else if (answerType.equals(ElementSubtype.TABLE)) {
             adapterTable = new TableQuestionAdapter(currentElement, answersList, getActivity(), mRefreshRecyclerViewRunnable, this);
             tableLayout.setAdapter(adapterTable);
+            tableLayout.setLongClickable(false);
             tableLayout.setDrawingCacheEnabled(true);
         } else if (answerType.equals(ElementSubtype.SCALE)) {
             adapterScale = new ScaleQuestionAdapter(getActivity(), currentElement, answersList,

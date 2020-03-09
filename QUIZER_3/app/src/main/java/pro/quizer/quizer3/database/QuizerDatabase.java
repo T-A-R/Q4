@@ -16,11 +16,13 @@ import pro.quizer.quizer3.database.models.ElementStatusImageR;
 import pro.quizer.quizer3.database.models.OptionsR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
+import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.SmsItemR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.database.models.WarningsR;
 
-@Database(entities = {ActivationModelR.class,
+@Database(entities = {
+        ActivationModelR.class,
         ElementDatabaseModelR.class,
         QuestionnaireDatabaseModelR.class,
         UserModelR.class,
@@ -35,7 +37,8 @@ import pro.quizer.quizer3.database.models.WarningsR;
         ElementPassedR.class,
         PrevElementsR.class,
         OptionsR.class,
-        SmsItemR.class}, version = 23)
+        SettingsR.class,
+        SmsItemR.class}, version = 24)
 public abstract class QuizerDatabase extends RoomDatabase {
     public abstract QuizerDao getQuizerDao();
 }

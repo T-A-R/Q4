@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:longClickable="false"
     tools:layout_height="@dimen/_40sdp"
     tools:layout_width="@dimen/_120sdp"
     android:id="@+id/row_cont">
@@ -19,6 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"
+        android:longClickable="false"
         android:background="@color/gray" />
 
     <TextView
@@ -36,6 +38,7 @@
         android:paddingRight="4dp"
         android:textColor="@android:color/black"
         android:textSize="@dimen/_10ssp"
+        android:longClickable="false"
         android:text="text" />
 
     <TextView
@@ -54,5 +57,6 @@
         android:paddingRight="4dp"
         android:textSize="@dimen/_10ssp"
         android:textStyle="italic"
+        android:longClickable="false"
         android:text="text" />
 </RelativeLayout>

@@ -212,6 +212,42 @@ public class QuizerAPI {
     }
 
     /**
+     * Получение статистики.
+     * <p>
+     * Код ошибок ?.хх
+     *
+     * @param url
+     * @param json
+     * @param listener
+     */
+
+    static public void getStatistics(String url, String json, final GetStatisticsCallback listener) {
+
+        Log.d(TAG, "getStatistics: " + json);
+
+        Map<String, String> fields = new HashMap<>();
+        fields.put(Constants.ServerFields.JSON_DATA, json);
+
+        CoreApplication.getQuizerApi().getStatistics(url, fields).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d(TAG, "QuizerAPI.getStatistics.onResponse() Message: " + response.message());
+                listener.onGetStatisticsCallback(response.body());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d(TAG, "QuizerAPI.getStatistics.onFailure() " + t);
+                listener.onGetStatisticsCallback(null);
+            }
+        });
+    }
+
+    public interface GetStatisticsCallback {
+        void onGetStatisticsCallback(ResponseBody data);
+    }
+
+    /**
      * Отправка файлов (аудио и фото).
      * <p>
      * Код ошибок 3.хх

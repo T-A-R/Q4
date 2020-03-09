@@ -3,6 +3,8 @@ package pro.quizer.quizer3.view.fragment;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Process;
@@ -13,10 +15,15 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -25,6 +32,10 @@ import java.util.Objects;
 import java.util.Set;
 
 import java9.util.concurrent.CompletableFuture;
+import okhttp3.ResponseBody;
+import pro.quizer.quizer3.API.QuizerAPI;
+import pro.quizer.quizer3.API.models.request.StatisticsRequestModel;
+import pro.quizer.quizer3.API.models.response.StatisticsResponseModel;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
@@ -42,6 +53,7 @@ import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
 import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
+import pro.quizer.quizer3.model.Statistics;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.ProjectInfoModel;
 import pro.quizer.quizer3.model.quota.QuotaModel;
@@ -51,6 +63,7 @@ import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.GPSModel;
 import pro.quizer.quizer3.utils.GpsUtils;
+import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.utils.Internet;
@@ -65,12 +78,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private Toolbar toolbar;
     private Button btnContinue;
     private Button btnStart;
+    private Button btnInfo;
     private Button btnQuotas;
     private TextView tvConfigAgreement;
     private TextView tvCurrentUser;
     private TextView tvConfigName;
-    private TextView tvCoountAll;
-    private TextView tvCountSent;
+//    private TextView tvCoountAll;
+//    private TextView tvCountSent;
     private TextView tvQuotasClosed;
     private TextView tvPbText;
     private ProgressBar pb;
@@ -96,6 +110,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private boolean isQuotaUpdated = false;
     private Long mFakeGpsTime;
     private GPSModel mGPSModel;
+    private Statistics finalStatistics;
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog infoDialog;
+    private int completedCounter = 0;
+    private int sentCounter = 0;
+    private int notSentCounter = 0;
 
     public MainActivity activity;
 
@@ -115,11 +135,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         RelativeLayout cont = (RelativeLayout) findViewById(R.id.cont_home_fragment);
         btnContinue = (Button) findViewById(R.id.btn_continue);
         btnStart = (Button) findViewById(R.id.btn_start);
+        btnInfo = (Button) findViewById(R.id.btn_info);
         btnQuotas = (Button) findViewById(R.id.btn_quotas);
         tvConfigAgreement = (TextView) findViewById(R.id.config_agreement);
         tvConfigName = (TextView) findViewById(R.id.config_name);
-        tvCoountAll = (TextView) findViewById(R.id.count_all);
-        tvCountSent = (TextView) findViewById(R.id.count_sent);
+//        tvCoountAll = (TextView) findViewById(R.id.count_all);
+//        tvCountSent = (TextView) findViewById(R.id.count_sent);
         tvQuotasClosed = (TextView) findViewById(R.id.quotas_closed);
         tvCurrentUser = (TextView) findViewById(R.id.current_user);
         tvPbText = (TextView) findViewById(R.id.tv_pb_text);
@@ -128,17 +149,19 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         MainFragment.enableSideMenu(true);
 
         btnStart.setOnClickListener(this);
+        btnInfo.setOnClickListener(this);
         btnQuotas.setOnClickListener(this);
         tvConfigAgreement.setTypeface(Fonts.getFuturaPtBook());
         tvConfigName.setTypeface(Fonts.getFuturaPtBook());
-        tvCoountAll.setTypeface(Fonts.getFuturaPtBook());
-        tvCountSent.setTypeface(Fonts.getFuturaPtBook());
+//        tvCoountAll.setTypeface(Fonts.getFuturaPtBook());
+//        tvCountSent.setTypeface(Fonts.getFuturaPtBook());
         tvQuotasClosed.setTypeface(Fonts.getFuturaPtBook());
         tvCurrentUser.setTypeface(Fonts.getFuturaPtBook());
 
         cont.startAnimation(Anim.getAppear(getContext()));
         btnContinue.startAnimation(Anim.getAppearSlide(getContext(), 500));
         btnStart.startAnimation(Anim.getAppearSlide(getContext(), 500));
+        btnInfo.startAnimation(Anim.getAppearSlide(getContext(), 500));
         btnQuotas.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
         toolbar.setTitle(getString(R.string.home_screen));
@@ -252,29 +275,20 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
                     final SyncViewModel syncViewModel = new SyncInfoExecutable(getContext()).execute();
 
-                    UiUtils.setTextOrHide(tvCoountAll, (String
-                            .format(getString(R.string.collected_questions),
-                                    String.valueOf(syncViewModel.getmAllQuestionnaireModels().size()))));
-                    UiUtils.setTextOrHide(tvCountSent, (String
-                            .format(getString(R.string.questions_sent_from_device),
-                                    String.valueOf(syncViewModel.getmSentQuestionnaireModelsFromThisDevice().size()))));
+                    completedCounter = syncViewModel.getmAllQuestionnaireModels().size();
+                    sentCounter = syncViewModel.getmSentQuestionnaireModelsFromThisDevice().size();
+                    notSentCounter = syncViewModel.getmNotSentQuestionnaireModels().size();
+
+//                    UiUtils.setTextOrHide(tvCoountAll, (String
+//                            .format(getString(R.string.collected_questions),
+//                                    String.valueOf(syncViewModel.getmAllQuestionnaireModels().size()))));
+//                    UiUtils.setTextOrHide(tvCountSent, (String
+//                            .format(getString(R.string.questions_sent_from_device),
+//                                    String.valueOf(syncViewModel.getmSentQuestionnaireModelsFromThisDevice().size()))));
 
 
                 }
             });
-    }
-
-    private void showClosedQuotas() {
-        if (!getMainActivity().isSpeedMode()) {
-            if(!isClosedQuotasWasCounted) {
-                isClosedQuotasWasCounted = true;
-                mClosedQuotasCount = 0;
-                ShowClosedQuotas task = new ShowClosedQuotas();
-                task.execute();
-            }
-        } else {
-            tvQuotasClosed.setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -285,6 +299,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 deactivateButtons();
                 startQuestionnaire();
             }
+        } else if (view == btnInfo) {
+            getInfo();
         } else if (view == btnQuotas) {
             replaceFragment(new QuotasFragment());
         } else if (view == btnContinue) {
@@ -705,9 +721,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             btnContinue.setEnabled(false);
             btnStart.setEnabled(false);
             btnQuotas.setEnabled(false);
+            btnInfo.setEnabled(false);
             UiUtils.setButtonEnabled(btnStart, false);
             UiUtils.setButtonEnabled(btnContinue, false);
             UiUtils.setButtonEnabled(btnQuotas, false);
+            UiUtils.setButtonEnabled(btnInfo, false);
         }
 
         @SafeVarargs
@@ -730,9 +748,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             btnContinue.setEnabled(true);
             btnStart.setEnabled(true);
             btnQuotas.setEnabled(true);
+            btnInfo.setEnabled(true);
             UiUtils.setButtonEnabled(btnStart, true);
             UiUtils.setButtonEnabled(btnContinue, true);
             UiUtils.setButtonEnabled(btnQuotas, true);
+            UiUtils.setButtonEnabled(btnInfo, true);
 
             try {
                 if (activity != null)
@@ -740,7 +760,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            showClosedQuotas();
+//            showClosedQuotas();
         }
 
         public ElementItemR[][] getTree(List<ElementItemR> quotasBlock) {
@@ -939,6 +959,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         btnContinue.setEnabled(true);
         btnStart.setEnabled(true);
         btnQuotas.setEnabled(true);
+        btnInfo.setEnabled(true);
 
         final int sdk = android.os.Build.VERSION.SDK_INT;
 
@@ -946,10 +967,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             btnContinue.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
             btnStart.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
             btnQuotas.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+            btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
         } else {
             btnContinue.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
             btnStart.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
             btnQuotas.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+            btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
         }
     }
 
@@ -958,6 +981,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         btnContinue.setEnabled(false);
         btnStart.setEnabled(false);
         btnQuotas.setEnabled(false);
+        btnInfo.setEnabled(false);
 
         final int sdk = android.os.Build.VERSION.SDK_INT;
 
@@ -965,10 +989,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             btnContinue.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
             btnStart.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
             btnQuotas.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
         } else {
             btnContinue.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
             btnStart.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
             btnQuotas.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
         }
     }
 
@@ -1034,7 +1060,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         }
     }
 
-    class ShowClosedQuotas extends AsyncTask<Void, Void, Void> {
+    class ShowStatistics extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -1046,18 +1072,48 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         protected Void doInBackground(Void... voids) {
             QuotasViewModel quotasViewModel = new QuotasViewModelExecutable(activity.getMap(false), activity, Constants.Strings.EMPTY, false).execute();
             List<QuotaModel> pQuotasList;
+            int quotas = 0;
             if (quotasViewModel != null) {
                 pQuotasList = quotasViewModel.getQuotas();
                 if (pQuotasList != null) {
                     for (QuotaModel quota : pQuotasList) {
                         final int doneInt = quota.getDone();
-                        final int limitInt = quota.getLimit();
-                        if (doneInt == limitInt) {
-                            mClosedQuotasCount++;
-                        }
+                        quotas = quotas + doneInt;
                     }
                 }
             }
+            int userId = getCurrentUserId();
+//            int completed = 0;
+            int savedAborted = activity.getAborted();
+            int aborted = 0;
+            int unfinished = 0;
+//            List<QuestionnaireDatabaseModelR> questionnairesList = null;
+            List<QuestionnaireDatabaseModelR> abortedQuestionnairesList = null;
+            List<QuestionnaireDatabaseModelR> unfinishedQuestionnairesList = null;
+            try {
+//                questionnairesList = getDao().getQuestionnaireSurveyStatus(userId, Constants.QuestionnaireStatuses.COMPLETED, Constants.LogStatus.NOT_SENT);
+                abortedQuestionnairesList = getDao().getQuestionnaireSurveyStatus(userId, Constants.QuestionnaireStatuses.ABORTED, Constants.LogStatus.NOT_SENT);
+                unfinishedQuestionnairesList = getDao().getQuestionnaireSurveyStatus(userId, Constants.QuestionnaireStatuses.UNFINISHED, Constants.LogStatus.NOT_SENT);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+//            if(questionnairesList != null) {
+//                completed = questionnairesList.size();
+//                Log.d(TAG, "doInBackground: " + questionnairesList.size());
+//            }
+            if (abortedQuestionnairesList != null) {
+                aborted = abortedQuestionnairesList.size();
+            }
+
+            if (unfinishedQuestionnairesList != null) {
+                unfinished = unfinishedQuestionnairesList.size();
+            }
+            int totalAborted = -1;
+            if (savedAborted != -1) {
+                totalAborted = aborted + savedAborted + unfinished;
+            }
+
+            finalStatistics = new Statistics(quotas, totalAborted, 0, 0);
             return null;
         }
 
@@ -1068,12 +1124,137 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        UiUtils.setTextOrHide(tvQuotasClosed, (String
-                                .format(getString(R.string.quotas_closed_on_device),
-                                        String.valueOf(mClosedQuotasCount))));
+                        showInfoDialog(false);
                     }
                 });
         }
+    }
+
+    private void getInfo() {
+        UserModelR userModel = activity.getCurrentUser();
+        ConfigModel configModel = userModel.getConfigR();
+        StatisticsRequestModel requestModel = new StatisticsRequestModel(configModel.getLoginAdmin(), userModel.getPassword(), userModel.getLogin());
+        Gson gson = new Gson();
+        String json = gson.toJson(requestModel);
+        String mServerUrl = configModel.getServerUrl();
+
+//        MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, activity.getString(R.string.get_quotas), Constants.LogResult.SENT, activity.getString(R.string.sending_request), json);
+
+        QuizerAPI.getStatistics(mServerUrl, json, new QuizerAPI.GetStatisticsCallback() {
+            @Override
+            public void onGetStatisticsCallback(ResponseBody responseBody) {
+                if (responseBody == null) {
+//                    MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.ERROR, mContext.getString(R.string.log_error_101_desc), null);
+                    showStatistics(null);
+                    return;
+                }
+                String responseJson;
+                try {
+                    responseJson = responseBody.string();
+//                    Log.d(TAG, "?????????????? onGetStatisticsCallback: " + responseJson);
+                } catch (IOException e) {
+//                    MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.ERROR, mContext.getString(R.string.log_error_102_desc), null);
+                    showStatistics(null);
+                    return;
+                }
+
+                StatisticsResponseModel statisticsResponseModel;
+
+                try {
+                    statisticsResponseModel = new GsonBuilder().create().fromJson(responseJson, StatisticsResponseModel.class);
+                } catch (final Exception pE) {
+//                    MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.ERROR, mContext.getString(R.string.log_error_103_desc), responseJson);
+                    showStatistics(null);
+                    return;
+                }
+
+                if (statisticsResponseModel != null) {
+
+                    if (statisticsResponseModel.getResult() != 0) {
+                        activity.setAborted(statisticsResponseModel.getStatistics().getAborted());
+                        showStatistics(statisticsResponseModel.getStatistics());
+//                        showStatistics(null);
+                        return;
+                    } else {
+                        showStatistics(null);
+                        return;
+                    }
+                } else {
+                    showStatistics(null);
+                    return;
+                }
+            }
+        });
+    }
+
+    private void showStatistics(Statistics statistics) {
+
+        if (statistics == null) {
+//            Log.d(TAG, "!!!!!!!!!!!!!!!!!! showStatistics: EMPTY");
+            ShowStatistics task = new ShowStatistics();
+            task.execute();
+        } else {
+            finalStatistics = statistics;
+//            Log.d(TAG, "!!!!!!!!!!!!! showStatistics: " + finalStatistics.getQuotas()
+//                    + " " + finalStatistics.getAborted()
+//                    + " " + finalStatistics.getDefective()
+//                    + " " + finalStatistics.getTests()
+//            );
+            showInfoDialog(true);
+        }
+    }
+
+    private void showInfoDialog(boolean server) {
+        dialogBuilder = new AlertDialog.Builder(getMainActivity());
+        View layoutView = getLayoutInflater().inflate(getMainActivity().isAutoZoom() ? R.layout.dialog_statistics_auto : R.layout.dialog_statistics, null);
+        TextView quotasCount = layoutView.findViewById(R.id.quotas_count);
+        TextView abortedCount = layoutView.findViewById(R.id.aborted_count);
+        TextView devectiveCount = layoutView.findViewById(R.id.defective_count);
+        TextView testCount = layoutView.findViewById(R.id.test_count);
+        TextView complitedCount = layoutView.findViewById(R.id.completed_count);
+        TextView sentCount = layoutView.findViewById(R.id.sent_count);
+        TextView notSentCount = layoutView.findViewById(R.id.not_sent_count);
+        LinearLayout cont = layoutView.findViewById(R.id.cont);
+
+        cont.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                infoDialog.dismiss();
+            }
+        });
+
+        UiUtils.setTextOrHide(quotasCount, (String.format(getString(R.string.collected_quotas),
+                String.valueOf(finalStatistics.getQuotas()))));
+        if (finalStatistics.getAborted() == -1) {
+            UiUtils.setTextOrHide(abortedCount, (String.format(getString(R.string.collected_aborted),
+                    "нет данных")));
+        } else {
+            UiUtils.setTextOrHide(abortedCount, (String.format(getString(R.string.collected_aborted),
+                    String.valueOf(finalStatistics.getAborted()))));
+        }
+        UiUtils.setTextOrHide(devectiveCount, (String.format(getString(R.string.collected_defective),
+                String.valueOf(finalStatistics.getDefective()))));
+        if (server && finalStatistics.getTests() != 0) {
+            testCount.setVisibility(View.VISIBLE);
+            UiUtils.setTextOrHide(testCount, (String.format(getString(R.string.collected_tests),
+                    String.valueOf(finalStatistics.getTests()))));
+        } else {
+            testCount.setVisibility(View.GONE);
+        }
+
+        UiUtils.setTextOrHide(complitedCount, (String.format(getString(R.string.collected_questions),
+                String.valueOf(completedCounter))));
+        UiUtils.setTextOrHide(sentCount, (String.format(getString(R.string.questions_sent_from_device),
+                String.valueOf(sentCounter))));
+        UiUtils.setTextOrHide(notSentCount, (String.format(getString(R.string.questions_not_sent_from_device),
+                String.valueOf(notSentCounter))));
+
+        dialogBuilder.setView(layoutView);
+        infoDialog = dialogBuilder.create();
+        infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+        infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if (activity != null && !activity.isFinishing())
+            infoDialog.show();
     }
 }
 

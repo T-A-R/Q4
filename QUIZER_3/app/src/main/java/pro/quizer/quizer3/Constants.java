@@ -34,6 +34,7 @@ public final class Constants {
         String QUOTA_TIME_DIFFERENCE = "quota_time_difference";
         String AUTO_ZOOM = "AUTO_ZOOM";
         String SPEED = "SPEED";
+        String ABORTED = "ABORTED";
 
     }
 
@@ -56,6 +57,7 @@ public final class Constants {
         String KEY_CLIENT = "key_client";
         String USER_LOGIN = "user_login";
         String GET_QUOTA = "get_quota";
+        String STATISTICS = "statistics";
         String PHOTO_FILE = "photo_file";
         String AUDIO_FILE = "audio_file";
         String DOWNLOAD_UPDATE = "download_update";

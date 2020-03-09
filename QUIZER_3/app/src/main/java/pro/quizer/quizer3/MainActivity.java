@@ -54,6 +54,7 @@ import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementOptionsR;
 import pro.quizer.quizer3.database.models.ElementStatusImageR;
+import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.QuotasTreeMaker;
@@ -506,6 +507,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public int getSpeedMode() {
         return SPUtils.getSpeedMode(this);
+    }
+
+    public int getAborted() {
+        return SPUtils.getAborted(this);
     }
 
     public int getZoomMode() {
@@ -1037,6 +1042,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         SPUtils.saveSpeedMode(this, mSpeedMode ? 1 : 0);
     }
 
+    public void setAborted(int mAborted) {
+        SPUtils.saveAborted(this, mAborted);
+    }
+
     public void setAutoZoom(boolean mAutoZoom) {
         this.mAutoZoom = mAutoZoom;
         SPUtils.saveZoomMode(this, mAutoZoom ? 1 : 0);
@@ -1212,5 +1221,22 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     protected void onSaveInstanceState(Bundle InstanceState) {
         super.onSaveInstanceState(InstanceState);
         InstanceState.clear();
+    }
+
+    public SettingsR getSettings() {
+        SettingsR settings = getStaticDao().getSettings();
+        if(settings == null) {
+            settings = new SettingsR();
+            getStaticDao().insertSettings(settings);
+        }
+        return settings;
+    }
+
+    public boolean isTableSpeedMode() {
+        return getSettings().isTable_speed();
+    }
+
+    public void setTableSpeedMode(boolean speed) {
+        getMainDao().setSettingsTableSpeed(speed);
     }
 }

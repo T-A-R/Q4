@@ -18,6 +18,7 @@ import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.OptionsR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
+import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.SmsItemR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.database.models.WarningsR;
@@ -136,6 +137,9 @@ public interface QuizerDao {
 
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status")
     List<QuestionnaireDatabaseModelR> getQuestionnaireByStatus(String status);
+
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND survey_status = :survey AND status = :status")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireSurveyStatus(int userId, String survey, String status);
 
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status AND send_sms = :send_sms AND survey_status = :survey")
     List<QuestionnaireDatabaseModelR> getQuestionnaireForStage(int userId, String status, String survey, boolean send_sms);
@@ -287,4 +291,19 @@ public interface QuizerDao {
 
     @Query("UPDATE OptionsR SET data = :data WHERE name = :name")
     void setOption(String name, String data);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertSettings(SettingsR settingsR);
+
+    @Query("SELECT * FROM SettingsR LIMIT 1")
+    SettingsR getSettings();
+
+    @Query("UPDATE SettingsR SET started = :data")
+    void setSettingsStarted(boolean data);
+
+    @Query("UPDATE SettingsR SET auto_zoom = :data")
+    void setSettingsAutoZoom(boolean data);
+
+    @Query("UPDATE SettingsR SET table_speed = :data")
+    void setSettingsTableSpeed(boolean data);
 }

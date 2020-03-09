@@ -37,6 +37,10 @@ public interface RetrofitQuizerAPI {
     @POST()
     Call<ResponseBody> getQuotas(@Url String apiname, @FieldMap Map<String, String> fields);
 
+    @FormUrlEncoded
+    @POST()
+    Call<ResponseBody> getStatistics(@Url String apiname, @FieldMap Map<String, String> fields);
+
     @Multipart
     @POST()
     Call<ResponseBody> sendFiles(

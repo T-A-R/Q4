@@ -24,7 +24,7 @@ public class SettingViewModelExecutable extends BaseModelExecutable<SettingsView
         if (mContext instanceof MainActivity) {
             final MainActivity activity = (MainActivity) mContext;
             final UserModelR currentUser = activity.getCurrentUser();
-            final ConfigModel configModel = currentUser.getConfigR();
+            final ConfigModel configModel = activity.getConfig();
 
             settingsViewModel.setmConfigDate(configModel.getConfigDate());
             settingsViewModel.setmConfigId(currentUser.getConfig_id());

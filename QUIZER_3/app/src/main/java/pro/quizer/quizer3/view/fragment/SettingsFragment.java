@@ -217,7 +217,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         }
 
         final UserModelR currentUser = mBaseActivity.getCurrentUser();
-        final ConfigModel configModel = currentUser.getConfigR();
+        final ConfigModel configModel = mBaseActivity.getConfig();
         final ReserveChannelModel reserveChannelModel = configModel.getProjectInfo().getReserveChannel();
 
         if (reserveChannelModel != null) {

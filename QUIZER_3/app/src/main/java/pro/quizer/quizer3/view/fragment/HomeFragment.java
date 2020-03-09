@@ -131,6 +131,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     @Override
     protected void onReady() {
         activity = (MainActivity) getActivity();
+
         toolbar = findViewById(R.id.toolbar);
         RelativeLayout cont = (RelativeLayout) findViewById(R.id.cont_home_fragment);
         btnContinue = (Button) findViewById(R.id.btn_continue);
@@ -178,6 +179,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             e.printStackTrace();
         }
         deactivateButtons();
+        getMainActivity().freeMemory();
         initViews();
         sendCrashLogs();
 
@@ -210,7 +212,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         }, false).execute();
 
 //        showElementsDB();
-        MainActivity activity = getMainActivity();
+//        MainActivity activity = getMainActivity();
         if (activity != null) {
             if (activity.hasReserveChannel()) {
                 btnQuotas.setVisibility(View.GONE);
@@ -220,10 +222,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         }
 
         try {
-            getMainActivity().activateExitReminder();
+            activity.activateExitReminder();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     public void makeQuotaTree() {
@@ -234,7 +237,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     public void initViews() {
 
         mUserModel = getCurrentUser();
-        final ConfigModel config = mUserModel.getConfigR();
+        final ConfigModel config = activity.getConfig();
         final ProjectInfoModel projectInfo = config.getProjectInfo();
 
         initSyncInfoViews();
@@ -350,7 +353,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 if (currentQuestionnaire != null) {
                     boolean saved = true;
                     if (currentQuestionnaire.getUser_project_id().equals(getCurrentUser().getUser_project_id())) {
-                        if (getCurrentUser().getConfigR().isSaveAborted()) {
+                        if (activity.getConfig().isSaveAborted()) {
                             saved = saveQuestionnaireToDatabase(currentQuestionnaire, true);
                         } else {
                             saved = true;
@@ -399,7 +402,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         Log.d(TAG, "startQuestionnaire: insertCurrentQuestionnaireR() started.");
                         CurrentQuestionnaireR questionnaire = new CurrentQuestionnaireR();
                         questionnaire.setToken(StringUtils.generateToken());
-                        questionnaire.setProject_id(getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+                        questionnaire.setProject_id(activity.getConfig().getProjectInfo().getProjectId());
                         questionnaire.setUser_project_id(getCurrentUser().getUser_project_id());
                         questionnaire.setStart_date(DateUtils.getCurrentTimeMillis());
                         questionnaire.setGps(mGpsString);
@@ -503,7 +506,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     private boolean checkTime() {
 
-        if (!isTimeAutomatic() && getCurrentUser().getConfigR().isForceTime()) {
+        if (!isTimeAutomatic() && activity.getConfig().isForceTime()) {
             try {
                 addLog(getCurrentUser().getLogin(), Constants.LogType.DIALOG, Constants.LogObject.QUESTIONNAIRE, getString(R.string.show_dialog), Constants.LogResult.SUCCESS, getString(R.string.dialog_please_turn_on_auto_time), null);
                 showTimeDialog();
@@ -543,8 +546,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private boolean checkGps() {
         boolean zeroCoordinates = false;
         mGPSModel = null;
-        isForceGps = getCurrentUser().getConfigR().isForceGps();
-        if (getCurrentUser().getConfigR().isGps() && mGPSModel == null) {
+        isForceGps = activity.getConfig().isForceGps();
+        if (activity.getConfig().isGps() && mGPSModel == null) {
             try {
                 mGPSModel = GpsUtils.getCurrentGps(getActivity(), isForceGps);
                 if (mGPSModel == null || mGPSModel.isNoGps()) {
@@ -567,7 +570,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
 
             Log.d(TAG, "=== GPS: " + getCurrentUser().getConfigR().isForceGps() + " " + zeroCoordinates);
-            if (getCurrentUser().getConfigR().isForceGps()) {
+            if (activity.getConfig().isForceGps()) {
                 if (mGPSModel == null) {
                     showSettingsAlert();
                     return false;
@@ -699,7 +702,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void startRecording() {
-        if (getCurrentUser().getConfigR().isAudio() && getCurrentUser().getConfigR().isAudioRecordAll()) {
+        if (activity.getConfig().isAudio() && getCurrentUser().getConfigR().isAudioRecordAll()) {
             MainActivity activity = (MainActivity) getActivity();
             try {
                 addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.start_audio_recording), Constants.LogResult.ATTEMPT, getString(R.string.start_audio_recording_attempt), null);
@@ -1133,7 +1136,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     private void getInfo() {
         UserModelR userModel = activity.getCurrentUser();
-        ConfigModel configModel = userModel.getConfigR();
+        ConfigModel configModel = activity.getConfig();
         StatisticsRequestModel requestModel = new StatisticsRequestModel(configModel.getLoginAdmin(), userModel.getPassword(), userModel.getLogin());
         Gson gson = new Gson();
         String json = gson.toJson(requestModel);

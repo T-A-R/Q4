@@ -321,28 +321,27 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             checkAbortedBox();
             MainActivity activity = getMainActivity();
             boolean isInAbortedBox = false;
-            if(activity != null) {
+            if (activity != null) {
                 CurrentQuestionnaireR quiz = activity.getCurrentQuestionnaireForce();
-                if(quiz != null) {
+                if (quiz != null) {
                     isInAbortedBox = quiz.isIn_aborted_box();
                 }
-            }
 
+                if (activity.getConfig().isSaveAborted()
+                        && hasAbortedBox()
+                        && !isInAbortedBox) {
+                    try {
+                        getDao().setCurrentQuestionnaireInAbortedBox(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
-            if (getCurrentUser().getConfigR().isSaveAborted()
-                    && hasAbortedBox()
-                    && !isInAbortedBox) {
-                try {
-                    getDao().setCurrentQuestionnaireInAbortedBox(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    TransFragment fragment = new TransFragment();
+                    fragment.setStartElement(getAbortedBoxRelativeId());
+                    replaceFragment(fragment);
+                } else {
+                    showExitPoolAlertDialog();
                 }
-
-                TransFragment fragment = new TransFragment();
-                fragment.setStartElement(getAbortedBoxRelativeId());
-                replaceFragment(fragment);
-            } else {
-                showExitPoolAlertDialog();
             }
         } else if (view == closeImage1 || view == titleCont1) {
             titleCont1.setVisibility(View.GONE);
@@ -505,7 +504,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
         showContent(currentElement, questionImagesCont);
 
-        if (getCurrentUser().getConfigR().isPhotoQuestionnaire() && currentElement.getElementOptionsR().isTake_photo()) {
+        if (getMainActivity().getConfig().isPhotoQuestionnaire() && currentElement.getElementOptionsR().isTake_photo()) {
             shotPicture(getLoginAdmin(), getQuestionnaire().getToken(), currentElement.getRelative_id(), getCurrentUserId(), getQuestionnaire().getProject_id(), getCurrentUser().getLogin());
         }
     }
@@ -588,7 +587,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 nextElementId = answersList.get(0).getElementOptionsR().getJump();
             }
             if (nextElementId == null || nextElementId.equals(0)) {
-                if (getCurrentUser().getConfigR().isSaveAborted()) {
+                if (getMainActivity().getConfig().isSaveAborted()) {
                     if (saveQuestionnaire(false)) {
                         exitQuestionnaire();
                     } else {
@@ -1415,7 +1414,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     public boolean saveQuestionnaire(boolean aborted) {
         stopRecording();
 //        Log.d(TAG, "!!!!!!!!!!!!!!!!11111111 saveQuestionnaire: ");
-        if (!aborted || (getCurrentUser().getConfigR().isSaveAborted() && aborted)) {
+        if (!aborted || (getMainActivity().getConfig().isSaveAborted() && aborted)) {
             if (saveQuestionnaireToDatabase(getQuestionnaire(), aborted)) {
                 try {
                     getDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");
@@ -1471,7 +1470,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     public void showExitPoolAlertDialog() {
         activateButtons();
-        if (!getCurrentUser().getConfigR().isSaveAborted()) {
+        if (!getMainActivity().getConfig().isSaveAborted()) {
             MainActivity activity = getMainActivity();
             addLog(getCurrentUser().getLogin(), Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_exit), null);
             if (activity != null && !activity.isFinishing()) {
@@ -1597,7 +1596,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             }
         });
 
-        dQuota3.setText(getCurrentUser().getConfigR().getProjectInfo().getName());
+        dQuota3.setText(getMainActivity().getConfig().getProjectInfo().getName());
         quota1Cont.setVisibility(View.GONE);
         quota2Cont.setVisibility(View.GONE);
 
@@ -1634,7 +1633,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         }
                         st("after save quiz");
                     } else if (nextElementId == -1) {
-                        if (getCurrentUser().getConfigR().isSaveAborted()) {
+                        if (getMainActivity().getConfig().isSaveAborted()) {
                             if (saveQuestionnaire(true)) {
                                 exitQuestionnaire();
                             } else {

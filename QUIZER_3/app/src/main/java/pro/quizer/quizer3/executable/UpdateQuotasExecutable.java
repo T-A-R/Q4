@@ -41,7 +41,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
 
         mainActivity = (MainActivity) mContext;
         userModel = mainActivity.getCurrentUser();
-        configModel = userModel.getConfigR();
+        configModel = mainActivity.getConfig();
         userProjectId = userModel.getUser_project_id();
 
         QuotaRequestModel requestModel = new QuotaRequestModel(configModel.getLoginAdmin(), userModel.getPassword(), userModel.getLogin());

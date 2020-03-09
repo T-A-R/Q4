@@ -41,7 +41,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
 
     public SendQuestionnairesByUserModelExecutable(final MainActivity pBaseActivity, final UserModelR pUserModel, final ICallback pCallback, final boolean pIsShowAlertDialog) {
         super(pCallback);
-        final ConfigModel configModel = pUserModel.getConfigR();
+        final ConfigModel configModel = pBaseActivity.getConfig();
 
         mBaseActivity = pBaseActivity;
         mServerUrl = configModel.getServerUrl();
@@ -52,7 +52,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
 
     public SendQuestionnairesByUserModelExecutable(final MainActivity pBaseActivity, final UserModelR pUserModel, final ICallback pCallback, final boolean pIsShowAlertDialog, final boolean isFromService) {
         super(pCallback);
-        final ConfigModel configModel = pUserModel.getConfigR();
+        final ConfigModel configModel = pBaseActivity.getConfig();
 
         mBaseActivity = pBaseActivity;
         mServerUrl = configModel.getServerUrl();
@@ -67,8 +67,8 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
 
         if (NetworkUtils.hasConnection()) {
             sendViaInternetWithRetrofit();
-        } else if (mUserModel.getConfigR().hasReserveChannels()) {
-            sendViaSms(mBaseActivity.createNewMap(mUserModel.getConfigR().getProjectInfo().getElements()), mBaseActivity);
+        } else if (mBaseActivity.getConfig().hasReserveChannels()) {
+            sendViaSms(mBaseActivity.createNewMap(mBaseActivity.getConfig().getProjectInfo().getElements()), mBaseActivity);
         } else {
             onError(new Exception(mBaseActivity.getString(R.string.notification_no_connection)));
         }

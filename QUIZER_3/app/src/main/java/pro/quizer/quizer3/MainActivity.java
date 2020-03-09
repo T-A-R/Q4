@@ -61,6 +61,7 @@ import pro.quizer.quizer3.executable.QuotasTreeMaker;
 import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.User;
+import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.Contents;
 import pro.quizer.quizer3.model.config.ElementModelFlat;
 import pro.quizer.quizer3.model.config.ElementModelNew;
@@ -131,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     private Timer mTimer;
     private AlertSmsTask mAlertSmsTask;
+    private ConfigModel mConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -312,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     private List<ElementModelNew> getElements() {
-        return getCurrentUser().getConfigR().getProjectInfo().getElements();
+        return getConfig().getProjectInfo().getElements();
     }
 
 //    private void generateMap(final List<ElementModelNew> elements, boolean rebuild) {
@@ -327,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 //    }
 
     private void initDataForRebuild() {
-        projectId = getCurrentUser().getConfigR().getProjectInfo().getProjectId();
+        projectId = getConfig().getProjectInfo().getProjectId();
         userId = getCurrentUser().getUser_id();
         configId = getCurrentUser().getConfig_id();
     }
@@ -698,7 +700,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                     break;
             }
 
-            mAudioRecordLimitTime = getCurrentUser().getConfigR().getAudioRecordLimitTime() * 60 * 1000;
+            mAudioRecordLimitTime = getConfig().getAudioRecordLimitTime() * 60 * 1000;
 
             Log.d("Timer", "Limit: " + mAudioRecordLimitTime + " - tick: " + ONE_SEC);
 
@@ -765,8 +767,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     private void callRecord() {
         mUserId = mCurrentUser.getUser_id();
-        mLoginAdmin = mCurrentUser.getConfigR().getLoginAdmin();
-        mProjectId = mCurrentUser.getConfigR().getProjectInfo().getProjectId();
+        mLoginAdmin = getConfig().getLoginAdmin();
+        mProjectId = getConfig().getProjectInfo().getProjectId();
         mLogin = mCurrentUser.getLogin();
         AudioService.mFileName = FileUtils.generateAudioFileName(this, mUserId, mLoginAdmin, mProjectId, mLogin, mToken, mAudioRelativeId);
 
@@ -1155,7 +1157,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     private ReserveChannelModel getReserveChannel() {
-        return getCurrentUser().getConfigR().getProjectInfo().getReserveChannel();
+        return getConfig().getProjectInfo().getReserveChannel();
     }
 
     public void startSMS(Long startTime) {
@@ -1196,7 +1198,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public List<ElementModelFlat> getFlatElementsList() {
         if (currentElementsFlatList == null) {
-            currentElementsFlatList = mCurrentUser.getConfigR().getProjectInfo().getFlatElements();
+            currentElementsFlatList = getConfig().getProjectInfo().getFlatElements();
         }
         return currentElementsFlatList;
     }
@@ -1225,7 +1227,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public SettingsR getSettings() {
         SettingsR settings = getStaticDao().getSettings();
-        if(settings == null) {
+        if (settings == null) {
             settings = new SettingsR();
             getStaticDao().insertSettings(settings);
         }
@@ -1238,5 +1240,18 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void setTableSpeedMode(boolean speed) {
         getMainDao().setSettingsTableSpeed(speed);
+    }
+
+    public ConfigModel getConfig() {
+        if (mConfig == null) {
+            mConfig = getCurrentUser().getConfigR();
+        }
+        return mConfig;
+    }
+
+    public void freeMemory(){
+        System.runFinalization();
+        Runtime.getRuntime().gc();
+        System.gc();
     }
 }

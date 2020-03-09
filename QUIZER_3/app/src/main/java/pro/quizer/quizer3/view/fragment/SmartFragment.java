@@ -445,8 +445,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     private List<ElementModelNew> getElements() {
         if (getCurrentUser() == null) Log.d(TAG, "------------ USER: ");
-        if (getCurrentUser().getConfigR() == null) Log.d(TAG, "------------ CONFIG: ");
-        return getCurrentUser().getConfigR().getProjectInfo().getElements();
+        if (getMainActivity().getConfig() == null) Log.d(TAG, "------------ CONFIG: ");
+        return getMainActivity().getConfig().getProjectInfo().getElements();
     }
 
 
@@ -780,8 +780,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         questionnaireDatabaseModel.setUser_id(getCurrentUserId());
         questionnaireDatabaseModel.setPassw(getCurrentUser().getPassword());
 //        Log.d(TAG, "saveQuestionnaireToDatabase: 4");
-        questionnaireDatabaseModel.setQuestionnaire_id(getCurrentUser().getConfigR().getProjectInfo().getQuestionnaireId());
-        questionnaireDatabaseModel.setProject_id(getCurrentUser().getConfigR().getProjectInfo().getProjectId());
+        questionnaireDatabaseModel.setQuestionnaire_id(getMainActivity().getConfig().getProjectInfo().getQuestionnaireId());
+        questionnaireDatabaseModel.setProject_id(getMainActivity().getConfig().getProjectInfo().getProjectId());
 //        questionnaireDatabaseModel.setBilling_questions(mBillingQuestions); //TODO Узнать надо или нет!
         questionnaireDatabaseModel.setUser_project_id(getCurrentUser().getUser_project_id());
 //        Log.d(TAG, "saveQuestionnaireToDatabase: 5");

@@ -54,7 +54,7 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
     public AbstractFilesSendingByUserModelExecutable(final MainActivity pContext, final UserModelR pUserModel, final ICallback pCallback) {
         super(pCallback);
 
-        final ConfigModel configModel = pUserModel.getConfigR();
+        final ConfigModel configModel = pContext.getConfig();
 
         mBaseActivity = pContext;
         mLoginAdmin = configModel.getLoginAdmin();

@@ -27,7 +27,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
     public SmsStageModelExecutable(final MainActivity pBaseActivity, final SmsStage pSmsStage, final UserModelR pUserModel, final StagesModel pStageModel) {
         super();
 
-        final List<ElementModelNew> elements = pUserModel.getConfigR().getProjectInfo().getElements();
+        final List<ElementModelNew> elements = pBaseActivity.getConfig().getProjectInfo().getElements();
 
         mStagesModel = pStageModel;
         mUserId = pUserModel.getUser_id();

@@ -745,12 +745,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public boolean saveQuestionnaireToDatabase(CurrentQuestionnaireR currentQuiz, boolean aborted) {
-//        Log.d(TAG, "!!!!!!!!1 saveQuestionnaireToDatabase: " + getCurrentUser().getConfigR().isSaveAborted());
-//        if (aborted && !getCurrentUser().getConfigR().isSaveAborted()) {
-//            return true;
-//        }
 
-//        Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!!!!!!111 saveQuestionnaireToDatabase: 1");
         boolean saved = true;
         countElements = 0;
         countScreens = 0;
@@ -759,15 +754,11 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         List<ElementPassedR> elements = null;
 
         try {
-//            Log.d(TAG, "saveQuestionnaireToDatabase: 2");
             elements = getDao().getAllElementsPassedR(currentQuiz.getToken());
-//            Log.d(TAG, "saveQuestionnaireToDatabase: 2.1 " + elements.size());
         } catch (Exception e) {
-//            Log.d(TAG, "saveQuestionnaireToDatabase: 2.2");
             e.printStackTrace();
         }
         if (elements != null && elements.size() > 0) {
-//            Log.d(TAG, "saveQuestionnaireToDatabase: 2.3");
             for (ElementPassedR element : elements) {
                 if (!saveElement(currentQuiz, element)) {
                     showToast("Ошибка сохранения элемента анкеты");
@@ -811,9 +802,12 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.UNFINISHED);
             else
                 questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.ABORTED);
+            questionnaireDatabaseModel.setCount_interrupted(currentQuiz.getCount_interrupted() + 1);
+
         } else {
 //            Log.d(TAG, "saveQuestionnaireToDatabase: 8");
             questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.COMPLETED);
+            questionnaireDatabaseModel.setCount_interrupted(currentQuiz.getCount_interrupted());
         }
 //        Log.d(TAG, "saveQuestionnaireToDatabase: 9");
         questionnaireDatabaseModel.setQuestions_passed(countQuestions);

@@ -14,6 +14,7 @@ public class QuestionnaireRequestModel implements Serializable {
     private final int project_id;
     private final int user_project_id;
     private final int duration_time_questionnaire;
+    private final int count_interrupted;
     private final long date_interview;
     private final String gps;
     private final String gps_network;
@@ -49,7 +50,8 @@ public class QuestionnaireRequestModel implements Serializable {
                                      Long send_time_difference,
                                      Long quota_time_difference,
                                      boolean used_fake_gps,
-                                     Long fake_gps_time) {
+                                     Long fake_gps_time,
+                                     int count_interrupted) {
         this.gps_time = gps_time;
         this.gps_time_network = gps_time_network;
         this.billing_questions = billing_questions;
@@ -72,6 +74,7 @@ public class QuestionnaireRequestModel implements Serializable {
         this.send_time_difference = send_time_difference;
         this.used_fake_gps = used_fake_gps;
         this.fake_gps_time = fake_gps_time;
+        this.count_interrupted = count_interrupted;
     }
 
     public void addElement(final ElementRequestModel pElement) {

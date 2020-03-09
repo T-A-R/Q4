@@ -309,6 +309,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 currentQuestionnaire.setPaused(false);
                 int counter = currentQuestionnaire.getCount_interrupted() + 1;
                 getDao().setInterruptedCounter(counter);
+                currentQuestionnaire.setCount_interrupted(counter);
                 getDao().updateQuestionnaireStart(true, getCurrentUserId());
                 getDao().setOption(Constants.OptionName.QUIZ_STARTED, "true");
                 showToast("Продолжение прерванной анкеты");

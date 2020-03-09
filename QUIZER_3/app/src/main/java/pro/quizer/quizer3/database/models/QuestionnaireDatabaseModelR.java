@@ -92,6 +92,10 @@ public class QuestionnaireDatabaseModelR {
     @ColumnInfo(name = "used_fake_gps")
     private boolean used_fake_gps;
 
+    @ColumnInfo(name = "count_interrupted")
+    private int count_interrupted;
+
+
 
     public QuestionnaireDatabaseModelR() {
     }
@@ -124,6 +128,7 @@ public class QuestionnaireDatabaseModelR {
         this.has_photo = has_photo;
         this.send_sms = false;
         this.used_fake_gps = used_fake_gps;
+        this.count_interrupted = 0;
     }
 
     public Long getGps_time_fk() {
@@ -348,5 +353,13 @@ public class QuestionnaireDatabaseModelR {
 
     public void setGps_time_network(Long gps_time_network) {
         this.gps_time_network = gps_time_network;
+    }
+
+    public int getCount_interrupted() {
+        return count_interrupted;
+    }
+
+    public void setCount_interrupted(int count_interrupted) {
+        this.count_interrupted = count_interrupted;
     }
 }

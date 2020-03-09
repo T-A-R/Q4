@@ -66,7 +66,9 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
                     questionnaireDatabaseModel.getSend_time_difference(),
                     questionnaireDatabaseModel.getQuota_time_difference(),
                     questionnaireDatabaseModel.isUsed_fake_gps(),
-                    questionnaireDatabaseModel.getGps_time_fk()
+                    questionnaireDatabaseModel.getGps_time_fk(),
+                    questionnaireDatabaseModel.getCount_interrupted()
+
             );
 
             final List<ElementDatabaseModelR> elements = MainActivity.getStaticDao().getElementByToken(questionnaireDatabaseModel.getToken());

@@ -170,13 +170,15 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                     onError(new Exception(mBaseActivity.getString(R.string.empty_tokens_list_error) + " " + mBaseActivity.getString(R.string.error_204)));
                 } else {
                     SPUtils.addSendedQInSession(mBaseActivity, tokensToRemove.size());
-
+                    Log.d(TAG, "onSendQuestionnaires DELETE: " + tokensToRemove.size());
                     MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.quiz_sent), null);
 
                     for (final String token : tokensToRemove) {
                         try {
                             MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.set_quiz_status), Constants.LogResult.SENT, mBaseActivity.getString(R.string.set_sent_quiz_status), null);
                             MainActivity.getStaticDao().setQuestionnaireStatus(QuestionnaireStatus.SENT, token);
+//                            MainActivity.getStaticDao().deleteQuestionnaireByToken(token);
+
                         } catch (Exception e) {
                             MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.set_quiz_status), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.db_save_error), e.getMessage());
                         }

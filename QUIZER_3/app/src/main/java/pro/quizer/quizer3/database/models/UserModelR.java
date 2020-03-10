@@ -84,6 +84,7 @@ public class UserModelR {
 
             return list;
         } catch (final Exception pE) {
+            Log.d(TAG, "getQuotasR ERROR: " + pE.toString());
             return new ArrayList<>();
         }
     }

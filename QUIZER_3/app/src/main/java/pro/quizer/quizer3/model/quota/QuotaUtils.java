@@ -64,7 +64,7 @@ public class QuotaUtils {
 
     private static ElementItemR[][] fillQuotas(ElementItemR[][] tree, MainActivity activity) {
         Log.d(TAG, "initQuestion: 4");
-        Log.d(TAG, "============== fillQuotas ======================= ");
+        Log.d(TAG, "============== fillQuotas ======================= 2");
 //        int qn = 8;
         List<QuotaModel> quotas = activity.getCurrentUser().getQuotasR();
         Log.d(TAG, "fillQuotas: " + quotas.size());

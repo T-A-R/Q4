@@ -78,7 +78,7 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
     }
 
     private ElementItemR[][] fillQuotas(ElementItemR[][] tree, MainActivity activity) {
-        Log.d(TAG, "============== fillQuotas ======================= ");
+        Log.d(TAG, "============== fillQuotas ======================= 3");
         int qn = 8;
         List<QuotaModel> quotas = activity.getCurrentUser().getQuotasR();
         if (quotas == null || quotas.isEmpty()) return tree;

@@ -953,6 +953,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public List<ElementItemR> getQuotasElements() {
         List<ElementItemR> quotaList = null;
 
+        Log.d(TAG, "getQuotasElements 1: " + elementItemRList);
+        if(elementItemRList != null)
+        Log.d(TAG, "getQuotasElements 2: " + elementItemRList.size());
+
         if (elementItemRList == null) {
             try {
                 elementItemRList = getStaticDao().getCurrentElements();

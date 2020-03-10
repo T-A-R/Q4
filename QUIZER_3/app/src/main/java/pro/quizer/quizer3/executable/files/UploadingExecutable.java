@@ -147,8 +147,7 @@ public class UploadingExecutable extends BaseExecutable {
 
     private void setSentStatusForUserQuestionnaires(final UserModelR pUserModel) {
         try {
-//            MainActivity.getStaticDao().setQuestionnaireStatusByUserId(QuestionnaireStatus.SENT, pUserModel.getUser_id());
-            MainActivity.getStaticDao().deleteQuestionnaireStatusByUserId(pUserModel.getUser_id());
+            MainActivity.getStaticDao().setQuestionnaireStatusByUserId(QuestionnaireStatus.SENT, pUserModel.getUser_id());
         } catch (Exception e) {
             Log.d(TAG, "Ошибка записи в базу данных.");
         }

@@ -332,7 +332,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                             final String pPassword,
                             final AuthResponseModel pAuthResponseModel) {
 
-//        SPUtils.resetSendedQInSession(getContext());
+        SPUtils.resetSendedQInSession(getContext());
 
         updateDatabaseUserByUserId(pLogin, pPassword, pAuthResponseModel.getConfigId(), pAuthResponseModel.getUserId(), pAuthResponseModel.getRoleId(), pAuthResponseModel.getUserProjectId());
         onLoggedInWithoutUpdateLocalData(pAuthResponseModel.getUserId());

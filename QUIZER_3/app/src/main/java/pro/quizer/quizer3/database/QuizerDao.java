@@ -132,9 +132,6 @@ public interface QuizerDao {
     @Query("UPDATE QuestionnaireDatabaseModelR SET status = :status WHERE token = :token")
     void setQuestionnaireStatus(String status, String token);
 
-    @Query("DELETE FROM QuestionnaireDatabaseModelR WHERE token = :token")
-    void deleteQuestionnaireByToken(String token);
-
     @Query("UPDATE QuestionnaireDatabaseModelR SET send_sms = :send_sms WHERE token = :token")
     void setQuestionnaireSendSms(boolean send_sms, String token);
 
@@ -158,9 +155,6 @@ public interface QuizerDao {
 
     @Query("UPDATE QuestionnaireDatabaseModelR SET status = :status WHERE user_id = :userId")
     void setQuestionnaireStatusByUserId(String status, int userId);
-
-    @Query("DELETE FROM QuestionnaireDatabaseModelR WHERE user_id = :userId")
-    void deleteQuestionnaireStatusByUserId(int userId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertQuestionnaire(QuestionnaireDatabaseModelR questionnaireDatabaseModelR);

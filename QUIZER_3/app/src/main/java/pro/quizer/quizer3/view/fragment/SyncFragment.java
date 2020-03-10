@@ -51,7 +51,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
         initViews();
         MainFragment.enableSideMenu(true);
         initStrings();
-        new CleanUpFilesExecutable(getContext(), null).execute();
+//        new CleanUpFilesExecutable(getContext(), null).execute();
         updateData(new SyncInfoExecutable(getContext()).execute());
     }
 

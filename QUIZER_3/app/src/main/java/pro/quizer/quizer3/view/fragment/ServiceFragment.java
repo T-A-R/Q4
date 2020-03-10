@@ -67,7 +67,7 @@ public class ServiceFragment extends ScreenFragment {
         initViews();
         MainFragment.disableSideMenu();
         initStrings();
-        new CleanUpFilesExecutable(getContext(), null).execute();
+//        new CleanUpFilesExecutable(getContext(), null).execute();
         updateData(new ServiceInfoExecutable().execute());
     }
 

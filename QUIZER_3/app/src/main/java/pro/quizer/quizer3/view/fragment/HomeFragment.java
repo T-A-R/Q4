@@ -279,11 +279,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
                     final SyncViewModel syncViewModel = new SyncInfoExecutable(getContext()).execute();
 
-                    completedCounter = syncViewModel.getmAllQuestionnaireModels().size();
-                    sentCounter = syncViewModel.getmSentQuestionnaireModelsFromThisDevice().size();
+//                    completedCounter = syncViewModel.getmAllQuestionnaireModels().size();
+//                    sentCounter = syncViewModel.getmSentQuestionnaireModelsFromThisDevice().size();
                     notSentCounter = syncViewModel.getmNotSentQuestionnaireModels().size();
-//                    sentCounter = syncViewModel.getSentQuestionnaireModelsInSession(activity);
-//                    completedCounter = sentCounter + notSentCounter;
+                    sentCounter = syncViewModel.getSentQuestionnaireModelsInSession(activity);
+                    completedCounter = sentCounter + notSentCounter;
 
                 }
             });

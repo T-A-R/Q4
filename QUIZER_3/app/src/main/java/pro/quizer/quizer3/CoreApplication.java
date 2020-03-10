@@ -22,6 +22,7 @@ public class CoreApplication extends Application {
 
     private static RetrofitQuizerAPI retrofitQuizerAPI;
     private static QuizerDatabase quizerDatabase;
+    private Retrofit retrofit;
 
     @Override
     public void onCreate() {
@@ -34,21 +35,25 @@ public class CoreApplication extends Application {
         OkHttpClient client;
         client = new OkHttpClient.Builder()
 //                .addInterceptor((new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)))
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(false)
                 .addInterceptor(new UserAgentInterceptor(userAgent))
-                .connectTimeout(20, TimeUnit.SECONDS)
-                .readTimeout(20, TimeUnit.SECONDS)
                 .build();
 
         Gson gson = new GsonBuilder()
                 .create();
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .client(client)
-                .baseUrl(Constants.Default.API_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+//        Retrofit retrofit = null;
+        if (retrofit == null)
+            retrofit = new Retrofit.Builder()
+                    .client(client)
+                    .baseUrl(Constants.Default.API_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
 
-        retrofitQuizerAPI = retrofit.create(RetrofitQuizerAPI.class);
+        if (retrofitQuizerAPI == null)
+            retrofitQuizerAPI = retrofit.create(RetrofitQuizerAPI.class);
 
 
         quizerDatabase = Room.databaseBuilder(getApplicationContext(), QuizerDatabase.class, "quizer_database")

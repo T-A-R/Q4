@@ -187,7 +187,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             quotaUpdate();
         }
 
-        new SendQuestionnairesByUserModelExecutable((MainActivity) getActivity(), mUserModel, new ICallback() {
+        new SendQuestionnairesByUserModelExecutable(getMainActivity(), mUserModel, new ICallback() {
             @Override
             public void onStarting() {
                 showScreensaver(true);
@@ -282,14 +282,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     completedCounter = syncViewModel.getmAllQuestionnaireModels().size();
                     sentCounter = syncViewModel.getmSentQuestionnaireModelsFromThisDevice().size();
                     notSentCounter = syncViewModel.getmNotSentQuestionnaireModels().size();
-
-//                    UiUtils.setTextOrHide(tvCoountAll, (String
-//                            .format(getString(R.string.collected_questions),
-//                                    String.valueOf(syncViewModel.getmAllQuestionnaireModels().size()))));
-//                    UiUtils.setTextOrHide(tvCountSent, (String
-//                            .format(getString(R.string.questions_sent_from_device),
-//                                    String.valueOf(syncViewModel.getmSentQuestionnaireModelsFromThisDevice().size()))));
-
+//                    sentCounter = syncViewModel.getSentQuestionnaireModelsInSession(activity);
+//                    completedCounter = sentCounter + notSentCounter;
 
                 }
             });

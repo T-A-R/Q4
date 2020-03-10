@@ -176,6 +176,7 @@
     <string name="save_quotas_to_db">Сохранение квот в базе данных</string>
     <string name="quotas_renew">Список квот обновлен</string>
     <string name="set_quiz_status">Установка статуса SENT у анкеты</string>
+    <string name="delete_quiz_by_token">Удаление анкеты по токену</string>
     <string name="set_sent_quiz_status">Статус отправки анкеты в базе данных установлен как SENT</string>
     <string name="send_quiz_attempt">Попытка отправки анкеты на сервер</string>
     <string name="quiz_sent">Анкеты отправлены</string>

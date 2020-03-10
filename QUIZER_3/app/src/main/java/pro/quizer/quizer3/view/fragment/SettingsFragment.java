@@ -42,10 +42,10 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
     public static final List<FontSizeModel> FONT_SIZE_MODELS = new ArrayList<FontSizeModel>() {
         {
             add(new FontSizeModel("Очень маленький", 0.6875F));
-            add(new FontSizeModel("Маленький", 0.9375F));
-            add(new FontSizeModel("Средний", 1.125F));
-            add(new FontSizeModel("Большой", 1.5625F));
-            add(new FontSizeModel("Очень большой", 1.6875F));
+            add(new FontSizeModel("Маленький", 1.125F));
+            add(new FontSizeModel("Средний", 1.6875F));
+            add(new FontSizeModel("Большой", 2.25F));
+            add(new FontSizeModel("Очень большой", 2.8125F));
         }
     };
 

@@ -458,8 +458,13 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public UserModelR getCurrentUser() {
-        mCurrentUser = getUserByUserId(getCurrentUserId());
+        if (mCurrentUser == null)
+            mCurrentUser = getUserByUserId(getCurrentUserId());
         return mCurrentUser;
+    }
+
+    public void clearCurrentUser() {
+        mCurrentUser = null;
     }
 
     public UserModelR forceGetCurrentUser() {
@@ -1250,7 +1255,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         return mConfig;
     }
 
-    public void freeMemory(){
+    public void freeMemory() {
         System.runFinalization();
         Runtime.getRuntime().gc();
         System.gc();

@@ -63,7 +63,8 @@ public class ScreensaverFragment extends SmartFragment implements View.OnClickLi
             visible = true;
 
             this.title.setText(title);
-            this.title.startAnimation(Anim.getAppearSlide(getContext(), 1000));
+            if (getContext() != null)
+                this.title.startAnimation(Anim.getAppearSlide(getContext(), 1000));
 
             if (User.getUser().isDelegateMode()) {
                 for (int i = 0; i < imgs.size(); i++) {

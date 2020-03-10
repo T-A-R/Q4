@@ -415,48 +415,50 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             if (emptyAnswersState || isFilled() || answersState.get(getAdapterPosition()).isChecked()) {
                 isPressed = true;
                 lastSelectedPosition = getAdapterPosition();
-                if (answersList.get(lastSelectedPosition).isEnabled()) {
-                    notifyItemChanged(lastSelectedPosition);
+                if (lastSelectedPosition != -1) {
+                    if (answersList.get(lastSelectedPosition).isEnabled()) {
+                        notifyItemChanged(lastSelectedPosition);
 
-                    if (isMulti && !answersList.get(lastSelectedPosition).getElementOptionsR().isUnchecker()) {
+                        if (isMulti && !answersList.get(lastSelectedPosition).getElementOptionsR().isUnchecker()) {
 
-                        if (answersState.get(lastSelectedPosition).isChecked()) {
-                            answersState.get(lastSelectedPosition).setChecked(false);
+                            if (answersState.get(lastSelectedPosition).isChecked()) {
+                                answersState.get(lastSelectedPosition).setChecked(false);
 
+                            } else {
+                                answersState.get(lastSelectedPosition).setChecked(true);
+                                lastCheckedElement = lastSelectedPosition;
+                            }
+                        } else if (isMulti && answersList.get(lastSelectedPosition).getElementOptionsR().isUnchecker()) {
+                            notifyDataSetChanged();
+                            if (!answersState.get(lastSelectedPosition).isChecked()) {
+                                answersState.get(lastSelectedPosition).setChecked(true);
+                                lastCheckedElement = lastSelectedPosition;
+                                unselectOther(lastSelectedPosition);
+                            } else {
+                                answersState.get(lastSelectedPosition).setChecked(false);
+                            }
+                            setEnabled(lastSelectedPosition);
                         } else {
-                            answersState.get(lastSelectedPosition).setChecked(true);
-                            lastCheckedElement = lastSelectedPosition;
-                        }
-                    } else if (isMulti && answersList.get(lastSelectedPosition).getElementOptionsR().isUnchecker()) {
-                        notifyDataSetChanged();
-                        if (!answersState.get(lastSelectedPosition).isChecked()) {
+                            notifyDataSetChanged();
                             answersState.get(lastSelectedPosition).setChecked(true);
                             lastCheckedElement = lastSelectedPosition;
                             unselectOther(lastSelectedPosition);
-                        } else {
-                            answersState.get(lastSelectedPosition).setChecked(false);
                         }
-                        setEnabled(lastSelectedPosition);
-                    } else {
-                        notifyDataSetChanged();
-                        answersState.get(lastSelectedPosition).setChecked(true);
-                        lastCheckedElement = lastSelectedPosition;
-                        unselectOther(lastSelectedPosition);
-                    }
 
-                    if (isChecked) {
-                        isChecked = false;
+                        if (isChecked) {
+                            isChecked = false;
 //                button.setImageResource( R.drawable.radio_button_unchecked);
-                    } else {
-                        isChecked = true;
+                        } else {
+                            isChecked = true;
 //                button.setImageResource( R.drawable.radio_button_checked);
 //                answerEditText.requestFocus();
-                    }
+                        }
 
-                    String answer = null;
-                    if (answerEditText.getText() != null)
-                        answer = answerEditText.getText().toString();
-                    onUserClickListener.onAnswerClick(lastSelectedPosition, isChecked, answer);
+                        String answer = null;
+                        if (answerEditText.getText() != null)
+                            answer = answerEditText.getText().toString();
+                        onUserClickListener.onAnswerClick(lastSelectedPosition, isChecked, answer);
+                    }
                 }
             } else {
                 mActivity.showToastfromActivity(mActivity.getString(R.string.empty_string_warning));

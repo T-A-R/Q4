@@ -305,12 +305,13 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public void showToast(String text) {
         final MainActivity activity = getMainActivity();
-        if (activity != null)
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(activity, text, Toast.LENGTH_LONG).show();
-                }
-            });
+        if (activity != null) {
+            try {
+                activity.runOnUiThread(() -> Toast.makeText(activity, text, Toast.LENGTH_LONG).show());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public boolean isActivated() {
@@ -683,9 +684,12 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
                     if (configResponseModel != null) {
                         if (configResponseModel.getResult() != 0) {
-                            addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SUCCESS, getString(R.string.get_config_success), configResponseJson);
-
-                            addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.loading_files), Constants.LogResult.SENT, getString(R.string.try_to_load_files), configResponseJson);
+                            try {
+                                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SUCCESS, getString(R.string.get_config_success), configResponseJson);
+                                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.loading_files), Constants.LogResult.SENT, getString(R.string.try_to_load_files), configResponseJson);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
                             updateConfig(getCurrentUser(), configResponseModel.getConfig());
                             showToast(getString(R.string.config_updated));

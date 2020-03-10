@@ -1224,10 +1224,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             public void onClick(View v) {
                 btnInfo.setEnabled(true);
                 final int sdk = android.os.Build.VERSION.SDK_INT;
-                if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                    btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-                } else {
-                    btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                try {
+                    if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
+                        btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                    } else {
+                        btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 infoDialog.dismiss();
             }
@@ -1270,10 +1274,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             public void onDismiss(DialogInterface dialog) {
                 btnInfo.setEnabled(true);
                 final int sdk = android.os.Build.VERSION.SDK_INT;
-                if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                    btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-                } else {
-                    btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                try {
+                    if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
+                        btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                    } else {
+                        btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });

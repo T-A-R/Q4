@@ -96,6 +96,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         cont.startAnimation(Anim.getAppear(getContext()));
         btnSend.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
+        getMainActivity().clearCurrentUser();
         checkVersion();
 
         final int usersCountValue = getDao().getAllUsers().size();

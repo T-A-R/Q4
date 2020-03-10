@@ -830,21 +830,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 answerStates = adapterScale.getAnswers();
             } else {
                 answerStates = adapterList.getAnswers();
-//                Log.d(TAG, "saveElement: " + answerStates.get(0).getData());
             }
             st("init SAVE 1");
             if (answerStates != null && notEmpty(answerStates)) {
                 st("init SAVE 1.0");
-//                lastCheckedElement = adapterList.getLastCheckedElement();
-//                if (lastCheckedElement != -103) {
-//                    st("init SAVE 1.1");
-//                    int id = answerStates.get(lastCheckedElement).getRelative_id();
-//                    st("init SAVE 1.2");
-//                    nextElementId = getElement(id).getElementOptionsR().getJump();
-//                }
-
-
-//                for (AnswerState answerState : answerStates) {
                 for (int i = 0; i < answerStates.size(); i++) {
                     if (answerStates.get(i).isChecked()) {
                         st("init SAVE 1.1");
@@ -1447,10 +1436,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     private void stopRecording() {
         try {
-            addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.stop_audio_recording), Constants.LogResult.ATTEMPT, getString(R.string.stop_audio_recording_attempt), null);
+            addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getMainActivity().getString(R.string.stop_audio_recording), Constants.LogResult.ATTEMPT, getString(R.string.stop_audio_recording_attempt), null);
             getMainActivity().stopRecording();
         } catch (Exception e) {
-            addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.stop_audio_recording), Constants.LogResult.ERROR, getString(R.string.stop_audio_recording_error), e.toString());
+            try {
+                addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getMainActivity().getString(R.string.stop_audio_recording), Constants.LogResult.ERROR, getString(R.string.stop_audio_recording_error), e.toString());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
             e.printStackTrace();
         }
     }

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.executable.BaseExecutable;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.Constants;
@@ -18,10 +19,10 @@ import pro.quizer.quizer3.utils.FileUtils;
 
 public class UploadingFTPExecutable extends BaseExecutable {
 
-    private final Context mContext;
+    private final MainActivity mContext;
     private List<File> mFileList;
 
-    public UploadingFTPExecutable(final Context pContext, final ICallback pCallback) {
+    public UploadingFTPExecutable(final MainActivity pContext, final ICallback pCallback) {
         super(pCallback);
 
         mContext = pContext;

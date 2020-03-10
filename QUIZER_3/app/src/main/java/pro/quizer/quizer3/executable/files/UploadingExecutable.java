@@ -42,9 +42,9 @@ public class UploadingExecutable extends BaseExecutable {
     public static final String UPLOADING_FOLDER_NAME = "data_quizer";
     public static final String UPLOADING_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + FOLDER_DIVIDER + UPLOADING_FOLDER_NAME + FOLDER_DIVIDER;
 
-    private final Context mContext;
+    private final MainActivity mContext;
 
-    public UploadingExecutable(final Context pContext, final ICallback pCallback) {
+    public UploadingExecutable(final MainActivity pContext, final ICallback pCallback) {
         super(pCallback);
 
         mContext = pContext;
@@ -62,7 +62,7 @@ public class UploadingExecutable extends BaseExecutable {
 
         if (mContext != null)
             try {
-                Toast.makeText(mContext, R.string.notification_uploading, Toast.LENGTH_SHORT).show();
+                mContext.runOnUiThread(() ->  Toast.makeText(mContext, R.string.notification_uploading, Toast.LENGTH_SHORT).show());
             } catch (Resources.NotFoundException e) {
                 e.printStackTrace();
             }

@@ -358,17 +358,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         } else {
                             saved = true;
                         }
-                        Log.d(TAG, "startQuestionnaire: MID 1 " + saved);
-//                        if (!saved) {
-//                            hideScreensaver();
-//                        } else {
-//                            hideScreensaver();
-//                            Toast.makeText(getContext(), "Ошибка сохранения прерванной анкеты", Toast.LENGTH_SHORT).show();
-//                        }
                     } else {
                         return true;
                     }
-                    Log.d(TAG, "startQuestionnaire: END " + saved);
                     return saved;
                 } else return true;
             }).thenApplyAsync(result -> {
@@ -1135,6 +1127,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void getInfo() {
+        btnInfo.setEnabled(false);
+        final int sdk = android.os.Build.VERSION.SDK_INT;
+        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+        } else {
+            btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+        }
         UserModelR userModel = activity.getCurrentUser();
         ConfigModel configModel = activity.getConfig();
         StatisticsRequestModel requestModel = new StatisticsRequestModel(configModel.getLoginAdmin(), userModel.getPassword(), userModel.getLogin());
@@ -1223,6 +1222,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         cont.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnInfo.setEnabled(true);
+                final int sdk = android.os.Build.VERSION.SDK_INT;
+                if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                } else {
+                    btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                }
                 infoDialog.dismiss();
             }
         });
@@ -1259,6 +1265,18 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         if (activity != null && !activity.isFinishing())
             infoDialog.show();
+        infoDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                btnInfo.setEnabled(true);
+                final int sdk = android.os.Build.VERSION.SDK_INT;
+                if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                } else {
+                    btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                }
+            }
+        });
     }
 }
 

@@ -85,6 +85,8 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
 
     @Override
     public boolean onBackPressed() {
+//        getMainActivity().setHomeFragmentStarted(false);
+//        Log.d(TAG, "start Home: 8");
         replaceFragment(new HomeFragment());
         return true;
     }
@@ -116,6 +118,8 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
         mToolbar.showCloseView(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+//                getMainActivity().setHomeFragmentStarted(false);
+//                Log.d(TAG, "start Home: 9");
                 replaceFragment(new HomeFragment());
             }
         });

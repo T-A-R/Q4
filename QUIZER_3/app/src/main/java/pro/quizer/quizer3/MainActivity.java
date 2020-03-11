@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private Timer mTimer;
     private AlertSmsTask mAlertSmsTask;
     private ConfigModel mConfig;
+    private boolean isHomeFragmentStarted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1262,5 +1263,13 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         System.runFinalization();
         Runtime.getRuntime().gc();
         System.gc();
+    }
+
+    public boolean isHomeFragmentStarted() {
+        return isHomeFragmentStarted;
+    }
+
+    public void setHomeFragmentStarted(boolean homeFragmentStarted) {
+        isHomeFragmentStarted = homeFragmentStarted;
     }
 }

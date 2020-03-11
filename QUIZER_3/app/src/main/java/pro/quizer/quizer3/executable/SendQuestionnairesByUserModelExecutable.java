@@ -43,7 +43,6 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
     public SendQuestionnairesByUserModelExecutable(final MainActivity pBaseActivity, final UserModelR pUserModel, final ICallback pCallback, final boolean pIsShowAlertDialog) {
         super(pCallback);
         final ConfigModel configModel = pBaseActivity.getConfig();
-
         mBaseActivity = pBaseActivity;
         mServerUrl = configModel.getServerUrl();
         mUserModel = pUserModel;
@@ -54,7 +53,6 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
     public SendQuestionnairesByUserModelExecutable(final MainActivity pBaseActivity, final UserModelR pUserModel, final ICallback pCallback, final boolean pIsShowAlertDialog, final boolean isFromService) {
         super(pCallback);
         final ConfigModel configModel = pBaseActivity.getConfig();
-
         mBaseActivity = pBaseActivity;
         mServerUrl = configModel.getServerUrl();
         mUserModel = pUserModel;

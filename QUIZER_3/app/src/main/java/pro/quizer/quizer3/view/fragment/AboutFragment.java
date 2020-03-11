@@ -1,5 +1,6 @@
 package pro.quizer.quizer3.view.fragment;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -8,6 +9,8 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.utils.EmailUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Toolbar;
+
+import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class AboutFragment extends ScreenFragment {
 
@@ -25,6 +28,8 @@ public class AboutFragment extends ScreenFragment {
         mToolbar.showCloseView(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+//                getMainActivity().setHomeFragmentStarted(false);
+//                Log.d(TAG, "start Home: 10");
                 replaceFragment(new HomeFragment());
             }
         });
@@ -48,6 +53,8 @@ public class AboutFragment extends ScreenFragment {
 
     @Override
     public boolean onBackPressed() {
+//        getMainActivity().setHomeFragmentStarted(false);
+//        Log.d(TAG, "start Home: 11");
         replaceFragment(new HomeFragment());
         return true;
     }

@@ -1411,7 +1411,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     e.printStackTrace();
                 }
                 showToast("Анкета сохранена");
-                replaceFragment(new HomeFragment());
+//                getMainActivity().setHomeFragmentStarted(false);
+//                Log.d(TAG, "start Home: 2");
+//                replaceFragment(new HomeFragment());
 
             } else {
                 showToast("Ошибка сохранения анкеты. Попробуйте еще раз");
@@ -1431,6 +1433,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } catch (Exception e) {
             e.printStackTrace();
         }
+//        getMainActivity().setHomeFragmentStarted(false);
+//        Log.d(TAG, "start Home: 3");
         replaceFragment(new HomeFragment());
     }
 

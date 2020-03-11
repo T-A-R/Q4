@@ -109,6 +109,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private boolean canContWithZeroGps = false;
     private boolean isCanBackPress = true;
     private boolean isQuotaUpdated = false;
+    private boolean isStarted = false;
     private Long mFakeGpsTime;
     private GPSModel mGPSModel;
     private Statistics finalStatistics;
@@ -187,31 +188,36 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         if (mIsStartAfterAuth) {
             quotaUpdate();
         }
+//        if(!getMainActivity().isHomeFragmentStarted()) {
+//            Log.d(TAG, "??????????????? onReady: " + isStarted);
+//            getMainActivity().setHomeFragmentStarted(true);
 
-        new SendQuestionnairesByUserModelExecutable(getMainActivity(), mUserModel, new ICallback() {
-            @Override
-            public void onStarting() {
-                showScreensaver(true);
+            new SendQuestionnairesByUserModelExecutable(getMainActivity(), mUserModel, new ICallback() {
+                @Override
+                public void onStarting() {
+                    showScreensaver(true);
 //                Log.d(TAG, "SendQuestionnairesByUserModelExecutable onStarting: ");
-            }
-
-            @Override
-            public void onSuccess() {
-                if (!isQuotaUpdated) {
-                    quotaUpdate();
                 }
 
-                hideScreensaver();
-                initSyncInfoViews();
-            }
+                @Override
+                public void onSuccess() {
+                    if (!isQuotaUpdated) {
+                        quotaUpdate();
+                    }
 
-            @Override
-            public void onError(Exception pException) {
-                makeQuotaTree();
-                hideScreensaver();
-            }
-        }, false).execute();
+                    hideScreensaver();
+                    initSyncInfoViews();
+                }
 
+                @Override
+                public void onError(Exception pException) {
+                    makeQuotaTree();
+                    hideScreensaver();
+                }
+            }, false).execute();
+//        } else {
+//            activateButtons();
+//        }
 //        showElementsDB();
 //        MainActivity activity = getMainActivity();
         if (activity != null) {
@@ -707,7 +713,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         float progress = 0;
 
         protected void onPreExecute() {
-            showTime("before start");
+//            showTime("before start");
             pb.setVisibility(View.VISIBLE);
             tvPbText.setVisibility(View.VISIBLE);
             btnContinue.setEnabled(false);
@@ -718,7 +724,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             UiUtils.setButtonEnabled(btnContinue, false);
             UiUtils.setButtonEnabled(btnQuotas, false);
             UiUtils.setButtonEnabled(btnInfo, false);
-            showTime("after disable keys");
+//            showTime("after disable keys");
         }
 
         @SafeVarargs
@@ -753,11 +759,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            showTime("after activate buttons");
+//            showTime("after activate buttons");
         }
 
         public ElementItemR[][] getTree(List<ElementItemR> quotasBlock) {
-            showTime("before get tree");
+//            showTime("before get tree");
             List<ElementItemR> questions = new ArrayList<>();
             int answersTotal = 1;
             int answersMultiple = 1;
@@ -793,7 +799,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 progress = progress + ((float) 10 / (float) questions.size());
                 publishProgress((int) progress);
             }
-            showTime("after get tree");
+//            showTime("after get tree");
             return tree;
         }
 
@@ -806,19 +812,16 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            showTime("====== fill quotas 1");
+//            showTime("====== fill quotas 1");
             offlineQuestionnaires = MainActivity.getStaticDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), activity.getCurrentUser().getUser_project_id(), QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
-            showTime("====== fill quotas 2");
+//            showTime("====== fill quotas 2");
             if (quotas == null || quotas.isEmpty()) {
                 return tree;
             }
 
             for (int q = 0; q < quotas.size(); q++) {
                 Integer[] sequence = quotas.get(q).getArray();
-//                int local = getLocalQuotas(activity, sequence);
-                int done = quotas.get(q).getDone();
-                int limit = quotas.get(q).getLimit();
-
+                int localQuota = getLocalQuotas(activity, sequence);
                 for (int i = 0; i < tree.length; i++) {
                     for (int k = 0; k < tree[i].length; k++) {
                         if (sequence[0].equals(tree[i][k].getRelative_id())) {
@@ -829,7 +832,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                         if (s == sequence.length - 1) {
                                             if (tree[temp][k].getLimit() > quotas.get(q).getLimit()) {
                                                 tree[temp][k].setLimit(quotas.get(q).getLimit());
-                                                tree[temp][k].setDone(quotas.get(q).getDone());
+                                                int lc = quotas.get(q).getSent() + localQuota;
+                                                tree[temp][k].setDone(lc);
+//                                                Log.d(TAG, "fillQuotas: " + lc);
                                                 int done = tree[temp][k].getDone();
 //                                                int local = getLocalQuotas(activity, sequence);
                                                 int local = 0;
@@ -855,7 +860,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                             } else {
                                 if (tree[i][k].getLimit() > quotas.get(q).getLimit()) {
                                     tree[i][k].setLimit(quotas.get(q).getLimit());
-                                    tree[i][k].setDone(quotas.get(q).getDone());
+                                    int lc = quotas.get(q).getSent() + localQuota;
+//                                    Log.d(TAG, "fillQuotas: " + lc);
+                                    tree[i][k].setDone(lc);
                                     int done = tree[i][k].getDone();
                                     int limit = tree[i][k].getLimit();
 //                                    int local = getLocalQuotas(activity, sequence);
@@ -879,6 +886,93 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             showTime("after fill quotas");
             return tree;
         }
+
+
+
+//        private ElementItemR[][] fillQuotas(ElementItemR[][] tree) {
+//            Log.d(TAG, "============== fillQuotas ======================= 1");
+//            showTime("before fill quotas");
+//            List<QuotaModel> quotas = null;
+//            try {
+//                quotas = activity.getCurrentUser().getQuotasR();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            showTime("====== fill quotas 1");
+//            offlineQuestionnaires = MainActivity.getStaticDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), activity.getCurrentUser().getUser_project_id(), QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
+//            showTime("====== fill quotas 2");
+//            if (quotas == null || quotas.isEmpty()) {
+//                return tree;
+//            }
+//
+//            for (int q = 0; q < quotas.size(); q++) {
+//                Integer[] sequence = quotas.get(q).getArray();
+////                int local = getLocalQuotas(activity, sequence);
+////                int done = quotas.get(q).getDone();
+////                int limit = quotas.get(q).getLimit();
+//
+//                for (int i = 0; i < tree.length; i++) {
+//                    for (int k = 0; k < tree[i].length; k++) {
+//                        if (sequence[0].equals(tree[i][k].getRelative_id())) {
+//                            int temp = i + 1;
+//                            if (sequence.length > 1) {
+//                                for (int s = 1; s < sequence.length; ) {
+//                                    if (sequence[s].equals(tree[temp][k].getRelative_id())) {
+//                                        if (s == sequence.length - 1) {
+//                                            if (tree[temp][k].getLimit() > quotas.get(q).getLimit()) {
+//                                                tree[temp][k].setLimit(quotas.get(q).getLimit());
+//                                                tree[temp][k].setDone(quotas.get(q).getDone());
+//                                                int done = tree[temp][k].getDone();
+////                                                int local = getLocalQuotas(activity, sequence);
+//                                                int local = 0;
+////                                                Log.d(TAG, "QUOTA: " + sequence[s] + " done:" + done + " local: " + local);
+//                                                int total = done + local;
+//                                                int limit = tree[temp][k].getLimit();
+//                                                if (total >= limit) {
+//                                                    tree[temp][k].setEnabled(false);
+//                                                    for (int x = temp - 1; x >= 0; x--) {
+//                                                        tree[x][k].setEnabled(false);
+//                                                    }
+//                                                }
+//                                            }
+//                                        }
+//                                        s++;
+//                                    } else {
+//                                        temp++;
+//                                        if (temp == tree.length) {
+//                                            break;
+//                                        }
+//                                    }
+//                                }
+//                            } else {
+//                                if (tree[i][k].getLimit() > quotas.get(q).getLimit()) {
+//                                    tree[i][k].setLimit(quotas.get(q).getLimit());
+//                                    tree[i][k].setDone(quotas.get(q).getDone());
+//                                    int done = tree[i][k].getDone();
+//                                    int limit = tree[i][k].getLimit();
+////                                    int local = getLocalQuotas(activity, sequence);
+//                                    int local = 0;
+//                                    int total = done + local;
+//                                    if (total >= limit) {
+//                                        tree[i][k].setEnabled(false);
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                progress = progress + ((float) 90 / (float) quotas.size());
+//                publishProgress((int) progress);
+//            }
+////            showTree(tree); // Для отладки
+//            publishProgress(100);
+////            Log.d(TAG, "fillQuotas TREE??????????????????????: " + tree);
+//            showTime("after fill quotas");
+//            return tree;
+//        }
+
+
 
         private void showTree(ElementItemR[][] tree) {
             if (tree != null) {

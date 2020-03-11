@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -23,6 +24,8 @@ import pro.quizer.quizer3.model.sms.SmsStage;
 import pro.quizer.quizer3.model.view.SmsViewModel;
 import pro.quizer.quizer3.utils.SmsUtils;
 import pro.quizer.quizer3.utils.UiUtils;
+
+import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class SmsFragment extends ScreenFragment implements ICallback {
 
@@ -163,6 +166,8 @@ public class SmsFragment extends ScreenFragment implements ICallback {
 
     @Override
     public boolean onBackPressed() {
+//        getMainActivity().setHomeFragmentStarted(false);
+//        Log.d(TAG, "start Home: 1");
         replaceFragment(new HomeFragment());
         return true;
     }

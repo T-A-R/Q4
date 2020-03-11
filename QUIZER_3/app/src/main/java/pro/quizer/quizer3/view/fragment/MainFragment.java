@@ -199,6 +199,8 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
         if (view == mHomeBtn) {
             getDao().updateQuestionnaireStart(false, getCurrentUserId());
             hide();
+//            getMainActivity().setHomeFragmentStarted(false);
+//            Log.d(TAG, "start Home: 12");
             openScreen(new HomeFragment());
         } else if (view == mSyncBtn) {
             getDao().updateQuestionnaireStart(false, getCurrentUserId());

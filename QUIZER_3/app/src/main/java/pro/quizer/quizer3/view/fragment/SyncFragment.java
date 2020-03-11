@@ -1,5 +1,6 @@
 package pro.quizer.quizer3.view.fragment;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -18,6 +19,8 @@ import pro.quizer.quizer3.model.view.SyncViewModel;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
+
+import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class SyncFragment extends ScreenFragment implements View.OnClickListener, ICallback {
 
@@ -83,6 +86,8 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
         mToolbar.showCloseView(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+//                getMainActivity().setHomeFragmentStarted(false);
+//                Log.d(TAG, "start Home: 4");
                 replaceFragment(new HomeFragment());
             }
         });
@@ -97,6 +102,8 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
 
     @Override
     public boolean onBackPressed() {
+//        getMainActivity().setHomeFragmentStarted(false);
+//        Log.d(TAG, "start Home: 5");
         replaceFragment(new HomeFragment());
         return true;
     }

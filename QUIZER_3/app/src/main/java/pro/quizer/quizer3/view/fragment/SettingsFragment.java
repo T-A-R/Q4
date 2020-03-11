@@ -131,6 +131,8 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         mToolbar.showCloseView(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+//                getMainActivity().setHomeFragmentStarted(false);
+//                Log.d(TAG, "start Home: 6");
                 replaceFragment(new HomeFragment());
             }
         });
@@ -350,6 +352,8 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
 
     @Override
     public boolean onBackPressed() {
+//        getMainActivity().setHomeFragmentStarted(false);
+//        Log.d(TAG, "start Home: 7");
         replaceFragment(new HomeFragment());
         return true;
     }

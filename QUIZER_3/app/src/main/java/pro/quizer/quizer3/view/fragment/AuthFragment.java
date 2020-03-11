@@ -233,6 +233,8 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             UpdateQuiz updateQuiz = new UpdateQuiz();
             updateQuiz.execute();
         } else {
+//            getMainActivity().setHomeFragmentStarted(false);
+//            Log.d(TAG, "start Home: 13");
             HomeFragment fragment = new HomeFragment();
             fragment.setStartAfterAuth();
             replaceFragment(fragment);
@@ -261,6 +263,8 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 //            hideScreensaver();
+//            getMainActivity().setHomeFragmentStarted(false);
+//            Log.d(TAG, "start Home: 14");
             HomeFragment fragment = new HomeFragment();
             fragment.setStartAfterAuth();
             replaceFragment(fragment);

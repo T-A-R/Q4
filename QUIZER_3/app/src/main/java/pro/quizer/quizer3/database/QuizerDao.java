@@ -20,6 +20,7 @@ import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.SmsItemR;
+import pro.quizer.quizer3.database.models.TokensCounterR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.database.models.WarningsR;
 
@@ -312,4 +313,10 @@ public interface QuizerDao {
 
     @Query("UPDATE SettingsR SET table_speed = :data")
     void setSettingsTableSpeed(boolean data);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertToken(TokensCounterR token);
+
+    @Query("SELECT * FROM TokensCounterR WHERE user_id = :userId")
+    List<TokensCounterR> getTokens(int userId);
 }

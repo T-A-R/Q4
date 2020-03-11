@@ -63,6 +63,10 @@ public class QuotaModel implements Serializable {
         return done + getLocalCount();
     }
 
+    public int getSent() {
+        return done;
+    }
+
     private int getLocalCount() {
         if (mLocalCount == null) {
             mLocalCount = new QuestionnairesCountBySequenceExecutable(userId, userProjectId, getSet()).execute();

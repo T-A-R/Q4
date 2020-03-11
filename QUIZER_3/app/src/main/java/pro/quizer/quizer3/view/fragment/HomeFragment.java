@@ -72,6 +72,7 @@ import pro.quizer.quizer3.view.Toolbar;
 
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
+import static pro.quizer.quizer3.MainActivity.showTime;
 
 public class HomeFragment extends ScreenFragment implements View.OnClickListener {
 
@@ -83,7 +84,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private TextView tvConfigAgreement;
     private TextView tvCurrentUser;
     private TextView tvConfigName;
-//    private TextView tvCoountAll;
+    //    private TextView tvCoountAll;
 //    private TextView tvCountSent;
     private TextView tvQuotasClosed;
     private TextView tvPbText;
@@ -282,9 +283,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 //                    completedCounter = syncViewModel.getmAllQuestionnaireModels().size();
 //                    sentCounter = syncViewModel.getmSentQuestionnaireModelsFromThisDevice().size();
                     notSentCounter = syncViewModel.getmNotSentQuestionnaireModels().size();
-                    sentCounter = syncViewModel.getSentQuestionnaireModelsInSession(activity);
+                    sentCounter = syncViewModel.getTokensCounter();
                     completedCounter = sentCounter + notSentCounter;
-
                 }
             });
     }
@@ -707,6 +707,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         float progress = 0;
 
         protected void onPreExecute() {
+            showTime("before start");
             pb.setVisibility(View.VISIBLE);
             tvPbText.setVisibility(View.VISIBLE);
             btnContinue.setEnabled(false);
@@ -717,6 +718,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             UiUtils.setButtonEnabled(btnContinue, false);
             UiUtils.setButtonEnabled(btnQuotas, false);
             UiUtils.setButtonEnabled(btnInfo, false);
+            showTime("after disable keys");
         }
 
         @SafeVarargs
@@ -751,10 +753,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            showTime("after activate buttons");
         }
 
         public ElementItemR[][] getTree(List<ElementItemR> quotasBlock) {
-
+            showTime("before get tree");
             List<ElementItemR> questions = new ArrayList<>();
             int answersTotal = 1;
             int answersMultiple = 1;
@@ -790,36 +793,31 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 progress = progress + ((float) 10 / (float) questions.size());
                 publishProgress((int) progress);
             }
-
+            showTime("after get tree");
             return tree;
         }
 
         private ElementItemR[][] fillQuotas(ElementItemR[][] tree) {
             Log.d(TAG, "============== fillQuotas ======================= 1");
+            showTime("before fill quotas");
             List<QuotaModel> quotas = null;
             try {
                 quotas = activity.getCurrentUser().getQuotasR();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            showTime("====== fill quotas 1");
             offlineQuestionnaires = MainActivity.getStaticDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), activity.getCurrentUser().getUser_project_id(), QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
-//            if(offlineQuestionnaires != null) {
-//                activity.showToastfromActivity("Неотправленных анкет: " + offlineQuestionnaires.size());
-//            }
+            showTime("====== fill quotas 2");
             if (quotas == null || quotas.isEmpty()) {
-//                Log.d(TAG, "fillQuotas 1: " + quotas);
-//                if(quotas != null) {
-//                    Log.d(TAG, "fillQuotas 2: " + quotas.isEmpty());
-//                }
                 return tree;
             }
 
             for (int q = 0; q < quotas.size(); q++) {
                 Integer[] sequence = quotas.get(q).getArray();
-//                String seq = sequence[0].toString();
-//                for (int i = 1; i < sequence.length; i++) {
-//                    seq = seq.concat(" " + sequence[i].toString());
-//                }
+//                int local = getLocalQuotas(activity, sequence);
+                int done = quotas.get(q).getDone();
+                int limit = quotas.get(q).getLimit();
 
                 for (int i = 0; i < tree.length; i++) {
                     for (int k = 0; k < tree[i].length; k++) {
@@ -875,10 +873,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 progress = progress + ((float) 90 / (float) quotas.size());
                 publishProgress((int) progress);
             }
-
 //            showTree(tree); // Для отладки
             publishProgress(100);
 //            Log.d(TAG, "fillQuotas TREE??????????????????????: " + tree);
+            showTime("after fill quotas");
             return tree;
         }
 
@@ -890,9 +888,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     for (int i = 0; i < tree[0].length; i++) {
 //                    for (int i = 0; i < 6; i++) {
                         Log.d(TAG, tree[0][i].getElementOptionsR().getTitle() + " " + tree[0][i].getRelative_id() + " " + tree[0][i].getDone() + "/" + tree[0][i].getLimit() + "/" + tree[0][i].isEnabled() + " | "
-                                + tree[1][i].getElementOptionsR().getTitle() + " " + tree[1][i].getRelative_id() + " " + tree[1][i].getDone() + "/" + tree[1][i].getLimit() + "/" + tree[1][i].isEnabled() + " | "
-                                + tree[2][i].getElementOptionsR().getTitle() + " " + tree[2][i].getRelative_id() + " " + tree[2][i].getDone() + "/" + tree[2][i].getLimit() + "/" + tree[2][i].isEnabled() + " | "
-                                + tree[3][i].getElementOptionsR().getTitle() + " " + tree[3][i].getRelative_id() + " " + tree[3][i].getDone() + "/" + tree[3][i].getLimit() + "/" + tree[3][i].isEnabled() + " | "
+                                        + tree[1][i].getElementOptionsR().getTitle() + " " + tree[1][i].getRelative_id() + " " + tree[1][i].getDone() + "/" + tree[1][i].getLimit() + "/" + tree[1][i].isEnabled() + " | "
+                                        + tree[2][i].getElementOptionsR().getTitle() + " " + tree[2][i].getRelative_id() + " " + tree[2][i].getDone() + "/" + tree[2][i].getLimit() + "/" + tree[2][i].isEnabled() + " | "
+                                        + tree[3][i].getElementOptionsR().getTitle() + " " + tree[3][i].getRelative_id() + " " + tree[3][i].getDone() + "/" + tree[3][i].getLimit() + "/" + tree[3][i].isEnabled() + " | "
 //                                + tree[4][i].getElementOptionsR().getTitle() + " " + tree[4][i].getRelative_id() + " " + tree[4][i].getDone() + "/" + tree[4][i].getLimit() + "/" + tree[4][i].isEnabled() + " | "
 
                         );
@@ -1217,6 +1215,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private void showInfoDialog(boolean server) {
         dialogBuilder = new AlertDialog.Builder(getMainActivity());
         View layoutView = getLayoutInflater().inflate(getMainActivity().isAutoZoom() ? R.layout.dialog_statistics_auto : R.layout.dialog_statistics, null);
+        TextView deviceTitle = layoutView.findViewById(R.id.device_title);
         TextView quotasCount = layoutView.findViewById(R.id.quotas_count);
         TextView abortedCount = layoutView.findViewById(R.id.aborted_count);
         TextView devectiveCount = layoutView.findViewById(R.id.defective_count);
@@ -1263,6 +1262,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             testCount.setVisibility(View.GONE);
         }
 
+        UiUtils.setTextOrHide(deviceTitle,
+                "Данные по устройству: (логин: " + getCurrentUser().getLogin() + ")");
         UiUtils.setTextOrHide(complitedCount, (String.format(getString(R.string.collected_questions),
                 String.valueOf(completedCounter))));
         UiUtils.setTextOrHide(sentCount, (String.format(getString(R.string.questions_sent_from_device),

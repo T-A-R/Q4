@@ -17,6 +17,7 @@ import pro.quizer.quizer3.API.QuizerAPI;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.database.models.TokensCounterR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.config.ConfigModel;
@@ -128,7 +129,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
         String json = gson.toJson(requestModel);
 
         MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.SENT, mBaseActivity.getString(R.string.send_quiz_attempt), json);
-
+        Log.d(TAG, "================== sendViaInternetWithRetrofit: =====================");
         QuizerAPI.sendQuestionnaires(mServerUrl, json, this);
     }
 
@@ -169,14 +170,15 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                     MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.error_204) + mBaseActivity.getString(R.string.empty_tokens_list_error), responseJson);
                     onError(new Exception(mBaseActivity.getString(R.string.empty_tokens_list_error) + " " + mBaseActivity.getString(R.string.error_204)));
                 } else {
-                    SPUtils.addSendedQInSession(mBaseActivity, tokensToRemove.size());
-                    Log.d(TAG, "onSendQuestionnaires DELETE: " + tokensToRemove.size());
+//                    SPUtils.addSendedQInSession(mBaseActivity, tokensToRemove.size());
+//                    Log.d(TAG, "onSendQuestionnaires DELETE: " + tokensToRemove.size());
                     MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.quiz_sent), null);
 
                     for (final String token : tokensToRemove) {
                         try {
                             MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.set_quiz_status), Constants.LogResult.SENT, mBaseActivity.getString(R.string.set_sent_quiz_status), null);
 //                            MainActivity.getStaticDao().setQuestionnaireStatus(QuestionnaireStatus.SENT, token);
+                            MainActivity.getStaticDao().insertToken(new TokensCounterR(token, mUserModel.getUser_id()));
                             MainActivity.getStaticDao().deleteQuestionnaireByToken(token);
 
                         } catch (Exception e) {

@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
+import pro.quizer.quizer3.database.models.TokensCounterR;
 import pro.quizer.quizer3.utils.SPUtils;
 
 public class SyncViewModel implements Serializable {
@@ -18,6 +19,7 @@ public class SyncViewModel implements Serializable {
     private List<QuestionnaireDatabaseModelR> mAllQuestionnaireModels;
     private List<QuestionnaireDatabaseModelR> mNotSentQuestionnaireModels;
     private List<QuestionnaireDatabaseModelR> mSentQuestionnaireModelsFromThisDevice;
+    private List<TokensCounterR> mSentTokensFromThisDevice;
 
     public List<QuestionnaireDatabaseModelR> getmAllQuestionnaireModels() {
         return mAllQuestionnaireModels;
@@ -71,4 +73,16 @@ public class SyncViewModel implements Serializable {
         return mNotSendedPhoto;
     }
 
+    public List<TokensCounterR> getmSentTokensFromThisDevice() {
+        return mSentTokensFromThisDevice;
+    }
+
+    public int getTokensCounter() {
+        if (mSentTokensFromThisDevice != null) return mSentTokensFromThisDevice.size();
+        else return 0;
+    }
+
+    public void setmSentTokensFromThisDevice(List<TokensCounterR> mSentTokensFromThisDevice) {
+        this.mSentTokensFromThisDevice = mSentTokensFromThisDevice;
+    }
 }

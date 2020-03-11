@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private HashMap<Integer, ElementModelNew> mMap;
     private HashMap<Integer, ElementModelNew> mTempMap;
     private CurrentQuestionnaireR currentQuestionnaire = null;
-    private List<ElementItemR> elementItemRList = null;
+//    private List<ElementItemR> elementItemRList = null;
     private List<ElementItemR> currentElementsList = null;
     //    List<ElementItemR> elementItemsList = new ArrayList<>();
     private List<ElementModelFlat> currentElementsFlatList = null;
@@ -953,22 +953,19 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public List<ElementItemR> getQuotasElements() {
         List<ElementItemR> quotaList = null;
 
-        Log.d(TAG, "getQuotasElements 1: " + elementItemRList);
-        if(elementItemRList != null)
-        Log.d(TAG, "getQuotasElements 2: " + elementItemRList.size());
+//        if (elementItemRList == null) {
+//            try {
+//                elementItemRList = getStaticDao().getCurrentElements();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        Log.d(TAG, "getQuotasElements: " + elementItemRList.size());
 
-        if (elementItemRList == null) {
-            try {
-                elementItemRList = getStaticDao().getCurrentElements();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (elementItemRList != null) {
+        if (currentElementsList != null) {
             int quotaBlockID = -2;
 
-            for (ElementItemR element : elementItemRList) {
+            for (ElementItemR element : currentElementsList) {
 
                 if (element.getSubtype() != null && element.getSubtype().equals(ElementSubtype.QUOTA)) {
                     quotaBlockID = element.getRelative_id();
@@ -977,8 +974,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             }
             if (quotaBlockID != -2) {
                 quotaList = getMainDao().getQuotaElements(quotaBlockID);
+//                showTime("get quota list 3");
             } else {
                 quotaList = new ArrayList<>();
+//                showTime("get quota list 4");
             }
         }
         return quotaList;

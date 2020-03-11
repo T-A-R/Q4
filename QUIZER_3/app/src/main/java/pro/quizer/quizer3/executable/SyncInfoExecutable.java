@@ -7,6 +7,7 @@ import java.util.List;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
+import pro.quizer.quizer3.database.models.TokensCounterR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.config.ConfigModel;
@@ -42,9 +43,9 @@ public class SyncInfoExecutable extends BaseModelExecutable<SyncViewModel> {
 
                 final List<QuestionnaireDatabaseModelR> allQDM = SmartFragment.getDao().getQuestionnaireByUserId(pUserId);
 
-                final List<QuestionnaireDatabaseModelR> sendFromThisDevice = SmartFragment.getDao().getQuestionnaireByUserIdAndProjectIdWithStatus(pUserId, pUserProjectId, QuestionnaireStatus.SENT);
+                final List<TokensCounterR> sendFromThisDevice = SmartFragment.getDao().getTokens(pUserId);
 
-                syncViewModel.setmSentQuestionnaireModelsFromThisDevice(sendFromThisDevice);
+                syncViewModel.setmSentTokensFromThisDevice(sendFromThisDevice);
                 syncViewModel.setNotSentQuestionnaireModels(notSentQDM);
                 syncViewModel.setAllQuestionnaireModels(allQDM);
                 syncViewModel.setNotSendedPhoto(mainFragment.getPhotosByUserId(pUserId));

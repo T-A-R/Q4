@@ -36,8 +36,9 @@ public class RemoveUserExecutable extends BaseExecutable {
 
             } else {
                 try {
-                    MainActivity.getStaticDao().deleteUserByUserId(currentUser.getUser_id());
-                    MainActivity.getStaticDao().clearCurrentQuestionnaireR();
+                    activity.getMainDao().deleteUserByUserId(currentUser.getUser_id());
+                    activity.getMainDao().clearCurrentQuestionnaireR();
+                    activity.getMainDao().clearPrevElementsR();
                     activity.setCurrentQuestionnaireNull();
                 } catch (Exception e) {
                     onError(e);

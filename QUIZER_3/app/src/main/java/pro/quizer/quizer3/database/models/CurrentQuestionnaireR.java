@@ -7,7 +7,6 @@ import android.arch.persistence.room.TypeConverters;
 
 import java.util.List;
 
-import pro.quizer.quizer3.database.PrevQuestionConverter;
 import pro.quizer.quizer3.database.QuotaBlockConverter;
 
 @Entity
@@ -59,9 +58,9 @@ public class CurrentQuestionnaireR {
     @ColumnInfo(name = "question_start_time")
     private Long question_start_time;
 
-    @ColumnInfo(name = "prev_element_id")
-    @TypeConverters({PrevQuestionConverter.class})
-    private List<PrevElementsR> prev_element_id;
+//    @ColumnInfo(name = "prev_element_id")
+//    @TypeConverters({PrevQuestionConverter.class})
+//    private List<PrevElementsR> prev_element_id;
 
     @ColumnInfo(name = "passed_quota_block")
     @TypeConverters({QuotaBlockConverter.class})
@@ -91,7 +90,7 @@ public class CurrentQuestionnaireR {
                                  String gps, String gps_network, Long gps_time, Long gps_time_network,
                                  boolean used_fake_gps, Long fake_gps_time, Long auth_time_difference,
                                  Long send_time_difference, Long quota_time_difference, Long question_start_time,
-                                 List<PrevElementsR> prev_element_id, List<Integer> passed_quota_block,
+                                 List<Integer> passed_quota_block,
                                  Integer current_element_id) {
         this.token = token;
         this.project_id = project_id;
@@ -107,7 +106,7 @@ public class CurrentQuestionnaireR {
         this.send_time_difference = send_time_difference;
         this.quota_time_difference = quota_time_difference;
         this.question_start_time = question_start_time;
-        this.prev_element_id = prev_element_id;
+//        this.prev_element_id = prev_element_id;
         this.passed_quota_block = passed_quota_block;
         this.current_element_id = current_element_id;
         this.count_interrupted = 0;
@@ -235,13 +234,13 @@ public class CurrentQuestionnaireR {
         this.question_start_time = question_start_time;
     }
 
-    public List<PrevElementsR> getPrev_element_id() {
-        return prev_element_id;
-    }
+//    public List<PrevElementsR> getPrev_element_id() {
+//        return prev_element_id;
+//    }
 
-    public void setPrev_element_id(List<PrevElementsR> prev_element_id) {
-        this.prev_element_id = prev_element_id;
-    }
+//    public void setPrev_element_id(List<PrevElementsR> prev_element_id) {
+//        this.prev_element_id = prev_element_id;
+//    }
 
     public Integer getCurrent_element_id() {
         return current_element_id;

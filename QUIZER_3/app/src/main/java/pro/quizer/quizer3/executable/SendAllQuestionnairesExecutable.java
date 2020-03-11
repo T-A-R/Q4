@@ -22,7 +22,7 @@ public class SendAllQuestionnairesExecutable extends BaseExecutable {
     public void execute() {
         onStarting();
 
-        final List<UserModelR> users = MainActivity.getStaticDao().getAllUsers();
+        final List<UserModelR> users = mContext.getMainDao().getAllUsers();
 
         if (users == null || users.isEmpty()) {
             onError(new Exception(mContext.getString(R.string.notification_sending_empty_users_list)));

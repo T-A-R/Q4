@@ -176,8 +176,8 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                         try {
                             MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.set_quiz_status), Constants.LogResult.SENT, mBaseActivity.getString(R.string.set_sent_quiz_status), null);
 //                            MainActivity.getStaticDao().setQuestionnaireStatus(QuestionnaireStatus.SENT, token);
-                            MainActivity.getStaticDao().insertToken(new TokensCounterR(token, mUserModel.getUser_id()));
-                            MainActivity.getStaticDao().deleteQuestionnaireByToken(token);
+                            mBaseActivity.getMainDao().insertToken(new TokensCounterR(token, mUserModel.getUser_id()));
+                            mBaseActivity.getMainDao().deleteQuestionnaireByToken(token);
 
                         } catch (Exception e) {
                             MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.set_quiz_status), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.db_save_error), e.getMessage());
@@ -208,7 +208,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
 //                    BaseActivity.sendCrashLogs();
 
                     try {
-                        MainActivity.getStaticDao().clearWarningsR();
+                        mBaseActivity.getMainDao().clearWarningsR();
                     } catch (Exception e) {
                         MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.WARNINGS, mBaseActivity.getString(R.string.clear_warnings_db), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.db_clear_error), e.getMessage());
                     }

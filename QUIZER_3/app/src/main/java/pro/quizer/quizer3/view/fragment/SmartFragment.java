@@ -596,11 +596,11 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         return quiz;
     }
 
-    public void showElementsQuery() {
-        for (int i = 0; i < getQuestionnaire().getPrev_element_id().size(); i++) {
-            Log.d(TAG, i + " element: " + getQuestionnaire().getPrev_element_id().get(i).getPrevId());
-        }
-    }
+//    public void showElementsQuery() {
+//        for (int i = 0; i < getQuestionnaire().getPrev_element_id().size(); i++) {
+//            Log.d(TAG, i + " element: " + getQuestionnaire().getPrev_element_id().get(i).getPrevId());
+//        }
+//    }
 
     public void reloadConfig() {
 
@@ -693,8 +693,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
                             updateConfig(getCurrentUser(), configResponseModel.getConfig());
                             showToast(getString(R.string.config_updated));
-
-                            final String[] fileUris = getCurrentUser().getConfigR().getProjectInfo().getMediaFiles();
+                            ConfigModel configModel = getMainActivity().getConfigForce();
+                            final String[] fileUris = configModel.getProjectInfo().getMediaFiles();
 
                             if (fileUris == null || fileUris.length == 0) {
                                 Log.d(TAG, "reloadConfig: file list empty");
@@ -839,6 +839,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             try {
                 getDao().clearCurrentQuestionnaireR();
                 getDao().clearElementPassedR();
+                getDao().clearPrevElementsR();
                 getMainActivity().setCurrentQuestionnaireNull();
 //                Log.d(TAG, "saveQuestionnaireToDatabase: 15");
             } catch (Exception e) {

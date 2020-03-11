@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private HashMap<Integer, ElementModelNew> mMap;
     private HashMap<Integer, ElementModelNew> mTempMap;
     private CurrentQuestionnaireR currentQuestionnaire = null;
-//    private List<ElementItemR> elementItemRList = null;
+    //    private List<ElementItemR> elementItemRList = null;
     private List<ElementItemR> currentElementsList = null;
     //    List<ElementItemR> elementItemsList = new ArrayList<>();
     private List<ElementModelFlat> currentElementsFlatList = null;
@@ -274,13 +274,13 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             Log.d(TAG, "Rebuilding Elements Database............. 2");
             mMap = new HashMap<>();
             Log.d(TAG, "Rebuilding Elements Database............. 3");
-            getStaticDao().clearElementItemR();
+            getMainDao().clearElementItemR();
             Log.d(TAG, "Rebuilding Elements Database............. 4");
             initDataForRebuild();
             currentElementsList = new ArrayList<>();
             generateMap(getElements(), true);
             if (currentElementsList.size() > 0) {
-                getStaticDao().insertListElementItemR(currentElementsList);
+                getMainDao().insertListElementItemR(currentElementsList);
             } else {
                 showToastfromActivity("Пустая таблица!");
             }
@@ -988,7 +988,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         ElementItemR elementItemR = null;
         try {
 //            elementItemR = getStaticDao().getElementById(id, getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
-            elementItemR = getStaticDao().getElementById(id);
+            elementItemR = getMainDao().getElementById(id);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1069,7 +1069,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         public void run() {
             if (!isFinishing()) {
 
-                if (!isFinishing() && getStaticDao().getQuestionnaireForStage(
+                if (!isFinishing() && getMainDao().getQuestionnaireForStage(
                         getCurrentUserId(),
                         QuestionnaireStatus.NOT_SENT,
                         Constants.QuestionnaireStatuses.COMPLETED,
@@ -1201,7 +1201,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public List<ElementItemR> getElementItemRList() {
         if (currentElementsList == null) {
 //            currentElementsList = getStaticDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
-            currentElementsList = getStaticDao().getCurrentElements();
+            currentElementsList = getMainDao().getCurrentElements();
         }
         return currentElementsList;
     }
@@ -1215,13 +1215,13 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public CurrentQuestionnaireR getCurrentQuestionnaire() {
         if (currentQuestionnaire == null) {
-            currentQuestionnaire = getStaticDao().getCurrentQuestionnaireR();
+            currentQuestionnaire = getMainDao().getCurrentQuestionnaireR();
         }
         return currentQuestionnaire;
     }
 
     public CurrentQuestionnaireR getCurrentQuestionnaireForce() {
-        currentQuestionnaire = getStaticDao().getCurrentQuestionnaireR();
+        currentQuestionnaire = getMainDao().getCurrentQuestionnaireR();
         return currentQuestionnaire;
     }
 
@@ -1236,10 +1236,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public SettingsR getSettings() {
-        SettingsR settings = getStaticDao().getSettings();
+        SettingsR settings = getMainDao().getSettings();
         if (settings == null) {
             settings = new SettingsR();
-            getStaticDao().insertSettings(settings);
+            getMainDao().insertSettings(settings);
         }
         return settings;
     }
@@ -1256,6 +1256,11 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         if (mConfig == null) {
             mConfig = getCurrentUser().getConfigR();
         }
+        return mConfig;
+    }
+
+    public ConfigModel getConfigForce() {
+        mConfig = getCurrentUser().getConfigR();
         return mConfig;
     }
 

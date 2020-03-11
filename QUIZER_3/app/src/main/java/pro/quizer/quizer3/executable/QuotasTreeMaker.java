@@ -209,10 +209,10 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
         try {
             //TODO: Добавить проверку на завершенность анкеты!
 //            List<QuestionnaireDatabaseModelR> offlineQuestionnaires = MainActivity.getStaticDao().getQuestionnaireByUserIdWithStatus(activity.getCurrentUserId(), QuestionnaireStatus.NOT_SENT);
-            List<QuestionnaireDatabaseModelR> offlineQuestionnaires = MainActivity.getStaticDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), activity.getCurrentUser().getUser_project_id(), QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
+            List<QuestionnaireDatabaseModelR> offlineQuestionnaires = activity.getMainDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), activity.getCurrentUser().getUser_project_id(), QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
 
             for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : offlineQuestionnaires) {
-                final List<ElementDatabaseModelR> elements = MainActivity.getStaticDao().getElementByToken(questionnaireDatabaseModel.getToken());
+                final List<ElementDatabaseModelR> elements = activity.getMainDao().getElementByToken(questionnaireDatabaseModel.getToken());
 //                int found = 0;
 //                for (int s = 0; s < sequence.length; s++) {
 //                    for (final ElementDatabaseModelR element : elements) {

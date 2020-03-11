@@ -319,7 +319,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 showToast("Продолжение прерванной анкеты");
                 startRecording();
                 TransFragment fragment = new TransFragment();
-                fragment.setStartElement(currentQuestionnaire.getPrev_element_id().get(currentQuestionnaire.getPrev_element_id().size() - 1).getNextId(), true);
+                List<PrevElementsR> prevElementsRList = getDao().getPrevElementsR();
+                fragment.setStartElement(prevElementsRList.get(prevElementsRList.size() - 1).getNextId(), true);
                 replaceFragment(fragment);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -369,6 +370,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     try {
                         Log.d(TAG, "startQuestionnaire: clearCurrentQuestionnaireR() started.");
                         getDao().clearCurrentQuestionnaireR();
+                        getDao().clearPrevElementsR();
+                        getDao().clearElementPassedR();
                         getMainActivity().setCurrentQuestionnaireNull();
                         return true;
                     } catch (Exception e) {
@@ -406,9 +409,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         if (mIsUsedFakeGps)
                             questionnaire.setFake_gps_time(DateUtils.getCurrentTimeMillis());
                         questionnaire.setQuestion_start_time(DateUtils.getCurrentTimeMillis());
-                        List<PrevElementsR> prev = new ArrayList<>();
-                        prev.add(new PrevElementsR(0, 0));
-                        questionnaire.setPrev_element_id(prev);
+                        getDao().insertPrevElementsR(new PrevElementsR(0, 0));
+//                        List<PrevElementsR> prev = new ArrayList<>();
+//                        prev.add(new PrevElementsR(0, 0));
+//                        questionnaire.setPrev_element_id(prev);
 
                         getDao().insertCurrentQuestionnaireR(questionnaire);
                         getDao().clearWasElementShown(false);
@@ -562,7 +566,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 Log.d(TAG, "startGps: " + e.getMessage());
             }
 
-            Log.d(TAG, "=== GPS: " + getCurrentUser().getConfigR().isForceGps() + " " + zeroCoordinates);
+//            Log.d(TAG, "=== GPS: " + getCurrentUser().getConfigR().isForceGps() + " " + zeroCoordinates);
             if (activity.getConfig().isForceGps()) {
                 if (mGPSModel == null) {
                     showSettingsAlert();
@@ -695,7 +699,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void startRecording() {
-        if (activity.getConfig().isAudio() && getCurrentUser().getConfigR().isAudioRecordAll()) {
+        if (activity.getConfig().isAudio() && activity.getConfig().isAudioRecordAll()) {
             MainActivity activity = (MainActivity) getActivity();
             try {
                 addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.start_audio_recording), Constants.LogResult.ATTEMPT, getString(R.string.start_audio_recording_attempt), null);

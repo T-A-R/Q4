@@ -268,10 +268,6 @@ public interface QuizerDao {
     @Query("UPDATE CurrentQuestionnaireR SET question_start_time = :time")
     void setQuestionTime(Long time);
 
-    @Query("UPDATE CurrentQuestionnaireR SET prev_element_id = :id ")
-    @TypeConverters({PrevQuestionConverter.class})
-    void setPrevElement(List<PrevElementsR> id);
-
     @Query("UPDATE CurrentQuestionnaireR SET current_element_id = :id ")
     void setCurrentElement(Integer id);
 
@@ -319,4 +315,16 @@ public interface QuizerDao {
 
     @Query("SELECT * FROM TokensCounterR WHERE user_id = :userId")
     List<TokensCounterR> getTokens(int userId);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertPrevElementsR(PrevElementsR prevElementsR);
+
+    @Query("SELECT * FROM PrevElementsR")
+    List<PrevElementsR> getPrevElementsR();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void setPrevElement(List<PrevElementsR> elementItemR);
+
+    @Query("DELETE FROM PrevElementsR")
+    void clearPrevElementsR();
 }

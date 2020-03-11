@@ -128,7 +128,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private ArrayAdapter adapterSpinner;
     private TableQuestionAdapter adapterTable;
     private MultiSelectSpinner multiSelectionSpinner;
-
+    private List<PrevElementsR> prevList = null;
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
 
@@ -234,6 +234,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         st("after init side menu");
 
         showScreensaver("Подождите, \nидет загрузка элемента анкеты", true);
+        try {
+            prevList = getDao().getPrevElementsR();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(prevList == null || prevList.size() == 0) {
+            prevList = new ArrayList<>();
+        }
         initCurrentElements();
         st("after init elements");
         loadResumedData();
@@ -300,12 +308,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } else if (view == btnPrev) {
             deactivateButtons();
             TransFragment fragment = new TransFragment();
-            List<PrevElementsR> prevList;
+
             if (prevElementId != 0) {
-                prevList = getQuestionnaire().getPrev_element_id();
+//                prevList = getQuestionnaire().getPrev_element_id();
+
                 prevElementId = prevList.get(prevList.size() - 1).getPrevId();
                 prevList.remove(prevList.size() - 1);
                 try {
+                    getDao().clearPrevElementsR();
                     getDao().setPrevElement(prevList);
                 } catch (Exception e) {
                     showToast(getString(R.string.set_last_element_error));
@@ -382,13 +392,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private void initQuestion() {
         startTime = DateUtils.getCurrentTimeMillis();
 
-        List<PrevElementsR> prevList;
+//        List<PrevElementsR> prevList;
         if (getQuestionnaire() == null) {
             initCurrentElements();
         }
         if (getQuestionnaire() != null)
-            if (getQuestionnaire().getPrev_element_id() != null && getQuestionnaire().getPrev_element_id().size() > 0) {
-                prevList = getQuestionnaire().getPrev_element_id();
+            if (prevList != null && prevList.size() > 0) {
+//                prevList = getQuestionnaire().getPrev_element_id();
                 prevElementId = prevList.get(prevList.size() - 1).getPrevId();
             } else {
                 prevElementId = 0;
@@ -1190,20 +1200,23 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void updatePrevElement() {
-        List<PrevElementsR> prevList;
-        if (getQuestionnaire().getPrev_element_id() != null) {
-            prevList = getQuestionnaire().getPrev_element_id();
-            prevList.add(new PrevElementsR(startElementId, nextElementId));
+//        List<PrevElementsR> prevList;
+        if (prevList != null) {
+//            prevList = getQuestionnaire().getPrev_element_id();
+            prevList = getDao().getPrevElementsR();
+            getDao().insertPrevElementsR(new PrevElementsR(startElementId, nextElementId));
+//            prevList.add(new PrevElementsR(startElementId, nextElementId));
 
         } else {
             prevList = new ArrayList<>();
-            prevList.add(new PrevElementsR(startElementId, nextElementId));
+            getDao().insertPrevElementsR(new PrevElementsR(startElementId, nextElementId));
+//            prevList.add(new PrevElementsR(startElementId, nextElementId));
         }
-        try {
-            getDao().setPrevElement(prevList);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            getDao().setPrevElement(prevList);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override
@@ -1250,7 +1263,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     public void loadResumedData() {
         if (isRestored) {
             try {
-                List<PrevElementsR> prevList = getQuestionnaire().getPrev_element_id();
+//                List<PrevElementsR> prevList = getQuestionnaire().getPrev_element_id();
                 if (prevList != null && prevList.size() > 0) {
                     PrevElementsR lastPassedElement = prevList.get(prevList.size() - 1);
                     startElementId = lastPassedElement.getNextId();
@@ -1429,6 +1442,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             getDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");
             getDao().clearCurrentQuestionnaireR();
             getDao().clearElementPassedR();
+            getDao().clearPrevElementsR();
             getMainActivity().setCurrentQuestionnaireNull();
         } catch (Exception e) {
             e.printStackTrace();
@@ -1483,6 +1497,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                 try {
                                     getDao().clearCurrentQuestionnaireR();
                                     getDao().clearElementPassedR();
+                                    getDao().clearPrevElementsR();
                                     getMainActivity().setCurrentQuestionnaireNull();
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -1501,6 +1516,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 try {
                     getDao().clearCurrentQuestionnaireR();
                     getDao().clearElementPassedR();
+                    getDao().clearPrevElementsR();
                     getMainActivity().setCurrentQuestionnaireNull();
                 } catch (Exception e) {
                     e.printStackTrace();

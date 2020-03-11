@@ -58,7 +58,7 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
         Object[] keys = smsStage.getSmsAnswers().keySet().toArray();
 
         for (int i = 0; i < smsStage.getSmsAnswers().size(); i++) {
-            String status = MainActivity.getStaticDao().getSmsItemBySmsNumber(smsStage.getSmsAnswers().get(keys[i]).getSmsIndex()).get(0).getSmsStatus();
+            String status = pBaseActivity.getMainDao().getSmsItemBySmsNumber(smsStage.getSmsAnswers().get(keys[i]).getSmsIndex()).get(0).getSmsStatus();
             mSmsItems.add(new SmsItem(smsStage.getSmsAnswers().get(keys[i]).getSmsIndex(), smsStage.getSmsAnswers().get(keys[i]).toString(), smsStage.getSmsAnswers().get(keys[i]).getmSmsStatus()));
 //            mSmsItems.add(new SmsItem("" + i, "#" + i + " xx xxx xx xxx", "Отправлена"));
         }
@@ -76,7 +76,7 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
         String status = null;
         final int sdk = android.os.Build.VERSION.SDK_INT;
         try {
-            status = MainActivity.getStaticDao().getSmsItemBySmsNumber(mSmsItems.get(position).getSmsNumber()).get(0).getSmsStatus();
+            status = mBaseActivity.getMainDao().getSmsItemBySmsNumber(mSmsItems.get(position).getSmsNumber()).get(0).getSmsStatus();
         } catch (Exception e) {
             mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.db_load_error));
         }

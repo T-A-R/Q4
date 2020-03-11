@@ -23,6 +23,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
     private Map<Integer, ElementModelNew> mMap;
     private final StagesModel mStagesModel;
     private SmsStage mSmsStage;
+    private MainActivity activity;
 
     public SmsStageModelExecutable(final MainActivity pBaseActivity, final SmsStage pSmsStage, final UserModelR pUserModel, final StagesModel pStageModel) {
         super();
@@ -33,6 +34,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
         mUserId = pUserModel.getUser_id();
         mSmsStage = pSmsStage;
         mMap = pBaseActivity.createNewMap(elements);
+        activity = pBaseActivity;
     }
 
     @Override
@@ -60,7 +62,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
 
         final List<ElementDatabaseModelR> allElements = new ArrayList<>();
 
-        final List<QuestionnaireDatabaseModelR> questionnaires = MainActivity.getStaticDao().getQuestionnaireWithTime(
+        final List<QuestionnaireDatabaseModelR> questionnaires = activity.getMainDao().getQuestionnaireWithTime(
                 mUserId,
                 pStatus,
                 mStagesModel.getTimeFrom(),
@@ -71,7 +73,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
 
             mSmsStage.addToken(token);
 
-            final List<ElementDatabaseModelR> elements = MainActivity.getStaticDao().getElementByToken(token);
+            final List<ElementDatabaseModelR> elements = activity.getMainDao().getElementByToken(token);
             allElements.addAll(elements);
         }
 

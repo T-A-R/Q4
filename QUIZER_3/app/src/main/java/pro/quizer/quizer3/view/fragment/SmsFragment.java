@@ -59,9 +59,9 @@ public class SmsFragment extends ScreenFragment implements ICallback {
             @Override
             public void onClick(View view) {
                 final SmsViewModel mSmsViewModel = new SmsViewModelExecutable(mMap, mBaseActivity).execute();
-                if (mSmsViewModel.getNotSentSms().size() != 0) {
+                if (mSmsViewModel.getNotSentSms(mBaseActivity).size() != 0) {
                     List<String> mSmsNumbers = new ArrayList<>();
-                    for (SmsItemR mSmsItem : mSmsViewModel.getNotSentSms()) {
+                    for (SmsItemR mSmsItem : mSmsViewModel.getNotSentSms(mBaseActivity)) {
                         mSmsNumbers.add(mSmsItem.getSmsNumber());
                     }
 
@@ -128,7 +128,7 @@ public class SmsFragment extends ScreenFragment implements ICallback {
                 mSmsRecyclerView.setAdapter(mAdapter);
                 int currentStage = 0;
 
-                List<SmsItemR> smsToSend = pSmsViewModel.getNotSentSms();
+                List<SmsItemR> smsToSend = pSmsViewModel.getNotSentSms(mBaseActivity);
                 if (smsToSend.size() > 0 && smsStages.size() > 0) {
                     for (int i = 0; i < smsStages.size(); i++) {
                         if (smsStages.get(i).getSmsAnswers().get(smsToSend.get(0).getSmsNumber()) != null) {

@@ -21,7 +21,7 @@ public class SmsStage implements Serializable {
     private final Map<String, SmsAnswer> mSmsAnswers;
     @QuestionnaireStatus
     private String mStatus = null;
-    private Context mContext;
+    private MainActivity mContext;
 
     public SmsStage(final MainActivity pContext, final StagesModel pStageModel, final MainActivity pBaseActivity) {
         this.mContext = pContext;
@@ -54,8 +54,8 @@ public class SmsStage implements Serializable {
 //        mStatus = pStatus;
 //        mSmsAnswers.get(smsNumber).setmSmsStatus(pStatus);
         try {
-            MainActivity.getStaticDao().setSmsItemStatusBySmsNumber(smsNumber, pStatus);
-            MainActivity.getStaticDao().setElementSendSms(true, questionId);
+            mContext.getMainDao().setSmsItemStatusBySmsNumber(smsNumber, pStatus);
+            mContext.getMainDao().setElementSendSms(true, questionId);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -76,7 +76,7 @@ public class SmsStage implements Serializable {
 
         for (final String token : mTokens) {
             try {
-                MainActivity.getStaticDao().setQuestionnaireSendSms(true, token);
+                mContext.getMainDao().setQuestionnaireSendSms(true, token);
             } catch (Exception e) {
                 e.printStackTrace();
             }

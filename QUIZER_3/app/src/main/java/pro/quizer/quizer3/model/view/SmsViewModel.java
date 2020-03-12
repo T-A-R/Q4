@@ -40,7 +40,7 @@ public class SmsViewModel implements Serializable {
         return finishedStages;
     }
 
-    public List<SmsItemR> getNotSentSms() {
+    public List<SmsItemR> getNotSentSms(MainActivity activity) {
         final List<SmsItemR> notSentSms = new ArrayList<>();
 
         if (mSmsStages != null && !mSmsStages.isEmpty()) {
@@ -56,7 +56,7 @@ public class SmsViewModel implements Serializable {
                         }
                         SmsItemR smsItemR = null;
                         try {
-                            smsItemR = MainActivity.getStaticDao().getSmsItemBySmsNumber(smsAnswer.getValue().getSmsIndex()).get(0);
+                            smsItemR = activity.getMainDao().getSmsItemBySmsNumber(smsAnswer.getValue().getSmsIndex()).get(0);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

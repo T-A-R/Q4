@@ -56,6 +56,7 @@ public class ServiceFragment extends ScreenFragment {
     private String mUnsendedPhotoString;
     private Toolbar mToolbar;
     private boolean isDeletingDB = false;
+    private MainActivity activity;
 
     public ServiceFragment() {
         super(R.layout.fragment_service);
@@ -64,11 +65,12 @@ public class ServiceFragment extends ScreenFragment {
     @Override
     protected void onReady() {
 
+        activity = getMainActivity();
         initViews();
         MainFragment.disableSideMenu();
         initStrings();
 //        new CleanUpFilesExecutable(getContext(), null).execute();
-        updateData(new ServiceInfoExecutable().execute());
+        updateData(new ServiceInfoExecutable(activity).execute());
     }
 
     public void initViews() {
@@ -152,12 +154,12 @@ public class ServiceFragment extends ScreenFragment {
 
                     @Override
                     public void onSuccess() {
-                        updateData(new ServiceInfoExecutable().execute());
+                        updateData(new ServiceInfoExecutable(activity).execute());
                     }
 
                     @Override
                     public void onError(Exception pException) {
-                        updateData(new ServiceInfoExecutable().execute());
+                        updateData(new ServiceInfoExecutable(activity).execute());
                     }
                 }).execute();
             }
@@ -180,12 +182,12 @@ public class ServiceFragment extends ScreenFragment {
 
                     @Override
                     public void onSuccess() {
-                        updateData(new ServiceInfoExecutable().execute());
+                        updateData(new ServiceInfoExecutable(activity).execute());
                     }
 
                     @Override
                     public void onError(Exception pException) {
-                        updateData(new ServiceInfoExecutable().execute());
+                        updateData(new ServiceInfoExecutable(activity).execute());
                     }
                 }).execute();
             }
@@ -208,12 +210,12 @@ public class ServiceFragment extends ScreenFragment {
 
                     @Override
                     public void onSuccess() {
-                        updateData(new ServiceInfoExecutable().execute());
+                        updateData(new ServiceInfoExecutable(activity).execute());
                     }
 
                     @Override
                     public void onError(Exception pException) {
-                        updateData(new ServiceInfoExecutable().execute());
+                        updateData(new ServiceInfoExecutable(activity).execute());
                     }
                 }).execute();
             }
@@ -246,12 +248,12 @@ public class ServiceFragment extends ScreenFragment {
 
                     @Override
                     public void onSuccess() {
-                        updateData(new ServiceInfoExecutable().execute());
+                        updateData(new ServiceInfoExecutable(activity).execute());
                     }
 
                     @Override
                     public void onError(Exception pException) {
-                        updateData(new ServiceInfoExecutable().execute());
+                        updateData(new ServiceInfoExecutable(activity).execute());
                     }
                 }).execute();
             }
@@ -269,12 +271,12 @@ public class ServiceFragment extends ScreenFragment {
 
                     @Override
                     public void onSuccess() {
-                        updateData(new ServiceInfoExecutable().execute());
+                        updateData(new ServiceInfoExecutable(activity).execute());
                     }
 
                     @Override
                     public void onError(Exception pException) {
-                        updateData(new ServiceInfoExecutable().execute());
+                        updateData(new ServiceInfoExecutable(activity).execute());
                     }
                 }).execute();
             }
@@ -315,7 +317,7 @@ public class ServiceFragment extends ScreenFragment {
 
                                 @Override
                                 public void onError(Exception pException) {
-                                    updateData(new ServiceInfoExecutable().execute());
+                                    updateData(new ServiceInfoExecutable(activity).execute());
                                 }
                             }).execute();
                         }

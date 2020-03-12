@@ -27,7 +27,7 @@ public abstract class AbstractAllFilesSendingExecutable extends BaseExecutable {
     public void execute() {
         onStarting();
 
-        mUsers = MainActivity.getStaticDao().getAllUsers();
+        mUsers = mContext.getMainDao().getAllUsers();
 
         if (mUsers == null || mUsers.isEmpty()) {
             onError(new Exception(mContext.getString(R.string.notification_sending_empty_users_list)));

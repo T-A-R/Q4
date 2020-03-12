@@ -70,7 +70,7 @@ public class UploadingExecutable extends BaseExecutable {
 
     private void moveQuestionnaires() {
 
-        final List<UserModelR> users = MainActivity.getStaticDao().getAllUsers();
+        final List<UserModelR> users = mContext.getMainDao().getAllUsers();
 
         if (users == null || users.isEmpty()) {
             onError(new Exception(mContext.getString(R.string.notification_sending_empty_users_list)));
@@ -78,7 +78,7 @@ public class UploadingExecutable extends BaseExecutable {
         }
 
         for (final UserModelR user : users) {
-            final QuestionnaireListRequestModel requestModel = new QuestionnaireListRequestModelExecutable(user, true).execute();
+            final QuestionnaireListRequestModel requestModel = new QuestionnaireListRequestModelExecutable(mContext, user, true).execute();
 
             if (requestModel != null) {
                 try {
@@ -93,12 +93,12 @@ public class UploadingExecutable extends BaseExecutable {
 
     private void moveCrashLogs() {
 
-        if (MainActivity.getStaticDao().getCrashLogs().size() > 0) {
+        if (mContext.getMainDao().getCrashLogs().size() > 0) {
 
             List<Crash> crashList = new ArrayList<>();
             List<CrashLogs> crashLogsList = null;
             try {
-                crashLogsList = MainActivity.getStaticDao().getCrashLogs();
+                crashLogsList = mContext.getMainDao().getCrashLogs();
             } catch (Exception e) {
                 MainActivity.addLog("android", Constants.LogType.DATABASE, Constants.LogObject.LOG, mContext.getString(R.string.load_crashlog_from_db), Constants.LogResult.ERROR, mContext.getString(R.string.db_load_error), e.getMessage());
             }
@@ -117,7 +117,7 @@ public class UploadingExecutable extends BaseExecutable {
             try {
                 Log.d(TAG, "moveCrashLogs: " + json);
                 FileUtils.createTxtFile(UPLOADING_PATH, String.format(UPLOADING_CRASH_FILE_NAME, "android", DateUtils.getCurrentTimeMillis()), json);
-                MainActivity.getStaticDao().clearCrashLogs();
+                mContext.getMainDao().clearCrashLogs();
             } catch (final IOException pE) {
                 MainActivity.addLog("android", Constants.LogType.FILE, Constants.LogObject.LOG, mContext.getString(R.string.save_crashlog_to_file), Constants.LogResult.ERROR, mContext.getString(R.string.save_ctashlog_error), pE.getMessage());
             }
@@ -126,7 +126,7 @@ public class UploadingExecutable extends BaseExecutable {
 
     private void moveLogs() {
 
-        List<AppLogsR> logs = MainActivity.getStaticDao().getAllLogsWithStatus(Constants.LogStatus.NOT_SENT);
+        List<AppLogsR> logs = mContext.getMainDao().getAllLogsWithStatus(Constants.LogStatus.NOT_SENT);
 
         if (logs.size() > 0) {
 
@@ -137,8 +137,7 @@ public class UploadingExecutable extends BaseExecutable {
             try {
                 Log.d(TAG, "moveLogs: " + json);
                 FileUtils.createTxtFile(UPLOADING_PATH, String.format(UPLOADING_LOGS_FILE_NAME, "android", DateUtils.getCurrentTimeMillis()), json);
-//                BaseActivity.getDao().setLogsStatus(Constants.LogStatus.SENT);
-                MainActivity.getStaticDao().clearAppLogsR();
+                mContext.getMainDao().clearAppLogsR();
             } catch (final IOException pE) {
                 Log.d(TAG, "Не удалось сформировать файл журнала событий при ручной выгрузке\n" + pE.getMessage());
             }
@@ -147,8 +146,7 @@ public class UploadingExecutable extends BaseExecutable {
 
     private void setSentStatusForUserQuestionnaires(final UserModelR pUserModel) {
         try {
-            MainActivity.getStaticDao().setQuestionnaireStatusByUserId(QuestionnaireStatus.SENT, pUserModel.getUser_id());
-//            MainActivity.getStaticDao().deleteQuestionnaireStatusByUserId(pUserModel.getUser_id());
+            mContext.getMainDao().setQuestionnaireStatusByUserId(QuestionnaireStatus.SENT, pUserModel.getUser_id());
         } catch (Exception e) {
             Log.d(TAG, "Ошибка записи в базу данных.");
         }

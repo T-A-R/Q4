@@ -256,9 +256,9 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         return CoreApplication.getQuizerDatabase().getQuizerDao();
     }
 
-    public static QuizerDao getStaticDao() {
-        return CoreApplication.getQuizerDatabase().getQuizerDao();
-    }
+//    public static QuizerDao getStaticDao() {
+//        return CoreApplication.getQuizerDatabase().getQuizerDao();
+//    }
 
     public void showKeyboard() {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
@@ -413,8 +413,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
                         elementItemR.setElementOptionsR(elementOptionsR);
                     }
-//                    getStaticDao().insertElementItemR(elementItemR);
-
                     currentElementsList.add(elementItemR);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -633,21 +631,21 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                               String result,
                               String desc,
                               String data) {
-        AppLogsR appLogsR = new AppLogsR();
-        appLogsR.setLogin(login);
-        appLogsR.setDevice(DeviceUtils.getDeviceInfo());
-        appLogsR.setAppversion(DeviceUtils.getAppVersion());
-        appLogsR.setPlatform(DeviceUtils.getAndroidVersion());
-        appLogsR.setDate(String.valueOf(DateUtils.getCurrentTimeMillis()));
-        appLogsR.setType(type);
-        appLogsR.setObject(object);
-        appLogsR.setAction(action);
-        appLogsR.setResult(result);
-        appLogsR.setDescription(desc);
-        if (data != null)
-            appLogsR.setInfo(data.substring(0, Math.min(data.length(), 5000)));
-
-        getStaticDao().insertAppLogsR(appLogsR);
+//        AppLogsR appLogsR = new AppLogsR();
+//        appLogsR.setLogin(login);
+//        appLogsR.setDevice(DeviceUtils.getDeviceInfo());
+//        appLogsR.setAppversion(DeviceUtils.getAppVersion());
+//        appLogsR.setPlatform(DeviceUtils.getAndroidVersion());
+//        appLogsR.setDate(String.valueOf(DateUtils.getCurrentTimeMillis()));
+//        appLogsR.setType(type);
+//        appLogsR.setObject(object);
+//        appLogsR.setAction(action);
+//        appLogsR.setResult(result);
+//        appLogsR.setDescription(desc);
+//        if (data != null)
+//            appLogsR.setInfo(data.substring(0, Math.min(data.length(), 5000)));
+//
+//        getStaticDao().insertAppLogsR(appLogsR);
     }
 
     public void startRecording(int relativeId, String token) {
@@ -987,7 +985,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public ElementItemR getElement(Integer id) {
         ElementItemR elementItemR = null;
         try {
-//            elementItemR = getStaticDao().getElementById(id, getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
             elementItemR = getMainDao().getElementById(id);
         } catch (Exception e) {
             e.printStackTrace();
@@ -1200,7 +1197,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public List<ElementItemR> getElementItemRList() {
         if (currentElementsList == null) {
-//            currentElementsList = getStaticDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
             currentElementsList = getMainDao().getCurrentElements();
         }
         return currentElementsList;

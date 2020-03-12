@@ -10,16 +10,18 @@ import pro.quizer.quizer3.model.view.ServiceViewModel;
 
 public class ServiceInfoExecutable extends BaseModelExecutable<ServiceViewModel> {
 
-    public ServiceInfoExecutable() {
+    private MainActivity activity;
+    public ServiceInfoExecutable(MainActivity activity) {
         super();
+        this.activity = activity;
     }
 
     @Override
     public ServiceViewModel execute() {
         final ServiceViewModel serviceViewModel = new ServiceViewModel();
-        final List<QuestionnaireDatabaseModelR> notSentQDM = MainActivity.getStaticDao().getQuestionnaireByStatus(QuestionnaireStatus.NOT_SENT);
+        final List<QuestionnaireDatabaseModelR> notSentQDM = activity.getMainDao().getQuestionnaireByStatus(QuestionnaireStatus.NOT_SENT);
         serviceViewModel.setNotSentQuestionnaireModels(notSentQDM);
-        final List<UserModelR> users = MainActivity.getStaticDao().getAllUsers();
+        final List<UserModelR> users = activity.getMainDao().getAllUsers();
         serviceViewModel.setUserModels(users);
         return serviceViewModel;
     }

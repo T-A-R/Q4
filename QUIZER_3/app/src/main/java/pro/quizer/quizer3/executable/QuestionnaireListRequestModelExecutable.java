@@ -19,12 +19,13 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
     private final String mLogin;
     private final String mPassword;
     private final boolean mGetAllQuestionnaires;
+    private MainActivity activity;
 
 
-    public QuestionnaireListRequestModelExecutable(final UserModelR pUserModel, final boolean pGetAllQuestionnaires) {
+    public QuestionnaireListRequestModelExecutable(MainActivity activity, final UserModelR pUserModel, final boolean pGetAllQuestionnaires) {
         super();
-
-        final ConfigModel configModel = pUserModel.getConfigR();
+        this.activity = activity;
+        final ConfigModel configModel = activity.getConfig();
 
         mUserId = pUserModel.getUser_id();
         mLoginAdmin = configModel.getLoginAdmin();
@@ -39,9 +40,9 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
         final QuestionnaireListRequestModel requestModel = new QuestionnaireListRequestModel(mLoginAdmin, mLogin, mPassword);
         List<QuestionnaireDatabaseModelR> questionnaires;
         if (mGetAllQuestionnaires) {
-            questionnaires = MainActivity.getStaticDao().getQuestionnaireByUserId(mUserId);
+            questionnaires = activity.getMainDao().getQuestionnaireByUserId(mUserId);
         } else {
-            questionnaires = MainActivity.getStaticDao().getQuestionnaireByUserIdWithStatus(mUserId, QuestionnaireStatus.NOT_SENT);
+            questionnaires = activity.getMainDao().getQuestionnaireByUserIdWithStatus(mUserId, QuestionnaireStatus.NOT_SENT);
         }
 
         for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : questionnaires) {
@@ -71,7 +72,7 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
 
             );
 
-            final List<ElementDatabaseModelR> elements = MainActivity.getStaticDao().getElementByToken(questionnaireDatabaseModel.getToken());
+            final List<ElementDatabaseModelR> elements = activity.getMainDao().getElementByToken(questionnaireDatabaseModel.getToken());
 
             for (final ElementDatabaseModelR element : elements) {
                 final ElementRequestModel elementRequestModel = new ElementRequestModel(

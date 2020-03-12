@@ -59,17 +59,17 @@ public class QuotaModel implements Serializable {
         return limit;
     }
 
-    public int getDone() {
-        return done + getLocalCount();
+    public int getDone(MainActivity activity) {
+        return done + getLocalCount(activity);
     }
 
     public int getSent() {
         return done;
     }
 
-    private int getLocalCount() {
+    private int getLocalCount(MainActivity activity) {
         if (mLocalCount == null) {
-            mLocalCount = new QuestionnairesCountBySequenceExecutable(userId, userProjectId, getSet()).execute();
+            mLocalCount = new QuestionnairesCountBySequenceExecutable(activity, userId, userProjectId, getSet()).execute();
         }
 
         return mLocalCount;
@@ -143,8 +143,8 @@ public class QuotaModel implements Serializable {
         return mArray;
     }
 
-    public boolean isCompleted() {
-        return getDone() >= getLimit();
+    public boolean isCompleted(MainActivity activity) {
+        return getDone(activity) >= getLimit();
     }
 
     public boolean isCanDisplayed() {

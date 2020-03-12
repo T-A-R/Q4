@@ -63,7 +63,7 @@ public class QuotasViewModelExecutable extends BaseModelExecutable<QuotasViewMod
             final List<QuotaModel> quotas = new ArrayList<>();
 
             for (final QuotaModel quotaModel : pQuotas) {
-                if (!quotaModel.isCompleted()) {
+                if (!quotaModel.isCompleted(mMainActivity)) {
                     quotas.add(quotaModel);
                 }
             }

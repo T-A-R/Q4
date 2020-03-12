@@ -111,9 +111,9 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
 
         QuestionnaireListRequestModel requestModel;
         if (isFromService) {
-            requestModel = new QuestionnaireListRequestModelExecutable(mUserModel, true).execute();
+            requestModel = new QuestionnaireListRequestModelExecutable(mBaseActivity, mUserModel, true).execute();
         } else {
-            requestModel = new QuestionnaireListRequestModelExecutable(mUserModel, false).execute();
+            requestModel = new QuestionnaireListRequestModelExecutable(mBaseActivity, mUserModel, false).execute();
         }
         if (requestModel == null) {
             onSuccess();

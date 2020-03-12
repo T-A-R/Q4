@@ -3,11 +3,6 @@ package pro.quizer.quizer3.database.models;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverters;
-
-import java.util.List;
-
-import pro.quizer.quizer3.database.QuotaBlockConverter;
 
 @Entity
 public class CurrentQuestionnaireR {
@@ -62,9 +57,9 @@ public class CurrentQuestionnaireR {
 //    @TypeConverters({PrevQuestionConverter.class})
 //    private List<PrevElementsR> prev_element_id;
 
-    @ColumnInfo(name = "passed_quota_block")
-    @TypeConverters({QuotaBlockConverter.class})
-    private List<Integer> passed_quota_block;
+//    @ColumnInfo(name = "passed_quota_block")
+//    @TypeConverters({QuotaBlockConverter.class})
+//    private List<Integer> passed_quota_block;
 
     @ColumnInfo(name = "current_element_id")
     private Integer current_element_id;
@@ -90,7 +85,7 @@ public class CurrentQuestionnaireR {
                                  String gps, String gps_network, Long gps_time, Long gps_time_network,
                                  boolean used_fake_gps, Long fake_gps_time, Long auth_time_difference,
                                  Long send_time_difference, Long quota_time_difference, Long question_start_time,
-                                 List<Integer> passed_quota_block,
+//                                 List<Integer> passed_quota_block,
                                  Integer current_element_id) {
         this.token = token;
         this.project_id = project_id;
@@ -107,7 +102,7 @@ public class CurrentQuestionnaireR {
         this.quota_time_difference = quota_time_difference;
         this.question_start_time = question_start_time;
 //        this.prev_element_id = prev_element_id;
-        this.passed_quota_block = passed_quota_block;
+//        this.passed_quota_block = passed_quota_block;
         this.current_element_id = current_element_id;
         this.count_interrupted = 0;
         this.paused = false;
@@ -274,13 +269,13 @@ public class CurrentQuestionnaireR {
         this.has_photo = has_photo;
     }
 
-    public List<Integer> getPassed_quota_block() {
-        return passed_quota_block;
-    }
-
-    public void setPassed_quota_block(List<Integer> passed_quota_block) {
-        this.passed_quota_block = passed_quota_block;
-    }
+//    public List<Integer> getPassed_quota_block() {
+//        return passed_quota_block;
+//    }
+//
+//    public void setPassed_quota_block(List<Integer> passed_quota_block) {
+//        this.passed_quota_block = passed_quota_block;
+//    }
 
     public boolean isIn_aborted_box() {
         return in_aborted_box;

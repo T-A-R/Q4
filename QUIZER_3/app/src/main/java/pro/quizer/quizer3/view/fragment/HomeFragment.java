@@ -817,7 +817,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 e.printStackTrace();
             }
 //            showTime("====== fill quotas 1");
-            offlineQuestionnaires = MainActivity.getStaticDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), activity.getCurrentUser().getUser_project_id(), QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
+            offlineQuestionnaires = activity.getMainDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), activity.getCurrentUser().getUser_project_id(), QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
 //            showTime("====== fill quotas 2");
             if (quotas == null || quotas.isEmpty()) {
                 return tree;
@@ -1007,7 +1007,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 //TODO: Добавить проверку на завершенность анкеты!
 
                 for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : offlineQuestionnaires) {
-                    final List<ElementDatabaseModelR> elements = MainActivity.getStaticDao().getElementByToken(questionnaireDatabaseModel.getToken());
+                    final List<ElementDatabaseModelR> elements = activity.getMainDao().getElementByToken(questionnaireDatabaseModel.getToken());
 //                    int found = 0;
 //                    for (int s = 0; s < sequence.length; s++) {
 //                        for (final ElementDatabaseModelR element : elements) {
@@ -1176,7 +1176,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 pQuotasList = quotasViewModel.getQuotas();
                 if (pQuotasList != null) {
                     for (QuotaModel quota : pQuotasList) {
-                        final int doneInt = quota.getDone();
+                        final int doneInt = quota.getDone(activity);
                         quotas = quotas + doneInt;
                     }
                 }

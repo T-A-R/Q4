@@ -37,7 +37,7 @@ public class CleanUpFilesExecutable extends BaseExecutable {
             files.addAll(FileUtils.getFilesRecursion(FileUtils.JPEG, FileUtils.getPhotosStoragePath(mContext)));
             files.addAll(FileUtils.getFilesRecursion(FileUtils.AMR, FileUtils.getAudioStoragePath(mContext)));
 
-            final List<QuestionnaireDatabaseModelR> allQuestionnaires = MainActivity.getStaticDao().getAllQuestionnaires();
+            final List<QuestionnaireDatabaseModelR> allQuestionnaires = ((MainActivity) mContext).getMainDao().getAllQuestionnaires();
 
             final List<String> allTokens = new ArrayList<>();
 

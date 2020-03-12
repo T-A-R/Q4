@@ -15,13 +15,15 @@ public class QuestionnairesCountBySequenceExecutable extends BaseModelExecutable
     private final Set<Integer> mSet;
     private final int userId;
     private final int userProjectId;
+    private MainActivity activity;
 
 
-    public QuestionnairesCountBySequenceExecutable(final int userId, final int userProjectId, final Set<Integer> pSet) {
+    public QuestionnairesCountBySequenceExecutable(MainActivity activity, final int userId, final int userProjectId, final Set<Integer> pSet) {
         super();
 
         this.userId = userId;
         this.userProjectId = userProjectId;
+        this.activity = activity;
         mSet = pSet;
     }
 
@@ -29,11 +31,11 @@ public class QuestionnairesCountBySequenceExecutable extends BaseModelExecutable
     public Integer execute() {
         int count = 0;
 
-        final List<QuestionnaireDatabaseModelR> sentQuestionnaires = MainActivity.getStaticDao().getQuestionnaireForQuotas(userId, userProjectId,QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
+        final List<QuestionnaireDatabaseModelR> sentQuestionnaires = activity.getMainDao().getQuestionnaireForQuotas(userId, userProjectId,QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
 
         for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : sentQuestionnaires) {
 
-            final List<ElementDatabaseModelR> elements = MainActivity.getStaticDao().getElementByToken(questionnaireDatabaseModel.getToken());
+            final List<ElementDatabaseModelR> elements = activity.getMainDao().getElementByToken(questionnaireDatabaseModel.getToken());
 
             final Set<Integer> set = new HashSet<>();
 

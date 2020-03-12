@@ -138,7 +138,7 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
                                     if (s == sequence.length - 1) {
                                         if (tree[temp][k].getLimit() > quotas.get(q).getLimit()) {
                                             tree[temp][k].setLimit(quotas.get(q).getLimit());
-                                            tree[temp][k].setDone(quotas.get(q).getDone());
+                                            tree[temp][k].setDone(quotas.get(q).getDone(activity));
                                             int done = tree[temp][k].getDone();
 //                                            int local = getLocalQuotas(activity, sequence);
                                             int local = 0;
@@ -163,7 +163,7 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
                         } else {
                             if (tree[i][k].getLimit() > quotas.get(q).getLimit()) {
                                 tree[i][k].setLimit(quotas.get(q).getLimit());
-                                tree[i][k].setDone(quotas.get(q).getDone());
+                                tree[i][k].setDone(quotas.get(q).getDone(activity));
                                 int done = tree[i][k].getDone();
                                 int limit = tree[i][k].getLimit();
 //                                int local = getLocalQuotas(activity, sequence);

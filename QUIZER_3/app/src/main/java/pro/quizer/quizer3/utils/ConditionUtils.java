@@ -179,7 +179,7 @@ public final class ConditionUtils {
             final CurrentQuestionnaireR questionnaireR = pBaseActivity.getCurrentQuestionnaire();
             final String token = questionnaireR.getToken();
 //            Log.d(TAG, "formatCondition: TOKEN " + token);
-            elementsPassed = MainActivity.getStaticDao().getAllElementsPassedR(token);
+            elementsPassed = pBaseActivity.getMainDao().getAllElementsPassedR(token);
         } catch (Exception e) {
             e.printStackTrace();
         }

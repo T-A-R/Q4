@@ -328,6 +328,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             public void onError(Exception pException) {
                 hideScreensaver();
                 showToast(getString(R.string.load_quotas_error) + "\n" + pException.toString());
+                activateButtons();
             }
         }).execute();
     }

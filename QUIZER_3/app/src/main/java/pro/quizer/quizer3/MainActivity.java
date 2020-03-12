@@ -275,6 +275,9 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             mMap = new HashMap<>();
             Log.d(TAG, "Rebuilding Elements Database............. 3");
             getMainDao().clearElementItemR();
+            getMainDao().clearElementContentsR();
+            getMainDao().clearElementOptionsR();
+
             Log.d(TAG, "Rebuilding Elements Database............. 4");
             initDataForRebuild();
             currentElementsList = new ArrayList<>();
@@ -357,16 +360,18 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                     List<ElementContentsR> elementContentsRList = new ArrayList<>();
                     if (contentsList != null && !contentsList.isEmpty()) {
                         for (Contents contents : contentsList) {
-                            elementContentsRList.add(new ElementContentsR(contents.getType(), contents.getData(), contents.getOrder()));
+                            elementContentsRList.add(new ElementContentsR(element.getRelativeID(), contents.getType(), contents.getData(), contents.getOrder()));
                         }
                     }
                     if (elementContentsRList.size() > 0) {
-                        elementItemR.setElementContentsR(elementContentsRList);
+//                        elementItemR.setElementContentsR(elementContentsRList);
+                        getMainDao().insertElementContentsR(elementContentsRList);
                     }
 
                     final OptionsModelNew optionsModelNew = element.getOptions();
                     if (optionsModelNew != null) {
                         ElementOptionsR elementOptionsR = new ElementOptionsR();
+                        elementOptionsR.setRelative_id(element.getRelativeID());
                         elementOptionsR.setData(optionsModelNew.getData());
                         elementOptionsR.setTitle(optionsModelNew.getTitle());
                         if (optionsModelNew.getJump() != null) {
@@ -401,15 +406,15 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                         elementOptionsR.setType_behavior(optionsModelNew.getType_behavior());
                         elementOptionsR.setShow_scale(optionsModelNew.isShow_scale());
                         elementOptionsR.setShow_images(optionsModelNew.isShow_images());
-                        if (optionsModelNew.getStatusImage() != null) {
-                            ElementStatusImageR elementStatusImageR = new ElementStatusImageR();
-                            elementStatusImageR.setType(optionsModelNew.getStatusImage().getType());
-                            elementStatusImageR.setData(optionsModelNew.getStatusImage().getData());
-                            elementStatusImageR.setData_on(optionsModelNew.getStatusImage().getData_on());
-                            elementStatusImageR.setData_off(optionsModelNew.getStatusImage().getData_off());
-
-                            elementOptionsR.setStatus_image(elementStatusImageR);
-                        }
+//                        if (optionsModelNew.getStatusImage() != null) {
+//                            ElementStatusImageR elementStatusImageR = new ElementStatusImageR();
+//                            elementStatusImageR.setType(optionsModelNew.getStatusImage().getType());
+//                            elementStatusImageR.setData(optionsModelNew.getStatusImage().getData());
+//                            elementStatusImageR.setData_on(optionsModelNew.getStatusImage().getData_on());
+//                            elementStatusImageR.setData_off(optionsModelNew.getStatusImage().getData_off());
+//
+//                            elementOptionsR.setStatus_image(elementStatusImageR);
+//                        }
 
                         elementItemR.setElementOptionsR(elementOptionsR);
                     }

@@ -4,16 +4,12 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverters;
-import android.util.Log;
+//import android.arch.persistence.room.TypeConverters;
 
 import java.util.List;
 
-import pro.quizer.quizer3.database.ElementContentsRConverter;
-import pro.quizer.quizer3.database.ElementOptionsRConverter;
-import pro.quizer.quizer3.utils.DateUtils;
+//import pro.quizer.quizer3.database.ElementOptionsRConverter;
 
-import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.view.fragment.SmartFragment.getDao;
 
 //@Entity
@@ -66,13 +62,13 @@ public class ElementItemR {
     @ColumnInfo(name = "limit")
     private Integer limit;
 
-    @ColumnInfo(name = "elementOptionsR")
-    @TypeConverters({ElementOptionsRConverter.class})
-    private ElementOptionsR elementOptionsR;
+//    @ColumnInfo(name = "elementOptionsR")
+//    @TypeConverters({ElementOptionsRConverter.class})
+//    private ElementOptionsR elementOptionsR;
 
-    @ColumnInfo(name = "elementContentsR")
-    @TypeConverters({ElementContentsRConverter.class})
-    private List<ElementContentsR> elementContentsR;
+//    @ColumnInfo(name = "elementContentsR")
+//    @TypeConverters({ElementContentsRConverter.class})
+//    private List<ElementContentsR> elementContentsR;
 
     public ElementItemR() {
         this.was_shown = false;
@@ -82,7 +78,8 @@ public class ElementItemR {
         this.shown_at_id = -102;
     }
 
-    public ElementItemR(String configId, int userId, int projectId, int questionnaireId, String type, String subtype, Integer relative_id, Integer relative_parent_id, ElementOptionsR elementOptionsR, List<ElementContentsR> elementContentsR) {
+//    public ElementItemR(String configId, int userId, int projectId, int questionnaireId, String type, String subtype, Integer relative_id, Integer relative_parent_id, ElementOptionsR elementOptionsR, List<ElementContentsR> elementContentsR) {
+    public ElementItemR(String configId, int userId, int projectId, int questionnaireId, String type, String subtype, Integer relative_id, Integer relative_parent_id) {
         this.configId = configId;
         this.userId = userId;
         this.projectId = projectId;
@@ -91,8 +88,8 @@ public class ElementItemR {
         this.subtype = subtype;
         this.relative_id = relative_id;
         this.relative_parent_id = relative_parent_id;
-        this.elementOptionsR = elementOptionsR;
-        this.elementContentsR = elementContentsR;
+//        this.elementOptionsR = elementOptionsR;
+//        this.elementContentsR = elementContentsR;
         this.was_shown = false;
         this.checked = false;
         this.enabled = true;
@@ -112,8 +109,8 @@ public class ElementItemR {
         newItem.subtype = item.getSubtype();
         newItem.relative_id = item.getRelative_id();
         newItem.relative_parent_id = item.getRelative_parent_id();
-        newItem.elementOptionsR = item.getElementOptionsR();
-        newItem.elementContentsR = item.getElementContentsR();
+//        newItem.elementOptionsR = item.getElementOptionsR();
+//        newItem.elementContentsR = item.getElementContentsR();
         newItem.was_shown = false;
         newItem.checked = false;
         newItem.enabled = true;
@@ -194,20 +191,22 @@ public class ElementItemR {
     }
 
     public ElementOptionsR getElementOptionsR() {
-        return elementOptionsR;
+//        return elementOptionsR;
+        return getDao().getElementOptionsR(relative_id);
     }
 
     public void setElementOptionsR(ElementOptionsR elementOptionsR) {
-        this.elementOptionsR = elementOptionsR;
+//        this.elementOptionsR = elementOptionsR;
+        getDao().insertElementOptionsR(elementOptionsR);
     }
 
-    public List<ElementContentsR> getElementContentsR() {
-        return elementContentsR;
-    }
-
-    public void setElementContentsR(List<ElementContentsR> elementContentsR) {
-        this.elementContentsR = elementContentsR;
-    }
+//    public List<ElementContentsR> getElementContentsR() {
+//        return elementContentsR;
+//    }
+//
+//    public void setElementContentsR(List<ElementContentsR> elementContentsR) {
+//        this.elementContentsR = elementContentsR;
+//    }
 
     public boolean isWas_shown() {
         return was_shown;
@@ -228,16 +227,10 @@ public class ElementItemR {
     public List<ElementItemR> getElements() {
         List<ElementItemR> elements = null;
         try {
-//            elements = getDao().getChildElements(relative_id, userId, projectId);
             elements = getDao().getChildElements(relative_id);
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        if (elements != null)
-//            Log.d(TAG, "getElements in model: answers size= " + elements.size());
-//        for(ElementItemR elementItemR : elements) {
-//            Log.d(TAG, "Element: " + elementItemR.getId() + "/" + elementItemR.getRelative_id());
-//        }
         return elements;
     }
 

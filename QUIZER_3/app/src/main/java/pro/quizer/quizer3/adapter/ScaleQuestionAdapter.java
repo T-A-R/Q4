@@ -149,7 +149,9 @@ public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdap
         }
 
         private void showContent(ElementItemR element, View cont, View text, String type, int position) {
-            final List<ElementContentsR> contents = element.getElementContentsR();
+//            final List<ElementContentsR> contents = element.getElementContentsR();
+            final List<ElementContentsR> contents = mActivity.getMainDao().getElementContentsR(element.getRelative_id());
+
             String data1 = null;
             String data2 = null;
             String data3 = null;

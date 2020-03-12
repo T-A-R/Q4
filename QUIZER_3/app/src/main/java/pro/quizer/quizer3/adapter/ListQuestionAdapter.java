@@ -286,7 +286,8 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         }
 
         private void showContent(ElementItemR element, View cont) {
-            final List<ElementContentsR> contents = element.getElementContentsR();
+//            final List<ElementContentsR> contents = element.getElementContentsR();
+            final List<ElementContentsR> contents = mActivity.getMainDao().getElementContentsR(element.getRelative_id());
 
             if (contents != null && !contents.isEmpty()) {
                 String data1 = null;

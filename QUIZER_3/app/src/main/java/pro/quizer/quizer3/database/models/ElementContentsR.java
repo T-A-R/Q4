@@ -2,16 +2,20 @@ package pro.quizer.quizer3.database.models;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 import pro.quizer.quizer3.Constants;
 
-@Entity
+@Entity(indices = {@Index("relative_id")})
 public class ElementContentsR {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private int id;
+
+    @ColumnInfo(name = "relative_id")
+    private Integer relative_id;
 
     @ColumnInfo(name = "type")
     private String type;
@@ -25,7 +29,8 @@ public class ElementContentsR {
     public ElementContentsR() {
     }
 
-    public ElementContentsR(String type, String data, Integer order) {
+    public ElementContentsR(Integer relative_id, String type, String data, Integer order) {
+        this.relative_id = relative_id;
         this.type = type;
         this.data = data;
         this.order = order;
@@ -61,5 +66,13 @@ public class ElementContentsR {
 
     public void setOrder(Integer order) {
         this.order = order;
+    }
+
+    public Integer getRelative_id() {
+        return relative_id;
+    }
+
+    public void setRelative_id(Integer relative_id) {
+        this.relative_id = relative_id;
     }
 }

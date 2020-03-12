@@ -452,6 +452,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void initViews() {
+        Log.d(TAG, "????????????????? 0: " + currentElement.getRelative_id());
+        Log.d(TAG, "????????????????? 1: " + getDao().getElementOptionsR(currentElement.getRelative_id()));
+        Log.d(TAG, "????????????????? 2: " + currentElement.getElementOptionsR());
         tvQuestion.setText(currentElement.getElementOptionsR().getTitle());
         if (currentElement.getElementOptionsR().getDescription() != null) {
             tvQuestionDesc.setVisibility(View.VISIBLE);
@@ -520,7 +523,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void showContent(ElementItemR element, View cont) {
-        final List<ElementContentsR> contents = element.getElementContentsR();
+//        final List<ElementContentsR> contents = element.getElementContentsR();
+        final List<ElementContentsR> contents = getDao().getElementContentsR(element.getRelative_id());
 
         if (contents != null && !contents.isEmpty()) {
             String data1 = null;

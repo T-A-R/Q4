@@ -4,7 +4,6 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
-import android.arch.persistence.room.TypeConverters;
 
 import java.util.List;
 
@@ -12,8 +11,10 @@ import pro.quizer.quizer3.database.models.ActivationModelR;
 import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
+import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
+import pro.quizer.quizer3.database.models.ElementOptionsR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.OptionsR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
@@ -327,4 +328,22 @@ public interface QuizerDao {
 
     @Query("DELETE FROM PrevElementsR")
     void clearPrevElementsR();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertElementContentsR(List<ElementContentsR> contentsR);
+
+    @Query("SELECT * FROM ElementContentsR WHERE relative_id =:relativeId")
+    List<ElementContentsR> getElementContentsR(Integer relativeId);
+
+    @Query("DELETE FROM ElementContentsR")
+    void clearElementContentsR();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertElementOptionsR(ElementOptionsR elementOptionsR);
+
+    @Query("SELECT * FROM ElementOptionsR WHERE relative_id =:relativeId LIMIT 1")
+    ElementOptionsR getElementOptionsR(Integer relativeId);
+
+    @Query("DELETE FROM ElementOptionsR")
+    void clearElementOptionsR();
 }

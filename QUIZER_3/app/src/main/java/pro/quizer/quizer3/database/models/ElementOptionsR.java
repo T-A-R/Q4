@@ -2,17 +2,21 @@ package pro.quizer.quizer3.database.models;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 
-import pro.quizer.quizer3.database.ElementStatusImageRConverter;
+//import pro.quizer.quizer3.database.ElementStatusImageRConverter;
 
-@Entity
+@Entity(indices = {@Index("relative_id")})
 public class ElementOptionsR {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private int id;
+
+    @ColumnInfo(name = "relative_id")
+    private Integer relative_id;
 
     @ColumnInfo(name = "title")
     private String title;
@@ -80,9 +84,9 @@ public class ElementOptionsR {
     @ColumnInfo(name = "end_value")
     private Integer end_value;
 
-    @ColumnInfo(name = "status_image")
-    @TypeConverters({ElementStatusImageRConverter.class})
-    private ElementStatusImageR status_image;
+//    @ColumnInfo(name = "status_image")
+//    @TypeConverters({ElementStatusImageRConverter.class})
+//    private ElementStatusImageR status_image;
 
     @ColumnInfo(name = "type_behavior")
     private String type_behavior;
@@ -96,14 +100,15 @@ public class ElementOptionsR {
     public ElementOptionsR() {
     }
 
-    public ElementOptionsR(String title, Integer jump, boolean search, String pre_condition,
+    public ElementOptionsR(Integer relative_id, String title, Integer jump, boolean search, String pre_condition,
                            String post_condition, String data, Integer order, Integer number,
                            boolean polyanswer, boolean record_sound, boolean take_photo,
                            String description, boolean flip_cols_and_rows, boolean rotation,
                            boolean fixed_order, Integer min_answers, Integer max_answers,
                            String open_type, String placeholder, boolean unchecker,
-                           Integer start_value, Integer end_value, ElementStatusImageR status_image,
+                           Integer start_value, Integer end_value,
                            String type_behavior, boolean show_scale, boolean show_images) {
+        this.relative_id = relative_id;
         this.title = title;
         this.jump = jump;
         this.search = search;
@@ -126,7 +131,7 @@ public class ElementOptionsR {
         this.unchecker = unchecker;
         this.start_value = start_value;
         this.end_value = end_value;
-        this.status_image = status_image;
+//        this.status_image = status_image;
         this.type_behavior = type_behavior;
         this.show_scale = show_scale;
         this.show_images = show_images;
@@ -316,13 +321,13 @@ public class ElementOptionsR {
         this.end_value = end_value;
     }
 
-    public ElementStatusImageR getStatus_image() {
-        return status_image;
-    }
-
-    public void setStatus_image(ElementStatusImageR status_image) {
-        this.status_image = status_image;
-    }
+//    public ElementStatusImageR getStatus_image() {
+//        return status_image;
+//    }
+//
+//    public void setStatus_image(ElementStatusImageR status_image) {
+//        this.status_image = status_image;
+//    }
 
     public String getType_behavior() {
         return type_behavior;
@@ -346,5 +351,13 @@ public class ElementOptionsR {
 
     public void setShow_images(boolean show_images) {
         this.show_images = show_images;
+    }
+
+    public Integer getRelative_id() {
+        return relative_id;
+    }
+
+    public void setRelative_id(Integer relative_id) {
+        this.relative_id = relative_id;
     }
 }

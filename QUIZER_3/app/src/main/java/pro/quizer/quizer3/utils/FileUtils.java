@@ -114,7 +114,9 @@ public class FileUtils {
     }
 
     private static String getDataStoragePath(final Context pContext) {
-        final File file = pContext.getExternalCacheDir();
+        File file = null;
+        if (pContext != null)
+            file = pContext.getExternalCacheDir();
 
         if (file != null) {
             final String path = file.getAbsolutePath();
@@ -125,7 +127,9 @@ public class FileUtils {
     }
 
     public static String getFilesStoragePath(final Context pContext) {
-        final File file = pContext.getExternalFilesDir(null);
+        File file = null;
+        if (pContext != null)
+        file = pContext.getExternalFilesDir(null);
 
         if (file != null) {
             return file.getAbsolutePath();

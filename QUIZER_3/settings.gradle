@@ -1,1 +1,1 @@
-include ':app', ':subProject:multispinner'
+include ':app', ':subProject:multispinner', ':subProject:hiddencamera'

@@ -1064,4 +1064,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             });
         }
     }
+
+
 }

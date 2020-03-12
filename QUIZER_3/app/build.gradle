@@ -6,8 +6,8 @@ android {
         applicationId "pro.quizer.quizer3"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 3113
-        versionName "3.1.13"
+        versionCode 3114
+        versionName "3.1.14"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         project.ext.set("archivesBaseName", "Quizer_ " + defaultConfig.versionName)
     }
@@ -59,10 +59,10 @@ dependencies {
     implementation "com.cleveroad:adaptivetablelayout:1.1.1"
     implementation 'com.github.vipulasri:timelineview:1.1.2'
     implementation 'commons-net:commons-net:3.6'
-    implementation 'com.kevalpatel2106:hiddencamera:1.3.5'
+//    implementation 'com.kevalpatel2106:hiddencamera:1.3.5'
     implementation 'com.zolad:zoominimageview:1.0.0'
-//    implementation project(':subProject:libmultispinner')
     implementation project(':subProject:multispinner')
+    implementation project(':subProject:hiddencamera')
 //    implementation'com.thomashaertel:multispinner:0.1.1'
 //    implementation 'com.github.pratikbutani:MultiSelectSpinner:-SNAPSHOT'
 

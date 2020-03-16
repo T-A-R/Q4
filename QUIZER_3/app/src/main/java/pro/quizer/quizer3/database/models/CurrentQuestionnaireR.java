@@ -76,9 +76,13 @@ public class CurrentQuestionnaireR {
     @ColumnInfo(name = "has_photo")
     private String has_photo;
 
+    @ColumnInfo(name = "audio_number")
+    private int audio_number;
+
     public CurrentQuestionnaireR() {
         this.count_interrupted = 0;
         this.paused = false;
+        this.audio_number = 1;
     }
 
     public CurrentQuestionnaireR(String token, Integer project_id, Integer user_project_id, Long start_date,
@@ -107,6 +111,7 @@ public class CurrentQuestionnaireR {
         this.count_interrupted = 0;
         this.paused = false;
         this.in_aborted_box = false;
+        this.audio_number = 1;
     }
 
     public int getId() {
@@ -283,5 +288,13 @@ public class CurrentQuestionnaireR {
 
     public void setIn_aborted_box(boolean in_aborted_box) {
         this.in_aborted_box = in_aborted_box;
+    }
+
+    public int getAudio_number() {
+        return audio_number;
+    }
+
+    public void setAudio_number(int audio_number) {
+        this.audio_number = audio_number;
     }
 }

@@ -24,7 +24,7 @@ public class FileUtils {
 
     public static String FILE_NAME_DIVIDER = "^";
     private static final String PHOTO_NAME_JPEG_TEMPLATE = "%1$s" + FILE_NAME_DIVIDER + "%2$s" + FILE_NAME_DIVIDER + "%3$s" + FILE_NAME_DIVIDER + "%4$s" + FILE_NAME_DIVIDER + "%5$s.jpeg";
-    private static final String AUDIO_NAME_AMR_TEMPLATE = "%1$s/%2$s" + FILE_NAME_DIVIDER + "%3$s" + FILE_NAME_DIVIDER + "%4$s" + FILE_NAME_DIVIDER + "%5$s" + FILE_NAME_DIVIDER + "%6$s.amr";
+    private static final String AUDIO_NAME_AMR_TEMPLATE = "%1$s/%2$s" + FILE_NAME_DIVIDER + "%3$s" + FILE_NAME_DIVIDER + "%4$s" + FILE_NAME_DIVIDER + "%5$s" + FILE_NAME_DIVIDER + "%6$s" + FILE_NAME_DIVIDER + "%7$s" + FILE_NAME_DIVIDER + "%8$s.amr";
 
     public static final String JSON = ".json";
     public static final String AMR = ".amr";
@@ -260,17 +260,17 @@ public class FileUtils {
         return String.format(PHOTO_NAME_JPEG_TEMPLATE, mLoginAdmin, mProjectId, mUserLogin, mToken, mRelativeId);
     }
 
-    public static String generateAudioFileName(final Context pContext, final int pUserId, final String mLoginAdmin, final int mProjectId, final String mUserLogin, final String mToken) {
-        return generateAudioFileName(pContext, pUserId, mLoginAdmin, mProjectId, mUserLogin, mToken, 0);
-    }
+//    public static String generateAudioFileName(final Context pContext, final int pUserId, final String mLoginAdmin, final int mProjectId, final String mUserLogin, final String mToken) {
+//        return generateAudioFileName(pContext, pUserId, mLoginAdmin, mProjectId, mUserLogin, mToken, 0);
+//    }
 
-    public static String generateAudioFileName(final Context pContext, final int pUserId, final String mLoginAdmin, final int mProjectId, final String mUserLogin, final String mToken, final int mRelativeId) {
+    public static String generateAudioFileName(final Context pContext, final int pUserId, final String mLoginAdmin, final int mProjectId, final String mUserLogin, final String mToken, final int mRelativeId, final int number, Long time) {
         final String pCurrentFilePath = getAudioStoragePath(pContext) + FOLDER_DIVIDER + pUserId + FOLDER_DIVIDER;
 
         createFolderIfNotExist(pCurrentFilePath);
 
-//        return String.format(AUDIO_NAME_AMR_TEMPLATE, pUserId, mLoginAdmin, mProjectId, mUserLogin, mToken, mRelativeId, DateUtils.getCurrentTimeMillis());
-        return String.format(AUDIO_NAME_AMR_TEMPLATE, pUserId, mLoginAdmin, mProjectId, mUserLogin, mToken, mRelativeId);
+        return String.format(AUDIO_NAME_AMR_TEMPLATE, pUserId, mLoginAdmin, mProjectId, mUserLogin, mToken, mRelativeId, number, time);
+//        return String.format(AUDIO_NAME_AMR_TEMPLATE, pUserId, mLoginAdmin, mProjectId, mUserLogin, mToken, mRelativeId);
     }
 
     public static void saveToFile(String data, String fileName) {

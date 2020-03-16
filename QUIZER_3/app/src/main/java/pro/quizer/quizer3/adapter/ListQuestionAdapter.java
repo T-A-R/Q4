@@ -68,6 +68,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     private Context mContext;
     private String textBefore;
     private String textAfter;
+    private QuotaUtils quotaUtils;
 
     public ListQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> passedQuotaBlock, ElementItemR[][] quotaTree, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
@@ -75,6 +76,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         this.passedQuotaBlock = passedQuotaBlock;
         this.quotaTree = quotaTree;
         this.mContext = context;
+        this.quotaUtils = new QuotaUtils();
 
         if (question.getElementOptionsR() != null && question.getElementOptionsR().isRotation()) {
             List<ElementItemR> shuffleList = new ArrayList<>();
@@ -255,7 +257,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 openAnswerCont.setVisibility(View.VISIBLE);
             }
 
-            if (!QuotaUtils.canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder())) {
+            if (!quotaUtils.canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder())) {
                 answerTitle.setTextColor(Color.parseColor("#AAAAAA"));
                 item.setEnabled(false);
 //                Log.d(TAG, "ELEMENT DISABLED: " + item.getElementOptionsR().getTitle());

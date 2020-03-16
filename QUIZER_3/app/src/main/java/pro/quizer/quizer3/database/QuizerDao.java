@@ -269,6 +269,9 @@ public interface QuizerDao {
     @Query("UPDATE CurrentQuestionnaireR SET question_start_time = :time")
     void setQuestionTime(Long time);
 
+    @Query("UPDATE CurrentQuestionnaireR SET audio_number = :number")
+    void setAudioNumber(int number);
+
     @Query("UPDATE CurrentQuestionnaireR SET current_element_id = :id ")
     void setCurrentElement(Integer id);
 

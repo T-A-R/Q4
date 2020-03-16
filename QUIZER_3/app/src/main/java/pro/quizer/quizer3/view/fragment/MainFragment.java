@@ -187,7 +187,7 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
 
     @Override
     public void onClick(View view) {
-        MainActivity activity = (MainActivity) getActivity();
+        MainActivity activity = getMainActivity();
         try {
             addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.stop_audio_recording), Constants.LogResult.ATTEMPT, getString(R.string.stop_audio_recording_attempt), null);
             activity.stopRecording();

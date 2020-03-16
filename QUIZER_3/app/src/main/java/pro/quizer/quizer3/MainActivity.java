@@ -135,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private AlertSmsTask mAlertSmsTask;
     private ConfigModel mConfig;
     private boolean isHomeFragmentStarted = false;
+    private int audioNumber = 1;
+    private Long audioTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -656,9 +658,16 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public void startRecording(int relativeId, String token) {
         if (mIsMediaConnected) {
             Log.d(TAG, "******************* startRecording: **********************");
-
+            try {
+                audioNumber = getCurrentQuestionnaireForce().getAudio_number();
+                getMainDao().setAudioNumber(audioNumber + 1);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            audioTime = DateUtils.getCurrentTimeMillis();
             mToken = token;
             mAudioRelativeId = relativeId;
+
             final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
             if (mediaCntrlr == null) {
                 return;
@@ -780,7 +789,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         mLoginAdmin = getConfig().getLoginAdmin();
         mProjectId = getConfig().getProjectInfo().getProjectId();
         mLogin = mCurrentUser.getLogin();
-        AudioService.mFileName = FileUtils.generateAudioFileName(this, mUserId, mLoginAdmin, mProjectId, mLogin, mToken, mAudioRelativeId);
+        AudioService.mFileName = FileUtils.generateAudioFileName(this, mUserId, mLoginAdmin, mProjectId, mLogin, mToken, mAudioRelativeId, audioNumber, audioTime);
 
         final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
         if (mediaCntrlr != null) {

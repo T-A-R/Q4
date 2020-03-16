@@ -223,7 +223,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             }
         });
         toolbar.showInfoView();
-        st("after init toolbar");
 
         cont.startAnimation(Anim.getAppear(getContext()));
         btnNext.startAnimation(Anim.getAppearSlide(getContext(), 500));
@@ -231,7 +230,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         btnExit.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
         MainFragment.enableSideMenu(false);
-        st("after init side menu");
 
         showScreensaver("Подождите, \nидет загрузка элемента анкеты", true);
         try {
@@ -243,34 +241,23 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             prevList = new ArrayList<>();
         }
         initCurrentElements();
-        st("after init elements");
         loadResumedData();
-        st("after load data");
         initQuestion();
-        st("after init question");
-//        if (conditions) {
         if (currentElement != null) {
             if (checkConditions(currentElement)) {
-                st("after element cond");
+                startRecording();
                 setQuestionType();
-                st("after set type");
                 initViews();
-                st("after init views");
                 updateCurrentQuestionnaire();
-                st("after update current quiz");
                 initRecyclerView();
-                st("after init recycler");
                 if (isRestored || wasReloaded()) {
                     loadSavedData();
-                    st("after load old data");
                 }
             }
             hideScreensaver();
             activateButtons();
-            st("after act buttons");
             try {
                 getMainActivity().activateExitReminder();
-                st("after init EXIT");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -322,6 +309,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     return;
                 }
                 fragment.setStartElement(prevElementId, true);
+                stopRecording();
                 replaceFragmentBack(fragment);
             } else {
                 showExitPoolAlertDialog();
@@ -348,6 +336,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
                     TransFragment fragment = new TransFragment();
                     fragment.setStartElement(getAbortedBoxRelativeId());
+                    stopRecording();
                     replaceFragment(fragment);
                 } else {
                     showExitPoolAlertDialog();
@@ -452,9 +441,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void initViews() {
-        Log.d(TAG, "????????????????? 0: " + currentElement.getRelative_id());
-        Log.d(TAG, "????????????????? 1: " + getDao().getElementOptionsR(currentElement.getRelative_id()));
-        Log.d(TAG, "????????????????? 2: " + currentElement.getElementOptionsR());
         tvQuestion.setText(currentElement.getElementOptionsR().getTitle());
         if (currentElement.getElementOptionsR().getDescription() != null) {
             tvQuestionDesc.setVisibility(View.VISIBLE);
@@ -468,7 +454,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 e.printStackTrace();
             }
             if (parentElement != null) {
-//                Log.d(TAG, "????????????????: " + parentElement.getElementOptionsR().getTitle().length());
                 if (parentElement.getType().equals(ElementType.BOX)
                         && parentElement.getElementOptionsR() != null
                         && parentElement.getElementOptionsR().getTitle() != null
@@ -831,6 +816,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private void showNextFragment(int id) {
         TransFragment fragment = new TransFragment();
         fragment.setStartElement(id);
+        stopRecording();
         replaceFragment(fragment);
     }
 
@@ -1418,7 +1404,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     public boolean saveQuestionnaire(boolean aborted) {
-        stopRecording();
+        stopAllRecording();
 //        Log.d(TAG, "!!!!!!!!!!!!!!!!11111111 saveQuestionnaire: ");
         if (!aborted || (getMainActivity().getConfig().isSaveAborted() && aborted)) {
             if (saveQuestionnaireToDatabase(getQuestionnaire(), aborted)) {
@@ -1441,7 +1427,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     public void exitQuestionnaire() {
-        stopRecording();
+        stopAllRecording();
         try {
             getDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");
             getDao().clearCurrentQuestionnaireR();
@@ -1451,12 +1437,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        getMainActivity().setHomeFragmentStarted(false);
-//        Log.d(TAG, "start Home: 3");
+
         replaceFragment(new HomeFragment());
     }
 
-    private void stopRecording() {
+    private void stopAllRecording() {
         try {
             addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getMainActivity().getString(R.string.stop_audio_recording), Constants.LogResult.ATTEMPT, getString(R.string.stop_audio_recording_attempt), null);
             getMainActivity().stopRecording();
@@ -1687,6 +1672,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             if (checkConditions(getElement(nextElementId))) {
                 TransFragment fragment = new TransFragment();
                 fragment.setStartElement(nextElementId);
+                stopRecording();
                 replaceFragment(fragment);
                 st("calling new fragment");
             } else {
@@ -1694,6 +1680,28 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             }
         } else {
             activateButtons();
+        }
+    }
+
+    private void startRecording() {
+        if (getMainActivity().getConfig().isAudio() && currentElement.getElementOptionsR().isRecord_sound() && !getMainActivity().getConfig().isAudioRecordAll()) {
+            MainActivity activity = (MainActivity) getActivity();
+            try {
+                Objects.requireNonNull(activity).startRecording(currentElement.getRelative_id(), getQuestionnaire().getToken());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void stopRecording() {
+        if (getMainActivity().getConfig().isAudio() && currentElement.getElementOptionsR().isRecord_sound() && !getMainActivity().getConfig().isAudioRecordAll()) {
+            MainActivity activity = (MainActivity) getActivity();
+            try {
+                Objects.requireNonNull(activity).stopRecording();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

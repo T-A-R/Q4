@@ -830,6 +830,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 answerStates = adapterScale.getAnswers();
             } else {
                 answerStates = adapterList.getAnswers();
+                for( AnswerState state : answerStates) {
+                    Log.d(TAG, "saveElement : " + state.getData() + " " + state.isChecked());
+                }
             }
             st("init SAVE 1");
             if (answerStates != null && notEmpty(answerStates)) {
@@ -1292,7 +1295,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             adapterList.setAnswers(answerStatesRestored);
             adapterList.setPressed(true);
             adapterList.setRestored(true);
-            adapterList.setLastSelectedPosition(lastSelectedPosition);
+//            adapterList.setLastSelectedPosition(lastSelectedPosition);
             adapterList.notifyDataSetChanged();
 
         } else if (answerType.equals(ElementSubtype.SELECT)) {

@@ -179,10 +179,10 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             }
         }
 
-        holder.myCustomEditTextListener.updatePosition(holder.getAdapterPosition());
+        holder.myCustomEditTextListener.updatePosition(position);
 //        showAnswers();
 //        Log.d(TAG, "(1) !!!===!!!: " + holder.getAdapterPosition() + "/" + position + " " + answersState.get(position).getData());
-        holder.answerEditText.setText(answersState.get(holder.getAdapterPosition()).getData());
+        holder.answerEditText.setText(answersState.get(position).getData());
 
     }
 
@@ -495,12 +495,12 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             if (charSequence.length() == 1) canDelete = true;
             else canDelete = false;
             if (lastSelectedPosition != -1) {
-//                for(int k =0; k < answersState.size();k++) {
-//                    Log.d(TAG, "state: " + k + " " + answersState.get(k).getData());
-//                }
-//                Log.d(TAG, "beforeTextChanged: " + lastSelectedPosition);
-//                Log.d(TAG, "beforeTextChanged: textBefore 1" + answersState.get(lastSelectedPosition).getData());
-                textBefore = answersState.get(lastSelectedPosition).getData();
+                for(int k =0; k < answersState.size();k++) {
+                    Log.d(TAG, "state: " + k + " " + answersState.get(k).getData());
+                }
+                Log.d(TAG, "beforeTextChanged: position " + lastSelectedPosition);
+                Log.d(TAG, "beforeTextChanged: textBefore " + answersState.get(lastSelectedPosition).getData());
+                textBefore = answersState.get(getLastSelectedPosition()).getData();
 
             }
 //            Log.d(TAG, "beforeTextChanged: textBefore 2" + textBefore);
@@ -518,11 +518,11 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                     answersState.get(lastSelectedPosition).setData(charSequence.toString());
                 }
 //            mDataset[position] = charSequence.toString();
-//            if (lastSelectedPosition != -1) {
-//                Log.d(TAG, "onTextChanged canDelete: " + canDelete);
-//                Log.d(TAG, "onTextChanged charSequence: " + lastSelectedPosition + " " + charSequence.toString());
-//                Log.d(TAG, "onTextChanged answersState: " + lastSelectedPosition + " " + answersState.get(lastSelectedPosition).getData());
-//            }
+            if (lastSelectedPosition != -1) {
+                Log.d(TAG, "onTextChanged canDelete: " + canDelete);
+                Log.d(TAG, "onTextChanged charSequence: " + lastSelectedPosition + " " + charSequence.toString());
+                Log.d(TAG, "onTextChanged answersState: " + lastSelectedPosition + " " + answersState.get(lastSelectedPosition).getData());
+            }
         }
 
         @Override

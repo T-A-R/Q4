@@ -216,6 +216,7 @@
     <string name="record_audio_error_player_start">Can\'t start player</string>
     <string name="record_audio_recording">Recording..</string>
     <string name="record_audio_error_recorder_start">Can\'t start recorder</string>
+    <string name="record_audio_error_microphone">Can\'t start microphone</string>
     <string name="record_audio_error_recorder_stop">No valid audio/video data has been received</string>
 
     <string name="exit_message">Для выхода нажмите \"Назад\" еще раз</string>
@@ -271,6 +272,7 @@
     <string name="view_switch_hide_completed_quotas">Скрыть выполненные</string>
     <string name="view_switch_auto_zoom">Автоматическое маштабирование шрифтов</string>
     <string name="view_switch_speed">Режим производительности таблиц</string>
+    <string name="view_switch_memory">Проверка свободного места</string>
     <string name="view_hint_search">Поиск</string>
     <string name="quota_not_renew_after_send">Квота не обновлена после последней отправки анкеты.</string>
     <string name="quota_not_renew_after_finish">Квота не обновлена после последнего завершения анкеты.</string>
@@ -293,6 +295,7 @@
     <string name="view_unsent_count_audio">Количество неотправленных аудио файлов: %1$s</string>
     <string name="view_unsent_count_photo">Количество неотправленных фото файлов: %1$s</string>
     <string name="button_delete_users">Удалить пользователей</string>
+    <string name="button_delete_files">Удалить аудио и фото</string>
     <string name="button_clear_db">Очистить базу данных</string>
     <string name="clear_db_title">Очистка базы данных</string>
     <string name="button_delete_user">Удалить пользователя</string>
@@ -383,6 +386,7 @@
     <string name="cant_show_dialog">Невозможно отобразить диалог</string>
     <string name="view_reopen">Развернуть...</string>
     <string name="data_changed">Данные изменены</string>
+    <string name="start_audio_error_check_microphone">Невозможно начать запись аудио. Возможно микрофон занят другим приложением</string>
 
 
 </resources>

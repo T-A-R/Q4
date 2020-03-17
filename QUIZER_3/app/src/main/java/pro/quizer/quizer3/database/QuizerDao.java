@@ -314,6 +314,9 @@ public interface QuizerDao {
     @Query("UPDATE SettingsR SET table_speed = :data")
     void setSettingsTableSpeed(boolean data);
 
+    @Query("UPDATE SettingsR SET memory_check = :data")
+    void setSettingsMemoryCheck(boolean data);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertToken(TokensCounterR token);
 

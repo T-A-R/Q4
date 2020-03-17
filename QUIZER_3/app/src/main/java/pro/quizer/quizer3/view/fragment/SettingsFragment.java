@@ -66,6 +66,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
     private FrameLayout mSpinnerFrame;
     private Switch mAutoZoomSwitch;
     private Switch mSpeedSwitch;
+    private Switch mMemorySwitch;
 
     private MainActivity mBaseActivity;
     private int answerMargin;
@@ -115,6 +116,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         mUpdateConfig = findViewById(R.id.update_config);
         mAutoZoomSwitch = findViewById(R.id.auto_zoom_switch);
         mSpeedSwitch = findViewById(R.id.speed_switch);
+        mMemorySwitch = findViewById(R.id.memory_switch);
 
 
 //        LinearLayout textSettingsCont = findViewById(R.id.text_settings_cont);
@@ -175,6 +177,15 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 
                 mBaseActivity.setTableSpeedMode(b);
+            }
+        });
+
+        mMemorySwitch.setChecked(mBaseActivity.isMemoryCheckMode());
+        mMemorySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+                mBaseActivity.setMemoryCheckMode(b);
             }
         });
 

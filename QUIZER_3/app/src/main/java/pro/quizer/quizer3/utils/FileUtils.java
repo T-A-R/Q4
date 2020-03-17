@@ -3,6 +3,7 @@ package pro.quizer.quizer3.utils;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.StatFs;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 
@@ -19,6 +20,8 @@ import java.util.Queue;
 import pro.quizer.quizer3.Constants;
 
 import pro.quizer.quizer3.MainActivity;
+
+import static pro.quizer.quizer3.Constants.LogResult.ERROR;
 
 public class FileUtils {
 
@@ -129,7 +132,7 @@ public class FileUtils {
     public static String getFilesStoragePath(final Context pContext) {
         File file = null;
         if (pContext != null)
-        file = pContext.getExternalFilesDir(null);
+            file = pContext.getExternalFilesDir(null);
 
         if (file != null) {
             return file.getAbsolutePath();
@@ -288,5 +291,120 @@ public class FileUtils {
 
     public static Uri getUriForFile(Context context, File file) {
         return FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", file);
+    }
+
+    public static boolean externalMemoryAvailable() {
+        return android.os.Environment.getExternalStorageState().equals(
+                android.os.Environment.MEDIA_MOUNTED);
+    }
+
+    public static String getAvailableInternalMemorySize() {
+        File path = Environment.getDataDirectory();
+        StatFs stat = new StatFs(path.getPath());
+        long blockSize = 0L;
+        long availableBlocks = 0L;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            blockSize = stat.getBlockSizeLong();
+            availableBlocks = stat.getAvailableBlocksLong();
+        } else {
+            blockSize = (long) stat.getBlockSize();
+            availableBlocks = (long) stat.getAvailableBlocks();
+        }
+
+        return formatSize(availableBlocks * blockSize);
+    }
+
+    public static long getAvailableInternalMemorySizeLong() {
+        File path = Environment.getDataDirectory();
+        StatFs stat = new StatFs(path.getPath());
+        long blockSize = 0L;
+        long availableBlocks = 0L;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            blockSize = stat.getBlockSizeLong();
+            availableBlocks = stat.getAvailableBlocksLong();
+        } else {
+            blockSize = (long) stat.getBlockSize();
+            availableBlocks = (long) stat.getAvailableBlocks();
+        }
+
+        return (availableBlocks * blockSize);
+    }
+
+    public static String getTotalInternalMemorySize() {
+        File path = Environment.getDataDirectory();
+        StatFs stat = new StatFs(path.getPath());
+        long blockSize = 0L;
+        long totalBlocks = 0L;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            blockSize = stat.getBlockSizeLong();
+            totalBlocks = stat.getBlockCountLong();
+        } else {
+            blockSize = (long) stat.getBlockSize();
+            totalBlocks = (long) stat.getBlockCount();
+        }
+
+        return formatSize(totalBlocks * blockSize);
+    }
+
+    public static String getAvailableExternalMemorySize() {
+        if (externalMemoryAvailable()) {
+            File path = Environment.getExternalStorageDirectory();
+            StatFs stat = new StatFs(path.getPath());
+            long blockSize = 0L;
+            long availableBlocks = 0L;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                blockSize = stat.getBlockSizeLong();
+                availableBlocks = stat.getAvailableBlocksLong();
+            } else {
+                blockSize = (long) stat.getBlockSize();
+                availableBlocks = (long) stat.getAvailableBlocks();
+            }
+            return formatSize(availableBlocks * blockSize);
+        } else {
+            return ERROR;
+        }
+    }
+
+    public static String getTotalExternalMemorySize() {
+        if (externalMemoryAvailable()) {
+            File path = Environment.getExternalStorageDirectory();
+            StatFs stat = new StatFs(path.getPath());
+            long blockSize = 0L;
+            long totalBlocks = 0L;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                blockSize = stat.getBlockSizeLong();
+                totalBlocks = stat.getBlockCountLong();
+            } else {
+                blockSize = (long) stat.getBlockSize();
+                totalBlocks = (long) stat.getBlockCount();
+            }
+            return formatSize(totalBlocks * blockSize);
+        } else {
+            return ERROR;
+        }
+    }
+
+    public static String formatSize(long size) {
+        String suffix = null;
+
+        if (size >= 1024) {
+            suffix = "KB";
+            size /= 1024;
+            if (size >= 1024) {
+                suffix = "MB";
+                size /= 1024;
+            }
+        }
+
+        StringBuilder resultBuffer = new StringBuilder(Long.toString(size));
+
+        int commaOffset = resultBuffer.length() - 3;
+        while (commaOffset > 0) {
+            resultBuffer.insert(commaOffset, ',');
+            commaOffset -= 3;
+        }
+
+        if (suffix != null) resultBuffer.append(suffix);
+        return resultBuffer.toString();
     }
 }

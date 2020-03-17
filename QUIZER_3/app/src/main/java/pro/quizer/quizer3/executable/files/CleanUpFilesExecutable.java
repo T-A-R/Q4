@@ -54,6 +54,7 @@ public class CleanUpFilesExecutable extends BaseExecutable {
                     Log.d("Clean up file", (isDeleted ? "NOT" : "") + " DELETED: " + file.getAbsolutePath());
                 }
             }
+            onSuccess();
         } else {
             onError(new Exception("Внутренняя ошибка приложения CleanUpFilesExecutable 1"));
         }

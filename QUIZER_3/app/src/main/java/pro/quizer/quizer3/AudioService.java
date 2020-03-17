@@ -861,8 +861,20 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                     if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
                         audioFilesPath.mkdirs();
                         recorder.setOutputFile(recFilePath);
-                        recorder.prepare();
-                        recorder.start();
+                        try {
+                            recorder.prepare();
+                            recorder.start();
+                        } catch (IOException e) {
+                            actionStopRecording();
+                            setPBState(PlaybackStateCompat.STATE_ERROR,
+                                    PlaybackStateCompat.ERROR_CODE_UNKNOWN_ERROR,
+                                    getString(R.string.record_audio_error_microphone), null);
+                        } catch (IllegalStateException e) {
+                            actionStopRecording();
+                            setPBState(PlaybackStateCompat.STATE_ERROR,
+                                    PlaybackStateCompat.ERROR_CODE_UNKNOWN_ERROR,
+                                    getString(R.string.record_audio_error_microphone), null);
+                        }
                     } else {
                         throw new IOException("Wrong External Storage State: "
                                 + Environment.getExternalStorageState());

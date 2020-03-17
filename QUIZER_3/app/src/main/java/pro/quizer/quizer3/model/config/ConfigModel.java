@@ -1,8 +1,12 @@
 package pro.quizer.quizer3.model.config;
 
+import android.util.Log;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+
+import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class ConfigModel implements Serializable {
 
@@ -35,6 +39,9 @@ public class ConfigModel implements Serializable {
 
     @SerializedName("force_gps")
     private boolean force_gps;
+
+    @SerializedName("is_force_audio")
+    private Boolean is_force_audio;
 
     @SerializedName("force_auto_time")
     private boolean force_auto_time;
@@ -161,6 +168,16 @@ public class ConfigModel implements Serializable {
 
     public boolean isSaveAborted() {
         return save_aborted;
+    }
+
+    public boolean isForce_Audio() {
+        if (is_force_audio == null)
+        {
+            Log.d(TAG, "isForce_Audio: NO DATA!");
+            return false;
+        }
+        else
+            return is_force_audio;
     }
 
 }

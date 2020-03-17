@@ -60,6 +60,7 @@ import pro.quizer.quizer3.model.quota.QuotaModel;
 import pro.quizer.quizer3.model.view.QuotasViewModel;
 import pro.quizer.quizer3.model.view.SyncViewModel;
 import pro.quizer.quizer3.utils.DateUtils;
+import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.GPSModel;
 import pro.quizer.quizer3.utils.GpsUtils;
@@ -192,29 +193,29 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 //            Log.d(TAG, "??????????????? onReady: " + isStarted);
 //            getMainActivity().setHomeFragmentStarted(true);
 
-            new SendQuestionnairesByUserModelExecutable(getMainActivity(), mUserModel, new ICallback() {
-                @Override
-                public void onStarting() {
-                    showScreensaver(true);
+        new SendQuestionnairesByUserModelExecutable(getMainActivity(), mUserModel, new ICallback() {
+            @Override
+            public void onStarting() {
+                showScreensaver(true);
 //                Log.d(TAG, "SendQuestionnairesByUserModelExecutable onStarting: ");
+            }
+
+            @Override
+            public void onSuccess() {
+                if (!isQuotaUpdated) {
+                    quotaUpdate();
                 }
 
-                @Override
-                public void onSuccess() {
-                    if (!isQuotaUpdated) {
-                        quotaUpdate();
-                    }
+                hideScreensaver();
+                initSyncInfoViews();
+            }
 
-                    hideScreensaver();
-                    initSyncInfoViews();
-                }
-
-                @Override
-                public void onError(Exception pException) {
-                    makeQuotaTree();
-                    hideScreensaver();
-                }
-            }, false).execute();
+            @Override
+            public void onError(Exception pException) {
+                makeQuotaTree();
+                hideScreensaver();
+            }
+        }, false).execute();
 //        } else {
 //            activateButtons();
 //        }
@@ -348,7 +349,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     private void startQuestionnaire() {
         Log.d(TAG, "startQuestionnaire: ZERO");
-        if (checkTime() && checkGps()) {
+        if (checkTime() && checkGps() && checkMemory()) {
             showScreensaver("Подождите, \nидет запуск анкеты", true);
             CompletableFuture.supplyAsync(() -> {
                 Log.d(TAG, "startQuestionnaire: START...");
@@ -429,6 +430,21 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 } else return false;
             }).thenApplyAsync(result -> {
                 if (result) {
+                    startRecording();
+                    if (activity.ismIsAudioStarted()) {
+                        return true;
+                    } else {
+                        if (activity.getConfig().isForce_Audio()) {
+                            showToast("Не удалось начать запись аудио. Продолжение невозможно.");
+                            return false;
+                        } else {
+                            showToast("Не удалось начать запись аудио.");
+                            return true;
+                        }
+                    }
+                } else return false;
+            }).thenApplyAsync(result -> {
+                if (result) {
                     try {
                         Log.d(TAG, "startQuestionnaire: insertCurrentQuestionnaireR() completed.");
 //                        for (ElementItemR elementItemR : getCurrentElements()) {
@@ -443,8 +459,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 //                            activity.getMap(true);
 //                        }
 //                        Log.d(TAG, "??????????????????????????: 1");
-
-                        startRecording();
 
 //                        Log.d(TAG, "??????????????????????????: 2");
                         getDao().updateQuestionnaireStart(true, getCurrentUserId());
@@ -538,6 +552,17 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             alertDialog.show();
         }
+    }
+
+    private boolean checkMemory() {
+        if (activity.isMemoryCheckMode()) {
+            long memory = FileUtils.getAvailableInternalMemorySizeLong();
+            if (memory < 100000000) { // ~100 Мб в байтах!
+                showToast("Недостаточно свободного места на устройтве. Пожалуйста освободите больше места.");
+                return false;
+            }
+            return true;
+        } else return true;
     }
 
     private boolean checkGps() {

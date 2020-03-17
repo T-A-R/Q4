@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private boolean mSpeedMode;
     private boolean mAutoZoom;
     private boolean hasRotationContainer = false;
+    private boolean mIsAudioStarted = false;
     private static Long alphaTime = 0L;
 
     private int projectId;
@@ -347,7 +348,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             mMap.put(element.getRelativeID(), element);
 
             if (rebuild) {
-                Log.d(TAG, "generateMap: TRUE");
+//                Log.d(TAG, "generateMap: TRUE");
                 try {
                     ElementItemR elementItemR = new ElementItemR();
                     elementItemR.setConfigId(configId);
@@ -657,6 +658,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void startRecording(int relativeId, String token) {
         if (mIsMediaConnected) {
+            mIsAudioStarted = true;
             Log.d(TAG, "******************* startRecording: **********************");
             try {
                 audioNumber = getCurrentQuestionnaireForce().getAudio_number();
@@ -670,10 +672,12 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
             final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
             if (mediaCntrlr == null) {
+                mIsAudioStarted = false;
                 return;
             }
             final String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
             if (mediaID == null) {
+                mIsAudioStarted = false;
                 return;
             }
             final int pbState = mediaCntrlr.getPlaybackState().getState();
@@ -681,6 +685,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             if (pbState == PlaybackStateCompat.STATE_ERROR) {
                 callStopReady();
                 callRecord();
+                showToastfromActivity(getString(R.string.start_audio_error_check_microphone));
+                mIsAudioStarted = false;
                 return;
             }
 
@@ -1260,6 +1266,16 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void setTableSpeedMode(boolean speed) {
         getMainDao().setSettingsTableSpeed(speed);
+        getSettings();
+    }
+
+    public boolean isMemoryCheckMode() {
+        return getSettings().isMemory_check();
+    }
+
+    public void setMemoryCheckMode(boolean check) {
+        getMainDao().setSettingsMemoryCheck(check);
+        getSettings();
     }
 
     public ConfigModel getConfig() {
@@ -1286,5 +1302,13 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void setHomeFragmentStarted(boolean homeFragmentStarted) {
         isHomeFragmentStarted = homeFragmentStarted;
+    }
+
+    public boolean ismIsAudioStarted() {
+        return mIsAudioStarted;
+    }
+
+    public void setmIsAudioStarted(boolean mIsAudioStarted) {
+        this.mIsAudioStarted = mIsAudioStarted;
     }
 }

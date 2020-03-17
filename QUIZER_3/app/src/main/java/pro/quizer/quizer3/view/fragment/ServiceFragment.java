@@ -40,6 +40,7 @@ public class ServiceFragment extends ScreenFragment {
     private Button mSendDataButton;
     private Button mSendAudioButton;
     private Button mSendPhotoButton;
+    private Button mClearFiles;
     private Button mClearDbButton;
     private Button mUploadDataButton;
     private Button mUploadFTPDataButton;
@@ -78,6 +79,7 @@ public class ServiceFragment extends ScreenFragment {
         mSendAudioButton = findViewById(R.id.send_audio);
         mSendPhotoButton = findViewById(R.id.send_photo);
         mClearDbButton = findViewById(R.id.clear_db);
+        mClearFiles = findViewById(R.id.clear_files);
         mUploadDataButton = findViewById(R.id.upload_data);
         mUploadFTPDataButton = findViewById(R.id.upload_ftp_data);
         mLogsButton = findViewById(R.id.logs_btn);
@@ -102,6 +104,7 @@ public class ServiceFragment extends ScreenFragment {
         mSendDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mSendAudioButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mSendPhotoButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
+        mClearFiles.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mClearDbButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mUploadDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mUploadFTPDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
@@ -138,6 +141,7 @@ public class ServiceFragment extends ScreenFragment {
                 UiUtils.setButtonEnabled(mSendDataButton, notSentQuestionnairesCount > 0);
                 UiUtils.setButtonEnabled(mSendAudioButton, notSentAudioCount > 0);
                 UiUtils.setButtonEnabled(mSendPhotoButton, notSentPhotoCount > 0);
+                UiUtils.setButtonEnabled(mClearFiles, notSentPhotoCount > 0 || notSentAudioCount > 0);
                 UiUtils.setButtonEnabled(mUploadDataButton, notSentQuestionnairesCount > 0 || notSentAudioCount > 0 || notSentPhotoCount > 0 || notSentCrashCount > 0 || notSentLogsCount > 0);
             }
         });
@@ -231,6 +235,34 @@ public class ServiceFragment extends ScreenFragment {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                }
+
+            }
+        });
+
+        mClearFiles.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_clear_db), null);
+                if (getActivity() != null && !getActivity().isFinishing()) {
+                    new CleanUpFilesExecutable(activity, new ICallback() {
+                        @Override
+                        public void onStarting() {
+
+                        }
+
+                        @Override
+                        public void onSuccess() {
+                            showToast("Файлы удалены");
+                            updateData(new ServiceInfoExecutable(activity).execute());
+                        }
+
+                        @Override
+                        public void onError(Exception pException) {
+                            showToast("Ошибка удаления файлов");
+                            updateData(new ServiceInfoExecutable(activity).execute());
+                        }
+                    }).execute();
                 }
 
             }

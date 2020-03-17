@@ -120,6 +120,13 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 }
             }
         }
+        long memory = FileUtils.getAvailableInternalMemorySizeLong();
+        if(memory < 100000000) {
+            showToast("Недостаточно свободного места на устройтве. Пожалуйста освободите больше места.");
+        }
+//        showToast("Свободное место на устройстве: " + FileUtils.getAvailableInternalMemorySize());
+//        Log.d(TAG, "Свободное место на устройстве: " + FileUtils.getAvailableInternalMemorySizeLong());
+
     }
 
     @Override

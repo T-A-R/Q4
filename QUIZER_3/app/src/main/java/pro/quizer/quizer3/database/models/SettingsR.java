@@ -20,10 +20,14 @@ public class SettingsR {
     @ColumnInfo(name = "auto_zoom")
     private boolean auto_zoom;
 
+    @ColumnInfo(name = "memory_check")
+    private boolean memory_check;
+
     public SettingsR() {
         this.started = false;
         this.auto_zoom = true;
         this.table_speed = true;
+        this.memory_check = true;
     }
 
     public int getId() {
@@ -56,5 +60,13 @@ public class SettingsR {
 
     public void setAuto_zoom(boolean auto_zoom) {
         this.auto_zoom = auto_zoom;
+    }
+
+    public boolean isMemory_check() {
+        return memory_check;
+    }
+
+    public void setMemory_check(boolean memory_check) {
+        this.memory_check = memory_check;
     }
 }

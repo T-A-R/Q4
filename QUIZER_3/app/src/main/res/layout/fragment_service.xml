@@ -141,6 +141,17 @@
                 android:text="@string/button_ftp_upload_data" />
 
             <Button
+                android:id="@+id/clear_files"
+                style="@style/ButtonRed"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/button_delete_files" />
+
+            <Button
                 android:id="@+id/clear_db"
                 style="@style/ButtonRed"
                 android:layout_width="match_parent"

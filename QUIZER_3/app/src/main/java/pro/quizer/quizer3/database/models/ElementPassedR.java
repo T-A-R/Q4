@@ -8,7 +8,7 @@ import android.arch.persistence.room.PrimaryKey;
 import pro.quizer.quizer3.Constants;
 
 //@Entity
-@Entity(indices = {@Index("relative_id")})
+@Entity(indices = {@Index(value = {"relative_id"} , unique = true)})
 public class ElementPassedR {
 
     @PrimaryKey(autoGenerate = true)

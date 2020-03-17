@@ -237,7 +237,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if(prevList == null || prevList.size() == 0) {
+        if (prevList == null || prevList.size() == 0) {
             prevList = new ArrayList<>();
         }
         initCurrentElements();
@@ -612,7 +612,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } else if (answerType.equals(ElementSubtype.QUOTA)) {
             MainActivity activity = getMainActivity();
             adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList,
-                    getPassedQuotasBlock(), activity.getTree(null), this);
+                    getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), this);
             rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
             rvAnswers.setAdapter(adapterList);
         } else if (answerType.equals(ElementSubtype.SELECT)) {
@@ -830,7 +830,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 answerStates = adapterScale.getAnswers();
             } else {
                 answerStates = adapterList.getAnswers();
-                for( AnswerState state : answerStates) {
+                for (AnswerState state : answerStates) {
                     Log.d(TAG, "saveElement : " + state.getData() + " " + state.isChecked());
                 }
             }
@@ -871,17 +871,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 elementPassedR.setFrom_quotas_block(false);
                 st("init SAVE 9");
 //                Log.d(TAG, "saveElement: TOKEN " + elementPassedR.getToken());
-                try {
+//                try {
 //                    if (!isRestored) {
                     getDao().insertElementPassedR(elementPassedR);
                     st("init SAVE 10");
                     getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
 //                    }
                     saved = true;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    saved = false;
-                }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    saved = false;
+//                }
                 st("init SAVE 11");
                 for (int i = 0; i < answerStates.size(); i++) {
                     if (answerStates.get(i).isChecked()) {
@@ -898,6 +898,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         }
 
                         try {
+                            //TODO дублирование!!!!!
 //                            if (!isRestored) {
                             getDao().insertElementPassedR(answerPassedR);
 //                            }
@@ -1295,7 +1296,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             adapterList.setAnswers(answerStatesRestored);
             adapterList.setPressed(true);
             adapterList.setRestored(true);
-//            adapterList.setLastSelectedPosition(lastSelectedPosition);
+            if (!currentElement.getElementOptionsR().isPolyanswer())
+                adapterList.setLastSelectedPosition(lastSelectedPosition);
             adapterList.notifyDataSetChanged();
 
         } else if (answerType.equals(ElementSubtype.SELECT)) {

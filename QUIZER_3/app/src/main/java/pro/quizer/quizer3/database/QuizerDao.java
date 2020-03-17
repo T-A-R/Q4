@@ -239,7 +239,7 @@ public interface QuizerDao {
     @Query("SELECT * FROM WarningsR WHERE warning = :warning AND warningStatus = :status")
     List<WarningsR> getWarningsByStatus(String warning, String status);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertElementPassedR(ElementPassedR elementPassedR);
 
     @Query("SELECT * FROM ElementPassedR WHERE token =:token")

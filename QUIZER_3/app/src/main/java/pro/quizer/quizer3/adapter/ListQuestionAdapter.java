@@ -68,7 +68,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     private Context mContext;
     private String textBefore;
     private String textAfter;
-    private QuotaUtils quotaUtils;
+//    private QuotaUtils quotaUtils;
 
     public ListQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> passedQuotaBlock, ElementItemR[][] quotaTree, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
@@ -76,7 +76,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         this.passedQuotaBlock = passedQuotaBlock;
         this.quotaTree = quotaTree;
         this.mContext = context;
-        this.quotaUtils = new QuotaUtils();
+//        this.quotaUtils = new QuotaUtils();
 
         if (question.getElementOptionsR() != null && question.getElementOptionsR().isRotation()) {
             List<ElementItemR> shuffleList = new ArrayList<>();
@@ -257,7 +257,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 openAnswerCont.setVisibility(View.VISIBLE);
             }
 
-            if (!quotaUtils.canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder())) {
+            if (!canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder())) {
                 answerTitle.setTextColor(Color.parseColor("#AAAAAA"));
                 item.setEnabled(false);
 //                Log.d(TAG, "ELEMENT DISABLED: " + item.getElementOptionsR().getTitle());
@@ -285,6 +285,50 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 //            setEnabled(item, position);
             setChecked(item, position);
 
+        }
+
+        public boolean canShow(ElementItemR[][] tree, List<Integer> passedElementsId, int relativeId, int order) {
+//            try {
+//                Log.d(TAG, "canShow: " + passedElementsId.size() + " " + relativeId + " " + order);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+            if (tree == null) {
+                return true;
+            }
+
+            if (order == 1) {
+                for (int k = 0; k < tree[0].length; k++) {
+                    if (tree[0][k].getRelative_id().equals(relativeId)) {
+                        if (tree[0][k].isEnabled())
+                            return true;
+                    }
+                }
+//                Log.d(TAG, "canShow false: 1");
+                return false;
+            } else {
+                int endPassedElement = order - 1;
+
+                for (int k = 0; k < tree[0].length; k++) {
+                    for (int i = 0; i < endPassedElement; ) {
+//                        Log.d(TAG, "canShow: FOR " + tree[i][k].getRelative_id() + " " + passedElementsId.get(i));
+                        if (tree[i][k].getRelative_id().equals(passedElementsId.get(i))) {
+//                            Log.d(TAG, "canShow: FOUND ID");
+                            if (i == (endPassedElement - 1)) { // Если последний, то
+                                if (tree[i + 1][k].getRelative_id().equals(relativeId)) { // Если следующий за последним равен Relative ID
+//                                    Log.d(TAG, "canShow: FOUND NEXT");
+                                    if (tree[i + 1][k].isEnabled()) {
+                                        return true;
+                                    }
+                                }
+                            }
+                            i++;
+                        } else break;
+                    }
+                }
+            }
+//            Log.d(TAG, "canShow false: 2");
+            return false;
         }
 
         private void showContent(ElementItemR element, View cont) {
@@ -495,11 +539,11 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             if (charSequence.length() == 1) canDelete = true;
             else canDelete = false;
             if (lastSelectedPosition != -1) {
-                for(int k =0; k < answersState.size();k++) {
-                    Log.d(TAG, "state: " + k + " " + answersState.get(k).getData());
-                }
-                Log.d(TAG, "beforeTextChanged: position " + lastSelectedPosition);
-                Log.d(TAG, "beforeTextChanged: textBefore " + answersState.get(lastSelectedPosition).getData());
+//                for(int k =0; k < answersState.size();k++) {
+//                    Log.d(TAG, "state: " + k + " " + answersState.get(k).getData());
+//                }
+//                Log.d(TAG, "beforeTextChanged: position " + lastSelectedPosition);
+//                Log.d(TAG, "beforeTextChanged: textBefore " + answersState.get(lastSelectedPosition).getData());
                 textBefore = answersState.get(getLastSelectedPosition()).getData();
 
             }
@@ -518,11 +562,11 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                     answersState.get(lastSelectedPosition).setData(charSequence.toString());
                 }
 //            mDataset[position] = charSequence.toString();
-            if (lastSelectedPosition != -1) {
-                Log.d(TAG, "onTextChanged canDelete: " + canDelete);
-                Log.d(TAG, "onTextChanged charSequence: " + lastSelectedPosition + " " + charSequence.toString());
-                Log.d(TAG, "onTextChanged answersState: " + lastSelectedPosition + " " + answersState.get(lastSelectedPosition).getData());
-            }
+//            if (lastSelectedPosition != -1) {
+//                Log.d(TAG, "onTextChanged canDelete: " + canDelete);
+//                Log.d(TAG, "onTextChanged charSequence: " + lastSelectedPosition + " " + charSequence.toString());
+//                Log.d(TAG, "onTextChanged answersState: " + lastSelectedPosition + " " + answersState.get(lastSelectedPosition).getData());
+//            }
         }
 
         @Override
@@ -546,7 +590,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     }
 
     public int getLastSelectedPosition() {
-        Log.d(TAG, "getLastSelectedPosition: " + lastSelectedPosition);
+//        Log.d(TAG, "getLastSelectedPosition: " + lastSelectedPosition);
         return lastSelectedPosition;
     }
 
@@ -558,15 +602,15 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     public void setAnswers(List<AnswerState> answers) {
         Log.d(TAG, "=============================");
         if (answers != null) {
-            for (int i = 0; i < answers.size(); i++) {
-                Log.d(TAG, i + ": " + answers.get(i).getRelative_id() + " : " + answers.get(i).getData() + " : " + answers.get(i).isChecked());
-            }
+//            for (int i = 0; i < answers.size(); i++) {
+//                Log.d(TAG, i + ": " + answers.get(i).getRelative_id() + " : " + answers.get(i).getData() + " : " + answers.get(i).isChecked());
+//            }
             this.answersState = answers;
             for (int i = 0; i < answers.size(); i++) {
                 if (answersList.get(i).getElementOptionsR().isUnchecker() && answers.get(i).isChecked()) {
                     for (int k = 0; k < answersList.size(); k++) {
                         if (k != i) {
-                            Log.d(TAG, "set false 5: " + k);
+//                            Log.d(TAG, "set false 5: " + k);
                             answersList.get(k).setEnabled(false);
                         }
                     }

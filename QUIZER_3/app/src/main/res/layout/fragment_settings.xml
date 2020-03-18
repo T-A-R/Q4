@@ -108,6 +108,14 @@
                     android:text="@string/view_switch_auto_zoom"
                     android:textSize="16sp" />
 
+                <pro.quizer.quizer3.view.element.customswitch.ResizableSwitch
+                    android:id="@+id/dark_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/view_switch_dark_mode"
+                    android:textSize="16sp" />
+
                 <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                     android:id="@+id/spinner_title"
                     android:layout_width="match_parent"

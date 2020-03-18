@@ -317,6 +317,9 @@ public interface QuizerDao {
     @Query("UPDATE SettingsR SET memory_check = :data")
     void setSettingsMemoryCheck(boolean data);
 
+    @Query("UPDATE SettingsR SET dark_mode = :data")
+    void setSettingsDarkMode(boolean data);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertToken(TokensCounterR token);
 

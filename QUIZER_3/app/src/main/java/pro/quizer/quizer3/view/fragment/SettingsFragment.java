@@ -67,6 +67,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
     private Switch mAutoZoomSwitch;
     private Switch mSpeedSwitch;
     private Switch mMemorySwitch;
+    private Switch mDarkModeSwitch;
 
     private MainActivity mBaseActivity;
     private int answerMargin;
@@ -117,6 +118,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         mAutoZoomSwitch = findViewById(R.id.auto_zoom_switch);
         mSpeedSwitch = findViewById(R.id.speed_switch);
         mMemorySwitch = findViewById(R.id.memory_switch);
+        mDarkModeSwitch = findViewById(R.id.dark_switch);
 
 
 //        LinearLayout textSettingsCont = findViewById(R.id.text_settings_cont);
@@ -186,6 +188,15 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 
                 mBaseActivity.setMemoryCheckMode(b);
+            }
+        });
+
+        mDarkModeSwitch.setChecked(mBaseActivity.isDarkkMode());
+        mDarkModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+                mBaseActivity.setDarkMode(b);
             }
         });
 

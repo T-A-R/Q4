@@ -1278,6 +1278,15 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         getSettings();
     }
 
+    public boolean isDarkkMode() {
+        return getSettings().isDark_mode();
+    }
+
+    public void setDarkMode(boolean dark) {
+        getMainDao().setSettingsDarkMode(dark);
+        getSettings();
+    }
+
     public ConfigModel getConfig() {
         if (mConfig == null) {
             mConfig = getCurrentUser().getConfigR();

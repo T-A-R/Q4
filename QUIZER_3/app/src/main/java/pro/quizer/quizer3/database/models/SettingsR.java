@@ -23,11 +23,15 @@ public class SettingsR {
     @ColumnInfo(name = "memory_check")
     private boolean memory_check;
 
+    @ColumnInfo(name = "dark_mode")
+    private boolean dark_mode;
+
     public SettingsR() {
         this.started = false;
         this.auto_zoom = true;
         this.table_speed = true;
         this.memory_check = true;
+        this.dark_mode = false;
     }
 
     public int getId() {
@@ -68,5 +72,13 @@ public class SettingsR {
 
     public void setMemory_check(boolean memory_check) {
         this.memory_check = memory_check;
+    }
+
+    public boolean isDark_mode() {
+        return dark_mode;
+    }
+
+    public void setDark_mode(boolean dark_mode) {
+        this.dark_mode = dark_mode;
     }
 }

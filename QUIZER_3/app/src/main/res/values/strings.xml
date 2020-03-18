@@ -271,6 +271,7 @@
     <string name="view_button_info">INFO</string>
     <string name="view_switch_hide_completed_quotas">Скрыть выполненные</string>
     <string name="view_switch_auto_zoom">Автоматическое маштабирование шрифтов</string>
+    <string name="view_switch_dark_mode">Затемнение закрытых квот</string>
     <string name="view_switch_speed">Режим производительности таблиц</string>
     <string name="view_switch_memory">Проверка свободного места</string>
     <string name="view_hint_search">Поиск</string>

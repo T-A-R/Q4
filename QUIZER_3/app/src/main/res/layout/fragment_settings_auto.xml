@@ -108,6 +108,14 @@
                     android:text="@string/view_switch_auto_zoom"
                     android:textSize="@dimen/_12ssp" />
 
+                <Switch
+                    android:id="@+id/dark_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_6sdp"
+                    android:text="@string/view_switch_dark_mode"
+                    android:textSize="@dimen/_12ssp" />
+
                 <TextView
                     android:id="@+id/spinner_title"
                     android:layout_width="match_parent"

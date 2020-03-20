@@ -166,10 +166,23 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         }
 
         if (!answersList.get(position).isEnabled()) {
-            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bg_gray_shadow));
+            if(!isMulti) {
+                holder.button.setImageResource(R.drawable.radio_button_disabled);
             } else {
-                holder.cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_gray_shadow));
+                holder.button.setImageResource(R.drawable.checkbox_disabled);
+            }
+            if(!mActivity.isDarkkMode()) {
+                if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bg_gray_shadow));
+                } else {
+                    holder.cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_gray_shadow));
+                }
+            } else {
+                if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bg_dark_gray_shadow));
+                } else {
+                    holder.cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_dark_gray_shadow));
+                }
             }
         } else {
             if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {

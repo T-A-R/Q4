@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
+import pro.quizer.quizer3.model.quota.QuotaModel;
+
 public class DeletingListResponseModel implements Serializable {
 
     @SerializedName("result")
@@ -18,6 +20,9 @@ public class DeletingListResponseModel implements Serializable {
 
     @SerializedName("accepted")
     private List<String> accepted;
+
+    @SerializedName("quotas")
+    private List<QuotaModel> quotas;
 
     public int getResult() {
         return result;
@@ -33,6 +38,10 @@ public class DeletingListResponseModel implements Serializable {
 
     public Long getServerTime() {
         return server_time;
+    }
+
+    public List<QuotaModel> getQuotas() {
+        return quotas;
     }
 
 }

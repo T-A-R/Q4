@@ -19,6 +19,7 @@ import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.OptionsR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
+import pro.quizer.quizer3.database.models.QuotaR;
 import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.SmsItemR;
 import pro.quizer.quizer3.database.models.TokensCounterR;
@@ -355,4 +356,13 @@ public interface QuizerDao {
 
     @Query("DELETE FROM ElementOptionsR")
     void clearElementOptionsR();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertQuotaR(List<QuotaR> quotaRList);
+
+    @Query("SELECT * FROM QuotaR")
+    List<QuotaR> getQuotaR();
+
+    @Query("DELETE FROM QuotaR")
+    void clearQuotaR();
 }

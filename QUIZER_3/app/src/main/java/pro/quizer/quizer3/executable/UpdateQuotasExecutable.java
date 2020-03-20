@@ -7,16 +7,20 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import pro.quizer.quizer3.API.QuizerAPI;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.database.models.QuotaR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.API.models.request.QuotaRequestModel;
 import pro.quizer.quizer3.API.models.response.QuotaResponseModel;
+import pro.quizer.quizer3.model.quota.QuotaModel;
 import pro.quizer.quizer3.utils.SPUtils;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
@@ -89,7 +93,15 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
                 try {
                     MainActivity.addLog(userModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUOTA, mContext.getString(R.string.save_quotas), Constants.LogResult.SENT, mContext.getString(R.string.save_quotas_to_db), null);
                     Log.d(TAG, "onGetQuotasCallback: " + responseJson);
-                    mainActivity.getMainDao().updateQuotas(responseJson, userProjectId);
+//                    mainActivity.getMainDao().updateQuotas(responseJson, userProjectId);
+                    if(quotaResponseModel.getQuotas() != null && quotaResponseModel.getQuotas().size() > 0){
+                        List<QuotaR> quotaRList = new ArrayList<>();
+                        for(QuotaModel model : quotaResponseModel.getQuotas()) {
+                            quotaRList.add(new QuotaR(model.getSequence(), model.getLimit(), model.getSent()));
+                        }
+                        mainActivity.getMainDao().clearQuotaR();
+                        mainActivity.getMainDao().insertQuotaR(quotaRList);
+                    }
                 } catch (Exception e) {
                     Log.d(TAG, mContext.getString(R.string.db_save_error));
                     MainActivity.addLog(userModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUOTA, mContext.getString(R.string.save_quotas), Constants.LogResult.ERROR, e.getMessage(), null);

@@ -14,6 +14,7 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
+import pro.quizer.quizer3.database.models.QuotaR;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.quota.QuotaModel;
@@ -80,7 +81,14 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
     private ElementItemR[][] fillQuotas(ElementItemR[][] tree, MainActivity activity) {
         Log.d(TAG, "============== fillQuotas ======================= 3");
         int qn = 8;
-        List<QuotaModel> quotas = activity.getCurrentUser().getQuotasR();
+        int user_id = activity.getCurrentUserId();
+        int user_project_id = activity.getCurrentUser().getUser_project_id();
+        List<QuotaModel> quotas = new ArrayList<>();
+
+        final List<QuotaR> quotasR = activity.getMainDao().getQuotaR();
+        for (QuotaR quotaR : quotasR) {
+            quotas.add(new QuotaModel(quotaR.getSequence(), quotaR.getLimit(), quotaR.getDone(), user_id, user_project_id));
+        }
         if (quotas == null || quotas.isEmpty()) return tree;
 
 //        for (int q = 0; q < quotas.size(); q++) {

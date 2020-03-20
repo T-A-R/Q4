@@ -44,6 +44,7 @@ import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
+import pro.quizer.quizer3.database.models.QuotaR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.QuotasViewModelExecutable;
@@ -157,8 +158,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         btnQuotas.setOnClickListener(this);
         tvConfigAgreement.setTypeface(Fonts.getFuturaPtBook());
         tvConfigName.setTypeface(Fonts.getFuturaPtBook());
-//        tvCoountAll.setTypeface(Fonts.getFuturaPtBook());
-//        tvCountSent.setTypeface(Fonts.getFuturaPtBook());
         tvQuotasClosed.setTypeface(Fonts.getFuturaPtBook());
         tvCurrentUser.setTypeface(Fonts.getFuturaPtBook());
 
@@ -189,21 +188,18 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         if (mIsStartAfterAuth) {
             quotaUpdate();
         }
-//        if(!getMainActivity().isHomeFragmentStarted()) {
-//            Log.d(TAG, "??????????????? onReady: " + isStarted);
-//            getMainActivity().setHomeFragmentStarted(true);
 
         new SendQuestionnairesByUserModelExecutable(getMainActivity(), mUserModel, new ICallback() {
             @Override
             public void onStarting() {
                 showScreensaver(true);
-//                Log.d(TAG, "SendQuestionnairesByUserModelExecutable onStarting: ");
             }
 
             @Override
             public void onSuccess() {
                 if (!isQuotaUpdated) {
-                    quotaUpdate();
+                    makeQuotaTree();
+                    isQuotaUpdated = true;
                 }
 
                 hideScreensaver();
@@ -835,11 +831,19 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         private ElementItemR[][] fillQuotas(ElementItemR[][] tree) {
             Log.d(TAG, "============== fillQuotas ======================= 1");
             showTime("before fill quotas");
-            List<QuotaModel> quotas = null;
-            try {
-                quotas = activity.getCurrentUser().getQuotasR();
-            } catch (Exception e) {
-                e.printStackTrace();
+//            List<QuotaModel> quotas = null;
+//            try {
+//                quotas = activity.getCurrentUser().getQuotasR();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+            int user_id = activity.getCurrentUserId();
+            int user_project_id = activity.getCurrentUser().getUser_project_id();
+            List<QuotaModel> quotas = new ArrayList<>();
+
+            final List<QuotaR> quotasR = activity.getMainDao().getQuotaR();
+            for (QuotaR quotaR : quotasR) {
+                quotas.add(new QuotaModel(quotaR.getSequence(), quotaR.getLimit(), quotaR.getDone(), user_id, user_project_id));
             }
 //            showTime("====== fill quotas 1");
             offlineQuestionnaires = activity.getMainDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), activity.getCurrentUser().getUser_project_id(), QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);

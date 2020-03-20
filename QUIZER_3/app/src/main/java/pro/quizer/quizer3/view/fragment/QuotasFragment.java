@@ -256,7 +256,8 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
             showToast(getString(R.string.db_load_error));
         }
 
-        if (mMainActivity.getCurrentUser().getQuotasR() != null) {
+//        if (mMainActivity.getCurrentUser().getQuotasR() != null) {
+        if (getDao().getQuotaR() != null) {
 
             if (logs != null && isAdded()) {
 

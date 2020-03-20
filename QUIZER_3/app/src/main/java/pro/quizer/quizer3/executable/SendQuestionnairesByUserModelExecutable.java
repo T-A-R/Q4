@@ -3,12 +3,12 @@ package pro.quizer.quizer3.executable;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,13 +17,14 @@ import pro.quizer.quizer3.API.QuizerAPI;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.database.models.QuotaR;
 import pro.quizer.quizer3.database.models.TokensCounterR;
 import pro.quizer.quizer3.database.models.UserModelR;
-import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.API.models.request.QuestionnaireListRequestModel;
 import pro.quizer.quizer3.API.models.response.DeletingListResponseModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
+import pro.quizer.quizer3.model.quota.QuotaModel;
 import pro.quizer.quizer3.model.sms.SmsStage;
 import pro.quizer.quizer3.model.view.SmsViewModel;
 import pro.quizer.quizer3.utils.NetworkUtils;
@@ -161,6 +162,17 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
         if (deletingListResponseModel != null) {
             SPUtils.saveSendTimeDifference(mBaseActivity, deletingListResponseModel.getServerTime());
 
+            if (deletingListResponseModel.getQuotas() != null && deletingListResponseModel.getQuotas().size() > 0) {
+                Log.d(TAG, "????????? onSendQuestionnaires: UP " + mUserModel.getUser_project_id());
+                List<QuotaR> quotaRList = new ArrayList<>();
+                for(QuotaModel model : deletingListResponseModel.getQuotas()) {
+                    quotaRList.add(new QuotaR(model.getSequence(), model.getLimit(), model.getSent()));
+                }
+                mBaseActivity.getMainDao().clearQuotaR();
+                mBaseActivity.getMainDao().insertQuotaR(quotaRList);
+//                quotaUpdate();
+            }
+
             if (deletingListResponseModel.getResult() != 0) {
                 final List<String> tokensToRemove = deletingListResponseModel.getAccepted();
 
@@ -168,14 +180,11 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                     MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.error_204) + mBaseActivity.getString(R.string.empty_tokens_list_error), responseJson);
                     onError(new Exception(mBaseActivity.getString(R.string.empty_tokens_list_error) + " " + mBaseActivity.getString(R.string.error_204)));
                 } else {
-//                    SPUtils.addSendedQInSession(mBaseActivity, tokensToRemove.size());
-//                    Log.d(TAG, "onSendQuestionnaires DELETE: " + tokensToRemove.size());
                     MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.quiz_sent), null);
 
                     for (final String token : tokensToRemove) {
                         try {
                             MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.set_quiz_status), Constants.LogResult.SENT, mBaseActivity.getString(R.string.set_sent_quiz_status), null);
-//                            MainActivity.getStaticDao().setQuestionnaireStatus(QuestionnaireStatus.SENT, token);
                             mBaseActivity.getMainDao().insertToken(new TokensCounterR(token, mUserModel.getUser_id()));
                             mBaseActivity.getMainDao().deleteQuestionnaireByToken(token);
 
@@ -184,52 +193,11 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                         }
                     }
 
-//                    new UpdateQuotasExecutable(mBaseActivity, new ICallback() {
-//
-//                        @Override
-//                        public void onStarting() {
-//
-//                        }
-//
-//                        @Override
-//                        public void onSuccess() {
-//                            mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.quotas_renew));
-////                            mBaseActivity.getTree();
-//                            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.quotas_renew), null);
-//                        }
-//
-//                        @Override
-//                        public void onError(Exception pException) {
-//                            mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.load_quotas_error) + " " + mBaseActivity.getString(R.string.error_107));
-//                            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.ERROR, " " + mBaseActivity.getString(R.string.error_107) + R.string.load_quotas_error, pException.toString());
-//                        }
-//                    }).execute();
-
-//                    BaseActivity.sendCrashLogs();
-
                     try {
                         mBaseActivity.getMainDao().clearWarningsR();
                     } catch (Exception e) {
                         MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.WARNINGS, mBaseActivity.getString(R.string.clear_warnings_db), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.db_clear_error), e.getMessage());
                     }
-
-//                    mBaseActivity.getTreeForce(null);
-//                    mBaseActivity.getTreeForce(new ICallback() {
-//                        @Override
-//                        public void onStarting() {
-//
-//                        }
-//
-//                        @Override
-//                        public void onSuccess() {
-//                            onSuccess();
-//                        }
-//
-//                        @Override
-//                        public void onError(Exception pException) {
-//                            onError(new Exception("Ошибка расчета квот. " + mBaseActivity.getString(R.string.error_108)));
-//                        }
-//                    });
                     onSuccess();
                 }
             } else {
@@ -241,6 +209,4 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
             onError(new Exception(mBaseActivity.getString(R.string.server_response_error) + " " + mBaseActivity.getString(R.string.error_206)));
         }
     }
-
-
 }

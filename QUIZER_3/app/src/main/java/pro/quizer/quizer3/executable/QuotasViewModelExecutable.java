@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import pro.quizer.quizer3.MainActivity;
+import pro.quizer.quizer3.database.models.QuotaR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.model.config.ElementModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
@@ -37,7 +38,16 @@ public class QuotasViewModelExecutable extends BaseModelExecutable<QuotasViewMod
         quotasViewModel.setQuery(mQuery);
 
         final UserModelR currentUser = mMainActivity.forceGetCurrentUser();
-        List<QuotaModel> quotas = currentUser.getQuotasR();
+//        List<QuotaModel> quotas = currentUser.getQuotasR();
+        int user_id = currentUser.getUser_id();
+        int user_project_id = currentUser.getUser_project_id();
+        List<QuotaModel> quotas = new ArrayList<>();
+
+        final List<QuotaR> quotasR = mMainActivity.getMainDao().getQuotaR();
+        for (QuotaR quotaR : quotasR) {
+            quotas.add(new QuotaModel(quotaR.getSequence(), quotaR.getLimit(), quotaR.getDone(), user_id, user_project_id));
+        }
+
 
         if (quotas == null || quotas.isEmpty()) {
             return quotasViewModel;

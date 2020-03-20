@@ -1,7 +1,5 @@
 package pro.quizer.quizer3.model.quota;
 
-import android.util.Log;
-
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -14,10 +12,7 @@ import java.util.Set;
 
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.executable.QuestionnairesCountBySequenceExecutable;
-import pro.quizer.quizer3.model.config.ElementModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
-
-import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class QuotaModel implements Serializable {
 
@@ -38,6 +33,14 @@ public class QuotaModel implements Serializable {
     private Integer[] mArray = null;
     private int userId;
     private int userProjectId;
+
+    public QuotaModel(String sequence, int limit, int done, int userId, int userProjectId) {
+        this.sequence = sequence;
+        this.limit = limit;
+        this.done = done;
+        this.userId = userId;
+        this.userProjectId = userProjectId;
+    }
 
     public void setUserId(int userId) {
         this.userId = userId;

@@ -15,6 +15,7 @@ import pro.quizer.quizer3.model.quota.QuotaModel;
 import pro.quizer.quizer3.API.models.response.QuotaResponseModel;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
+import static pro.quizer.quizer3.view.fragment.SmartFragment.getDao;
 
 @Entity
 public class UserModelR {
@@ -69,25 +70,27 @@ public class UserModelR {
         return new Gson().fromJson(config, ConfigModel.class);
     }
 
-    public List<QuotaModel> getQuotasR() {
-        try {
-//            Log.d(TAG, "getQuotasR STRING: " + quotas);
-            final List<QuotaModel> list = new Gson().fromJson(quotas, QuotaResponseModel.class).getQuotas();
-//            for(QuotaModel model : list) {
-//                Log.d(TAG, "getQuotasR: " + model.getDone());
+//    public List<QuotaModel> getQuotasR() {
+//        try {
+////            final List<QuotaModel> list = new Gson().fromJson(quotas, QuotaResponseModel.class).getQuotas();
+//            List<QuotaModel> list = new ArrayList<>();
+//            final List<QuotaR> quotasR = getDao().getQuotaR();
+//            for (QuotaR quotaR : quotasR) {
+//                list.add(new QuotaModel(quotaR.getSequence(), quotaR.getLimit(), quotaR.getDone(), user_id, user_project_id));
 //            }
-            for (QuotaModel quotaModel : list) {
-                quotaModel.setUserId(user_id);
-                quotaModel.setUserProjectId(user_project_id);
-//                Log.d(TAG, "getQuotasR MODEL: " + quotaModel.getDone());
-            }
-
-            return list;
-        } catch (final Exception pE) {
-            Log.d(TAG, "getQuotasR ERROR: " + pE.toString());
-            return new ArrayList<>();
-        }
-    }
+//
+////            for (QuotaModel quotaModel : list) {
+////                quotaModel.setUserId(user_id);
+////                quotaModel.setUserProjectId(user_project_id);
+//////                Log.d(TAG, "getQuotasR MODEL: " + quotaModel.getDone());
+////            }
+//
+//            return list;
+//        } catch (final Exception pE) {
+//            Log.d(TAG, "getQuotasR ERROR: " + pE.toString());
+//            return new ArrayList<>();
+//        }
+//    }
 
     public int getId() {
         return id;

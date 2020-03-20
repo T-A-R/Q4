@@ -31,7 +31,7 @@ public class SettingsR {
         this.auto_zoom = true;
         this.table_speed = true;
         this.memory_check = true;
-        this.dark_mode = false;
+        this.dark_mode = true;
     }
 
     public int getId() {

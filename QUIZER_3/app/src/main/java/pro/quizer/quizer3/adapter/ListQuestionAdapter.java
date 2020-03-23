@@ -170,6 +170,8 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 holder.button.setImageResource(R.drawable.radio_button_disabled);
             } else {
                 holder.button.setImageResource(R.drawable.checkbox_disabled);
+                holder.answerTitle.setTextColor(mActivity.getResources().getColor(R.color.gray));
+                holder.answerDesc.setTextColor(mActivity.getResources().getColor(R.color.gray));
             }
             if(!mActivity.isDarkkMode()) {
                 if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
@@ -190,6 +192,8 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             } else {
                 holder.cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_shadow));
             }
+            holder.answerTitle.setTextColor(mActivity.getResources().getColor(R.color.black));
+            holder.answerDesc.setTextColor(mActivity.getResources().getColor(R.color.black));
         }
 
         holder.myCustomEditTextListener.updatePosition(position);

@@ -57,8 +57,8 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
         btnSend.startAnimation(Anim.getAppearSlide(getContext(), 500));
 //        image.startAnimation(Anim.getSlideUpDown(getContext()));
 
-        getUser().setFirstStart(false);
-        getUser().setDelegateMode(false);
+//        getUser().setFirstStart(false);
+//        getUser().setDelegateMode(false);
     }
 
     @Override

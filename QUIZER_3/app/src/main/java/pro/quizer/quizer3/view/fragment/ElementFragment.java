@@ -1697,6 +1697,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 e.printStackTrace();
             }
         }
+        if (getMainActivity().getConfig().isAudio() && getMainActivity().getConfig().isAudioRecordAll()) {
+            MainActivity activity = (MainActivity) getActivity();
+            try {
+                Objects.requireNonNull(activity).startRecording(0, getQuestionnaire().getToken());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void stopRecording() {

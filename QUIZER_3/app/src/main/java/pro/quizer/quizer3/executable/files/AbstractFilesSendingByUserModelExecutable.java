@@ -26,6 +26,8 @@ import pro.quizer.quizer3.API.models.response.DeletingListResponseModel;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.StringUtils;
 
+import static pro.quizer.quizer3.MainActivity.TAG;
+
 public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExecutable {
 
     public static final int FIRST_FILE_POSITION = 0;
@@ -208,6 +210,7 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
                     final List<String> tokensToRemove = deletingListResponseModel.getAccepted();
 
                     if (tokensToRemove == null || tokensToRemove.isEmpty()) {
+                        Log.d(TAG, "sendFile: TOKEN = NULL");
                         pSendingFileCallback.onError(position);
                         MainActivity.addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, mBaseActivity.getString(R.string.sending) + " " + getMediaType(), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.log_error_304_desc), responseJson);
                         onError(new Exception(mBaseActivity.getString(R.string.empty_tokens_list_error) + " " + mBaseActivity.getString(R.string.error_304)));
@@ -215,6 +218,7 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
                         MainActivity.addLog(mLogin, Constants.LogType.FILE, Constants.LogObject.FILE, mBaseActivity.getString(R.string.deleting) + " " + getMediaType(), Constants.LogResult.SENT, mBaseActivity.getString(R.string.got_fileslist_to_delete) + " ", responseJson);
 
                         for (final String token : tokensToRemove) {
+                            Log.d(TAG, "sendFile: TOKEN = " + token);
                             final String path = FileUtils.getFullPathByFileName(file, token);
 
                             if (StringUtils.isNotEmpty(path)) {

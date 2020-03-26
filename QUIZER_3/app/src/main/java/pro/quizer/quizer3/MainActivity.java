@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private boolean mAutoZoom;
     private boolean hasRotationContainer = false;
     private boolean mIsAudioStarted = false;
+    private boolean mIsFirstStart = true;
     private static Long alphaTime = 0L;
 
     private int projectId;
@@ -146,9 +147,11 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Fonts.init(this);
 
+        if (!checkPermission()) {
+            requestPermission();
+        }
         Preferences preferences = new Preferences(getApplicationContext());
         getUser().setPreferences(preferences);
-
         mMediaBrowser = new MediaBrowserCompat(this, new ComponentName(this, AudioService.class), mConnCallbacks, null); // optional bundle
 
         if (!mMediaBrowser.isConnected()) {
@@ -156,16 +159,16 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         }
 
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-
-        if (savedInstanceState == null) {
+        if (mIsFirstStart || savedInstanceState == null) {
+            mIsFirstStart = false;
             mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.main);
-
             assert mainFragment != null;
             View view = mainFragment.getView();
             if (mainFragment == null || view == null)
                 Log.d(TAG, "MainActivity.onCreate() WTF? view == null");
-            else
+            else {
                 view.post(() -> view.getViewTreeObserver().addOnGlobalLayoutListener(MainActivity.this));
+            }
         }
 
         if (getSpeedMode() == 1) {
@@ -657,19 +660,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public void startRecording(int relativeId, String token) {
+        Log.d(TAG, "******************* ATTEMPT startRecording: **********************");
         if (mIsMediaConnected) {
-            mIsAudioStarted = true;
-            Log.d(TAG, "******************* startRecording: **********************");
-            try {
-                audioNumber = getCurrentQuestionnaireForce().getAudio_number();
-                getMainDao().setAudioNumber(audioNumber + 1);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            audioTime = DateUtils.getCurrentTimeMillis();
-            mToken = token;
-            mAudioRelativeId = relativeId;
-
             final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
             if (mediaCntrlr == null) {
                 mIsAudioStarted = false;
@@ -689,64 +681,81 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 mIsAudioStarted = false;
                 return;
             }
+            if(pbState != PlaybackStateCompat.STATE_PLAYING) {
 
-            switch (mediaID) {
-                case AudioService.SOURCE_NONE:
-                case AudioService.SOURCE_MIC:
-                    switch (pbState) {
-                        case PlaybackStateCompat.STATE_PLAYING:
-                            callPauseRecording();
-                            break;
-                        case PlaybackStateCompat.STATE_NONE:
-                        case PlaybackStateCompat.STATE_PAUSED:
-                        case PlaybackStateCompat.STATE_STOPPED:
-                            callRecord();
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case AudioService.SOURCE_AUDIO:
-                    switch (pbState) {
-                        case PlaybackStateCompat.STATE_PLAYING:
-                        case PlaybackStateCompat.STATE_PAUSED:
-                            callStopReady();
-                            callRecord();
-                            break;
-                        case PlaybackStateCompat.STATE_NONE:
-                        case PlaybackStateCompat.STATE_STOPPED:
-                            callRecord();
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                default:
-                    break;
-            }
-
-            mAudioRecordLimitTime = getConfig().getAudioRecordLimitTime() * 60 * 1000;
-
-            Log.d("Timer", "Limit: " + mAudioRecordLimitTime + " - tick: " + ONE_SEC);
-
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    mCountDownTimer = new CountDownTimer(mAudioRecordLimitTime, ONE_SEC) {
-
-                        public void onTick(long millisUntilFinished) {
-//                            Log.d("Timer", "onTick: " + String.valueOf(millisUntilFinished));
-                        }
-
-                        public void onFinish() {
-                            Log.d("Timer", "FINISH");
-                            stopRecording();
-                        }
-                    }.start();
+                mIsAudioStarted = true;
+                Log.d(TAG, "******************* startRecording: **********************");
+                try {
+                    audioNumber = getCurrentQuestionnaireForce().getAudio_number();
+//                    Log.d(TAG, "startRecording: " + audioNumber);
+                    getMainDao().setAudioNumber(audioNumber + 1);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            });
+                audioTime = DateUtils.getCurrentTimeMillis();
+                mToken = token;
+                mAudioRelativeId = relativeId;
 
 
+
+//                Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!! startRecording: STATE " + pbState);
+                switch (mediaID) {
+                    case AudioService.SOURCE_NONE:
+                    case AudioService.SOURCE_MIC:
+                        switch (pbState) {
+                            case PlaybackStateCompat.STATE_PLAYING:
+                                callPauseRecording();
+                                break;
+                            case PlaybackStateCompat.STATE_NONE:
+                            case PlaybackStateCompat.STATE_PAUSED:
+                            case PlaybackStateCompat.STATE_STOPPED:
+                                callRecord();
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case AudioService.SOURCE_AUDIO:
+                        switch (pbState) {
+                            case PlaybackStateCompat.STATE_PLAYING:
+                            case PlaybackStateCompat.STATE_PAUSED:
+                                callStopReady();
+                                callRecord();
+                                break;
+                            case PlaybackStateCompat.STATE_NONE:
+                            case PlaybackStateCompat.STATE_STOPPED:
+                                callRecord();
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+                mAudioRecordLimitTime = getConfig().getAudioRecordLimitTime() * 60 * 1000;
+
+                Log.d("Timer", "Limit: " + mAudioRecordLimitTime + " - tick: " + ONE_SEC);
+
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCountDownTimer = new CountDownTimer(mAudioRecordLimitTime, ONE_SEC) {
+
+                            public void onTick(long millisUntilFinished) {
+//                            Log.d("Timer", "onTick: " + String.valueOf(millisUntilFinished));
+                            }
+
+                            public void onFinish() {
+                                Log.d("Timer", "FINISH");
+                                stopRecording();
+                            }
+                        }.start();
+                    }
+                });
+
+            }
         }
         RECORDING = true;
     }

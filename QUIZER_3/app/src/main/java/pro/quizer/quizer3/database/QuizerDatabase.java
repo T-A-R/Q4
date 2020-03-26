@@ -33,8 +33,8 @@ import pro.quizer.quizer3.database.models.WarningsR;
         SettingsR.class,
         UserModelR.class,
         ElementItemR.class,
-        TokensCounterR.class,
         PrevElementsR.class,
+        TokensCounterR.class,
         ElementPassedR.class,
         ElementOptionsR.class,
         ElementContentsR.class,
@@ -42,7 +42,7 @@ import pro.quizer.quizer3.database.models.WarningsR;
         ElementStatusImageR.class,
         CurrentQuestionnaireR.class,
         ElementDatabaseModelR.class,
-        QuestionnaireDatabaseModelR.class}, version = 39)
+        QuestionnaireDatabaseModelR.class}, version = 40)
 public abstract class QuizerDatabase extends RoomDatabase {
     public abstract QuizerDao getQuizerDao();
 }

@@ -405,32 +405,36 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
     public void onCreate() {
         super.onCreate();
 
-        audioFilesPath = new File(FileUtils.getAudioStoragePath(this));
-        Log.d(LOG_TAG, "AudioService created" + isUiMsg());
+        try {
+            audioFilesPath = new File(FileUtils.getAudioStoragePath(this));
+            Log.d(LOG_TAG, "AudioService created" + isUiMsg());
 
-        hThread.start();
-        Handler hndlrBG = new Handler(hThread.getLooper());
-        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        // MediaSession:
-        //error without receiver declared in manifest: java.lang.IllegalArgumentException: MediaButtonReceiver component may not be null
-        mediaSes = new MediaSessionCompat(getApplicationContext(), LOG_TAG);
-        // callbacks for MediaButtons and TransportControls
-        mediaSes.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS
-                | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-        metadataBuilder = new MediaMetadataCompat.Builder();
-        mediaSes.setMetadata(metadataBuilder
-                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, SOURCE_NONE).build());
-        stateBuilderImplFacility = new PlaybackStateCompat.Builder().setActions(PlaybackStateCompat.ACTION_PLAY
-                | PlaybackStateCompat.ACTION_PAUSE | PlaybackStateCompat.ACTION_STOP);
-        mediaSes.setPlaybackState(stateBuilderImplFacility.build());
-        // callback from media controller
-        mediaSes.setCallback(mediaSesCallback, hndlrBG); //Handler to set execution thread
-        // token through which to communicate with client
-        setSessionToken(mediaSes.getSessionToken());
+            hThread.start();
+            Handler hndlrBG = new Handler(hThread.getLooper());
+            audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+            // MediaSession:
+            //error without receiver declared in manifest: java.lang.IllegalArgumentException: MediaButtonReceiver component may not be null
+            mediaSes = new MediaSessionCompat(getApplicationContext(), LOG_TAG);
+            // callbacks for MediaButtons and TransportControls
+            mediaSes.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS
+                    | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+            metadataBuilder = new MediaMetadataCompat.Builder();
+            mediaSes.setMetadata(metadataBuilder
+                    .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, SOURCE_NONE).build());
+            stateBuilderImplFacility = new PlaybackStateCompat.Builder().setActions(PlaybackStateCompat.ACTION_PLAY
+                    | PlaybackStateCompat.ACTION_PAUSE | PlaybackStateCompat.ACTION_STOP);
+            mediaSes.setPlaybackState(stateBuilderImplFacility.build());
+            // callback from media controller
+            mediaSes.setCallback(mediaSesCallback, hndlrBG); //Handler to set execution thread
+            // token through which to communicate with client
+            setSessionToken(mediaSes.getSessionToken());
 
-        transCntrl = mediaSes.getController().getTransportControls();
+            transCntrl = mediaSes.getController().getTransportControls();
 
-        actionSetReady();
+            actionSetReady();
+        } catch (Exception e) {
+            Log.d("AUDIO Service", "onCreate AUDIO: ERROR!");
+        }
     }
 
     @Override

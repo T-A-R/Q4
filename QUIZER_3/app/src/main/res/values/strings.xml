@@ -127,8 +127,7 @@
     <string name="dialog_close_app_title">Выход из приложения</string>
     <string name="dialog_delete_title">Завершение анкеты</string>
     <string name="dialog_close_app_body">Вы уверены, что хотите выйти из приложения?</string>
-    <string name="dialog_delete_body">Вы уверены, что хотите принудительно завершить текущую анкету?</string>
-
+    <string name="dialog_delete_body">После очистки очереди вы не сможете продолжить прерванную анкету. Вы действительно хотите очистить очередь?</string>
 
     <string name="error_101">Ошибка 1.01</string>
     <string name="error_102">Ошибка 1.02</string>

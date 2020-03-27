@@ -80,6 +80,7 @@
         android:id="@+id/device_cont"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_16sdp"
         android:orientation="vertical">
 
         <TextView
@@ -138,11 +139,22 @@
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginLeft="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_4sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
             android:layout_marginRight="@dimen/_8sdp"
-            android:layout_marginBottom="@dimen/_16sdp"
             android:text="Неотправленных: 2"
             android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/unfinished_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:text="Возможно продолжить анкет: 1"
+            android:textColor="@android:color/black"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

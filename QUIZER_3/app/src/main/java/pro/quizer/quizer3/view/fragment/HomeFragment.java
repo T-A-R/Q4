@@ -1263,6 +1263,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         TextView complitedCount = layoutView.findViewById(R.id.completed_count);
         TextView sentCount = layoutView.findViewById(R.id.sent_count);
         TextView notSentCount = layoutView.findViewById(R.id.not_sent_count);
+        TextView unfinishedCount = layoutView.findViewById(R.id.unfinished_count);
         LinearLayout cont = layoutView.findViewById(R.id.cont);
 
         cont.setOnClickListener(new View.OnClickListener() {
@@ -1310,6 +1311,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 String.valueOf(sentCounter))));
         UiUtils.setTextOrHide(notSentCount, (String.format(getString(R.string.questions_not_sent_from_device),
                 String.valueOf(notSentCounter))));
+
+        if (currentQuestionnaire != null) {
+            unfinishedCount.setVisibility(View.VISIBLE);
+        } else {
+            unfinishedCount.setVisibility(View.GONE);
+        }
 
         dialogBuilder.setView(layoutView);
         infoDialog = dialogBuilder.create();
@@ -1362,6 +1369,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                             getDao().clearElementPassedR();
                             activity.setCurrentQuestionnaireNull();
                             contContinue.setVisibility(View.GONE);
+                            currentQuestionnaire = null;
                             if (!activity.getConfig().isSaveAborted()) {
                                 hideScreensaver();
                             }

@@ -125,7 +125,9 @@
     <string name="dialog_fake_gps_title">Обнаружено нарушение.</string>
     <string name="dialog_fake_gps_body">На Вашем устройстве используется программа для подмены GPS-координат. Для продолжения работы необходимо её удалить.</string>
     <string name="dialog_close_app_title">Выход из приложения</string>
+    <string name="dialog_delete_title">Завершение анкеты</string>
     <string name="dialog_close_app_body">Вы уверены, что хотите выйти из приложения?</string>
+    <string name="dialog_delete_body">Вы уверены, что хотите принудительно завершить текущую анкету?</string>
 
 
     <string name="error_101">Ошибка 1.01</string>

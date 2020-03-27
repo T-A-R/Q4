@@ -65,7 +65,6 @@ import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.GPSModel;
 import pro.quizer.quizer3.utils.GpsUtils;
-import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.utils.Internet;
@@ -79,15 +78,15 @@ import static pro.quizer.quizer3.MainActivity.showTime;
 public class HomeFragment extends ScreenFragment implements View.OnClickListener {
 
     private Toolbar toolbar;
+    private LinearLayout contContinue;
     private Button btnContinue;
+    private Button btnDelete;
     private Button btnStart;
     private Button btnInfo;
     private Button btnQuotas;
     private TextView tvConfigAgreement;
     private TextView tvCurrentUser;
     private TextView tvConfigName;
-    //    private TextView tvCoountAll;
-//    private TextView tvCountSent;
     private TextView tvQuotasClosed;
     private TextView tvPbText;
     private ProgressBar pb;
@@ -138,14 +137,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         toolbar = findViewById(R.id.toolbar);
         RelativeLayout cont = (RelativeLayout) findViewById(R.id.cont_home_fragment);
+        contContinue = (LinearLayout) findViewById(R.id.cont_continue);
         btnContinue = (Button) findViewById(R.id.btn_continue);
+        btnDelete = (Button) findViewById(R.id.btn_delete);
         btnStart = (Button) findViewById(R.id.btn_start);
         btnInfo = (Button) findViewById(R.id.btn_info);
         btnQuotas = (Button) findViewById(R.id.btn_quotas);
         tvConfigAgreement = (TextView) findViewById(R.id.config_agreement);
         tvConfigName = (TextView) findViewById(R.id.config_name);
-//        tvCoountAll = (TextView) findViewById(R.id.count_all);
-//        tvCountSent = (TextView) findViewById(R.id.count_sent);
         tvQuotasClosed = (TextView) findViewById(R.id.quotas_closed);
         tvCurrentUser = (TextView) findViewById(R.id.current_user);
         tvPbText = (TextView) findViewById(R.id.tv_pb_text);
@@ -163,6 +162,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         cont.startAnimation(Anim.getAppear(getContext()));
         btnContinue.startAnimation(Anim.getAppearSlide(getContext(), 500));
+        btnDelete.startAnimation(Anim.getAppearSlide(getContext(), 500));
         btnStart.startAnimation(Anim.getAppearSlide(getContext(), 500));
         btnInfo.startAnimation(Anim.getAppearSlide(getContext(), 500));
         btnQuotas.startAnimation(Anim.getAppearSlide(getContext(), 500));
@@ -189,34 +189,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             quotaUpdate();
         }
 
-        new SendQuestionnairesByUserModelExecutable(getMainActivity(), mUserModel, new ICallback() {
-            @Override
-            public void onStarting() {
-                showScreensaver(true);
-            }
+        sendQuestionnaires();
 
-            @Override
-            public void onSuccess() {
-                if (!isQuotaUpdated) {
-                    makeQuotaTree();
-                    isQuotaUpdated = true;
-                }
-
-                hideScreensaver();
-                initSyncInfoViews();
-            }
-
-            @Override
-            public void onError(Exception pException) {
-                makeQuotaTree();
-                hideScreensaver();
-            }
-        }, false).execute();
-//        } else {
-//            activateButtons();
-//        }
-//        showElementsDB();
-//        MainActivity activity = getMainActivity();
         if (activity != null) {
             if (activity.hasReserveChannel()) {
                 btnQuotas.setVisibility(View.GONE);
@@ -231,65 +205,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             e.printStackTrace();
         }
 
-    }
-
-    public void makeQuotaTree() {
-        Log.d(TAG, "====== makeQuotaTree: ========");
-        getMainActivity().forceGetCurrentUser();
-        new UpdateQuotasTree().execute(activity.getQuotasElements());
-    }
-
-    public void initViews() {
-
-        mUserModel = getCurrentUser();
-        final ConfigModel config = activity.getConfig();
-        final ProjectInfoModel projectInfo = config.getProjectInfo();
-
-        initSyncInfoViews();
-
-        tvConfigName.setText(projectInfo.getName());
-        tvConfigAgreement.setText(projectInfo.getAgreement());
-
-        try {
-            currentQuestionnaire = getDao().getCurrentQuestionnaireR();
-            activity.getElementItemRList();
-            activity.getCurrentQuestionnaire();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (currentQuestionnaire != null) {
-            if (currentQuestionnaire.getUser_project_id() == mUserModel.getUser_project_id()) {
-                btnContinue.setVisibility(View.VISIBLE);
-                btnContinue.setOnClickListener(this);
-            } else {
-
-            }
-        } else {
-            btnContinue.setVisibility(View.GONE);
-        }
-    }
-
-    private void initSyncInfoViews() {
-        if (getActivity() != null)
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                    final View pView = getView();
-
-                    if (pView == null) {
-                        return;
-                    }
-
-                    final SyncViewModel syncViewModel = new SyncInfoExecutable(getContext()).execute();
-
-//                    completedCounter = syncViewModel.getmAllQuestionnaireModels().size();
-//                    sentCounter = syncViewModel.getmSentQuestionnaireModelsFromThisDevice().size();
-                    notSentCounter = syncViewModel.getmNotSentQuestionnaireModels().size();
-                    sentCounter = syncViewModel.getTokensCounter();
-                    completedCounter = sentCounter + notSentCounter;
-                }
-            });
     }
 
     @Override
@@ -323,7 +238,92 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 e.printStackTrace();
                 showToast("Ошибка продолжения прерванной анкеты");
             }
+        } else if (view == btnDelete) {
+            showDeleteDialog();
         }
+    }
+
+    private void sendQuestionnaires() {
+        new SendQuestionnairesByUserModelExecutable(getMainActivity(), mUserModel, new ICallback() {
+            @Override
+            public void onStarting() {
+                showScreensaver(true);
+            }
+
+            @Override
+            public void onSuccess() {
+                if (!isQuotaUpdated) {
+                    makeQuotaTree();
+                    isQuotaUpdated = true;
+                }
+
+                hideScreensaver();
+                initSyncInfoViews();
+            }
+
+            @Override
+            public void onError(Exception pException) {
+                makeQuotaTree();
+                hideScreensaver();
+            }
+        }, false).execute();
+    }
+
+    public void makeQuotaTree() {
+        Log.d(TAG, "====== makeQuotaTree: ========");
+        getMainActivity().forceGetCurrentUser();
+        new UpdateQuotasTree().execute(activity.getQuotasElements());
+    }
+
+    public void initViews() {
+
+        mUserModel = getCurrentUser();
+        final ConfigModel config = activity.getConfig();
+        final ProjectInfoModel projectInfo = config.getProjectInfo();
+
+        initSyncInfoViews();
+
+        tvConfigName.setText(projectInfo.getName());
+        tvConfigAgreement.setText(projectInfo.getAgreement());
+
+        try {
+            currentQuestionnaire = getDao().getCurrentQuestionnaireR();
+            activity.getElementItemRList();
+            activity.getCurrentQuestionnaire();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (currentQuestionnaire != null) {
+            if (currentQuestionnaire.getUser_project_id() == mUserModel.getUser_project_id()) {
+                contContinue.setVisibility(View.VISIBLE);
+                btnContinue.setOnClickListener(this);
+                btnDelete.setOnClickListener(this);
+            } else {
+
+            }
+        } else {
+            contContinue.setVisibility(View.GONE);
+        }
+    }
+
+    private void initSyncInfoViews() {
+        if (getActivity() != null)
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    final View pView = getView();
+
+                    if (pView == null) {
+                        return;
+                    }
+
+                    final SyncViewModel syncViewModel = new SyncInfoExecutable(getContext()).execute();
+                    notSentCounter = syncViewModel.getmNotSentQuestionnaireModels().size();
+                    sentCounter = syncViewModel.getTokensCounter();
+                    completedCounter = sentCounter + notSentCounter;
+                }
+            });
     }
 
     @Override
@@ -1333,6 +1333,42 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 }
             }
         });
+    }
+
+    public void showDeleteDialog() {
+
+        if (activity != null && !activity.isFinishing()) {
+
+            new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.dialog_delete_title)
+                    .setMessage(R.string.dialog_delete_body)
+                    .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialog, final int which) {
+                            activity.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    showScreensaver("Подождите идет отправка анкет.", true);
+                                }
+                            });
+
+                            if (activity.getConfig().isSaveAborted()) {
+                                isQuotaUpdated = false;
+                                saveQuestionnaireToDatabase(currentQuestionnaire, true);
+                                sendQuestionnaires();
+                            }
+                            getDao().clearCurrentQuestionnaireR();
+                            getDao().clearPrevElementsR();
+                            getDao().clearElementPassedR();
+                            activity.setCurrentQuestionnaireNull();
+                            contContinue.setVisibility(View.GONE);
+                            if (!activity.getConfig().isSaveAborted()) {
+                                hideScreensaver();
+                            }
+                        }
+                    })
+                    .setNegativeButton(R.string.view_no, null).show();
+        }
     }
 }
 

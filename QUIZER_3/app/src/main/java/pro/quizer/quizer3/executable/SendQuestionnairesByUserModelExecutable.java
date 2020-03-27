@@ -163,14 +163,12 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
             SPUtils.saveSendTimeDifference(mBaseActivity, deletingListResponseModel.getServerTime());
 
             if (deletingListResponseModel.getQuotas() != null && deletingListResponseModel.getQuotas().size() > 0) {
-                Log.d(TAG, "????????? onSendQuestionnaires: UP " + mUserModel.getUser_project_id());
                 List<QuotaR> quotaRList = new ArrayList<>();
                 for(QuotaModel model : deletingListResponseModel.getQuotas()) {
                     quotaRList.add(new QuotaR(model.getSequence(), model.getLimit(), model.getSent()));
                 }
                 mBaseActivity.getMainDao().clearQuotaR();
                 mBaseActivity.getMainDao().insertQuotaR(quotaRList);
-//                quotaUpdate();
             }
 
             if (deletingListResponseModel.getResult() != 0) {

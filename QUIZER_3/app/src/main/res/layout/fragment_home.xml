@@ -48,16 +48,36 @@
             android:text="Обновление квотного блока"
             android:visibility="gone"/>
 
-        <Button
-            android:id="@+id/btn_continue"
-            style="@style/ButtonStyle"
+        <LinearLayout
+            android:id="@+id/cont_continue"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_36sdp"
-            android:layout_gravity="center_horizontal"
-            android:maxLines="1"
-            android:text="@string/button_continue"
-            android:textSize="@dimen/_12ssp"
-            android:visibility="gone"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/btn_continue"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:text="@string/button_continue"
+                android:textSize="@dimen/_12ssp" />
+
+            <Button
+                android:id="@+id/btn_delete"
+                style="@style/ButtonRed"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="3"
+                android:maxLines="1"
+                android:text="X"
+                android:textSize="@dimen/_12ssp" />
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/btn_start"
@@ -65,7 +85,6 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_36sdp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
             android:maxLines="1"
             android:text="@string/button_start"
             android:textSize="@dimen/_12ssp" />

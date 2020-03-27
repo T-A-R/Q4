@@ -1,5 +1,7 @@
 package pro.quizer.quizer3.view.fragment;
 
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -30,8 +32,10 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
     private Button mSendAudioButton;
     private Button mSendPhotoButton;
     private Button mSyncSms;
+    private Button mDelete;
     private TextView mQSendedFromThisDeviceView;
     private TextView mQSendedInSessionView;
+    private TextView mUnfinishedView;
     private TextView mQUnsendedView;
     private TextView mAUnsendedView;
     private TextView mPUnsendedView;
@@ -69,20 +73,32 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
         mSendPhotoButton = findViewById(R.id.send_photo);
         mSyncSms = findViewById(R.id.sync_sms);
         mQSendedFromThisDeviceView = findViewById(R.id.sended_q_from_this_device);
+        mUnfinishedView = findViewById(R.id.have_unfinished);
         mQSendedInSessionView = findViewById(R.id.sended_q_in_session);
         mQUnsendedView = findViewById(R.id.unsended_q);
         mAUnsendedView = findViewById(R.id.unsended_audio);
         mPUnsendedView = findViewById(R.id.unsended_photo);
+        mDelete = findViewById(R.id.btn_delete);
 
         mSyncSms.setOnClickListener(this);
+        mDelete.setOnClickListener(this);
 
         cont.startAnimation(Anim.getAppear(getContext()));
+        mDelete.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mSendDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mSendAudioButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mSendPhotoButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mSyncSms.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
         mToolbar.setTitle(getString(R.string.sync_screen));
+        if (getMainActivity().getCurrentQuestionnaire() != null) {
+            mUnfinishedView.setText(getResources().getString(R.string.sync_have_unfinished_yes));
+            mDelete.setVisibility(View.VISIBLE);
+        } else {
+            mUnfinishedView.setText(getResources().getString(R.string.sync_have_unfinished_no));
+            mDelete.setVisibility(View.GONE);
+        }
+
         mToolbar.showCloseView(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -97,6 +113,37 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
     public void onClick(View view) {
         if (view == mSyncSms) {
 //                replaceFragment(new SmsFragment());
+        } else if (view == mDelete) {
+            showDeleteDialog();
+        }
+    }
+
+    public void showDeleteDialog() {
+
+        MainActivity activity = getMainActivity();
+
+        if (activity != null && !activity.isFinishing()) {
+
+            new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.dialog_delete_title)
+                    .setMessage(R.string.dialog_delete_body)
+                    .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialog, final int which) {
+
+                            if (activity.getConfig().isSaveAborted()) {
+                                saveQuestionnaireToDatabase(activity.getCurrentQuestionnaireForce(), true);
+                            }
+                            getDao().clearCurrentQuestionnaireR();
+                            getDao().clearPrevElementsR();
+                            getDao().clearElementPassedR();
+                            activity.setCurrentQuestionnaireNull();
+                            mDelete.setVisibility(View.GONE);
+                            mUnfinishedView.setText(getResources().getString(R.string.sync_have_unfinished_no));
+                        }
+                    })
+                    .setNegativeButton(R.string.view_no, null).show();
         }
     }
 

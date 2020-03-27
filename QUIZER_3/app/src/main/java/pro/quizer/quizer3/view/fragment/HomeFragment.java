@@ -1134,7 +1134,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             try {
 //                questionnairesList = getDao().getQuestionnaireSurveyStatus(userId, Constants.QuestionnaireStatuses.COMPLETED, Constants.LogStatus.NOT_SENT);
                 abortedQuestionnairesList = getDao().getQuestionnaireSurveyStatus(userId, Constants.QuestionnaireStatuses.ABORTED, Constants.LogStatus.NOT_SENT);
-                unfinishedQuestionnairesList = getDao().getQuestionnaireSurveyStatus(userId, Constants.QuestionnaireStatuses.UNFINISHED, Constants.LogStatus.NOT_SENT);
+                unfinishedQuestionnairesList = getDao().getQuestionnaireSurveyStatus(userId, Constants.QuestionnaireStatuses.ABORTED, Constants.LogStatus.NOT_SENT);
             } catch (Exception e) {
                 e.printStackTrace();
             }

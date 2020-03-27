@@ -389,6 +389,8 @@
     <string name="view_reopen">Развернуть...</string>
     <string name="data_changed">Данные изменены</string>
     <string name="start_audio_error_check_microphone">Невозможно начать запись аудио. Возможно микрофон занят другим приложением</string>
+    <string name="sync_have_unfinished_yes">Наличие незавершённой анкеты в очереди на продолжение: да</string>
+    <string name="sync_have_unfinished_no">Наличие незавершённой анкеты в очереди на продолжение: нет</string>
 
 
 </resources>

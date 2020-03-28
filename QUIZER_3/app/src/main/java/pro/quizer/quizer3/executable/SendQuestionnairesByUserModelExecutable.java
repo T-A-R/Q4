@@ -27,6 +27,7 @@ import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.model.quota.QuotaModel;
 import pro.quizer.quizer3.model.sms.SmsStage;
 import pro.quizer.quizer3.model.view.SmsViewModel;
+import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.NetworkUtils;
 import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.utils.SmsUtils;
@@ -167,8 +168,14 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                 for(QuotaModel model : deletingListResponseModel.getQuotas()) {
                     quotaRList.add(new QuotaR(model.getSequence(), model.getLimit(), model.getSent()));
                 }
-                mBaseActivity.getMainDao().clearQuotaR();
-                mBaseActivity.getMainDao().insertQuotaR(quotaRList);
+                try {
+                    mBaseActivity.getMainDao().clearQuotaR();
+                    mBaseActivity.getMainDao().insertQuotaR(quotaRList);
+                    mBaseActivity.setSettings(Constants.Settings.QUOTA_TIME, String.valueOf(DateUtils.getFullCurrentTime()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
 
             if (deletingListResponseModel.getResult() != 0) {
@@ -185,6 +192,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                             MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.set_quiz_status), Constants.LogResult.SENT, mBaseActivity.getString(R.string.set_sent_quiz_status), null);
                             mBaseActivity.getMainDao().insertToken(new TokensCounterR(token, mUserModel.getUser_id()));
                             mBaseActivity.getMainDao().deleteQuestionnaireByToken(token);
+                            mBaseActivity.setSettings(Constants.Settings.SENT_TIME, String.valueOf(DateUtils.getFullCurrentTime()));
 
                         } catch (Exception e) {
                             MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.set_quiz_status), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.db_save_error), e.getMessage());

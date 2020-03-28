@@ -130,4 +130,10 @@ public final class Constants {
     public interface OptionName {
         String QUIZ_STARTED = "quiz_started";
     }
+
+    public interface Settings {
+        String QUIZ_TIME = "quiz_time";
+        String SENT_TIME = "sent_time";
+        String QUOTA_TIME = "quota_time";
+    }
 }

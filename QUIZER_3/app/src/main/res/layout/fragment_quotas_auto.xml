@@ -114,7 +114,7 @@
                 android:textSize="@dimen/_12ssp"
                 android:text="@string/view_button_info"
                 android:layout_marginEnd="@dimen/_10sdp"
-                android:visibility="gone"/>
+                android:visibility="visible"/>
 
             <Button
                 android:id="@+id/details_quotas"

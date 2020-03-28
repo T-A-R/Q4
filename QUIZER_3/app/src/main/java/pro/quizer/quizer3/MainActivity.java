@@ -681,7 +681,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 mIsAudioStarted = false;
                 return;
             }
-            if(pbState != PlaybackStateCompat.STATE_PLAYING) {
+            if (pbState != PlaybackStateCompat.STATE_PLAYING) {
 
                 mIsAudioStarted = true;
                 Log.d(TAG, "******************* startRecording: **********************");
@@ -695,7 +695,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 audioTime = DateUtils.getCurrentTimeMillis();
                 mToken = token;
                 mAudioRelativeId = relativeId;
-
 
 
 //                Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!! startRecording: STATE " + pbState);
@@ -1267,6 +1266,24 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             getMainDao().insertSettings(settings);
         }
         return settings;
+    }
+
+    public void setSettings(String settings, String data) {
+        if (settings != null && data != null) {
+            switch (settings) {
+                case "":
+                    break;
+                case Constants.Settings.QUIZ_TIME:
+                    getMainDao().setLastQuizTime(Long.parseLong(data));
+                    break;
+                case Constants.Settings.SENT_TIME:
+                    getMainDao().setLastSentQuizTime(Long.parseLong(data));
+                    break;
+                case Constants.Settings.QUOTA_TIME:
+                    getMainDao().setLastQuotaTime(Long.parseLong(data));
+                    break;
+            }
+        }
     }
 
     public boolean isTableSpeedMode() {

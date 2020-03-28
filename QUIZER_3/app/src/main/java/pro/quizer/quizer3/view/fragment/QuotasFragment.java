@@ -26,6 +26,7 @@ import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.QuotasAdapter;
 import pro.quizer.quizer3.database.models.AppLogsR;
+import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.QuotasViewModelExecutable;
 import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
@@ -85,8 +86,6 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
 
     @Override
     public boolean onBackPressed() {
-//        getMainActivity().setHomeFragmentStarted(false);
-//        Log.d(TAG, "start Home: 8");
         replaceFragment(new HomeFragment());
         return true;
     }
@@ -103,9 +102,7 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
 
         mToolbar = findViewById(R.id.toolbar);
         mMainActivity = (MainActivity) getActivity();
-//        mMap = mMainActivity.getMap();
         mMap = getMainActivity().getMap(false);
-//        Log.d(TAG, "??????????? initViews: " + mMap.size());
         mSearchEditTextView = findViewById(R.id.search_edit_text);
         mNotCompletedOnlySwitch = findViewById(R.id.not_completed_only_switch);
         mClearSearchBtn = findViewById(R.id.clear_search_icon);
@@ -118,8 +115,6 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
         mToolbar.showCloseView(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-//                getMainActivity().setHomeFragmentStarted(false);
-//                Log.d(TAG, "start Home: 9");
                 replaceFragment(new HomeFragment());
             }
         });
@@ -249,78 +244,56 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
     }
 
     private void checkQuotasLogs() {
-        List<AppLogsR> logs = null;
-        try {
-            logs = getDao().getAppLogsByLogin(mMainActivity.getCurrentUser().getLogin());
-        } catch (Exception e) {
-            showToast(getString(R.string.db_load_error));
+        Long saveQuizTime = null;
+        Long sentQuizTime = null;
+        Long gotQuotaTime = null;
+        SettingsR settings = null;
+
+        settings = mMainActivity.getSettings();
+        if (settings != null) {
+            saveQuizTime = settings.getLast_quiz_time();
+            sentQuizTime = settings.getLast_sent_quiz_time();
+            gotQuotaTime = settings.getLast_quota_time();
         }
 
-//        if (mMainActivity.getCurrentUser().getQuotasR() != null) {
         if (getDao().getQuotaR() != null) {
+            if (gotQuotaTime != null) {
+                String text = getString(R.string.quota_renew_time) + " " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, gotQuotaTime);
+                quotaText3 = text;
+            }
 
-            if (logs != null && isAdded()) {
-
-                for (int i = logs.size() - 1; i >= 0; i--) {
-                    if (logs.get(i).getObject().equals(Constants.LogObject.QUOTA)
-                            && logs.get(i).getType().equals(Constants.LogType.SERVER)
-                            && logs.get(i).getResult().equals(Constants.LogResult.SUCCESS)) {
-                        String text = getString(R.string.quota_renew_time) + " " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, Long.parseLong(logs.get(i).getDate()) * 1000);
-                        quotaText3 = text;
-                        break;
-                    }
-                }
-
-                boolean hasRenew = false;
-                for (int i = logs.size() - 1; i >= 0; i--) {
-                    if (logs.get(i).getObject().equals(Constants.LogObject.QUESTIONNAIRE)
-                            && logs.get(i).getType().equals(Constants.LogType.SERVER)
-                            && logs.get(i).getResult().equals(Constants.LogResult.SUCCESS)) {
-
-                        hasRenew = true;
-
-                        for (int k = i; k < logs.size(); k++) {
-                            if (logs.get(k).getObject().equals(Constants.LogObject.QUOTA)
-                                    && logs.get(k).getType().equals(Constants.LogType.SERVER)
-                                    && logs.get(k).getResult().equals(Constants.LogResult.SUCCESS)) {
-                                quotaText1 = getString(R.string.quota_renewed_after_send);
-                                quotaType1 = 1;
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                }
-
-                if (!hasRenew) {
-                    quotaType1 = 0;
-                }
-
-                hasRenew = false;
-                for (int i = logs.size() - 1; i >= 0; i--) {
-                    if (logs.get(i).getObject().equals(Constants.LogObject.QUESTIONNAIRE)
-                            && logs.get(i).getType().equals(Constants.LogType.DATABASE)
-                            && logs.get(i).getResult().equals(Constants.LogResult.SUCCESS)) {
-
-                        hasRenew = true;
-
-                        for (int k = i; k < logs.size(); k++) {
-                            if (logs.get(k).getObject().equals(Constants.LogObject.QUOTA)
-                                    && logs.get(k).getType().equals(Constants.LogType.SERVER)
-                                    && logs.get(k).getResult().equals(Constants.LogResult.SUCCESS)) {
-                                quotaText2 = getString(R.string.quota_renewed_after_finish);
-                                quotaType2 = 1;
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                }
-
-                if (!hasRenew) {
-                    quotaType2 = 0;
+            boolean hasRenew = false;
+            if (gotQuotaTime != null && sentQuizTime != null) {
+                hasRenew = true;
+                Log.d(TAG, "checkQuotasLogs 1: " + gotQuotaTime + " " + sentQuizTime);
+                if (gotQuotaTime >= sentQuizTime) {
+                    quotaText1 = getString(R.string.quota_renewed_after_send);
+                    quotaType1 = 1;
+                } else {
+                    quotaType1 = 2;
                 }
             }
+
+            if (!hasRenew) {
+                quotaType1 = 0;
+            }
+
+            hasRenew = false;
+            if (gotQuotaTime != null && saveQuizTime != null) {
+                hasRenew = true;
+                Log.d(TAG, "checkQuotasLogs 2: " + gotQuotaTime + " " + saveQuizTime);
+                if (gotQuotaTime >= saveQuizTime) {
+                    quotaText2 = getString(R.string.quota_renewed_after_finish);
+                    quotaType2 = 1;
+                }else {
+                    quotaType2 = 2;
+                }
+            }
+
+            if (!hasRenew) {
+                quotaType2 = 0;
+            }
+
         } else {
             quotaText1 = getString(R.string.no_quota_limits);
             quotaType1 = 1;

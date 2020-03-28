@@ -822,6 +822,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
         try {
             getDao().insertQuestionnaire(questionnaireDatabaseModel);
+            getMainActivity().setSettings(Constants.Settings.QUIZ_TIME, String.valueOf(DateUtils.getFullCurrentTime()));
             addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.SUCCESS, getString(R.string.save_question_to_db_success), null);
         } catch (Exception e) {
             showToast(getString(R.string.db_save_error));

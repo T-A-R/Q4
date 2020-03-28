@@ -26,6 +26,15 @@ public class SettingsR {
     @ColumnInfo(name = "dark_mode")
     private boolean dark_mode;
 
+    @ColumnInfo(name = "last_quota_time")
+    private Long last_quota_time;
+
+    @ColumnInfo(name = "last_quiz_time")
+    private Long last_quiz_time;
+
+    @ColumnInfo(name = "last_sent_quiz_time")
+    private Long last_sent_quiz_time;
+
     public SettingsR() {
         this.started = false;
         this.auto_zoom = true;
@@ -80,5 +89,29 @@ public class SettingsR {
 
     public void setDark_mode(boolean dark_mode) {
         this.dark_mode = dark_mode;
+    }
+
+    public Long getLast_quota_time() {
+        return last_quota_time;
+    }
+
+    public void setLast_quota_time(Long last_quota_time) {
+        this.last_quota_time = last_quota_time;
+    }
+
+    public Long getLast_quiz_time() {
+        return last_quiz_time;
+    }
+
+    public void setLast_quiz_time(Long last_quiz_time) {
+        this.last_quiz_time = last_quiz_time;
+    }
+
+    public Long getLast_sent_quiz_time() {
+        return last_sent_quiz_time;
+    }
+
+    public void setLast_sent_quiz_time(Long last_sent_quiz_time) {
+        this.last_sent_quiz_time = last_sent_quiz_time;
     }
 }

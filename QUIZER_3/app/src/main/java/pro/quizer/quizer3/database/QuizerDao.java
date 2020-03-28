@@ -321,6 +321,15 @@ public interface QuizerDao {
     @Query("UPDATE SettingsR SET dark_mode = :data")
     void setSettingsDarkMode(boolean data);
 
+    @Query("UPDATE SettingsR SET last_quota_time = :data")
+    void setLastQuotaTime(Long data);
+
+    @Query("UPDATE SettingsR SET last_quiz_time = :data")
+    void setLastQuizTime(Long data);
+
+    @Query("UPDATE SettingsR SET last_sent_quiz_time = :data")
+    void setLastSentQuizTime(Long data);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertToken(TokensCounterR token);
 

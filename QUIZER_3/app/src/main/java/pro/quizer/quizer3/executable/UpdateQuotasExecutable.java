@@ -21,6 +21,7 @@ import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.API.models.request.QuotaRequestModel;
 import pro.quizer.quizer3.API.models.response.QuotaResponseModel;
 import pro.quizer.quizer3.model.quota.QuotaModel;
+import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.SPUtils;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
@@ -101,6 +102,8 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
                         }
                         mainActivity.getMainDao().clearQuotaR();
                         mainActivity.getMainDao().insertQuotaR(quotaRList);
+                        mainActivity.setSettings(Constants.Settings.QUOTA_TIME, String.valueOf(DateUtils.getFullCurrentTime()));
+
                     }
                 } catch (Exception e) {
                     Log.d(TAG, mContext.getString(R.string.db_save_error));

@@ -1042,5 +1042,16 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         }
     }
 
-
+    public boolean hasUnfinishedOrSend(int mQUnsendedCount, boolean hasUnfinishedQuiz) {
+        if (mQUnsendedCount > 0 || hasUnfinishedQuiz) {
+            if (mQUnsendedCount > 0 && hasUnfinishedQuiz) {
+                showToast(getString(R.string.notification_please_send_and_clear_quiz));
+            } else if (hasUnfinishedQuiz) {
+                showToast(getString(R.string.notification_please_clear_quiz));
+            } else {
+                showToast(getString(R.string.notification_please_send_quiz));
+            }
+            return true;
+        } else return false;
+    }
 }

@@ -185,6 +185,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
         final int mAUnsendedCount = pSyncViewModel.getmNotSendedAudio().size();
         final int mPUnsendedCount = pSyncViewModel.getmNotSendedPhoto().size();
         final boolean hasReserveChannel = pSyncViewModel.hasReserveChannel();
+        final boolean hasUnfinishedQuiz = pSyncViewModel.hasUnfinishedQuiz();
 
         final MainActivity activity = (MainActivity) getActivity();
 
@@ -219,10 +220,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
                 mSendPhotoButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(final View view) {
-                        if (mQUnsendedCount > 0) {
-                            showToast(getString(R.string.notification_please_send_quiz));
-                            return;
-                        }
+                        if (hasUnfinishedOrSend(mQUnsendedCount, hasUnfinishedQuiz)) return;
 
                         new PhotosSendingByUserModelExecutable((MainActivity) getActivity(), mUserModel, SyncFragment.this).execute();
                     }
@@ -233,10 +231,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
 
                     @Override
                     public void onClick(final View view) {
-                        if (mQUnsendedCount > 0) {
-                            showToast(getString(R.string.notification_please_send_quiz));
-                            return;
-                        }
+                        if (hasUnfinishedOrSend(mQUnsendedCount, hasUnfinishedQuiz)) return;
 
                         new AudiosSendingByUserModelExecutable((MainActivity) getActivity(), mUserModel, SyncFragment.this).execute();
                     }

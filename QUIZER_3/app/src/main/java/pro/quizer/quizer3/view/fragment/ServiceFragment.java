@@ -127,6 +127,7 @@ public class ServiceFragment extends ScreenFragment {
         final int notSentCrashCount = getDao().getCrashLogs().size();
         final int notSentLogsCount = getDao().getAllLogsWithStatus(Constants.LogStatus.NOT_SENT).size();
         final int usersCount = pServiceViewModel.getUserModels().size();
+        final boolean hasUnfinishedQuiz = activity.getCurrentQuestionnaireForce() != null;
 
         getActivity().runOnUiThread(new Runnable() {
 
@@ -172,11 +173,8 @@ public class ServiceFragment extends ScreenFragment {
         mSendPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                if (notSentQuestionnairesCount > 0) {
-                    showToast(getString(R.string.notification_please_send_quiz));
+                if (hasUnfinishedOrSend(notSentQuestionnairesCount, hasUnfinishedQuiz)) return;
 
-                    return;
-                }
                 addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_send_photo), null);
                 new AllPhotosSendingExecutable((MainActivity) getActivity(), new ICallback() {
                     @Override
@@ -200,11 +198,8 @@ public class ServiceFragment extends ScreenFragment {
         mSendAudioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                if (notSentQuestionnairesCount > 0) {
-                    showToast(getString(R.string.notification_please_send_quiz));
+                if (hasUnfinishedOrSend(notSentQuestionnairesCount, hasUnfinishedQuiz)) return;
 
-                    return;
-                }
                 addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_send_audio), null);
                 new AllAudiosSendingExecutable((MainActivity) getActivity(), new ICallback() {
                     @Override

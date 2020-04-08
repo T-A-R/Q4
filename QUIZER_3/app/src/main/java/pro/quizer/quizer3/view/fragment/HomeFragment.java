@@ -211,9 +211,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     public void onClick(View view) {
         if (view == btnStart) {
             if (!isStartBtnPressed) {
-                isStartBtnPressed = true;
-                deactivateButtons();
-                startQuestionnaire();
+                if(currentQuestionnaire == null) {
+                    isStartBtnPressed = true;
+                    deactivateButtons();
+                    startQuestionnaire();
+                } else {
+                    showStartDialog();
+                }
             }
         } else if (view == btnInfo) {
             getInfo();
@@ -350,6 +354,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             CompletableFuture.supplyAsync(() -> {
                 Log.d(TAG, "startQuestionnaire: START...");
                 if (currentQuestionnaire != null) {
+
                     boolean saved = true;
                     if (currentQuestionnaire.getUser_project_id().equals(getCurrentUser().getUser_project_id())) {
                         if (activity.getConfig().isSaveAborted()) {
@@ -1373,6 +1378,26 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                             if (!activity.getConfig().isSaveAborted()) {
                                 hideScreensaver();
                             }
+                        }
+                    })
+                    .setNegativeButton(R.string.view_no, null).show();
+        }
+    }
+
+    public void showStartDialog() {
+
+        if (activity != null && !activity.isFinishing()) {
+
+            new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.dialog_start_title)
+                    .setMessage(R.string.dialog_start_body)
+                    .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialog, final int which) {
+                            isStartBtnPressed = true;
+                            deactivateButtons();
+                            startQuestionnaire();
                         }
                     })
                     .setNegativeButton(R.string.view_no, null).show();

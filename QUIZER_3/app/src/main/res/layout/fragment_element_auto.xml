@@ -5,8 +5,8 @@
     android:id="@+id/cont_element_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:saveEnabled="false"
-    android:keepScreenOn="true">
+    android:keepScreenOn="true"
+    android:saveEnabled="false">
 
     <pro.quizer.quizer3.view.Toolbar
         android:id="@+id/toolbar"
@@ -282,24 +282,24 @@
                     android:id="@+id/question"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_8sdp"
                     android:layout_marginStart="@dimen/_8sdp"
-                    android:layout_marginRight="@dimen/_20sdp"
+                    android:layout_marginLeft="@dimen/_8sdp"
                     android:layout_marginEnd="@dimen/_20sdp"
+                    android:layout_marginRight="@dimen/_20sdp"
                     android:text="Question"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/_12ssp"
                     tools:ignore="MissingConstraints"
-                    tools:layout_editor_absoluteX="10dp"/>
+                    tools:layout_editor_absoluteX="10dp" />
 
                 <ImageView
                     android:id="@+id/question_close"
                     android:layout_width="@dimen/_12sdp"
                     android:layout_height="@dimen/_12sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_marginRight="@dimen/_8sdp"
                     android:src="@drawable/arrow_up_white"
                     app:layout_constraintEnd_toEndOf="@+id/question_box"
-                    android:layout_marginRight="@dimen/_8sdp"
-                    android:layout_marginEnd="@dimen/_8sdp"
                     tools:ignore="MissingConstraints"
                     tools:layout_editor_absoluteY="2dp" />
 
@@ -370,15 +370,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
                 <com.multispinner.MultiSelectSpinner
                     android:id="@+id/answers_multi_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:hintText="Выберите варианты ответа"
                     android:padding="5dp"
-                    android:visibility="gone"/>
+                    android:visibility="gone"
+                    app:hintText="Выберите варианты ответа" />
 
             </LinearLayout>
 
@@ -387,6 +387,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_8sdp"
+                android:layout_marginRight="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:scrollbarSize="@dimen/_16sdp"
+                android:fadeScrollbars="false"
+                android:scrollbarAlwaysDrawVerticalTrack="false"
+                android:scrollbarThumbVertical="@drawable/button_background_green"
+                android:scrollbarTrackVertical="@color/lightGray2"
+                android:scrollbarStyle="outsideInset"
+                android:scrollbars="vertical"
                 android:visibility="gone" />
 
             <FrameLayout
@@ -412,7 +421,15 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/scale_recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:scrollbarSize="@dimen/_16sdp"
+            android:fadeScrollbars="false"
+            android:scrollbarAlwaysDrawVerticalTrack="false"
+            android:scrollbarThumbVertical="@drawable/button_background_green"
+            android:scrollbarTrackVertical="@color/lightGray2"
+            android:scrollbars="vertical"
             android:visibility="visible" />
 
     </LinearLayout>

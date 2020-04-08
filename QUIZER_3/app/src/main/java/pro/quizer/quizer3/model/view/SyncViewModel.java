@@ -13,6 +13,7 @@ import pro.quizer.quizer3.utils.SPUtils;
 public class SyncViewModel implements Serializable {
 
     private boolean mHasReserveChannel;
+    private boolean mHasUnfinishedQuiz;
     private List<File> mNotSendedAudio;
     private List<File> mNotSendedPhoto;
 
@@ -59,6 +60,14 @@ public class SyncViewModel implements Serializable {
 
     public boolean hasReserveChannel() {
         return mHasReserveChannel;
+    }
+
+    public boolean hasUnfinishedQuiz() {
+        return mHasUnfinishedQuiz;
+    }
+
+    public void setHasUnfinishedQuiz(boolean mHasUnfinishedQuiz) {
+        this.mHasUnfinishedQuiz = mHasUnfinishedQuiz;
     }
 
     public void setNotSendedPhoto(List<File> mNotSendedPhoto) {

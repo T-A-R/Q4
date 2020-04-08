@@ -126,6 +126,8 @@
     <string name="dialog_fake_gps_body">На Вашем устройстве используется программа для подмены GPS-координат. Для продолжения работы необходимо её удалить.</string>
     <string name="dialog_close_app_title">Выход из приложения</string>
     <string name="dialog_delete_title">Завершение анкеты</string>
+    <string name="dialog_start_title">Начало новой анкеты</string>
+    <string name="dialog_start_body">Вы собираетесь начать новую анкету. При этом сохранённая для продолжения незавершённая анкета будет удалена из очереди на продолжение и её нельзя будет продолжить. Вы действительно хотите начать новую анкету?</string>
     <string name="dialog_close_app_body">Вы уверены, что хотите выйти из приложения?</string>
     <string name="dialog_delete_body">После очистки очереди вы не сможете продолжить прерванную анкету. Вы действительно хотите очистить очередь?</string>
 
@@ -290,7 +292,9 @@
     <string name="drawer_about">О НАС</string>
     <string name="drawer_exit">ВЫЙТИ</string>
     <string name="button_sms">СМС</string>
-    <string name="notification_please_send_quiz">Действие невозможно. Сначала отправьте все анкеты.</string>
+    <string name="notification_please_send_quiz">Перед отправкой аудио/фото отправьте все неотосланные анкеты.</string>
+    <string name="notification_please_clear_quiz">Перед отправкой аудио/фото очистите очередь на продолжение анкет.</string>
+    <string name="notification_please_send_and_clear_quiz">Перед отправкой аудио/фото очистите очередь на продолжение анкет и отправьте все неотосланные анкеты.</string>
     <string name="view_sent_count_quiz_from_this_device">Отправлено анкет в рамках проекта с данного устройства: %1$s</string>
     <string name="view_sent_count_quiz_from_this_session">Отправлено анкет в данном сеансе: %1$s</string>
     <string name="view_unsent_count_quiz">Количество неотправленных анкет: %1$s</string>

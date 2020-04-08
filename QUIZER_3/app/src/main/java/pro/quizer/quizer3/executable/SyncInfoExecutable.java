@@ -33,7 +33,7 @@ public class SyncInfoExecutable extends BaseModelExecutable<SyncViewModel> {
         if (mContext instanceof MainActivity) {
             final MainActivity activity = (MainActivity) mContext;
             final MainFragment mainFragment = (MainFragment) activity.getSupportFragmentManager().findFragmentById(R.id.main);
-            if(mainFragment != null) {
+            if (mainFragment != null) {
                 final UserModelR userModel = mainFragment.getCurrentUser();
                 final int pUserId = userModel.getUser_id();
                 final int pUserProjectId = userModel.getUser_project_id();
@@ -51,6 +51,11 @@ public class SyncInfoExecutable extends BaseModelExecutable<SyncViewModel> {
                 syncViewModel.setNotSendedPhoto(mainFragment.getPhotosByUserId(pUserId));
                 syncViewModel.setNotSendedAudio(mainFragment.getAudioByUserId(pUserId));
                 syncViewModel.setHasReserveChannel(configModel.hasReserveChannels());
+                if (activity.getCurrentQuestionnaireForce() != null) {
+                    syncViewModel.setHasUnfinishedQuiz(true);
+                } else {
+                    syncViewModel.setHasUnfinishedQuiz(false);
+                }
             }
             return syncViewModel;
         } else {

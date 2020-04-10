@@ -206,6 +206,13 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
             }
 
             if (deletingListResponseModel != null) {
+                if(deletingListResponseModel.isProjectActive() != null) {
+                    try {
+                        mBaseActivity.getMainDao().setProjectActive(deletingListResponseModel.isProjectActive());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 if (deletingListResponseModel.getResult() != 0) {
                     final List<String> tokensToRemove = deletingListResponseModel.getAccepted();
 

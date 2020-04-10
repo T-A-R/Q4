@@ -35,12 +35,16 @@ public class SettingsR {
     @ColumnInfo(name = "last_sent_quiz_time")
     private Long last_sent_quiz_time;
 
+    @ColumnInfo(name = "project_is_active")
+    private boolean project_is_active;
+
     public SettingsR() {
         this.started = false;
         this.auto_zoom = true;
         this.table_speed = true;
         this.memory_check = true;
         this.dark_mode = true;
+        this.project_is_active = true;
     }
 
     public int getId() {
@@ -113,5 +117,13 @@ public class SettingsR {
 
     public void setLast_sent_quiz_time(Long last_sent_quiz_time) {
         this.last_sent_quiz_time = last_sent_quiz_time;
+    }
+
+    public boolean isProject_is_active() {
+        return project_is_active;
+    }
+
+    public void setProject_is_active(boolean project_is_active) {
+        this.project_is_active = project_is_active;
     }
 }

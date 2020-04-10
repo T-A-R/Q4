@@ -237,6 +237,7 @@
     <string name="questions_sent_from_device">Отправлено анкет: %1$s</string>
     <string name="questions_not_sent_from_device">Неотправленных: %1$s</string>
     <string name="quotas_closed_on_device">Квот закрыто: %1$s</string>
+    <string name="inactive_on_device">Неактуальных квотных: %1$s</string>
     <string name="start_questions">Начало новой анкеты</string>
     <string name="start_question_error">Ошибка запуска анкеты. Попробуйте еще раз</string>
     <string name="home_screen">Главный экран</string>
@@ -395,6 +396,8 @@
     <string name="start_audio_error_check_microphone">Невозможно начать запись аудио. Возможно микрофон занят другим приложением</string>
     <string name="sync_have_unfinished_yes">Наличие незавершённой анкеты в очереди на продолжение: да</string>
     <string name="sync_have_unfinished_no">Наличие незавершённой анкеты в очереди на продолжение: нет</string>
+    <string name="project_not_active">Проект не активен</string>
+    <string name="project_not_active_error">Проект не активен, анкеты не могут быть отправлены на сервер</string>
 
 
 </resources>

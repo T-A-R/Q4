@@ -22,6 +22,9 @@ public class StatisticsResponseModel implements Serializable {
     @SerializedName("statistics")
     private Statistics statistics;
 
+    @SerializedName("project_is_active")
+    private Boolean project_is_active;
+
     public StatisticsResponseModel() {
     }
 
@@ -40,4 +43,9 @@ public class StatisticsResponseModel implements Serializable {
     public Statistics getStatistics() {
         return statistics;
     }
+
+    public Boolean isProjectActive() {
+        return project_is_active;
+    }
+
 }

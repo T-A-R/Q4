@@ -89,6 +89,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private TextView tvConfigName;
     private TextView tvQuotasClosed;
     private TextView tvPbText;
+    private TextView tvProjectStatus;
     private ProgressBar pb;
 
     private boolean isStartBtnPressed = false;
@@ -148,6 +149,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         tvQuotasClosed = (TextView) findViewById(R.id.quotas_closed);
         tvCurrentUser = (TextView) findViewById(R.id.current_user);
         tvPbText = (TextView) findViewById(R.id.tv_pb_text);
+        tvProjectStatus = (TextView) findViewById(R.id.project_status);
         pb = (ProgressBar) findViewById(R.id.progressBarQuota);
 
         MainFragment.enableSideMenu(true);
@@ -204,6 +206,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        checkProjectActive();
 
     }
 
@@ -774,12 +778,15 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         protected void onPostExecute(ElementItemR[][] result) {
             pb.setVisibility(View.GONE);
             tvPbText.setVisibility(View.GONE);
-            btnContinue.setEnabled(true);
-            btnStart.setEnabled(true);
+            if(activity.getSettings().isProject_is_active()) {
+                btnContinue.setEnabled(true);
+                btnStart.setEnabled(true);
+                UiUtils.setButtonEnabled(btnStart, true);
+                UiUtils.setButtonEnabled(btnContinue, true);
+            }
             btnQuotas.setEnabled(true);
             btnInfo.setEnabled(true);
-            UiUtils.setButtonEnabled(btnStart, true);
-            UiUtils.setButtonEnabled(btnContinue, true);
+
             UiUtils.setButtonEnabled(btnQuotas, true);
             UiUtils.setButtonEnabled(btnInfo, true);
 
@@ -1044,6 +1051,23 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         }
     }
 
+    private void deactivateStartButtons() {
+        Log.d(TAG, "deactivateStartButtons: 22222222222222222222222222222222");
+        btnContinue.setEnabled(false);
+        btnStart.setEnabled(false);
+
+
+        final int sdk = android.os.Build.VERSION.SDK_INT;
+
+        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            btnContinue.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            btnStart.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+        } else {
+            btnContinue.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            btnStart.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+        }
+    }
+
     class UpdateQuiz extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -1123,7 +1147,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 pQuotasList = quotasViewModel.getQuotas();
                 if (pQuotasList != null) {
                     for (QuotaModel quota : pQuotasList) {
-                        final int doneInt = quota.getDone(activity);
+                        int doneInt = 0;
+                        if(activity.getSettings().isProject_is_active()) {
+                            doneInt = quota.getDone(activity);
+                        } else {
+                            doneInt = quota.getSent();
+                        }
                         quotas = quotas + doneInt;
                     }
                 }
@@ -1222,7 +1251,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 }
 
                 if (statisticsResponseModel != null) {
-
+                    if(statisticsResponseModel.isProjectActive() != null) {
+                        try {
+                            getDao().setProjectActive(statisticsResponseModel.isProjectActive());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                     if (statisticsResponseModel.getResult() != 0) {
                         activity.setAborted(statisticsResponseModel.getStatistics().getAborted());
                         showStatistics(statisticsResponseModel.getStatistics());
@@ -1269,7 +1304,15 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         TextView sentCount = layoutView.findViewById(R.id.sent_count);
         TextView notSentCount = layoutView.findViewById(R.id.not_sent_count);
         TextView unfinishedCount = layoutView.findViewById(R.id.unfinished_count);
+        TextView inactiveCount = layoutView.findViewById(R.id.inactive_count);
         LinearLayout cont = layoutView.findViewById(R.id.cont);
+
+        if(activity != null && !activity.getSettings().isProject_is_active()) {
+            int count = getDao().getQuestionnaireSurveyStatus(activity.getCurrentUserId(), Constants.QuestionnaireStatuses.COMPLETED, Constants.LogStatus.NOT_SENT).size();
+            UiUtils.setTextOrHide(inactiveCount, (String.format(getString(R.string.inactive_on_device),
+                    String.valueOf(count))));
+            inactiveCount.setVisibility(View.VISIBLE);
+        }
 
         cont.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1384,6 +1427,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         }
     }
 
+
     public void showStartDialog() {
 
         if (activity != null && !activity.isFinishing()) {
@@ -1401,6 +1445,17 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         }
                     })
                     .setNegativeButton(R.string.view_no, null).show();
+        }
+    }
+
+    private void checkProjectActive() {
+        Log.d(TAG, "checkProjectActive: " + activity.getSettings().isProject_is_active());
+        if(!activity.getSettings().isProject_is_active()) {
+            deactivateStartButtons();
+            tvProjectStatus.setVisibility(View.VISIBLE);
+            Log.d(TAG, "checkProjectActive: 111111111111111111111111111111111111111111111111");
+        } else {
+            activateButtons();
         }
     }
 }

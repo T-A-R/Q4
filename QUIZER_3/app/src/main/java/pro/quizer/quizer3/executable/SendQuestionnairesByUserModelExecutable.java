@@ -161,6 +161,13 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
         }
 
         if (deletingListResponseModel != null) {
+            if(deletingListResponseModel.isProjectActive() != null) {
+                try {
+                    mBaseActivity.getMainDao().setProjectActive(deletingListResponseModel.isProjectActive());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             SPUtils.saveSendTimeDifference(mBaseActivity, deletingListResponseModel.getServerTime());
 
             if (deletingListResponseModel.getQuotas() != null && deletingListResponseModel.getQuotas().size() > 0) {

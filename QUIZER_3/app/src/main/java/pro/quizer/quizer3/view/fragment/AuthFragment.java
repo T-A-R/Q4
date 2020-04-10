@@ -525,6 +525,14 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             return;
         }
 
+        if(authResponseModel.isProjectActive() != null) {
+            try {
+                getDao().setProjectActive(authResponseModel.isProjectActive());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         if (authResponseModel.getServerTime() != null) {
             SPUtils.saveAuthTimeDifference(getContext(), authResponseModel.getServerTime());
         } else {

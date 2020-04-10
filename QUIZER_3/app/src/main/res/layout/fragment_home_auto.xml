@@ -169,6 +169,18 @@
                     tools:text="Экзит пул" />
 
                 <TextView
+                    android:id="@+id/project_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:gravity="center|top"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="@dimen/_16ssp"
+                    android:textStyle="bold"
+                    android:text="@string/project_not_active"
+                    android:visibility="gone"/>
+
+                <TextView
                     android:id="@+id/count_all"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

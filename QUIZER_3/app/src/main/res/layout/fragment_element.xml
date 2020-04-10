@@ -388,6 +388,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_8sdp"
+                android:layout_marginRight="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:scrollbarSize="@dimen/_16sdp"
+                android:fadeScrollbars="false"
+                android:scrollbarAlwaysDrawVerticalTrack="false"
+                android:scrollbarThumbVertical="@drawable/button_background_green"
+                android:scrollbarTrackVertical="@color/lightGray2"
+                android:scrollbarStyle="outsideInset"
+                android:scrollbars="vertical"
                 android:visibility="gone" />
 
             <FrameLayout
@@ -414,6 +423,15 @@
             android:id="@+id/scale_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:scrollbarSize="@dimen/_16sdp"
+            android:fadeScrollbars="false"
+            android:scrollbarAlwaysDrawVerticalTrack="false"
+            android:scrollbarThumbVertical="@drawable/button_background_green"
+            android:scrollbarTrackVertical="@color/lightGray2"
+            android:scrollbarStyle="outsideInset"
+            android:scrollbars="vertical"
             android:visibility="visible" />
 
     </LinearLayout>

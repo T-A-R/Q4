@@ -652,6 +652,13 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             String mConfigId = null;
             if (authResponseModel != null) {
                 mConfigId = authResponseModel.getConfigId();
+                if(authResponseModel.isProjectActive() != null) {
+                    try {
+                        getDao().setProjectActive(authResponseModel.isProjectActive());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             } else return;
 
             if (mConfigId != null) {

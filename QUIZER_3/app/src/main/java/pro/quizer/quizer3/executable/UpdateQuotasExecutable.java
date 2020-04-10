@@ -76,7 +76,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
             onError(new Exception(mContext.getString(R.string.load_quotas_error) + " " + mContext.getString(R.string.error_102)));
             return;
         }
-        Log.d(TAG, "&&&&&&&&&&&&&&^^^^^^^^^^^^^^^^^  onGetQuotasCallback: " + responseJson);
+//        Log.d(TAG, "&&&&&&&&&&&&&&^^^^^^^^^^^^^^^^^  onGetQuotasCallback: " + responseJson);
         QuotaResponseModel quotaResponseModel;
 
         try {
@@ -88,6 +88,13 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
         }
 
         if (quotaResponseModel != null) {
+            if(quotaResponseModel.isProjectActive() != null) {
+                try {
+                    mainActivity.getMainDao().setProjectActive(quotaResponseModel.isProjectActive());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             SPUtils.saveQuotaTimeDifference(mContext, quotaResponseModel.getServerTime());
 
             if (quotaResponseModel.getResult() != 0) {

@@ -21,6 +21,10 @@ public class QuotaResponseModel implements Serializable {
     @SerializedName("quotas")
     private List<QuotaModel> quotas;
 
+    @SerializedName("project_is_active")
+    private Boolean project_is_active;
+
+
     public QuotaResponseModel() {
     }
 
@@ -38,6 +42,10 @@ public class QuotaResponseModel implements Serializable {
 
     public Long getServerTime() {
         return server_time;
+    }
+
+    public Boolean isProjectActive() {
+        return project_is_active;
     }
 
 }

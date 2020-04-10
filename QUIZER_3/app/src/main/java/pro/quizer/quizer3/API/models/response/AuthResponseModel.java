@@ -27,6 +27,9 @@ public class AuthResponseModel implements Serializable {
     @SerializedName("error")
     private String error;
 
+    @SerializedName("project_is_active")
+    private Boolean project_is_active;
+
     public AuthResponseModel() {
     }
 
@@ -56,6 +59,10 @@ public class AuthResponseModel implements Serializable {
 
     public Long getServerTime() {
         return server_time;
+    }
+
+    public Boolean isProjectActive() {
+        return project_is_active;
     }
 
 }

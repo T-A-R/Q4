@@ -321,6 +321,9 @@ public interface QuizerDao {
     @Query("UPDATE SettingsR SET dark_mode = :data")
     void setSettingsDarkMode(boolean data);
 
+    @Query("UPDATE SettingsR SET project_is_active = :data")
+    void setProjectActive(boolean data);
+
     @Query("UPDATE SettingsR SET last_quota_time = :data")
     void setLastQuotaTime(Long data);
 

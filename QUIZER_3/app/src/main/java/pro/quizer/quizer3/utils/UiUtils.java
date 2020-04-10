@@ -74,6 +74,18 @@ public class UiUtils {
         }
     }
 
+    public static void setButtonEnabledRed(final View pView, final boolean pIsEnabled) {
+        final Context context = pView.getContext();
+
+        if (pIsEnabled) {
+            pView.setEnabled(true);
+            pView.setBackground(ContextCompat.getDrawable(context, R.drawable.button_background_red));
+        } else {
+            pView.setEnabled(false);
+            pView.setBackground(ContextCompat.getDrawable(context, R.drawable.button_background_gray));
+        }
+    }
+
     public static float pxToDp(final Context context, final int px) {
         return px / context.getResources().getDisplayMetrics().density;
     }

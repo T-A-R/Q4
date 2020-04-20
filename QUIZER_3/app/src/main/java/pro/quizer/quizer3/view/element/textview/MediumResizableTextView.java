@@ -3,6 +3,8 @@ package pro.quizer.quizer3.view.element.textview;
 import android.content.Context;
 import android.util.AttributeSet;
 
+import pro.quizer.quizer3.R;
+
 import static pro.quizer.quizer3.view.element.ResizableConstants.MEDIUM;
 
 public class MediumResizableTextView extends AbstractResizableTextView {
@@ -21,6 +23,7 @@ public class MediumResizableTextView extends AbstractResizableTextView {
 
     @Override
     public int getDefaultFontSize() {
+
         return MEDIUM;
     }
 }

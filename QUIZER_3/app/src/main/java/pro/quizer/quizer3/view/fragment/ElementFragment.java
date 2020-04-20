@@ -649,6 +649,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 multiSelectionSpinner = (MultiSelectSpinner) findViewById(R.id.answers_multi_spinner);
                 multiSelectionSpinner.setVisibility(View.VISIBLE);
                 multiSelectionSpinner.setItems(itemsList);
+                if(unchecker != null)
                 multiSelectionSpinner.hasNoneOption(true, unchecker);
                 multiSelectionSpinner.setSelection(new int[]{});
                 multiSelectionSpinner.setListener(new MultiSelectSpinner.OnMultipleItemsSelectedListener() {

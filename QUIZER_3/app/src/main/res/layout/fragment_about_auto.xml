@@ -10,21 +10,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-        <ImageView
-            android:id="@+id/quizer_logo"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_90sdp"
-            android:layout_marginLeft="@dimen/_40sdp"
-            android:layout_marginRight="@dimen/_40sdp"
-            android:layout_marginTop="@dimen/_102sdp"
-            android:src="@drawable/quizer" />
+    <ImageView
+        android:id="@+id/quizer_logo"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_90sdp"
+        android:layout_marginLeft="@dimen/_40sdp"
+        android:layout_marginRight="@dimen/_40sdp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/_62sdp"
+        android:src="@drawable/quizer" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginLeft="@dimen/_40sdp"
-        android:layout_marginRight="@dimen/_40sdp"
+        android:layout_marginLeft="@dimen/_30sdp"
+        android:layout_marginRight="@dimen/_30sdp"
         android:orientation="vertical">
 
         <TextView
@@ -33,9 +34,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_10sdp"
             android:gravity="center"
-            android:textSize="@dimen/_20ssp"
+            android:text="@string/_7_909_214_48_33"
             android:textColor="@android:color/black"
-            android:text="@string/_7_909_214_48_33" />
+            android:textSize="@dimen/_20ssp" />
 
         <TextView
             android:id="@+id/contacts_email"
@@ -43,9 +44,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:gravity="center"
-            android:textSize="@dimen/_20ssp"
+            android:text="@string/e_mail_sales_quizer_pro"
             android:textColor="@android:color/black"
-            android:text="@string/e_mail_sales_quizer_pro" />
+            android:textSize="@dimen/_20ssp" />
 
         <TextView
             android:id="@+id/version_view"

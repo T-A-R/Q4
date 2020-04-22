@@ -34,9 +34,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:gravity="center"
+            android:text="@string/auth_version_warning"
             android:textColor="@android:color/holo_red_dark"
-            android:textSize="@dimen/_12ssp"
-            android:text="@string/auth_version_warning" />
+            android:textSize="@dimen/_12ssp" />
 
         <TextView
             android:id="@+id/users_count"
@@ -90,8 +90,8 @@
             android:layout_height="@dimen/_36sdp"
             android:layout_marginTop="@dimen/_16sdp"
             android:maxLines="1"
-            android:textSize="@dimen/_14ssp"
-            android:text="@string/button_send" />
+            android:text="@string/button_send"
+            android:textSize="@dimen/_14ssp" />
 
     </LinearLayout>
 

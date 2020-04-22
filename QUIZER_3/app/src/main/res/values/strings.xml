@@ -398,6 +398,10 @@
     <string name="sync_have_unfinished_no">Наличие незавершённой анкеты в очереди на продолжение: нет</string>
     <string name="project_not_active">Проект не активен</string>
     <string name="project_not_active_error">Проект не активен, анкеты не могут быть отправлены на сервер</string>
-
+    <string name="not_enough_space">Недостаточно свободного места на устройстве. Пожалуйста освободите больше места.</string>
+    <string name="plase_wait_quiz">Подождите, идет подготовка анкеты</string>
+    <string name="please_wait_quiz_element">Подождите,  идет загрузка элемента анкеты</string>
+    <string name="quiz_saved">Анкета сохранена</string>
+    <string name="quiz_save_error">Ошибка сохранения анкеты. Попробуйте еще раз</string>
 
 </resources>

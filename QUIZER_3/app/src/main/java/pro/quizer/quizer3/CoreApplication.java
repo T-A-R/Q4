@@ -41,10 +41,6 @@ public class CoreApplication extends Application {
                 .addInterceptor(new UserAgentInterceptor(userAgent))
                 .build();
 
-        Gson gson = new GsonBuilder()
-                .create();
-
-//        Retrofit retrofit = null;
         if (retrofit == null)
             retrofit = new Retrofit.Builder()
                     .client(client)

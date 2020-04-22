@@ -106,7 +106,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         mSavedUserModels = getSavedUserModels();
         mSavedUsers = getSavedUserLogins();
 
-        final ListAdapter adapter = new ArrayAdapter<>(getContext(), getMainActivity().isAutoZoom() ? R.layout.adapter_spinner_auto : R.layout.adapter_spinner, mSavedUsers);
+        final ListAdapter adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), getMainActivity().isAutoZoom() ? R.layout.adapter_spinner_auto : R.layout.adapter_spinner, mSavedUsers);
         esLogin.setAdapter(adapter);
 
         if (mSavedUserModels != null && !mSavedUserModels.isEmpty()) {
@@ -121,20 +121,16 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             }
         }
         long memory = FileUtils.getAvailableInternalMemorySizeLong();
-        if(memory < 100000000) {
-            showToast("Недостаточно свободного места на устройтве. Пожалуйста освободите больше места.");
+        if (memory < 100000000) {
+            showToast(getString(R.string.not_enough_space));
         }
-//        showToast("Свободное место на устройстве: " + FileUtils.getAvailableInternalMemorySize());
-//        Log.d(TAG, "Свободное место на устройстве: " + FileUtils.getAvailableInternalMemorySizeLong());
-
     }
 
     @Override
     public void onClick(View view) {
         if (view == btnSend) {
             deactivateButtons();
-            showScreensaver("Подождите,\nидет подготовка анкеты", true);
-//            showScreensaver(false);
+            showScreensaver(R.string.plase_wait_quiz, true);
             onLoginClick();
         } else if (view == tvVersionView) {
             onVersionClick();
@@ -181,7 +177,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     private List<UserModelR> getSavedUserModels() {
         final List<UserModelR> userModels = getDao().getAllUsers();
-        return (userModels == null) ? new ArrayList<UserModelR>() : userModels;
+        return (userModels == null) ? new ArrayList<>() : userModels;
     }
 
     private List<String> getSavedUserLogins() {
@@ -233,21 +229,16 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         saveCurrentUserId(pUserId);
         ElementItemR firstElement = getDao().getOneElement();
         if (firstElement == null || firstElement.getUserId() != pUserId) {
-//            Log.d(TAG, "onAuthUser CHECKING ID: " + pUserId + "/" + firstElement.getUserId());
             isRebuildDB = true;
         }
         if (isRebuildDB) {
             UpdateQuiz updateQuiz = new UpdateQuiz();
             updateQuiz.execute();
         } else {
-//            getMainActivity().setHomeFragmentStarted(false);
-//            Log.d(TAG, "start Home: 13");
             HomeFragment fragment = new HomeFragment();
             fragment.setStartAfterAuth();
             replaceFragment(fragment);
         }
-//        UpdateQuiz updateQuiz = new UpdateQuiz();
-//        updateQuiz.execute();
     }
 
     class UpdateQuiz extends AsyncTask<Void, Void, Void> {
@@ -255,7 +246,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-//            showScreensaver("Подождите,\nидет подготовка анкеты", true);
             UiUtils.setButtonEnabled(btnSend, false);
             isCanBackPress = false;
         }
@@ -269,9 +259,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-//            hideScreensaver();
-//            getMainActivity().setHomeFragmentStarted(false);
-//            Log.d(TAG, "start Home: 14");
             HomeFragment fragment = new HomeFragment();
             fragment.setStartAfterAuth();
             replaceFragment(fragment);
@@ -447,7 +434,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                             FileUtils.renameFile(downloadedFile, FileUtils.getFileName(fileUris[progress - 1]));
 
                             if (progress == totalFiles) {
-//                                hideScreensaver();
                                 saveUserAndLogin(pConfigResponseModel, pAuthResponseModel, pLogin, pPassword);
                             }
                             showToast(String.format(getString(R.string.downloaded_count_files), String.valueOf(progress)));
@@ -458,7 +444,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                             super.onError(e, progress);
                             showToast(getString(R.string.download_files_error));
                             addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.downloading_media_files), Constants.LogResult.ERROR, getString(R.string.download_files_error), "");
-//                            hideScreensaver();
                         }
                     }).loadMultiple(fileUris);
         }
@@ -466,7 +451,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     @Override
     public void onAuthUser(ResponseBody responseBody) {
-//            hideScreensaver();
 
         if (responseBody == null) {
             showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_401));
@@ -525,7 +509,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             return;
         }
 
-        if(authResponseModel.isProjectActive() != null) {
+        if (authResponseModel.isProjectActive() != null) {
             try {
                 getDao().setProjectActive(authResponseModel.isProjectActive());
             } catch (Exception e) {
@@ -553,7 +537,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             showToast(authResponseModel.getError());
             activateButtons();
             addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, authResponseModel.getError(), "");
-
         }
     }
 

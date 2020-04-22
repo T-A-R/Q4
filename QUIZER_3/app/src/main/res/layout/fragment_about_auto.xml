@@ -15,9 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_90sdp"
         android:layout_marginLeft="@dimen/_40sdp"
-        android:layout_marginRight="@dimen/_40sdp"
-        android:layout_alignParentTop="true"
         android:layout_marginTop="@dimen/_62sdp"
+        android:layout_marginRight="@dimen/_40sdp"
         android:src="@drawable/quizer" />
 
     <LinearLayout

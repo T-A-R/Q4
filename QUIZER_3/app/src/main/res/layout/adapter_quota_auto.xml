@@ -9,7 +9,7 @@
 
     <include layout="@layout/view_divider" />
 
-    <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+    <TextView
         android:id="@+id/quotas_time_line_count"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,7 +18,7 @@
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         android:textColor="@android:color/black"
-        android:textSize="18sp"
+        android:textSize="@dimen/_12ssp"
         tools:text="16 из 33" />
 
     <android.support.v7.widget.RecyclerView

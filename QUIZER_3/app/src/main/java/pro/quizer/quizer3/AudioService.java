@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import pro.quizer.quizer3.utils.FileUtils;
+
 import static pro.quizer.quizer3.utils.FileUtils.FOLDER_DIVIDER;
 
 public class AudioService extends MediaBrowserServiceCompat implements Serializable {
@@ -386,7 +387,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                         Thread.currentThread().interrupt();
                         return null;
                     }
-                    if(recorder != null) {
+                    if (recorder != null) {
                         double amplitude = recorder.getMaxAmplitude();
                         double dbSki = 20 * Math.log10(amplitude / 51805.5336 / 0.0002);
                         publishProgress(dbSki);
@@ -770,8 +771,6 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
      * VSL_PROP_FFT_NAME : alFft.get(li)
      * },
      * ]
-     *
-
      */
     private void writeJSON(ArrayList<Byte> alWaveFormIn, ArrayList<Byte> alFftIn)
             throws IllegalStateException, IOException {
@@ -805,7 +804,6 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
      * </VSL_PROP_FFT_NAME>
      * </VLS_PROP_ENTRY_NAME>
      * </DOCUMENT>
-     *
      */
     private void writeXML(ArrayList<Byte> alWaveFormIn, ArrayList<Byte> alFftIn)
             throws IllegalStateException, IllegalArgumentException, IOException {

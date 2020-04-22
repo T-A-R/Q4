@@ -1,6 +1,5 @@
 package pro.quizer.quizer3.view.fragment;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -9,8 +8,6 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.utils.EmailUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Toolbar;
-
-import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class AboutFragment extends ScreenFragment {
 
@@ -25,23 +22,13 @@ public class AboutFragment extends ScreenFragment {
 
         mToolbar = findViewById(R.id.toolbar);
         mToolbar.setTitle(getString(R.string.about_screen));
-        mToolbar.showCloseView(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-//                getMainActivity().setHomeFragmentStarted(false);
-//                Log.d(TAG, "start Home: 10");
-                replaceFragment(new HomeFragment());
-            }
-        });
+        mToolbar.showCloseView(v -> replaceFragment(new HomeFragment()));
 
         final TextView mVersionView = findViewById(R.id.version_view);
         UiUtils.setTextOrHide(mVersionView, String.format(getString(R.string.app_ver), BuildConfig.VERSION_NAME));
 
-        findViewById(R.id.contacts_phone).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        findViewById(R.id.contacts_phone).setOnClickListener(v -> {
 //                PhoneUtils.startCall(getContext(), "+79092144833");
-            }
         });
         findViewById(R.id.contacts_email).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,8 +40,6 @@ public class AboutFragment extends ScreenFragment {
 
     @Override
     public boolean onBackPressed() {
-//        getMainActivity().setHomeFragmentStarted(false);
-//        Log.d(TAG, "start Home: 11");
         replaceFragment(new HomeFragment());
         return true;
     }

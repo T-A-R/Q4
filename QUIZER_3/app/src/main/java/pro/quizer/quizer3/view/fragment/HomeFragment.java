@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Process;
 import android.provider.Settings;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -51,7 +50,6 @@ import pro.quizer.quizer3.executable.QuotasViewModelExecutable;
 import pro.quizer.quizer3.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizer3.executable.SyncInfoExecutable;
 import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
-import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.Statistics;
@@ -73,7 +71,6 @@ import pro.quizer.quizer3.view.Toolbar;
 
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
-import static pro.quizer.quizer3.MainActivity.showTime;
 
 public class HomeFragment extends ScreenFragment implements View.OnClickListener {
 
@@ -170,12 +167,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         btnQuotas.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
         toolbar.setTitle(getString(R.string.home_screen));
-        toolbar.showOptionsView(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                MainFragment.showDrawer();
-            }
-        }, null);
+        toolbar.showOptionsView(v -> MainFragment.showDrawer(), null);
 
         try {
             hideScreensaver();
@@ -215,7 +207,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     public void onClick(View view) {
         if (view == btnStart) {
             if (!isStartBtnPressed) {
-                if(currentQuestionnaire == null) {
+                if (currentQuestionnaire == null) {
                     isStartBtnPressed = true;
                     deactivateButtons();
                     startQuestionnaire();
@@ -416,10 +408,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                             questionnaire.setFake_gps_time(DateUtils.getCurrentTimeMillis());
                         questionnaire.setQuestion_start_time(DateUtils.getCurrentTimeMillis());
                         getDao().insertPrevElementsR(new PrevElementsR(0, 0));
-//                        List<PrevElementsR> prev = new ArrayList<>();
-//                        prev.add(new PrevElementsR(0, 0));
-//                        questionnaire.setPrev_element_id(prev);
-
                         getDao().insertCurrentQuestionnaireR(questionnaire);
                         getDao().clearWasElementShown(false);
 
@@ -452,6 +440,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 if (result) {
                     try {
                         Log.d(TAG, "startQuestionnaire: insertCurrentQuestionnaireR() completed.");
+
+                        //TODO Ротацию вопросов!
 //                        for (ElementItemR elementItemR : getCurrentElements()) {
 //                            if (elementItemR.getSubtype() != null && elementItemR.getElementOptionsR() != null)
 //                                if (elementItemR.getSubtype().equals(ElementSubtype.CONTAINER) && elementItemR.getElementOptionsR().isRotation()) {
@@ -459,24 +449,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 //                                    break;
 //                                }
 //                        }
-                        //TODO Ротацию вопросов!
 //                        if (activity.hasRotationContainer()) {
 //                            activity.getMap(true);
 //                        }
-//                        Log.d(TAG, "??????????????????????????: 1");
 
-//                        Log.d(TAG, "??????????????????????????: 2");
                         getDao().updateQuestionnaireStart(true, getCurrentUserId());
-
-//                        Log.d(TAG, "??????????????????????????: 3");
                         getDao().setOption(Constants.OptionName.QUIZ_STARTED, "true");
-//                        activity.getElementItemRList();
-//                        activity.getCurrentQuestionnaire();
-//                        Log.d(TAG, "??????????????????????????: 4");
                         hideScreensaver();
-//                        for(ElementItemR elem : getCurrentElements()) {
-//                            Log.d(TAG, "!!!!!!!!!!!! elements check: " + elem.getRelative_id());
-//                        }
                         replaceFragment(new ElementFragment());
                         return true;
                     } catch (Exception e) {
@@ -542,17 +521,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             alertDialog.setCancelable(false);
             alertDialog.setTitle(R.string.dialog_please_turn_on_auto_time);
             alertDialog.setMessage(R.string.dialog_you_need_to_turn_on_auto_time);
-            alertDialog.setPositiveButton(R.string.dialog_turn_on, new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(Settings.ACTION_DATE_SETTINGS);
-                    startActivity(intent);
-                    if (alertDialog != null) {
-                        dialog.dismiss();
-                        mIsTimeDialogShow = false;
-                    }
-
+            alertDialog.setPositiveButton(R.string.dialog_turn_on, (dialog, which) -> {
+                Intent intent = new Intent(Settings.ACTION_DATE_SETTINGS);
+                startActivity(intent);
+                if (alertDialog != null) {
+                    dialog.dismiss();
+                    mIsTimeDialogShow = false;
                 }
+
             });
 
             alertDialog.show();
@@ -563,7 +539,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         if (activity.isMemoryCheckMode()) {
             long memory = FileUtils.getAvailableInternalMemorySizeLong();
             if (memory < 100000000) { // ~100 Мб в байтах!
-                showToast("Недостаточно свободного места на устройтве. Пожалуйста освободите больше места.");
+                showToast(getString(R.string.not_enough_space));
                 return false;
             }
             return true;
@@ -571,7 +547,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private boolean checkGps() {
-        boolean zeroCoordinates = false;
         mGPSModel = null;
         isForceGps = activity.getConfig().isForceGps();
         if (activity.getConfig().isGps() && mGPSModel == null) {
@@ -579,24 +554,19 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 mGPSModel = GpsUtils.getCurrentGps(getActivity(), isForceGps);
                 if (mGPSModel == null || mGPSModel.isNoGps()) {
                     Log.d(TAG, "checkGps: NO GPS DIALOG");
-//                    showNoGpsAlert();
-                    zeroCoordinates = true;
+
                 } else {
                     mGpsString = mGPSModel.getGPS();
                     mGpsNetworkString = mGPSModel.getGPSNetwork();
                     mIsUsedFakeGps = mGPSModel.isFakeGPS();
-//                    mIsUsedFakeGps = true; // For tests!
                     mGpsTime = mGPSModel.getTime();
                     mGpsTimeNetwork = mGPSModel.getTimeNetwork();
-//                    return true;
-                    zeroCoordinates = false;
                 }
             } catch (final Exception e) {
                 e.printStackTrace();
                 Log.d(TAG, "startGps: " + e.getMessage());
             }
 
-//            Log.d(TAG, "=== GPS: " + getCurrentUser().getConfigR().isForceGps() + " " + zeroCoordinates);
             if (activity.getConfig().isForceGps()) {
                 if (mGPSModel == null) {
                     showSettingsAlert();
@@ -632,12 +602,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             alertDialog.setCancelable(false);
             alertDialog.setTitle(R.string.dialog_please_turn_on_gps);
             alertDialog.setMessage(R.string.dialog_you_need_to_turn_on_gps);
-            alertDialog.setPositiveButton(R.string.dialog_turn_on, new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    activity.startActivity(intent);
-                }
+            alertDialog.setPositiveButton(R.string.dialog_turn_on, (dialog, which) -> {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                activity.startActivity(intent);
             });
 
 
@@ -653,29 +620,20 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             alertDialog.setTitle(R.string.dialog_no_gps);
             if (isForceGps) {
                 alertDialog.setMessage(R.string.dialog_no_gps_empty_text);
-                alertDialog.setPositiveButton(R.string.view_retry, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int which) {
-                        canContWithZeroGps = false;
-                        dialog.dismiss();
-                    }
+                alertDialog.setPositiveButton(R.string.view_retry, (dialog, which) -> {
+                    canContWithZeroGps = false;
+                    dialog.dismiss();
                 });
             } else {
                 alertDialog.setMessage(R.string.dialog_no_gps_text_warning);
-                alertDialog.setPositiveButton(R.string.dialog_next, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int which) {
-                        canContWithZeroGps = true;
-                        dialog.dismiss();
-                    }
+                alertDialog.setPositiveButton(R.string.dialog_next, (dialog, which) -> {
+                    canContWithZeroGps = true;
+                    dialog.dismiss();
                 });
 
-                alertDialog.setNegativeButton(R.string.view_retry, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        canContWithZeroGps = false;
-                        dialog.dismiss();
-                    }
+                alertDialog.setNegativeButton(R.string.view_retry, (dialog, which) -> {
+                    canContWithZeroGps = false;
+                    dialog.dismiss();
                 });
             }
 
@@ -692,13 +650,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     .setCancelable(false)
                     .setTitle(R.string.dialog_fake_gps_title)
                     .setMessage(R.string.dialog_fake_gps_body)
-                    .setPositiveButton(R.string.dialog_apply, new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
-                            dialog.dismiss();
-                            activateButtons();
-                        }
+                    .setPositiveButton(R.string.dialog_apply, (dialog, which) -> {
+                        dialog.dismiss();
+                        activateButtons();
                     })
                     .show();
         }
@@ -716,13 +670,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     .setCancelable(false)
                     .setTitle(R.string.dialog_close_app_title)
                     .setMessage(R.string.dialog_close_app_body)
-                    .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
-//                            activity.finish();
-                            activity.finishAffinity();
-                            Process.killProcess(Process.myPid());
-                        }
+                    .setPositiveButton(R.string.view_yes, (dialog, which) -> {
+                        activity.finishAffinity();
+                        Process.killProcess(Process.myPid());
                     })
                     .setNegativeButton(R.string.view_no, null).show();
         }
@@ -747,7 +697,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         float progress = 0;
 
         protected void onPreExecute() {
-//            showTime("before start");
             pb.setVisibility(View.VISIBLE);
             tvPbText.setVisibility(View.VISIBLE);
             btnContinue.setEnabled(false);
@@ -758,7 +707,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             UiUtils.setButtonEnabled(btnContinue, false);
             UiUtils.setButtonEnabled(btnQuotas, false);
             UiUtils.setButtonEnabled(btnInfo, false);
-//            showTime("after disable keys");
         }
 
         @SafeVarargs
@@ -778,7 +726,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         protected void onPostExecute(ElementItemR[][] result) {
             pb.setVisibility(View.GONE);
             tvPbText.setVisibility(View.GONE);
-            if(activity.getSettings().isProject_is_active()) {
+            if (activity.getSettings().isProject_is_active()) {
                 btnContinue.setEnabled(true);
                 btnStart.setEnabled(true);
                 UiUtils.setButtonEnabled(btnStart, true);
@@ -796,11 +744,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             } catch (Exception e) {
                 e.printStackTrace();
             }
-//            showTime("after activate buttons");
         }
 
         public ElementItemR[][] getTree(List<ElementItemR> quotasBlock) {
-//            showTime("before get tree");
             List<ElementItemR> questions = new ArrayList<>();
             int answersTotal = 1;
             int answersMultiple = 1;
@@ -836,19 +782,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 progress = progress + ((float) 10 / (float) questions.size());
                 publishProgress((int) progress);
             }
-//            showTime("after get tree");
             return tree;
         }
 
         private ElementItemR[][] fillQuotas(ElementItemR[][] tree) {
             Log.d(TAG, "============== fillQuotas ======================= 1");
-            showTime("before fill quotas");
-//            List<QuotaModel> quotas = null;
-//            try {
-//                quotas = activity.getCurrentUser().getQuotasR();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
             int user_id = activity.getCurrentUserId();
             int user_project_id = activity.getCurrentUser().getUser_project_id();
             List<QuotaModel> quotas = new ArrayList<>();
@@ -857,9 +795,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             for (QuotaR quotaR : quotasR) {
                 quotas.add(new QuotaModel(quotaR.getSequence(), quotaR.getLimit(), quotaR.getDone(), user_id, user_project_id));
             }
-//            showTime("====== fill quotas 1");
             offlineQuestionnaires = activity.getMainDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), activity.getCurrentUser().getUser_project_id(), QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
-//            showTime("====== fill quotas 2");
             if (quotas == null || quotas.isEmpty()) {
                 return tree;
             }
@@ -879,11 +815,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                                 tree[temp][k].setLimit(quotas.get(q).getLimit());
                                                 int lc = quotas.get(q).getSent() + localQuota;
                                                 tree[temp][k].setDone(lc);
-//                                                Log.d(TAG, "fillQuotas: " + lc);
                                                 int done = tree[temp][k].getDone();
-//                                                int local = getLocalQuotas(activity, sequence);
                                                 int local = 0;
-//                                                Log.d(TAG, "QUOTA: " + sequence[s] + " done:" + done + " local: " + local);
                                                 int total = done + local;
                                                 int limit = tree[temp][k].getLimit();
                                                 if (total >= limit) {
@@ -906,11 +839,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                 if (tree[i][k].getLimit() > quotas.get(q).getLimit()) {
                                     tree[i][k].setLimit(quotas.get(q).getLimit());
                                     int lc = quotas.get(q).getSent() + localQuota;
-//                                    Log.d(TAG, "fillQuotas: " + lc);
                                     tree[i][k].setDone(lc);
                                     int done = tree[i][k].getDone();
                                     int limit = tree[i][k].getLimit();
-//                                    int local = getLocalQuotas(activity, sequence);
                                     int local = 0;
                                     int total = done + local;
                                     if (total >= limit) {
@@ -927,8 +858,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
 //            showTree(tree); // Для отладки
             publishProgress(100);
-//            Log.d(TAG, "fillQuotas TREE??????????????????????: " + tree);
-            showTime("after fill quotas");
             return tree;
         }
 
@@ -958,22 +887,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             int counter = 0;
             Set<Integer> mSet = new HashSet<>(Arrays.asList(sequence));
             try {
-                //TODO: Добавить проверку на завершенность анкеты!
 
                 for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : offlineQuestionnaires) {
                     final List<ElementDatabaseModelR> elements = activity.getMainDao().getElementByToken(questionnaireDatabaseModel.getToken());
-//                    int found = 0;
-//                    for (int s = 0; s < sequence.length; s++) {
-//                        for (final ElementDatabaseModelR element : elements) {
-//                            if (sequence[s].equals(element.getRelative_id())) {
-//                                found++;
-//                                break;
-//                            }
-//                        }
-//                    }
-//                    if (found == sequence.length) {
-//                        counter++;
-//                    }
 
                     final Set<Integer> set = new HashSet<>();
 
@@ -992,15 +908,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     if (matchesCount == mSet.size()) {
                         counter++;
                     }
-
-
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
                 MainActivity.addLog(activity.getCurrentUser().getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, activity.getString(R.string.get_quotas), Constants.LogResult.ERROR, activity.getString(R.string.log_error_102_desc), e.toString());
             }
-//            Log.d(TAG, "getLocalQuotas: " + counter);
 
             return counter;
         }
@@ -1081,7 +994,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         protected Void doInBackground(Void... voids) {
             if (mIsStartAfterAuth)
                 rebuildElementsDatabase();
-//                makeQuotaTree();
             return null;
         }
 
@@ -1148,7 +1060,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 if (pQuotasList != null) {
                     for (QuotaModel quota : pQuotasList) {
                         int doneInt = 0;
-                        if(activity.getSettings().isProject_is_active()) {
+                        if (activity.getSettings().isProject_is_active()) {
                             doneInt = quota.getDone(activity);
                         } else {
                             doneInt = quota.getSent();
@@ -1158,24 +1070,18 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 }
             }
             int userId = getCurrentUserId();
-//            int completed = 0;
             int savedAborted = activity.getAborted();
             int aborted = 0;
             int unfinished = 0;
-//            List<QuestionnaireDatabaseModelR> questionnairesList = null;
             List<QuestionnaireDatabaseModelR> abortedQuestionnairesList = null;
             List<QuestionnaireDatabaseModelR> unfinishedQuestionnairesList = null;
             try {
-//                questionnairesList = getDao().getQuestionnaireSurveyStatus(userId, Constants.QuestionnaireStatuses.COMPLETED, Constants.LogStatus.NOT_SENT);
                 abortedQuestionnairesList = getDao().getQuestionnaireSurveyStatus(userId, Constants.QuestionnaireStatuses.ABORTED, Constants.LogStatus.NOT_SENT);
                 unfinishedQuestionnairesList = getDao().getQuestionnaireSurveyStatus(userId, Constants.QuestionnaireStatuses.ABORTED, Constants.LogStatus.NOT_SENT);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-//            if(questionnairesList != null) {
-//                completed = questionnairesList.size();
-//                Log.d(TAG, "doInBackground: " + questionnairesList.size());
-//            }
+
             if (abortedQuestionnairesList != null) {
                 aborted = abortedQuestionnairesList.size();
             }
@@ -1220,22 +1126,17 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         String json = gson.toJson(requestModel);
         String mServerUrl = configModel.getServerUrl();
 
-//        MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, activity.getString(R.string.get_quotas), Constants.LogResult.SENT, activity.getString(R.string.sending_request), json);
-
         QuizerAPI.getStatistics(mServerUrl, json, new QuizerAPI.GetStatisticsCallback() {
             @Override
             public void onGetStatisticsCallback(ResponseBody responseBody) {
                 if (responseBody == null) {
-//                    MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.ERROR, mContext.getString(R.string.log_error_101_desc), null);
                     showStatistics(null);
                     return;
                 }
                 String responseJson;
                 try {
                     responseJson = responseBody.string();
-//                    Log.d(TAG, "?????????????? onGetStatisticsCallback: " + responseJson);
                 } catch (IOException e) {
-//                    MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.ERROR, mContext.getString(R.string.log_error_102_desc), null);
                     showStatistics(null);
                     return;
                 }
@@ -1245,13 +1146,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 try {
                     statisticsResponseModel = new GsonBuilder().create().fromJson(responseJson, StatisticsResponseModel.class);
                 } catch (final Exception pE) {
-//                    MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.ERROR, mContext.getString(R.string.log_error_103_desc), responseJson);
                     showStatistics(null);
                     return;
                 }
 
                 if (statisticsResponseModel != null) {
-                    if(statisticsResponseModel.isProjectActive() != null) {
+                    if (statisticsResponseModel.isProjectActive() != null) {
                         try {
                             getDao().setProjectActive(statisticsResponseModel.isProjectActive());
                         } catch (Exception e) {
@@ -1261,7 +1161,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     if (statisticsResponseModel.getResult() != 0) {
                         activity.setAborted(statisticsResponseModel.getStatistics().getAborted());
                         showStatistics(statisticsResponseModel.getStatistics());
-//                        showStatistics(null);
                         return;
                     } else {
                         showStatistics(null);
@@ -1278,16 +1177,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private void showStatistics(Statistics statistics) {
 
         if (statistics == null) {
-//            Log.d(TAG, "!!!!!!!!!!!!!!!!!! showStatistics: EMPTY");
             ShowStatistics task = new ShowStatistics();
             task.execute();
         } else {
             finalStatistics = statistics;
-//            Log.d(TAG, "!!!!!!!!!!!!! showStatistics: " + finalStatistics.getQuotas()
-//                    + " " + finalStatistics.getAborted()
-//                    + " " + finalStatistics.getDefective()
-//                    + " " + finalStatistics.getTests()
-//            );
             showInfoDialog(true);
         }
     }
@@ -1307,29 +1200,26 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         TextView inactiveCount = layoutView.findViewById(R.id.inactive_count);
         LinearLayout cont = layoutView.findViewById(R.id.cont);
 
-        if(activity != null && !activity.getSettings().isProject_is_active()) {
+        if (activity != null && !activity.getSettings().isProject_is_active()) {
             int count = getDao().getQuestionnaireSurveyStatus(activity.getCurrentUserId(), Constants.QuestionnaireStatuses.COMPLETED, Constants.LogStatus.NOT_SENT).size();
             UiUtils.setTextOrHide(inactiveCount, (String.format(getString(R.string.inactive_on_device),
                     String.valueOf(count))));
             inactiveCount.setVisibility(View.VISIBLE);
         }
 
-        cont.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                btnInfo.setEnabled(true);
-                final int sdk = android.os.Build.VERSION.SDK_INT;
-                try {
-                    if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
-                        btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-                    } else {
-                        btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+        cont.setOnClickListener(v -> {
+            btnInfo.setEnabled(true);
+            final int sdk = Build.VERSION.SDK_INT;
+            try {
+                if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
+                    btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                } else {
+                    btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
                 }
-                infoDialog.dismiss();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            infoDialog.dismiss();
         });
 
         UiUtils.setTextOrHide(quotasCount, (String.format(getString(R.string.collected_quotas),
@@ -1398,29 +1288,26 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     .setCancelable(false)
                     .setTitle(R.string.dialog_delete_title)
                     .setMessage(R.string.dialog_delete_body)
-                    .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
-                            activity.runOnUiThread(new Runnable() {
-                                public void run() {
-                                    showScreensaver("Подождите идет отправка анкет.", true);
-                                }
-                            });
+                    .setPositiveButton(R.string.view_yes, (dialog, which) -> {
+                        activity.runOnUiThread(new Runnable() {
+                            public void run() {
+                                showScreensaver("Подождите идет отправка анкет.", true);
+                            }
+                        });
 
-                            if (activity.getConfig().isSaveAborted()) {
-                                isQuotaUpdated = false;
-                                saveQuestionnaireToDatabase(currentQuestionnaire, true);
-                                sendQuestionnaires();
-                            }
-                            getDao().clearCurrentQuestionnaireR();
-                            getDao().clearPrevElementsR();
-                            getDao().clearElementPassedR();
-                            activity.setCurrentQuestionnaireNull();
-                            contContinue.setVisibility(View.GONE);
-                            currentQuestionnaire = null;
-                            if (!activity.getConfig().isSaveAborted()) {
-                                hideScreensaver();
-                            }
+                        if (activity.getConfig().isSaveAborted()) {
+                            isQuotaUpdated = false;
+                            saveQuestionnaireToDatabase(currentQuestionnaire, true);
+                            sendQuestionnaires();
+                        }
+                        getDao().clearCurrentQuestionnaireR();
+                        getDao().clearPrevElementsR();
+                        getDao().clearElementPassedR();
+                        activity.setCurrentQuestionnaireNull();
+                        contContinue.setVisibility(View.GONE);
+                        currentQuestionnaire = null;
+                        if (!activity.getConfig().isSaveAborted()) {
+                            hideScreensaver();
                         }
                     })
                     .setNegativeButton(R.string.view_no, null).show();
@@ -1436,13 +1323,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     .setCancelable(false)
                     .setTitle(R.string.dialog_start_title)
                     .setMessage(R.string.dialog_start_body)
-                    .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
-                            isStartBtnPressed = true;
-                            deactivateButtons();
-                            startQuestionnaire();
-                        }
+                    .setPositiveButton(R.string.view_yes, (dialog, which) -> {
+                        isStartBtnPressed = true;
+                        deactivateButtons();
+                        startQuestionnaire();
                     })
                     .setNegativeButton(R.string.view_no, null).show();
         }
@@ -1450,10 +1334,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     private void checkProjectActive() {
         Log.d(TAG, "checkProjectActive: " + activity.getSettings().isProject_is_active());
-        if(!activity.getSettings().isProject_is_active()) {
+        if (!activity.getSettings().isProject_is_active()) {
             deactivateStartButtons();
             tvProjectStatus.setVisibility(View.VISIBLE);
-            Log.d(TAG, "checkProjectActive: 111111111111111111111111111111111111111111111111");
         } else {
             activateButtons();
         }

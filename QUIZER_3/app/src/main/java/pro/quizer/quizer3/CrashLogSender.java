@@ -73,9 +73,7 @@ public class CrashLogSender implements Thread.UncaughtExceptionHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        Log.d(TAG, "BEFORE uncaughtException: " + CoreApplication.getQuizerDatabase().getQuizerDao().getCrashLogs().size());
         CoreApplication.getQuizerDatabase().getQuizerDao().insertCrashLog(new CrashLogs(DateUtils.getCurrentTimeMillis(), log, flag));
-//        Log.d(TAG, "AFTER uncaughtException: " + CoreApplication.getQuizerDatabase().getQuizerDao().getCrashLogs().size());
 
         if (oldHandler != null) // если есть ранее установленный...
             oldHandler.uncaughtException(thread, throwable); // ...вызовем его

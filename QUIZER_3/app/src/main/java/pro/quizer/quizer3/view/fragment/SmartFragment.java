@@ -106,6 +106,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     private boolean hasAbortedBox = false;
     private CurrentQuestionnaireR currentQuestionnaire = null;
     private List<ElementItemR> elementItemRList = null;
+    private long durationTimeQuestionnaire = 0;
 
     public SmartFragment(int layoutSrc) {
         this.layoutSrc = layoutSrc;
@@ -566,7 +567,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 //        }
         List<Integer> passedQuotasBlockNew = new ArrayList<>();
 //        Log.d(TAG, "getPassedQuotasBlock SIZE: " + max);
-        if(passedQuotasBlock.size() > 0) {
+        if (passedQuotasBlock.size() > 0) {
             for (int i = 0; i < max - 1; i++) {
                 passedQuotasBlockNew.add(passedQuotasBlock.get(i));
             }
@@ -652,7 +653,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             String mConfigId = null;
             if (authResponseModel != null) {
                 mConfigId = authResponseModel.getConfigId();
-                if(authResponseModel.isProjectActive() != null) {
+                if (authResponseModel.isProjectActive() != null) {
                     try {
                         getDao().setProjectActive(authResponseModel.isProjectActive());
                     } catch (Exception e) {
@@ -791,7 +792,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             }
         }
         final long endTime = DateUtils.getCurrentTimeMillis();
-        final long durationTimeQuestionnaire = endTime - currentQuiz.getStart_date();
+//        final long durationTimeQuestionnaire = endTime - currentQuiz.getStart_date();
         final QuestionnaireDatabaseModelR questionnaireDatabaseModel = new QuestionnaireDatabaseModelR();
         questionnaireDatabaseModel.setStatus(QuestionnaireStatus.NOT_SENT);
         questionnaireDatabaseModel.setToken(currentQuiz.getToken());
@@ -812,7 +813,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         questionnaireDatabaseModel.setGps_time_fk(currentQuiz.getFake_gps_time());
 
         if (aborted || getQuestionnaire().isIn_aborted_box() || getQuestionnaireFromDB().isIn_aborted_box()) {
-                questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.ABORTED);
+            questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.ABORTED);
             questionnaireDatabaseModel.setCount_interrupted(currentQuiz.getCount_interrupted() + 1);
 
         } else {
@@ -883,6 +884,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                     countQuestions++;
                 }
                 elementDatabaseModel.setDuration(element.getDuration());
+                durationTimeQuestionnaire += element.getDuration();
                 elementDatabaseModel.setType(ElementDatabaseType.SCREEN);
                 countScreens++;
             }

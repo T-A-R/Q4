@@ -34,11 +34,11 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
     public void onClickDetails(boolean expanded) {
         Log.d(TAG, "onClickDetails: " + expanded);
         if (expanded) {
-            for(int i = 0; i< mQuotasList.size();i++) {
+            for (int i = 0; i < mQuotasList.size(); i++) {
                 mHoldersState.set(i, 1);
             }
         } else {
-            for(int i = 0; i< mQuotasList.size();i++) {
+            for (int i = 0; i < mQuotasList.size(); i++) {
                 mHoldersState.set(i, 0);
             }
         }
@@ -72,7 +72,7 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
 
     @Override
     public QuotaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(mMainActivity).inflate(R.layout.adapter_quota, parent, false);
+        View itemView = LayoutInflater.from(mMainActivity).inflate(mMainActivity.isAutoZoom() ? R.layout.adapter_quota_auto : R.layout.adapter_quota, parent, false);
         return new QuotaViewHolder(itemView);
     }
 
@@ -81,7 +81,7 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
         QuotaModel quotaModel = mQuotasList.get(position);
 
         int doneInt = 0;
-        if(mMainActivity.getSettings().isProject_is_active()) {
+        if (mMainActivity.getSettings().isProject_is_active()) {
             doneInt = quotaModel.getDone(mMainActivity);
         } else {
             doneInt = quotaModel.getSent();
@@ -90,7 +90,6 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
         final String done = String.valueOf(doneInt);
         final String limit = String.valueOf(limitInt);
 
-//        Log.d(TAG, "???????????????? onBindViewHolder: " + mMap.size());
         final QuotasTimeLineAdapter mAdapter = new QuotasTimeLineAdapter(quotaModel.getStringSet(mMainActivity, mMap), mMainActivity);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mMainActivity, LinearLayoutManager.VERTICAL, false);
         holder.mRecyclerView.setLayoutManager(mLayoutManager);
@@ -109,16 +108,14 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
         final int sdk = android.os.Build.VERSION.SDK_INT;
         if (mHoldersState.get(position) == 1) {
             holder.mRecyclerView.setVisibility(View.VISIBLE);
-            if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                holder.mCount.setBackgroundDrawable(ContextCompat.getDrawable(mMainActivity, R.drawable.button_background_gray_light) );
+            if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                holder.mCount.setBackgroundDrawable(ContextCompat.getDrawable(mMainActivity, R.drawable.button_background_gray_light));
             } else {
                 holder.mCount.setBackground(ContextCompat.getDrawable(mMainActivity, R.drawable.button_background_gray_light));
             }
-//            Log.d(TAG, "onBindViewHolder: VISIBLE");
         } else {
             holder.mRecyclerView.setVisibility(View.GONE);
             holder.mCount.setBackgroundColor(0xFFFFFF);
-//            Log.d(TAG, "onBindViewHolder: GONE");
         }
 
         holder.mCont.setOnClickListener(v -> onHolderClick(position));

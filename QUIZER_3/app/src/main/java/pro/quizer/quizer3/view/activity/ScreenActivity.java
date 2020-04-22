@@ -3,10 +3,8 @@ package pro.quizer.quizer3.view.activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import pro.quizer.quizer3.R;
-
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.view.fragment.MainFragment;
 
@@ -20,7 +18,7 @@ public class ScreenActivity extends MainActivity {
 
         setContentView(R.layout.activity_screen);
 
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
 
             mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.screen);
 

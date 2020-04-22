@@ -48,12 +48,10 @@ import java.util.TimerTask;
 
 import pro.quizer.quizer3.broadcast.StartSmsSender;
 import pro.quizer.quizer3.database.QuizerDao;
-import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementOptionsR;
-import pro.quizer.quizer3.database.models.ElementStatusImageR;
 import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
@@ -69,9 +67,7 @@ import pro.quizer.quizer3.model.config.OptionsModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.model.config.StagesModel;
 import pro.quizer.quizer3.utils.DateUtils;
-import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
-import pro.quizer.quizer3.utils.FontUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.view.fragment.MainFragment;
@@ -109,9 +105,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private HashMap<Integer, ElementModelNew> mMap;
     private HashMap<Integer, ElementModelNew> mTempMap;
     private CurrentQuestionnaireR currentQuestionnaire = null;
-    //    private List<ElementItemR> elementItemRList = null;
     private List<ElementItemR> currentElementsList = null;
-    //    List<ElementItemR> elementItemsList = new ArrayList<>();
     private List<ElementModelFlat> currentElementsFlatList = null;
     private MainFragment mainFragment;
 
@@ -171,31 +165,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             }
         }
 
-        if (getSpeedMode() == 1) {
-            mSpeedMode = true;
-        } else {
-            mSpeedMode = false;
-        }
-
-        if (getZoomMode() == 1) {
-            mAutoZoom = true;
-        } else {
-            mAutoZoom = false;
-        }
-
-//        setChangeFontCallback(new ChangeFontCallback() {
-//            @Override
-//            public void onChangeFont() {
-//                Toast.makeText(MainActivity.this, getString(R.string.setted) + " " + FontUtils.getCurrentFontName(getFontSizePosition()), Toast.LENGTH_SHORT).show();
-//                finish();
-//                overridePendingTransition(0, 0);
-//                startActivity(getIntent());
-//                overridePendingTransition(0, 0);
-//
-//            }
-//        });
-
-
+        mSpeedMode = getSpeedMode() == 1;
+        mAutoZoom = getZoomMode() == 1;
     }
 
     @Override
@@ -212,7 +183,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public void onBackPressed() {
         if (mainFragment != null && mainFragment.onBackPressed())
             return;
-
         super.onBackPressed();
     }
 
@@ -328,17 +298,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         return getConfig().getProjectInfo().getElements();
     }
 
-//    private void generateMap(final List<ElementModelNew> elements, boolean rebuild) {
-//        for (final ElementModelNew element : elements) {
-//            mMap.put(element.getRelativeID(), element);
-//
-//            final List<ElementModelNew> nestedList = element.getElements();
-//            if (nestedList != null && !nestedList.isEmpty()) {
-//                generateMap(nestedList, rebuild);
-//            }
-//        }
-//    }
-
     private void initDataForRebuild() {
         projectId = getConfig().getProjectInfo().getProjectId();
         userId = getCurrentUser().getUser_id();
@@ -351,7 +310,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             mMap.put(element.getRelativeID(), element);
 
             if (rebuild) {
-//                Log.d(TAG, "generateMap: TRUE");
                 try {
                     ElementItemR elementItemR = new ElementItemR();
                     elementItemR.setConfigId(configId);
@@ -370,7 +328,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                         }
                     }
                     if (elementContentsRList.size() > 0) {
-//                        elementItemR.setElementContentsR(elementContentsRList);
                         getMainDao().insertElementContentsR(elementContentsRList);
                     }
 
@@ -412,15 +369,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                         elementOptionsR.setType_behavior(optionsModelNew.getType_behavior());
                         elementOptionsR.setShow_scale(optionsModelNew.isShow_scale());
                         elementOptionsR.setShow_images(optionsModelNew.isShow_images());
-//                        if (optionsModelNew.getStatusImage() != null) {
-//                            ElementStatusImageR elementStatusImageR = new ElementStatusImageR();
-//                            elementStatusImageR.setType(optionsModelNew.getStatusImage().getType());
-//                            elementStatusImageR.setData(optionsModelNew.getStatusImage().getData());
-//                            elementStatusImageR.setData_on(optionsModelNew.getStatusImage().getData_on());
-//                            elementStatusImageR.setData_off(optionsModelNew.getStatusImage().getData_off());
-//
-//                            elementOptionsR.setStatus_image(elementStatusImageR);
-//                        }
 
                         elementItemR.setElementOptionsR(elementOptionsR);
                     }
@@ -687,7 +635,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 Log.d(TAG, "******************* startRecording: **********************");
                 try {
                     audioNumber = getCurrentQuestionnaireForce().getAudio_number();
-//                    Log.d(TAG, "startRecording: " + audioNumber);
                     getMainDao().setAudioNumber(audioNumber + 1);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -696,8 +643,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 mToken = token;
                 mAudioRelativeId = relativeId;
 
-
-//                Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!! startRecording: STATE " + pbState);
                 switch (mediaID) {
                     case AudioService.SOURCE_NONE:
                     case AudioService.SOURCE_MIC:
@@ -980,15 +925,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public List<ElementItemR> getQuotasElements() {
         List<ElementItemR> quotaList = null;
 
-//        if (elementItemRList == null) {
-//            try {
-//                elementItemRList = getStaticDao().getCurrentElements();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        Log.d(TAG, "getQuotasElements: " + elementItemRList.size());
-
         if (currentElementsList != null) {
             int quotaBlockID = -2;
 
@@ -1001,10 +937,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             }
             if (quotaBlockID != -2) {
                 quotaList = getMainDao().getQuotaElements(quotaBlockID);
-//                showTime("get quota list 3");
             } else {
                 quotaList = new ArrayList<>();
-//                showTime("get quota list 4");
             }
         }
         return quotaList;

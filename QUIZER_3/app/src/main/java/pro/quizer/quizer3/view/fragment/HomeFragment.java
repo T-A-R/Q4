@@ -1198,6 +1198,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         TextView notSentCount = layoutView.findViewById(R.id.not_sent_count);
         TextView unfinishedCount = layoutView.findViewById(R.id.unfinished_count);
         TextView inactiveCount = layoutView.findViewById(R.id.inactive_count);
+//        RelativeLayout cont = layoutView.findViewById(R.id.cont);
         LinearLayout cont = layoutView.findViewById(R.id.cont);
 
         if (activity != null && !activity.getSettings().isProject_is_active()) {

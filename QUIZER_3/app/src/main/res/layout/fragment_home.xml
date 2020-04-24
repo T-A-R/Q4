@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cont_home_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/cont_home_fragment"
-    android:saveEnabled="false"
-    android:keepScreenOn="true">
+    android:keepScreenOn="true"
+    android:saveEnabled="false">
 
     <pro.quizer.quizer3.view.Toolbar
         android:id="@+id/toolbar"
@@ -16,10 +16,10 @@
         android:id="@+id/quizer_logo"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_90sdp"
-        android:layout_marginLeft="@dimen/_40sdp"
-        android:layout_marginRight="@dimen/_40sdp"
         android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/_40sdp"
         android:layout_marginTop="@dimen/_62sdp"
+        android:layout_marginRight="@dimen/_40sdp"
         android:src="@drawable/quizer" />
 
     <LinearLayout
@@ -37,16 +37,16 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_20sdp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_pb_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|center_horizontal"
-            android:textSize="@dimen/_10ssp"
             android:text="Обновление квотного блока"
-            android:visibility="gone"/>
+            android:textSize="@dimen/_10ssp"
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/cont_continue"
@@ -101,8 +101,8 @@
                 android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
-                android:maxLines="1"
                 android:layout_weight="1"
+                android:maxLines="1"
                 android:text="@string/button_info"
                 android:textSize="@dimen/_12ssp" />
 
@@ -113,8 +113,8 @@
                 android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
-                android:maxLines="1"
                 android:layout_weight="1"
+                android:maxLines="1"
                 android:text="@string/button_quotas"
                 android:textSize="@dimen/_12ssp" />
 
@@ -131,108 +131,116 @@
         android:layout_marginBottom="@dimen/_10sdp"
         android:orientation="vertical">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-
-        android:layout_marginLeft="@dimen/_12sdp"
-        android:layout_marginRight="@dimen/_12sdp"
-        android:layout_marginBottom="@dimen/_10sdp">
-
-        <LinearLayout
+        <ScrollView
+            android:id="@+id/scroll"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_3sdp"
-            android:orientation="vertical">
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="@dimen/_12sdp"
+            android:layout_marginRight="@dimen/_12sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:fadeScrollbars="false"
+            android:scrollbarAlwaysDrawVerticalTrack="false"
+            android:scrollbarSize="@dimen/_16sdp"
+            android:scrollbarStyle="outsideInset"
+            android:scrollbarThumbVertical="@drawable/button_background_green"
+            android:scrollbarTrackVertical="@color/lightGray2"
+            android:scrollbars="vertical">
 
-            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
-                android:id="@+id/config_agreement"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:gravity="center|top"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                tools:text="Экзит пул agreement..." />
+                android:layout_marginTop="@dimen/_3sdp"
+                android:orientation="vertical">
+
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                    android:id="@+id/config_agreement"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:gravity="center|top"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    tools:text="Экзит пул agreement..." />
 
 
-            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
-                android:id="@+id/config_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:gravity="center|top"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text="Экзит пул" />
+                <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+                    android:id="@+id/config_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:gravity="center|top"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="Экзит пул" />
 
-            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
-                android:id="@+id/project_status"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:gravity="center|top"
-                android:textColor="@android:color/holo_red_dark"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                tools:text="@string/project_not_active"
-                android:visibility="gone"/>
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                    android:id="@+id/project_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:gravity="center|top"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    tools:text="@string/project_not_active" />
 
-            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
-                android:id="@+id/count_all"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/_40sdp"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:layout_marginRight="@dimen/_40sdp"
-                android:textColor="@color/dark_shadow"
-                android:textSize="16sp"
-                android:visibility="gone"
-                tools:text="Всего собрано: 10" />
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                    android:id="@+id/count_all"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_40sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginRight="@dimen/_40sdp"
+                    android:textColor="@color/dark_shadow"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    tools:text="Всего собрано: 10" />
 
-            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
-                android:id="@+id/count_sent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/count_all"
-                android:layout_marginLeft="@dimen/_40sdp"
-                android:layout_marginTop="8dp"
-                android:layout_marginRight="@dimen/_40sdp"
-                android:textColor="@color/dark_shadow"
-                android:textSize="16sp"
-                android:visibility="gone"
-                tools:text="Отправлено: 10" />
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                    android:id="@+id/count_sent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/count_all"
+                    android:layout_marginLeft="@dimen/_40sdp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="@dimen/_40sdp"
+                    android:textColor="@color/dark_shadow"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    tools:text="Отправлено: 10" />
 
-            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
-                android:id="@+id/quotas_closed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/count_sent"
-                android:layout_marginLeft="@dimen/_40sdp"
-                android:layout_marginTop="8dp"
-                android:layout_marginRight="@dimen/_40sdp"
-                android:textColor="@color/dark_shadow"
-                android:textSize="16sp"
-                android:visibility="gone"
-                tools:text="Квот закрыто: 10" />
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                    android:id="@+id/quotas_closed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/count_sent"
+                    android:layout_marginLeft="@dimen/_40sdp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="@dimen/_40sdp"
+                    android:textColor="@color/dark_shadow"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    tools:text="Квот закрыто: 10" />
 
-            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
-                android:id="@+id/current_user"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:visibility="gone"
-                tools:text="Экзит пул agreement..." />
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                    android:id="@+id/current_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    tools:text="Экзит пул agreement..." />
 
 
-        </LinearLayout>
+            </LinearLayout>
 
-    </ScrollView>
+        </ScrollView>
 
-</LinearLayout>
+    </LinearLayout>
+
     <include layout="@layout/view_progress" />
 
 </RelativeLayout>

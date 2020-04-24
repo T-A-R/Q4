@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -79,7 +80,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     @Override
     protected void onReady() {
-        FrameLayout cont = (FrameLayout) findViewById(R.id.cont_auth_fragment);
+        RelativeLayout cont = (RelativeLayout) findViewById(R.id.cont_auth_fragment);
         LinearLayout image = (LinearLayout) findViewById(R.id.cont_image);
         btnSend = (Button) findViewById(R.id.btn_send_auth);
         esLogin = (EditSpinner) findViewById(R.id.login_spinner);

@@ -36,18 +36,9 @@ import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
+import static pro.quizer.quizer3.utils.Fonts.FONT_SIZE_MODELS;
 
 public class SettingsFragment extends ScreenFragment implements View.OnClickListener, ICallback {
-
-    public static final List<FontSizeModel> FONT_SIZE_MODELS = new ArrayList<FontSizeModel>() {
-        {
-            add(new FontSizeModel("Очень маленький", 0.6875F));
-            add(new FontSizeModel("Маленький", 1.125F));
-            add(new FontSizeModel("Средний", 1.6875F));
-            add(new FontSizeModel("Большой", 2.25F));
-            add(new FontSizeModel("Очень большой", 2.8125F));
-        }
-    };
 
     private Toolbar mToolbar;
     private TextView mConfigDateView;

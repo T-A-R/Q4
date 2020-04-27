@@ -1214,7 +1214,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 answerStatesRestored.add(answerStateNew);
             }
             adapterList.setAnswers(answerStatesRestored);
-            adapterList.setPressed(true);
+            adapterList.setPressed();
             adapterList.setRestored(true);
             if (!currentElement.getElementOptionsR().isPolyanswer())
                 adapterList.setLastSelectedPosition(lastSelectedPosition);

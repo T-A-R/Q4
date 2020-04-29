@@ -1509,8 +1509,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
         cont.setOnClickListener(v -> infoDialog.dismiss());
 
+        dQuota1.setTextColor(getResources().getColor(R.color.black));
+        dQuota1.setText(getString(R.string.label_login, getMainActivity().getCurrentUser().getLogin()));
         dQuota3.setText(getMainActivity().getConfig().getProjectInfo().getName());
-        quota1Cont.setVisibility(View.GONE);
+//        quota1Cont.setVisibility(View.GONE);
         quota2Cont.setVisibility(View.GONE);
 
         dialogBuilder.setView(layoutView);

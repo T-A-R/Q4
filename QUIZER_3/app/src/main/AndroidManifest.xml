@@ -37,7 +37,7 @@
 
         <activity
             android:name="pro.quizer.quizer3.MainActivity"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -48,7 +48,7 @@
         <activity
             android:name="pro.quizer.quizer3.view.activity.ScreenActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
 
         <service
             android:name=".AudioService"

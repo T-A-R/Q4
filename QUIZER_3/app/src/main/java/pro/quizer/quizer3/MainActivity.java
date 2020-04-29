@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         Fonts.init(this);
 
         if (!checkPermission()) {

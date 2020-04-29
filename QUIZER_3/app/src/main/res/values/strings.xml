@@ -403,5 +403,6 @@
     <string name="please_wait_quiz_element">Подождите,  идет загрузка элемента анкеты</string>
     <string name="quiz_saved">Анкета сохранена</string>
     <string name="quiz_save_error">Ошибка сохранения анкеты. Попробуйте еще раз</string>
+    <string name="label_login">Login: %1$s</string>
 
 </resources>

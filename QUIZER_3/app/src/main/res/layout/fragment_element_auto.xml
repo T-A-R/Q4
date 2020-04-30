@@ -9,12 +9,14 @@
     android:keepScreenOn="true"
     android:saveEnabled="false">
 
+    <!--TOOLBAR-->
     <pro.quizer.quizer3.view.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <LinearLayout
+        android:id="@+id/element_cont"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
@@ -23,18 +25,249 @@
         android:layout_marginBottom="@dimen/_40sdp"
         android:orientation="vertical">
 
+        <!--UNHIDE-->
+        <LinearLayout
+            android:id="@+id/unhide_cont"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/brand_color"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <android.support.constraint.ConstraintLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_8sdp">
+
+                <TextView
+                    android:id="@+id/unhide_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_8sdp"
+                    android:text="Развернуть..."
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/_12ssp"
+                    android:visibility="visible"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteX="10dp" />
+
+                <ImageView
+                    android:id="@+id/image_unhide"
+                    android:layout_width="@dimen/_12sdp"
+                    android:layout_height="@dimen/_12sdp"
+                    android:src="@drawable/arrow_down_white"
+                    app:layout_constraintEnd_toEndOf="@+id/unhide_title"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteY="2dp" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <include layout="@layout/view_divider" />
+
+        </LinearLayout>
+
+        <!--TITLE 1-->
+        <LinearLayout
+            android:id="@+id/title_cont_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/brand_color"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_8sdp">
+
+                <TextView
+                    android:id="@+id/title_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_8sdp"
+                    android:text="Title 1"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/_12ssp"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteX="10dp" />
+
+                <ImageView
+                    android:id="@+id/image_close_1"
+                    android:layout_width="@dimen/_12sdp"
+                    android:layout_height="@dimen/_12sdp"
+                    android:src="@drawable/arrow_up_white"
+                    app:layout_constraintEnd_toEndOf="@+id/title_1"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteY="2dp" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/title_desc_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_8sdp"
+                android:layout_marginRight="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_8sdp"
+                android:text="Question desc"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_10ssp"
+                android:textStyle="italic"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/title_images_cont_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_8ssp"
+                android:layout_marginRight="@dimen/_8ssp"
+                android:layout_marginBottom="@dimen/_8ssp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/title_1_image_1"
+                    android:layout_width="@dimen/_120sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/title_1_image_2"
+                    android:layout_width="@dimen/_120sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/title_1_image_3"
+                    android:layout_width="@dimen/_120sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+            <include layout="@layout/view_divider" />
+
+        </LinearLayout>
+
+        <!--TITLE 2-->
+        <LinearLayout
+            android:id="@+id/title_cont_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/brand_color"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_8sdp">
+
+                <TextView
+                    android:id="@+id/title_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_8sdp"
+                    android:text="Title 2"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/_12ssp"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteX="10dp" />
+
+                <ImageView
+                    android:id="@+id/image_close_2"
+                    android:layout_width="@dimen/_12sdp"
+                    android:layout_height="@dimen/_12sdp"
+                    android:src="@drawable/arrow_up_white"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/title_2"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteY="2dp" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/title_desc_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_8sdp"
+                android:layout_marginRight="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_8sdp"
+                android:text="Question desc"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_10ssp"
+                android:textStyle="italic"
+                android:visibility="gone" />
+
+            <!--IMAGES 2-->
+            <LinearLayout
+                android:id="@+id/title_images_cont_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_8ssp"
+                android:layout_marginRight="@dimen/_8ssp"
+                android:layout_marginBottom="@dimen/_8ssp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/title_2_image_1"
+                    android:layout_width="@dimen/_120sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/title_2_image_2"
+                    android:layout_width="@dimen/_120sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/title_2_image_3"
+                    android:layout_width="@dimen/_120sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+            <include layout="@layout/view_divider" />
+
+        </LinearLayout>
+
+        <!--INFO-->
         <LinearLayout
             android:id="@+id/info_cont"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/bg_shadow"
             android:orientation="vertical"
             android:visibility="gone">
 
             <WebView
                 android:id="@+id/info_text"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_margin="@dimen/_4sdp" />
 
         </LinearLayout>
@@ -44,334 +277,98 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_green_shadow"
-            android:orientation="vertical"
-            android:visibility="visible">
+            android:orientation="vertical">
 
-            <android.support.v4.widget.NestedScrollView
+            <!--QUESTION-->
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/question_box"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_8sdp">
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/question"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_20sdp"
+                    android:layout_marginRight="@dimen/_20sdp"
+                    android:text="Question"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/_12ssp"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteX="10dp" />
 
-                    <LinearLayout
-                        android:id="@+id/unhide_cont"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/brand_color"
-                        android:orientation="vertical"
-                        android:visibility="gone">
+                <ImageView
+                    android:id="@+id/question_close"
+                    android:layout_width="@dimen/_12sdp"
+                    android:layout_height="@dimen/_12sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:src="@drawable/arrow_up_white"
+                    app:layout_constraintEnd_toEndOf="@+id/question_box"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteY="2dp" />
 
-                        <android.support.constraint.ConstraintLayout
+            </android.support.constraint.ConstraintLayout>
 
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_8sdp"
-                            android:layout_marginBottom="@dimen/_8sdp">
+            <!--DESC-->
+            <TextView
+                android:id="@+id/question_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_8sdp"
+                android:layout_marginRight="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_8sdp"
+                android:text="Question desc"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_8ssp"
+                android:textStyle="italic"
+                android:visibility="gone" />
 
-                            <TextView
-                                android:id="@+id/unhide_title"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/_8sdp"
-                                android:text="Развернуть..."
-                                android:textColor="@android:color/white"
-                                android:textSize="@dimen/_12ssp"
-                                android:visibility="visible"
-                                tools:ignore="MissingConstraints"
-                                tools:layout_editor_absoluteX="10dp" />
+            <!--IMAGES-->
+            <LinearLayout
+                android:id="@+id/question_images_cont"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_8ssp"
+                android:layout_marginRight="@dimen/_8ssp"
+                android:layout_marginBottom="@dimen/_8ssp"
+                android:orientation="horizontal"
+                android:visibility="gone">
 
-                            <ImageView
-                                android:id="@+id/image_unhide"
-                                android:layout_width="@dimen/_12sdp"
-                                android:layout_height="@dimen/_12sdp"
-                                android:src="@drawable/arrow_down_white"
-                                app:layout_constraintEnd_toEndOf="@+id/unhide_title"
-                                tools:ignore="MissingConstraints"
-                                tools:layout_editor_absoluteY="2dp" />
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/question_image_1"
+                    android:layout_width="@dimen/_120sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
 
-                        </android.support.constraint.ConstraintLayout>
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/question_image_2"
+                    android:layout_width="@dimen/_120sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
 
-                        <include layout="@layout/view_divider" />
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/question_image_3"
+                    android:layout_width="@dimen/_120sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
 
-                    </LinearLayout>
+            </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/title_cont_1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/brand_color"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <android.support.constraint.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_8sdp"
-                            android:layout_marginBottom="@dimen/_8sdp">
-
-                            <TextView
-                                android:id="@+id/title_1"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/_8sdp"
-                                android:text="Title 1"
-                                android:textColor="@android:color/white"
-                                android:textSize="@dimen/_12ssp"
-                                tools:ignore="MissingConstraints"
-                                tools:layout_editor_absoluteX="10dp" />
-
-                            <ImageView
-                                android:id="@+id/image_close_1"
-                                android:layout_width="@dimen/_12sdp"
-                                android:layout_height="@dimen/_12sdp"
-                                android:src="@drawable/arrow_up_white"
-                                app:layout_constraintEnd_toEndOf="@+id/title_1"
-                                tools:ignore="MissingConstraints"
-                                tools:layout_editor_absoluteY="2dp" />
-
-                        </android.support.constraint.ConstraintLayout>
-
-                        <TextView
-                            android:id="@+id/title_desc_1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/_8sdp"
-                            android:layout_marginRight="@dimen/_8sdp"
-                            android:layout_marginBottom="@dimen/_8sdp"
-                            android:text="Question desc"
-                            android:textColor="@android:color/white"
-                            android:textSize="@dimen/_10ssp"
-                            android:textStyle="italic"
-                            android:visibility="gone" />
-
-                        <LinearLayout
-                            android:id="@+id/title_images_cont_1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/_8ssp"
-                            android:layout_marginRight="@dimen/_8ssp"
-                            android:layout_marginBottom="@dimen/_8ssp"
-                            android:orientation="horizontal"
-                            android:visibility="gone">
-
-                            <com.zolad.zoominimageview.ZoomInImageView
-                                android:id="@+id/title_1_image_1"
-                                android:layout_width="@dimen/_120sdp"
-                                android:layout_height="@dimen/_80sdp"
-                                android:layout_weight="1"
-                                android:adjustViewBounds="true"
-                                android:scaleType="centerCrop"
-                                android:visibility="visible" />
-
-                            <com.zolad.zoominimageview.ZoomInImageView
-                                android:id="@+id/title_1_image_2"
-                                android:layout_width="@dimen/_120sdp"
-                                android:layout_height="@dimen/_80sdp"
-                                android:layout_weight="1"
-                                android:adjustViewBounds="true"
-                                android:scaleType="centerCrop"
-                                android:visibility="visible" />
-
-                            <com.zolad.zoominimageview.ZoomInImageView
-                                android:id="@+id/title_1_image_3"
-                                android:layout_width="@dimen/_120sdp"
-                                android:layout_height="@dimen/_80sdp"
-                                android:layout_weight="1"
-                                android:adjustViewBounds="true"
-                                android:scaleType="centerCrop"
-                                android:visibility="visible" />
-
-                        </LinearLayout>
-
-                        <include layout="@layout/view_divider" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/title_cont_2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/brand_color"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <android.support.constraint.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_8sdp"
-                            android:layout_marginBottom="@dimen/_8sdp">
-
-                            <TextView
-                                android:id="@+id/title_2"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/_8sdp"
-                                android:text="Title 1"
-                                android:textColor="@android:color/white"
-                                android:textSize="@dimen/_12ssp"
-                                tools:ignore="MissingConstraints"
-                                tools:layout_editor_absoluteX="10dp" />
-
-                            <ImageView
-                                android:id="@+id/image_close_2"
-                                android:layout_width="@dimen/_12sdp"
-                                android:layout_height="@dimen/_12sdp"
-                                android:src="@drawable/arrow_up_white"
-                                app:layout_constraintEnd_toEndOf="@+id/title_2"
-                                tools:ignore="MissingConstraints"
-                                tools:layout_editor_absoluteY="2dp" />
-
-                        </android.support.constraint.ConstraintLayout>
-
-                        <TextView
-                            android:id="@+id/title_desc_2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/_8sdp"
-                            android:layout_marginRight="@dimen/_8sdp"
-                            android:layout_marginBottom="@dimen/_8sdp"
-                            android:text="Question desc"
-                            android:textColor="@android:color/white"
-                            android:textSize="@dimen/_10ssp"
-                            android:textStyle="italic"
-                            android:visibility="gone" />
-
-                        <LinearLayout
-                            android:id="@+id/title_images_cont_2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/_8ssp"
-                            android:layout_marginRight="@dimen/_8ssp"
-                            android:layout_marginBottom="@dimen/_8ssp"
-                            android:orientation="horizontal"
-                            android:visibility="gone">
-
-                            <com.zolad.zoominimageview.ZoomInImageView
-                                android:id="@+id/title_2_image_1"
-                                android:layout_width="@dimen/_120sdp"
-                                android:layout_height="@dimen/_80sdp"
-                                android:layout_weight="1"
-                                android:adjustViewBounds="true"
-                                android:scaleType="centerCrop"
-                                android:visibility="visible" />
-
-                            <com.zolad.zoominimageview.ZoomInImageView
-                                android:id="@+id/title_2_image_2"
-                                android:layout_width="@dimen/_120sdp"
-                                android:layout_height="@dimen/_80sdp"
-                                android:layout_weight="1"
-                                android:adjustViewBounds="true"
-                                android:scaleType="centerCrop"
-                                android:visibility="visible" />
-
-                            <com.zolad.zoominimageview.ZoomInImageView
-                                android:id="@+id/title_2_image_3"
-                                android:layout_width="@dimen/_120sdp"
-                                android:layout_height="@dimen/_80sdp"
-                                android:layout_weight="1"
-                                android:adjustViewBounds="true"
-                                android:scaleType="centerCrop"
-                                android:visibility="visible" />
-
-                        </LinearLayout>
-
-                        <include layout="@layout/view_divider" />
-
-                    </LinearLayout>
-
-                    <android.support.constraint.ConstraintLayout
-                        android:id="@+id/question_box"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_8sdp"
-                        android:layout_marginBottom="@dimen/_8sdp">
-
-                        <TextView
-                            android:id="@+id/question"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_8sdp"
-                            android:layout_marginLeft="@dimen/_8sdp"
-                            android:layout_marginEnd="@dimen/_20sdp"
-                            android:layout_marginRight="@dimen/_20sdp"
-                            android:text="Question"
-                            android:textColor="@android:color/white"
-                            android:textSize="@dimen/_12ssp"
-                            tools:ignore="MissingConstraints"
-                            tools:layout_editor_absoluteX="10dp" />
-
-                        <ImageView
-                            android:id="@+id/question_close"
-                            android:layout_width="@dimen/_12sdp"
-                            android:layout_height="@dimen/_12sdp"
-                            android:layout_marginEnd="@dimen/_8sdp"
-                            android:layout_marginRight="@dimen/_8sdp"
-                            android:src="@drawable/arrow_up_white"
-                            app:layout_constraintEnd_toEndOf="@+id/question_box"
-                            tools:ignore="MissingConstraints"
-                            tools:layout_editor_absoluteY="2dp" />
-
-                    </android.support.constraint.ConstraintLayout>
-
-                    <TextView
-                        android:id="@+id/question_desc"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/_8sdp"
-                        android:layout_marginRight="@dimen/_8sdp"
-                        android:layout_marginBottom="@dimen/_8sdp"
-                        android:text="Question desc"
-                        android:textColor="@android:color/white"
-                        android:textSize="@dimen/_8ssp"
-                        android:textStyle="italic"
-                        android:visibility="gone" />
-
-                    <LinearLayout
-                        android:id="@+id/question_images_cont"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/_8ssp"
-                        android:layout_marginRight="@dimen/_8ssp"
-                        android:layout_marginBottom="@dimen/_8ssp"
-                        android:orientation="horizontal"
-                        android:visibility="gone">
-
-                        <com.zolad.zoominimageview.ZoomInImageView
-                            android:id="@+id/question_image_1"
-                            android:layout_width="@dimen/_120sdp"
-                            android:layout_height="@dimen/_80sdp"
-                            android:layout_weight="1"
-                            android:adjustViewBounds="true"
-                            android:scaleType="centerCrop"
-                            android:visibility="visible" />
-
-                        <com.zolad.zoominimageview.ZoomInImageView
-                            android:id="@+id/question_image_2"
-                            android:layout_width="@dimen/_120sdp"
-                            android:layout_height="@dimen/_80sdp"
-                            android:layout_weight="1"
-                            android:adjustViewBounds="true"
-                            android:scaleType="centerCrop"
-                            android:visibility="visible" />
-
-                        <com.zolad.zoominimageview.ZoomInImageView
-                            android:id="@+id/question_image_3"
-                            android:layout_width="@dimen/_120sdp"
-                            android:layout_height="@dimen/_80sdp"
-                            android:layout_weight="1"
-                            android:adjustViewBounds="true"
-                            android:scaleType="centerCrop"
-                            android:visibility="visible" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </android.support.v4.widget.NestedScrollView>
-
+            <!--SPINNER-->
             <LinearLayout
                 android:id="@+id/spinner_cont"
                 android:layout_width="match_parent"
@@ -397,6 +394,7 @@
 
             </LinearLayout>
 
+            <!--LIST-->
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/answers_recyclerview"
                 android:layout_width="match_parent"
@@ -413,26 +411,28 @@
                 android:scrollbars="vertical"
                 android:visibility="gone" />
 
-            <FrameLayout
-                android:id="@+id/table_cont"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_shadow"
-                android:visibility="gone">
-
-                <com.cleveroad.adaptivetablelayout.AdaptiveTableLayout
-                    android:id="@+id/table_question_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/_4sdp"
-                    app:cellMargin="1dp"
-                    app:dragAndDropEnabled="false"
-                    tools:ignore="UnknownIdInLayout" />
-
-            </FrameLayout>
-
         </LinearLayout>
 
+        <!--TABLE-->
+        <FrameLayout
+            android:id="@+id/table_cont"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_shadow"
+            android:visibility="gone">
+
+            <com.cleveroad.adaptivetablelayout.AdaptiveTableLayout
+                android:id="@+id/table_question_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_4sdp"
+                app:cellMargin="1dp"
+                app:dragAndDropEnabled="false"
+                tools:ignore="UnknownIdInLayout" />
+
+        </FrameLayout>
+
+        <!--SCALE-->
         <android.support.v7.widget.RecyclerView
             android:id="@+id/scale_recyclerview"
             android:layout_width="match_parent"
@@ -449,6 +449,7 @@
 
     </LinearLayout>
 
+    <!--BUTTONS-->
     <android.support.v7.widget.LinearLayoutCompat
         android:id="@+id/button_panel"
         android:layout_width="match_parent"

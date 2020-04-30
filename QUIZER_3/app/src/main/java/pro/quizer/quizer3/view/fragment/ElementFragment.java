@@ -325,10 +325,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             titleCont1.setVisibility(View.GONE);
             unhideCont.setVisibility(View.VISIBLE);
             isTitle1Hided = true;
-        } else if (view == closeImage2 || view == titleCont2) {
             titleCont2.setVisibility(View.GONE);
             unhideCont.setVisibility(View.VISIBLE);
             isTitle2Hided = true;
+        } else if (view == closeImage2 || view == titleCont2) {
+//            titleCont2.setVisibility(View.GONE);
+//            unhideCont.setVisibility(View.VISIBLE);
+//            isTitle2Hided = true;
         } else if (view == unhideCont) {
             if (isTitle1Hided) {
                 isTitle1Hided = false;

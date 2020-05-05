@@ -1449,9 +1449,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             btnExit.setEnabled(true);
                             btnNext.setEnabled(true);
 
-                            final int sdk = android.os.Build.VERSION.SDK_INT;
-
-                            if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                            if (getMainActivity().getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
                                 btnPrev.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_green));
                                 btnExit.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_red));
                                 btnNext.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_green));

@@ -13,10 +13,12 @@ import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Process;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -1053,19 +1055,11 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                                             .setCancelable(false)
                                             .setTitle(R.string.dialog_sending_waves_via_sms)
                                             .setMessage(R.string.sms_notification_text)
-                                            .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(final DialogInterface dialog, final int which) {
+                                            .setPositiveButton(R.string.view_yes, (dialog, which) -> {
 //                                                    showSmsFragment();
-                                                    mainFragment.openScreen(new SmsFragment());
-                                                }
+                                                mainFragment.openScreen(new SmsFragment());
                                             })
-                                            .setNegativeButton(R.string.view_cancel, new DialogInterface.OnClickListener() {
-
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    dialog.cancel();
-                                                }
-                                            })
+                                            .setNegativeButton(R.string.view_cancel, (dialog, which) -> dialog.cancel())
                                             .show();
                                 } catch (Exception e) {
                                     if (getCurrentUser() != null)
@@ -1259,7 +1253,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public ConfigModel getConfigForce() {
-        mConfig = getCurrentUser().getConfigR();
+        mConfig = forceGetCurrentUser().getConfigR();
         return mConfig;
     }
 
@@ -1283,5 +1277,20 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void setmIsAudioStarted(boolean mIsAudioStarted) {
         this.mIsAudioStarted = mIsAudioStarted;
+    }
+
+    public int getAndroidVersion() {
+        return android.os.Build.VERSION.SDK_INT;
+    }
+
+    public void closeApp() {
+        if (getAndroidVersion() < Build.VERSION_CODES.JELLY_BEAN) {
+            this.finish();
+            Process.killProcess(Process.myPid());
+        } else if (getAndroidVersion() < Build.VERSION_CODES.LOLLIPOP) {
+            this.finishAffinity();
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            finishAndRemoveTask();
+        }
     }
 }

@@ -50,7 +50,7 @@ import pro.quizer.quizer3.view.Anim;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class AuthFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.AuthUserCallback {
+public class AuthFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.AuthUserCallback, SmartFragment.Events {
 
     private static int MAX_USERS = 5;
     private static int MAX_VERSION_TAP_COUNT = 5;
@@ -125,6 +125,8 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         if (memory < 100000000) {
             showToast(getString(R.string.not_enough_space));
         }
+
+        setEventsListener(this);
     }
 
     @Override
@@ -144,8 +146,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             if (isExit) {
                 MainActivity activity = getMainActivity();
                 if (activity != null) {
-                    activity.finish();
-                    android.os.Process.killProcess(android.os.Process.myPid());
+                    activity.closeApp();
                 }
             } else {
                 showToast(getString(R.string.exit_message));
@@ -242,29 +243,44 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         }
     }
 
-    class UpdateQuiz extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            UiUtils.setButtonEnabled(btnSend, false);
-            isCanBackPress = false;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            rebuildElementsDatabase();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            HomeFragment fragment = new HomeFragment();
-            fragment.setStartAfterAuth();
-            replaceFragment(fragment);
+    @Override
+    public void runEvent(int id) {
+        switch (id) {
+            case 1:
+                UiUtils.setButtonEnabled(btnSend, false);
+                isCanBackPress = false;
+                break;
+            case 2:
+                HomeFragment fragment = new HomeFragment();
+                fragment.setStartAfterAuth();
+                replaceFragment(fragment);
+                break;
         }
     }
+
+//    class UpdateQuiz extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            UiUtils.setButtonEnabled(btnSend, false);
+//            isCanBackPress = false;
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            rebuildElementsDatabase();
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//            HomeFragment fragment = new HomeFragment();
+//            fragment.setStartAfterAuth();
+//            replaceFragment(fragment);
+//        }
+//    }
 
 
     private void updateQuotas() {

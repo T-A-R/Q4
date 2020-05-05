@@ -2,6 +2,7 @@ package pro.quizer.quizer3.view.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -107,6 +108,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     private CurrentQuestionnaireR currentQuestionnaire = null;
     private List<ElementItemR> elementItemRList = null;
     private long durationTimeQuestionnaire = 0;
+    private Events eventsListener = null;
 
     public SmartFragment(int layoutSrc) {
         this.layoutSrc = layoutSrc;
@@ -714,12 +716,11 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                             updateConfig(getCurrentUser(), configResponseModel.getConfig());
                             showToast(getString(R.string.config_updated));
                             ConfigModel configModel = getMainActivity().getConfigForce();
-                            final String[] fileUris = configModel.getProjectInfo().getMediaFiles();
+                            final String[] fileUris = configResponseModel.getConfig().getProjectInfo().getMediaFiles();
 
                             if (fileUris == null || fileUris.length == 0) {
                                 Log.d(TAG, "reloadConfig: file list empty");
                             } else {
-
                                 FileLoader.multiFileDownload(getContext())
                                         .fromDirectory(Constants.Strings.EMPTY, FileLoader.DIR_EXTERNAL_PRIVATE)
                                         .progressListener(new MultiFileDownloadListener() {
@@ -741,12 +742,13 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                                             }
                                         }).loadMultiple(fileUris);
                             }
+                            UpdateQuiz task = new UpdateQuiz();
+                            task.execute();
                         } else {
                             showToast(configResponseModel.getError());
                             addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, configResponseModel.getError(), configResponseJson);
                         }
                     }
-
                 });
             } else return;
 
@@ -1062,5 +1064,40 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             }
             return true;
         } else return false;
+    }
+
+    class UpdateQuiz extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (eventsListener != null) {
+                eventsListener.runEvent(1);
+            }
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            rebuildElementsDatabase();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (eventsListener != null) {
+                eventsListener.runEvent(2);
+            }
+        }
+    }
+
+    public void setEventsListener(Events listener) {
+        eventsListener = listener;
+    }
+
+    public interface Events {
+        void runEvent(int id);
+        // 01 - isCanBackPress = false
+        // 02 - run HomeFragment
     }
 }

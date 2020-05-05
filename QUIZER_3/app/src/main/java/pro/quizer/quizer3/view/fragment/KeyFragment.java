@@ -161,7 +161,7 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
     @Override
     public boolean onBackPressed() {
         if (isExit) {
-            getActivity().finish();
+            getMainActivity().closeApp();
         } else {
             showToast("Для выхода нажмите \"Назад\" еще раз");
             isExit = true;

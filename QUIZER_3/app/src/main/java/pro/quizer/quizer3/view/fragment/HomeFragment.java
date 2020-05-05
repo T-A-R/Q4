@@ -549,6 +549,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private boolean checkGps() {
         mGPSModel = null;
         isForceGps = activity.getConfig().isForceGps();
+        mIsUsedFakeGps = false;
         if (activity.getConfig().isGps() && mGPSModel == null) {
             try {
                 mGPSModel = GpsUtils.getCurrentGps(getActivity(), isForceGps);
@@ -670,10 +671,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     .setCancelable(false)
                     .setTitle(R.string.dialog_close_app_title)
                     .setMessage(R.string.dialog_close_app_body)
-                    .setPositiveButton(R.string.view_yes, (dialog, which) -> {
-                        activity.finishAffinity();
-                        Process.killProcess(Process.myPid());
-                    })
+                    .setPositiveButton(R.string.view_yes, (dialog, which) -> activity.closeApp())
                     .setNegativeButton(R.string.view_no, null).show();
         }
     }
@@ -1198,7 +1196,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         TextView notSentCount = layoutView.findViewById(R.id.not_sent_count);
         TextView unfinishedCount = layoutView.findViewById(R.id.unfinished_count);
         TextView inactiveCount = layoutView.findViewById(R.id.inactive_count);
-//        RelativeLayout cont = layoutView.findViewById(R.id.cont);
         LinearLayout cont = layoutView.findViewById(R.id.cont);
 
         if (activity != null && !activity.getSettings().isProject_is_active()) {

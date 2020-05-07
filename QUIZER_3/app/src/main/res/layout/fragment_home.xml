@@ -174,7 +174,7 @@
                     android:textStyle="bold"
                     tools:text="Экзит пул" />
 
-                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
                     android:id="@+id/project_status"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -184,7 +184,7 @@
                     android:textSize="24sp"
                     android:textStyle="bold"
                     android:visibility="gone"
-                    tools:text="@string/project_not_active" />
+                    android:text="@string/project_not_active" />
 
                 <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                     android:id="@+id/count_all"

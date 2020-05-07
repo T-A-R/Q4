@@ -1195,7 +1195,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             getMainDao().insertSettings(settings);
         }
 
-//        settings.setProject_is_active(false); //TODO FOR TESTS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        settings.setProject_is_active(false); //TODO FOR TESTS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         return settings;
     }

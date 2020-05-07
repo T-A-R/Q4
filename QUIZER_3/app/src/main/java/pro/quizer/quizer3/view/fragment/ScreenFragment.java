@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
 import java.util.List;
+import java.util.Objects;
 
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
@@ -38,7 +40,7 @@ public abstract class ScreenFragment extends SmartFragment {
     private IMainFragment main;
     private ScreenListener screenListener;
     private boolean delegateScreen;
-//    private Class<? extends ScreenFragment> prevClass;
+    //    private Class<? extends ScreenFragment> prevClass;
     private String cameraPhotoPath;
     private int requestCodeFragment;
 
@@ -346,10 +348,10 @@ public abstract class ScreenFragment extends SmartFragment {
     }
 
     public void refreshFragment() {
-        if(getVisibleFragment() instanceof SettingsFragment) {
+        if (getVisibleFragment() instanceof SettingsFragment) {
 
         } else {
-            if(!getMainActivity().isFinishing()) {
+            if (!getMainActivity().isFinishing()) {
                 showToast(getString(R.string.setted) + " " + FontUtils.getCurrentFontName(getMainActivity().getFontSizePosition()));
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.detach(this).attach(this).commit();
@@ -357,16 +359,32 @@ public abstract class ScreenFragment extends SmartFragment {
         }
     }
 
-    public Fragment getVisibleFragment(){
+    public Fragment getVisibleFragment() {
         FragmentManager fragmentManager = getMainActivity().getSupportFragmentManager();
         List<Fragment> fragments = fragmentManager.getFragments();
-        if(fragments != null){
-            for(Fragment fragment : fragments){
-                if(fragment != null && fragment.isVisible())
+        if (fragments != null) {
+            for (Fragment fragment : fragments) {
+                if (fragment != null && fragment.isVisible())
                     return fragment;
             }
         }
         return null;
+    }
+
+    public void setViewBackground(View view, boolean visible) {
+        if (visible) {
+            if (getMainActivity().getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                view.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+            } else {
+                view.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+            }
+        } else {
+            if (getMainActivity().getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                view.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            } else {
+                view.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            }
+        }
     }
 
 //    protected void initPageCont1() {

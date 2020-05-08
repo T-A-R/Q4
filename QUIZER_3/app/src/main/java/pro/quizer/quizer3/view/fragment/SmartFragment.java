@@ -387,6 +387,22 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public void saveUser(final String pLogin, final String pPassword, final AuthResponseModel pModel, final ConfigModel pConfigModel) throws Exception {
         Log.d(TAG, "Saving User To Database............. ");
+
+        String oldConfig = null;
+        UserModelR oldUser = null;
+
+        try {
+            oldUser = getMainActivity().getUserByUserId(pModel.getUserId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (oldUser != null) {
+            if(getMainActivity().getCurrentQuestionnaireByConfigId(oldUser.getConfig_id()) != null) {
+                oldConfig = oldUser.getConfig();
+            }
+        }
+
         try {
             getDao().deleteUserByUserId(pModel.getUserId());
         } catch (Exception e) {
@@ -406,7 +422,13 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         userModelR.setRole_id(pModel.getRoleId());
         userModelR.setUser_id(pModel.getUserId());
         userModelR.setUser_project_id(pModel.getUserProjectId());
-        userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
+        if(oldConfig == null) {
+            userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
+        } else {
+            userModelR.setConfig(oldConfig);
+            userModelR.setConfig_new(new GsonBuilder().create().toJson(pConfigModel));
+        }
+
         try {
             addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.SENT, getString(R.string.save_user_to_db), "login: " + userModelR.getLogin());
             getDao().insertUser(userModelR);
@@ -761,6 +783,30 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
         try {
             addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.save_config), Constants.LogResult.SENT, getString(R.string.save_config_to_db), null);
+
+            String oldConfig = null;
+            UserModelR oldUser = null;
+
+            try {
+                oldUser = getMainActivity().getUserByUserId(pUserModel.getUser_id());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (oldUser != null) {
+                if(getMainActivity().getCurrentQuestionnaireByConfigId(pUserModel.getConfig_id()) != null) {
+                    oldConfig = oldUser.getConfig();
+                }
+            }
+
+
+
+
+
+
+
+
+
             getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
 
         } catch (Exception e) {

@@ -422,14 +422,14 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         });
     }
 
-    private void createElementsItems(String mLogin) {
-        try {
-            List<ElementModelNew> mElements = getCurrentUser().getConfigR().getProjectInfo().getElements();
-        } catch (Exception e) {
-            showToast(getString(R.string.make_elements_error));
-            addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.make_elements_error), e.getMessage());
-        }
-    }
+//    private void createElementsItems(String mLogin) {
+//        try {
+//            List<ElementModelNew> mElements = getCurrentUser().getConfigR().getProjectInfo().getElements();
+//        } catch (Exception e) {
+//            showToast(getString(R.string.make_elements_error));
+//            addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.make_elements_error), e.getMessage());
+//        }
+//    }
 
     private void downloadFiles(final ConfigResponseModel pConfigResponseModel,
                                final AuthResponseModel pAuthResponseModel,

@@ -45,6 +45,9 @@ public class UserModelR {
     @ColumnInfo(name = "config")
     private String config;
 
+    @ColumnInfo(name = "config_new")
+    private String config_new;
+
     @ColumnInfo(name = "quotas")
     private String quotas;
 
@@ -70,27 +73,9 @@ public class UserModelR {
         return new Gson().fromJson(config, ConfigModel.class);
     }
 
-//    public List<QuotaModel> getQuotasR() {
-//        try {
-////            final List<QuotaModel> list = new Gson().fromJson(quotas, QuotaResponseModel.class).getQuotas();
-//            List<QuotaModel> list = new ArrayList<>();
-//            final List<QuotaR> quotasR = getDao().getQuotaR();
-//            for (QuotaR quotaR : quotasR) {
-//                list.add(new QuotaModel(quotaR.getSequence(), quotaR.getLimit(), quotaR.getDone(), user_id, user_project_id));
-//            }
-//
-////            for (QuotaModel quotaModel : list) {
-////                quotaModel.setUserId(user_id);
-////                quotaModel.setUserProjectId(user_project_id);
-//////                Log.d(TAG, "getQuotasR MODEL: " + quotaModel.getDone());
-////            }
-//
-//            return list;
-//        } catch (final Exception pE) {
-//            Log.d(TAG, "getQuotasR ERROR: " + pE.toString());
-//            return new ArrayList<>();
-//        }
-//    }
+    public ConfigModel getNewConfigR() {
+        return new Gson().fromJson(config_new, ConfigModel.class);
+    }
 
     public int getId() {
         return id;
@@ -162,7 +147,6 @@ public class UserModelR {
 
     public void setQuotas(String quotas) {
         this.quotas = quotas;
-//        Log.d(TAG, "setQuotas: " + quotas);
     }
 
     public boolean isQuestionnaire_opened() {
@@ -171,5 +155,13 @@ public class UserModelR {
 
     public void setQuestionnaire_opened(boolean questionnaire_opened) {
         this.questionnaire_opened = questionnaire_opened;
+    }
+
+    public String getConfig_new() {
+        return config_new;
+    }
+
+    public void setConfig_new(String config_new) {
+        this.config_new = config_new;
     }
 }

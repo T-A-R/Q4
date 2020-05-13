@@ -258,31 +258,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         }
     }
 
-//    class UpdateQuiz extends AsyncTask<Void, Void, Void> {
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//            UiUtils.setButtonEnabled(btnSend, false);
-//            isCanBackPress = false;
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            rebuildElementsDatabase();
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//            HomeFragment fragment = new HomeFragment();
-//            fragment.setStartAfterAuth();
-//            replaceFragment(fragment);
-//        }
-//    }
-
-
     private void updateQuotas() {
         new UpdateQuotasExecutable(getActivity(), new ICallback() {
             @Override

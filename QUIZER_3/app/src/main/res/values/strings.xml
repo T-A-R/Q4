@@ -396,8 +396,8 @@
     <string name="start_audio_error_check_microphone">Невозможно начать запись аудио. Возможно микрофон занят другим приложением</string>
     <string name="sync_have_unfinished_yes">Наличие незавершённой анкеты в очереди на продолжение: да</string>
     <string name="sync_have_unfinished_no">Наличие незавершённой анкеты в очереди на продолжение: нет</string>
-    <string name="project_not_active">Проект не активен</string>
-    <string name="project_not_active_error">Проект не активен, анкеты не могут быть отправлены на сервер</string>
+    <string name="project_not_active">Проект неактивен</string>
+    <string name="project_not_active_error">Проект неактивен, анкеты не могут быть отправлены на сервер</string>
     <string name="not_enough_space">Недостаточно свободного места на устройстве. Пожалуйста освободите больше места.</string>
     <string name="plase_wait_quiz">Подождите, идет подготовка анкеты</string>
     <string name="please_wait_quiz_element">Подождите,  идет загрузка элемента анкеты</string>

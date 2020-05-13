@@ -19,6 +19,7 @@ public class QuestionnaireListRequestModel implements Serializable {
     private final String app_version;
     private final String device_info;
     private final String device_id;
+    private final String platform;
     private boolean service_send;
 
     public QuestionnaireListRequestModel(String login_admin, String login, String passw) {
@@ -31,6 +32,7 @@ public class QuestionnaireListRequestModel implements Serializable {
         this.device_info = DeviceUtils.getDeviceInfo();
         this.app_version = DeviceUtils.getAppVersion();
         this.device_id = DeviceUtils.getDeviceId();
+        this.platform = "android";
         this.service_send = false;
     }
 

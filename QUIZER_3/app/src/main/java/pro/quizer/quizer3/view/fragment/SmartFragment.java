@@ -418,15 +418,17 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         final UserModelR userModelR = new UserModelR();
         userModelR.setLogin(pLogin);
         userModelR.setPassword(pPassword);
-        userModelR.setConfig_id(pModel.getConfigId());
         userModelR.setRole_id(pModel.getRoleId());
         userModelR.setUser_id(pModel.getUserId());
         userModelR.setUser_project_id(pModel.getUserProjectId());
         if(oldConfig == null) {
             userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
+            userModelR.setConfig_id(pModel.getConfigId());
         } else {
-            userModelR.setConfig(oldConfig);
+//            userModelR.setConfig(oldConfig);
             userModelR.setConfig_new(new GsonBuilder().create().toJson(pConfigModel));
+            userModelR.setConfig_id(pModel.getConfigId());
+            userModelR.setConfig_id(pModel.getConfigId());
         }
 
         try {

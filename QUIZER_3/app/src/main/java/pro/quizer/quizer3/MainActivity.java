@@ -428,7 +428,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         mCurrentUser = null;
     }
 
-    public UserModelR forceGetCurrentUser() {
+    public UserModelR getCurrentUserForce() {
         try {
             mCurrentUser = getUserByUserId(getCurrentUserId());
         } catch (Exception e) {
@@ -1201,7 +1201,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             getMainDao().insertSettings(settings);
         }
 
-        settings.setProject_is_active(false); //TODO FOR TESTS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//        settings.setProject_is_active(false); //TODO FOR TESTS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         return settings;
     }
@@ -1259,7 +1259,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public ConfigModel getConfigForce() {
-        mConfig = forceGetCurrentUser().getConfigR();
+        mConfig = getCurrentUserForce().getConfigR();
         return mConfig;
     }
 

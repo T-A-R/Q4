@@ -59,6 +59,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
     private Switch mSpeedSwitch;
     private Switch mMemorySwitch;
     private Switch mDarkModeSwitch;
+    private boolean isCanBackPress = true;
 
     private MainActivity mBaseActivity;
     private int answerMargin;
@@ -73,6 +74,19 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         initViews();
         initStrings();
         MainFragment.enableSideMenu(true);
+        setEventsListener(id -> {
+            switch (id) {
+                case 1:
+                    showScreensaver("Идет обновление конфига",true);
+                    isCanBackPress = false;
+                    break;
+                case 2:
+                    hideScreensaver();
+                    isCanBackPress = true;
+                    showToast(getString(R.string.config_updated));
+                    break;
+            }
+        });
         updateData(new SettingViewModelExecutable(getContext()).execute());
     }
 
@@ -365,9 +379,9 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
 
     @Override
     public boolean onBackPressed() {
-//        getMainActivity().setHomeFragmentStarted(false);
-//        Log.d(TAG, "start Home: 7");
-        replaceFragment(new HomeFragment());
+        if (isCanBackPress) {
+            replaceFragment(new HomeFragment());
+        }
         return true;
     }
 

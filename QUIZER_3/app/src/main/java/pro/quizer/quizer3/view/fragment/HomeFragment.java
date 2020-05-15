@@ -271,7 +271,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     public void makeQuotaTree() {
         Log.d(TAG, "====== makeQuotaTree: ========");
-        getMainActivity().forceGetCurrentUser();
+        getMainActivity().getCurrentUserForce();
         new UpdateQuotasTree().execute(activity.getQuotasElements());
     }
 
@@ -299,7 +299,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 btnContinue.setOnClickListener(this);
                 btnDelete.setOnClickListener(this);
             } else {
-
+                updateLocalConfig();
             }
         } else {
             contContinue.setVisibility(View.GONE);
@@ -371,6 +371,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         getDao().clearPrevElementsR();
                         getDao().clearElementPassedR();
                         getMainActivity().setCurrentQuestionnaireNull();
+                        updateLocalConfig();
                         return true;
                     } catch (Exception e) {
                         Log.d(TAG, "startQuestionnaire: clearCurrentQuestionnaireR() error.");
@@ -929,19 +930,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         setViewBackground(btnQuotas, true);
         setViewBackground(btnInfo, true);
 
-//        final int sdk = android.os.Build.VERSION.SDK_INT;
-
-//        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-//            btnContinue.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-//            btnStart.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-//            btnQuotas.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-//            btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-//        } else {
-//            btnContinue.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-//            btnStart.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-//            btnQuotas.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-//            btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-//        }
     }
 
     private void deactivateButtons() {
@@ -954,20 +942,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         setViewBackground(btnStart, false);
         setViewBackground(btnQuotas, false);
         setViewBackground(btnInfo, false);
-
-//        final int sdk = android.os.Build.VERSION.SDK_INT;
-//
-//        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-//            btnContinue.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-//            btnStart.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-//            btnQuotas.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-//            btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-//        } else {
-//            btnContinue.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-//            btnStart.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-//            btnQuotas.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-//            btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-//        }
     }
 
     private void deactivateStartButtons() {
@@ -975,14 +949,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         btnStart.setEnabled(false);
         setViewBackground(btnContinue, false);
         setViewBackground(btnStart, false);
-
-//        if (activity.getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-//            btnContinue.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-//            btnStart.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-//        } else {
-//            btnContinue.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-//            btnStart.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-//        }
     }
 
     class UpdateQuiz extends AsyncTask<Void, Void, Void> {
@@ -1343,6 +1309,37 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             tvProjectStatus.setVisibility(View.VISIBLE);
         } else {
             activateButtons();
+        }
+    }
+
+    private void updateLocalConfig() {
+        String newConfig = null;
+
+        newConfig = activity.getCurrentUser().getConfig_new();
+        if(newConfig != null) {
+            getDao().updateConfig(newConfig, activity.getCurrentUser().getUser_id(), activity.getCurrentUser().getUser_project_id());
+            getDao().updateNewConfig(null, activity.getCurrentUser().getUser_id(), activity.getCurrentUser().getUser_project_id());
+            activity.getConfigForce();
+            setEventsListener(new Events() {
+                @Override
+                public void runEvent(int id) {
+                    switch (id) {
+                        case 1:
+                            showScreensaver("Идет обновление конфига",true);
+                            isCanBackPress = false;
+                            deactivateStartButtons();
+                            break;
+                        case 2:
+                            hideScreensaver();
+                            isCanBackPress = true;
+                            btnContinue.setVisibility(View.GONE);
+                            activateButtons();
+                            break;
+                    }
+                }
+            });
+            SmartFragment.UpdateQuiz updateQuiz = new SmartFragment.UpdateQuiz();
+            updateQuiz.execute();
         }
     }
 }

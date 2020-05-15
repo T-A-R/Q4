@@ -382,6 +382,13 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             }
 
             if (configResponseModel != null) {
+                if(configResponseModel.isProjectActive() != null) {
+                    try {
+                        getDao().setProjectActive(configResponseModel.isProjectActive());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 if (configResponseModel.getResult() != 0) {
                     addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SUCCESS, getString(R.string.get_config_success), responseJson);
 //                    createElementsItems(pLogin);

@@ -398,7 +398,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         }
 
         if (oldUser != null) {
-            if(getMainActivity().getCurrentQuestionnaireByConfigId(oldUser.getConfig_id()) != null) {
+            if (getMainActivity().getCurrentQuestionnaireByConfigId(oldUser.getConfig_id()) != null) {
                 oldConfig = oldUser.getConfig();
             }
         }
@@ -421,7 +421,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         userModelR.setRole_id(pModel.getRoleId());
         userModelR.setUser_id(pModel.getUserId());
         userModelR.setUser_project_id(pModel.getUserProjectId());
-        if(oldConfig == null) {
+        if (oldConfig == null) {
             userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
             userModelR.setConfig_id(pModel.getConfigId());
         } else {
@@ -729,6 +729,13 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                     }
 
                     if (configResponseModel != null) {
+                        if (configResponseModel.isProjectActive() != null) {
+                            try {
+                                getDao().setProjectActive(configResponseModel.isProjectActive());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                         if (configResponseModel.getResult() != 0) {
                             try {
                                 addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SUCCESS, getString(R.string.get_config_success), configResponseJson);
@@ -738,7 +745,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                             }
 
                             updateConfig(getCurrentUser(), configResponseModel.getConfig());
-                            showToast(getString(R.string.config_updated));
+
                             ConfigModel configModel = getMainActivity().getConfigForce();
                             final String[] fileUris = configResponseModel.getConfig().getProjectInfo().getMediaFiles();
 
@@ -796,20 +803,25 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             }
 
             if (oldUser != null) {
-                if(getMainActivity().getCurrentQuestionnaireByConfigId(pUserModel.getConfig_id()) != null) {
+                if (getMainActivity().getCurrentQuestionnaireByConfigId(pUserModel.getConfig_id()) != null) {
                     oldConfig = oldUser.getConfig();
                 }
             }
 
+            if (oldConfig != null) {
+                getDao().updateNewConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
+                showToast(getString(R.string.update_config_delay));
+            } else {
+                getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
+                getMainActivity().getConfigForce();
+
+                SmartFragment.UpdateQuiz updateQuiz = new SmartFragment.UpdateQuiz();
+                updateQuiz.execute();
 
 
 
 
-
-
-
-
-            getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
+            }
 
         } catch (Exception e) {
             showToast(getString(R.string.db_save_error));

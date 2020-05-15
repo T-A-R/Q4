@@ -37,7 +37,7 @@ public class QuotasViewModelExecutable extends BaseModelExecutable<QuotasViewMod
         final QuotasViewModel quotasViewModel = new QuotasViewModel();
         quotasViewModel.setQuery(mQuery);
 
-        final UserModelR currentUser = mMainActivity.forceGetCurrentUser();
+        final UserModelR currentUser = mMainActivity.getCurrentUserForce();
 //        List<QuotaModel> quotas = currentUser.getQuotasR();
         int user_id = currentUser.getUser_id();
         int user_project_id = currentUser.getUser_project_id();

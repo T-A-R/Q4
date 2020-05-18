@@ -368,10 +368,28 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     try {
                         Log.d(TAG, "startQuestionnaire: clearCurrentQuestionnaireR() started.");
                         getDao().clearCurrentQuestionnaireR();
+                        Log.d(TAG, "clearCurrentQuestionnaireR(): 1");
                         getDao().clearPrevElementsR();
+                        Log.d(TAG, "clearCurrentQuestionnaireR(): 2");
                         getDao().clearElementPassedR();
+                        Log.d(TAG, "clearCurrentQuestionnaireR(): 3");
                         getMainActivity().setCurrentQuestionnaireNull();
-                        updateLocalConfig();
+                        Log.d(TAG, "clearCurrentQuestionnaireR(): 4");
+//                        updateLocalConfig();
+                        String newConfig = null;
+                        newConfig = activity.getCurrentUser().getConfig_new();
+                        if (newConfig != null) {
+                            showScreensaver("Идет обновление конфига", true);
+                            isCanBackPress = false;
+                            getDao().updateConfig(newConfig, activity.getCurrentUser().getUser_id(), activity.getCurrentUser().getUser_project_id());
+                            getDao().updateNewConfig(null, activity.getCurrentUser().getUser_id(), activity.getCurrentUser().getUser_project_id());
+                            activity.getConfigForce();
+                            SmartFragment.UpdateQuiz updateQuiz = new SmartFragment.UpdateQuiz();
+                            updateQuiz.execute();
+                        }
+                        isCanBackPress = true;
+                        hideScreensaver();
+                        Log.d(TAG, "clearCurrentQuestionnaireR(): 5");
                         return true;
                     } catch (Exception e) {
                         Log.d(TAG, "startQuestionnaire: clearCurrentQuestionnaireR() error.");
@@ -397,6 +415,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         Log.d(TAG, "startQuestionnaire: insertCurrentQuestionnaireR() started.");
                         CurrentQuestionnaireR questionnaire = new CurrentQuestionnaireR();
                         questionnaire.setToken(StringUtils.generateToken());
+                        questionnaire.setConfig_id(getCurrentUser().getConfig_id());
                         questionnaire.setProject_id(activity.getConfig().getProjectInfo().getProjectId());
                         questionnaire.setUser_project_id(getCurrentUser().getUser_project_id());
                         questionnaire.setStart_date(DateUtils.getCurrentTimeMillis());
@@ -481,9 +500,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                 }
                             });
                     }
-                } else {
-                    activateButtons();
                 }
+                activateButtons();
+
                 return true;
             });
         } else {
@@ -1316,7 +1335,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         String newConfig = null;
 
         newConfig = activity.getCurrentUser().getConfig_new();
-        if(newConfig != null) {
+        if (newConfig != null) {
             getDao().updateConfig(newConfig, activity.getCurrentUser().getUser_id(), activity.getCurrentUser().getUser_project_id());
             getDao().updateNewConfig(null, activity.getCurrentUser().getUser_id(), activity.getCurrentUser().getUser_project_id());
             activity.getConfigForce();
@@ -1325,7 +1344,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 public void runEvent(int id) {
                     switch (id) {
                         case 1:
-                            showScreensaver("Идет обновление конфига",true);
+                            showScreensaver("Идет обновление конфига", true);
                             isCanBackPress = false;
                             deactivateStartButtons();
                             break;

@@ -773,8 +773,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                                             }
                                         }).loadMultiple(fileUris);
                             }
-                            UpdateQuiz task = new UpdateQuiz();
-                            task.execute();
+//                            UpdateQuiz task = new UpdateQuiz();
+//                            task.execute();
                         } else {
                             showToast(configResponseModel.getError());
                             addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, configResponseModel.getError(), configResponseJson);
@@ -788,7 +788,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     }
 
-    public void updateConfig(final UserModelR pUserModel, final ConfigModel pConfigModel) {
+    public boolean updateConfig(final UserModelR pUserModel, final ConfigModel pConfigModel) {
 
         try {
             addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.save_config), Constants.LogResult.SENT, getString(R.string.save_config_to_db), null);
@@ -797,6 +797,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             UserModelR oldUser = null;
 
             try {
+                Log.d(TAG, "==== pUserModel.getUser_id() = " + pUserModel.getUser_id());
+                Log.d(TAG, "==== getCurrentUser().getUser_id() = " + getCurrentUser().getUser_id());
                 oldUser = getMainActivity().getUserByUserId(pUserModel.getUser_id());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -805,28 +807,33 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             if (oldUser != null) {
                 if (getMainActivity().getCurrentQuestionnaireByConfigId(pUserModel.getConfig_id()) != null) {
                     oldConfig = oldUser.getConfig();
+                } else {
+                    Log.d(TAG, "==== CURRENT QUIZ IS NULL ==== " + getQuestionnaireFromDB().getConfig_id());
                 }
+            } else {
+                Log.d(TAG, "==== OLD USER IS NULL ====");
             }
 
             if (oldConfig != null) {
+                Log.d(TAG, "==== HAVE QUIZ. SAVE TO NEW CONFIG ====");
                 getDao().updateNewConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
                 showToast(getString(R.string.update_config_delay));
+                return false;
             } else {
+                Log.d(TAG, "==== OLD CONFIG IS NULL ====");
+                Log.d(TAG, "==== SAVE TO CONFIG COZ NO HAVE QUIZ ====");
                 getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
                 getMainActivity().getConfigForce();
 
                 SmartFragment.UpdateQuiz updateQuiz = new SmartFragment.UpdateQuiz();
                 updateQuiz.execute();
-
-
-
-
+                return true;
             }
 
         } catch (Exception e) {
             showToast(getString(R.string.db_save_error));
             addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.save_config), Constants.LogResult.ERROR, getString(R.string.save_config_to_db_error), e.getMessage());
-
+            return false;
         }
     }
 

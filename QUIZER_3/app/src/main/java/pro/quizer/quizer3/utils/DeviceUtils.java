@@ -32,7 +32,7 @@ public class DeviceUtils {
     }
 
     @SuppressLint("HardwareIds")
-    public static String getAndroidId() {
+    private static String getAndroidId() {
         String androidId = null;
         try {
             androidId = Secure.getString(getContext().getContentResolver(), Secure.ANDROID_ID);

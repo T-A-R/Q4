@@ -211,7 +211,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
                 android:maxLines="1"
-                android:text="@string/button_update_config"
+                android:text="@string/button_get_config"
                 android:textSize="@dimen/_12ssp" />
 
 

@@ -150,7 +150,7 @@ public class ServiceFragment extends ScreenFragment {
         mSendDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_send_quiz), null);
+//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_send_quiz), null);
                 new SendAllQuestionnairesExecutable((MainActivity) getActivity(), new ICallback() {
                     @Override
                     public void onStarting() {
@@ -175,7 +175,7 @@ public class ServiceFragment extends ScreenFragment {
             public void onClick(final View view) {
                 if (hasUnfinishedOrSend(notSentQuestionnairesCount, hasUnfinishedQuiz)) return;
 
-                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_send_photo), null);
+//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_send_photo), null);
                 new AllPhotosSendingExecutable((MainActivity) getActivity(), new ICallback() {
                     @Override
                     public void onStarting() {
@@ -200,7 +200,7 @@ public class ServiceFragment extends ScreenFragment {
             public void onClick(final View view) {
                 if (hasUnfinishedOrSend(notSentQuestionnairesCount, hasUnfinishedQuiz)) return;
 
-                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_send_audio), null);
+//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_send_audio), null);
                 new AllAudiosSendingExecutable((MainActivity) getActivity(), new ICallback() {
                     @Override
                     public void onStarting() {
@@ -223,7 +223,7 @@ public class ServiceFragment extends ScreenFragment {
         mClearDbButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_clear_db), null);
+//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_clear_db), null);
                 if (getActivity() != null && !getActivity().isFinishing()) {
                     try {
                         showClearDbAlertDialog();
@@ -266,7 +266,7 @@ public class ServiceFragment extends ScreenFragment {
         mUploadDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_upload_data), null);
+//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_upload_data), null);
                 new UploadingExecutable((MainActivity) getActivity(), new ICallback() {
                     @Override
                     public void onStarting() {
@@ -289,7 +289,7 @@ public class ServiceFragment extends ScreenFragment {
         mUploadFTPDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.ftp_upload), null);
+//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.ftp_upload), null);
                 new UploadingFTPExecutable((MainActivity) getActivity(), new ICallback() {
                     @Override
                     public void onStarting() {
@@ -312,7 +312,7 @@ public class ServiceFragment extends ScreenFragment {
         mLogsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.LOG, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_logs), null);
+//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.LOG, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_logs), null);
                 replaceFragment(new LogsFragment());
             }
         });

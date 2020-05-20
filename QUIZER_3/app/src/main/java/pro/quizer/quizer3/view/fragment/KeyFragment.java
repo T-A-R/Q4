@@ -85,10 +85,10 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
             ActivationRequestModel activationRequestModel = new ActivationRequestModel(key);
             Gson gson = new Gson();
             String json = gson.toJson(activationRequestModel);
-            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY,
-                    getString(R.string.log_send_key),
-                    Constants.LogResult.SENT,
-                    getString(R.string.log_try_to_send_key) + " : " + key, json);
+//            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY,
+//                    getString(R.string.log_send_key),
+//                    Constants.LogResult.SENT,
+//                    getString(R.string.log_try_to_send_key) + " : " + key, json);
             QuizerAPI.sendKey(Constants.Default.ACTIVATION_URL, json, this);
         }
     }
@@ -104,11 +104,11 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
         }
 
         try {
-            addLog(Constants.LogUser.ANDROID, Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.log_save_server_info), Constants.LogResult.SENT, getString(R.string.log_save_server_to_db), "");
+//            addLog(Constants.LogUser.ANDROID, Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.log_save_server_info), Constants.LogResult.SENT, getString(R.string.log_save_server_to_db), "");
             getDao().insertActivationModelR(activationModelR);
         } catch (Exception e) {
             showToast(getString(R.string.db_save_error));
-            addLog(Constants.LogUser.ANDROID, Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.log_save_server_info), Constants.LogResult.ERROR, getString(R.string.db_save_error), e.getMessage());
+//            addLog(Constants.LogUser.ANDROID, Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.log_save_server_info), Constants.LogResult.ERROR, getString(R.string.db_save_error), e.getMessage());
 
         }
     }
@@ -121,7 +121,7 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
 
         if (responseBody == null) {
             showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_501));
-            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.log_send_key), Constants.LogResult.ERROR, getString(R.string.log_error_501_desc), "");
+//            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.log_send_key), Constants.LogResult.ERROR, getString(R.string.log_error_501_desc), "");
             return;
         }
 
@@ -131,7 +131,7 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
         } catch (IOException e) {
             e.printStackTrace();
             showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_502));
-            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.log_send_key), Constants.LogResult.ERROR, getString(R.string.log_error_502_desc), responseJson);
+//            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.log_send_key), Constants.LogResult.ERROR, getString(R.string.log_error_502_desc), responseJson);
         }
         ActivationResponseModel activationModel = null;
 
@@ -141,17 +141,17 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
             activationModel = new GsonBuilder().create().fromJson(responseJson, ActivationResponseModel.class);
         } catch (Exception pE) {
             showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_503));
-            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.log_send_key), Constants.LogResult.ERROR, getString(R.string.log_error_503_desc), responseJson);
+//            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.log_send_key), Constants.LogResult.ERROR, getString(R.string.log_error_503_desc), responseJson);
         }
 
         if (activationModel != null) {
             if (activationModel.getResult() != 0) {
                 saveActivationBundle(activationModel);
-                addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.log_send_key), Constants.LogResult.SUCCESS, getString(R.string.log_send_key_success), responseJson);
+//                addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.log_send_key), Constants.LogResult.SUCCESS, getString(R.string.log_send_key_success), responseJson);
                 replaceFragment(new AuthFragment());
             } else {
                 showToast(activationModel.getError());
-                addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.log_send_key), Constants.LogResult.ERROR, activationModel.getError(), responseJson);
+//                addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.log_send_key), Constants.LogResult.ERROR, activationModel.getError(), responseJson);
             }
         } else {
             showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_504));

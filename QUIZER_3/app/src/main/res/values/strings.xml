@@ -316,6 +316,7 @@
     <string name="button_send_log">Отправить журнал на сервер</string>
     <string name="button_clear_logs">Очистить журнал логов</string>
     <string name="button_update_config">Обновить конфиг</string>
+    <string name="button_get_config">Получить конфиг</string>
     <string name="view_config_title">Конфигурация</string>
     <string name="view_id">ID: %1$s</string>
     <string name="view_date">Дата: %1$s</string>
@@ -405,6 +406,9 @@
     <string name="quiz_save_error">Ошибка сохранения анкеты. Попробуйте еще раз</string>
     <string name="label_login">Login: %1$s</string>
     <string name="update_config_delay">Обновление конфигурации получено. У Вас есть незавершённая активная анкета. Данное обновление конфигурации будет автоматически применено как только Вы её завершите или прервёте.</string>
+    <string name="config_update">Идет обновление конфига</string>
+    <string name="wait_starting_new_quiz">Подождите,  идет запуск анкеты</string>
+    <string name="message_quiz_save_error">Ошибка сохранения анкеты. Обратитесь в службу поддержки.</string>
 
 
 </resources>

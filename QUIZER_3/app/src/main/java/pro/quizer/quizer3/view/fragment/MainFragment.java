@@ -189,15 +189,15 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
     public void onClick(View view) {
         MainActivity activity = getMainActivity();
         try {
-            addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.stop_audio_recording), Constants.LogResult.ATTEMPT, getString(R.string.stop_audio_recording_attempt), null);
+//            addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.stop_audio_recording), Constants.LogResult.ATTEMPT, getString(R.string.stop_audio_recording_attempt), null);
             activity.stopRecording();
         } catch (Exception e) {
-            addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.stop_audio_recording), Constants.LogResult.ERROR, getString(R.string.stop_audio_recording_error), e.toString());
+//            addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getString(R.string.stop_audio_recording), Constants.LogResult.ERROR, getString(R.string.stop_audio_recording_error), e.toString());
             e.printStackTrace();
         }
 
         if (view == mHomeBtn) {
-            getDao().updateQuestionnaireStart(false, getCurrentUserId());
+//            getDao().updateQuestionnaireStart(false, getCurrentUserId());
             hide();
 //            getMainActivity().setHomeFragmentStarted(false);
 //            Log.d(TAG, "start Home: 12");

@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidhiddencamera.CameraConfig;
@@ -34,10 +32,7 @@ import com.krishna.fileloader.listener.MultiFileDownloadListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 import pro.quizer.quizer3.API.QuizerAPI;
 import pro.quizer.quizer3.API.models.request.AuthRequestModel;
@@ -54,35 +49,25 @@ import pro.quizer.quizer3.database.models.ActivationModelR;
 import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
-import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
-import pro.quizer.quizer3.database.models.ElementOptionsR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
-import pro.quizer.quizer3.database.models.ElementStatusImageR;
 import pro.quizer.quizer3.database.models.OptionsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.UserModelR;
-import pro.quizer.quizer3.database.models.WarningsR;
 import pro.quizer.quizer3.model.ElementDatabaseType;
 import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.config.ConfigModel;
-import pro.quizer.quizer3.model.config.Contents;
-import pro.quizer.quizer3.model.config.ElementModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
-import pro.quizer.quizer3.model.config.OptionsModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.model.logs.Crash;
-import pro.quizer.quizer3.model.quota.QuotaUtils;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.FontUtils;
-import pro.quizer.quizer3.utils.LogUtils;
 import pro.quizer.quizer3.utils.SPUtils;
-import pro.quizer.quizer3.utils.UiUtils;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.utils.FileUtils.AMR;
@@ -108,7 +93,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     private CurrentQuestionnaireR currentQuestionnaire = null;
     private List<ElementItemR> elementItemRList = null;
     private long durationTimeQuestionnaire = 0;
-    private Events eventsListener = null;
+    public Events eventsListener = null;
 
     public SmartFragment(int layoutSrc) {
         this.layoutSrc = layoutSrc;
@@ -160,19 +145,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         super.onActivityCreated(savedInstanceState);
         setRetainInstance(true);
         onReady();
-
-        //TODO SET FONT CHANGE BACK!
-
-//        MainActivity mainActivity = (MainActivity) getActivity();
-//
-//        if (mainActivity != null && !mainActivity.isFinishing()) {
-//            mainActivity.setChangeFontCallback(new MainActivity.ChangeFontCallback() {
-//                @Override
-//                public void onChangeFont() {
-//                    refreshFragment();
-//                }
-//            });
-//        }
     }
 
     public void refreshFragment() {
@@ -278,33 +250,35 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         return CoreApplication.getQuizerDatabase().getQuizerDao();
     }
 
-    public static void addLog(String login,
-                              String type,
-                              String object,
-                              String action,
-                              String result,
-                              String desc,
-                              String data) {
-        AppLogsR appLogsR = new AppLogsR();
-        appLogsR.setLogin(login);
-        appLogsR.setDevice(DeviceUtils.getDeviceInfo());
-        appLogsR.setAppversion(DeviceUtils.getAppVersion());
-        appLogsR.setPlatform(DeviceUtils.getAndroidVersion());
-        appLogsR.setDate(String.valueOf(DateUtils.getCurrentTimeMillis()));
-        appLogsR.setType(type);
-        appLogsR.setObject(object);
-        appLogsR.setAction(action);
-        appLogsR.setResult(result);
-        appLogsR.setDescription(desc);
-        if (data != null)
-            appLogsR.setInfo(data.substring(0, Math.min(data.length(), 5000)));
+    //TODO Вернуть логи! Временно выключены из за тестов на учечку памяти.
 
-        try {
-            getDao().insertAppLogsR(appLogsR);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void addLog(String login,
+//                              String type,
+//                              String object,
+//                              String action,
+//                              String result,
+//                              String desc,
+//                              String data) {
+//        AppLogsR appLogsR = new AppLogsR();
+//        appLogsR.setLogin(login);
+//        appLogsR.setDevice(DeviceUtils.getDeviceInfo());
+//        appLogsR.setAppversion(DeviceUtils.getAppVersion());
+//        appLogsR.setPlatform(DeviceUtils.getAndroidVersion());
+//        appLogsR.setDate(String.valueOf(DateUtils.getCurrentTimeMillis()));
+//        appLogsR.setType(type);
+//        appLogsR.setObject(object);
+//        appLogsR.setAction(action);
+//        appLogsR.setResult(result);
+//        appLogsR.setDescription(desc);
+//        if (data != null)
+//            appLogsR.setInfo(data.substring(0, Math.min(data.length(), 5000)));
+//
+//        try {
+//            getDao().insertAppLogsR(appLogsR);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public void showToast(String text) {
         final MainActivity activity = getMainActivity();
@@ -432,12 +406,12 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         }
 
         try {
-            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.SENT, getString(R.string.save_user_to_db), "login: " + userModelR.getLogin());
+//            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.SENT, getString(R.string.save_user_to_db), "login: " + userModelR.getLogin());
             getDao().insertUser(userModelR);
             getDao().insertOption(new OptionsR(Constants.OptionName.QUIZ_STARTED, "false"));
         } catch (Exception e) {
             showToast(getString(R.string.db_save_error));
-            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.ERROR, getString(R.string.save_user_to_db_error), e.getMessage());
+//            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.ERROR, getString(R.string.save_user_to_db_error), e.getMessage());
         }
 
 
@@ -451,11 +425,11 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                                            final int pUserProjectId) {
 
         try {
-            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.SENT, getString(R.string.save_user_to_db), "login: " + pLogin);
+//            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.SENT, getString(R.string.save_user_to_db), "login: " + pLogin);
             getDao().updateUserModelR(pLogin, pPassword, pConfigId, pRoleId, pUserProjectId, pUserId);
         } catch (Exception e) {
             showToast(getString(R.string.db_save_error));
-            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.ERROR, getString(R.string.save_user_to_db_error), e.getMessage());
+//            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.ERROR, getString(R.string.save_user_to_db_error), e.getMessage());
         }
     }
 
@@ -481,10 +455,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public void rebuildElementsDatabase() {
 
         try {
-            Log.d(TAG, "Clearing Elements Database............. ");
-            getDao().clearElementItemR();
-            getDao().clearElementContentsR();
-            getDao().clearElementOptionsR();
+//            Log.d(TAG, "Clearing Elements Database............. ");
+//            getDao().clearElementItemR();
+//            getDao().clearElementContentsR();
+//            getDao().clearElementOptionsR();
             Log.d(TAG, "Rebuilding Elements Database............. ");
             getMainActivity().getMap(true);
         } catch (Exception e) {
@@ -650,13 +624,12 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         Gson gsonAuth = new Gson();
         String jsonAuth = gsonAuth.toJson(post);
 
-        addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SENT, getString(R.string.sending_request), jsonAuth);
+//        addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SENT, getString(R.string.sending_request), jsonAuth);
 
         QuizerAPI.authUser(getServer(), jsonAuth, responseBody -> {
             if (responseBody == null) {
                 showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_401));
-                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_401_desc), null);
-
+//                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_401_desc), null);
                 return;
             }
 
@@ -665,7 +638,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 responseJson = responseBody.string();
             } catch (IOException e) {
                 e.printStackTrace();
-                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_402_desc), null);
+//                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_402_desc), null);
                 responseJson = null;
             }
 
@@ -673,7 +646,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             try {
                 authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
             } catch (final Exception pE) {
-                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_403_desc), responseJson);
+//                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_403_desc), responseJson);
             }
 
             String mConfigId = null;
@@ -699,13 +672,13 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 Gson gson = new Gson();
                 String json = gson.toJson(configRequestModel);
 
-                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SENT, getString(R.string.try_to_get_config), json);
+//                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SENT, getString(R.string.try_to_get_config), json);
 
                 QuizerAPI.getConfig(getServer(), json, configResponseBody -> {
 
                     if (configResponseBody == null) {
                         showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_601));
-                        addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_601_desc), null);
+//                        addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_601_desc), null);
 
                         return;
                     }
@@ -715,7 +688,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                         configResponseJson = configResponseBody.string();
                     } catch (IOException e) {
                         showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_602));
-                        addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_602_desc), null);
+//                        addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_602_desc), null);
 
                     }
                     final GsonBuilder gsonBuilder = new GsonBuilder();
@@ -725,7 +698,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                         configResponseModel = gsonBuilder.create().fromJson(configResponseJson, ConfigResponseModel.class);
                     } catch (final Exception pE) {
                         showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_603));
-                        addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_603_desc), configResponseJson);
+//                        addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_603_desc), configResponseJson);
                     }
 
                     if (configResponseModel != null) {
@@ -738,8 +711,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                         }
                         if (configResponseModel.getResult() != 0) {
                             try {
-                                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SUCCESS, getString(R.string.get_config_success), configResponseJson);
-                                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.loading_files), Constants.LogResult.SENT, getString(R.string.try_to_load_files), configResponseJson);
+//                                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SUCCESS, getString(R.string.get_config_success), configResponseJson);
+//                                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.loading_files), Constants.LogResult.SENT, getString(R.string.try_to_load_files), configResponseJson);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -769,7 +742,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                                             public void onError(final Exception e, final int progress) {
                                                 super.onError(e, progress);
                                                 showToast(getString(R.string.download_files_error));
-                                                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.loading_files), Constants.LogResult.ERROR, getString(R.string.download_files_error), e.toString());
+//                                                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.loading_files), Constants.LogResult.ERROR, getString(R.string.download_files_error), e.toString());
                                             }
                                         }).loadMultiple(fileUris);
                             }
@@ -777,7 +750,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 //                            task.execute();
                         } else {
                             showToast(configResponseModel.getError());
-                            addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, configResponseModel.getError(), configResponseJson);
+//                            addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, configResponseModel.getError(), configResponseJson);
                         }
                     }
                 });
@@ -791,7 +764,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public boolean updateConfig(final UserModelR pUserModel, final ConfigModel pConfigModel) {
 
         try {
-            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.save_config), Constants.LogResult.SENT, getString(R.string.save_config_to_db), null);
+//            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.save_config), Constants.LogResult.SENT, getString(R.string.save_config_to_db), null);
 
             String oldConfig = null;
             UserModelR oldUser = null;
@@ -832,7 +805,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
         } catch (Exception e) {
             showToast(getString(R.string.db_save_error));
-            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.save_config), Constants.LogResult.ERROR, getString(R.string.save_config_to_db_error), e.getMessage());
+//            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.save_config), Constants.LogResult.ERROR, getString(R.string.save_config_to_db_error), e.getMessage());
             return false;
         }
     }
@@ -900,10 +873,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         try {
             getDao().insertQuestionnaire(questionnaireDatabaseModel);
             getMainActivity().setSettings(Constants.Settings.QUIZ_TIME, String.valueOf(DateUtils.getFullCurrentTime()));
-            addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.SUCCESS, getString(R.string.save_question_to_db_success), null);
+//            addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.SUCCESS, getString(R.string.save_question_to_db_success), null);
         } catch (Exception e) {
             showToast(getString(R.string.db_save_error));
-            addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.ERROR, getString(R.string.save_question_to_db_error), e.toString());
+//            addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.ERROR, getString(R.string.save_question_to_db_error), e.toString());
             saved = false;
         }
 
@@ -915,7 +888,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 getMainActivity().setCurrentQuestionnaireNull();
             } catch (Exception e) {
                 showToast(getString(R.string.warning_clear_current_quiz_error));
-                addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.ERROR, getString(R.string.warning_clear_current_quiz_error), e.toString());
+//                addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.ERROR, getString(R.string.warning_clear_current_quiz_error), e.toString());
             }
         }
 
@@ -961,7 +934,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             try {
                 getDao().insertElement(elementDatabaseModel);
             } catch (Exception e) {
-                addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.ERROR, getString(R.string.db_save_error), e.toString());
+//                addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.ERROR, getString(R.string.db_save_error), e.toString());
                 showToast(getString(R.string.db_save_error));
             }
         } catch (Exception e) {
@@ -1073,7 +1046,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             wasStarted = getCurrentUser().isQuestionnaire_opened();
         } catch (Exception e) {
             e.printStackTrace();
-            addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.LOG, getString(R.string.load_crash_log_from_db), Constants.LogResult.ERROR, getString(R.string.db_load_error), e.getMessage());
+//            addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.LOG, getString(R.string.load_crash_log_from_db), Constants.LogResult.ERROR, getString(R.string.db_load_error), e.getMessage());
         }
 
         if (wasStarted) {
@@ -1088,7 +1061,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             crashLogsList = getDao().getCrashLogs();
         } catch (Exception e) {
             e.printStackTrace();
-            addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.LOG, getString(R.string.load_crash_log_from_db), Constants.LogResult.ERROR, getString(R.string.db_load_error), e.getMessage());
+//            addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.LOG, getString(R.string.load_crash_log_from_db), Constants.LogResult.ERROR, getString(R.string.db_load_error), e.getMessage());
         }
 
 

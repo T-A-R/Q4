@@ -771,9 +771,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
             try {
                 Log.d(TAG, "==== pUserModel.getUser_id() = " + pUserModel.getUser_id());
-                Log.d(TAG, "==== getCurrentUser().getUser_id() = " + getCurrentUser().getUser_id());
+
                 oldUser = getMainActivity().getUserByUserId(pUserModel.getUser_id());
             } catch (Exception e) {
+                Log.d(TAG, "updateConfig: ERROR!");
                 e.printStackTrace();
             }
 
@@ -781,7 +782,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 if (getMainActivity().getCurrentQuestionnaireByConfigId(pUserModel.getConfig_id()) != null) {
                     oldConfig = oldUser.getConfig();
                 } else {
-                    Log.d(TAG, "==== CURRENT QUIZ IS NULL ==== " + getQuestionnaireFromDB().getConfig_id());
+                    Log.d(TAG, "==== CURRENT QUIZ IS NULL ==== ");
                 }
             } else {
                 Log.d(TAG, "==== OLD USER IS NULL ====");
@@ -793,7 +794,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 showToast(getString(R.string.update_config_delay));
                 return false;
             } else {
-                Log.d(TAG, "==== OLD CONFIG IS NULL ====");
                 Log.d(TAG, "==== SAVE TO CONFIG COZ NO HAVE QUIZ ====");
                 getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
                 getMainActivity().getConfigForce();
@@ -804,6 +804,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             showToast(getString(R.string.db_save_error));
 //            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.save_config), Constants.LogResult.ERROR, getString(R.string.save_config_to_db_error), e.getMessage());
             return false;

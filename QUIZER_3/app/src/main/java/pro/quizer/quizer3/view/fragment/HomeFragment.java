@@ -73,7 +73,8 @@ import pro.quizer.quizer3.view.Toolbar;
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class HomeFragment extends ScreenFragment implements View.OnClickListener, SmartFragment.Events {
+//public class HomeFragment extends ScreenFragment implements View.OnClickListener, SmartFragment.Events {
+public class HomeFragment extends ScreenFragment implements View.OnClickListener {
 
     private Toolbar toolbar;
     private LinearLayout contContinue;
@@ -199,40 +200,35 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         } catch (Exception e) {
             e.printStackTrace();
         }
-        setEventsListener(this);
+//        setEventsListener(this);
         checkProjectActive();
     }
 
-    @Override
-    public void runEvent(int id) {
-        switch (id) {
-            case 1:
-                startQuestionnaire();
-                isCanBackPress = false;
-                break;
-            case 2:
-
-                isCanBackPress = true;
-                break;
-        }
-    }
+//    @Override
+//    public void runEvent(int id) {
+//        switch (id) {
+//            case 1:
+//                startQuestionnaire();
+//                isCanBackPress = false;
+//                break;
+//            case 2:
+//
+//                isCanBackPress = true;
+//                break;
+//        }
+//    }
 
     @Override
     public void onClick(View view) {
         if (view == btnStart) {
             isStartBtnPressed = true;
-//            if (!isStartBtnPressed) {
-            if (currentQuestionnaire == null) {
-//                    isStartBtnPressed = true;
-//                    deactivateButtons();
-//                    startQuestionnaire();
+            if (currentQuestionnaire == null && !isNeedUpdate) {
                 if (checkTime() && checkGps() && checkMemory()) {
                     new StartNewQuiz().execute();
                 }
             } else {
                 showStartDialog();
             }
-//            }
         } else if (view == btnInfo) {
             getInfo();
         } else if (view == btnQuotas) {
@@ -316,18 +312,22 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 contContinue.setVisibility(View.VISIBLE);
                 btnContinue.setOnClickListener(this);
                 btnDelete.setOnClickListener(this);
-
-                String newConfig = null;
-                newConfig = activity.getCurrentUser().getConfig_new();
-                if (newConfig != null) {
-                    btnStart.setText(getString(R.string.button_update_config));
-                    isNeedUpdate = true;
-                }
             } else {
                 updateLocalConfig();
             }
         } else {
             contContinue.setVisibility(View.GONE);
+        }
+        String newConfig = null;
+        newConfig = activity.getCurrentUser().getConfig_new();
+        if (newConfig != null) {
+            if(currentQuestionnaire == null) {
+                updateLocalConfig();
+            } else {
+                btnStart.setText(getString(R.string.button_update_config));
+                isNeedUpdate = true;
+            }
+
         }
     }
 
@@ -1251,11 +1251,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     public void showStartDialog() {
 
         if (activity != null && !activity.isFinishing()) {
-
             new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
                     .setCancelable(false)
-                    .setTitle(R.string.dialog_start_title)
-                    .setMessage(R.string.dialog_start_body)
+                    .setTitle(isNeedUpdate ? R.string.dialog_config_title : R.string.dialog_start_title)
+                    .setMessage(isNeedUpdate ? R.string.dialog_config_body : R.string.dialog_start_body)
                     .setPositiveButton(R.string.view_yes, (dialog, which) -> {
                         isStartBtnPressed = true;
                         deactivateButtons();
@@ -1283,6 +1282,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void updateLocalConfig() {
+        Log.d(TAG, "updateLocalConfig: START !");
         String newConfig = null;
 
         newConfig = activity.getCurrentUser().getConfig_new();
@@ -1305,13 +1305,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         if (isStartBtnPressed) {
                             isStartBtnPressed = false;
                             initViews();
-                            if (saveQuestionnaireToDatabase(currentQuestionnaire, true)) {
-                                getDao().clearCurrentQuestionnaireR();
-                                getDao().clearPrevElementsR();
-                                getDao().clearElementPassedR();
-                                activity.setCurrentQuestionnaireNull();
-                                currentQuestionnaire = null;
-                            }
+                            if (currentQuestionnaire != null)
+                                if (saveQuestionnaireToDatabase(currentQuestionnaire, true)) {
+                                    getDao().clearCurrentQuestionnaireR();
+                                    getDao().clearPrevElementsR();
+                                    getDao().clearElementPassedR();
+                                    activity.setCurrentQuestionnaireNull();
+                                    currentQuestionnaire = null;
+                                }
                         }
                         btnStart.setText(R.string.button_start);
                         activateButtons();
@@ -1339,14 +1340,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         @Override
         protected Void doInBackground(Void... voids) {
 //            if (checkTime() && checkGps() && checkMemory()) {
-                if (currentQuestionnaire != null) {
-                    if (currentQuestionnaire.getUser_project_id().equals(getCurrentUser().getUser_project_id())) {
-                        if (activity.getConfig().isSaveAborted()) {
-                            if (saveQuestionnaireToDatabase(currentQuestionnaire, true)) {
-                                getDao().clearCurrentQuestionnaireR();
-                                getDao().clearPrevElementsR();
-                                getDao().clearElementPassedR();
-                                activity.setCurrentQuestionnaireNull();
+            if (currentQuestionnaire != null) {
+                if (currentQuestionnaire.getUser_project_id().equals(getCurrentUser().getUser_project_id())) {
+                    if (activity.getConfig().isSaveAborted()) {
+                        if (saveQuestionnaireToDatabase(currentQuestionnaire, true)) {
+                            getDao().clearCurrentQuestionnaireR();
+                            getDao().clearPrevElementsR();
+                            getDao().clearElementPassedR();
+                            activity.setCurrentQuestionnaireNull();
 
 //                                String newConfig;
 //                                newConfig = activity.getCurrentUser().getConfig_new();
@@ -1359,25 +1360,25 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 //                                    SmartFragment.UpdateQuiz updateQuiz = new SmartFragment.UpdateQuiz();
 //                                    updateQuiz.execute();
 //                                } else {
-                                startQuestionnaire();
-//                                }
-                            } else {
-                                activity.showToastfromActivity(getString(R.string.message_quiz_save_error));
-                                activateButtons();
-                            }
-                        } else {
-                            getDao().clearCurrentQuestionnaireR();
-                            getDao().clearPrevElementsR();
-                            getDao().clearElementPassedR();
-                            activity.setCurrentQuestionnaireNull();
                             startQuestionnaire();
+//                                }
+                        } else {
+                            activity.showToastfromActivity(getString(R.string.message_quiz_save_error));
+                            activateButtons();
                         }
                     } else {
+                        getDao().clearCurrentQuestionnaireR();
+                        getDao().clearPrevElementsR();
+                        getDao().clearElementPassedR();
+                        activity.setCurrentQuestionnaireNull();
                         startQuestionnaire();
                     }
                 } else {
                     startQuestionnaire();
                 }
+            } else {
+                startQuestionnaire();
+            }
 //            }
             return null;
         }

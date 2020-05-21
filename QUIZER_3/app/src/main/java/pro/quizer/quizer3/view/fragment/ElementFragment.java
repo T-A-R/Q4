@@ -1393,16 +1393,35 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     public void showExitPoolAlertDialog() {
         activateButtons();
-        if (!getMainActivity().getConfig().isSaveAborted()) {
-            MainActivity activity = getMainActivity();
+        MainActivity activity = getMainActivity();
 //            addLog(getCurrentUser().getLogin(), Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_exit), null);
-            if (activity != null && !activity.isFinishing()) {
-                new AlertDialog.Builder(Objects.requireNonNull(getContext()), R.style.AlertDialogTheme)
-                        .setCancelable(false)
-                        .setTitle(R.string.exit_quiz_header)
-                        .setMessage(R.string.exit_questionaire_warning)
-                        .setPositiveButton(R.string.view_yes, (dialog, which) -> {
+        if (activity != null && !activity.isFinishing()) {
+            new AlertDialog.Builder(Objects.requireNonNull(getContext()), R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.exit_quiz_header)
+                    .setMessage(getMainActivity().getConfig().isSaveAborted() ? R.string.exit_questionnaire_with_saving_warning : R.string.exit_questionnaire_warning)
+                    .setPositiveButton(R.string.view_yes, (dialog, which) -> {
+                        if (getMainActivity().getConfig().isSaveAborted()) {
+                            showScreensaver(true);
+                            if (saveQuestionnaire(true)) {
+                                showToast(getString(R.string.save_questionnaire));
 
+                                try {
+                                    getDao().clearCurrentQuestionnaireR();
+                                    getDao().clearElementPassedR();
+                                    getDao().clearPrevElementsR();
+                                    getMainActivity().setCurrentQuestionnaireNull();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    hideScreensaver();
+                                    activateButtons();
+                                }
+                                exitQuestionnaire();
+                            } else {
+                                hideScreensaver();
+                                activateButtons();
+                            }
+                        } else {
                             try {
                                 getDao().clearCurrentQuestionnaireR();
                                 getDao().clearElementPassedR();
@@ -1410,30 +1429,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                 getMainActivity().setCurrentQuestionnaireNull();
                             } catch (Exception e) {
                                 e.printStackTrace();
+                                hideScreensaver();
+                                activateButtons();
                             }
                             dialog.dismiss();
                             exitQuestionnaire();
-                        })
-                        .setNegativeButton(R.string.view_no, null).show();
-            }
-        } else {
-            showScreensaver(true);
-            if (saveQuestionnaire(true)) {
-                showToast(getString(R.string.save_questionnaire));
-
-                try {
-                    getDao().clearCurrentQuestionnaireR();
-                    getDao().clearElementPassedR();
-                    getDao().clearPrevElementsR();
-                    getMainActivity().setCurrentQuestionnaireNull();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                exitQuestionnaire();
-            } else {
-                hideScreensaver();
-                activateButtons();
-            }
+                        }
+                    })
+                    .setNegativeButton(R.string.view_no, null).show();
         }
     }
 

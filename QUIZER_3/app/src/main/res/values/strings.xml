@@ -248,7 +248,8 @@
     <string name="settings_screen">Настройки</string>
     <string name="about_screen">О нас</string>
     <string name="make_elements_error">Ошибка создания модели анкеты</string>
-    <string name="exit_questionaire_warning">Вы уверены, что хотите принудительно прервать анкету? \nЕё содержимое будет потеряно.</string>
+    <string name="exit_questionnaire_warning">Вы уверены, что хотите принудительно прервать анкету? \nЕё содержимое будет потеряно.</string>
+    <string name="exit_questionnaire_with_saving_warning">Вы действительно хотите выйти и прервать текущую анкету?</string>
     <string name="exit_quiz_header">Завершить анкету</string>
     <string name="fill_input_warning">Заполните текстовое поле в выбранных вариантах ответа.</string>
     <string name="set_last_element_error">Ошибка обновления таблицы переходов</string>

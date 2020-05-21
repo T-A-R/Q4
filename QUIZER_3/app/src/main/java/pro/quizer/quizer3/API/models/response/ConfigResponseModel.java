@@ -14,6 +14,9 @@ public class ConfigResponseModel implements Serializable {
     @SerializedName("error")
     private String error;
 
+    @SerializedName("project_is_active")
+    private Boolean project_is_active;
+
     @SerializedName("config")
     private ConfigModel config;
 
@@ -30,6 +33,10 @@ public class ConfigResponseModel implements Serializable {
 
     public ConfigModel getConfig() {
         return config;
+    }
+
+    public Boolean isProjectActive() {
+        return project_is_active;
     }
 
 }

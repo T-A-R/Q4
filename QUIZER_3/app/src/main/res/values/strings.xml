@@ -127,7 +127,9 @@
     <string name="dialog_close_app_title">Выход из приложения</string>
     <string name="dialog_delete_title">Завершение анкеты</string>
     <string name="dialog_start_title">Начало новой анкеты</string>
+    <string name="dialog_config_title">Обновление конфига</string>
     <string name="dialog_start_body">Вы собираетесь начать новую анкету. При этом сохранённая для продолжения незавершённая анкета будет удалена из очереди на продолжение и её нельзя будет продолжить. Вы действительно хотите начать новую анкету?</string>
+    <string name="dialog_config_body">Вы собираетесь обновить конфиг. При этом сохранённая для продолжения незавершённая анкета будет удалена из очереди на продолжение и её нельзя будет продолжить. Вы действительно хотите обновить конфиг?</string>
     <string name="dialog_close_app_body">Вы уверены, что хотите выйти из приложения?</string>
     <string name="dialog_delete_body">После очистки очереди вы не сможете продолжить прерванную анкету. Вы действительно хотите очистить очередь?</string>
 
@@ -316,6 +318,7 @@
     <string name="button_send_log">Отправить журнал на сервер</string>
     <string name="button_clear_logs">Очистить журнал логов</string>
     <string name="button_update_config">Обновить конфиг</string>
+    <string name="button_get_config">Получить конфиг</string>
     <string name="view_config_title">Конфигурация</string>
     <string name="view_id">ID: %1$s</string>
     <string name="view_date">Дата: %1$s</string>
@@ -396,13 +399,18 @@
     <string name="start_audio_error_check_microphone">Невозможно начать запись аудио. Возможно микрофон занят другим приложением</string>
     <string name="sync_have_unfinished_yes">Наличие незавершённой анкеты в очереди на продолжение: да</string>
     <string name="sync_have_unfinished_no">Наличие незавершённой анкеты в очереди на продолжение: нет</string>
-    <string name="project_not_active">Проект не активен</string>
-    <string name="project_not_active_error">Проект не активен, анкеты не могут быть отправлены на сервер</string>
+    <string name="project_not_active">Проект неактивен</string>
+    <string name="project_not_active_error">Проект неактивен, анкеты не могут быть отправлены на сервер</string>
     <string name="not_enough_space">Недостаточно свободного места на устройстве. Пожалуйста освободите больше места.</string>
     <string name="plase_wait_quiz">Подождите, идет подготовка анкеты</string>
     <string name="please_wait_quiz_element">Подождите,  идет загрузка элемента анкеты</string>
     <string name="quiz_saved">Анкета сохранена</string>
     <string name="quiz_save_error">Ошибка сохранения анкеты. Попробуйте еще раз</string>
     <string name="label_login">Login: %1$s</string>
+    <string name="update_config_delay">Обновление конфигурации получено. У Вас есть незавершённая активная анкета. Данное обновление конфигурации будет автоматически применено как только Вы её завершите или прервёте.</string>
+    <string name="config_update">Идет обновление конфига</string>
+    <string name="wait_starting_new_quiz">Подождите,  идет запуск анкеты</string>
+    <string name="message_quiz_save_error">Ошибка сохранения анкеты. Обратитесь в службу поддержки.</string>
+
 
 </resources>

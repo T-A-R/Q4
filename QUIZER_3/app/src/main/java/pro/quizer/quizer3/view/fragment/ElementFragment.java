@@ -1366,11 +1366,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     private void stopAllRecording() {
         try {
-            addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getMainActivity().getString(R.string.stop_audio_recording), Constants.LogResult.ATTEMPT, getString(R.string.stop_audio_recording_attempt), null);
+//            addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getMainActivity().getString(R.string.stop_audio_recording), Constants.LogResult.ATTEMPT, getString(R.string.stop_audio_recording_attempt), null);
             getMainActivity().stopRecording();
         } catch (Exception e) {
             try {
-                addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getMainActivity().getString(R.string.stop_audio_recording), Constants.LogResult.ERROR, getString(R.string.stop_audio_recording_error), e.toString());
+//                addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getMainActivity().getString(R.string.stop_audio_recording), Constants.LogResult.ERROR, getString(R.string.stop_audio_recording_error), e.toString());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -1395,7 +1395,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         activateButtons();
         if (!getMainActivity().getConfig().isSaveAborted()) {
             MainActivity activity = getMainActivity();
-            addLog(getCurrentUser().getLogin(), Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_exit), null);
+//            addLog(getCurrentUser().getLogin(), Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_exit), null);
             if (activity != null && !activity.isFinishing()) {
                 new AlertDialog.Builder(Objects.requireNonNull(getContext()), R.style.AlertDialogTheme)
                         .setCancelable(false)

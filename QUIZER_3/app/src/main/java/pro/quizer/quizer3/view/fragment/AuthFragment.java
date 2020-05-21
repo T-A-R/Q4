@@ -1,6 +1,5 @@
 package pro.quizer.quizer3.view.fragment;
 
-import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -8,7 +7,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
@@ -40,7 +38,6 @@ import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
-import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.MD5Utils;
 import pro.quizer.quizer3.utils.SPUtils;
@@ -171,7 +168,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         mVersionTapCount++;
 
         if (mVersionTapCount == MAX_VERSION_TAP_COUNT) {
-            addLog("android", Constants.LogType.BUTTON, null, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_version), "");
+//            addLog("android", Constants.LogType.BUTTON, null, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_version), "");
             mVersionTapCount = 0;
             replaceFragment(new ServiceFragment());
         }
@@ -211,7 +208,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
         if (mSavedUsers != null && mSavedUsers.size() >= MAX_USERS && !mSavedUsers.contains(login)) {
             showToast(String.format(getString(R.string.notification_max_users), String.valueOf(MAX_USERS)));
-            addLog(null, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.notification_max_users), "");
+//            addLog(null, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.notification_max_users), "");
             activateButtons();
             return;
         }
@@ -222,7 +219,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         Gson gson = new Gson();
         String json = gson.toJson(post);
 
-        addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SENT, getString(R.string.send_auth_request), json);
+//        addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SENT, getString(R.string.send_auth_request), json);
 
         QuizerAPI.authUser(getServer(), json, this);
     }
@@ -257,31 +254,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 break;
         }
     }
-
-//    class UpdateQuiz extends AsyncTask<Void, Void, Void> {
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//            UiUtils.setButtonEnabled(btnSend, false);
-//            isCanBackPress = false;
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            rebuildElementsDatabase();
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//            HomeFragment fragment = new HomeFragment();
-//            fragment.setStartAfterAuth();
-//            replaceFragment(fragment);
-//        }
-//    }
-
 
     private void updateQuotas() {
         new UpdateQuotasExecutable(getActivity(), new ICallback() {
@@ -376,13 +348,13 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         Gson gson = new Gson();
         String json = gson.toJson(configRequestModel);
 
-        addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SENT, getString(R.string.try_to_get_config), json);
+//        addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SENT, getString(R.string.try_to_get_config), json);
 
         QuizerAPI.getConfig(getServer(), json, responseBody -> {
 
             if (responseBody == null) {
                 showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_601));
-                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_601_desc), "");
+//                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_601_desc), "");
 
                 return;
             }
@@ -393,7 +365,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 Log.d(TAG, "downloadConfig: " + responseJson);
             } catch (IOException e) {
                 showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_602));
-                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_602_desc), e.getMessage());
+//                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_602_desc), e.getMessage());
 
             }
             final GsonBuilder gsonBuilder = new GsonBuilder();
@@ -403,18 +375,25 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
             } catch (final Exception pE) {
                 showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_603));
-                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_603_desc), responseJson);
+//                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_603_desc), responseJson);
             }
 
             if (configResponseModel != null) {
+                if(configResponseModel.isProjectActive() != null) {
+                    try {
+                        getDao().setProjectActive(configResponseModel.isProjectActive());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 if (configResponseModel.getResult() != 0) {
-                    addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SUCCESS, getString(R.string.get_config_success), responseJson);
+//                    addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SUCCESS, getString(R.string.get_config_success), responseJson);
 //                    createElementsItems(pLogin);
                     isRebuildDB = true;
                     downloadFiles(configResponseModel, pModel, pLogin, pPassword);
                 } else {
                     showToast(configResponseModel.getError());
-                    addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, configResponseModel.getError(), responseJson);
+//                    addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, configResponseModel.getError(), responseJson);
                 }
             } else {
                 showToast(getString(R.string.server_response_error) + " " + configResponseModel.getError());
@@ -422,20 +401,20 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         });
     }
 
-    private void createElementsItems(String mLogin) {
-        try {
-            List<ElementModelNew> mElements = getCurrentUser().getConfigR().getProjectInfo().getElements();
-        } catch (Exception e) {
-            showToast(getString(R.string.make_elements_error));
-            addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.make_elements_error), e.getMessage());
-        }
-    }
+//    private void createElementsItems(String mLogin) {
+//        try {
+//            List<ElementModelNew> mElements = getCurrentUser().getConfigR().getProjectInfo().getElements();
+//        } catch (Exception e) {
+//            showToast(getString(R.string.make_elements_error));
+//            addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.make_elements_error), e.getMessage());
+//        }
+//    }
 
     private void downloadFiles(final ConfigResponseModel pConfigResponseModel,
                                final AuthResponseModel pAuthResponseModel,
                                final String pLogin,
                                final String pPassword) {
-        addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.loading_files), Constants.LogResult.SENT, getString(R.string.try_to_load_files), "");
+//        addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.loading_files), Constants.LogResult.SENT, getString(R.string.try_to_load_files), "");
 
         final String[] fileUris = pConfigResponseModel.getConfig().getProjectInfo().getMediaFiles();
 
@@ -460,7 +439,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                         public void onError(final Exception e, final int progress) {
                             super.onError(e, progress);
                             showToast(getString(R.string.download_files_error));
-                            addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.downloading_media_files), Constants.LogResult.ERROR, getString(R.string.download_files_error), "");
+//                            addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.downloading_media_files), Constants.LogResult.ERROR, getString(R.string.download_files_error), "");
                         }
                     }).loadMultiple(fileUris);
         }
@@ -471,17 +450,17 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
         if (responseBody == null) {
             showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_401));
-            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_401_desc), "");
+//            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_401_desc), "");
 
             final UserModelR savedUserModel = getLocalUserModel(login, passwordMD5);
 
             if (savedUserModel != null) {
                 showToast(getString(R.string.saved_data_login));
-                addLog(savedUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SUCCESS, getString(R.string.saved_data_login), "");
+//                addLog(savedUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SUCCESS, getString(R.string.saved_data_login), "");
                 onLoggedInWithoutUpdateLocalData(savedUserModel.getUser_id());
             } else {
                 showToast(getString(R.string.wrong_login_or_pass));
-                addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.wrong_login_or_pass), "login: " + login + " pass: " + password);
+//                addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.wrong_login_or_pass), "login: " + login + " pass: " + password);
             }
 
             activateButtons();
@@ -496,7 +475,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         } catch (IOException e) {
             e.printStackTrace();
             showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_402));
-            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_402_desc), e.getMessage());
+//            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_402_desc), e.getMessage());
 
             responseJson = null;
             activateButtons();
@@ -507,7 +486,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
         } catch (final Exception pE) {
             activateButtons();
-            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_403_desc), responseJson);
+//            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_403_desc), responseJson);
         }
 
         if (authResponseModel == null) {
@@ -515,11 +494,11 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
             if (savedUserModel != null) {
                 showToast(getString(R.string.saved_data_login));
-                addLog(savedUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SUCCESS, getString(R.string.saved_data_login), "");
+//                addLog(savedUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SUCCESS, getString(R.string.saved_data_login), "");
                 onLoggedInWithoutUpdateLocalData(savedUserModel.getUser_id());
             } else {
                 showToast(getString(R.string.wrong_login_or_pass));
-                addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.wrong_login_or_pass), "login: " + login + " pass: " + password);
+//                addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.wrong_login_or_pass), "login: " + login + " pass: " + password);
             }
 
             activateButtons();
@@ -539,11 +518,11 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         } else {
             showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_404));
             activateButtons();
-            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_404_desc), responseJson);
+//            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_404_desc), responseJson);
         }
 
         if (authResponseModel.getResult() != 0) {
-            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SUCCESS, getString(R.string.new_data_login), "");
+//            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SUCCESS, getString(R.string.new_data_login), "");
 
             if (isNeedDownloadConfig(authResponseModel)) {
                 downloadConfig(login, passwordMD5, authResponseModel);
@@ -553,7 +532,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         } else {
             showToast(authResponseModel.getError());
             activateButtons();
-            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, authResponseModel.getError(), "");
+//            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, authResponseModel.getError(), "");
         }
     }
 

@@ -1,8 +1,8 @@
 package pro.quizer.quizer3.executable;
 
-import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -85,18 +85,8 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                 alertDialog.setCancelable(false);
                 alertDialog.setTitle(R.string.dialog_sending_waves_via_sms);
                 alertDialog.setMessage(pBaseActivity.getString(R.string.dialog_sending_waves_via_sms_confirmation) + mUserModel.getLogin() + " " + pBaseActivity.getString(R.string.with_sms));
-                alertDialog.setPositiveButton(R.string.button_send, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int which) {
-                        SmsUtils.sendSms(mBaseActivity, getCallback(), readyToSendStages, null);
-                    }
-                });
-                alertDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int which) {
-                        onError(new Exception(pBaseActivity.getString(R.string.notification_cancel_sending_sms)));
-                    }
-                });
+                alertDialog.setPositiveButton(R.string.button_send, (dialog, which) -> SmsUtils.sendSms(mBaseActivity, getCallback(), readyToSendStages, null));
+                alertDialog.setNegativeButton(R.string.cancel, (dialog, which) -> onError(new Exception(pBaseActivity.getString(R.string.notification_cancel_sending_sms))));
 
                 if (!mBaseActivity.isFinishing()) {
                     alertDialog.show();
@@ -190,7 +180,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
 
                 if (tokensToRemove == null || tokensToRemove.isEmpty()) {
                     MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.error_204) + mBaseActivity.getString(R.string.empty_tokens_list_error), responseJson);
-                    onError(new Exception(mBaseActivity.getString(R.string.empty_tokens_list_error) + " " + mBaseActivity.getString(R.string.error_204)));
+                    onError(new Exception(deletingListResponseModel.getMessage() + " " + mBaseActivity.getString(R.string.error_204)));
                 } else {
                     MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.quiz_sent), null);
 
@@ -212,6 +202,10 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                         MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.WARNINGS, mBaseActivity.getString(R.string.clear_warnings_db), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.db_clear_error), e.getMessage());
                     }
                     onSuccess();
+
+                    final String message = deletingListResponseModel.getMessage();
+//                    final String message = "TEST MESSAGE";
+                    mBaseActivity.runOnUiThread(() -> Toast.makeText(mBaseActivity, message, Toast.LENGTH_LONG).show());
                 }
             } else {
                 onError(new Exception(deletingListResponseModel.getError() + " " + mBaseActivity.getString(R.string.error_205)));

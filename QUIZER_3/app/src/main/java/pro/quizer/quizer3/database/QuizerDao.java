@@ -92,6 +92,9 @@ public interface QuizerDao {
     @Query("UPDATE UserModelR SET config = :config WHERE user_id = :userId AND user_project_id = :userProjectId")
     void updateConfig(String config, int userId, int userProjectId);
 
+    @Query("UPDATE UserModelR SET config_new = :config WHERE user_id = :userId AND user_project_id = :userProjectId")
+    void updateNewConfig(String config, int userId, int userProjectId);
+
     @Query("UPDATE UserModelR SET quotas = :quotas WHERE user_project_id = :userProjectId")
     void updateQuotas(String quotas, int userProjectId);
 
@@ -266,6 +269,9 @@ public interface QuizerDao {
 
     @Query("SELECT * FROM CurrentQuestionnaireR ORDER BY id DESC LIMIT 1")
     CurrentQuestionnaireR getCurrentQuestionnaireR();
+
+    @Query("SELECT * FROM CurrentQuestionnaireR WHERE config_id = :config_id")
+    CurrentQuestionnaireR getCurrentQuestionnaireByConfigId(String config_id);
 
     @Query("UPDATE CurrentQuestionnaireR SET question_start_time = :time")
     void setQuestionTime(Long time);

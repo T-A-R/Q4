@@ -4,13 +4,10 @@ import android.app.Application;
 import android.arch.persistence.room.Room;
 
 import com.activeandroid.ActiveAndroid;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import pro.quizer.quizer3.API.RetrofitQuizerAPI;
 import pro.quizer.quizer3.API.UserAgentInterceptor;
 import pro.quizer.quizer3.database.QuizerDatabase;

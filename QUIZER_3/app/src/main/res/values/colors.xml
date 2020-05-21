@@ -9,6 +9,7 @@
     <color name="brand_color_light">#BEBEBE</color>
 
     <color name="green">#7ed084</color>
+    <color name="green_light">#7ed084</color>
     <color name="blue">#6974e0</color>
     <color name="blueBg">#E3EDFF</color>
     <color name="midGrayBg">#F2F2F2</color>

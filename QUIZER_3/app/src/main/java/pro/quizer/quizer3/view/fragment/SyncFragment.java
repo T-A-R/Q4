@@ -33,6 +33,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
     private Button mSendPhotoButton;
     private Button mSyncSms;
     private Button mDelete;
+    private TextView mProjectStatusView;
     private TextView mQSendedFromThisDeviceView;
     private TextView mQSendedInSessionView;
     private TextView mUnfinishedView;
@@ -67,6 +68,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
         mUserModel = getCurrentUser();
         mToolbar = findViewById(R.id.toolbar);
         mUserNameTitle = findViewById(R.id.user_name_title);
+        mProjectStatusView = findViewById(R.id.project_status);
         UiUtils.setTextOrHide(mUserNameTitle, mUserModel.getLogin());
         mSendDataButton = findViewById(R.id.send_q);
         mSendAudioButton = findViewById(R.id.send_audio);
@@ -182,23 +184,33 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
                 } else {
                     hideSmsButton();
                 }
+
+                if(activity.getSettings().isProject_is_active()) {
+                   mProjectStatusView.setVisibility(View.GONE);
+                    UiUtils.setButtonEnabled(mSendDataButton, mQUnsendedCount > 0);
+                    UiUtils.setButtonEnabled(mSendPhotoButton, mPUnsendedCount > 0);
+                    UiUtils.setButtonEnabled(mSendAudioButton, mAUnsendedCount > 0);
+                } else {
+                    mProjectStatusView.setVisibility(View.VISIBLE);
+                    UiUtils.setButtonEnabledLightGreen(mSendDataButton, mQUnsendedCount > 0);
+                    UiUtils.setButtonEnabledLightGreen(mSendPhotoButton, mPUnsendedCount > 0);
+                    UiUtils.setButtonEnabledLightGreen(mSendAudioButton, mAUnsendedCount > 0);
+                }
+
                 UiUtils.setTextOrHide(mQUnsendedView, (String.format(mQUnsendedViewString, mQUnsendedCount)));
                 UiUtils.setTextOrHide(mAUnsendedView, (String.format(mAUnsendedViewString, mAUnsendedCount)));
                 UiUtils.setTextOrHide(mPUnsendedView, (String.format(mPUnsendedViewString, mPUnsendedCount)));
 
                 UiUtils.setButtonEnabledRed(mDelete, hasUnfinishedQuiz);
 
-                UiUtils.setButtonEnabled(mSendDataButton, mQUnsendedCount > 0);
                 mSendDataButton.setOnClickListener(view -> new SendQuestionnairesByUserModelExecutable(getMainActivity(), mUserModel, SyncFragment.this, false).execute());
 
-                UiUtils.setButtonEnabled(mSendPhotoButton, mPUnsendedCount > 0);
                 mSendPhotoButton.setOnClickListener(view -> {
                     if (hasUnfinishedOrSend(mQUnsendedCount, hasUnfinishedQuiz)) return;
 
                     new PhotosSendingByUserModelExecutable((MainActivity) getActivity(), mUserModel, SyncFragment.this).execute();
                 });
 
-                UiUtils.setButtonEnabled(mSendAudioButton, mAUnsendedCount > 0);
                 mSendAudioButton.setOnClickListener(view -> {
                     if (hasUnfinishedOrSend(mQUnsendedCount, hasUnfinishedQuiz)) return;
 

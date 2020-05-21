@@ -15,6 +15,9 @@ public class DeletingListResponseModel implements Serializable {
     @SerializedName("error")
     private String error;
 
+    @SerializedName("message")
+    private String message;
+
     @SerializedName("server_time")
     private Long server_time;
 
@@ -49,5 +52,9 @@ public class DeletingListResponseModel implements Serializable {
 
     public Boolean isProjectActive() {
         return project_is_active;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

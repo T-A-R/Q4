@@ -207,11 +207,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         toolbar.showOptionsView(v -> MainFragment.showDrawer(), v -> showInfoDialog());
         toolbar.showInfoView();
 
-        cont.startAnimation(Anim.getAppear(getContext()));
-        btnNext.startAnimation(Anim.getAppearSlide(getContext(), 500));
-        btnPrev.startAnimation(Anim.getAppearSlide(getContext(), 500));
-        btnExit.startAnimation(Anim.getAppearSlide(getContext(), 500));
-
         MainFragment.enableSideMenu(false);
 
         showScreensaver(R.string.please_wait_quiz_element, true);
@@ -220,9 +215,24 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         if (prevList == null || prevList.size() == 0) {
             prevList = new ArrayList<>();
+            btnPrev.setVisibility(View.INVISIBLE);
         }
+
+        if(prevList.size() == 0 || prevList.size() == 1) {
+            btnPrev.setVisibility(View.INVISIBLE);
+            cont.startAnimation(Anim.getAppear(getContext()));
+            btnNext.startAnimation(Anim.getAppearSlide(getContext(), 500));
+            btnExit.startAnimation(Anim.getAppearSlide(getContext(), 500));
+        } else {
+            cont.startAnimation(Anim.getAppear(getContext()));
+            btnNext.startAnimation(Anim.getAppearSlide(getContext(), 500));
+            btnPrev.startAnimation(Anim.getAppearSlide(getContext(), 500));
+            btnExit.startAnimation(Anim.getAppearSlide(getContext(), 500));
+        }
+
         initCurrentElements();
         loadResumedData();
         initQuestion();

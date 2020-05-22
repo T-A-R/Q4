@@ -375,6 +375,12 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             if (getMainActivity().getCurrentQuestionnaireByConfigId(oldUser.getConfig_id()) != null) {
                 oldConfig = oldUser.getConfig();
             }
+        } else {
+            try {
+                getDao().clearCurrentQuestionnaireR();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         try {

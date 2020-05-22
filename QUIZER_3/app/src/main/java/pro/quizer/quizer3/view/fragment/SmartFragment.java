@@ -405,7 +405,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
             userModelR.setConfig_id(pModel.getConfigId());
         } else {
-//            userModelR.setConfig(oldConfig);
+            userModelR.setConfig(oldConfig);
             userModelR.setConfig_new(new GsonBuilder().create().toJson(pConfigModel));
             userModelR.setConfig_id(pModel.getConfigId());
             userModelR.setConfig_id(pModel.getConfigId());
@@ -722,7 +722,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-
                             updateConfig(getCurrentUser(), configResponseModel.getConfig());
 
                             ConfigModel configModel = getMainActivity().getConfigForce();

@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.text.InputType;
@@ -13,12 +12,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import com.cleveroad.adaptivetablelayout.LinkedAdaptiveTableAdapter;
 import com.cleveroad.adaptivetablelayout.OnItemClickListener;
@@ -320,13 +317,11 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     public void setDate(final EditText pEditText) {
         if (mContext != null && !mContext.isFinishing()) {
-            new DatePickerDialog(mContext, new DatePickerDialog.OnDateSetListener() {
-                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                    mCalendar.set(Calendar.YEAR, year);
-                    mCalendar.set(Calendar.MONTH, monthOfYear);
-                    mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                    setInitialDateTime(pEditText, true);
-                }
+            new DatePickerDialog(mContext, (view, year, monthOfYear, dayOfMonth) -> {
+                mCalendar.set(Calendar.YEAR, year);
+                mCalendar.set(Calendar.MONTH, monthOfYear);
+                mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                setInitialDateTime(pEditText, true);
             },
                     mCalendar.get(Calendar.YEAR),
                     mCalendar.get(Calendar.MONTH),
@@ -337,13 +332,10 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     public void setTime(final EditText pEditText) {
         if (mContext != null && !mContext.isFinishing()) {
-            new TimePickerDialog(mContext, new TimePickerDialog.OnTimeSetListener() {
-                @Override
-                public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                    mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                    mCalendar.set(Calendar.MINUTE, minute);
-                    setInitialDateTime(pEditText, false);
-                }
+            new TimePickerDialog(mContext, (view, hourOfDay, minute) -> {
+                mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                mCalendar.set(Calendar.MINUTE, minute);
+                setInitialDateTime(pEditText, false);
             },
                     mCalendar.get(Calendar.HOUR_OF_DAY),
                     mCalendar.get(Calendar.MINUTE), true)
@@ -398,22 +390,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 case OptionsOpenType.TIME:
                     mEditText.setFocusableInTouchMode(false);
                     mEditText.setHint(mContext.getString(R.string.hint_time));
-                    mEditText.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            setTime(mEditText);
-                        }
-                    });
+                    mEditText.setOnClickListener(view -> setTime(mEditText));
                     break;
                 case OptionsOpenType.DATE:
                     mEditText.setFocusableInTouchMode(false);
                     mEditText.setHint(mContext.getString(R.string.hint_date));
-                    mEditText.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            setDate(mEditText);
-                        }
-                    });
+                    mEditText.setOnClickListener(view -> setDate(mEditText));
                     break;
                 case OptionsOpenType.NUMBER:
                     mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -428,86 +410,82 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             }
 
             dialog.setCancelable(false)
-                    .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.apply, (dialogBox, id) -> {
+                        final String answer = mEditText.getText().toString();
 
-                        public void onClick(final DialogInterface dialogBox, final int id) {
-                            final String answer = mEditText.getText().toString();
+                        if (!StringUtils.isEmpty(answer) || options.isUnnecessary_fill_open()) {
 
-                            if (StringUtils.isEmpty(answer)) {
-                                mContext.showToastfromActivity(mContext.getString(R.string.empty_string_warning));
-
-                                return;
-                            }
-
-                            if (!mIsFlipColsAndRows) {
-                                mAnswersState[row - 1][column - 1].setChecked(true);
-                                setLine();
-                                mAnswersState[row - 1][column - 1].setData(answer);
-                                if (!isPolyanswer && mAnswersState[row - 1][column - 1].isChecked()) {
-                                    unselectOther(row, column, clickedQuestion, clickedElement);
-                                }
-                                if(!isSpeedMode) {
-                                    try {
-                                        notifyRowChanged(row);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                notifyItemChanged(row, 0);
-                            } else {
-                                mAnswersState[column - 1][row - 1].setChecked(true);
-                                setLine();
-                                mAnswersState[column - 1][row - 1].setData(answer);
-                                if (!isPolyanswer && mAnswersState[column - 1][row - 1].isChecked()) {
-                                    unselectOther(row, column, clickedQuestion, clickedElement);
-                                }
-                                if(!isSpeedMode) {
-                                    try {
-                                        notifyColumnChanged(column);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                notifyItemChanged(0, column);
-                            }
-                            mRefreshRunnable.run();
-
+                        } else {
+                            Log.d(TAG, "?????????????? notEmpty: 2");
+                            mContext.showToastfromActivity(mContext.getString(R.string.empty_string_warning));
+                            return;
                         }
+
+                        if (!mIsFlipColsAndRows) {
+                            mAnswersState[row - 1][column - 1].setChecked(true);
+                            setLine();
+                            mAnswersState[row - 1][column - 1].setData(answer);
+                            if (!isPolyanswer && mAnswersState[row - 1][column - 1].isChecked()) {
+                                unselectOther(row, column, clickedQuestion, clickedElement);
+                            }
+                            if(!isSpeedMode) {
+                                try {
+                                    notifyRowChanged(row);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            notifyItemChanged(row, 0);
+                        } else {
+                            mAnswersState[column - 1][row - 1].setChecked(true);
+                            setLine();
+                            mAnswersState[column - 1][row - 1].setData(answer);
+                            if (!isPolyanswer && mAnswersState[column - 1][row - 1].isChecked()) {
+                                unselectOther(row, column, clickedQuestion, clickedElement);
+                            }
+                            if(!isSpeedMode) {
+                                try {
+                                    notifyColumnChanged(column);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            notifyItemChanged(0, column);
+                        }
+                        mRefreshRunnable.run();
+
                     })
 
                     .setNegativeButton(R.string.cancel,
-                            new DialogInterface.OnClickListener() {
-
-                                public void onClick(final DialogInterface dialogBox, final int id) {
-                                    if (!mIsFlipColsAndRows) {
-                                        if(isPolyanswer) {
-                                            mAnswersState[row - 1][column - 1].setChecked(false);
-                                            setLine();
-                                            mAnswersState[row - 1][column - 1].setData(Constants.Strings.EMPTY);
-                                            dialogBox.cancel();
-                                            try {
-                                                notifyRowChanged(row);
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                            notifyItemChanged(row, 0);
+                            (dialogBox, id) -> {
+                                if (!mIsFlipColsAndRows) {
+                                    if(isPolyanswer) {
+                                        mAnswersState[row - 1][column - 1].setChecked(false);
+                                        setLine();
+                                        mAnswersState[row - 1][column - 1].setData(Constants.Strings.EMPTY);
+                                        dialogBox.cancel();
+                                        try {
+                                            notifyRowChanged(row);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
                                         }
-                                    } else {
-                                        if(isPolyanswer) {
-                                            mAnswersState[column - 1][row - 1].setChecked(false);
-                                            setLine();
-                                            mAnswersState[column - 1][row - 1].setData(Constants.Strings.EMPTY);
-                                            dialogBox.cancel();
-                                            try {
-                                                notifyColumnChanged(column);
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                            notifyItemChanged(0, column);
-                                        }
+                                        notifyItemChanged(row, 0);
                                     }
-                                    mRefreshRunnable.run();
+                                } else {
+                                    if(isPolyanswer) {
+                                        mAnswersState[column - 1][row - 1].setChecked(false);
+                                        setLine();
+                                        mAnswersState[column - 1][row - 1].setData(Constants.Strings.EMPTY);
+                                        dialogBox.cancel();
+                                        try {
+                                            notifyColumnChanged(column);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                        notifyItemChanged(0, column);
+                                    }
                                 }
+                                mRefreshRunnable.run();
                             });
 
             final AlertDialog alertDialog = dialog.create();
@@ -595,11 +573,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                         checked = true;
                     }
                 }
-                if (checked) {
-                    mLine[i] = true;
-                } else {
-                    mLine[i] = false;
-                }
+                mLine[i] = checked;
             }
         }
     }
@@ -632,12 +606,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         UiUtils.setTextOrHide(description, pOptionsModel.getDescription());
 
         dialog.setCancelable(false)
-                .setPositiveButton(R.string.view_OK, new DialogInterface.OnClickListener() {
-
-                    public void onClick(final DialogInterface dialogBox, final int id) {
-                        dialogBox.cancel();
-                    }
-                });
+                .setPositiveButton(R.string.view_OK, (dialogBox, id) -> dialogBox.cancel());
 
         final AlertDialog alertDialog = dialog.create();
 

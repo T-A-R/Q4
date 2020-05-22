@@ -1104,8 +1104,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     e.printStackTrace();
                 }
 
-                if (openType) {
+                if (openType && !element.getElementOptionsR().isUnnecessary_fill_open()) {
                     if (state.getData().equals("") || state.getData() == null) {
+                        Log.d(TAG, "?????????????? notEmpty: 3 " + element.getElementOptionsR().isUnnecessary_fill_open());
                         showToast(getString(R.string.empty_string_warning));
                         return false;
                     }
@@ -1135,6 +1136,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         return true;
     }
 
+    //TODO FOR TESTS!
     public void showPassed() {
         List<ElementPassedR> elementPassedRS = getDao().getAllElementsPassedR(getQuestionnaire().getToken());
         Log.d(TAG, "==========================================");
@@ -1330,8 +1332,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        //TODO save startTime
     }
 
     @Override
@@ -1526,7 +1526,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         dQuota1.setTextColor(getResources().getColor(R.color.black));
         dQuota1.setText(getString(R.string.label_login, getMainActivity().getCurrentUser().getLogin()));
         dQuota3.setText(getMainActivity().getConfig().getProjectInfo().getName());
-//        quota1Cont.setVisibility(View.GONE);
         quota2Cont.setVisibility(View.GONE);
 
         dialogBuilder.setView(layoutView);

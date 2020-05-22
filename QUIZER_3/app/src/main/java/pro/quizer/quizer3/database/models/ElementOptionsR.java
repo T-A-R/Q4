@@ -4,9 +4,6 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverters;
-
-//import pro.quizer.quizer3.database.ElementStatusImageRConverter;
 
 @Entity(indices = {@Index("relative_id")})
 public class ElementOptionsR {
@@ -84,10 +81,6 @@ public class ElementOptionsR {
     @ColumnInfo(name = "end_value")
     private Integer end_value;
 
-//    @ColumnInfo(name = "status_image")
-//    @TypeConverters({ElementStatusImageRConverter.class})
-//    private ElementStatusImageR status_image;
-
     @ColumnInfo(name = "type_behavior")
     private String type_behavior;
 
@@ -96,6 +89,9 @@ public class ElementOptionsR {
 
     @ColumnInfo(name = "show_images")
     private boolean show_images;
+
+    @ColumnInfo(name = "unnecessary_fill_open")
+    private boolean unnecessary_fill_open;
 
     public ElementOptionsR() {
     }
@@ -106,8 +102,8 @@ public class ElementOptionsR {
                            String description, boolean flip_cols_and_rows, boolean rotation,
                            boolean fixed_order, Integer min_answers, Integer max_answers,
                            String open_type, String placeholder, boolean unchecker,
-                           Integer start_value, Integer end_value,
-                           String type_behavior, boolean show_scale, boolean show_images) {
+                           Integer start_value, Integer end_value, String type_behavior,
+                           boolean show_scale, boolean show_images, boolean unnecessary_fill_open) {
         this.relative_id = relative_id;
         this.title = title;
         this.jump = jump;
@@ -131,10 +127,10 @@ public class ElementOptionsR {
         this.unchecker = unchecker;
         this.start_value = start_value;
         this.end_value = end_value;
-//        this.status_image = status_image;
         this.type_behavior = type_behavior;
         this.show_scale = show_scale;
         this.show_images = show_images;
+        this.unnecessary_fill_open = unnecessary_fill_open;
     }
 
     public int getId() {
@@ -321,14 +317,6 @@ public class ElementOptionsR {
         this.end_value = end_value;
     }
 
-//    public ElementStatusImageR getStatus_image() {
-//        return status_image;
-//    }
-//
-//    public void setStatus_image(ElementStatusImageR status_image) {
-//        this.status_image = status_image;
-//    }
-
     public String getType_behavior() {
         return type_behavior;
     }
@@ -359,5 +347,13 @@ public class ElementOptionsR {
 
     public void setRelative_id(Integer relative_id) {
         this.relative_id = relative_id;
+    }
+
+    public boolean isUnnecessary_fill_open() {
+        return unnecessary_fill_open;
+    }
+
+    public void setUnnecessary_fill_open(boolean unnecessary_fill_open) {
+        this.unnecessary_fill_open = unnecessary_fill_open;
     }
 }

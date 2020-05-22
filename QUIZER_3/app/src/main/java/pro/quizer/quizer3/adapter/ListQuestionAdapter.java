@@ -540,6 +540,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                     }
                 }
             } else {
+                Log.d(TAG, "?????????????? notEmpty: 1");
                 mActivity.showToastfromActivity(mActivity.getString(R.string.empty_string_warning));
             }
 
@@ -754,10 +755,9 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         if (lastSelectedPosition == -1) {
             return true;
         }
-//        Log.d(TAG, "isFilled: " + answersList.get(lastSelectedPosition).getElementOptionsR().getOpen_type() +
-//                " " + answersList.get(lastSelectedPosition).getRelative_id() +
-//                " " + answersState.get(lastSelectedPosition).getRelative_id());
-//        if (answersList.get(lastSelectedPosition).getElementOptionsR().getOpen_type().equals("checkbox") || answersState.get(lastCheckedElement).getData().length() > 0) {
+        if (answersList.get(lastSelectedPosition).getElementOptionsR().isUnnecessary_fill_open()) {
+            return true;
+        }
         if (answersList.get(lastSelectedPosition).getElementOptionsR().getOpen_type().equals("checkbox") || isAllHaveData()) {
             return true;
         } else return false;

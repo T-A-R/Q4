@@ -70,6 +70,7 @@ public class UserModelR {
     }
 
     public ConfigModel getConfigR() {
+        Log.d(TAG, "????????? getConfig: " + config);
         return new Gson().fromJson(config, ConfigModel.class);
     }
 

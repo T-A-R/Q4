@@ -95,6 +95,9 @@ public class OptionsModelNew implements Serializable {
     @SerializedName("show_images")
     private boolean show_images;
 
+    @SerializedName("unnecessary_fill_open")
+    private boolean unnecessary_fill_open;
+
     public String getData() {
         return data;
     }
@@ -106,10 +109,6 @@ public class OptionsModelNew implements Serializable {
     public String getPreCondition() {
         return pre_condition;
     }
-
-//    public String getTitle(final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> pMap) {
-//        return ConditionUtils.formatTitle(pBaseActivity, title, pMap);
-//    }
 
     public boolean isSearch() {
         return search;
@@ -163,14 +162,6 @@ public class OptionsModelNew implements Serializable {
         return jump;
     }
 
-//    public boolean isEnabled(final List<QuotaModel> quotas, final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel) {
-//        return QuotasUtils.isCanDisplayed(quotas, mMap, pElementModel, pBaseActivity);
-//    }
-//
-//    public boolean isCanShow(final BaseActivity pBaseActivity, final HashMap<Integer, ElementModel> mMap, final ElementModel pElementModel) {
-//        return ConditionUtils.CAN_SHOW == ConditionUtils.evaluateCondition(getPreCondition(), mMap, pBaseActivity);
-//    }
-
     @OptionsOpenType
     public String getOpenType() {
         return StringUtils.isEmpty(open_type) ? CHECKBOX : open_type;
@@ -187,10 +178,6 @@ public class OptionsModelNew implements Serializable {
     public boolean isUnchecker() {
         return unchecker;
     }
-
-//    public boolean isMedia() {
-//        return is_media;
-//    }
 
     public String getTitle(final MainActivity pBaseActivity, final HashMap<Integer, ElementModelNew> pMap) {
         return ConditionUtils.formatTitle(pBaseActivity, title, pMap);
@@ -274,5 +261,13 @@ public class OptionsModelNew implements Serializable {
 
     public void setShow_images(boolean show_images) {
         this.show_images = show_images;
+    }
+
+    public boolean isUnnecessary_fill_open() {
+        return unnecessary_fill_open;
+    }
+
+    public void setUnnecessary_fill_open(boolean unnecessary_fill_open) {
+        this.unnecessary_fill_open = unnecessary_fill_open;
     }
 }

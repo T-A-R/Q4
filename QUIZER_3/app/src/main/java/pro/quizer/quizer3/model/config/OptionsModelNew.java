@@ -98,6 +98,9 @@ public class OptionsModelNew implements Serializable {
     @SerializedName("unnecessary_fill_open")
     private boolean unnecessary_fill_open;
 
+    @SerializedName("type_end")
+    private Integer type_end;
+
     public String getData() {
         return data;
     }
@@ -269,5 +272,13 @@ public class OptionsModelNew implements Serializable {
 
     public void setUnnecessary_fill_open(boolean unnecessary_fill_open) {
         this.unnecessary_fill_open = unnecessary_fill_open;
+    }
+
+    public Integer getType_end() {
+        return type_end;
+    }
+
+    public void setType_end(Integer type_end) {
+        this.type_end = type_end;
     }
 }

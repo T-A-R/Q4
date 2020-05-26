@@ -57,12 +57,8 @@ public class Toolbar extends RelativeLayout implements Serializable {
     }
 
     private void inflate(Context context) {
-        MainActivity activity = (MainActivity) context;
-        if (activity.isAutoZoom()) {
-            inflate(getContext(), R.layout.view_toolbar_auto, this);
-        } else {
-            inflate(getContext(), R.layout.view_toolbar, this);
-        }
+
+        inflate(getContext(), R.layout.view_toolbar_auto, this);
 
         mLogo = findViewById(R.id.toolbar_view_logo);
         mIcon = findViewById(R.id.icon);

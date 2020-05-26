@@ -8,6 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.SOURCE)
 @StringDef({ElementSubtype.HTML,
         ElementSubtype.AUDIO,
+        ElementSubtype.END,
         ElementSubtype.LIST,
         ElementSubtype.IMAGE,
         ElementSubtype.VIDEO,
@@ -27,6 +28,7 @@ public @interface ElementSubtype {
     String RANK = "rank";
     String RANGE = "range";
     String HTML = "html";
+    String END = "end";
     String AUDIO = "audio";
     String IMAGE = "image";
     String STATUS_IMAGE = "status_image";

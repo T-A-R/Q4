@@ -93,6 +93,9 @@ public class ElementOptionsR {
     @ColumnInfo(name = "unnecessary_fill_open")
     private boolean unnecessary_fill_open;
 
+    @ColumnInfo(name = "type_end")
+    private Integer type_end;
+
     public ElementOptionsR() {
     }
 
@@ -103,7 +106,7 @@ public class ElementOptionsR {
                            boolean fixed_order, Integer min_answers, Integer max_answers,
                            String open_type, String placeholder, boolean unchecker,
                            Integer start_value, Integer end_value, String type_behavior,
-                           boolean show_scale, boolean show_images, boolean unnecessary_fill_open) {
+                           boolean show_scale, boolean show_images, boolean unnecessary_fill_open, Integer type_end) {
         this.relative_id = relative_id;
         this.title = title;
         this.jump = jump;
@@ -131,6 +134,7 @@ public class ElementOptionsR {
         this.show_scale = show_scale;
         this.show_images = show_images;
         this.unnecessary_fill_open = unnecessary_fill_open;
+        this.type_end = type_end;
     }
 
     public int getId() {
@@ -355,5 +359,13 @@ public class ElementOptionsR {
 
     public void setUnnecessary_fill_open(boolean unnecessary_fill_open) {
         this.unnecessary_fill_open = unnecessary_fill_open;
+    }
+
+    public Integer getType_end() {
+        return type_end;
+    }
+
+    public void setType_end(Integer type_end) {
+        this.type_end = type_end;
     }
 }

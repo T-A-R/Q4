@@ -221,7 +221,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             btnPrev.setVisibility(View.INVISIBLE);
         }
 
-        if(prevList.size() == 0 || prevList.size() == 1) {
+        if (prevList.size() == 0 || prevList.size() == 1) {
             btnPrev.setVisibility(View.INVISIBLE);
             cont.startAnimation(Anim.getAppear(getContext()));
             btnNext.startAnimation(Anim.getAppearSlide(getContext(), 500));
@@ -433,6 +433,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             case ElementSubtype.HTML:
                 answerType = ElementSubtype.HTML;
                 break;
+            case ElementSubtype.END:
+                answerType = ElementSubtype.END;
+                break;
         }
     }
 
@@ -557,7 +560,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             spinnerCont.setVisibility(View.VISIBLE);
         } else if (answerType.equals(ElementSubtype.TABLE)) {
             tableCont.setVisibility(View.VISIBLE);
-        } else if (answerType.equals(ElementSubtype.HTML)) {
+        } else if (answerType.equals(ElementSubtype.HTML) || answerType.equals(ElementSubtype.END)) {
             questionCont.setVisibility(View.GONE);
             infoCont.setVisibility(View.VISIBLE);
             infoText.loadData(currentElement.getElementOptionsR().getData(), "text/html; charset=UTF-8", null);
@@ -1030,22 +1033,27 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
                 }
             }
-        } else if (answerType.equals(ElementSubtype.HTML)) {
+        } else if (answerType.equals(ElementSubtype.HTML) || answerType.equals(ElementSubtype.END)) {
             ElementPassedR elementPassedR = new ElementPassedR();
-            nextElementId = currentElement.getElementOptionsR().getJump();
-            if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+            if (answerType.equals(ElementSubtype.END)) {
+                nextElementId = currentElement.getElementOptionsR().getType_end();
+            } else {
                 nextElementId = currentElement.getElementOptionsR().getJump();
-                if (nextElementId == -2) {
-                    nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+                    nextElementId = currentElement.getElementOptionsR().getJump();
+                    if (nextElementId == -2) {
+                        nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                    }
                 }
-            }
 
-            ElementItemR nextElement = getElement(nextElementId);
-            final ElementOptionsR options = nextElement.getElementOptionsR();
-            final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), (MainActivity) getActivity());
+                ElementItemR nextElement = getElement(nextElementId);
+                final ElementOptionsR options = nextElement.getElementOptionsR();
+                final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), (MainActivity) getActivity());
 
-            if (showValue != ConditionUtils.CAN_SHOW) {
-                nextElementId = options.getJump();
+                if (showValue != ConditionUtils.CAN_SHOW) {
+                    nextElementId = options.getJump();
+                }
+
             }
 
             elementPassedR.setRelative_id(currentElement.getRelative_id());
@@ -1106,7 +1114,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
                 if (openType && !element.getElementOptionsR().isUnnecessary_fill_open()) {
                     if (state.getData().equals("") || state.getData() == null) {
-                        Log.d(TAG, "?????????????? notEmpty: 3 " + element.getElementOptionsR().isUnnecessary_fill_open());
                         showToast(getString(R.string.empty_string_warning));
                         return false;
                     }

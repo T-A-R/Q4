@@ -60,9 +60,8 @@
                     android:ellipsize="end"
                     android:gravity="center"
                     android:textColor="@android:color/white"
-                    android:textStyle="bold"
                     android:visibility="gone"
-                    android:textSize="@dimen/_12ssp"
+                    android:textSize="@dimen/_18ssp"
                     tools:text="Квоты" />
 
                 <ImageView

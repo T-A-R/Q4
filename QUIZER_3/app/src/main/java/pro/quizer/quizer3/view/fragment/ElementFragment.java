@@ -63,6 +63,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private Button btnNext;
     private Button btnPrev;
     private Button btnExit;
+    private Button btnHideTitle;
+    private Button btnUnhideTitle;
+    private Button btnUnhideQuestion;
     private RelativeLayout cont;
     private LinearLayout unhideCont;
     private LinearLayout titleCont1;
@@ -86,6 +89,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private RecyclerView rvScale;
     private Spinner spinnerAnswers;
     private AdaptiveTableLayout tableLayout;
+    private RelativeLayout unhideTitleCont;
+    private RelativeLayout unhideAnswerCont;
     private ImageView title1Image1;
     private ImageView title1Image2;
     private ImageView title1Image3;
@@ -181,9 +186,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         closeImage1 = (ImageView) findViewById(R.id.image_close_1);
         closeImage2 = (ImageView) findViewById(R.id.image_close_2);
         closeQuestion = (ImageView) findViewById(R.id.question_close);
+        btnUnhideTitle = (Button) findViewById(R.id.unhide_btn);
+        btnHideTitle = (Button) findViewById(R.id.unhide_btn2);
+        btnUnhideQuestion = (Button) findViewById(R.id.down_btn);
         btnNext = (Button) findViewById(R.id.next_btn);
         btnPrev = (Button) findViewById(R.id.back_btn);
         btnExit = (Button) findViewById(R.id.exit_btn);
+        unhideTitleCont = (RelativeLayout) findViewById(R.id.unhide_title_btn_cont);
 
         btnNext.setTransformationMethod(null);
         btnPrev.setTransformationMethod(null);
@@ -200,6 +209,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         unhideCont.setOnClickListener(this);
         cont.setOnClickListener(this);
         tvQuestion.setOnClickListener(this);
+        btnHideTitle.setOnClickListener(this);
+        btnUnhideTitle.setOnClickListener(this);
+        btnUnhideQuestion.setOnClickListener(this);
 
         deactivateButtons();
 
@@ -279,7 +291,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-
+//        Log.d(TAG, "???????? onClick: " + view.getTransitionName());
         if (view == btnNext) {
             DoNext next = new DoNext();
             next.execute();
@@ -331,7 +343,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     showExitPoolAlertDialog();
                 }
             }
-        } else if (view == closeImage1 || view == titleCont1) {
+        } else if (view == closeImage1 || view == titleCont1 || view == btnHideTitle) {
             titleCont1.setVisibility(View.GONE);
             unhideCont.setVisibility(View.VISIBLE);
             isTitle1Hided = true;
@@ -342,7 +354,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //            titleCont2.setVisibility(View.GONE);
 //            unhideCont.setVisibility(View.VISIBLE);
 //            isTitle2Hided = true;
-        } else if (view == unhideCont) {
+        } else if (view == unhideCont || view == btnUnhideTitle) {
             if (isTitle1Hided) {
                 isTitle1Hided = false;
                 titleCont1.setVisibility(View.VISIBLE);
@@ -352,16 +364,18 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 titleCont2.setVisibility(View.VISIBLE);
             }
             unhideCont.setVisibility(View.GONE);
-        } else if (view == closeQuestion || view == tvQuestion) {
+        } else if (view == closeQuestion || view == tvQuestion || view == btnUnhideQuestion) {
             if (!isQuestionHided) {
-                closeQuestion.setImageResource(R.drawable.arrow_down_white);
-                tvQuestion.setText(getString(R.string.view_reopen));
+                closeQuestion.setImageResource(R.drawable.arrow_down_white_wide);
+//                tvQuestion.setText(getString(R.string.view_reopen));
+                tvQuestion.setVisibility(View.GONE);
                 questionImagesCont.setVisibility(View.GONE);
                 tvQuestionDesc.setVisibility(View.GONE);
                 isQuestionHided = true;
             } else {
+                tvQuestion.setVisibility(View.VISIBLE);
                 tvQuestion.setText(currentElement.getElementOptionsR().getTitle());
-                closeQuestion.setImageResource(R.drawable.arrow_up_white);
+                closeQuestion.setImageResource(R.drawable.arrow_up_white_wide);
                 if (hasQuestionImage) questionImagesCont.setVisibility(View.VISIBLE);
                 if (currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().getDescription() != null)
                     tvQuestionDesc.setVisibility(View.VISIBLE);
@@ -888,6 +902,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         if (nextElementId == null || nextElementId.equals(-2)) {
                             nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
                         }
+                    }
+                    if(nextElementId == null) {
+                        nextElementId = answersList.get(spinnerMultipleSelection.get(0)).getElementOptionsR().getJump();
                     }
 
                     elementPassedR.setRelative_id(currentElement.getRelative_id());

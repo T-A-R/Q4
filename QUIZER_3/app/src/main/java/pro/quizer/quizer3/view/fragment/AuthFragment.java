@@ -130,7 +130,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     public void onClick(View view) {
         if (view == btnSend) {
             deactivateButtons();
-            showScreensaver(R.string.plase_wait_quiz, true);
+            showScreensaver(R.string.please_wait_quiz, true);
             onLoginClick();
         } else if (view == tvVersionView) {
             onVersionClick();

@@ -68,7 +68,6 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     private Context mContext;
     private String textBefore;
     private String textAfter;
-//    private QuotaUtils quotaUtils;
 
     public ListQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> passedQuotaBlock, ElementItemR[][] quotaTree, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
@@ -76,7 +75,6 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         this.passedQuotaBlock = passedQuotaBlock;
         this.quotaTree = quotaTree;
         this.mContext = context;
-//        this.quotaUtils = new QuotaUtils();
 
         if (question.getElementOptionsR() != null && question.getElementOptionsR().isRotation()) {
             List<ElementItemR> shuffleList = new ArrayList<>();
@@ -96,7 +94,6 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             }
         }
         this.answersList = answersList;
-//        Log.d(TAG, "ListQuestionAdapter: answers size= " + this.answersList.size());
 
         this.onAnswerClickListener = onAnswerClickListener;
         if (question.getElementOptionsR().getOpen_type() != null) {
@@ -132,19 +129,13 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ListObjectViewHolder holder, int position) {
-//        if (answersState == null) {
-//            holder.bind(answersList.get(position), null);
-//        } else {
         holder.bind(answersList.get(position), position);
-//        }
         if (!isMulti) {
             if (position == lastSelectedPosition) {
                 holder.editButton.setVisibility(View.GONE);
                 holder.button.setImageResource(R.drawable.radio_button_checked);
-//                holder.answerEditText.requestFocus();
                 if (isOpen) {
                     holder.answerEditText.setVisibility(View.VISIBLE);
-//                    holder.answerEditText.requestFocus();
                 } else {
                     holder.answerEditText.setVisibility(View.GONE);
                     holder.editButton.setVisibility(View.GONE);
@@ -199,10 +190,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         }
 
         holder.myCustomEditTextListener.updatePosition(position);
-//        showAnswers();
-//        Log.d(TAG, "(1) !!!===!!!: " + holder.getAdapterPosition() + "/" + position + " " + answersState.get(position).getData());
         holder.answerEditText.setText(answersState.get(position).getData());
-        Log.d(TAG, "======== SET TEXT 1: " + position + " / " + answersState.get(position).getData());
 
     }
 
@@ -255,9 +243,6 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
             myCustomEditTextListener = new MyCustomEditTextListener();
             this.answerEditText.addTextChangedListener(myCustomEditTextListener);
-//            cont.setOnClickListener(this);
-//            editButton.setOnClickListener(this);
-
         }
 
         public void bind(final ElementItemR item, int position) {
@@ -280,39 +265,19 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             if (!canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder())) {
                 answerTitle.setTextColor(Color.parseColor("#AAAAAA"));
                 item.setEnabled(false);
-//                Log.d(TAG, "ELEMENT DISABLED: " + item.getElementOptionsR().getTitle());
-            } else {
-//                answerTitle.setTextColor(Color.parseColor("#000000"));
-//                item.setEnabled(true);
-//                Log.d(TAG, "ELEMENT ENABLED: " + item.getElementOptionsR().getTitle());
             }
 
             if (item.isEnabled()) {
-//                Log.d(TAG, "bind enable: " + position);
                 cont.setOnClickListener(this);
                 editButton.setOnClickListener(this);
-            } else {
-//                Log.d(TAG, "bind disable: " + position);
             }
 
-//            Log.d(TAG, "XXXXX ENABLED: " + item.getElementOptionsR().getTitle() + " : " +
-//                    QuotaUtils.canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder()));
-
-//            if (!QuotaUtils.canShow(quotaTree, passedQuotaBlock, item.getRelative_id())) {
-//                showDisableToLog(item.getElementOptionsR().getTitle());
-//            }
-
-//            setEnabled(item, position);
             setChecked(item, position);
 
         }
 
         public boolean canShow(ElementItemR[][] tree, List<Integer> passedElementsId, int relativeId, int order) {
-//            try {
-//                Log.d(TAG, "canShow: " + passedElementsId.size() + " " + relativeId + " " + order);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
+
             if (tree == null) {
                 return true;
             }
@@ -324,19 +289,15 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                             return true;
                     }
                 }
-//                Log.d(TAG, "canShow false: 1");
                 return false;
             } else {
                 int endPassedElement = order - 1;
 
                 for (int k = 0; k < tree[0].length; k++) {
                     for (int i = 0; i < endPassedElement; ) {
-//                        Log.d(TAG, "canShow: FOR " + tree[i][k].getRelative_id() + " " + passedElementsId.get(i));
                         if (tree[i][k].getRelative_id().equals(passedElementsId.get(i))) {
-//                            Log.d(TAG, "canShow: FOUND ID");
                             if (i == (endPassedElement - 1)) { // Если последний, то
                                 if (tree[i + 1][k].getRelative_id().equals(relativeId)) { // Если следующий за последним равен Relative ID
-//                                    Log.d(TAG, "canShow: FOUND NEXT");
                                     if (tree[i + 1][k].isEnabled()) {
                                         return true;
                                     }
@@ -347,12 +308,10 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                     }
                 }
             }
-//            Log.d(TAG, "canShow false: 2");
             return false;
         }
 
         private void showContent(ElementItemR element, View cont) {
-//            final List<ElementContentsR> contents = element.getElementContentsR();
             final List<ElementContentsR> contents = mActivity.getMainDao().getElementContentsR(element.getRelative_id());
 
             if (contents != null && !contents.isEmpty()) {
@@ -381,7 +340,6 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
             final String filePhotooPath = getFilePath(data);
 
-//            Log.d(TAG, "initViews: PICTURES: " + data + " " + filePhotooPath);
             if (StringUtils.isEmpty(filePhotooPath)) {
                 return;
             }
@@ -412,7 +370,6 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 editButton.setVisibility(View.GONE);
                 answerEditText.setVisibility(View.VISIBLE);
                 answerEditText.setText(answersState.get(position).getData());
-                Log.d(TAG, "======== SET TEXT 2: " + position + " / " + answersState.get(position).getData());
                 if (isPressed.get(position)) {
                     if (position == lastSelectedPosition) {
                         if (item.getElementOptionsR().getOpen_type().equals(TEXT)) {
@@ -428,13 +385,10 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                         } else if (item.getElementOptionsR().getOpen_type().equals(TIME)) {
                             setTime(answerEditText);
                             answersState.get(position).setData(answerEditText.getText().toString());
-                            Log.d(TAG, "======== SET TEXT 3: " + position + " / " + answersState.get(position).getData());
-//                            showAnswers();
                             answerEditText.setEnabled(false);
                         } else if (item.getElementOptionsR().getOpen_type().equals(DATE)) {
                             setDate(answerEditText);
                             answersState.get(position).setData(answerEditText.getText().toString());
-                            Log.d(TAG, "======== SET TEXT 4: " + position + " / " + answersState.get(position).getData());
                             answerEditText.setEnabled(false);
                         }
                     } else {
@@ -452,13 +406,11 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 if (answersState.get(position).isChecked()) {
                     for (int i = 0; i < answersState.size(); i++) {
                         if (i != position) {
-//                            Log.d(TAG, "set false 4: " + i);
                             answersList.get(i).setEnabled(false);
                         }
                     }
                 } else {
                     for (int i = 0; i < answersState.size(); i++) {
-//                        Log.d(TAG, "set false 5: " + i);
                         answersList.get(i).setEnabled(true);
                     }
                 }
@@ -484,21 +436,14 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             }
             if (emptyAnswersState || isFilled() || answersState.get(getAdapterPosition()).isChecked()) {
                 isPressed.set(getAdapterPosition(), true);
-
-                Log.d(TAG, "onClick: " + getAdapterPosition() + " / " + answersList.get(getAdapterPosition()).isEnabled());
-
-//                if (lastSelectedPosition == -1 || !answersList.get(getAdapterPosition()).isEnabled())
                 int oldPosition = lastSelectedPosition;
                 lastSelectedPosition = getAdapterPosition();
-
 
                 if (lastSelectedPosition != -1) {
                     notifyItemChanged(lastSelectedPosition);
                     if (answersList.get(lastSelectedPosition).isEnabled()) {
                         notifyItemChanged(lastSelectedPosition);
-
                         if (isMulti && !answersList.get(lastSelectedPosition).getElementOptionsR().isUnchecker()) {
-
                             if (answersState.get(lastSelectedPosition).isChecked()) {
                                 answersState.get(lastSelectedPosition).setChecked(false);
                                 lastSelectedPosition = oldPosition;
@@ -526,11 +471,8 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
                         if (isChecked) {
                             isChecked = false;
-//                button.setImageResource( R.drawable.radio_button_unchecked);
                         } else {
                             isChecked = true;
-//                button.setImageResource( R.drawable.radio_button_checked);
-//                answerEditText.requestFocus();
                         }
 
                         String answer = null;
@@ -540,7 +482,6 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                     }
                 }
             } else {
-                Log.d(TAG, "?????????????? notEmpty: 1");
                 mActivity.showToastfromActivity(mActivity.getString(R.string.empty_string_warning));
             }
 
@@ -573,44 +514,24 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             if (charSequence.length() == 1) canDelete = true;
             else canDelete = false;
             if (lastSelectedPosition != -1) {
-//                for(int k =0; k < answersState.size();k++) {
-//                    Log.d(TAG, "state: " + k + " " + answersState.get(k).getData());
-//                }
-//                Log.d(TAG, "beforeTextChanged: position " + lastSelectedPosition);
-//                Log.d(TAG, "beforeTextChanged: textBefore " + answersState.get(lastSelectedPosition).getData());
                 textBefore = answersState.get(getLastSelectedPosition()).getData();
-
             }
-//            Log.d(TAG, "beforeTextChanged: textBefore 2" + textBefore);
         }
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-//            Log.d(TAG, "onTextChanged isPressed: " + isPressed + " " + charSequence.length());
             if (isOpen && lastSelectedPosition != -1 && isPressed.get(lastSelectedPosition) && charSequence != null && charSequence.length() > 0) {
                 answersState.get(lastSelectedPosition).setData(charSequence.toString());
-                Log.d(TAG, "======== SET TEXT 5: " + lastSelectedPosition + " / " + answersState.get(lastSelectedPosition).getData());
-//                clearOldPassed();
             }
             if (charSequence == null || charSequence.length() == 0)
                 if (canDelete) {
                     answersState.get(lastSelectedPosition).setData(charSequence.toString());
-                    Log.d(TAG, "======== SET TEXT 6: " + lastSelectedPosition + " / " + answersState.get(lastSelectedPosition).getData());
                 }
-//            mDataset[position] = charSequence.toString();
-//            if (lastSelectedPosition != -1) {
-//                Log.d(TAG, "onTextChanged canDelete: " + canDelete);
-//                Log.d(TAG, "onTextChanged charSequence: " + lastSelectedPosition + " " + charSequence.toString());
-//                Log.d(TAG, "onTextChanged answersState: " + lastSelectedPosition + " " + answersState.get(lastSelectedPosition).getData());
-//            }
         }
 
         @Override
         public void afterTextChanged(Editable editable) {
-//            if (lastSelectedPosition != -1)
-//            Log.d(TAG, "afterTextChanged: " + lastSelectedPosition + " " + textBefore + " / " + answersState.get(lastSelectedPosition).getData());
             if (lastSelectedPosition != -1 && !answersState.get(lastSelectedPosition).getData().equals(textBefore) && !answersList.get(lastSelectedPosition).getElementOptionsR().getOpen_type().equals("checkbox")) {
-//                Log.d(TAG, "afterTextChanged: CLEAR");
                 clearOldPassed();
             }
         }
@@ -622,31 +543,24 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
     public void setLastSelectedPosition(int lastSelectedPosition) {
         this.lastSelectedPosition = lastSelectedPosition;
-//        Log.d(TAG, "setLastSelectedPosition: " + lastSelectedPosition);
     }
 
     public int getLastSelectedPosition() {
-//        Log.d(TAG, "getLastSelectedPosition: " + lastSelectedPosition);
         return lastSelectedPosition;
     }
 
     public int getLastCheckedElement() {
-//        Log.d(TAG, "getLastSelectedPosition: " + lastSelectedPosition);
         return lastCheckedElement;
     }
 
     public void setAnswers(List<AnswerState> answers) {
         Log.d(TAG, "=============================");
         if (answers != null) {
-//            for (int i = 0; i < answers.size(); i++) {
-//                Log.d(TAG, i + ": " + answers.get(i).getRelative_id() + " : " + answers.get(i).getData() + " : " + answers.get(i).isChecked());
-//            }
             this.answersState = answers;
             for (int i = 0; i < answers.size(); i++) {
                 if (answersList.get(i).getElementOptionsR().isUnchecker() && answers.get(i).isChecked()) {
                     for (int k = 0; k < answersList.size(); k++) {
                         if (k != i) {
-//                            Log.d(TAG, "set false 5: " + k);
                             answersList.get(k).setEnabled(false);
                         }
                     }
@@ -658,7 +572,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     }
 
     public void setPressed() {
-        for(int i = 0; i < answersState.size(); i++) {
+        for (int i = 0; i < answersState.size(); i++) {
             isPressed.set(i, answersState.get(i).isChecked());
         }
     }
@@ -712,7 +626,6 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
         dateFormat.setTimeZone(mCalendar.getTimeZone());
         mEditText.setText(dateFormat.format(mCalendar.getTime()));
-//        Log.d(TAG, "??????????????????: " + lastSelectedPosition);
         answersState.get(lastSelectedPosition).setData(dateFormat.format(mCalendar.getTime()));
     }
 
@@ -745,7 +658,6 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     }
 
     public boolean isFilled() {
-//        Log.d(TAG, "isFilled: " + isOpen + " " + lastSelectedPosition);
         if (!isOpen) {
             return true;
         }

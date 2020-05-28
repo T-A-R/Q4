@@ -151,7 +151,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
         }
 
         if (deletingListResponseModel != null) {
-            if(deletingListResponseModel.isProjectActive() != null) {
+            if (deletingListResponseModel.isProjectActive() != null) {
                 try {
                     mBaseActivity.getMainDao().setProjectActive(deletingListResponseModel.isProjectActive());
                 } catch (Exception e) {
@@ -162,7 +162,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
 
             if (deletingListResponseModel.getQuotas() != null && deletingListResponseModel.getQuotas().size() > 0) {
                 List<QuotaR> quotaRList = new ArrayList<>();
-                for(QuotaModel model : deletingListResponseModel.getQuotas()) {
+                for (QuotaModel model : deletingListResponseModel.getQuotas()) {
                     quotaRList.add(new QuotaR(model.getSequence(), model.getLimit(), model.getSent()));
                 }
                 try {
@@ -204,8 +204,10 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                     onSuccess();
 
                     final String message = deletingListResponseModel.getMessage();
-//                    final String message = "TEST MESSAGE";
-                    mBaseActivity.runOnUiThread(() -> Toast.makeText(mBaseActivity, message, Toast.LENGTH_LONG).show());
+                    if (message != null)
+                        mBaseActivity.runOnUiThread(() -> Toast.makeText(mBaseActivity, message, Toast.LENGTH_LONG).show());
+                    else
+                        mBaseActivity.runOnUiThread(() -> Toast.makeText(mBaseActivity, R.string.message_questionnaires_sent, Toast.LENGTH_LONG).show());
                 }
             } else {
                 onError(new Exception(deletingListResponseModel.getError() + " " + mBaseActivity.getString(R.string.error_205)));

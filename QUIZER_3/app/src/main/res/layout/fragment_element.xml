@@ -31,7 +31,6 @@
         android:visibility="gone">
 
         <android.support.constraint.ConstraintLayout
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_8sdp"
@@ -49,14 +48,32 @@
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteX="10dp" />
 
-            <ImageView
-                android:id="@+id/image_unhide"
-                android:layout_width="@dimen/_12sdp"
-                android:layout_height="@dimen/_12sdp"
-                android:src="@drawable/arrow_down_white"
+            <RelativeLayout
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_marginRight="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
                 app:layout_constraintEnd_toEndOf="@+id/unhide_title"
-                tools:ignore="MissingConstraints"
-                tools:layout_editor_absoluteY="2dp" />
+                tools:ignore="MissingConstraints">
+
+                <Button
+                    android:id="@+id/unhide_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/button_background_transparent_white"
+                    android:src="@drawable/arrow_down_white"
+                    android:textSize="@dimen/_12ssp" />
+
+                <ImageView
+                    android:id="@+id/image_unhide"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/_4sdp"
+                    android:src="@drawable/arrow_down_white"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteY="2dp" />
+
+            </RelativeLayout>
 
         </android.support.constraint.ConstraintLayout>
 
@@ -89,14 +106,33 @@
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteX="10dp" />
 
-            <ImageView
-                android:id="@+id/image_close_1"
-                android:layout_width="@dimen/_12sdp"
-                android:layout_height="@dimen/_12sdp"
-                android:src="@drawable/arrow_up_white"
+            <RelativeLayout
+                android:id="@+id/unhide_title_btn_cont"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_marginRight="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
                 app:layout_constraintEnd_toEndOf="@+id/title_1"
-                tools:ignore="MissingConstraints"
-                tools:layout_editor_absoluteY="2dp" />
+                tools:ignore="MissingConstraints">
+
+                <Button
+                    android:id="@+id/unhide_btn2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/button_background_transparent_white"
+                    android:src="@drawable/arrow_up_white"
+                    android:textSize="@dimen/_12ssp" />
+
+                <ImageView
+                    android:id="@+id/image_close_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/_4sdp"
+                    android:src="@drawable/arrow_up_white"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteY="2dp" />
+
+            </RelativeLayout>
 
         </android.support.constraint.ConstraintLayout>
 
@@ -288,17 +324,43 @@
                     android:orientation="vertical">
 
                     <!--QUESTION-->
-                    <android.support.constraint.ConstraintLayout
+                    <LinearLayout
                         android:id="@+id/question_box"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_8sdp"
-                        android:layout_marginBottom="@dimen/_8sdp">
+                        android:layout_marginBottom="@dimen/_8sdp"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_14sdp">
+
+                            <Button
+                                android:id="@+id/down_btn"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="@dimen/_6sdp"
+                                android:layout_marginRight="@dimen/_6sdp"
+                                android:background="@drawable/button_background_transparent_white"
+                                android:src="@drawable/arrow_up_white_wide"
+                                android:textSize="@dimen/_12ssp" />
+
+                            <ImageView
+                                android:id="@+id/question_close"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_12sdp"
+                                android:src="@drawable/arrow_up_white_wide"
+                                tools:ignore="MissingConstraints"
+                                tools:layout_editor_absoluteY="2dp" />
+
+                        </RelativeLayout>
 
                         <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
                             android:id="@+id/question"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
                             android:layout_marginStart="@dimen/_8sdp"
                             android:layout_marginLeft="@dimen/_8sdp"
                             android:layout_marginEnd="@dimen/_20sdp"
@@ -309,18 +371,7 @@
                             tools:ignore="MissingConstraints"
                             tools:layout_editor_absoluteX="10dp" />
 
-                        <ImageView
-                            android:id="@+id/question_close"
-                            android:layout_width="@dimen/_12sdp"
-                            android:layout_height="@dimen/_12sdp"
-                            android:layout_marginEnd="@dimen/_8sdp"
-                            android:layout_marginRight="@dimen/_8sdp"
-                            android:src="@drawable/arrow_up_white"
-                            app:layout_constraintEnd_toEndOf="@+id/question_box"
-                            tools:ignore="MissingConstraints"
-                            tools:layout_editor_absoluteY="2dp" />
-
-                    </android.support.constraint.ConstraintLayout>
+                    </LinearLayout>
 
                     <!--DESC-->
                     <pro.quizer.quizer3.view.element.textview.SmallResizableTextView

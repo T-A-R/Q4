@@ -214,37 +214,29 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         btnUnhideQuestion.setOnClickListener(this);
 
         deactivateButtons();
-        Log.d(TAG, "onReady: ............................................. 1");
         toolbar.setTitle(getString(R.string.app_name));
         toolbar.showOptionsView(v -> MainFragment.showDrawer(), v -> showInfoDialog());
         toolbar.showInfoView();
-        Log.d(TAG, "onReady: ............................................. 2");
         MainFragment.enableSideMenu(false);
 
         showScreensaver(R.string.please_wait_quiz_element, true);
-        Log.d(TAG, "onReady: ............................................. 3");
         try {
             prevList = getDao().getPrevElementsR();
-            Log.d(TAG, "onReady: ............................................. 4");
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d(TAG, "onReady: ............................................. 5");
         }
 
         if (prevList == null || prevList.size() == 0) {
-            Log.d(TAG, "onReady: ............................................. 6");
             prevList = new ArrayList<>();
             btnPrev.setVisibility(View.INVISIBLE);
         }
 
         if (prevList.size() == 0 || prevList.size() == 1) {
-            Log.d(TAG, "onReady: ............................................. 7");
             btnPrev.setVisibility(View.INVISIBLE);
             cont.startAnimation(Anim.getAppear(getContext()));
             btnNext.startAnimation(Anim.getAppearSlide(getContext(), 500));
             btnExit.startAnimation(Anim.getAppearSlide(getContext(), 500));
         } else {
-            Log.d(TAG, "onReady: ............................................. 8");
             cont.startAnimation(Anim.getAppear(getContext()));
             btnNext.startAnimation(Anim.getAppearSlide(getContext(), 500));
             btnPrev.startAnimation(Anim.getAppearSlide(getContext(), 500));
@@ -252,42 +244,27 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         }
 
         initCurrentElements();
-        Log.d(TAG, "onReady: ............................................. 9");
         loadResumedData();
-        Log.d(TAG, "onReady: ............................................. 10");
         initQuestion();
-        Log.d(TAG, "onReady: ............................................. 11");
         if (currentElement != null) {
-            Log.d(TAG, "onReady: ............................................. 12");
             if (checkConditions(currentElement)) {
-                Log.d(TAG, "onReady: ............................................. 13");
                 startRecording();
-                Log.d(TAG, "onReady: ............................................. 14");
                 setQuestionType();
-                Log.d(TAG, "onReady: ............................................. 15");
                 initViews();
-                Log.d(TAG, "onReady: ............................................. 16");
                 updateCurrentQuestionnaire();
-                Log.d(TAG, "onReady: ............................................. 17");
                 initRecyclerView();
-                Log.d(TAG, "onReady: ............................................. 18");
                 if (isRestored || wasReloaded()) {
-                    Log.d(TAG, "onReady: ............................................. 19");
                     loadSavedData();
                 }
             }
-            Log.d(TAG, "onReady: ............................................. 20");
             hideScreensaver();
-            Log.d(TAG, "onReady: ............................................. 21");
             activateButtons();
-            Log.d(TAG, "onReady: ............................................. 22");
             try {
                 getMainActivity().activateExitReminder();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
-            Log.d(TAG, "onReady: ............................................. 23");
             exitQuestionnaire();
         }
     }
@@ -1406,7 +1383,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     public void exitQuestionnaire() {
-        Log.d(TAG, "onReady: ............................................. 24");
         stopAllRecording();
         try {
             getDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");

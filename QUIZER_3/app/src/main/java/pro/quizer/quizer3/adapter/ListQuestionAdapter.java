@@ -521,7 +521,12 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
             if (isOpen && lastSelectedPosition != -1 && isPressed.get(lastSelectedPosition) && charSequence != null && charSequence.length() > 0) {
-                answersState.get(lastSelectedPosition).setData(charSequence.toString());
+                textAfter = charSequence.toString();
+                int delta = textAfter.length() - textBefore.length();
+                if((delta == 1 && textAfter.contains(textBefore)) || (delta == -1 && textBefore.contains(textAfter)))
+                {
+                    answersState.get(lastSelectedPosition).setData(textAfter);
+                }
             }
             if (charSequence == null || charSequence.length() == 0)
                 if (canDelete) {
@@ -632,7 +637,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     public void showAnswers() {
         Log.d(TAG, "============== Answers ==============");
         for (int i = 0; i < answersState.size(); i++) {
-            Log.d(TAG, "answer: (" + i + ") " + answersState.get(i).isChecked() + " " + answersState.get(i).getData());
+            Log.d(TAG, "answer: (" + i + ") " + answersState.get(i).isChecked() + " / " + answersState.get(i).getData());
         }
     }
 

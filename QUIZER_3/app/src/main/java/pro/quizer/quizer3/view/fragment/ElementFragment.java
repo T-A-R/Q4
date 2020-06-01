@@ -214,11 +214,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         btnUnhideQuestion.setOnClickListener(this);
 
         deactivateButtons();
-
         toolbar.setTitle(getString(R.string.app_name));
         toolbar.showOptionsView(v -> MainFragment.showDrawer(), v -> showInfoDialog());
         toolbar.showInfoView();
-
         MainFragment.enableSideMenu(false);
 
         showScreensaver(R.string.please_wait_quiz_element, true);
@@ -596,17 +594,18 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             if (nextElementId == null) {
                 nextElementId = answersList.get(0).getElementOptionsR().getJump();
             }
-            if (nextElementId == null || nextElementId.equals(0)) {
-                if (getMainActivity().getConfig().isSaveAborted()) {
-                    if (saveQuestionnaire(false)) {
-                        exitQuestionnaire();
-                    } else {
-                        activateButtons();
-                    }
-                } else {
-                    exitQuestionnaire();
-                }
-            }
+//            if (nextElementId == null || nextElementId.equals(0)) {
+//                if (getMainActivity().getConfig().isSaveAborted()) {
+//                    if (saveQuestionnaire(false)) {
+//                        exitQuestionnaire();
+//                    } else {
+//                        activateButtons();
+//                    }
+//                } else {
+//                    Log.d(TAG, "onReady: ............................................. 26");
+//                    exitQuestionnaire();
+//                }
+//            }
         } else {
             answersList = checkedAnswersList;
         }

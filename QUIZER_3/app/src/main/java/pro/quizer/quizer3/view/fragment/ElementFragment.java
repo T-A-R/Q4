@@ -348,10 +348,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             titleCont2.setVisibility(View.GONE);
             unhideCont.setVisibility(View.VISIBLE);
             isTitle2Hided = true;
-        } else if (view == closeImage2 || view == titleCont2) {
-//            titleCont2.setVisibility(View.GONE);
-//            unhideCont.setVisibility(View.VISIBLE);
-//            isTitle2Hided = true;
         } else if (view == unhideCont || view == btnUnhideTitle) {
             if (isTitle1Hided) {
                 isTitle1Hided = false;
@@ -365,7 +361,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } else if (view == closeQuestion || view == tvQuestion || view == btnUnhideQuestion) {
             if (!isQuestionHided) {
                 closeQuestion.setImageResource(R.drawable.arrow_down_white_wide);
-//                tvQuestion.setText(getString(R.string.view_reopen));
                 tvQuestion.setVisibility(View.GONE);
                 questionImagesCont.setVisibility(View.GONE);
                 tvQuestionDesc.setVisibility(View.GONE);
@@ -548,17 +543,15 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void showPic(View cont, ImageView view, String data) {
-        final String filePhotooPath = getFilePath(data);
+        final String filePhotoPath = getFilePath(data);
 
-        if (StringUtils.isEmpty(filePhotooPath)) {
+        if (StringUtils.isEmpty(filePhotoPath)) {
             return;
         }
-
         cont.setVisibility(View.VISIBLE);
         view.setVisibility(View.VISIBLE);
-
         Picasso.with(getActivity())
-                .load(new File(filePhotooPath))
+                .load(new File(filePhotoPath))
                 .into(view);
     }
 
@@ -594,18 +587,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             if (nextElementId == null) {
                 nextElementId = answersList.get(0).getElementOptionsR().getJump();
             }
-//            if (nextElementId == null || nextElementId.equals(0)) {
-//                if (getMainActivity().getConfig().isSaveAborted()) {
-//                    if (saveQuestionnaire(false)) {
-//                        exitQuestionnaire();
-//                    } else {
-//                        activateButtons();
-//                    }
-//                } else {
-//                    Log.d(TAG, "onReady: ............................................. 26");
-//                    exitQuestionnaire();
-//                }
-//            }
         } else {
             answersList = checkedAnswersList;
         }
@@ -629,7 +610,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 rvAnswers.setAdapter(adapterList);
                 break;
             case ElementSubtype.SELECT:
-
                 if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isRotation()) {
                     List<ElementItemR> shuffleList = new ArrayList<>();
                     for (ElementItemR elementItemR : answersList) {
@@ -658,7 +638,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
                 if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isPolyanswer()) {
                     isMultiSpinner = true;
-
                     multiSelectionSpinner = (MultiSelectSpinner) findViewById(R.id.answers_multi_spinner);
                     multiSelectionSpinner.setVisibility(View.VISIBLE);
                     multiSelectionSpinner.setItems(itemsList);
@@ -902,7 +881,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
                         }
                     }
-                    if(nextElementId == null) {
+                    if (nextElementId == null) {
                         nextElementId = answersList.get(spinnerMultipleSelection.get(0)).getElementOptionsR().getJump();
                     }
 
@@ -1336,12 +1315,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         }
     }
 
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -1350,11 +1323,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         if (!mActivity.checkPermission()) {
             mActivity.requestPermission();
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     @Override
@@ -1624,18 +1592,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void startRecording() {
-        if (getMainActivity().getConfig().isAudio() && currentElement.getElementOptionsR().isRecord_sound() && !getMainActivity().getConfig().isAudioRecordAll()) {
-            MainActivity activity = (MainActivity) getActivity();
+        MainActivity activity = getMainActivity();
+        if (activity != null && activity.getConfig().isAudio() && currentElement.getElementOptionsR().isRecord_sound() && !activity.getConfig().isAudioRecordAll()) {
             try {
-                Objects.requireNonNull(activity).startRecording(currentElement.getRelative_id(), getQuestionnaire().getToken());
+                activity.startRecording(currentElement.getRelative_id(), getQuestionnaire().getToken());
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        if (getMainActivity().getConfig().isAudio() && getMainActivity().getConfig().isAudioRecordAll()) {
-            MainActivity activity = (MainActivity) getActivity();
+        if (activity != null && activity.getConfig().isAudio() && activity.getConfig().isAudioRecordAll()) {
             try {
-                Objects.requireNonNull(activity).startRecording(0, getQuestionnaire().getToken());
+                activity.startRecording(0, getQuestionnaire().getToken());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1643,10 +1610,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void stopRecording() {
-        if (getMainActivity().getConfig().isAudio() && currentElement.getElementOptionsR().isRecord_sound() && !getMainActivity().getConfig().isAudioRecordAll()) {
-            MainActivity activity = (MainActivity) getActivity();
+        MainActivity activity = getMainActivity();
+        if (activity != null && activity.getConfig().isAudio() && currentElement.getElementOptionsR().isRecord_sound() && !activity.getConfig().isAudioRecordAll()) {
             try {
-                Objects.requireNonNull(activity).stopRecording();
+                activity.stopRecording();
             } catch (Exception e) {
                 e.printStackTrace();
             }

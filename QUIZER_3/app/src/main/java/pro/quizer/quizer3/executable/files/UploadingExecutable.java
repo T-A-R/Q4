@@ -53,7 +53,6 @@ public class UploadingExecutable extends BaseExecutable {
     @Override
     public void execute() {
         onStarting();
-
         FileUtils.createFolderIfNotExist(UPLOADING_PATH);
         moveCrashLogs();
         moveLogs();
@@ -76,10 +75,8 @@ public class UploadingExecutable extends BaseExecutable {
             onError(new Exception(mContext.getString(R.string.notification_sending_empty_users_list)));
             return;
         }
-
         for (final UserModelR user : users) {
             final QuestionnaireListRequestModel requestModel = new QuestionnaireListRequestModelExecutable(mContext, user, true).execute();
-
             if (requestModel != null) {
                 try {
                     FileUtils.createTxtFile(UPLOADING_PATH, String.format(UPLOADING_QUESTIONNAIRE_FILE_NAME, user.getLogin(), DateUtils.getCurrentTimeMillis()), new Gson().toJson(requestModel));
@@ -89,6 +86,7 @@ public class UploadingExecutable extends BaseExecutable {
                 }
             }
         }
+        onSuccess();
     }
 
     private void moveCrashLogs() {

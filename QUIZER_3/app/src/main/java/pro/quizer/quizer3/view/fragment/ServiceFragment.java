@@ -1,16 +1,9 @@
 package pro.quizer.quizer3.view.fragment;
 
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.v7.app.AlertDialog;
-import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.util.List;
@@ -29,8 +22,6 @@ import pro.quizer.quizer3.executable.files.UploadingExecutable;
 import pro.quizer.quizer3.executable.files.UploadingFTPExecutable;
 import pro.quizer.quizer3.model.view.ServiceViewModel;
 import pro.quizer.quizer3.utils.DeviceUtils;
-import pro.quizer.quizer3.utils.Fonts;
-import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
@@ -55,8 +46,6 @@ public class ServiceFragment extends ScreenFragment {
     private TextView mDeviceId;
     private String mUnsendedAudioString;
     private String mUnsendedPhotoString;
-    private Toolbar mToolbar;
-    private boolean isDeletingDB = false;
     private MainActivity activity;
 
     public ServiceFragment() {
@@ -70,7 +59,6 @@ public class ServiceFragment extends ScreenFragment {
         initViews();
         MainFragment.disableSideMenu();
         initStrings();
-//        new CleanUpFilesExecutable(getContext(), null).execute();
         updateData(new ServiceInfoExecutable(activity).execute());
     }
 
@@ -89,16 +77,11 @@ public class ServiceFragment extends ScreenFragment {
         mUnsendedAudio = findViewById(R.id.unsended_audio_files_count);
         mUnsendePhoto = findViewById(R.id.unsended_photo_files_count);
         mDeviceId = findViewById(R.id.device_id);
-        mToolbar = findViewById(R.id.toolbar);
+        Toolbar mToolbar = findViewById(R.id.toolbar);
         mToolbar.setTitle(getString(R.string.service_title));
-        mToolbar.showCloseView(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                replaceFragment(new AuthFragment());
-            }
-        });
+        mToolbar.showCloseView(v -> replaceFragment(new AuthFragment()));
 
-        RelativeLayout cont = (RelativeLayout) findViewById(R.id.service_cont);
+        RelativeLayout cont = findViewById(R.id.service_cont);
         cont.startAnimation(Anim.getAppear(getContext()));
         mLogsButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mSendDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
@@ -108,7 +91,6 @@ public class ServiceFragment extends ScreenFragment {
         mClearDbButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mUploadDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mUploadFTPDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
-
     }
 
     private void initStrings() {
@@ -147,174 +129,151 @@ public class ServiceFragment extends ScreenFragment {
             }
         });
 
-        mSendDataButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
+        mSendDataButton.setOnClickListener(view -> {
 //                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_send_quiz), null);
-                new SendAllQuestionnairesExecutable((MainActivity) getActivity(), new ICallback() {
-                    @Override
-                    public void onStarting() {
-                        showToast(getString(R.string.notification_sending));
-                    }
+            new SendAllQuestionnairesExecutable((MainActivity) getActivity(), new ICallback() {
+                @Override
+                public void onStarting() {
+                    showToast(getString(R.string.notification_sending));
+                }
 
-                    @Override
-                    public void onSuccess() {
-                        updateData(new ServiceInfoExecutable(activity).execute());
-                    }
+                @Override
+                public void onSuccess() {
+                    updateData(new ServiceInfoExecutable(activity).execute());
+                }
 
-                    @Override
-                    public void onError(Exception pException) {
-                        updateData(new ServiceInfoExecutable(activity).execute());
-                    }
-                }).execute();
-            }
+                @Override
+                public void onError(Exception pException) {
+                    updateData(new ServiceInfoExecutable(activity).execute());
+                }
+            }).execute();
         });
 
-        mSendPhotoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                if (hasUnfinishedOrSend(notSentQuestionnairesCount, hasUnfinishedQuiz)) return;
+        mSendPhotoButton.setOnClickListener(view -> {
+            if (hasUnfinishedOrSend(notSentQuestionnairesCount, hasUnfinishedQuiz)) return;
 
 //                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_send_photo), null);
-                new AllPhotosSendingExecutable((MainActivity) getActivity(), new ICallback() {
-                    @Override
-                    public void onStarting() {
-                        showToast(getString(R.string.notification_sending));
-                    }
+            new AllPhotosSendingExecutable((MainActivity) getActivity(), new ICallback() {
+                @Override
+                public void onStarting() {
+                    showToast(getString(R.string.notification_sending));
+                }
 
-                    @Override
-                    public void onSuccess() {
-                        updateData(new ServiceInfoExecutable(activity).execute());
-                    }
+                @Override
+                public void onSuccess() {
+                    updateData(new ServiceInfoExecutable(activity).execute());
+                }
 
-                    @Override
-                    public void onError(Exception pException) {
-                        updateData(new ServiceInfoExecutable(activity).execute());
-                    }
-                }).execute();
-            }
+                @Override
+                public void onError(Exception pException) {
+                    updateData(new ServiceInfoExecutable(activity).execute());
+                }
+            }).execute();
         });
 
-        mSendAudioButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                if (hasUnfinishedOrSend(notSentQuestionnairesCount, hasUnfinishedQuiz)) return;
+        mSendAudioButton.setOnClickListener(view -> {
+            if (hasUnfinishedOrSend(notSentQuestionnairesCount, hasUnfinishedQuiz)) return;
 
 //                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_send_audio), null);
-                new AllAudiosSendingExecutable((MainActivity) getActivity(), new ICallback() {
+            new AllAudiosSendingExecutable((MainActivity) getActivity(), new ICallback() {
+                @Override
+                public void onStarting() {
+                    showToast(getString(R.string.notification_sending));
+                }
+
+                @Override
+                public void onSuccess() {
+                    updateData(new ServiceInfoExecutable(activity).execute());
+                }
+
+                @Override
+                public void onError(Exception pException) {
+                    updateData(new ServiceInfoExecutable(activity).execute());
+                }
+            }).execute();
+        });
+
+        mClearDbButton.setOnClickListener(view -> {
+//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_clear_db), null);
+            if (getActivity() != null && !getActivity().isFinishing()) {
+                try {
+                    showClearDbAlertDialog();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        });
+
+        mClearFiles.setOnClickListener(view -> {
+//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_clear_db), null);
+            if (getActivity() != null && !getActivity().isFinishing()) {
+                new CleanUpFilesExecutable(activity, new ICallback() {
                     @Override
                     public void onStarting() {
-                        showToast(getString(R.string.notification_sending));
+
                     }
 
                     @Override
                     public void onSuccess() {
+                        showToast("Файлы удалены");
                         updateData(new ServiceInfoExecutable(activity).execute());
                     }
 
                     @Override
                     public void onError(Exception pException) {
+                        showToast("Ошибка удаления файлов");
                         updateData(new ServiceInfoExecutable(activity).execute());
                     }
                 }).execute();
             }
+
         });
 
-        mClearDbButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_clear_db), null);
-                if (getActivity() != null && !getActivity().isFinishing()) {
-                    try {
-                        showClearDbAlertDialog();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            }
-        });
-
-        mClearFiles.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_clear_db), null);
-                if (getActivity() != null && !getActivity().isFinishing()) {
-                    new CleanUpFilesExecutable(activity, new ICallback() {
-                        @Override
-                        public void onStarting() {
-
-                        }
-
-                        @Override
-                        public void onSuccess() {
-                            showToast("Файлы удалены");
-                            updateData(new ServiceInfoExecutable(activity).execute());
-                        }
-
-                        @Override
-                        public void onError(Exception pException) {
-                            showToast("Ошибка удаления файлов");
-                            updateData(new ServiceInfoExecutable(activity).execute());
-                        }
-                    }).execute();
-                }
-
-            }
-        });
-
-        mUploadDataButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
+        mUploadDataButton.setOnClickListener(view -> {
 //                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_upload_data), null);
-                new UploadingExecutable((MainActivity) getActivity(), new ICallback() {
-                    @Override
-                    public void onStarting() {
-                        showToast(getString(R.string.notification_uploading));
-                    }
+            new UploadingExecutable((MainActivity) getActivity(), new ICallback() {
+                @Override
+                public void onStarting() {
+                    showToast(getString(R.string.notification_uploading));
+                }
 
-                    @Override
-                    public void onSuccess() {
-                        updateData(new ServiceInfoExecutable(activity).execute());
-                    }
+                @Override
+                public void onSuccess() {
+                    updateData(new ServiceInfoExecutable(activity).execute());
+                }
 
-                    @Override
-                    public void onError(Exception pException) {
-                        updateData(new ServiceInfoExecutable(activity).execute());
-                    }
-                }).execute();
-            }
+                @Override
+                public void onError(Exception pException) {
+                    updateData(new ServiceInfoExecutable(activity).execute());
+                }
+            }).execute();
+            showToast(getString(R.string.upload_complete));
         });
 
-        mUploadFTPDataButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
+        mUploadFTPDataButton.setOnClickListener(view -> {
 //                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.ftp_upload), null);
-                new UploadingFTPExecutable((MainActivity) getActivity(), new ICallback() {
-                    @Override
-                    public void onStarting() {
-                        showToast(getString(R.string.notification_uploading));
-                    }
+            new UploadingFTPExecutable((MainActivity) getActivity(), new ICallback() {
+                @Override
+                public void onStarting() {
+                    showToast(getString(R.string.notification_uploading));
+                }
 
-                    @Override
-                    public void onSuccess() {
-                        updateData(new ServiceInfoExecutable(activity).execute());
-                    }
+                @Override
+                public void onSuccess() {
+                    updateData(new ServiceInfoExecutable(activity).execute());
+                }
 
-                    @Override
-                    public void onError(Exception pException) {
-                        updateData(new ServiceInfoExecutable(activity).execute());
-                    }
-                }).execute();
-            }
+                @Override
+                public void onError(Exception pException) {
+                    updateData(new ServiceInfoExecutable(activity).execute());
+                }
+            }).execute();
         });
 
-        mLogsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
+        mLogsButton.setOnClickListener(view -> {
 //                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.LOG, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_logs), null);
-                replaceFragment(new LogsFragment());
-            }
+            replaceFragment(new LogsFragment());
         });
     }
 
@@ -325,29 +284,24 @@ public class ServiceFragment extends ScreenFragment {
                     .setCancelable(false)
                     .setTitle(R.string.clear_db_title)
                     .setMessage(R.string.dialog_clear_db_warning)
-                    .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
-                            showScreensaver(false);
-                            isDeletingDB = true;
-                            new DeleteUsersExecutable((MainActivity) getActivity(), new ICallback() {
-                                @Override
-                                public void onStarting() {
-                                    showToast(getString(R.string.notification_clear_db));
-                                }
+                    .setPositiveButton(R.string.view_yes, (dialog, which) -> {
+                        showScreensaver(getString(R.string.notification_clear_db),true);
+                        new DeleteUsersExecutable(activity, new ICallback() {
+                            @Override
+                            public void onStarting() {
+                            }
 
-                                @Override
-                                public void onSuccess() {
-                                    hideScreensaver();
-                                    replaceFragment(new KeyFragment());
-                                }
+                            @Override
+                            public void onSuccess() {
+                                hideScreensaver();
+                                replaceFragment(new KeyFragment());
+                            }
 
-                                @Override
-                                public void onError(Exception pException) {
-                                    updateData(new ServiceInfoExecutable(activity).execute());
-                                }
-                            }).execute();
-                        }
+                            @Override
+                            public void onError(Exception pException) {
+                                updateData(new ServiceInfoExecutable(activity).execute());
+                            }
+                        }).execute();
                     })
                     .setNegativeButton(R.string.view_no, null).show();
         }
@@ -358,20 +312,5 @@ public class ServiceFragment extends ScreenFragment {
         replaceFragment(new AuthFragment());
         return true;
     }
-
-//    @Override
-//    public void onStarting() {
-//
-//    }
-//
-//    @Override
-//    public void onSuccess() {
-//
-//    }
-//
-//    @Override
-//    public void onError(Exception pException) {
-//
-//    }
 }
 

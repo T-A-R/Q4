@@ -412,5 +412,6 @@
     <string name="wait_starting_new_quiz">Подождите,  идет запуск анкеты</string>
     <string name="message_quiz_save_error">Ошибка сохранения анкеты. Обратитесь в службу поддержки.</string>
     <string name="message_questionnaires_sent">Успешная отправка</string>
+    <string name="upload_complete">Выгрузка данных выполенена.</string>
 
 </resources>

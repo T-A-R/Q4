@@ -91,7 +91,6 @@ public class ServiceFragment extends ScreenFragment {
         mClearDbButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mUploadDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mUploadFTPDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
-
     }
 
     private void initStrings() {

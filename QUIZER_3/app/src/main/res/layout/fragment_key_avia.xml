@@ -2,12 +2,15 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/brand_color"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/brand_color_avia"
     android:orientation="vertical"
     android:paddingLeft="56dp"
-    android:paddingRight="56dp">
+    android:paddingRight="56dp"
+    android:id="@+id/cont_key_fragment">
 
     <LinearLayout
+        android:id="@+id/cont_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -21,24 +24,26 @@
             android:orientation="vertical"
             android:src="@drawable/ic_rossya" />
 
-        <pro.quizer.quizerexit.view.resizeble.edittext.ResizableEditText
-            android:id="@+id/activation_edit_text"
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/et_activation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:hint="@string/TEXT_HINT_INPUT_ACTIVATION_KEY"
+            android:hint="@string/et_enter_key"
             android:inputType="textVisiblePassword"
             android:maxLines="1"
             android:textColor="@android:color/white"
             android:textColorHint="@color/gray"
-            android:textSize="18sp" />
+            app:backgroundTint="@android:color/white"
+            android:textSize="@dimen/_10ssp" />
 
-        <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
-            android:id="@+id/send_activation_button"
-            style="@style/ButtonStyle"
+        <Button
+            android:id="@+id/btn_send_activation"
+            style="@style/ButtonAvia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/VIEW_BUTTON_SEND" />
+            android:textSize="@dimen/_10ssp"
+            android:text="@string/button_send" />
 
     </LinearLayout>
 

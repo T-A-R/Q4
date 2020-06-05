@@ -90,7 +90,7 @@ import static pro.quizer.quizer3.utils.FileUtils.JPEG;
 public class MainActivity extends AppCompatActivity implements ViewTreeObserver.OnGlobalLayoutListener {
 
     static public String TAG = "TARLOGS";
-    static public boolean AVIA = false;
+    static public boolean AVIA = true;
     static public boolean EXIT = true;
     public static final String IS_AFTER_AUTH = "IS_AFTER_AUTH";
     static public boolean DEBUG_MODE = true;
@@ -140,7 +140,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        if (AVIA)
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         Fonts.init(this);
 
@@ -1182,7 +1185,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public CurrentQuestionnaireR getCurrentQuestionnaireByConfigId(String configId) {
         CurrentQuestionnaireR currentQuestionnaireByConfigId = null;
-                currentQuestionnaireByConfigId = getMainDao().getCurrentQuestionnaireByConfigId(configId);
+        currentQuestionnaireByConfigId = getMainDao().getCurrentQuestionnaireByConfigId(configId);
         return currentQuestionnaireByConfigId;
     }
 

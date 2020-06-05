@@ -13,6 +13,8 @@ public class Fonts {
 
     static private Typeface futuraPtBook;
     static private Typeface futuraPtMedium;
+    static private Typeface aviaText;
+    static private Typeface aviaButton;
 
     public static final List<FontSizeModel> FONT_SIZE_MODELS = new ArrayList<FontSizeModel>() {
         {
@@ -28,6 +30,8 @@ public class Fonts {
         AssetManager assets = context.getAssets();
         futuraPtMedium  = Typeface.createFromAsset(assets, "futura_pt_medium.ttf");
         futuraPtBook  = Typeface.createFromAsset(assets, "futura_pt_book.ttf");
+        aviaText  = Typeface.createFromAsset(assets, "arial.ttf");
+        aviaButton  = Typeface.createFromAsset(assets, "Heliosextc.otf");
     }
 
     static public Typeface getFuturaPtMedium() {
@@ -36,5 +40,13 @@ public class Fonts {
 
     static public Typeface getFuturaPtBook() {
         return futuraPtBook;
+    }
+
+    static public Typeface getAviaText() {
+        return aviaText;
+    }
+
+    static public Typeface getAviaButton() {
+        return aviaButton;
     }
 }

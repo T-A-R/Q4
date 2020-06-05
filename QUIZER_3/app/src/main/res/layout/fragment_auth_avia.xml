@@ -1,89 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cont_auth_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/brand_color"
-    android:paddingLeft="56dp"
-    android:paddingRight="56dp">
+    android:fitsSystemWindows="true"
+    android:keepScreenOn="true">
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/cont_auth_fragment_avia"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:background="@color/brand_color_avia"
+        android:paddingLeft="56dp"
+        android:paddingRight="56dp">
 
-        <android.support.v7.widget.AppCompatImageView
-            android:layout_width="match_parent"
-            android:layout_height="112dp"
-            android:orientation="vertical"
-            android:src="@drawable/ic_rossya" />
-
-        <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
-            android:id="@+id/version_warning"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:gravity="center"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:visibility="gone" />
+            android:layout_gravity="center"
+            android:orientation="vertical">
 
-        <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
-            android:id="@+id/users_count"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:gravity="center"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:visibility="gone"
-            tools:text="@string/VIEW_USERS_COUNT_ON_DEVICE" />
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="112dp"
+                android:orientation="vertical"
+                android:src="@drawable/ic_rossya" />
 
-        <pro.quizer.quizerexit.view.resizeble.editspinner.ResizableEditSpinner
-            android:id="@+id/login_spinner"
-            android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/version_warning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/users_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:visibility="gone"
+                tools:text="@string/auth_users_on_device" />
+
+            <pro.quizer.quizer3.view.element.editspinner.AutoEditSpinner
+                android:id="@+id/login_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
+                android:hint="@string/auth_enter_login"
+                android:inputType="textEmailAddress"
+                android:maxLines="1"
+                android:textColor="@android:color/white"
+                android:textColorHint="@color/gray"
+                android:textSize="@dimen/_10ssp" />
+
+            <EditText
+                android:id="@+id/auth_password_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/white"
+                android:hint="@string/auth_enter_password"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:textColor="@android:color/white"
+                android:textColorHint="@color/gray"
+                android:textSize="@dimen/_10ssp" />
+
+            <Button
+                android:id="@+id/btn_send_auth"
+                style="@style/ButtonAvia"
+                android:layout_width="224dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginTop="24dp"
+                android:text="@string/to_enter"
+                android:textSize="@dimen/_10ssp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/version_view"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/TEXT_HINT_INPUT_LOGIN"
-            android:inputType="textEmailAddress"
-            android:maxLines="1"
+            android:layout_gravity="center|bottom"
+            android:layout_margin="16dp"
             android:textColor="@android:color/white"
-            android:textColorHint="@color/gray"
-            android:textSize="18sp" />
+            android:textSize="@dimen/_10ssp"
+            tools:text="Версия 16.3.0" />
 
-        <pro.quizer.quizerexit.view.resizeble.edittext.ResizableEditText
-            android:id="@+id/auth_password_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="@string/TEXT_HINT_INPUT_PASSWORD"
-            android:inputType="textPassword"
-            android:maxLines="1"
-            android:textColor="@android:color/white"
-            android:textColorHint="@color/gray"
-            android:textSize="18sp" />
+        <include layout="@layout/view_progress" />
 
-        <pro.quizer.quizerexit.view.resizeble.button.ResizableButton
-            android:id="@+id/send_auth_button"
-            style="@style/ButtonStyle"
-            android:layout_width="224dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginTop="24dp"
-            android:text="@string/VIEW_BUTTON_LOGIN" />
-
-    </LinearLayout>
-
-    <pro.quizer.quizerexit.view.resizeble.textview.SmallResizableTextView
-        android:id="@+id/version_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|bottom"
-        android:layout_margin="16dp"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        tools:text="Версия 16.3.0" />
-
-    <include layout="@layout/view_progress" />
-
-</FrameLayout>
+    </FrameLayout>
+</RelativeLayout>

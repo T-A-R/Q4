@@ -10,6 +10,7 @@ android {
         versionName "3.2.2(1)"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         project.ext.set("archivesBaseName", "Quizer_ " + defaultConfig.versionName)
+//        project.ext.set("archivesBaseName", "Avia_ " + defaultConfig.versionName)
     }
     buildTypes {
         release {

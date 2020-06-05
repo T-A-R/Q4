@@ -39,6 +39,7 @@ import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
 import pro.quizer.quizer3.utils.FileUtils;
+import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.MD5Utils;
 import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.utils.StringUtils;
@@ -77,7 +78,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     @Override
     protected void onReady() {
-        RelativeLayout cont = (RelativeLayout) findViewById(R.id.cont_auth_fragment);
+
         LinearLayout image = (LinearLayout) findViewById(R.id.cont_image);
         btnSend = (Button) findViewById(R.id.btn_send_auth);
         esLogin = (EditSpinner) findViewById(R.id.login_spinner);
@@ -91,7 +92,16 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         btnSend.setOnClickListener(this);
         tvVersionView.setOnClickListener(this);
 
+        if (isAvia()) {
+            esLogin.setTypeface(Fonts.getAviaText());
+            etPass.setTypeface(Fonts.getAviaText());
+            btnSend.setTypeface(Fonts.getAviaButton());
+            btnSend.setTransformationMethod(null);
+        }
+
+        RelativeLayout cont = (RelativeLayout) findViewById(R.id.cont_auth_fragment);
         cont.startAnimation(Anim.getAppear(getContext()));
+
         btnSend.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
         getMainActivity().clearCurrentUser();
@@ -379,7 +389,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             }
 
             if (configResponseModel != null) {
-                if(configResponseModel.isProjectActive() != null) {
+                if (configResponseModel.isProjectActive() != null) {
                     try {
                         getDao().setProjectActive(configResponseModel.isProjectActive());
                     } catch (Exception e) {

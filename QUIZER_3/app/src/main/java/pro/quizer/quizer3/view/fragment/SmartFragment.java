@@ -69,6 +69,7 @@ import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.FontUtils;
 import pro.quizer.quizer3.utils.SPUtils;
 
+import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.utils.FileUtils.AMR;
 import static pro.quizer.quizer3.utils.FileUtils.JPEG;
@@ -108,7 +109,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                     layoutSrc = R.layout.fragment_settings_auto;
                     break;
                 case R.layout.fragment_auth:
-                    layoutSrc = R.layout.fragment_auth_auto;
+                    layoutSrc = isAvia() ? R.layout.fragment_auth_avia : R.layout.fragment_auth_auto;
                     break;
                 case R.layout.fragment_home:
                     layoutSrc = R.layout.fragment_home_auto;
@@ -126,7 +127,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                     layoutSrc = R.layout.fragment_logs_auto;
                     break;
                 case R.layout.fragment_key:
-                    layoutSrc = R.layout.fragment_key_auto;
+                    layoutSrc = isAvia() ? R.layout.fragment_key_avia : R.layout.fragment_key_auto;
                     break;
                 case R.layout.fragment_about:
                     layoutSrc = R.layout.fragment_about_auto;
@@ -171,6 +172,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             }
         }
         return null;
+    }
+
+    public boolean isAvia() {
+        return AVIA;
     }
 
     public MainActivity getMainActivity() {

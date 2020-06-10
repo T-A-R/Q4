@@ -371,21 +371,42 @@ public abstract class ScreenFragment extends SmartFragment {
         return null;
     }
 
-    public void setViewBackground(View view, boolean visible) {
-        if (visible) {
-            if (getMainActivity().getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                view.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+    public void setViewBackground(View view, boolean visible, boolean border) {
+        if(isAvia()) {
+            if (visible) {
+                view.setEnabled(true);
+                if (getMainActivity().getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    view.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), border ? R.drawable.button_background_red : R.drawable.button_background_red_without_border));
+                } else {
+                    view.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), border ? R.drawable.button_background_red : R.drawable.button_background_red_without_border));
+                }
             } else {
-                view.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                view.setEnabled(false);
+                if (getMainActivity().getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    view.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray_avia));
+                } else {
+                    view.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray_avia));
+                }
             }
         } else {
-            if (getMainActivity().getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                view.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            if (visible) {
+                view.setEnabled(true);
+                if (getMainActivity().getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    view.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                } else {
+                    view.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                }
             } else {
-                view.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+                view.setEnabled(false);
+                if (getMainActivity().getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    view.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+                } else {
+                    view.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+                }
             }
         }
     }
+
 
 //    protected void initPageCont1() {
 //        viewsArray[0][0] = (LinearLayout) findViewById(R.id.unhide_cont); // unhideCont

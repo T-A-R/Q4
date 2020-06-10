@@ -112,7 +112,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                     layoutSrc = isAvia() ? R.layout.fragment_auth_avia : R.layout.fragment_auth_auto;
                     break;
                 case R.layout.fragment_home:
-                    layoutSrc = R.layout.fragment_home_auto;
+                    layoutSrc = isAvia() ? R.layout.fragment_home_avia :  R.layout.fragment_home_auto;
                     break;
                 case R.layout.fragment_sync:
                     layoutSrc = R.layout.fragment_sync_auto;

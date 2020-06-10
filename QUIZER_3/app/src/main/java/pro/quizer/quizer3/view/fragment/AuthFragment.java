@@ -140,7 +140,9 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     public void onClick(View view) {
         if (view == btnSend) {
             deactivateButtons();
-            showScreensaver(R.string.please_wait_quiz, true);
+            if(isAvia()) {
+                //TODO ADD AVIA SCREENSAVER
+            } else showScreensaver(R.string.please_wait_quiz, true);
             onLoginClick();
         } else if (view == tvVersionView) {
             onVersionClick();
@@ -557,26 +559,28 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     private void activateButtons() {
         hideScreensaver();
-        btnSend.setEnabled(true);
-
-        final int sdk = android.os.Build.VERSION.SDK_INT;
-
-        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            btnSend.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-        } else {
-            btnSend.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-        }
+        setViewBackground(btnSend, true, true);
+//        btnSend.setEnabled(true);
+//
+//        final int sdk = android.os.Build.VERSION.SDK_INT;
+//
+//        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+//            btnSend.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_red : R.drawable.button_background_green));
+//        } else {
+//            btnSend.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_red : R.drawable.button_background_green));
+//        }
     }
 
     private void deactivateButtons() {
+        setViewBackground(btnSend, false, false);
         btnSend.setEnabled(false);
 
         final int sdk = android.os.Build.VERSION.SDK_INT;
 
         if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            btnSend.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            btnSend.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_gray_avia : R.drawable.button_background_gray) );
         } else {
-            btnSend.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            btnSend.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_gray_avia : R.drawable.button_background_gray));
         }
     }
 }

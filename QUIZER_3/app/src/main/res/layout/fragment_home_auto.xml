@@ -119,6 +119,19 @@
                 android:text="@string/button_quotas"
                 android:textSize="@dimen/_12ssp" />
 
+            <Button
+                android:id="@+id/btn_exit"
+                style="@style/ButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:text="@string/button_quotas"
+                android:textSize="@dimen/_12ssp"
+                android:visibility="gone"/>
+
         </LinearLayout>
 
     </LinearLayout>

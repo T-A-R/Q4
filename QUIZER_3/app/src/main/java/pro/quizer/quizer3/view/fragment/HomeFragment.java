@@ -83,12 +83,15 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private Button btnStart;
     private Button btnInfo;
     private Button btnQuotas;
+    private Button btnExit;
     private TextView tvConfigAgreement;
     private TextView tvCurrentUser;
     private TextView tvConfigName;
     private TextView tvQuotasClosed;
     private TextView tvPbText;
     private TextView tvProjectStatus;
+    private TextView tvCountAll;
+    private TextView tvCountSent;
     private ProgressBar pb;
 
     private boolean isStartBtnPressed = false;
@@ -143,12 +146,15 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         btnStart = (Button) findViewById(R.id.btn_start);
         btnInfo = (Button) findViewById(R.id.btn_info);
         btnQuotas = (Button) findViewById(R.id.btn_quotas);
+        btnExit = (Button) findViewById(R.id.btn_exit);
         tvConfigAgreement = (TextView) findViewById(R.id.config_agreement);
         tvConfigName = (TextView) findViewById(R.id.config_name);
         tvQuotasClosed = (TextView) findViewById(R.id.quotas_closed);
         tvCurrentUser = (TextView) findViewById(R.id.current_user);
         tvPbText = (TextView) findViewById(R.id.tv_pb_text);
         tvProjectStatus = (TextView) findViewById(R.id.project_status);
+        tvCountAll = (TextView) findViewById(R.id.count_all);
+        tvCountSent = (TextView) findViewById(R.id.count_sent);
         pb = (ProgressBar) findViewById(R.id.progressBarQuota);
 
         MainFragment.enableSideMenu(true);
@@ -156,52 +162,84 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         btnStart.setOnClickListener(this);
         btnInfo.setOnClickListener(this);
         btnQuotas.setOnClickListener(this);
+        btnExit.setOnClickListener(this);
         tvConfigAgreement.setTypeface(Fonts.getFuturaPtBook());
         tvConfigName.setTypeface(Fonts.getFuturaPtBook());
         tvQuotasClosed.setTypeface(Fonts.getFuturaPtBook());
         tvCurrentUser.setTypeface(Fonts.getFuturaPtBook());
 
-        cont.startAnimation(Anim.getAppear(getContext()));
-        btnContinue.startAnimation(Anim.getAppearSlide(getContext(), 500));
-        btnDelete.startAnimation(Anim.getAppearSlide(getContext(), 500));
-        btnStart.startAnimation(Anim.getAppearSlide(getContext(), 500));
-        btnInfo.startAnimation(Anim.getAppearSlide(getContext(), 500));
-        btnQuotas.startAnimation(Anim.getAppearSlide(getContext(), 500));
+        if (isAvia()) {
+            tvCountAll.setTypeface(Fonts.getAviaText());
+            tvCountSent.setTypeface(Fonts.getAviaText());
+            btnStart.setTypeface(Fonts.getAviaButton());
+            btnContinue.setTypeface(Fonts.getAviaButton());
+            btnExit.setTypeface(Fonts.getAviaButton());
+            btnStart.setTransformationMethod(null);
+            btnContinue.setTransformationMethod(null);
+            btnExit.setTransformationMethod(null);
 
-        toolbar.setTitle(getString(R.string.home_screen));
-        toolbar.showOptionsView(v -> MainFragment.showDrawer(), null);
+            btnExit.setVisibility(View.VISIBLE);
+            btnDelete.setVisibility(View.GONE);
+            btnInfo.setVisibility(View.GONE);
+            btnQuotas.setVisibility(View.GONE);
+            toolbar.setVisibility(View.GONE);
 
-        try {
-            hideScreensaver();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        deactivateButtons();
-        getMainActivity().freeMemory();
-        initViews();
-        sendCrashLogs();
+            cont.startAnimation(Anim.getAppear(getContext()));
+            btnContinue.startAnimation(Anim.getAppearSlide(getContext(), 500));
+            btnStart.startAnimation(Anim.getAppearSlide(getContext(), 500));
+            btnExit.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
-        if (mIsStartAfterAuth) {
-            quotaUpdate();
-        }
+            MainFragment.disableSideMenu();
 
-        sendQuestionnaires();
+            initViews();
+            sendCrashLogs();
+            sendQuestionnaires();
 
-        if (activity != null) {
-            if (activity.hasReserveChannel()) {
-                btnQuotas.setVisibility(View.GONE);
-            } else {
-                btnQuotas.setVisibility(View.VISIBLE);
+        } else {
+            btnExit.setVisibility(View.GONE);
+            cont.startAnimation(Anim.getAppear(getContext()));
+            btnContinue.startAnimation(Anim.getAppearSlide(getContext(), 500));
+            btnDelete.startAnimation(Anim.getAppearSlide(getContext(), 500));
+            btnStart.startAnimation(Anim.getAppearSlide(getContext(), 500));
+            btnInfo.startAnimation(Anim.getAppearSlide(getContext(), 500));
+            btnQuotas.startAnimation(Anim.getAppearSlide(getContext(), 500));
+
+            toolbar.setTitle(getString(R.string.home_screen));
+            toolbar.showOptionsView(v -> MainFragment.showDrawer(), null);
+
+
+            try {
+                hideScreensaver();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }
+            deactivateButtons();
+            getMainActivity().freeMemory();
+            initViews();
+            sendCrashLogs();
 
-        try {
-            activity.activateExitReminder();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            if (mIsStartAfterAuth) {
+                quotaUpdate();
+            }
+
+            sendQuestionnaires();
+
+            if (activity != null) {
+                if (activity.hasReserveChannel()) {
+                    btnQuotas.setVisibility(View.GONE);
+                } else {
+                    btnQuotas.setVisibility(View.VISIBLE);
+                }
+            }
+
+            try {
+                activity.activateExitReminder();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 //        setEventsListener(this);
-        checkProjectActive();
+            checkProjectActive();
+        }
     }
 
 //    @Override
@@ -254,6 +292,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
         } else if (view == btnDelete) {
             showDeleteDialog();
+        } else if (view == btnExit) {
+            showExitAlertDialog();
         }
     }
 
@@ -321,7 +361,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         String newConfig = null;
         newConfig = activity.getCurrentUser().getConfig_new();
         if (newConfig != null) {
-            if(currentQuestionnaire == null) {
+            if (currentQuestionnaire == null) {
                 updateLocalConfig();
             } else {
                 btnStart.setText(getString(R.string.button_update_config));
@@ -908,34 +948,27 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private void activateButtons() {
         Log.d(TAG, "=== activateButtons ===");
         isStartBtnPressed = false;
-        btnContinue.setEnabled(true);
-        btnStart.setEnabled(true);
-        btnQuotas.setEnabled(true);
-        btnInfo.setEnabled(true);
-        setViewBackground(btnContinue, true);
-        setViewBackground(btnStart, true);
-        setViewBackground(btnQuotas, true);
-        setViewBackground(btnInfo, true);
+
+        setViewBackground(btnContinue, true, false);
+        setViewBackground(btnStart, true, false);
+        setViewBackground(btnQuotas, true, false);
+        setViewBackground(btnInfo, true, false);
 
     }
 
     private void deactivateButtons() {
         Log.d(TAG, "=== deactivateButtons ===");
-        btnContinue.setEnabled(false);
-        btnStart.setEnabled(false);
-        btnQuotas.setEnabled(false);
-        btnInfo.setEnabled(false);
-        setViewBackground(btnContinue, false);
-        setViewBackground(btnStart, false);
-        setViewBackground(btnQuotas, false);
-        setViewBackground(btnInfo, false);
+
+        setViewBackground(btnContinue, false, true);
+        setViewBackground(btnStart, false, true);
+        setViewBackground(btnQuotas, false, true);
+        setViewBackground(btnInfo, false, true);
     }
 
     private void deactivateStartButtons() {
-        btnContinue.setEnabled(false);
-        btnStart.setEnabled(false);
-        setViewBackground(btnContinue, false);
-        setViewBackground(btnStart, false);
+
+        setViewBackground(btnContinue, false, true);
+        setViewBackground(btnStart, false, true);
     }
 
     private void quotaUpdate() {

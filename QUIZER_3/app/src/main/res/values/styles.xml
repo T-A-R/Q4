@@ -76,4 +76,8 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textAllCaps">true</item>
     </style>
+
+    <style name="ButtonAviaWithoutBorder" parent="ButtonStyle">
+        <item name="android:background">@drawable/button_background_red_without_border</item>
+    </style>
 </resources>

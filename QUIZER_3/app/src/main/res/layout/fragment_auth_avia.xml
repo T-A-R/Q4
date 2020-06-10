@@ -93,6 +93,7 @@
             android:layout_margin="16dp"
             android:textColor="@android:color/white"
             android:textSize="@dimen/_10ssp"
+            android:focusable="false"
             tools:text="Версия 16.3.0" />
 
         <include layout="@layout/view_progress" />

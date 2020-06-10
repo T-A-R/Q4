@@ -11,6 +11,7 @@ import java.lang.annotation.RetentionPolicy;
         ElementSubtype.END,
         ElementSubtype.LIST,
         ElementSubtype.IMAGE,
+        ElementSubtype.RANK,
         ElementSubtype.VIDEO,
         ElementSubtype.CONTAINER,
         ElementSubtype.ABORTED,

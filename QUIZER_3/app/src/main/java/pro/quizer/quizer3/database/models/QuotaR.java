@@ -2,9 +2,10 @@ package pro.quizer.quizer3.database.models;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity
+@Entity(indices = {@Index("config_id")})
 public class QuotaR {
 
     @PrimaryKey(autoGenerate = true)

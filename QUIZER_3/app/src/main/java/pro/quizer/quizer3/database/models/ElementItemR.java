@@ -12,7 +12,7 @@ import java.util.List;
 
 import static pro.quizer.quizer3.view.fragment.SmartFragment.getDao;
 
-//@Entity
+
 @Entity(indices = {@Index("relative_id")})
 public class ElementItemR {
 

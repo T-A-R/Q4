@@ -357,7 +357,7 @@
                     android:layout_marginTop="@dimen/_4sdp"
                     android:layout_marginEnd="@dimen/_8sdp"
                     android:layout_marginRight="@dimen/_8sdp"
-                    android:text="Question"
+                    android:text=""
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/_12ssp"
                     tools:ignore="MissingConstraints"

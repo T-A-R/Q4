@@ -256,6 +256,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 if (isRestored || wasReloaded()) {
                     loadSavedData();
                 }
+            } else {
+                checkAndLoadNext();
             }
             hideScreensaver();
             activateButtons();
@@ -1577,6 +1579,21 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void checkAndLoadNext() {
+        if (nextElementId != null && !nextElementId.equals(0) && !nextElementId.equals(-1)) {
+            if (checkConditions(getElement(nextElementId))) {
+                TransFragment fragment = new TransFragment();
+                fragment.setStartElement(nextElementId);
+                stopRecording();
+                replaceFragment(fragment);
+            } else {
+                checkAndLoadNext();
+            }
+        } else {
+            activateButtons();
+        }
+    }
+
+    private void cyclecheck() {
         if (nextElementId != null && !nextElementId.equals(0) && !nextElementId.equals(-1)) {
             if (checkConditions(getElement(nextElementId))) {
                 TransFragment fragment = new TransFragment();

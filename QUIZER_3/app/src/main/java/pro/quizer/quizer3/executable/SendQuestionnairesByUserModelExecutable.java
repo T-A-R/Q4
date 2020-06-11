@@ -163,7 +163,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
             if (deletingListResponseModel.getQuotas() != null && deletingListResponseModel.getQuotas().size() > 0) {
                 List<QuotaR> quotaRList = new ArrayList<>();
                 for (QuotaModel model : deletingListResponseModel.getQuotas()) {
-                    quotaRList.add(new QuotaR(model.getSequence(), model.getLimit(), model.getSent()));
+                    quotaRList.add(new QuotaR(model.getSequence(), model.getLimit(), model.getSent(), mBaseActivity.getCurrentUser().getConfig_id()));
                 }
                 try {
                     mBaseActivity.getMainDao().clearQuotaR();

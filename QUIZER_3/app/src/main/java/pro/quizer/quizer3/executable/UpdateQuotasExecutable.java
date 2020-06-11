@@ -105,7 +105,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
                     if(quotaResponseModel.getQuotas() != null && quotaResponseModel.getQuotas().size() > 0){
                         List<QuotaR> quotaRList = new ArrayList<>();
                         for(QuotaModel model : quotaResponseModel.getQuotas()) {
-                            quotaRList.add(new QuotaR(model.getSequence(), model.getLimit(), model.getSent()));
+                            quotaRList.add(new QuotaR(model.getSequence(), model.getLimit(), model.getSent(), mainActivity.getCurrentUser().getConfig_id()));
                         }
                         mainActivity.getMainDao().clearQuotaR();
                         mainActivity.getMainDao().insertQuotaR(quotaRList);

@@ -817,7 +817,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             int user_project_id = activity.getCurrentUser().getUser_project_id();
             List<QuotaModel> quotas = new ArrayList<>();
 
-            final List<QuotaR> quotasR = activity.getMainDao().getQuotaR();
+            final List<QuotaR> quotasR = activity.getMainDao().getQuotaR(getCurrentUser().getConfig_id());
             for (QuotaR quotaR : quotasR) {
                 quotas.add(new QuotaModel(quotaR.getSequence(), quotaR.getLimit(), quotaR.getDone(), user_id, user_project_id));
             }

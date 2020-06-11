@@ -136,7 +136,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private MultiSelectSpinner multiSelectionSpinner;
     private List<PrevElementsR> prevList = null;
 
-    private final String KEY_RECYCLER_STATE = "recycler_state";
+//    private final String KEY_RECYCLER_STATE = "recycler_state";
 
     public ElementFragment() {
         super(R.layout.fragment_element);
@@ -846,18 +846,24 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             List<AnswerState> answerStates = null;
             if (answerType.equals(ElementSubtype.SCALE)) {
                 answerStates = adapterScale.getAnswers();
-            } else  {
+            } else {
                 answerStates = adapterList.getAnswers();
             }
             if (answerStates != null && notEmpty(answerStates)) {
                 if (answerType.equals(ElementSubtype.RANK)) {
                     //TODO GET RANK ANSWERS
                     List<AnswerState> answerStatesRang = new ArrayList<>();
-                    for(ElementItemR answer : answersList) {
-                        String data = 
-                        answerStatesRang.add(new AnswerState(answer.getRelative_id(), true,))
+                    for (int i = 0; i < answerStates.size(); i++) {
+                        Integer id = answersList.get(i).getRelative_id();
+                        String data = "";
+                        for (int k = 0; k < answerStates.size(); k++) {
+                            if (id.equals(answerStates.get(k).getRelative_id())) {
+                                data = answerStates.get(k).getData();
+                            }
+                        }
+                        answerStatesRang.add(new AnswerState(id, true, data));
                     }
-
+                    answerStates = answerStatesRang;
                 } else {
                     for (int i = 0; i < answerStates.size(); i++) {
                         if (answerStates.get(i).isChecked()) {

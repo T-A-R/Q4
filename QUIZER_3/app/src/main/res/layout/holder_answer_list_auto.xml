@@ -60,15 +60,33 @@
             android:layout_toLeftOf="@+id/radio_button"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/answer"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/_8sdp"
                 android:layout_marginRight="@dimen/_8sdp"
-                android:text="Answer"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/_10ssp" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/position"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:text="1"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="@dimen/_10ssp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/answer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Answer"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/_10ssp" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/answer_desc"

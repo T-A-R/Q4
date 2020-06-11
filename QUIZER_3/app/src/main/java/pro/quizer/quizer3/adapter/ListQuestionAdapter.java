@@ -139,8 +139,10 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     @Override
     public void onBindViewHolder(@NonNull ListObjectViewHolder holder, int position) {
         holder.bind(answersList.get(position), position);
-        if (isRank)
+        if (isRank) {
             holder.button.setVisibility(View.GONE);
+            holder.answerPosition.setVisibility(View.VISIBLE);
+        }
 
         if (!isMulti) {
             if (position == lastSelectedPosition) {
@@ -213,6 +215,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
     public class ListObjectViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        TextView answerPosition;
         TextView answerTitle;
         TextView answerDesc;
         public EditText answerEditText;
@@ -233,6 +236,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         public ListObjectViewHolder(@NonNull View itemView, OnAnswerClickListener onUserClickListener) {
             super(itemView);
 
+            answerPosition = (TextView) itemView.findViewById(R.id.position);
             answerTitle = (TextView) itemView.findViewById(R.id.answer);
             answerDesc = (TextView) itemView.findViewById(R.id.answer_desc);
             answerEditText = (EditText) itemView.findViewById(R.id.edit_answer);

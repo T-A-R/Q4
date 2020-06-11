@@ -846,17 +846,24 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             List<AnswerState> answerStates = null;
             if (answerType.equals(ElementSubtype.SCALE)) {
                 answerStates = adapterScale.getAnswers();
-            } else if (answerType.equals(ElementSubtype.RANK)) {
-                //TODO GET RANK ANSWERS
-                
-            } else {
+            } else  {
                 answerStates = adapterList.getAnswers();
             }
             if (answerStates != null && notEmpty(answerStates)) {
-                for (int i = 0; i < answerStates.size(); i++) {
-                    if (answerStates.get(i).isChecked()) {
-                        int id = answerStates.get(i).getRelative_id();
-                        nextElementId = getElement(id).getElementOptionsR().getJump();
+                if (answerType.equals(ElementSubtype.RANK)) {
+                    //TODO GET RANK ANSWERS
+                    List<AnswerState> answerStatesRang = new ArrayList<>();
+                    for(ElementItemR answer : answersList) {
+                        String data = 
+                        answerStatesRang.add(new AnswerState(answer.getRelative_id(), true,))
+                    }
+
+                } else {
+                    for (int i = 0; i < answerStates.size(); i++) {
+                        if (answerStates.get(i).isChecked()) {
+                            int id = answerStates.get(i).getRelative_id();
+                            nextElementId = getElement(id).getElementOptionsR().getJump();
+                        }
                     }
                 }
 

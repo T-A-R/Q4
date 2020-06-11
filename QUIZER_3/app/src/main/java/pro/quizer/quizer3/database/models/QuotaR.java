@@ -20,14 +20,17 @@ public class QuotaR {
     @ColumnInfo(name = "done")
     private int done;
 
+    @ColumnInfo(name = "config_id")
+    private String config_id;
 
     public QuotaR() {
     }
 
-    public QuotaR(String sequence, int limit, int done) {
+    public QuotaR(String sequence, int limit, int done, String config_id) {
         this.sequence = sequence;
         this.limit = limit;
         this.done = done;
+        this.config_id = config_id;
     }
 
     public int getId() {
@@ -60,5 +63,13 @@ public class QuotaR {
 
     public void setDone(int done) {
         this.done = done;
+    }
+
+    public String getConfig_id() {
+        return config_id;
+    }
+
+    public void setConfig_id(String config_id) {
+        this.config_id = config_id;
     }
 }

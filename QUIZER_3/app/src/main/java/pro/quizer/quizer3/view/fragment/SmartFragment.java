@@ -378,6 +378,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         } else {
             try {
                 getDao().clearCurrentQuestionnaireR();
+                getDao().clearQuotaR();
             } catch (Exception e) {
                 e.printStackTrace();
             }

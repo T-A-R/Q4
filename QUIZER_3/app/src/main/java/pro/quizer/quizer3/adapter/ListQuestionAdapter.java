@@ -31,6 +31,7 @@ import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
+import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.quota.QuotaUtils;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.utils.FileUtils;
@@ -59,6 +60,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     private int lastCheckedElement = -103;
     public boolean isOpen = false;
     public boolean isMulti;
+    public boolean isRank = false;
     public List<Boolean> isPressed;
     public boolean isRestored = false;
     private String openType;
@@ -75,6 +77,10 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         this.passedQuotaBlock = passedQuotaBlock;
         this.quotaTree = quotaTree;
         this.mContext = context;
+
+        if (question.getSubtype().equals(ElementSubtype.RANK)) {
+            isRank = true;
+        }
 
         if (question.getElementOptionsR() != null && question.getElementOptionsR().isRotation()) {
             List<ElementItemR> shuffleList = new ArrayList<>();
@@ -104,7 +110,10 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         this.answersState = new ArrayList<>();
         this.isPressed = new ArrayList<>();
         for (int i = 0; i < answersList.size(); i++) {
-            this.answersState.add(new AnswerState(answersList.get(i).getRelative_id(), false, ""));
+            if (isRank)
+                this.answersState.add(new AnswerState(answersList.get(i).getRelative_id(), true, ""));
+            else
+                this.answersState.add(new AnswerState(answersList.get(i).getRelative_id(), false, ""));
             this.isPressed.add(false);
         }
     }
@@ -130,6 +139,9 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     @Override
     public void onBindViewHolder(@NonNull ListObjectViewHolder holder, int position) {
         holder.bind(answersList.get(position), position);
+        if (isRank)
+            holder.button.setVisibility(View.GONE);
+
         if (!isMulti) {
             if (position == lastSelectedPosition) {
                 holder.editButton.setVisibility(View.GONE);
@@ -523,8 +535,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             if (isOpen && lastSelectedPosition != -1 && isPressed.get(lastSelectedPosition) && charSequence != null && charSequence.length() > 0) {
                 textAfter = charSequence.toString();
                 int delta = textAfter.length() - textBefore.length();
-                if((delta == 1 && textAfter.contains(textBefore)) || (delta == -1 && textBefore.contains(textAfter)))
-                {
+                if ((delta == 1 && textAfter.contains(textBefore)) || (delta == -1 && textBefore.contains(textAfter))) {
                     answersState.get(lastSelectedPosition).setData(textAfter);
                 }
             }

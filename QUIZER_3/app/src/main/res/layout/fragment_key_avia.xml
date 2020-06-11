@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/brand_color_avia"
+    android:orientation="vertical"
+    android:paddingLeft="56dp"
+    android:paddingRight="56dp"
+    android:id="@+id/cont_key_fragment">
+
+    <LinearLayout
+        android:id="@+id/cont_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="112dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:orientation="vertical"
+            android:src="@drawable/ic_rossya" />
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/et_activation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:hint="@string/et_enter_key"
+            android:inputType="textVisiblePassword"
+            android:maxLines="1"
+            android:textColor="@android:color/white"
+            android:textColorHint="@color/gray"
+            app:backgroundTint="@android:color/white"
+            android:textSize="@dimen/_10ssp" />
+
+        <Button
+            android:id="@+id/btn_send_activation"
+            style="@style/ButtonAvia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/_10ssp"
+            android:text="@string/button_send" />
+
+    </LinearLayout>
+
+    <include layout="@layout/view_progress" />
+
+</FrameLayout>

@@ -2,12 +2,14 @@ package pro.quizer.quizer3.view.fragment;
 
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 
 import com.google.gson.Gson;
@@ -21,6 +23,7 @@ import pro.quizer.quizer3.API.models.request.ActivationRequestModel;
 import pro.quizer.quizer3.API.models.response.ActivationResponseModel;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.database.models.ActivationModelR;
+import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.view.Anim;
 
@@ -45,20 +48,27 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
         etKey = (EditText) findViewById(R.id.et_activation);
 
         MainFragment.disableSideMenu();
-//        MainFragment.hideToolbar();
 
-//        etKey.setTypeface(Fonts.getFuturaPtMedium());
-//        btnSend.setTypeface(Fonts.getFuturaPtBook());
-//        btnSend.setTransformationMethod(null);
+        if (isAvia()) {
+            etKey.setTypeface(Fonts.getAviaText());
+            btnSend.setTypeface(Fonts.getAviaButton());
+            btnSend.setTransformationMethod(null);
+        }
 
         btnSend.setOnClickListener(this);
 
         cont.startAnimation(Anim.getAppear(getContext()));
         btnSend.startAnimation(Anim.getAppearSlide(getContext(), 500));
-//        image.startAnimation(Anim.getSlideUpDown(getContext()));
 
-//        getUser().setFirstStart(false);
-//        getUser().setDelegateMode(false);
+        etKey.setOnFocusChangeListener((v, hasFocus) -> {
+            String liganame = etKey.getText().toString();
+            if (liganame.length() != 0) {
+                getMainActivity().hideKeyboardFrom(etKey);
+            }
+        });
+
+        etKey.requestFocus();
+        getMainActivity().showKeyboard();
     }
 
     @Override
@@ -70,7 +80,6 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
             if (StringUtils.isEmpty(key)) {
                 showToast(getString(R.string.empty_key));
                 hideScreensaver();
-//                hideProgressBar();
                 return;
             }
             if (!isKeyBtnPressed) {

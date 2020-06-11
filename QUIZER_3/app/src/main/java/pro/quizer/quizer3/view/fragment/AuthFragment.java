@@ -39,6 +39,7 @@ import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
 import pro.quizer.quizer3.utils.FileUtils;
+import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.MD5Utils;
 import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.utils.StringUtils;
@@ -77,7 +78,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     @Override
     protected void onReady() {
-        RelativeLayout cont = (RelativeLayout) findViewById(R.id.cont_auth_fragment);
+
         LinearLayout image = (LinearLayout) findViewById(R.id.cont_image);
         btnSend = (Button) findViewById(R.id.btn_send_auth);
         esLogin = (EditSpinner) findViewById(R.id.login_spinner);
@@ -91,7 +92,16 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         btnSend.setOnClickListener(this);
         tvVersionView.setOnClickListener(this);
 
+        if (isAvia()) {
+            esLogin.setTypeface(Fonts.getAviaText());
+            etPass.setTypeface(Fonts.getAviaText());
+            btnSend.setTypeface(Fonts.getAviaButton());
+            btnSend.setTransformationMethod(null);
+        }
+
+        RelativeLayout cont = (RelativeLayout) findViewById(R.id.cont_auth_fragment);
         cont.startAnimation(Anim.getAppear(getContext()));
+
         btnSend.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
         getMainActivity().clearCurrentUser();
@@ -130,7 +140,9 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     public void onClick(View view) {
         if (view == btnSend) {
             deactivateButtons();
-            showScreensaver(R.string.please_wait_quiz, true);
+            if(isAvia()) {
+                //TODO ADD AVIA SCREENSAVER
+            } else showScreensaver(R.string.please_wait_quiz, true);
             onLoginClick();
         } else if (view == tvVersionView) {
             onVersionClick();
@@ -379,7 +391,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             }
 
             if (configResponseModel != null) {
-                if(configResponseModel.isProjectActive() != null) {
+                if (configResponseModel.isProjectActive() != null) {
                     try {
                         getDao().setProjectActive(configResponseModel.isProjectActive());
                     } catch (Exception e) {
@@ -547,26 +559,28 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     private void activateButtons() {
         hideScreensaver();
-        btnSend.setEnabled(true);
-
-        final int sdk = android.os.Build.VERSION.SDK_INT;
-
-        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            btnSend.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-        } else {
-            btnSend.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-        }
+        setViewBackground(btnSend, true, true);
+//        btnSend.setEnabled(true);
+//
+//        final int sdk = android.os.Build.VERSION.SDK_INT;
+//
+//        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+//            btnSend.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_red : R.drawable.button_background_green));
+//        } else {
+//            btnSend.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_red : R.drawable.button_background_green));
+//        }
     }
 
     private void deactivateButtons() {
+        setViewBackground(btnSend, false, false);
         btnSend.setEnabled(false);
 
         final int sdk = android.os.Build.VERSION.SDK_INT;
 
         if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            btnSend.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            btnSend.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_gray_avia : R.drawable.button_background_gray) );
         } else {
-            btnSend.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+            btnSend.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_gray_avia : R.drawable.button_background_gray));
         }
     }
 }

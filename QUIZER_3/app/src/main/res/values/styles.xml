@@ -68,4 +68,16 @@
         <item name="android:windowEnterAnimation">@anim/slide_up</item>
         <item name="android:windowExitAnimation">@anim/slide_down</item>
     </style>
+
+    <style name="ButtonAvia">
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:background">@drawable/button_background_avia</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="ButtonAviaWithoutBorder" parent="ButtonStyle">
+        <item name="android:background">@drawable/button_background_red_without_border</item>
+    </style>
 </resources>

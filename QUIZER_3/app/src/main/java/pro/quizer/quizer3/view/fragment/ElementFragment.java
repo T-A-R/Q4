@@ -3,10 +3,12 @@ package pro.quizer.quizer3.view.fragment;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -445,6 +447,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             case ElementSubtype.END:
                 answerType = ElementSubtype.END;
                 break;
+            case ElementSubtype.RANK:
+                answerType = ElementSubtype.RANK;
+                break;
         }
     }
 
@@ -561,7 +566,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         answersList = new ArrayList<>();
         List<String> itemsList = new ArrayList<>();
 
-        if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.QUOTA)) {
+        if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.QUOTA) || answerType.equals(ElementSubtype.RANK)) {
             rvAnswers.setVisibility(View.VISIBLE);
         } else if (answerType.equals(ElementSubtype.SELECT)) {
             spinnerCont.setVisibility(View.VISIBLE);
@@ -603,6 +608,30 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         null, null, this);
                 rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
                 rvAnswers.setAdapter(adapterList);
+                break;
+            case ElementSubtype.RANK:
+                adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList,
+                        null, null, this);
+                rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
+                rvAnswers.setAdapter(adapterList);
+                ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
+                    @Override
+                    public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder dragged, @NonNull RecyclerView.ViewHolder target) {
+                        int positionDragged = dragged.getAdapterPosition();
+                        int positionTarget = target.getAdapterPosition();
+
+                        Collections.swap(answersList, positionDragged, positionTarget);
+                        adapterList.notifyItemMoved(positionDragged, positionTarget);
+
+                        return false;
+                    }
+
+                    @Override
+                    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+
+                    }
+                });
+                itemTouchHelper.attachToRecyclerView(rvAnswers);
                 break;
             case ElementSubtype.QUOTA:
                 MainActivity activity = getMainActivity();
@@ -813,10 +842,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     private boolean saveElement() {
         boolean saved = false;
-        if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.QUOTA) || answerType.equals(ElementSubtype.SCALE)) {
+        if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.QUOTA) || answerType.equals(ElementSubtype.SCALE) || answerType.equals(ElementSubtype.RANK)) {
             List<AnswerState> answerStates = null;
             if (answerType.equals(ElementSubtype.SCALE)) {
                 answerStates = adapterScale.getAnswers();
+            } else if (answerType.equals(ElementSubtype.RANK)) {
+                //TODO GET RANK ANSWERS
+                
             } else {
                 answerStates = adapterList.getAnswers();
             }

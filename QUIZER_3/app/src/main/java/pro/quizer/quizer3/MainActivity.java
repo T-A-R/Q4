@@ -140,7 +140,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        if (AVIA)
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         Fonts.init(this);
 
@@ -1182,7 +1185,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public CurrentQuestionnaireR getCurrentQuestionnaireByConfigId(String configId) {
         CurrentQuestionnaireR currentQuestionnaireByConfigId = null;
-                currentQuestionnaireByConfigId = getMainDao().getCurrentQuestionnaireByConfigId(configId);
+        currentQuestionnaireByConfigId = getMainDao().getCurrentQuestionnaireByConfigId(configId);
         return currentQuestionnaireByConfigId;
     }
 

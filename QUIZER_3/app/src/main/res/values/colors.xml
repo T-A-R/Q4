@@ -38,4 +38,7 @@
     <color name="checkbox_selected_color">@color/brand_color</color>
     <color name="dark_shadow">#cc222222</color>
     <color name="dark_shadow_green">#356136</color>
+
+    <color name="brand_color_dark_avia">#1B3E6F</color>
+    <color name="brand_color_avia">#D0112B</color>
 </resources>

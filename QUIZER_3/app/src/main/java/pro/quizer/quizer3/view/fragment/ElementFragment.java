@@ -30,6 +30,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -293,7 +294,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-//        Log.d(TAG, "???????? onClick: " + view.getTransitionName());
         if (view == btnNext) {
             DoNext next = new DoNext();
             next.execute();
@@ -615,15 +615,28 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
                 rvAnswers.setAdapter(adapterList);
                 ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
+                    private boolean mOrderChanged;
+
                     @Override
                     public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder dragged, @NonNull RecyclerView.ViewHolder target) {
                         int positionDragged = dragged.getAdapterPosition();
                         int positionTarget = target.getAdapterPosition();
 
+                        mOrderChanged = true;
                         Collections.swap(answersList, positionDragged, positionTarget);
                         adapterList.notifyItemMoved(positionDragged, positionTarget);
-
                         return false;
+                    }
+
+                    @Override
+                    public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+                        super.onSelectedChanged(viewHolder, actionState);
+
+                        if (actionState == ItemTouchHelper.ACTION_STATE_IDLE && mOrderChanged) {
+                            adapterList.notifyDataSetChanged();
+                            adapterList.clearOldPassed();
+                            mOrderChanged = false;
+                        }
                     }
 
                     @Override
@@ -852,8 +865,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             if (answerStates != null && notEmpty(answerStates)) {
                 if (answerType.equals(ElementSubtype.RANK)) {
                     //TODO GET RANK ANSWERS
+
                     List<AnswerState> answerStatesRang = new ArrayList<>();
-                    for (int i = 0; i < answerStates.size(); i++) {
+                    for (int i = 0; i < answersList.size(); i++) {
                         Integer id = answersList.get(i).getRelative_id();
                         String data = "";
                         for (int k = 0; k < answerStates.size(); k++) {
@@ -864,6 +878,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         answerStatesRang.add(new AnswerState(id, true, data));
                     }
                     answerStates = answerStatesRang;
+                    nextElementId = currentElement.getElementOptionsR().getJump();
+                    if (nextElementId == null)
+                        nextElementId = answersList.get(0).getElementOptionsR().getJump();
                 } else {
                     for (int i = 0; i < answerStates.size(); i++) {
                         if (answerStates.get(i).isChecked()) {
@@ -900,6 +917,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         answerPassedR.setProject_id(currentElement.getProjectId());
                         answerPassedR.setToken(getQuestionnaire().getToken());
                         answerPassedR.setValue(answerStates.get(i).getData());
+                        answerPassedR.setRank(i + 1);
                         if (answerType.equals(ElementSubtype.QUOTA)) {
                             answerPassedR.setFrom_quotas_block(true);
                         } else {
@@ -1283,6 +1301,44 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             if (!currentElement.getElementOptionsR().isPolyanswer())
                 adapterList.setLastSelectedPosition(lastSelectedPosition);
             adapterList.notifyDataSetChanged();
+        } else if (answerType.equals(ElementSubtype.RANK)) {
+            List<ElementPassedR> elementPassedRList = new ArrayList<>();
+            List<AnswerState> answerStatesRestored = new ArrayList<>();
+            List<ElementItemR> answerListRestored = new ArrayList<>();
+            for (int i = 0; i < answersList.size(); i++) {
+                ElementPassedR answerPassedRestored = null;
+                answerPassedRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answersList.get(i).getRelative_id());
+                if (answerPassedRestored != null) {
+                    elementPassedRList.add(answerPassedRestored);
+                }
+            }
+            if (elementPassedRList.size() > 0) {
+                Collections.sort(elementPassedRList, new Comparator<ElementPassedR>() {
+                    @Override
+                    public int compare(ElementPassedR lhs, ElementPassedR rhs) {
+                        return lhs.getRank().compareTo(rhs.getRank());
+                    }
+                });
+
+                for (ElementPassedR itemR : elementPassedRList) {
+                    answerStatesRestored.add(new AnswerState(itemR.getRelative_id(), true, itemR.getValue()));
+                    for (int i = 0; i < answersList.size(); i++) {
+                        if (answersList.get(i).getRelative_id().equals(itemR.getRelative_id())) {
+                            answerListRestored.add(answersList.get(i));
+                        }
+                    }
+                }
+                answersList = answerListRestored;
+//                for(int i = 0; i < answersList.size(); i++) {
+//                    Log.d(TAG, ">>>>>>>>>>>>>> loadSavedData: " + answersList.get(i).getRelative_id());
+//                    adapterList.notifyItemChanged(i);
+//                }
+                adapterList.setData(answersList);
+                adapterList.setAnswers(answerStatesRestored);
+                adapterList.setRestored(true);
+                adapterList.notifyDataSetChanged();
+            }
+
 
         } else if (answerType.equals(ElementSubtype.SELECT)) {
 

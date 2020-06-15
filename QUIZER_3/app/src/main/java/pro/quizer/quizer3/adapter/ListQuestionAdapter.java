@@ -142,6 +142,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         if (isRank) {
             holder.button.setVisibility(View.GONE);
             holder.answerPosition.setVisibility(View.VISIBLE);
+            holder.answerPosition.setText(String.valueOf(position + 1));
         }
 
         if (!isMulti) {
@@ -573,6 +574,10 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         return lastCheckedElement;
     }
 
+    public void setData(List<ElementItemR> elements) {
+        this.answersList = elements;
+    }
+
     public void setAnswers(List<AnswerState> answers) {
         Log.d(TAG, "=============================");
         if (answers != null) {
@@ -664,7 +669,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         isRestored = restored;
     }
 
-    private void clearOldPassed() {
+    public void clearOldPassed() {
         if (isRestored) {
             try {
                 int id = mActivity.getMainDao().getElementPassedR(mActivity.getCurrentQuestionnaire().getToken(), question.getRelative_id()).getId();

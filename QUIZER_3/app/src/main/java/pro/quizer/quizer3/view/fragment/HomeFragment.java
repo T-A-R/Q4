@@ -162,7 +162,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         btnStart.setOnClickListener(this);
         btnInfo.setOnClickListener(this);
         btnQuotas.setOnClickListener(this);
-        btnExit.setOnClickListener(this);
+        if (AVIA)
+            btnExit.setOnClickListener(this);
         tvConfigAgreement.setTypeface(Fonts.getFuturaPtBook());
         tvConfigName.setTypeface(Fonts.getFuturaPtBook());
         tvQuotasClosed.setTypeface(Fonts.getFuturaPtBook());
@@ -196,7 +197,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             sendQuestionnaires();
 
         } else {
-            btnExit.setVisibility(View.GONE);
+//            btnExit.setVisibility(View.GONE);
             cont.startAnimation(Anim.getAppear(getContext()));
             btnContinue.startAnimation(Anim.getAppearSlide(getContext(), 500));
             btnDelete.startAnimation(Anim.getAppearSlide(getContext(), 500));

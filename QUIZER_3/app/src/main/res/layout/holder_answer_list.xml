@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/_8ssp"
         android:layout_marginRight="@dimen/_8ssp"
-        android:layout_marginBottom="@dimen/_8ssp"
         android:orientation="horizontal"
         android:visibility="gone">
 
@@ -43,37 +42,40 @@
 
     </LinearLayout>
 
-
     <RelativeLayout
         android:id="@+id/open_question"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
         android:visibility="visible">
-
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginRight="@dimen/_8sdp"
             android:layout_toStartOf="@+id/radio_button"
             android:layout_toLeftOf="@+id/radio_button"
-            android:orientation="vertical">
+            android:orientation="horizontal">
+
+            <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+                android:id="@+id/position"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:layout_marginRight="@dimen/_8sdp"
+                android:text="1"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="@dimen/_14ssp"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/_8sdp"
-                android:orientation="horizontal">
-
-                <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
-                    android:id="@+id/position"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/_8sdp"
-                    android:layout_marginRight="@dimen/_8sdp"
-                    android:text="1"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="@dimen/_14ssp"
-                    android:visibility="gone" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
                     android:id="@+id/answer"
@@ -83,21 +85,17 @@
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/_14ssp" />
 
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                    android:id="@+id/answer_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Answer"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="@dimen/_12ssp"
+                    android:textStyle="italic"
+                    android:visibility="gone" />
+
             </LinearLayout>
-
-            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
-                android:id="@+id/answer_desc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/_8sdp"
-                android:layout_marginRight="@dimen/_8sdp"
-                android:layout_marginBottom="@dimen/_6sdp"
-                android:text="Answer"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="@dimen/_12ssp"
-                android:textStyle="italic"
-                android:visibility="gone" />
-
         </LinearLayout>
 
         <ImageView

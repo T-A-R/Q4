@@ -1172,7 +1172,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     e.printStackTrace();
                 }
 
-                if (openType && !element.getElementOptionsR().isUnnecessary_fill_open()) {
+                if (openType && !element.getElementOptionsR().isUnnecessary_fill_open() && !currentElement.getSubtype().equals(ElementSubtype.RANK)) {
                     if (state.getData().equals("") || state.getData() == null) {
                         showToast(getString(R.string.empty_string_warning));
                         return false;
@@ -1329,17 +1329,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
                 }
                 answersList = answerListRestored;
-//                for(int i = 0; i < answersList.size(); i++) {
-//                    Log.d(TAG, ">>>>>>>>>>>>>> loadSavedData: " + answersList.get(i).getRelative_id());
-//                    adapterList.notifyItemChanged(i);
-//                }
                 adapterList.setData(answersList);
                 adapterList.setAnswers(answerStatesRestored);
                 adapterList.setRestored(true);
                 adapterList.notifyDataSetChanged();
             }
-
-
         } else if (answerType.equals(ElementSubtype.SELECT)) {
 
             spinnerSelection = -1;

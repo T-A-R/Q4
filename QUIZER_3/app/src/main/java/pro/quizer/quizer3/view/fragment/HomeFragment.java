@@ -108,6 +108,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private int mClosedQuotasCount;
     private boolean mIsUsedFakeGps;
     private boolean mIsTimeDialogShow = false;
+    private boolean mIsDeleteQuizDialogShow = false;
     private boolean mIsStartAfterAuth = false;
     private boolean isForceGps = false;
     private boolean canContWithZeroGps = false;
@@ -659,11 +660,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 alertDialog.setPositiveButton(R.string.dialog_next, (dialog, which) -> {
                     canContWithZeroGps = true;
                     dialog.dismiss();
+                    onClick(btnStart);
                 });
 
                 alertDialog.setNegativeButton(R.string.view_retry, (dialog, which) -> {
                     canContWithZeroGps = false;
                     dialog.dismiss();
+                    activateButtons();
                 });
             }
 
@@ -1283,25 +1286,36 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
 
     public void showStartDialog() {
-
-        if (activity != null && !activity.isFinishing()) {
-            new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
-                    .setCancelable(false)
-                    .setTitle(isNeedUpdate ? R.string.dialog_config_title : R.string.dialog_start_title)
-                    .setMessage(isNeedUpdate ? R.string.dialog_config_body : R.string.dialog_start_body)
-                    .setPositiveButton(R.string.view_yes, (dialog, which) -> {
-                        isStartBtnPressed = true;
-                        deactivateButtons();
-                        if (isNeedUpdate) {
-                            updateLocalConfig();
-                        } else {
-                            if (checkTime() && checkGps() && checkMemory()) {
-                                new StartNewQuiz().execute();
+        if (!mIsDeleteQuizDialogShow) {
+            mIsDeleteQuizDialogShow = true;
+            if (activity != null && !activity.isFinishing()) {
+                new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
+                        .setCancelable(false)
+                        .setTitle(isNeedUpdate ? R.string.dialog_config_title : R.string.dialog_start_title)
+                        .setMessage(isNeedUpdate ? R.string.dialog_config_body : R.string.dialog_start_body)
+                        .setPositiveButton(R.string.view_yes, (dialog, which) -> {
+                            isStartBtnPressed = true;
+                            deactivateButtons();
+                            if (isNeedUpdate) {
+                                updateLocalConfig();
+                            } else {
+                                if (checkTime() && checkGps() && checkMemory()) {
+                                    new StartNewQuiz().execute();
+                                }
                             }
-                        }
-
-                    })
-                    .setNegativeButton(R.string.view_no, null).show();
+                        })
+                        .setNegativeButton(R.string.view_no, null).show();
+            }
+        } else {
+            isStartBtnPressed = true;
+            deactivateButtons();
+            if (isNeedUpdate) {
+                updateLocalConfig();
+            } else {
+                if (checkTime() && checkGps() && checkMemory()) {
+                    new StartNewQuiz().execute();
+                }
+            }
         }
     }
 

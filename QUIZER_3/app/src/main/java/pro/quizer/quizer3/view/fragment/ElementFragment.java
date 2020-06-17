@@ -39,6 +39,7 @@ import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.ListQuestionAdapter;
+import pro.quizer.quizer3.adapter.RankQuestionAdapter;
 import pro.quizer.quizer3.adapter.ScaleQuestionAdapter;
 import pro.quizer.quizer3.adapter.TableQuestionAdapter;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
@@ -60,7 +61,7 @@ import pro.quizer.quizer3.view.Toolbar;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class ElementFragment extends ScreenFragment implements View.OnClickListener, ListQuestionAdapter.OnAnswerClickListener, ScaleQuestionAdapter.OnAnswerClickListener, TableQuestionAdapter.OnTableAnswerClickListener {
+public class ElementFragment extends ScreenFragment implements View.OnClickListener, ListQuestionAdapter.OnAnswerClickListener, RankQuestionAdapter.OnAnswerClickListener, ScaleQuestionAdapter.OnAnswerClickListener, TableQuestionAdapter.OnTableAnswerClickListener {
 
     private Toolbar toolbar;
     private Button btnNext;
@@ -133,6 +134,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private int titles = 0;
 
     private ListQuestionAdapter adapterList;
+    private RankQuestionAdapter adapterRank;
     private ScaleQuestionAdapter adapterScale;
     private ArrayAdapter adapterSpinner;
     private TableQuestionAdapter adapterTable;
@@ -621,23 +623,24 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 rvAnswers.setAdapter(adapterList);
                 break;
             case ElementSubtype.RANK:
-                adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList,
+                adapterRank = new RankQuestionAdapter(getActivity(), currentElement, answersList,
                         null, null, this);
                 rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
-                rvAnswers.setAdapter(adapterList);
+                rvAnswers.setAdapter(adapterRank);
                 ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
                     private boolean mOrderChanged;
-                    private List<AnswerState> answers = adapterList.getAnswers();
+                    private List<AnswerState> answers = null;
 
                     @Override
                     public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder dragged, @NonNull RecyclerView.ViewHolder target) {
                         int positionDragged = dragged.getAdapterPosition();
                         int positionTarget = target.getAdapterPosition();
 
+                        answers = adapterRank.getAnswers();
                         mOrderChanged = true;
                         Collections.swap(answersList, positionDragged, positionTarget);
                         Collections.swap(answers, positionDragged, positionTarget);
-                        adapterList.notifyItemMoved(positionDragged, positionTarget);
+                        adapterRank.notifyItemMoved(positionDragged, positionTarget);
 
                         return false;
                     }
@@ -653,8 +656,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             for(AnswerState state : answers) {
                                 Log.d(TAG, ">>>>>>>>>>>>>> onSelectedChanged: " + state.getRelative_id() + " / " + state.getData());
                             }
-                            adapterList.notifyDataSetChanged();
-                            adapterList.clearOldPassed();
+                            adapterRank.setAnswers(answers);
+                            adapterRank.notifyDataSetChanged();
+                            adapterRank.clearOldPassed();
                             mOrderChanged = false;
                         }
                     }
@@ -879,6 +883,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             List<AnswerState> answerStates = null;
             if (answerType.equals(ElementSubtype.SCALE)) {
                 answerStates = adapterScale.getAnswers();
+            } else if (answerType.equals(ElementSubtype.RANK)) {
+                answerStates = adapterRank.getAnswers();
             } else {
                 answerStates = adapterList.getAnswers();
             }
@@ -1349,10 +1355,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
                 }
                 answersList = answerListRestored;
-                adapterList.setData(answersList);
-                adapterList.setAnswers(answerStatesRestored);
-                adapterList.setRestored(true);
-                adapterList.notifyDataSetChanged();
+                adapterRank.setData(answersList);
+                adapterRank.setAnswers(answerStatesRestored);
+                adapterRank.setRestored(true);
+                adapterRank.notifyDataSetChanged();
             }
         } else if (answerType.equals(ElementSubtype.SELECT)) {
 

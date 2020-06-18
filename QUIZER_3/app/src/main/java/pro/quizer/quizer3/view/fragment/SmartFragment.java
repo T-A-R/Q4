@@ -931,6 +931,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             elementDatabaseModel.setItem_order(elementItemR.getElementOptionsR().getOrder());
             if (ElementType.ANSWER.equals(elementItemR.getType())) {
                 elementDatabaseModel.setValue(element.getValue());
+                elementDatabaseModel.setRank(element.getRank());
                 elementDatabaseModel.setType(ElementDatabaseType.ELEMENT);
                 countElements++;
             } else {

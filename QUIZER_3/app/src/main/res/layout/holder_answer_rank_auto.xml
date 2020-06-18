@@ -68,7 +68,7 @@
                 android:layout_marginRight="@dimen/_8sdp"
                 android:layout_gravity="center_vertical"
                 android:text="1"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="@color/brand_color_dark"
                 android:textSize="@dimen/_10ssp"
                 android:visibility="gone" />
 
@@ -128,7 +128,8 @@
             android:layout_marginBottom="@dimen/_3sdp"
             android:inputType="text"
             android:maxLines="1"
-            android:textSize="@dimen/_10ssp" />
+            android:textSize="@dimen/_10ssp"
+            android:focusableInTouchMode="false"/>
 
         <ImageView
             android:id="@+id/edit_button"

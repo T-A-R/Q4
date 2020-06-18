@@ -30,6 +30,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -38,6 +39,7 @@ import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.ListQuestionAdapter;
+import pro.quizer.quizer3.adapter.RankQuestionAdapter;
 import pro.quizer.quizer3.adapter.ScaleQuestionAdapter;
 import pro.quizer.quizer3.adapter.TableQuestionAdapter;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
@@ -59,13 +61,14 @@ import pro.quizer.quizer3.view.Toolbar;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class ElementFragment extends ScreenFragment implements View.OnClickListener, ListQuestionAdapter.OnAnswerClickListener, ScaleQuestionAdapter.OnAnswerClickListener, TableQuestionAdapter.OnTableAnswerClickListener {
+public class ElementFragment extends ScreenFragment implements View.OnClickListener, ListQuestionAdapter.OnAnswerClickListener, RankQuestionAdapter.OnAnswerClickListener, ScaleQuestionAdapter.OnAnswerClickListener, TableQuestionAdapter.OnTableAnswerClickListener {
 
     private Toolbar toolbar;
     private Button btnNext;
     private Button btnPrev;
     private Button btnExit;
     private Button btnHideTitle;
+    private Button btnHideTitle2;
     private Button btnUnhideTitle;
     private Button btnUnhideQuestion;
     private RelativeLayout cont;
@@ -128,15 +131,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private boolean isMultiSpinner = false;
     private boolean conditions = false;
     private int lastCheckedElement = -103;
+    private int titles = 0;
 
     private ListQuestionAdapter adapterList;
+    private RankQuestionAdapter adapterRank;
     private ScaleQuestionAdapter adapterScale;
     private ArrayAdapter adapterSpinner;
     private TableQuestionAdapter adapterTable;
     private MultiSelectSpinner multiSelectionSpinner;
     private List<PrevElementsR> prevList = null;
 
-    private final String KEY_RECYCLER_STATE = "recycler_state";
+//    private final String KEY_RECYCLER_STATE = "recycler_state";
 
     public ElementFragment() {
         super(R.layout.fragment_element);
@@ -189,7 +194,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         closeImage2 = (ImageView) findViewById(R.id.image_close_2);
         closeQuestion = (ImageView) findViewById(R.id.question_close);
         btnUnhideTitle = (Button) findViewById(R.id.unhide_btn);
-        btnHideTitle = (Button) findViewById(R.id.unhide_btn2);
+        btnHideTitle = (Button) findViewById(R.id.unhide_btn1);
+        btnHideTitle2 = (Button) findViewById(R.id.unhide_btn2);
         btnUnhideQuestion = (Button) findViewById(R.id.down_btn);
         btnNext = (Button) findViewById(R.id.next_btn);
         btnPrev = (Button) findViewById(R.id.back_btn);
@@ -204,14 +210,15 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         btnPrev.setOnClickListener(this);
         btnExit.setOnClickListener(this);
         closeImage1.setOnClickListener(this);
-        titleCont1.setOnClickListener(this);
+//        titleCont1.setOnClickListener(this);
+//        titleCont2.setOnClickListener(this);
         closeImage2.setOnClickListener(this);
-        titleCont2.setOnClickListener(this);
         closeQuestion.setOnClickListener(this);
         unhideCont.setOnClickListener(this);
         cont.setOnClickListener(this);
         tvQuestion.setOnClickListener(this);
         btnHideTitle.setOnClickListener(this);
+        btnHideTitle2.setOnClickListener(this);
         btnUnhideTitle.setOnClickListener(this);
         btnUnhideQuestion.setOnClickListener(this);
 
@@ -293,7 +300,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-//        Log.d(TAG, "???????? onClick: " + view.getTransitionName());
         if (view == btnNext) {
             DoNext next = new DoNext();
             next.execute();
@@ -345,7 +351,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     showExitPoolAlertDialog();
                 }
             }
-        } else if (view == closeImage1 || view == titleCont1 || view == btnHideTitle) {
+        } else if (view == closeImage1 || view == closeImage2 || view == btnHideTitle || view == btnHideTitle2) {
             titleCont1.setVisibility(View.GONE);
             unhideCont.setVisibility(View.VISIBLE);
             isTitle1Hided = true;
@@ -355,11 +361,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } else if (view == unhideCont || view == btnUnhideTitle) {
             if (isTitle1Hided) {
                 isTitle1Hided = false;
-                titleCont1.setVisibility(View.VISIBLE);
-            }
-            if (isTitle2Hided) {
                 isTitle2Hided = false;
-                titleCont2.setVisibility(View.VISIBLE);
+                if(titles == 1) {
+                    titleCont2.setVisibility(View.VISIBLE);
+                }
+                if (titles == 2) {
+                    titleCont1.setVisibility(View.VISIBLE);
+                    titleCont2.setVisibility(View.VISIBLE);
+                }
             }
             unhideCont.setVisibility(View.GONE);
         } else if (view == closeQuestion || view == tvQuestion || view == btnUnhideQuestion) {
@@ -472,6 +481,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         && parentElement.getElementOptionsR().getTitle() != null
                         && parentElement.getElementOptionsR().getTitle().length() > 0
                         && (parentElement.getShown_at_id().equals(-102) || parentElement.getShown_at_id().equals(currentElement.getRelative_id()))) {
+                    titles = 1;
                     getDao().setWasElementShown(true, parentElement.getRelative_id(), parentElement.getUserId(), parentElement.getProjectId());
                     getDao().setShownId(currentElement.getRelative_id(), parentElement.getRelative_id(), parentElement.getUserId(), parentElement.getProjectId());
                     titleCont2.setVisibility(View.VISIBLE);
@@ -496,6 +506,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                     && parentElement2.getElementOptionsR().getTitle() != null
                                     && parentElement2.getElementOptionsR().getTitle().length() > 0
                                     && (parentElement2.getShown_at_id().equals(-102) || parentElement2.getShown_at_id().equals(currentElement.getRelative_id()))) {
+                                titles = 2;
                                 getDao().setWasElementShown(true, parentElement2.getRelative_id(), parentElement2.getUserId(), parentElement2.getProjectId());
                                 getDao().setShownId(currentElement.getRelative_id(), parentElement2.getRelative_id(), parentElement2.getUserId(), parentElement2.getProjectId());
                                 titleCont1.setVisibility(View.VISIBLE);
@@ -503,6 +514,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                 if (parentElement2.getElementOptionsR().getDescription() != null) {
                                     tvTitleDesc1.setVisibility(View.VISIBLE);
                                     tvTitleDesc1.setText(parentElement2.getElementOptionsR().getDescription());
+                                    btnHideTitle2.setVisibility(View.GONE);
+                                    closeImage2.setVisibility(View.GONE);
                                 }
                                 showContent(parentElement2, titleImagesCont2);
                             }
@@ -610,20 +623,45 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 rvAnswers.setAdapter(adapterList);
                 break;
             case ElementSubtype.RANK:
-                adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList,
+                adapterRank = new RankQuestionAdapter(getActivity(), currentElement, answersList,
                         null, null, this);
                 rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
-                rvAnswers.setAdapter(adapterList);
+                rvAnswers.setAdapter(adapterRank);
                 ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
+                    private boolean mOrderChanged;
+                    private List<AnswerState> answers = null;
+
                     @Override
                     public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder dragged, @NonNull RecyclerView.ViewHolder target) {
                         int positionDragged = dragged.getAdapterPosition();
                         int positionTarget = target.getAdapterPosition();
 
+                        answers = adapterRank.getAnswers();
+                        mOrderChanged = true;
                         Collections.swap(answersList, positionDragged, positionTarget);
-                        adapterList.notifyItemMoved(positionDragged, positionTarget);
+                        Collections.swap(answers, positionDragged, positionTarget);
+                        adapterRank.notifyItemMoved(positionDragged, positionTarget);
 
                         return false;
+                    }
+
+                    @Override
+                    public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+                        super.onSelectedChanged(viewHolder, actionState);
+
+                        if (actionState == ItemTouchHelper.ACTION_STATE_IDLE && mOrderChanged) {
+//                            adapterList.setAnswers(answers);
+//                            adapterList.setPressed();
+//                            adapterList.setRestored(true);
+                            for(AnswerState state : answers) {
+                                Log.d(TAG, ">>>>>>>>>>>>>> onSelectedChanged: " + state.getRelative_id() + " / " + state.getData());
+                            }
+                            adapterRank.setLastSelectedPosition(-1);
+                            adapterRank.setAnswers(answers);
+                            adapterRank.notifyDataSetChanged();
+                            adapterRank.clearOldPassed();
+                            mOrderChanged = false;
+                        }
                     }
 
                     @Override
@@ -847,16 +885,35 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             if (answerType.equals(ElementSubtype.SCALE)) {
                 answerStates = adapterScale.getAnswers();
             } else if (answerType.equals(ElementSubtype.RANK)) {
-                //TODO GET RANK ANSWERS
-                
+                answerStates = adapterRank.getAnswers();
             } else {
                 answerStates = adapterList.getAnswers();
             }
             if (answerStates != null && notEmpty(answerStates)) {
-                for (int i = 0; i < answerStates.size(); i++) {
-                    if (answerStates.get(i).isChecked()) {
-                        int id = answerStates.get(i).getRelative_id();
-                        nextElementId = getElement(id).getElementOptionsR().getJump();
+                if (answerType.equals(ElementSubtype.RANK)) {
+                    //TODO GET RANK ANSWERS
+
+                    List<AnswerState> answerStatesRang = new ArrayList<>();
+                    for (int i = 0; i < answersList.size(); i++) {
+                        Integer id = answersList.get(i).getRelative_id();
+                        String data = "";
+                        for (int k = 0; k < answerStates.size(); k++) {
+                            if (id.equals(answerStates.get(k).getRelative_id())) {
+                                data = answerStates.get(k).getData();
+                            }
+                        }
+                        answerStatesRang.add(new AnswerState(id, true, data));
+                    }
+                    answerStates = answerStatesRang;
+                    nextElementId = currentElement.getElementOptionsR().getJump();
+                    if (nextElementId == null)
+                        nextElementId = answersList.get(0).getElementOptionsR().getJump();
+                } else {
+                    for (int i = 0; i < answerStates.size(); i++) {
+                        if (answerStates.get(i).isChecked()) {
+                            int id = answerStates.get(i).getRelative_id();
+                            nextElementId = getElement(id).getElementOptionsR().getJump();
+                        }
                     }
                 }
 
@@ -887,6 +944,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         answerPassedR.setProject_id(currentElement.getProjectId());
                         answerPassedR.setToken(getQuestionnaire().getToken());
                         answerPassedR.setValue(answerStates.get(i).getData());
+                        answerPassedR.setRank(i + 1);
                         if (answerType.equals(ElementSubtype.QUOTA)) {
                             answerPassedR.setFrom_quotas_block(true);
                         } else {
@@ -1270,7 +1328,39 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             if (!currentElement.getElementOptionsR().isPolyanswer())
                 adapterList.setLastSelectedPosition(lastSelectedPosition);
             adapterList.notifyDataSetChanged();
+        } else if (answerType.equals(ElementSubtype.RANK)) {
+            List<ElementPassedR> elementPassedRList = new ArrayList<>();
+            List<AnswerState> answerStatesRestored = new ArrayList<>();
+            List<ElementItemR> answerListRestored = new ArrayList<>();
+            for (int i = 0; i < answersList.size(); i++) {
+                ElementPassedR answerPassedRestored = null;
+                answerPassedRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answersList.get(i).getRelative_id());
+                if (answerPassedRestored != null) {
+                    elementPassedRList.add(answerPassedRestored);
+                }
+            }
+            if (elementPassedRList.size() > 0) {
+                Collections.sort(elementPassedRList, new Comparator<ElementPassedR>() {
+                    @Override
+                    public int compare(ElementPassedR lhs, ElementPassedR rhs) {
+                        return lhs.getRank().compareTo(rhs.getRank());
+                    }
+                });
 
+                for (ElementPassedR itemR : elementPassedRList) {
+                    answerStatesRestored.add(new AnswerState(itemR.getRelative_id(), true, itemR.getValue()));
+                    for (int i = 0; i < answersList.size(); i++) {
+                        if (answersList.get(i).getRelative_id().equals(itemR.getRelative_id())) {
+                            answerListRestored.add(answersList.get(i));
+                        }
+                    }
+                }
+                answersList = answerListRestored;
+                adapterRank.setData(answersList);
+                adapterRank.setAnswers(answerStatesRestored);
+                adapterRank.setRestored(true);
+                adapterRank.notifyDataSetChanged();
+            }
         } else if (answerType.equals(ElementSubtype.SELECT)) {
 
             spinnerSelection = -1;

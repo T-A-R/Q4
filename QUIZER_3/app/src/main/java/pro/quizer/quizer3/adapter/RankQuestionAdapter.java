@@ -45,6 +45,7 @@ import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
+import pro.quizer.quizer3.utils.UiUtils;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.model.OptionsOpenType.CHECKBOX;
@@ -129,9 +130,9 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         }
         View view;
         if (mAutoZoom)
-            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.holder_answer_list_auto, viewGroup, false);
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.holder_answer_rank_auto, viewGroup, false);
         else
-            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.holder_answer_list, viewGroup, false);
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.holder_answer_rank, viewGroup, false);
         ListObjectViewHolder vh = new ListObjectViewHolder(view, onAnswerClickListener);
         return vh;
     }
@@ -144,76 +145,9 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         holder.answerPosition.setVisibility(View.VISIBLE);
         holder.answerPosition.setText(String.valueOf(position + 1));
         holder.answerEditText.setText(answersState.get(position).getData());
-        Log.d(TAG, "????????????????? onBindViewHolder: " + position + " data: " + answersState.get(position).getData());
-
-
-//        boolean isOpen = !answersList.get(position).getElementOptionsR().getOpen_type().equals(CHECKBOX);
-
-//        if (!isMulti) {
-//            if (position == lastSelectedPosition) {
-//                Log.d(TAG, ">>>>>>>>>>>>>>>> OPS! 1 <<<<<<<<<<<<<<<<<<<<<<< " + position);
-//                holder.editButton.setVisibility(View.GONE);
-//                holder.button.setImageResource(R.drawable.radio_button_checked);
-//                if (isOpen) {
-//                    holder.answerEditText.setVisibility(View.VISIBLE);
-//                } else {
-//                    holder.answerEditText.setVisibility(View.GONE);
-//                    Log.d(TAG, ">>>>>>>>>>>>>>>> OPS! 2 <<<<<<<<<<<<<<<<<<<<<<< " + position);
-//                    holder.editButton.setVisibility(View.GONE);
-//                }
-//            } else {
-//                holder.button.setImageResource(R.drawable.radio_button_unchecked);
-//                if (isOpen) {
-//                    holder.answerEditText.setVisibility(View.GONE);
-//                    holder.editButton.setVisibility(View.VISIBLE);
-//                } else {
-//                    holder.answerEditText.setVisibility(View.GONE);
-//                    Log.d(TAG, ">>>>>>>>>>>>>>>> OPS! 3 <<<<<<<<<<<<<<<<<<<<<<< " + position);
-//                    holder.editButton.setVisibility(View.GONE);
-//                }
-//            }
-//        } else {
-//            if (answersState.get(position).isChecked()) {
-//                holder.button.setImageResource(R.drawable.checkbox_checked);
-//            } else {
-//                holder.button.setImageResource(R.drawable.checkbox_unchecked);
-//            }
-//        }
-
-//        if (!answersList.get(position).isEnabled()) {
-//            if (!isMulti) {
-//                holder.button.setImageResource(R.drawable.radio_button_disabled);
-//            } else {
-//                holder.button.setImageResource(R.drawable.checkbox_disabled);
-//                holder.answerTitle.setTextColor(mActivity.getResources().getColor(R.color.gray));
-//                holder.answerDesc.setTextColor(mActivity.getResources().getColor(R.color.gray));
-//            }
-//            if (!mActivity.isDarkkMode()) {
-//                if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-//                    holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bg_gray_shadow));
-//                } else {
-//                    holder.cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_gray_shadow));
-//                }
-//            } else {
-//                if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-//                    holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bg_dark_gray_shadow));
-//                } else {
-//                    holder.cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_dark_gray_shadow));
-//                }
-//            }
-//        } else {
-//            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-//                holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bg_shadow));
-//            } else {
-//                holder.cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_shadow));
-//            }
-//            holder.answerTitle.setTextColor(mActivity.getResources().getColor(R.color.black));
-//            holder.answerDesc.setTextColor(mActivity.getResources().getColor(R.color.black));
-//        }
-
-        holder.myCustomEditTextListener.updatePosition(position);
-//        holder.answerEditText.setText(answersState.get(position).getData());
-
+        holder.answerEditText.setFocusableInTouchMode(false);
+        holder.answerEditText.clearFocus();
+//        holder.myCustomEditTextListener.updatePosition(position);
     }
 
     @Override
@@ -237,7 +171,6 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         LinearLayout contentCont;
         LinearLayout cont;
         boolean isChecked = false;
-//        public boolean isOpen = false;
 
         public MyCustomEditTextListener myCustomEditTextListener;
         OnAnswerClickListener onUserClickListener;
@@ -273,13 +206,6 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         }
 
         public void bind(final ElementItemR item, int position) {
-
-//            if (item.getElementOptionsR().getOpen_type() != null) {
-//                isOpen = true;
-////                this.openType = question.getElementOptionsR().getOpen_type();
-//                Log.d(TAG, "RankQuestionAdapter: OPEN!");
-//            }
-
             answerTitle.setText(item.getElementOptionsR().getTitle());
             if (item.getElementOptionsR().getDescription() != null) {
                 answerDesc.setVisibility(View.VISIBLE);
@@ -287,6 +213,7 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
             } else {
                 answerDesc.setVisibility(View.GONE);
             }
+
 
             showContent(item, contentCont);
 
@@ -304,9 +231,11 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
             if (item.isEnabled()) {
                 cont.setOnClickListener(this);
                 editButton.setOnClickListener(this);
+                answerEditText.setOnClickListener(this);
             }
 
-            setChecked(item, position);
+            checkFilled(item, position, answerEditText);
+//            setChecked(item, position);
 
         }
 
@@ -399,165 +328,72 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
             return path + FileUtils.FOLDER_DIVIDER + fileName;
         }
 
-        public void setChecked(final ElementItemR item, int position) {
-            if (answersState.get(position).isChecked()) {
-//                Log.d(TAG, ">>>>>>>>>>>>>>>> OPS! 4 <<<<<<<<<<<<<<<<<<<<<<< " + position);
+        public void checkFilled(final ElementItemR item, int position, EditText editText) {
+            Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>> checkFilled: " + lastSelectedPosition);
+            if (answersState.get(position).getData() != null && answersState.get(position).getData().length() > 0 || lastSelectedPosition == position) {
                 editButton.setVisibility(View.GONE);
-                answerEditText.setVisibility(View.VISIBLE);
-                answerEditText.setText(answersState.get(position).getData());
-                if (isPressed.get(position)) {
-                    if (position == lastSelectedPosition) {
-                        if (item.getElementOptionsR().getOpen_type().equals(TEXT)) {
-                            answerEditText.setEnabled(true);
-                            answerEditText.requestFocus();
-                            answerEditText.setInputType(InputType.TYPE_CLASS_TEXT);
-                            mActivity.showKeyboard();
-                        } else if (item.getElementOptionsR().getOpen_type().equals(NUMBER)) {
-                            answerEditText.setEnabled(true);
-                            answerEditText.requestFocus();
-                            answerEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                            mActivity.showKeyboard();
-                        } else if (item.getElementOptionsR().getOpen_type().equals(TIME)) {
-                            setTime(answerEditText);
-                            answersState.get(position).setData(answerEditText.getText().toString());
-                            Log.d(TAG, "--------------- onTextChanged 3: " + answersState.get(position).getData() + " position: " + position);
-                            answerEditText.setEnabled(false);
-                        } else if (item.getElementOptionsR().getOpen_type().equals(DATE)) {
-                            setDate(answerEditText);
-                            answersState.get(position).setData(answerEditText.getText().toString());
-                            Log.d(TAG, "--------------- onTextChanged 4: " + answersState.get(position).getData() + " position: " + position);
-                            answerEditText.setEnabled(false);
-                        }
-                    } else {
-                        answerEditText.setEnabled(false);
-                    }
-                }
-            } else {
-                if (!isRank) {
-                    answerEditText.setVisibility(View.GONE);
-                    editButton.setVisibility(View.VISIBLE);
-                }
-            }
-        }
-
-        public void setEnabled(int position) {
-            if (answersList.get(position).getElementOptionsR().isUnchecker()) {
-                if (answersState.get(position).isChecked()) {
-                    for (int i = 0; i < answersState.size(); i++) {
-                        if (i != position) {
-                            answersList.get(i).setEnabled(false);
-                        }
+                editText.setVisibility(View.VISIBLE);
+                editText.setFocusable(true);
+                editText.setText(answersState.get(position).getData());
+                if (lastSelectedPosition == position) {
+                    if (item.getElementOptionsR().getOpen_type().equals(TEXT)) {
+//                        editText.setEnabled(true);
+                        editText.setFocusableInTouchMode(true);
+                        editText.requestFocus();
+                        editText.setInputType(InputType.TYPE_CLASS_TEXT);
+                        mActivity.showKeyboard();
+                    } else if (item.getElementOptionsR().getOpen_type().equals(NUMBER)) {
+//                        editText.setEnabled(true);
+                        editText.requestFocus();
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        mActivity.showKeyboard();
+                    } else if (item.getElementOptionsR().getOpen_type().equals(TIME)) {
+                        setTime(editText);
+                        answersState.get(position).setData(answerEditText.getText().toString());
+//                        editText.setEnabled(false);
+                    } else if (item.getElementOptionsR().getOpen_type().equals(DATE)) {
+                        setDate(editText);
+                        answersState.get(position).setData(answerEditText.getText().toString());
+//                        editText.setEnabled(false);
                     }
                 } else {
-                    for (int i = 0; i < answersState.size(); i++) {
-                        answersList.get(i).setEnabled(true);
-                    }
+//                    editText.setEnabled(false);
                 }
-            }
-
-            if (!answersList.get(position).isEnabled()) {
-                cont.setEnabled(false);
-                editButton.setEnabled(false);
             } else {
-                cont.setEnabled(true);
-                editButton.setEnabled(true);
-                cont.setOnClickListener(this);
-                editButton.setOnClickListener(this);
+                editText.setVisibility(View.GONE);
+                editButton.setVisibility(View.VISIBLE);
             }
         }
 
         @Override
         public void onClick(View v) {
-            showAnswers();
-            boolean isOpen = !answersList.get(getAdapterPosition()).getElementOptionsR().getOpen_type().equals(CHECKBOX);
-//            Log.d(TAG, ">>>>>>>>>>>> onClick: " + getAdapterPosition() + " type:" + answersList.get(getAdapterPosition()).getElementOptionsR().getOpen_type() + " isOpen:" + isOpen + " isMulti:" + isMulti);
-//            boolean emptyAnswersState = true;
-//            for (AnswerState answer : answersState) {
-//                if (answer.isChecked()) emptyAnswersState = false;
-//            }
-
-            if(isOpen) {
-                isPressed.set(getAdapterPosition(), true);
+            if (v == cont) {
+                cont.setFocusable(true);
+                cont.requestFocus();
+                Log.d(TAG, "onClick: CLEAR FOCUS");
+                return;
+            }
+            if (lastSelectedPosition != getAdapterPosition()) {
                 lastSelectedPosition = getAdapterPosition();
 
-                notifyItemChanged(lastSelectedPosition);
-                String answer = null;
-                if (answerEditText.getText() != null)
-                    answer = answerEditText.getText().toString();
-                onUserClickListener.onAnswerClick(lastSelectedPosition, isChecked, answer);
-            }
-
-//            if (emptyAnswersState || !isOpen || isFilled() || answersState.get(getAdapterPosition()).isChecked()) {
-//                isPressed.set(getAdapterPosition(), true);
-//                int oldPosition = lastSelectedPosition;
+                Log.d(TAG, "lastSelectedPosition : " + lastSelectedPosition);
+//            showAnswers();
+                boolean isOpen = !answersList.get(getAdapterPosition()).getElementOptionsR().getOpen_type().equals(CHECKBOX);
+//            Log.d(TAG, "onClick 1: " + v.getVerticalScrollbarPosition());
+                if (isOpen) {
+                    isPressed.set(getAdapterPosition(), true);
+                    checkFilled(answersList.get(lastSelectedPosition), lastSelectedPosition, answerEditText);
 //                lastSelectedPosition = getAdapterPosition();
-
-//                if (lastSelectedPosition != -1) {
-//                    Log.d(TAG, "notifyItemChanged 1: " + lastSelectedPosition);
-//                    notifyItemChanged(lastSelectedPosition);
-//                    if (answersList.get(lastSelectedPosition).isEnabled()) {
-//                        Log.d(TAG, "notifyItemChanged 2: " + lastSelectedPosition);
-//                        notifyItemChanged(lastSelectedPosition);
-//                        if (isMulti && !answersList.get(lastSelectedPosition).getElementOptionsR().isUnchecker()) {
-//                            if (answersState.get(lastSelectedPosition).isChecked()) {
-//                                answersState.get(lastSelectedPosition).setChecked(false);
-//                                lastSelectedPosition = oldPosition;
-//                                isPressed.set(getAdapterPosition(), false);
-//                            } else {
-//                                answersState.get(lastSelectedPosition).setChecked(true);
-//                                lastCheckedElement = lastSelectedPosition;
-//                            }
-//                        } else if (isMulti && answersList.get(lastSelectedPosition).getElementOptionsR().isUnchecker()) {
-//                            Log.d(TAG, "notifyItemChanged 3: " + lastSelectedPosition);
-//                            notifyDataSetChanged();
-//                            if (!answersState.get(lastSelectedPosition).isChecked()) {
-//                                answersState.get(lastSelectedPosition).setChecked(true);
-//                                lastCheckedElement = lastSelectedPosition;
-//                                unselectOther(lastSelectedPosition);
-//                            } else {
-//                                answersState.get(lastSelectedPosition).setChecked(false);
-//                            }
-//                            setEnabled(lastSelectedPosition);
-//                        } else {
-//                            Log.d(TAG, "notifyItemChanged 4: " + lastSelectedPosition);
-//                            notifyDataSetChanged();
-//                            answersState.get(lastSelectedPosition).setChecked(true);
-//                            lastCheckedElement = lastSelectedPosition;
-//                            unselectOther(lastSelectedPosition);
-//                        }
-//
-//                        if (isChecked) {
-//                            isChecked = false;
-//                        } else {
-//                            isChecked = true;
-//                        }
-//
-//                        String answer = null;
-//                        if (answerEditText.getText() != null)
-//                            answer = answerEditText.getText().toString();
-//                        onUserClickListener.onAnswerClick(lastSelectedPosition, isChecked, answer);
-//                    }
-//                }
+//                Log.d(TAG, "lastSelectedPosition 1: " + lastSelectedPosition);
 //                notifyItemChanged(lastSelectedPosition);
-//                String answer = null;
-//                if (answerEditText.getText() != null)
-//                    answer = answerEditText.getText().toString();
-//                onUserClickListener.onAnswerClick(lastSelectedPosition, isChecked, answer);
-//            } else {
-//                mActivity.showToastfromActivity(mActivity.getString(R.string.empty_string_warning));
-//            }
-
+                    String answer = null;
+                    if (answerEditText.getText() != null)
+                        answer = answerEditText.getText().toString();
+                    onUserClickListener.onAnswerClick(lastSelectedPosition, isChecked, answer);
+                }
+            }
         }
     }
-
-//    public void unselectOther(int position) {
-//        for (int i = 0; i < answersState.size(); i++) {
-//            if (i != position)
-//                answersState.get(i).setChecked(false);
-//            //TODO Enable if have to clear text
-//            answersState.get(i).setData("");
-//        }
-//    }
 
     public interface OnAnswerClickListener {
         void onAnswerClick(int position, boolean enabled, String answer);
@@ -573,10 +409,10 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
 
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            Log.d(TAG, "?????????? beforeTextChanged: " + position + " " + lastSelectedPosition);
             if (charSequence.length() == 1) canDelete = true;
             else canDelete = false;
-            lastSelectedPosition = position;
+//            lastSelectedPosition = position;
+            Log.d(TAG, "lastSelectedPosition 2: " + lastSelectedPosition);
             if (lastSelectedPosition != -1) {
                 textBefore = answersState.get(getLastSelectedPosition()).getData();
             }
@@ -584,19 +420,16 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-//            if (lastSelectedPosition != -1 && isPressed.get(lastSelectedPosition) && charSequence != null && charSequence.length() > 0) {
             if (lastSelectedPosition != -1 && charSequence != null && charSequence.length() > 0) {
                 textAfter = charSequence.toString();
                 int delta = textAfter.length() - textBefore.length();
                 if ((delta == 1 && textAfter.contains(textBefore)) || (delta == -1 && textBefore.contains(textAfter))) {
                     answersState.get(lastSelectedPosition).setData(textAfter);
-                    Log.d(TAG, "--------------- onTextChanged 1: " + answersState.get(lastSelectedPosition).getData() + " position: " + lastSelectedPosition);
                 }
             }
             if (charSequence == null || charSequence.length() == 0)
-                if (canDelete) {
+                if (canDelete && lastSelectedPosition != -1) {
                     answersState.get(lastSelectedPosition).setData(charSequence.toString());
-                    Log.d(TAG, "--------------- onTextChanged 2: " + answersState.get(lastSelectedPosition).getData() + " position: " + lastSelectedPosition);
                 }
         }
 

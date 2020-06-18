@@ -656,6 +656,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             for(AnswerState state : answers) {
                                 Log.d(TAG, ">>>>>>>>>>>>>> onSelectedChanged: " + state.getRelative_id() + " / " + state.getData());
                             }
+                            adapterRank.setLastSelectedPosition(-1);
                             adapterRank.setAnswers(answers);
                             adapterRank.notifyDataSetChanged();
                             adapterRank.clearOldPassed();

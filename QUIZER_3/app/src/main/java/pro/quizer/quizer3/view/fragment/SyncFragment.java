@@ -22,6 +22,8 @@ import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
+import static pro.quizer.quizer3.MainActivity.AVIA;
+import static pro.quizer.quizer3.MainActivity.EXIT;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class SyncFragment extends ScreenFragment implements View.OnClickListener, ICallback {
@@ -179,9 +181,8 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
 
             @Override
             public void run() {
-                if (hasReserveChannel) {
-                    hideSmsButton();
-//                    showSmsButton();
+                if (hasReserveChannel && EXIT) {
+                    showSmsButton();
                 } else {
                     hideSmsButton();
                 }

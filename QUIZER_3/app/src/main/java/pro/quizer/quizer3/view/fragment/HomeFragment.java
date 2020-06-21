@@ -73,8 +73,8 @@ import pro.quizer.quizer3.view.Toolbar;
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-//public class HomeFragment extends ScreenFragment implements View.OnClickListener, SmartFragment.Events {
-public class HomeFragment extends ScreenFragment implements View.OnClickListener {
+public class HomeFragment extends ScreenFragment implements View.OnClickListener, SmartFragment.Events {
+//public class HomeFragment extends ScreenFragment implements View.OnClickListener {
 
     private Toolbar toolbar;
     private LinearLayout contContinue;
@@ -115,6 +115,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private boolean isCanBackPress = true;
     private boolean isQuotaUpdated = false;
     private boolean isNeedUpdate = false;
+    private boolean isTimeToDownloadConfig = false;
     private Long mFakeGpsTime;
     private GPSModel mGPSModel;
     private Statistics finalStatistics;
@@ -239,30 +240,33 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             } catch (Exception e) {
                 e.printStackTrace();
             }
-//        setEventsListener(this);
+            setEventsListener(this);
             checkProjectActive();
         }
     }
 
-//    @Override
-//    public void runEvent(int id) {
-//        switch (id) {
-//            case 1:
-//                startQuestionnaire();
-//                isCanBackPress = false;
-//                break;
-//            case 2:
-//
-//                isCanBackPress = true;
-//                break;
-//        }
-//    }
+    @Override
+    public void runEvent(int id) {
+        switch (id) {
+            case 1:
+                deactivateButtons();
+                isCanBackPress = false;
+                break;
+            case 2:
+                activateButtons();
+                checkConfigUpdateDate();
+                isCanBackPress = true;
+                break;
+        }
+    }
 
     @Override
     public void onClick(View view) {
         if (view == btnStart) {
             isStartBtnPressed = true;
-            if (currentQuestionnaire == null && !isNeedUpdate) {
+            if (isTimeToDownloadConfig) {
+                reloadConfig();
+            } else if (currentQuestionnaire == null && !isNeedUpdate) {
                 if (checkTime() && checkGps() && checkMemory()) {
                     new StartNewQuiz().execute();
                 }
@@ -1437,6 +1441,19 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             hideScreensaver();
             isCanBackPress = true;
         }
+    }
+
+    private void checkConfigUpdateDate() {
+        Long updateDate = getCurrentUser().getConfigR().getConfigUpdateDate();
+        if (updateDate != null) {
+            isTimeToDownloadConfig = DateUtils.getCurrentTimeMillis() >= updateDate;
+        }
+        if (isTimeToDownloadConfig) {
+            btnStart.setText(getString(R.string.button_update_config));
+        } else {
+            btnStart.setText(R.string.button_start);
+        }
+
     }
 }
 

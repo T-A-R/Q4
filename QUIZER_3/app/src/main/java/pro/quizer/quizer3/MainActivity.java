@@ -1129,6 +1129,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         return getConfig().getProjectInfo().getReserveChannel();
     }
 
+    public boolean isExit() {
+        return getConfig().getProjectInfo().getReserveChannel() != null;
+    }
+
     public void startSMS(Long startTime) {
 
         final AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);

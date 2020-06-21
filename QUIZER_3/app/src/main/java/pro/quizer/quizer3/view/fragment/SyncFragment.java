@@ -57,7 +57,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
     protected void onReady() {
 
         initViews();
-        MainFragment.enableSideMenu(true);
+        MainFragment.enableSideMenu(true, getMainActivity().isExit());
         initStrings();
 //        new CleanUpFilesExecutable(getContext(), null).execute();
         updateData(new SyncInfoExecutable(getContext()).execute());
@@ -180,7 +180,8 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
             @Override
             public void run() {
                 if (hasReserveChannel) {
-                    showSmsButton();
+                    hideSmsButton();
+//                    showSmsButton();
                 } else {
                     hideSmsButton();
                 }

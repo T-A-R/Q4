@@ -158,7 +158,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         tvCountSent = (TextView) findViewById(R.id.count_sent);
         pb = (ProgressBar) findViewById(R.id.progressBarQuota);
 
-        MainFragment.enableSideMenu(true);
+        MainFragment.enableSideMenu(true, getMainActivity().isExit());
 
         btnStart.setOnClickListener(this);
         btnInfo.setOnClickListener(this);

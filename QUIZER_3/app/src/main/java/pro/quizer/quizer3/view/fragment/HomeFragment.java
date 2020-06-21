@@ -241,6 +241,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 e.printStackTrace();
             }
             setEventsListener(this);
+            checkConfigUpdateDate();
             checkProjectActive();
         }
     }
@@ -263,6 +264,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onClick(View view) {
         if (view == btnStart) {
+            if(!isTimeToDownloadConfig) {
+                checkConfigUpdateDate();
+                if(isTimeToDownloadConfig) {
+                    showToast(getString(R.string.please_update_config));
+                    return;
+                }
+            }
+
             isStartBtnPressed = true;
             if (isTimeToDownloadConfig) {
                 reloadConfig();
@@ -1391,7 +1400,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         @Override
         protected Void doInBackground(Void... voids) {
-//            if (checkTime() && checkGps() && checkMemory()) {
             if (currentQuestionnaire != null) {
                 if (currentQuestionnaire.getUser_project_id().equals(getCurrentUser().getUser_project_id())) {
                     if (activity.getConfig().isSaveAborted()) {
@@ -1401,19 +1409,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                             getDao().clearElementPassedR();
                             activity.setCurrentQuestionnaireNull();
 
-//                                String newConfig;
-//                                newConfig = activity.getCurrentUser().getConfig_new();
-//                                if (newConfig != null) {
-//                                    activity.runOnUiThread(HomeFragment.this::hideScreensaver);
-//                                    activity.runOnUiThread(() -> showScreensaver(R.string.config_update, true));
-//                                    getDao().updateConfig(newConfig, activity.getCurrentUser().getUser_id(), activity.getCurrentUser().getUser_project_id());
-//                                    getDao().updateNewConfig(null, activity.getCurrentUser().getUser_id(), activity.getCurrentUser().getUser_project_id());
-//                                    activity.getConfigForce();
-//                                    SmartFragment.UpdateQuiz updateQuiz = new SmartFragment.UpdateQuiz();
-//                                    updateQuiz.execute();
-//                                } else {
                             startQuestionnaire();
-//                                }
+
                         } else {
                             activity.showToastfromActivity(getString(R.string.message_quiz_save_error));
                             activateButtons();
@@ -1431,7 +1428,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             } else {
                 startQuestionnaire();
             }
-//            }
             return null;
         }
 
@@ -1453,7 +1449,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         } else {
             btnStart.setText(R.string.button_start);
         }
-
     }
 }
 

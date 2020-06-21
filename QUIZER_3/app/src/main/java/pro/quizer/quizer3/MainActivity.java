@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     static public String TAG = "TARLOGS";
     static public boolean AVIA = false;
-    static public boolean EXIT = true;
+    static public boolean EXIT = false;
     public static final String IS_AFTER_AUTH = "IS_AFTER_AUTH";
     static public boolean DEBUG_MODE = true;
     static public boolean RECORDING = false;

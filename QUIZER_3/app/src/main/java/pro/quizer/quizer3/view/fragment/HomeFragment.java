@@ -264,9 +264,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onClick(View view) {
         if (view == btnStart) {
-            if(!isTimeToDownloadConfig) {
+            if (!isTimeToDownloadConfig) {
                 checkConfigUpdateDate();
-                if(isTimeToDownloadConfig) {
+                if (isTimeToDownloadConfig) {
                     showToast(getString(R.string.please_update_config));
                     return;
                 }
@@ -1440,10 +1440,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void checkConfigUpdateDate() {
-        Long updateDate = getCurrentUser().getConfigR().getConfigUpdateDate();
+        Long updateDate = getMainActivity().getConfigForce().getConfigUpdateDate();
         if (updateDate != null) {
             isTimeToDownloadConfig = DateUtils.getCurrentTimeMillis() >= updateDate;
         }
+
         if (isTimeToDownloadConfig) {
             btnStart.setText(getString(R.string.button_update_config));
         } else {

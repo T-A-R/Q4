@@ -117,7 +117,7 @@
                 tools:ignore="MissingConstraints">
 
                 <Button
-                    android:id="@+id/unhide_btn2"
+                    android:id="@+id/unhide_btn1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/button_background_transparent_white"
@@ -218,15 +218,32 @@
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteX="10dp" />
 
-            <ImageView
-                android:id="@+id/image_close_2"
-                android:layout_width="@dimen/_12sdp"
-                android:layout_height="@dimen/_12sdp"
-                android:src="@drawable/arrow_up_white"
-                android:visibility="gone"
+            <RelativeLayout
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_marginRight="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
                 app:layout_constraintEnd_toEndOf="@+id/title_2"
-                tools:ignore="MissingConstraints"
-                tools:layout_editor_absoluteY="2dp" />
+                tools:ignore="MissingConstraints">
+
+                <Button
+                    android:id="@+id/unhide_btn2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/button_background_transparent_white"
+                    android:src="@drawable/arrow_up_white"
+                    android:textSize="@dimen/_12ssp" />
+
+                <ImageView
+                    android:id="@+id/image_close_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/_4sdp"
+                    android:src="@drawable/arrow_up_white"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteY="2dp" />
+
+            </RelativeLayout>
 
         </android.support.constraint.ConstraintLayout>
 

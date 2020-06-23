@@ -734,7 +734,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                             final String[] fileUris = configResponseModel.getConfig().getProjectInfo().getMediaFiles();
 
                             if (fileUris == null || fileUris.length == 0) {
-                                Log.d(TAG, "reloadConfig: file list empty");
+                                Log.d("TARLOGS.SmartFragment", "reloadConfig: file list empty");
                             } else {
                                 FileLoader.multiFileDownload(getContext())
                                         .fromDirectory(Constants.Strings.EMPTY, FileLoader.DIR_EXTERNAL_PRIVATE)

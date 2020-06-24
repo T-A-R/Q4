@@ -458,6 +458,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     getDao().clearWasElementShown(false);
 
                     currentQuestionnaire = questionnaire;
+
+                    Log.d("T-L.HomeFragment", "!!!!!!!!!!! startQuestionnaire: " + mGpsString + " " + mGpsNetworkString + " " + questionnaire.getGps());
+                    setCurrentQuestionnaire(currentQuestionnaire);
                     if (mIsUsedFakeGps) {
                         return false;
                     }
@@ -596,16 +599,16 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         if (activity.getConfig().isGps() && mGPSModel == null) {
             try {
                 mGPSModel = GpsUtils.getCurrentGps(getActivity(), isForceGps);
-                if (mGPSModel == null || mGPSModel.isNoGps()) {
-                    Log.d(TAG, "checkGps: NO GPS DIALOG");
-
-                } else {
+//                if (mGPSModel == null || mGPSModel.isNoGps()) {
+//                    Log.d(TAG, "checkGps: NO GPS DIALOG " + mGPSModel.isNoGps());
+//
+//                } else {
                     mGpsString = mGPSModel.getGPS();
                     mGpsNetworkString = mGPSModel.getGPSNetwork();
                     mIsUsedFakeGps = mGPSModel.isFakeGPS();
                     mGpsTime = mGPSModel.getTime();
                     mGpsTimeNetwork = mGPSModel.getTimeNetwork();
-                }
+//                }
             } catch (final Exception e) {
                 e.printStackTrace();
                 Log.d(TAG, "startGps: " + e.getMessage());
@@ -1403,6 +1406,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             if (currentQuestionnaire != null) {
                 if (currentQuestionnaire.getUser_project_id().equals(getCurrentUser().getUser_project_id())) {
                     if (activity.getConfig().isSaveAborted()) {
+//                        setCurrentQuestionnaire(currentQuestionnaire);
                         if (saveQuestionnaireToDatabase(currentQuestionnaire, true)) {
                             getDao().clearCurrentQuestionnaireR();
                             getDao().clearPrevElementsR();

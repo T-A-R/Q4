@@ -1,5 +1,7 @@
 package pro.quizer.quizer3.utils;
 
+import android.util.Log;
+
 import pro.quizer.quizer3.Constants;
 
 import static pro.quizer.quizer3.utils.GpsUtils.DEFAULT_GPS_VALUE;
@@ -26,6 +28,7 @@ public class GPSModel {
         this.timeN = timeN;
         this.isFakeGPS = isFakeGPS;
         this.isConZeroLoc = isConZeroLoc;
+//        Log.d("T-L.GPSModel", "GPSModel: " + lon + " " + lat + " " + lonN + " " + latN + " " + time + " " + isFakeGPS + " " + isConZeroLoc);
     }
 
     public long getTime() {

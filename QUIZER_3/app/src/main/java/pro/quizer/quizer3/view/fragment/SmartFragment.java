@@ -613,7 +613,13 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public CurrentQuestionnaireR getQuestionnaire() {
+//        Log.d("T-L.SmartFragment", "??????? getQuestionnaire: " + currentQuestionnaire.getGps());
         return currentQuestionnaire;
+    }
+
+    public void setCurrentQuestionnaire(CurrentQuestionnaireR currentQuestionnaire) {
+        this.currentQuestionnaire = currentQuestionnaire;
+        Log.d("T-L.SmartFragment", ">>>>>>>>>>>>>>>>>>>>>>>> setCurrentQuestionnaire: " + currentQuestionnaire.getGps());
     }
 
     public CurrentQuestionnaireR getQuestionnaireFromDB() {
@@ -830,7 +836,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         countQuestions = 0;
 
         List<ElementPassedR> elements = null;
-
+//        Log.d("T-L.SmartFragment", "????????????? saveQuestionnaireToDatabase: " + currentQuiz.getGps());
         try {
             elements = getDao().getAllElementsPassedR(currentQuiz.getToken());
         } catch (Exception e) {

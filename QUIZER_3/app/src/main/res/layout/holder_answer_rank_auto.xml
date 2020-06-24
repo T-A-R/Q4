@@ -52,12 +52,10 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/_8sdp"
             android:layout_marginRight="@dimen/_8sdp"
             android:layout_centerVertical="true"
-            android:layout_toStartOf="@+id/radio_button"
-            android:layout_toLeftOf="@+id/radio_button"
             android:orientation="horizontal">
 
             <TextView
@@ -75,12 +73,14 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/answer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="Answer"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/_10ssp" />
@@ -89,6 +89,7 @@
                     android:id="@+id/answer_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="Answer"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="@dimen/_8ssp"
@@ -97,19 +98,6 @@
 
             </LinearLayout>
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/radio_button"
-            android:layout_width="@dimen/_16sdp"
-            android:layout_height="@dimen/_16sdp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginLeft="@dimen/_8sdp"
-            android:layout_marginEnd="@dimen/_8sdp"
-            android:layout_marginRight="@dimen/_8sdp"
-            android:src="@drawable/radio_button_unchecked" />
 
     </RelativeLayout>
 

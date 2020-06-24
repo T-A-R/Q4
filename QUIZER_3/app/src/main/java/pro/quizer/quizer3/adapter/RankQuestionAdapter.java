@@ -141,7 +141,7 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
     public void onBindViewHolder(@NonNull ListObjectViewHolder holder, int position) {
         holder.bind(answersList.get(position), position);
 
-        holder.button.setVisibility(View.GONE);
+//        holder.button.setVisibility(View.GONE);
         holder.answerPosition.setVisibility(View.VISIBLE);
         holder.answerPosition.setText(String.valueOf(position + 1));
         holder.answerEditText.setText(answersState.get(position).getData());
@@ -161,7 +161,7 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         TextView answerTitle;
         TextView answerDesc;
         public EditText answerEditText;
-        ImageView button;
+//        ImageView button;
         ImageView editButton;
         ImageView image1;
         ImageView image2;
@@ -182,7 +182,7 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
             answerTitle = (TextView) itemView.findViewById(R.id.answer);
             answerDesc = (TextView) itemView.findViewById(R.id.answer_desc);
             answerEditText = (EditText) itemView.findViewById(R.id.edit_answer);
-            button = (ImageView) itemView.findViewById(R.id.radio_button);
+//            button = (ImageView) itemView.findViewById(R.id.radio_button);
             editButton = (ImageView) itemView.findViewById(R.id.edit_button);
             image1 = (ImageView) itemView.findViewById(R.id.answer_image_1);
             image2 = (ImageView) itemView.findViewById(R.id.answer_image_2);
@@ -193,6 +193,7 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
             contentCont = (LinearLayout) itemView.findViewById(R.id.answer_images_cont);
 
             answerTitle.setTypeface(Fonts.getFuturaPtBook());
+            answerPosition.setTypeface(Fonts.getFuturaPtBook());
             answerDesc.setTypeface(Fonts.getFuturaPtBook());
             answerEditText.setTypeface(Fonts.getFuturaPtBook());
             answerEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -207,7 +208,7 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
 
         public void bind(final ElementItemR item, int position) {
             answerTitle.setText(item.getElementOptionsR().getTitle());
-            if (item.getElementOptionsR().getDescription() != null) {
+            if (item.getElementOptionsR().getDescription() != null && item.getElementOptionsR().getDescription().length() > 0) {
                 answerDesc.setVisibility(View.VISIBLE);
                 answerDesc.setText(item.getElementOptionsR().getDescription());
             } else {

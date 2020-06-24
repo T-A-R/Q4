@@ -226,7 +226,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         toolbar.setTitle(getString(R.string.app_name));
         toolbar.showOptionsView(v -> MainFragment.showDrawer(), v -> showInfoDialog());
         toolbar.showInfoView();
-        MainFragment.enableSideMenu(false);
+        MainFragment.enableSideMenu(false, getMainActivity().isExit());
 
         showScreensaver(R.string.please_wait_quiz_element, true);
         try {

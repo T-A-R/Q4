@@ -73,6 +73,9 @@ public class ConfigModel implements Serializable {
     @SerializedName("save_aborted")
     private boolean save_aborted;
 
+    @SerializedName("config_forced_update_date")
+    private Long config_forced_update_date;
+
     public String getServerUrl() {
         return server_url;
     }
@@ -180,4 +183,11 @@ public class ConfigModel implements Serializable {
             return is_force_audio;
     }
 
+    public Long getConfigUpdateDate() {
+        return config_forced_update_date;
+    }
+
+    public void setConfigUpdateDate(Long config_forced_update_date) {
+        this.config_forced_update_date = config_forced_update_date;
+    }
 }

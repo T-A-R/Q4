@@ -73,8 +73,8 @@ import pro.quizer.quizer3.view.Toolbar;
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-//public class HomeFragment extends ScreenFragment implements View.OnClickListener, SmartFragment.Events {
-public class HomeFragment extends ScreenFragment implements View.OnClickListener {
+public class HomeFragment extends ScreenFragment implements View.OnClickListener, SmartFragment.Events {
+//public class HomeFragment extends ScreenFragment implements View.OnClickListener {
 
     private Toolbar toolbar;
     private LinearLayout contContinue;
@@ -115,6 +115,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private boolean isCanBackPress = true;
     private boolean isQuotaUpdated = false;
     private boolean isNeedUpdate = false;
+    private boolean isTimeToDownloadConfig = false;
     private Long mFakeGpsTime;
     private GPSModel mGPSModel;
     private Statistics finalStatistics;
@@ -158,7 +159,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         tvCountSent = (TextView) findViewById(R.id.count_sent);
         pb = (ProgressBar) findViewById(R.id.progressBarQuota);
 
-        MainFragment.enableSideMenu(true);
+        MainFragment.enableSideMenu(true, getMainActivity().isExit());
 
         btnStart.setOnClickListener(this);
         btnInfo.setOnClickListener(this);
@@ -239,30 +240,42 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             } catch (Exception e) {
                 e.printStackTrace();
             }
-//        setEventsListener(this);
+            setEventsListener(this);
+            checkConfigUpdateDate();
             checkProjectActive();
         }
     }
 
-//    @Override
-//    public void runEvent(int id) {
-//        switch (id) {
-//            case 1:
-//                startQuestionnaire();
-//                isCanBackPress = false;
-//                break;
-//            case 2:
-//
-//                isCanBackPress = true;
-//                break;
-//        }
-//    }
+    @Override
+    public void runEvent(int id) {
+        switch (id) {
+            case 1:
+                deactivateButtons();
+                isCanBackPress = false;
+                break;
+            case 2:
+                activateButtons();
+                checkConfigUpdateDate();
+                isCanBackPress = true;
+                break;
+        }
+    }
 
     @Override
     public void onClick(View view) {
         if (view == btnStart) {
+            if (!isTimeToDownloadConfig) {
+                checkConfigUpdateDate();
+                if (isTimeToDownloadConfig) {
+                    showToast(getString(R.string.please_update_config));
+                    return;
+                }
+            }
+
             isStartBtnPressed = true;
-            if (currentQuestionnaire == null && !isNeedUpdate) {
+            if (isTimeToDownloadConfig) {
+                reloadConfig();
+            } else if (currentQuestionnaire == null && !isNeedUpdate) {
                 if (checkTime() && checkGps() && checkMemory()) {
                     new StartNewQuiz().execute();
                 }
@@ -445,6 +458,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     getDao().clearWasElementShown(false);
 
                     currentQuestionnaire = questionnaire;
+
+                    Log.d("T-L.HomeFragment", "!!!!!!!!!!! startQuestionnaire: " + mGpsString + " " + mGpsNetworkString + " " + questionnaire.getGps());
+                    setCurrentQuestionnaire(currentQuestionnaire);
                     if (mIsUsedFakeGps) {
                         return false;
                     }
@@ -583,16 +599,16 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         if (activity.getConfig().isGps() && mGPSModel == null) {
             try {
                 mGPSModel = GpsUtils.getCurrentGps(getActivity(), isForceGps);
-                if (mGPSModel == null || mGPSModel.isNoGps()) {
-                    Log.d(TAG, "checkGps: NO GPS DIALOG");
-
-                } else {
+//                if (mGPSModel == null || mGPSModel.isNoGps()) {
+//                    Log.d(TAG, "checkGps: NO GPS DIALOG " + mGPSModel.isNoGps());
+//
+//                } else {
                     mGpsString = mGPSModel.getGPS();
                     mGpsNetworkString = mGPSModel.getGPSNetwork();
                     mIsUsedFakeGps = mGPSModel.isFakeGPS();
                     mGpsTime = mGPSModel.getTime();
                     mGpsTimeNetwork = mGPSModel.getTimeNetwork();
-                }
+//                }
             } catch (final Exception e) {
                 e.printStackTrace();
                 Log.d(TAG, "startGps: " + e.getMessage());
@@ -1387,29 +1403,18 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         @Override
         protected Void doInBackground(Void... voids) {
-//            if (checkTime() && checkGps() && checkMemory()) {
             if (currentQuestionnaire != null) {
                 if (currentQuestionnaire.getUser_project_id().equals(getCurrentUser().getUser_project_id())) {
                     if (activity.getConfig().isSaveAborted()) {
+//                        setCurrentQuestionnaire(currentQuestionnaire);
                         if (saveQuestionnaireToDatabase(currentQuestionnaire, true)) {
                             getDao().clearCurrentQuestionnaireR();
                             getDao().clearPrevElementsR();
                             getDao().clearElementPassedR();
                             activity.setCurrentQuestionnaireNull();
 
-//                                String newConfig;
-//                                newConfig = activity.getCurrentUser().getConfig_new();
-//                                if (newConfig != null) {
-//                                    activity.runOnUiThread(HomeFragment.this::hideScreensaver);
-//                                    activity.runOnUiThread(() -> showScreensaver(R.string.config_update, true));
-//                                    getDao().updateConfig(newConfig, activity.getCurrentUser().getUser_id(), activity.getCurrentUser().getUser_project_id());
-//                                    getDao().updateNewConfig(null, activity.getCurrentUser().getUser_id(), activity.getCurrentUser().getUser_project_id());
-//                                    activity.getConfigForce();
-//                                    SmartFragment.UpdateQuiz updateQuiz = new SmartFragment.UpdateQuiz();
-//                                    updateQuiz.execute();
-//                                } else {
                             startQuestionnaire();
-//                                }
+
                         } else {
                             activity.showToastfromActivity(getString(R.string.message_quiz_save_error));
                             activateButtons();
@@ -1427,7 +1432,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             } else {
                 startQuestionnaire();
             }
-//            }
             return null;
         }
 
@@ -1436,6 +1440,19 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             super.onPostExecute(aVoid);
             hideScreensaver();
             isCanBackPress = true;
+        }
+    }
+
+    private void checkConfigUpdateDate() {
+        Long updateDate = getMainActivity().getConfigForce().getConfigUpdateDate();
+        if (updateDate != null) {
+            isTimeToDownloadConfig = DateUtils.getCurrentTimeMillis() >= updateDate;
+        }
+
+        if (isTimeToDownloadConfig) {
+            btnStart.setText(getString(R.string.button_update_config));
+        } else {
+            btnStart.setText(R.string.button_start);
         }
     }
 }

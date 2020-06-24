@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     static public String TAG = "TARLOGS";
     static public boolean AVIA = false;
-    static public boolean EXIT = true;
+    static public boolean EXIT = false;
     public static final String IS_AFTER_AUTH = "IS_AFTER_AUTH";
     static public boolean DEBUG_MODE = true;
     static public boolean RECORDING = false;
@@ -1127,6 +1127,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     private ReserveChannelModel getReserveChannel() {
         return getConfig().getProjectInfo().getReserveChannel();
+    }
+
+    public boolean isExit() {
+        return getConfig().getProjectInfo().getReserveChannel() != null;
     }
 
     public void startSMS(Long startTime) {

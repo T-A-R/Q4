@@ -40,6 +40,7 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
     private ImageButton mChangeUserBtn;
     private static RelativeLayout mHomeBtnCont;
     private static RelativeLayout mSyncBtnCont;
+    private static RelativeLayout mQuotaBtnCont;
 
     public MainFragment() {
         super(R.layout.fragment_main);
@@ -87,6 +88,7 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
 
         mHomeBtnCont = findViewById(R.id.home_cont);
         mSyncBtnCont = findViewById(R.id.sync_cont);
+        mQuotaBtnCont = findViewById(R.id.quotas_cont);
 
         bg.setOnClickListener(this);
         mHomeBtn.setOnClickListener(this);
@@ -98,6 +100,7 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
 
         screensManager.setListener(this);
         setSideMenu();
+
     }
 
     @Override
@@ -261,7 +264,7 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
         sideMenuDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
 
-    public static void enableSideMenu(boolean full) {
+    public static void enableSideMenu(boolean full, boolean exit) {
         sideMenuDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         if (full) {
             mHomeBtnCont.setVisibility(View.VISIBLE);
@@ -269,6 +272,9 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
         } else {
             mHomeBtnCont.setVisibility(View.GONE);
             mSyncBtnCont.setVisibility(View.GONE);
+        }
+        if(exit) {
+            mQuotaBtnCont.setVisibility(View.GONE);
         }
     }
 

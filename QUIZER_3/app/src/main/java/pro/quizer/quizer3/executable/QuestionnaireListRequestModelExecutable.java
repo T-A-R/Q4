@@ -1,5 +1,7 @@
 package pro.quizer.quizer3.executable;
 
+import android.util.Log;
+
 import java.util.List;
 
 import pro.quizer.quizer3.MainActivity;
@@ -46,6 +48,7 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
         }
 
         for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : questionnaires) {
+//            Log.d("T-L.QuestionnaireListRe", "??????????? execute: " + questionnaireDatabaseModel.getGps());
             final QuestionnaireRequestModel questionnaireRequestModel = new QuestionnaireRequestModel(
                     questionnaireDatabaseModel.getBilling_questions(),
                     questionnaireDatabaseModel.getQuestionnaire_id(),

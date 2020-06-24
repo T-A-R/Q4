@@ -35,9 +35,12 @@ import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.ElementItemR;
+import pro.quizer.quizer3.database.models.SmsItemR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
+import pro.quizer.quizer3.model.config.QuestionsMatchesModel;
+import pro.quizer.quizer3.model.config.StagesModel;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.MD5Utils;
@@ -299,10 +302,32 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             return;
         }
 
-        //TODO Создание базы СМС для квизера.
-//        makeSmsDatabase();
+        makeSmsDatabase();
 
         downloadQuotas(pAuthResponseModel, pLogin, pPassword);
+    }
+
+    private void makeSmsDatabase() {
+        if (getCurrentUser().getConfigR().getProjectInfo().getReserveChannel() != null) {
+            try {
+                getDao().clearSmsDatabase();
+            } catch (Exception e) {
+                showToast(getString(R.string.db_clear_error));
+            }
+            List<StagesModel> stages = getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getStages();
+            if (stages != null)
+                for (int i = 0; i < stages.size(); i++) {
+                    List<QuestionsMatchesModel> questionsMatchesModels = stages.get(i).getQuestionsMatches();
+                    if (questionsMatchesModels != null)
+                        for (int k = 0; k < questionsMatchesModels.size(); k++) {
+                            try {
+                                getDao().insertSmsItem(new SmsItemR(questionsMatchesModels.get(k).getSmsNum(), null));
+                            } catch (Exception e) {
+                                showToast(getString(R.string.db_save_error));
+                            }
+                        }
+                }
+        }
     }
 
     private void downloadQuotas(final AuthResponseModel pAuthResponseModel,

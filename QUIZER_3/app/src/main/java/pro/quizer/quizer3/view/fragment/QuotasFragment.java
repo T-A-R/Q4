@@ -77,7 +77,7 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
     @Override
     protected void onReady() {
 
-        MainFragment.enableSideMenu(true);
+        MainFragment.enableSideMenu(true, getMainActivity().isExit());
         initViews();
         refresh();
         updateQuotas();

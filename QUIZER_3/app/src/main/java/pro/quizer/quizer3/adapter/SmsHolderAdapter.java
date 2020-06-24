@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ import pro.quizer.quizer3.model.sms.SmsStage;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.SmsUtils;
 import pro.quizer.quizer3.utils.SystemUtils;
+
+import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsViewInnerHolder> {
 
@@ -58,7 +61,7 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
         Object[] keys = smsStage.getSmsAnswers().keySet().toArray();
 
         for (int i = 0; i < smsStage.getSmsAnswers().size(); i++) {
-            String status = pBaseActivity.getMainDao().getSmsItemBySmsNumber(smsStage.getSmsAnswers().get(keys[i]).getSmsIndex()).get(0).getSmsStatus();
+//            String status = pBaseActivity.getMainDao().getSmsItemBySmsNumber(smsStage.getSmsAnswers().get(keys[i]).getSmsIndex()).get(0).getSmsStatus();
             mSmsItems.add(new SmsItem(smsStage.getSmsAnswers().get(keys[i]).getSmsIndex(), smsStage.getSmsAnswers().get(keys[i]).toString(), smsStage.getSmsAnswers().get(keys[i]).getmSmsStatus()));
 //            mSmsItems.add(new SmsItem("" + i, "#" + i + " xx xxx xx xxx", "Отправлена"));
         }
@@ -76,6 +79,9 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
         String status = null;
         final int sdk = android.os.Build.VERSION.SDK_INT;
         try {
+            Log.d(TAG, "?????????? onBindViewHolder 1: " + mSmsItems.size());
+            Log.d(TAG, "?????????? onBindViewHolder 2: " + mBaseActivity.getMainDao().getSmsItemBySmsNumber(mSmsItems.get(position).getSmsNumber()).size());
+
             status = mBaseActivity.getMainDao().getSmsItemBySmsNumber(mSmsItems.get(position).getSmsNumber()).get(0).getSmsStatus();
         } catch (Exception e) {
             mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.db_load_error));
@@ -140,12 +146,13 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
 
                             @Override
                             public void onSuccess() {
+                                Log.d(TAG, "onSuccess: ");
                                 notifyItemChanged(position);
                             }
 
                             @Override
                             public void onError(Exception pException) {
-
+                                Log.d(TAG, "onError: ");
                             }
                         }, Collections.singletonList(smsStage), mSmsNumbers);
                     }

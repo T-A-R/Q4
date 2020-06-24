@@ -613,7 +613,13 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public CurrentQuestionnaireR getQuestionnaire() {
+//        Log.d("T-L.SmartFragment", "??????? getQuestionnaire: " + currentQuestionnaire.getGps());
         return currentQuestionnaire;
+    }
+
+    public void setCurrentQuestionnaire(CurrentQuestionnaireR currentQuestionnaire) {
+        this.currentQuestionnaire = currentQuestionnaire;
+        Log.d("T-L.SmartFragment", ">>>>>>>>>>>>>>>>>>>>>>>> setCurrentQuestionnaire: " + currentQuestionnaire.getGps());
     }
 
     public CurrentQuestionnaireR getQuestionnaireFromDB() {
@@ -734,7 +740,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                             final String[] fileUris = configResponseModel.getConfig().getProjectInfo().getMediaFiles();
 
                             if (fileUris == null || fileUris.length == 0) {
-                                Log.d(TAG, "reloadConfig: file list empty");
+                                Log.d("TARLOGS.SmartFragment", "reloadConfig: file list empty");
                             } else {
                                 FileLoader.multiFileDownload(getContext())
                                         .fromDirectory(Constants.Strings.EMPTY, FileLoader.DIR_EXTERNAL_PRIVATE)
@@ -830,7 +836,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         countQuestions = 0;
 
         List<ElementPassedR> elements = null;
-
+//        Log.d("T-L.SmartFragment", "????????????? saveQuestionnaireToDatabase: " + currentQuiz.getGps());
         try {
             elements = getDao().getAllElementsPassedR(currentQuiz.getToken());
         } catch (Exception e) {

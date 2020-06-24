@@ -73,7 +73,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
 
         initViews();
         initStrings();
-        MainFragment.enableSideMenu(true);
+        MainFragment.enableSideMenu(true, getMainActivity().isExit());
         setEventsListener(id -> {
             switch (id) {
                 case 1:

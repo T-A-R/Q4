@@ -24,11 +24,13 @@ import pro.quizer.quizer3.model.sms.SmsStage;
 import pro.quizer.quizer3.model.view.SmsViewModel;
 import pro.quizer.quizer3.utils.SmsUtils;
 import pro.quizer.quizer3.utils.UiUtils;
+import pro.quizer.quizer3.view.Toolbar;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class SmsFragment extends ScreenFragment implements ICallback {
 
+    private Toolbar mToolbar;
     private RecyclerView mSmsRecyclerView;
     private MainActivity mBaseActivity;
     private Map<Integer, ElementModelNew> mMap;
@@ -53,6 +55,9 @@ public class SmsFragment extends ScreenFragment implements ICallback {
     private void initViews() {
         mBaseActivity = (MainActivity) getMainActivity();
         mMap = mBaseActivity.getMap(false);
+        mToolbar = findViewById(R.id.toolbar);
+        mToolbar.setTitle(getString(R.string.sync_screen));
+        mToolbar.showCloseView(v -> replaceFragment(new SyncFragment()));
         mSmsRecyclerView = findViewById(R.id.sms_recycler_view);
         mSendAllSmsBtn = findViewById(R.id.sms_finished_btn);
         mSendAllSmsBtn.setOnClickListener(new View.OnClickListener() {
@@ -105,9 +110,11 @@ public class SmsFragment extends ScreenFragment implements ICallback {
                 }
             }
         });
+        refresh();
     }
 
     private void updateData(final SmsViewModel pSmsViewModel) {
+        Log.d(TAG, "updateData: " + pSmsViewModel.toString());
         mBaseActivity.runOnUiThread(new Runnable() {
 
             @Override
@@ -116,11 +123,12 @@ public class SmsFragment extends ScreenFragment implements ICallback {
 
                 if (smsStages == null || smsStages.isEmpty()) {
                     showEmptyView(getString(R.string.view_empty_sms));
-
+                    Log.d(TAG, getString(R.string.view_empty_sms));
                     return;
+                } else {
+                    Log.d(TAG, "SMS Stages: " + smsStages.size());
+                    hideEmptyView();
                 }
-
-                hideEmptyView();
 
                 final SmsAdapter mAdapter = new SmsAdapter(mBaseActivity, smsStages);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mBaseActivity);

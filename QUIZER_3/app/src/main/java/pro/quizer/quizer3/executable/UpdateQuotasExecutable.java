@@ -32,7 +32,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
     private MainActivity mainActivity;
     private UserModelR userModel;
     private ConfigModel configModel;
-    private int userProjectId;
+    private Integer userProjectId;
 
     public UpdateQuotasExecutable(final Context pContext, final ICallback pCallback) {
         super(pCallback);
@@ -47,7 +47,9 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
         mainActivity = (MainActivity) mContext;
         userModel = mainActivity.getCurrentUser();
         configModel = mainActivity.getConfig();
-        userProjectId = userModel.getUser_project_id();
+        userProjectId = configModel.getUserProjectId();
+        if (userProjectId == null)
+            userProjectId = userModel.getUser_project_id();
 
         QuotaRequestModel requestModel = new QuotaRequestModel(configModel.getLoginAdmin(), userModel.getPassword(), userModel.getLogin());
 

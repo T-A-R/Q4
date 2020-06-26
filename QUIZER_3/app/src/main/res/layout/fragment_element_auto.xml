@@ -514,7 +514,7 @@
             android:scrollbarThumbVertical="@drawable/button_background_green"
             android:scrollbarTrackVertical="@color/lightGray2"
             android:scrollbars="vertical"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
     </LinearLayout>
 

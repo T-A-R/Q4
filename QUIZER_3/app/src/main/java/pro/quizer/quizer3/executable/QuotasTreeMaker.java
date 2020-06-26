@@ -82,7 +82,10 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
         Log.d(TAG, "============== fillQuotas ======================= 3");
         int qn = 8;
         int user_id = activity.getCurrentUserId();
-        int user_project_id = activity.getCurrentUser().getUser_project_id();
+        Integer user_project_id = null;
+        user_project_id = activity.getCurrentUser().getConfigR().getUserProjectId();
+        if (user_project_id == null)
+            user_project_id = activity.getCurrentUser().getUser_project_id();
         List<QuotaModel> quotas = new ArrayList<>();
 
         final List<QuotaR> quotasR = activity.getMainDao().getQuotaR(activity.getCurrentUser().getConfig_id());
@@ -215,9 +218,12 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
         Set<Integer> mSet = new HashSet<>(Arrays.asList(sequence));
         Log.d(TAG, "getLocalQuotas: sequence " + sequence.length);
         try {
-            //TODO: Добавить проверку на завершенность анкеты!
-//            List<QuestionnaireDatabaseModelR> offlineQuestionnaires = MainActivity.getStaticDao().getQuestionnaireByUserIdWithStatus(activity.getCurrentUserId(), QuestionnaireStatus.NOT_SENT);
-            List<QuestionnaireDatabaseModelR> offlineQuestionnaires = activity.getMainDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), activity.getCurrentUser().getUser_project_id(), QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
+            Integer user_project_id = null;
+            user_project_id = activity.getCurrentUser().getConfigR().getUserProjectId();
+            if (user_project_id == null)
+                user_project_id = activity.getCurrentUser().getUser_project_id();
+
+            List<QuestionnaireDatabaseModelR> offlineQuestionnaires = activity.getMainDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), user_project_id, QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
 
             for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : offlineQuestionnaires) {
                 final List<ElementDatabaseModelR> elements = activity.getMainDao().getElementByToken(questionnaireDatabaseModel.getToken());

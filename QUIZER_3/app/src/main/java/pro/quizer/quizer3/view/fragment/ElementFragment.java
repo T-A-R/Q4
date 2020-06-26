@@ -156,6 +156,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     @Override
     protected void onReady() {
+        st("START");
         setRetainInstance(true);
         toolbar = findViewById(R.id.toolbar);
         cont = (RelativeLayout) findViewById(R.id.cont_element_fragment);
@@ -228,6 +229,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         toolbar.showInfoView();
         MainFragment.enableSideMenu(false, getMainActivity().isExit());
 
+        st("init views 1");
+
         showScreensaver(R.string.please_wait_quiz_element, true);
         try {
             prevList = getDao().getPrevElementsR();
@@ -252,26 +255,40 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             btnExit.startAnimation(Anim.getAppearSlide(getContext(), 500));
         }
 
+        st("load prev elements");
+
         initCurrentElements();
+        st("init curr element");
         loadResumedData();
+        st("load resumed data");
         initQuestion();
+        st("init question");
         if (currentElement != null) {
             if (checkConditions(currentElement)) {
+                st("check conditions");
                 startRecording();
+                st("start recording");
                 setQuestionType();
+                st("set type");
                 initViews();
+                st("init views 2");
                 updateCurrentQuestionnaire();
+                st("upd curr quest");
                 initRecyclerView();
+                st("init recycler");
                 if (isRestored || wasReloaded()) {
                     loadSavedData();
+                    st("load rest data");
                 }
             } else {
                 checkAndLoadNext();
             }
             hideScreensaver();
             activateButtons();
+            st("activ btns");
             try {
                 getMainActivity().activateExitReminder();
+                st("activ exit rem");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1760,7 +1777,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void st(String notes) {
-//        MainActivity.showTime(notes);
+        MainActivity.showTime(notes);
     }
 }
 

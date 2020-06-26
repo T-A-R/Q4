@@ -83,6 +83,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     private Integer countElements;
     private Integer countScreens;
     private Integer countQuestions;
+    private Integer tempUserProjectId;
     private String mUserLogin = Constants.Strings.UNKNOWN;
     private String mLoginAdmin = Constants.Strings.UNKNOWN;
     private String mToken = Constants.Strings.UNKNOWN;
@@ -407,13 +408,14 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         userModelR.setRole_id(pModel.getRoleId());
         userModelR.setUser_id(pModel.getUserId());
         userModelR.setUser_project_id(pModel.getUserProjectId());
+
+        pConfigModel.setUserProjectId(pModel.getUserProjectId());
         if (oldConfig == null) {
             userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
             userModelR.setConfig_id(pModel.getConfigId());
         } else {
             userModelR.setConfig(oldConfig);
             userModelR.setConfig_new(new GsonBuilder().create().toJson(pConfigModel));
-            userModelR.setConfig_id(pModel.getConfigId());
             userModelR.setConfig_id(pModel.getConfigId());
         }
 
@@ -670,6 +672,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             String mConfigId = null;
             if (authResponseModel != null) {
                 mConfigId = authResponseModel.getConfigId();
+                tempUserProjectId = authResponseModel.getUserProjectId();
                 if (authResponseModel.isProjectActive() != null) {
                     try {
                         getDao().setProjectActive(authResponseModel.isProjectActive());
@@ -805,6 +808,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 Log.d(TAG, "==== OLD USER IS NULL ====");
             }
 
+            if(tempUserProjectId == null) {
+                tempUserProjectId = pUserModel.getUser_project_id();
+            }
+            pConfigModel.setUserProjectId(pUserModel.getUser_project_id());
             if (oldConfig != null) {
                 Log.d(TAG, "==== HAVE QUIZ. SAVE TO NEW CONFIG ====");
                 getDao().updateNewConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
@@ -835,8 +842,12 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         countScreens = 0;
         countQuestions = 0;
 
+        Integer user_project_id = null;
+        user_project_id = getCurrentUser().getConfigR().getUserProjectId();
+        if (user_project_id == null)
+            user_project_id = getCurrentUser().getUser_project_id();
+
         List<ElementPassedR> elements = null;
-//        Log.d("T-L.SmartFragment", "????????????? saveQuestionnaireToDatabase: " + currentQuiz.getGps());
         try {
             elements = getDao().getAllElementsPassedR(currentQuiz.getToken());
         } catch (Exception e) {
@@ -852,7 +863,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             }
         }
         final long endTime = DateUtils.getCurrentTimeMillis();
-//        final long durationTimeQuestionnaire = endTime - currentQuiz.getStart_date();
         final QuestionnaireDatabaseModelR questionnaireDatabaseModel = new QuestionnaireDatabaseModelR();
         questionnaireDatabaseModel.setStatus(QuestionnaireStatus.NOT_SENT);
         questionnaireDatabaseModel.setToken(currentQuiz.getToken());
@@ -862,7 +872,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         questionnaireDatabaseModel.setPassw(getCurrentUser().getPassword());
         questionnaireDatabaseModel.setQuestionnaire_id(getMainActivity().getConfig().getProjectInfo().getQuestionnaireId());
         questionnaireDatabaseModel.setProject_id(getMainActivity().getConfig().getProjectInfo().getProjectId());
-        questionnaireDatabaseModel.setUser_project_id(getCurrentUser().getUser_project_id());
+        questionnaireDatabaseModel.setUser_project_id(user_project_id);
         questionnaireDatabaseModel.setGps(currentQuiz.getGps());
         questionnaireDatabaseModel.setGps_network(currentQuiz.getGps_network());
         questionnaireDatabaseModel.setGps_time(currentQuiz.getGps_time());

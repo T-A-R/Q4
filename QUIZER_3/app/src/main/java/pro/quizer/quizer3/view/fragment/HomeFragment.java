@@ -363,7 +363,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             e.printStackTrace();
         }
         if (currentQuestionnaire != null) {
-            if (currentQuestionnaire.getUser_project_id() == mUserModel.getUser_project_id()) {
+            Integer user_project_id = null;
+            user_project_id = mUserModel.getConfigR().getUserProjectId();
+            if (user_project_id == null)
+                user_project_id = mUserModel.getUser_project_id();
+            if (currentQuestionnaire.getUser_project_id().equals(user_project_id)) {
                 contContinue.setVisibility(View.VISIBLE);
                 btnContinue.setOnClickListener(this);
                 btnDelete.setOnClickListener(this);
@@ -443,7 +447,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     questionnaire.setToken(StringUtils.generateToken());
                     questionnaire.setConfig_id(getCurrentUser().getConfig_id());
                     questionnaire.setProject_id(activity.getConfig().getProjectInfo().getProjectId());
-                    questionnaire.setUser_project_id(getCurrentUser().getUser_project_id());
+                    Integer user_project_id = null;
+                    user_project_id = getCurrentUser().getConfigR().getUserProjectId();
+                    if (user_project_id == null)
+                        user_project_id = getCurrentUser().getUser_project_id();
+                    questionnaire.setUser_project_id(user_project_id);
                     questionnaire.setStart_date(DateUtils.getCurrentTimeMillis());
                     questionnaire.setGps(mGpsString);
                     questionnaire.setGps_network(mGpsNetworkString);
@@ -834,14 +842,19 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         private ElementItemR[][] fillQuotas(ElementItemR[][] tree) {
             Log.d(TAG, "============== fillQuotas ======================= 1");
             int user_id = activity.getCurrentUserId();
-            int user_project_id = activity.getCurrentUser().getUser_project_id();
+
+            Integer user_project_id = null;
+            user_project_id = getCurrentUser().getConfigR().getUserProjectId();
+            if (user_project_id == null)
+                user_project_id = getCurrentUser().getUser_project_id();
+
             List<QuotaModel> quotas = new ArrayList<>();
 
             final List<QuotaR> quotasR = activity.getMainDao().getQuotaR(getCurrentUser().getConfig_id());
             for (QuotaR quotaR : quotasR) {
                 quotas.add(new QuotaModel(quotaR.getSequence(), quotaR.getLimit(), quotaR.getDone(), user_id, user_project_id));
             }
-            offlineQuestionnaires = activity.getMainDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), activity.getCurrentUser().getUser_project_id(), QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
+            offlineQuestionnaires = activity.getMainDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), user_project_id, QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
             if (quotas == null || quotas.isEmpty()) {
                 return tree;
             }
@@ -1404,7 +1417,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         @Override
         protected Void doInBackground(Void... voids) {
             if (currentQuestionnaire != null) {
-                if (currentQuestionnaire.getUser_project_id().equals(getCurrentUser().getUser_project_id())) {
+                Integer user_project_id = null;
+                user_project_id = getCurrentUser().getConfigR().getUserProjectId();
+                if (user_project_id == null)
+                    user_project_id = getCurrentUser().getUser_project_id();
+                if (currentQuestionnaire.getUser_project_id().equals(user_project_id)) {
                     if (activity.getConfig().isSaveAborted()) {
 //                        setCurrentQuestionnaire(currentQuestionnaire);
                         if (saveQuestionnaireToDatabase(currentQuestionnaire, true)) {

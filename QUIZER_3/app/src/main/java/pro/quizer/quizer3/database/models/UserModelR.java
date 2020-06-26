@@ -51,6 +51,9 @@ public class UserModelR {
     @ColumnInfo(name = "quotas")
     private String quotas;
 
+    @ColumnInfo(name = "quotas_new")
+    private String quotas_new;
+
     @ColumnInfo(name = "questionnaire_opened")
     private boolean questionnaire_opened;
 
@@ -163,5 +166,13 @@ public class UserModelR {
 
     public void setConfig_new(String config_new) {
         this.config_new = config_new;
+    }
+
+    public String getQuotas_new() {
+        return quotas_new;
+    }
+
+    public void setQuotas_new(String quotas_new) {
+        this.quotas_new = quotas_new;
     }
 }

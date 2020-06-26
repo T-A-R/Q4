@@ -150,7 +150,7 @@ public class QuizerAPI {
 
     static public void sendQuestionnaires(String url, String json, final SendQuestionnairesCallback listener) {
 
-        Log.d(TAG, "sendQuestionnaires: " + json);
+//        Log.d(TAG, "sendQuestionnaires: " + json);
 
         Map<String, String> fields = new HashMap<>();
         fields.put(Constants.ServerFields.JSON_DATA, json);
@@ -187,7 +187,7 @@ public class QuizerAPI {
 
     static public void getQuotas(String url, String json, final GetQuotasCallback listener) {
 
-        Log.d(TAG, "getQuotas: " + json);
+//        Log.d(TAG, "getQuotas: " + json);
 
         Map<String, String> fields = new HashMap<>();
         fields.put(Constants.ServerFields.JSON_DATA, json);

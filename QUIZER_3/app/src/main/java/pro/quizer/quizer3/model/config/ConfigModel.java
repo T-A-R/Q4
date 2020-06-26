@@ -1,14 +1,18 @@
 package pro.quizer.quizer3.model.config;
 
+
 import android.util.Log;
-
 import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
-
 import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class ConfigModel implements Serializable {
+
+    @SerializedName("config_id")
+    private String config_id;
+
+    @SerializedName("user_project_id")
+    private Integer user_project_id;
 
     @SerializedName("server_url")
     private String server_url;
@@ -176,7 +180,6 @@ public class ConfigModel implements Serializable {
     public boolean isForce_Audio() {
         if (is_force_audio == null)
         {
-            Log.d(TAG, "isForce_Audio: NO DATA!");
             return false;
         }
         else
@@ -189,5 +192,21 @@ public class ConfigModel implements Serializable {
 
     public void setConfigUpdateDate(Long config_forced_update_date) {
         this.config_forced_update_date = config_forced_update_date;
+    }
+
+    public String getConfigId() {
+        return config_id;
+    }
+
+    public void setConfigId(String config_id) {
+        this.config_id = config_id;
+    }
+
+    public Integer getUserProjectId() {
+        return user_project_id;
+    }
+
+    public void setUserProjectId(Integer user_project_id) {
+        this.user_project_id = user_project_id;
     }
 }

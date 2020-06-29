@@ -91,7 +91,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     static public String TAG = "TARLOGS";
     static public boolean AVIA = false;
-    static public boolean EXIT = false;
+    static public boolean EXIT = true;
+    static public boolean SMS = false;
     public static final String IS_AFTER_AUTH = "IS_AFTER_AUTH";
     static public boolean DEBUG_MODE = true;
     static public boolean RECORDING = false;
@@ -307,7 +308,9 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private void initDataForRebuild() {
         projectId = getConfig().getProjectInfo().getProjectId();
         userId = getCurrentUser().getUser_id();
-        configId = getCurrentUser().getConfig_id();
+        configId = getCurrentUser().getConfigR().getConfigId();
+        if (configId == null)
+            configId = getCurrentUser().getConfig_id();
     }
 
     private void generateMap(final List<ElementModelNew> elements, boolean rebuild) {

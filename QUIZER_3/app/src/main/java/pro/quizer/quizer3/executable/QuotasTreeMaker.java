@@ -88,7 +88,11 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
             user_project_id = activity.getCurrentUser().getUser_project_id();
         List<QuotaModel> quotas = new ArrayList<>();
 
-        final List<QuotaR> quotasR = activity.getMainDao().getQuotaR(activity.getCurrentUser().getConfig_id());
+        String configId = activity.getCurrentUser().getConfigR().getConfigId();
+        if (configId == null)
+            configId = activity.getCurrentUser().getConfig_id();
+
+        final List<QuotaR> quotasR = activity.getMainDao().getQuotaR(configId);
         for (QuotaR quotaR : quotasR) {
             quotas.add(new QuotaModel(quotaR.getSequence(), quotaR.getLimit(), quotaR.getDone(), user_id, user_project_id));
         }

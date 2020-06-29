@@ -369,7 +369,10 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         if (userModel == null) {
             return true;
         } else {
-            return !pAuthResponseModel.getConfigId().equals(userModel.getConfig_id());
+            String configId = userModel.getConfigR().getConfigId();
+            if (configId == null)
+                configId = userModel.getConfig_id();
+            return !pAuthResponseModel.getConfigId().equals(configId);
         }
     }
 

@@ -345,6 +345,9 @@ public interface QuizerDao {
     @Query("SELECT * FROM TokensCounterR WHERE user_id = :userId")
     List<TokensCounterR> getTokens(int userId);
 
+    @Query("DELETE FROM TokensCounterR WHERE user_id = :user_id")
+    void clearTokensCounterR(Integer user_id);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertPrevElementsR(PrevElementsR prevElementsR);
 
@@ -383,4 +386,5 @@ public interface QuizerDao {
 
     @Query("DELETE FROM QuotaR")
     void clearQuotaR();
+
 }

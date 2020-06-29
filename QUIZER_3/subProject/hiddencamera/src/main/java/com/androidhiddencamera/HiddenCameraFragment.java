@@ -59,9 +59,11 @@ public abstract class HiddenCameraFragment extends Fragment implements CameraCal
 
             onCameraError(CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA);
         } else {
+            mCameraPreview = null;
             //Add the camera preview surface to the root of the activity view.
-            if (mCameraPreview == null) mCameraPreview = addPreView();
-            mCameraPreview.startCameraInternal(cameraConfig);
+//            if (mCameraPreview == null) mCameraPreview = addPreView();
+            mCameraPreview = addPreView();
+            mCameraPreview.startCameraInternal(cameraConfig, getActivity());
             mCachedCameraConfig = cameraConfig;
         }
     }
@@ -95,16 +97,22 @@ public abstract class HiddenCameraFragment extends Fragment implements CameraCal
      */
     private CameraPreview addPreView() {
         //create fake camera view
-        CameraPreview cameraSourceCameraPreview = new CameraPreview(getActivity(), this);
+        final CameraPreview cameraSourceCameraPreview = new CameraPreview(getActivity(), this);
         cameraSourceCameraPreview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         View view = ((ViewGroup) getActivity().getWindow().getDecorView().getRootView()).getChildAt(0);
 
         if (view instanceof LinearLayout) {
-            LinearLayout linearLayout = (LinearLayout) view;
+            final LinearLayout linearLayout = (LinearLayout) view;
 
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(1, 1);
-            linearLayout.addView(cameraSourceCameraPreview, params);
+            final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(1, 1);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    linearLayout.addView(cameraSourceCameraPreview, params);
+                }
+            });
+
         } else if (view instanceof RelativeLayout) {
             RelativeLayout relativeLayout = (RelativeLayout) view;
 

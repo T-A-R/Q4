@@ -25,9 +25,12 @@ public class SettingViewModelExecutable extends BaseModelExecutable<SettingsView
             final MainActivity activity = (MainActivity) mContext;
             final UserModelR currentUser = activity.getCurrentUser();
             final ConfigModel configModel = activity.getConfig();
+            String configId = activity.getCurrentUser().getConfigR().getConfigId();
+            if (configId == null)
+                configId = activity.getCurrentUser().getConfig_id();
 
             settingsViewModel.setmConfigDate(configModel.getConfigDate());
-            settingsViewModel.setmConfigId(currentUser.getConfig_id());
+            settingsViewModel.setmConfigId(configId);
             settingsViewModel.setmAnswerMargin(activity.getAnswerMargin());
             settingsViewModel.setSmsSection(configModel.hasReserveChannels());
 

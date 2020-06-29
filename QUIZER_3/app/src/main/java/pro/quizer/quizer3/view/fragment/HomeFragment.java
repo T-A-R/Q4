@@ -71,6 +71,7 @@ import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
 import static pro.quizer.quizer3.MainActivity.AVIA;
+import static pro.quizer.quizer3.MainActivity.EXIT;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class HomeFragment extends ScreenFragment implements View.OnClickListener, SmartFragment.Events {
@@ -228,7 +229,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             sendQuestionnaires();
 
             if (activity != null) {
-                if (activity.hasReserveChannel()) {
+                if (EXIT) {
                     btnQuotas.setVisibility(View.GONE);
                 } else {
                     btnQuotas.setVisibility(View.VISIBLE);
@@ -244,6 +245,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             checkConfigUpdateDate();
             checkProjectActive();
         }
+
     }
 
     @Override
@@ -445,7 +447,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     Log.d(TAG, "startQuestionnaire: insertCurrentQuestionnaireR() started.");
                     CurrentQuestionnaireR questionnaire = new CurrentQuestionnaireR();
                     questionnaire.setToken(StringUtils.generateToken());
-                    questionnaire.setConfig_id(getCurrentUser().getConfig_id());
+                    String configId = getCurrentUser().getConfigR().getConfigId();
+                    if (configId == null)
+                        configId = getCurrentUser().getConfig_id();
+                    questionnaire.setConfig_id(configId);
                     questionnaire.setProject_id(activity.getConfig().getProjectInfo().getProjectId());
                     Integer user_project_id = null;
                     user_project_id = getCurrentUser().getConfigR().getUserProjectId();
@@ -850,7 +855,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             List<QuotaModel> quotas = new ArrayList<>();
 
-            final List<QuotaR> quotasR = activity.getMainDao().getQuotaR(getCurrentUser().getConfig_id());
+            String configId = getCurrentUser().getConfigR().getConfigId();
+            if (configId == null)
+                configId = getCurrentUser().getConfig_id();
+
+            final List<QuotaR> quotasR = activity.getMainDao().getQuotaR(configId);
             for (QuotaR quotaR : quotasR) {
                 quotas.add(new QuotaModel(quotaR.getSequence(), quotaR.getLimit(), quotaR.getDone(), user_id, user_project_id));
             }

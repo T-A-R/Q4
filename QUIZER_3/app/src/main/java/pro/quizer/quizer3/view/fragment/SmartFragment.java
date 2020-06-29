@@ -55,14 +55,18 @@ import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.OptionsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.UserModelR;
+import pro.quizer.quizer3.executable.QuotasViewModelExecutable;
 import pro.quizer.quizer3.model.ElementDatabaseType;
 import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
+import pro.quizer.quizer3.model.Statistics;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.model.logs.Crash;
+import pro.quizer.quizer3.model.quota.QuotaModel;
+import pro.quizer.quizer3.model.view.QuotasViewModel;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
@@ -113,7 +117,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                     layoutSrc = isAvia() ? R.layout.fragment_auth_avia : R.layout.fragment_auth_auto;
                     break;
                 case R.layout.fragment_home:
-                    layoutSrc = isAvia() ? R.layout.fragment_home_avia :  R.layout.fragment_home_auto;
+                    layoutSrc = isAvia() ? R.layout.fragment_home_avia : R.layout.fragment_home_auto;
                     break;
                 case R.layout.fragment_sync:
                     layoutSrc = R.layout.fragment_sync_auto;
@@ -378,7 +382,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         }
 
         if (oldUser != null) {
-            if (getMainActivity().getCurrentQuestionnaireByConfigId(oldUser.getConfig_id()) != null) {
+            String configId = oldUser.getConfigR().getConfigId();
+            if (configId == null)
+                configId = oldUser.getConfig_id();
+            if (getMainActivity().getCurrentQuestionnaireByConfigId(configId) != null) {
                 oldConfig = oldUser.getConfig();
             }
         } else {
@@ -799,7 +806,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             }
 
             if (oldUser != null) {
-                if (getMainActivity().getCurrentQuestionnaireByConfigId(pUserModel.getConfig_id()) != null) {
+                String configId = pUserModel.getConfigR().getConfigId();
+                if (configId == null)
+                    configId = pUserModel.getConfig_id();
+                if (getMainActivity().getCurrentQuestionnaireByConfigId(configId) != null) {
                     oldConfig = oldUser.getConfig();
                 } else {
                     Log.d(TAG, "==== CURRENT QUIZ IS NULL ==== ");
@@ -808,7 +818,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 Log.d(TAG, "==== OLD USER IS NULL ====");
             }
 
-            if(tempUserProjectId == null) {
+            if (tempUserProjectId == null) {
                 tempUserProjectId = pUserModel.getUser_project_id();
             }
             pConfigModel.setUserProjectId(pUserModel.getUser_project_id());
@@ -1020,20 +1030,21 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                             final int pUserId,
                             final int pProjectId,
                             final String pUserLogin) {
-        Log.d(TAG, ">>> Taking Hidden Picture <<<");
-        try {
-            startCamera(new CameraConfig()
-                    .getBuilder(getContext())
-                    .setCameraFacing(CameraFacing.FRONT_FACING_CAMERA)
-                    .setCameraResolution(CameraResolution.LOW_RESOLUTION)
-                    .setImageFormat(CameraImageFormat.FORMAT_JPEG)
-                    .setImageRotation(CameraRotation.ROTATION_270)
-                    .build());
-        } catch (final Exception pException) {
-            showToast("Не удается стартануть камеру");
-            pException.printStackTrace();
-            return;
-        }
+//        Log.d(TAG, ">>> Taking Hidden Picture <<<");
+//
+//        try {
+//            startCamera(new CameraConfig()
+//                    .getBuilder(getContext())
+//                    .setCameraFacing(CameraFacing.FRONT_FACING_CAMERA)
+//                    .setCameraResolution(CameraResolution.LOW_RESOLUTION)
+//                    .setImageFormat(CameraImageFormat.FORMAT_JPEG)
+//                    .setImageRotation(CameraRotation.ROTATION_270)
+//                    .build());
+//        } catch (final Exception pException) {
+//            showToast("Не удается стартануть камеру");
+//            pException.printStackTrace();
+//            return;
+//        }
 
         mProjectId = pProjectId;
         mUserLogin = pUserLogin;
@@ -1042,28 +1053,31 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         mRelativeId = pRelativeId;
         mUserId = pUserId;
 
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    takePicture();
-                    try {
-                        getDao().setCurrentQuestionnairePhoto(true);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    onCameraError(CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA);
-                    try {
-                        getDao().setCurrentQuestionnairePhoto(false);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }
-        }, 1000);
+        TakePicture take = new TakePicture();
+        take.execute();
+
+//        final Handler handler = new Handler();
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    takePicture();
+//                    try {
+//                        getDao().setCurrentQuestionnairePhoto(true);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    onCameraError(CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA);
+//                    try {
+//                        getDao().setCurrentQuestionnairePhoto(false);
+//                    } catch (Exception ex) {
+//                        ex.printStackTrace();
+//                    }
+//                }
+//            }
+//        }, 1000);
     }
 
     public void sendCrashLogs() {
@@ -1168,5 +1182,61 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         void runEvent(int id);
         // 01 - isCanBackPress = false
         // 02 - run HomeFragment
+    }
+
+    class TakePicture extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @SuppressLint("MissingPermission")
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Log.d(TAG, ">>> Taking Hidden Picture <<<");
+            try {
+                startCamera(new CameraConfig()
+                        .getBuilder(getContext())
+                        .setCameraFacing(CameraFacing.FRONT_FACING_CAMERA)
+                        .setCameraResolution(CameraResolution.LOW_RESOLUTION)
+                        .setImageFormat(CameraImageFormat.FORMAT_JPEG)
+                        .setImageRotation(CameraRotation.ROTATION_270)
+                        .build());
+            } catch (final Exception pException) {
+                showToast("Не удается стартануть камеру");
+                pException.printStackTrace();
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        takePicture();
+                        try {
+                            getDao().setCurrentQuestionnairePhoto(true);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        onCameraError(CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA);
+                        try {
+                            getDao().setCurrentQuestionnairePhoto(false);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+            }, 10);
+        }
     }
 }

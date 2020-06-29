@@ -6,7 +6,7 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-@Entity(indices = {@Index("token")})
+@Entity(indices = {@Index("user_id")})
 public class TokensCounterR {
 
     @NonNull

@@ -1037,8 +1037,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
                 @Override
                 public void onError(Exception pException) {
-                    mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.load_quotas_error) + " " + mBaseActivity.getString(R.string.error_107));
-                    MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.ERROR, " " + mBaseActivity.getString(R.string.error_107) + R.string.load_quotas_error, pException.toString());
+//                    mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.load_quotas_error) + " " + mBaseActivity.getString(R.string.error_107));
+                    mBaseActivity.showToastfromActivity(pException.getMessage());
+                    MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.ERROR, pException.getMessage(), pException.toString());
                     if (!isQuotaUpdated) {
                         if (!mIsStartAfterAuth) {
                             isQuotaUpdated = true;

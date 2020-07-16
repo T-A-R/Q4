@@ -192,6 +192,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                             MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.set_quiz_status), Constants.LogResult.SENT, mBaseActivity.getString(R.string.set_sent_quiz_status), null);
                             mBaseActivity.getMainDao().insertToken(new TokensCounterR(token, mUserModel.getUser_id()));
                             mBaseActivity.getMainDao().deleteQuestionnaireByToken(token);
+                            mBaseActivity.getMainDao().deleteElementDatabaseModelByToken(token);
                             mBaseActivity.setSettings(Constants.Settings.SENT_TIME, String.valueOf(DateUtils.getFullCurrentTime()));
 
                         } catch (Exception e) {

@@ -415,5 +415,8 @@
     <string name="message_questionnaires_sent">Успешная отправка</string>
     <string name="upload_complete">Выгрузка данных выполенена.</string>
     <string name="please_update_config">Сбор данных невозможен, обновите конфигурацию</string>
+    <string name="header_cant_start_record_audio">Не удалось начать запись аудио. Продолжение невозможно.</string>
+    <string name="message_contact_support">Попробуйте еще раз. Если ситуация будет повторяться, обратитесь в службу поддержки.</string>
+    <string name="header_quiz_insert_error">Ошибка создания анкеты.</string>
 
 </resources>

@@ -128,6 +128,9 @@ public interface QuizerDao {
     @Query("DELETE FROM ElementDatabaseModelR")
     void clearElementDatabaseModelR();
 
+    @Query("DELETE FROM ElementDatabaseModelR WHERE token = :token")
+    void deleteElementDatabaseModelByToken(String token);
+
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status")
     List<QuestionnaireDatabaseModelR> getQuestionnaireByUserIdWithStatus(int userId, String status);
 
@@ -282,8 +285,8 @@ public interface QuizerDao {
     @Query("UPDATE CurrentQuestionnaireR SET current_element_id = :id ")
     void setCurrentElement(Integer id);
 
-    @Query("UPDATE CurrentQuestionnaireR SET count_interrupted = :counter ")
-    void setInterruptedCounter(Integer counter);
+    @Query("UPDATE CurrentQuestionnaireR SET count_interrupted = :counter WHERE config_id = :config_id")
+    void setInterruptedCounter(String config_id, Integer counter);
 
     @Query("UPDATE CurrentQuestionnaireR SET paused = :paused ")
     void setCurrentQuestionnairePaused(boolean paused);

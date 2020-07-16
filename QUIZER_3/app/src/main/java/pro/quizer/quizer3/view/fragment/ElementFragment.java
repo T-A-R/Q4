@@ -1568,6 +1568,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                 getDao().clearCurrentQuestionnaireR();
                                 getDao().clearElementPassedR();
                                 getDao().clearPrevElementsR();
+                                getDao().deleteElementDatabaseModelByToken(activity.getCurrentQuestionnaireForce().getToken());
                                 getMainActivity().setCurrentQuestionnaireNull();
                             } catch (Exception e) {
                                 e.printStackTrace();

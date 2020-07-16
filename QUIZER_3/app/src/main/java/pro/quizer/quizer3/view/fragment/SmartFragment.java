@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -1238,5 +1239,23 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 }
             }, 10);
         }
+    }
+
+    public void showErrorDialog(String header, String message) {
+        MainActivity activity = getMainActivity();
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                if (!activity.isFinishing()) {
+                    new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
+                            .setCancelable(false)
+                            .setTitle(header)
+                            .setMessage(message)
+                            .setPositiveButton(R.string.view_OK, (dialog, which) -> {
+                                dialog.dismiss();
+                            })
+                            .show();
+                }
+            }
+        });
     }
 }

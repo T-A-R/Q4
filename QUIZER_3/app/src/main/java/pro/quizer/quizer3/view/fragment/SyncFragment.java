@@ -1,8 +1,6 @@
 package pro.quizer.quizer3.view.fragment;
 
-import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -15,29 +13,22 @@ import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizer3.executable.SyncInfoExecutable;
 import pro.quizer.quizer3.executable.files.AudiosSendingByUserModelExecutable;
-import pro.quizer.quizer3.executable.files.CleanUpFilesExecutable;
 import pro.quizer.quizer3.executable.files.PhotosSendingByUserModelExecutable;
 import pro.quizer.quizer3.model.view.SyncViewModel;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
-import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.EXIT;
-import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class SyncFragment extends ScreenFragment implements View.OnClickListener, ICallback {
 
-    private Toolbar mToolbar;
-    private TextView mUserNameTitle;
     private Button mSendDataButton;
     private Button mSendAudioButton;
     private Button mSendPhotoButton;
     private Button mSyncSms;
     private Button mDelete;
     private TextView mProjectStatusView;
-    private TextView mQSendedFromThisDeviceView;
-    private TextView mQSendedInSessionView;
     private TextView mUnfinishedView;
     private TextView mQUnsendedView;
     private TextView mAUnsendedView;
@@ -45,8 +36,6 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
 
     private UserModelR mUserModel;
 
-    private String mQSendedFromThisDeviceViewString;
-    private String mQSendedInSessionViewString;
     private String mQUnsendedViewString;
     private String mAUnsendedViewString;
     private String mPUnsendedViewString;
@@ -68,17 +57,15 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
     public void initViews() {
         RelativeLayout cont = findViewById(R.id.sync_cont);
         mUserModel = getCurrentUser();
-        mToolbar = findViewById(R.id.toolbar);
-        mUserNameTitle = findViewById(R.id.user_name_title);
+        Toolbar mToolbar = findViewById(R.id.toolbar);
+        TextView mUserNameTitle = findViewById(R.id.user_name_title);
         mProjectStatusView = findViewById(R.id.project_status);
         UiUtils.setTextOrHide(mUserNameTitle, mUserModel.getLogin());
         mSendDataButton = findViewById(R.id.send_q);
         mSendAudioButton = findViewById(R.id.send_audio);
         mSendPhotoButton = findViewById(R.id.send_photo);
         mSyncSms = findViewById(R.id.sync_sms);
-        mQSendedFromThisDeviceView = findViewById(R.id.sended_q_from_this_device);
         mUnfinishedView = findViewById(R.id.have_unfinished);
-        mQSendedInSessionView = findViewById(R.id.sended_q_in_session);
         mQUnsendedView = findViewById(R.id.unsended_q);
         mAUnsendedView = findViewById(R.id.unsended_audio);
         mPUnsendedView = findViewById(R.id.unsended_photo);
@@ -123,20 +110,19 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
                     .setCancelable(false)
                     .setTitle(R.string.dialog_delete_title)
                     .setMessage(R.string.dialog_delete_body)
-                    .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
+                    .setPositiveButton(R.string.view_yes, (dialog, which) -> {
 
-                            if (activity.getConfig().isSaveAborted()) {
-                                saveQuestionnaireToDatabase(activity.getCurrentQuestionnaireForce(), true);
-                            }
-                            getDao().clearCurrentQuestionnaireR();
-                            getDao().clearPrevElementsR();
-                            getDao().clearElementPassedR();
-                            activity.setCurrentQuestionnaireNull();
-                            updateData(new SyncInfoExecutable(getContext()).execute());
-                            mUnfinishedView.setText(getResources().getString(R.string.sync_have_unfinished_no));
+                        if (activity.getConfig().isSaveAborted()) {
+                            saveQuestionnaireToDatabase(activity.getCurrentQuestionnaireForce(), true);
+                        } else {
+                            getDao().deleteElementDatabaseModelByToken(activity.getCurrentQuestionnaireForce().getToken());
                         }
+                        getDao().clearCurrentQuestionnaireR();
+                        getDao().clearPrevElementsR();
+                        getDao().clearElementPassedR();
+                        activity.setCurrentQuestionnaireNull();
+                        updateData(new SyncInfoExecutable(getContext()).execute());
+                        mUnfinishedView.setText(getResources().getString(R.string.sync_have_unfinished_no));
                     })
                     .setNegativeButton(R.string.view_no, null).show();
         }

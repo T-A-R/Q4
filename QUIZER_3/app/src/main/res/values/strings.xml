@@ -319,6 +319,7 @@
     <string name="button_send_log">Отправить журнал на сервер</string>
     <string name="button_clear_logs">Очистить журнал логов</string>
     <string name="button_update_config">Обновить конфиг</string>
+    <string name="button_set_config">Применить конфиг</string>
     <string name="button_get_config">Получить конфиг</string>
     <string name="view_config_title">Конфигурация</string>
     <string name="view_id">ID: %1$s</string>

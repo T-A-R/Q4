@@ -1247,7 +1247,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         }
 
         if (isTimeToDownloadConfig) {
-            btnStart.setText(getString(R.string.button_update_config));
+            btnStart.setText(getString(R.string.button_set_config));
         } else {
             btnStart.setText(R.string.button_start);
         }

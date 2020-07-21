@@ -102,12 +102,17 @@
                 android:id="@+id/title_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_8sdp"
+                android:layout_marginRight="@dimen/_30sdp"
+                android:layout_marginEnd="@dimen/_30sdp"
+                android:layout_marginLeft="@dimen/_8sdp"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_8sdp"
                 android:text="Title 1"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/_16ssp"
                 tools:ignore="MissingConstraints"
-                tools:layout_editor_absoluteX="10dp" />
+                tools:layout_editor_absoluteX="10dp"
+                 />
 
             <RelativeLayout
                 android:id="@+id/unhide_title_btn_cont"
@@ -115,7 +120,7 @@
                 android:layout_height="@dimen/_20sdp"
                 android:layout_marginRight="@dimen/_4sdp"
                 android:layout_marginEnd="@dimen/_4sdp"
-                app:layout_constraintEnd_toEndOf="@+id/title_1"
+                app:layout_constraintEnd_toEndOf="parent"
                 tools:ignore="MissingConstraints">
 
                 <Button

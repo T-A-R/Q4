@@ -262,6 +262,7 @@
     <string name="table_label">ВОПРОС&lt;br /&gt;ОТВЕТ</string>
     <string name="view_OK">ОК</string>
     <string name="empty_string_warning">Заполните текстовое поле в выбранных вариантах ответа.</string>
+    <string name="empty_rank_warning">Заполните текстовое поле в выбранных вариантах ответа.</string>
     <string name="empty_answers_warning">Вы не выбрали ни одного ответа.</string>
     <string name="view_x_from_y">\u0020(%1$s из %2$s)</string>
     <string name="view_x_from_y_two">\u0020%1$s из %2$s</string>

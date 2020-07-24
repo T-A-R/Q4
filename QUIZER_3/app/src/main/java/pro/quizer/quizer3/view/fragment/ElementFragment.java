@@ -379,7 +379,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             if (isTitle1Hided) {
                 isTitle1Hided = false;
                 isTitle2Hided = false;
-                if(titles == 1) {
+                if (titles == 1) {
                     titleCont2.setVisibility(View.VISIBLE);
                 }
                 if (titles == 2) {
@@ -670,7 +670,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //                            adapterList.setAnswers(answers);
 //                            adapterList.setPressed();
 //                            adapterList.setRestored(true);
-                            for(AnswerState state : answers) {
+                            for (AnswerState state : answers) {
                                 Log.d(TAG, ">>>>>>>>>>>>>> onSelectedChanged: " + state.getRelative_id() + " / " + state.getData());
                             }
                             adapterRank.setLastSelectedPosition(-1);
@@ -1200,7 +1200,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     public boolean notEmpty(List<AnswerState> answerStates) {
-
         int counter = 0;
 
         for (AnswerState state : answerStates) {
@@ -1218,7 +1217,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
                 if (openType && !element.getElementOptionsR().isUnnecessary_fill_open()) {
                     if (state.getData().equals("") || state.getData() == null) {
-                        showToast(getString(R.string.empty_string_warning));
+                        if (answerType.equals(ElementSubtype.RANK))
+                            showToast(getString(R.string.empty_rank_warning));
+                        else showToast(getString(R.string.empty_string_warning));
+
                         return false;
                     }
                 }

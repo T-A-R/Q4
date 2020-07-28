@@ -1,6 +1,7 @@
 package pro.quizer.quizer3.view.fragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatSeekBar;
@@ -347,8 +348,11 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
 
                                 @Override
                                 public void onSuccess() {
-                                    replaceFragment(new AuthFragment());
+                                    startActivity(new Intent(getContext(), MainActivity.class));
                                 }
+//                                public void onSuccess() {
+//                                    replaceFragment(new AuthFragment());
+//                                }
 
                                 @Override
                                 public void onError(Exception pException) {

@@ -6,7 +6,6 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
@@ -16,13 +15,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import com.squareup.picasso.Picasso;
 
@@ -32,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import pro.quizer.quizer3.Constants;
@@ -61,19 +59,15 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
     private List<ElementItemR> answersList;
     private List<AnswerState> answersState;
     private int lastSelectedPosition = -1;
-    private int lastCheckedElement = -103;
-
     public boolean isMulti;
     public boolean isRank = false;
     public List<Boolean> isPressed;
     public boolean isRestored = false;
-    private String openType;
     private MainActivity mActivity;
     private List<Integer> passedQuotaBlock;
     private ElementItemR[][] quotaTree;
     private Context mContext;
     private String textBefore;
-    private String textAfter;
 
     public RankQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> passedQuotaBlock, ElementItemR[][] quotaTree, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
@@ -107,7 +101,7 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
 
         this.onAnswerClickListener = onAnswerClickListener;
 
-        this.isMulti = question.getElementOptionsR().isPolyanswer();
+        this.isMulti = Objects.requireNonNull(question.getElementOptionsR()).isPolyanswer();
         this.answersState = new ArrayList<>();
         this.isPressed = new ArrayList<>();
         for (int i = 0; i < answersList.size(); i++) {
@@ -133,21 +127,19 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.holder_answer_rank_auto, viewGroup, false);
         else
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.holder_answer_rank, viewGroup, false);
-        ListObjectViewHolder vh = new ListObjectViewHolder(view, onAnswerClickListener);
-        return vh;
+
+        return new ListObjectViewHolder(view, onAnswerClickListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ListObjectViewHolder holder, int position) {
         holder.bind(answersList.get(position), position);
 
-//        holder.button.setVisibility(View.GONE);
         holder.answerPosition.setVisibility(View.VISIBLE);
         holder.answerPosition.setText(String.valueOf(position + 1));
         holder.answerEditText.setText(answersState.get(position).getData());
         holder.answerEditText.setFocusableInTouchMode(false);
         holder.answerEditText.clearFocus();
-//        holder.myCustomEditTextListener.updatePosition(position);
     }
 
     @Override
@@ -161,7 +153,6 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         TextView answerTitle;
         TextView answerDesc;
         public EditText answerEditText;
-//        ImageView button;
         ImageView editButton;
         ImageView image1;
         ImageView image2;
@@ -182,7 +173,6 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
             answerTitle = (TextView) itemView.findViewById(R.id.answer);
             answerDesc = (TextView) itemView.findViewById(R.id.answer_desc);
             answerEditText = (EditText) itemView.findViewById(R.id.edit_answer);
-//            button = (ImageView) itemView.findViewById(R.id.radio_button);
             editButton = (ImageView) itemView.findViewById(R.id.edit_button);
             image1 = (ImageView) itemView.findViewById(R.id.answer_image_1);
             image2 = (ImageView) itemView.findViewById(R.id.answer_image_2);
@@ -202,8 +192,6 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
 
             myCustomEditTextListener = new MyCustomEditTextListener();
             this.answerEditText.addTextChangedListener(myCustomEditTextListener);
-
-
         }
 
         public void bind(final ElementItemR item, int position) {
@@ -214,7 +202,6 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
             } else {
                 answerDesc.setVisibility(View.GONE);
             }
-
 
             showContent(item, contentCont);
 
@@ -236,8 +223,6 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
             }
 
             checkFilled(item, position, answerEditText);
-//            setChecked(item, position);
-
         }
 
         public boolean canShow(ElementItemR[][] tree, List<Integer> passedElementsId, int relativeId, int order) {
@@ -318,19 +303,17 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
 
         private String getFilePath(final String data) {
             final String path = FileUtils.getFilesStoragePath(mActivity);
-            final String url = data;
 
-            if (StringUtils.isEmpty(url)) {
+            if (StringUtils.isEmpty(data)) {
                 return Constants.Strings.EMPTY;
             }
 
-            final String fileName = FileUtils.getFileName(url);
+            final String fileName = FileUtils.getFileName(data);
 
             return path + FileUtils.FOLDER_DIVIDER + fileName;
         }
 
         public void checkFilled(final ElementItemR item, int position, EditText editText) {
-            Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>> checkFilled: " + lastSelectedPosition);
             if (answersState.get(position).getData() != null && answersState.get(position).getData().length() > 0 || lastSelectedPosition == position) {
                 editButton.setVisibility(View.GONE);
                 editText.setVisibility(View.VISIBLE);
@@ -338,27 +321,21 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
                 editText.setText(answersState.get(position).getData());
                 if (lastSelectedPosition == position) {
                     if (item.getElementOptionsR().getOpen_type().equals(TEXT)) {
-//                        editText.setEnabled(true);
                         editText.setFocusableInTouchMode(true);
                         editText.requestFocus();
                         editText.setInputType(InputType.TYPE_CLASS_TEXT);
                         mActivity.showKeyboard();
                     } else if (item.getElementOptionsR().getOpen_type().equals(NUMBER)) {
-//                        editText.setEnabled(true);
                         editText.requestFocus();
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         mActivity.showKeyboard();
                     } else if (item.getElementOptionsR().getOpen_type().equals(TIME)) {
                         setTime(editText);
                         answersState.get(position).setData(answerEditText.getText().toString());
-//                        editText.setEnabled(false);
                     } else if (item.getElementOptionsR().getOpen_type().equals(DATE)) {
                         setDate(editText);
                         answersState.get(position).setData(answerEditText.getText().toString());
-//                        editText.setEnabled(false);
                     }
-                } else {
-//                    editText.setEnabled(false);
                 }
             } else {
                 editText.setVisibility(View.GONE);
@@ -371,22 +348,15 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
             if (v == cont) {
                 cont.setFocusable(true);
                 cont.requestFocus();
-                Log.d(TAG, "onClick: CLEAR FOCUS");
                 return;
             }
             if (lastSelectedPosition != getAdapterPosition()) {
                 lastSelectedPosition = getAdapterPosition();
-
-                Log.d(TAG, "lastSelectedPosition : " + lastSelectedPosition);
-//            showAnswers();
                 boolean isOpen = !answersList.get(getAdapterPosition()).getElementOptionsR().getOpen_type().equals(CHECKBOX);
-//            Log.d(TAG, "onClick 1: " + v.getVerticalScrollbarPosition());
+
                 if (isOpen) {
                     isPressed.set(getAdapterPosition(), true);
                     checkFilled(answersList.get(lastSelectedPosition), lastSelectedPosition, answerEditText);
-//                lastSelectedPosition = getAdapterPosition();
-//                Log.d(TAG, "lastSelectedPosition 1: " + lastSelectedPosition);
-//                notifyItemChanged(lastSelectedPosition);
                     String answer = null;
                     if (answerEditText.getText() != null)
                         answer = answerEditText.getText().toString();
@@ -401,19 +371,11 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
     }
 
     private class MyCustomEditTextListener implements TextWatcher {
-        private int position;
         private boolean canDelete = false;
-
-        public void updatePosition(int position) {
-            this.position = position;
-        }
 
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            if (charSequence.length() == 1) canDelete = true;
-            else canDelete = false;
-//            lastSelectedPosition = position;
-            Log.d(TAG, "lastSelectedPosition 2: " + lastSelectedPosition);
+            canDelete = charSequence.length() == 1;
             if (lastSelectedPosition != -1) {
                 textBefore = answersState.get(getLastSelectedPosition()).getData();
             }
@@ -422,16 +384,17 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
             if (lastSelectedPosition != -1 && charSequence != null && charSequence.length() > 0) {
-                textAfter = charSequence.toString();
+                String textAfter = charSequence.toString();
                 int delta = textAfter.length() - textBefore.length();
                 if ((delta == 1 && textAfter.contains(textBefore)) || (delta == -1 && textBefore.contains(textAfter))) {
                     answersState.get(lastSelectedPosition).setData(textAfter);
                 }
             }
-            if (charSequence == null || charSequence.length() == 0)
+            if (charSequence == null || charSequence.length() == 0) {
                 if (canDelete && lastSelectedPosition != -1) {
                     answersState.get(lastSelectedPosition).setData(charSequence.toString());
                 }
+            }
         }
 
         @Override
@@ -454,16 +417,11 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         return lastSelectedPosition;
     }
 
-    public int getLastCheckedElement() {
-        return lastCheckedElement;
-    }
-
     public void setData(List<ElementItemR> elements) {
         this.answersList = elements;
     }
 
     public void setAnswers(List<AnswerState> answers) {
-        Log.d(TAG, "=============================");
         if (answers != null) {
             this.answersState = answers;
             for (int i = 0; i < answers.size(); i++) {
@@ -480,24 +438,15 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         }
     }
 
-    public void setPressed() {
-        for (int i = 0; i < answersState.size(); i++) {
-            isPressed.set(i, answersState.get(i).isChecked());
-        }
-    }
-
     private Calendar mCalendar = Calendar.getInstance();
 
-    // отображаем диалоговое окно для выбора даты
     public void setDate(final EditText pEditText) {
         if (!mActivity.isFinishing()) {
-            new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
-                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                    mCalendar.set(Calendar.YEAR, year);
-                    mCalendar.set(Calendar.MONTH, monthOfYear);
-                    mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                    setInitialDateTime(pEditText, true);
-                }
+            new DatePickerDialog(mActivity, (view, year, monthOfYear, dayOfMonth) -> {
+                mCalendar.set(Calendar.YEAR, year);
+                mCalendar.set(Calendar.MONTH, monthOfYear);
+                mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                setInitialDateTime(pEditText, true);
             },
                     mCalendar.get(Calendar.YEAR),
                     mCalendar.get(Calendar.MONTH),
@@ -506,16 +455,12 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         }
     }
 
-    // отображаем диалоговое окно для выбора времени
     public void setTime(final EditText pEditText) {
         if (!mActivity.isFinishing()) {
-            new TimePickerDialog(mActivity, new TimePickerDialog.OnTimeSetListener() {
-                @Override
-                public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                    mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                    mCalendar.set(Calendar.MINUTE, minute);
-                    setInitialDateTime(pEditText, false);
-                }
+            new TimePickerDialog(mActivity, (view, hourOfDay, minute) -> {
+                mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                mCalendar.set(Calendar.MINUTE, minute);
+                setInitialDateTime(pEditText, false);
             },
                     mCalendar.get(Calendar.HOUR_OF_DAY),
                     mCalendar.get(Calendar.MINUTE), true)
@@ -536,18 +481,14 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         dateFormat.setTimeZone(mCalendar.getTimeZone());
         mEditText.setText(dateFormat.format(mCalendar.getTime()));
         answersState.get(lastSelectedPosition).setData(dateFormat.format(mCalendar.getTime()));
-        Log.d(TAG, "--------------- onTextChanged 5: " + answersState.get(lastSelectedPosition).getData() + " position: " + lastSelectedPosition);
     }
 
+    //FOR TESTS
     public void showAnswers() {
         Log.d(TAG, "============== Answers ==============");
         for (int i = 0; i < answersState.size(); i++) {
             Log.d(TAG, "answer: (" + i + ") " + answersState.get(i).isChecked() + " / " + answersState.get(i).getData());
         }
-    }
-
-    private void showDisableToLog(String name) {
-        Log.d(TAG, "XXXXXX Disabled: " + name);
     }
 
     public void setRestored(boolean restored) {
@@ -565,35 +506,5 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
             }
             isRestored = false;
         }
-    }
-
-    public boolean isFilled() {
-//        if (!isOpen) {
-//            return true;
-//        }
-        if (!isMulti) {
-            return true;
-        }
-        if (lastSelectedPosition == -1) {
-            return true;
-        }
-        if (answersList.get(lastSelectedPosition).getElementOptionsR().isUnnecessary_fill_open()) {
-            return true;
-        }
-        if (answersList.get(lastSelectedPosition).getElementOptionsR().getOpen_type().equals("checkbox") || isAllHaveData()) {
-            return true;
-        } else return false;
-    }
-
-    private boolean isAllHaveData() {
-        boolean ok = true;
-        for (int i = 0; i < answersState.size(); i++) {
-            if (!answersList.get(i).getElementOptionsR().getOpen_type().equals("checkbox")
-                    && answersState.get(i).isChecked()
-                    && (answersState.get(i).getData() == null || answersState.get(i).getData().length() == 0)) {
-                ok = false;
-            }
-        }
-        return ok;
     }
 }

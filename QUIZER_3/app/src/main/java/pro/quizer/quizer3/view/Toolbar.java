@@ -59,7 +59,7 @@ public class Toolbar extends RelativeLayout implements Serializable {
 
     private void inflate(Context context) {
 
-        inflate(getContext(), R.layout.view_toolbar_auto, this);
+        inflate(context, R.layout.view_toolbar_auto, this);
 
         mLogo = findViewById(R.id.toolbar_view_logo);
         mIcon = findViewById(R.id.icon);

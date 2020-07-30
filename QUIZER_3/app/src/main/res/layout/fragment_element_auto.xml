@@ -335,6 +335,15 @@
             android:background="@drawable/bg_green_shadow"
             android:orientation="vertical">
 
+            <android.support.v4.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
             <!--QUESTION-->
             <LinearLayout
                 android:id="@+id/question_box"
@@ -438,6 +447,10 @@
                     android:visibility="visible" />
 
             </LinearLayout>
+
+            </LinearLayout>
+
+            </android.support.v4.widget.NestedScrollView>
 
             <!--SPINNER-->
             <LinearLayout

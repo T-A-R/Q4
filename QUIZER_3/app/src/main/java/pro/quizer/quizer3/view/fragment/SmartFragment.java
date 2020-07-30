@@ -745,6 +745,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                            Log.d("T-L.SmartFragment", "?????? reloadConfig: " + configResponseModel.getConfig().toString());
                             updateConfig(getCurrentUser(), configResponseModel.getConfig());
 
                             ConfigModel configModel = getMainActivity().getConfigForce();

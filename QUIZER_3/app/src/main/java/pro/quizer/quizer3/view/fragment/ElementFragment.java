@@ -159,6 +159,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     protected void onReady() {
         st("START");
         setRetainInstance(true);
+        toolbar = new Toolbar(getMainActivity());
         toolbar = findViewById(R.id.toolbar);
         cont = (RelativeLayout) findViewById(R.id.cont_element_fragment);
         unhideCont = (LinearLayout) findViewById(R.id.unhide_cont);

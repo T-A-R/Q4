@@ -1,5 +1,6 @@
 package pro.quizer.quizer3.view.fragment;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -12,6 +13,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,6 +21,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Spinner;
@@ -140,8 +143,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private TableQuestionAdapter adapterTable;
     private MultiSelectSpinner multiSelectionSpinner;
     private List<PrevElementsR> prevList = null;
-
-//    private final String KEY_RECYCLER_STATE = "recycler_state";
 
     public ElementFragment() {
         super(R.layout.fragment_element);
@@ -271,6 +272,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 setQuestionType();
                 st("set type");
                 initViews();
+                if (currentElement.getElementOptionsR().isWith_card()) {
+                    toolbar.showCardView(v -> showCardDialog());
+                }
                 st("init views 2");
                 updateCurrentQuestionnaire();
                 st("upd curr quest");
@@ -1150,12 +1154,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
                 }
 
-                ElementItemR nextElement = getElement(nextElementId);
-                final ElementOptionsR options = nextElement.getElementOptionsR();
-                final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), (MainActivity) getActivity());
+                if (nextElementId > 0) {
+                    ElementItemR nextElement = getElement(nextElementId);
+                    final ElementOptionsR options = nextElement.getElementOptionsR();
+                    final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), (MainActivity) getActivity());
 
-                if (showValue != ConditionUtils.CAN_SHOW) {
-                    nextElementId = options.getJump();
+                    if (showValue != ConditionUtils.CAN_SHOW) {
+                        nextElementId = options.getJump();
+                    }
                 }
 
             }
@@ -1781,6 +1787,40 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     private void st(String notes) {
         MainActivity.showTime(notes);
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void showCardDialog() {
+        dialogBuilder = new AlertDialog.Builder(getMainActivity());
+        View layoutView = getLayoutInflater().inflate(R.layout.dialog_card, null);
+
+        View mCloseBtn = layoutView.findViewById(R.id.view_close);
+        ListView listView = (ListView) layoutView.findViewById(R.id.card_list);
+
+        mCloseBtn.setOnClickListener(v -> infoDialog.dismiss());
+
+        int counter = 1;
+        List<String> values = new ArrayList<>();
+        for (ElementItemR element : answersList) {
+            if (element.getElementOptionsR() != null && element.getElementOptionsR().isShow_in_card()) {
+                values.add(counter + ". " + element.getElementOptionsR().getTitle());
+                counter++;
+            }
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getMainActivity(),
+                getMainActivity().isAutoZoom() ? R.layout.holder_card_auto : R.layout.holder_card, android.R.id.text1, values);
+        listView.setAdapter(adapter);
+
+
+        dialogBuilder.setView(layoutView, 10, 10, 10 ,10);
+        infoDialog = dialogBuilder.create();
+        infoDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+        infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        MainActivity activity = getMainActivity();
+        if (activity != null && !activity.isFinishing())
+            infoDialog.show();
     }
 }
 

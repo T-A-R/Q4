@@ -96,6 +96,12 @@ public class ElementOptionsR {
     @ColumnInfo(name = "type_end")
     private Integer type_end;
 
+    @ColumnInfo(name = "with_card")
+    private boolean with_card;
+
+    @ColumnInfo(name = "show_in_card")
+    private boolean show_in_card;
+
     public ElementOptionsR() {
     }
 
@@ -367,5 +373,21 @@ public class ElementOptionsR {
 
     public void setType_end(Integer type_end) {
         this.type_end = type_end;
+    }
+
+    public boolean isWith_card() {
+        return with_card;
+    }
+
+    public void setWith_card(boolean with_card) {
+        this.with_card = with_card;
+    }
+
+    public boolean isShow_in_card() {
+        return show_in_card;
+    }
+
+    public void setShow_in_card(boolean show_in_card) {
+        this.show_in_card = show_in_card;
     }
 }

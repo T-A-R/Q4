@@ -62,6 +62,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private MainActivity mContext;
     private OnTableAnswerClickListener mOnTableAnswerClickListener;
     private boolean isSpeedMode;
+    private List<String> titles;
 
     public TableQuestionAdapter(final ElementItemR pCurrentElement, List<ElementItemR> questions, final Context context, final Runnable pRefreshRunnable, OnTableAnswerClickListener pOnTableAnswerClickListener) {
         mCurrentElement = pCurrentElement;
@@ -131,6 +132,18 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final int widthIndex = mTopSide.size() + 1 >= CELL_COUNT ? CELL_COUNT : HALF;
         mHeaderWidth = UiUtils.getDisplayWidth(context) / widthIndex;
         mColumnWidth = UiUtils.getDisplayWidth(context) / widthIndex;
+
+        int counter = 1;
+        titles = new ArrayList<>();
+        for(ElementItemR element : mQuestions) {
+            if (element.getElementOptionsR().isShow_in_card()) {
+                String text = counter + ". " + element.getElementOptionsR().getTitle();
+                titles.add(text);
+                counter++;
+            } else {
+                titles.add(element.getElementOptionsR().getTitle());
+            }
+        }
     }
 
     @Override
@@ -223,7 +236,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final TableHeaderColumnViewHolder vh = (TableHeaderColumnViewHolder) viewHolder;
         final ElementOptionsR optionsModel = mTopSide.get(column - 1).getElementOptionsR();
 
-        UiUtils.setTextOrHide(vh.mHeaderColumnTextView, optionsModel.getTitle());
+        UiUtils.setTextOrHide(vh.mHeaderColumnTextView, mIsFlipColsAndRows ? titles.get(column - 1) : optionsModel.getTitle());
 //        UiUtils.setTextOrHide(vh.mHeaderColumnDescriptionTextView, optionsModel.getDescription());
         if(!isSpeedMode) {
             if (mIsFlipColsAndRows) {
@@ -241,7 +254,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final TableHeaderRowViewHolder vh = (TableHeaderRowViewHolder) viewHolder;
         final ElementOptionsR optionsModel = mLeftSide.get(row - 1).getElementOptionsR();
 
-        UiUtils.setTextOrHide(vh.mHeaderRowTextView, optionsModel.getTitle());
+        UiUtils.setTextOrHide(vh.mHeaderRowTextView, !mIsFlipColsAndRows ? titles.get(row - 1) : optionsModel.getTitle());
         UiUtils.setTextOrHide(vh.mHeaderRowDescriptionTextView, optionsModel.getDescription());
         if(!isSpeedMode) {
             if (!mIsFlipColsAndRows) {

@@ -101,6 +101,12 @@ public class OptionsModelNew implements Serializable {
     @SerializedName("type_end")
     private Integer type_end;
 
+    @SerializedName("with_card")
+    private Boolean with_card;
+
+    @SerializedName("show_in_card")
+    private Boolean show_in_card;
+
     public String getData() {
         return data;
     }
@@ -280,5 +286,27 @@ public class OptionsModelNew implements Serializable {
 
     public void setType_end(Integer type_end) {
         this.type_end = type_end;
+    }
+
+    public boolean getWithCard() {
+        if (with_card == null) {
+            return false;
+        } else
+            return with_card;
+    }
+
+    public void setWithCard(boolean with_card) {
+        this.with_card = with_card;
+    }
+
+    public boolean getShowInCard() {
+        if (show_in_card == null) {
+            return false;
+        } else
+            return show_in_card;
+    }
+
+    public void setShowInCard(boolean show_in_card) {
+        this.show_in_card = show_in_card;
     }
 }

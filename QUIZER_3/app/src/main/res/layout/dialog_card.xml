@@ -1,86 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:minWidth="10000dp"
+    android:minHeight="10000dp"
     android:background="@drawable/dialog_round"
     android:orientation="vertical"
-    android:id="@+id/cont">
+    android:id="@+id/card_cont">
 
-    <LinearLayout
-        android:id="@+id/quota_1_cont"
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/view_close"
+        android:layout_width="@dimen/_26sdp"
+        android:layout_height="@dimen/_26sdp"
+        android:layout_gravity="end"
+        android:src="@drawable/ic_close"
+        android:tint="@color/brand_color"
+        android:visibility="visible"
+        tools:visibility="visible" />
+
+    <ListView
+        android:id="@+id/card_list"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
-            android:id="@+id/quota_1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginLeft="@dimen/_8sdp"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:layout_marginEnd="@dimen/_8sdp"
-            android:layout_marginRight="@dimen/_8sdp"
-            android:layout_marginBottom="@dimen/_8sdp"
-            android:text="@string/quota_not_renew_after_send"
-            android:textColor="@android:color/holo_red_dark"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <include layout="@layout/view_divider" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/quota_2_cont"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
-            android:id="@+id/quota_2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginLeft="@dimen/_8sdp"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:layout_marginEnd="@dimen/_8sdp"
-            android:layout_marginRight="@dimen/_8sdp"
-            android:layout_marginBottom="@dimen/_8sdp"
-            android:text="@string/quota_not_renew_after_finish"
-            android:textColor="@android:color/holo_red_dark"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/quota_1" />
-
-        <include layout="@layout/view_divider" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/quota_3_cont"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
-            android:id="@+id/quota_3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginLeft="@dimen/_8sdp"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:layout_marginEnd="@dimen/_8sdp"
-            android:layout_marginRight="@dimen/_8sdp"
-            android:layout_marginBottom="@dimen/_8sdp"
-            android:text="@string/quota_renew_time"
-            android:textColor="@android:color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/quota_2" />
-
-    </LinearLayout>
+        android:layout_marginTop="@dimen/_4sdp">
+    </ListView>
 
 </LinearLayout>

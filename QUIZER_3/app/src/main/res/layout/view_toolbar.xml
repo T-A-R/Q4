@@ -84,46 +84,56 @@
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/_36sdp"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    >
+                    android:layout_alignParentRight="true">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
 
-                    <android.support.v7.widget.AppCompatImageView
-                        android:id="@+id/toolbar_view_info"
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/info_white"
-                        android:tint="@android:color/white"
-                        android:layout_marginRight="@dimen/_8sdp"
-                        android:layout_marginEnd="@dimen/_8sdp"
-                        android:visibility="gone"
-                        tools:visibility="visible"
-                         />
+                        <android.support.v7.widget.AppCompatImageView
+                            android:id="@+id/toolbar_view_card"
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="@dimen/_8sdp"
+                            android:layout_marginRight="@dimen/_8sdp"
+                            android:src="@drawable/clipboard"
+                            android:tint="@color/orange"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
 
-                    <android.support.v7.widget.AppCompatImageView
-                        android:id="@+id/toolbar_view_options"
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/ic_options"
-                        android:tint="@android:color/white"
-                        android:visibility="gone"
-                        tools:visibility="visible" />
+                        <android.support.v7.widget.AppCompatImageView
+                            android:id="@+id/toolbar_view_info"
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="@dimen/_8sdp"
+                            android:layout_marginRight="@dimen/_8sdp"
+                            android:src="@drawable/info_white"
+                            android:tint="@android:color/white"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
 
-                    <android.support.v7.widget.AppCompatImageView
-                        android:id="@+id/toolbar_view_close"
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/ic_close"
-                        android:tint="@android:color/white"
-                        android:visibility="gone"
-                        tools:visibility="visible" />
+                        <android.support.v7.widget.AppCompatImageView
+                            android:id="@+id/toolbar_view_options"
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/ic_options"
+                            android:tint="@android:color/white"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+
+                        <android.support.v7.widget.AppCompatImageView
+                            android:id="@+id/toolbar_view_close"
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/ic_close"
+                            android:tint="@android:color/white"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
 
                     </LinearLayout>
                 </FrameLayout>

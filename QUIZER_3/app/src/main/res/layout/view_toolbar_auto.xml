@@ -93,6 +93,19 @@
                         android:orientation="horizontal">
 
                         <android.support.v7.widget.AppCompatImageView
+                            android:id="@+id/toolbar_view_card"
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/clipboard"
+                            android:tint="@color/orange"
+                            android:layout_marginRight="@dimen/_8sdp"
+                            android:layout_marginEnd="@dimen/_8sdp"
+                            android:visibility="gone"
+                            tools:visibility="visible"
+                            />
+
+                        <android.support.v7.widget.AppCompatImageView
                             android:id="@+id/toolbar_view_info"
                             android:layout_width="@dimen/_20sdp"
                             android:layout_height="@dimen/_20sdp"

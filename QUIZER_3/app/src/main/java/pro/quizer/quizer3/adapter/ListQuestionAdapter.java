@@ -70,6 +70,8 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     private Context mContext;
     private String textBefore;
     private String textAfter;
+    private int counter = 1;
+    private List<String> titles;
 
     public ListQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> passedQuotaBlock, ElementItemR[][] quotaTree, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
@@ -77,6 +79,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         this.passedQuotaBlock = passedQuotaBlock;
         this.quotaTree = quotaTree;
         this.mContext = context;
+
 
         if (question.getSubtype().equals(ElementSubtype.RANK)) {
             isRank = true;
@@ -116,7 +119,19 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 this.answersState.add(new AnswerState(answersList.get(i).getRelative_id(), false, ""));
             this.isPressed.add(false);
         }
+
+        titles = new ArrayList<>();
+        for(ElementItemR element : answersList) {
+            if (element.getElementOptionsR().isShow_in_card()) {
+                String text = counter + ". " + element.getElementOptionsR().getTitle();
+                titles.add(text);
+                counter++;
+            } else {
+                titles.add(element.getElementOptionsR().getTitle());
+            }
+        }
     }
+
 
     @NonNull
     @Override
@@ -260,10 +275,13 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
             myCustomEditTextListener = new MyCustomEditTextListener();
             this.answerEditText.addTextChangedListener(myCustomEditTextListener);
+
         }
 
         public void bind(final ElementItemR item, int position) {
-            answerTitle.setText(item.getElementOptionsR().getTitle());
+
+//            answerTitle.setText(item.getElementOptionsR().getTitle());
+            answerTitle.setText(titles.get(position));
             if (item.getElementOptionsR().getDescription() != null) {
                 answerDesc.setVisibility(View.VISIBLE);
                 answerDesc.setText(item.getElementOptionsR().getDescription());

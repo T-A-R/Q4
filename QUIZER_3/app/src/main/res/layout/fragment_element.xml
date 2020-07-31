@@ -339,6 +339,31 @@
             android:orientation="vertical"
             android:visibility="visible">
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_14sdp"
+                android:layout_margin="@dimen/_4sdp">
+
+                <Button
+                    android:id="@+id/down_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/_6sdp"
+                    android:layout_marginRight="@dimen/_6sdp"
+                    android:background="@drawable/button_background_transparent_white"
+                    android:src="@drawable/arrow_up_white_wide"
+                    android:textSize="@dimen/_12ssp" />
+
+                <ImageView
+                    android:id="@+id/question_close"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_12sdp"
+                    android:src="@drawable/arrow_up_white_wide"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteY="2dp" />
+
+            </RelativeLayout>
+
             <android.support.v4.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -356,30 +381,6 @@
                         android:layout_marginTop="@dimen/_8sdp"
                         android:layout_marginBottom="@dimen/_8sdp"
                         android:orientation="vertical">
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/_14sdp">
-
-                            <Button
-                                android:id="@+id/down_btn"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_marginLeft="@dimen/_6sdp"
-                                android:layout_marginRight="@dimen/_6sdp"
-                                android:background="@drawable/button_background_transparent_white"
-                                android:src="@drawable/arrow_up_white_wide"
-                                android:textSize="@dimen/_12ssp" />
-
-                            <ImageView
-                                android:id="@+id/question_close"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/_12sdp"
-                                android:src="@drawable/arrow_up_white_wide"
-                                tools:ignore="MissingConstraints"
-                                tools:layout_editor_absoluteY="2dp" />
-
-                        </RelativeLayout>
 
                         <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
                             android:id="@+id/question"

@@ -96,11 +96,9 @@
             android:orientation="vertical"
             android:visibility="gone">
 
-            <android.support.constraint.ConstraintLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:layout_marginBottom="@dimen/_8sdp">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/title_1"
@@ -108,22 +106,22 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_8sdp"
                     android:layout_marginLeft="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginBottom="@dimen/_8sdp"
-                    android:layout_marginEnd="@dimen/_30sdp"
-                    android:layout_marginRight="@dimen/_30sdp"
+                    android:layout_marginEnd="@dimen/_28sdp"
+                    android:layout_marginRight="@dimen/_28sdp"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/_12ssp"
-                    tools:ignore="MissingConstraints"
-                    tools:layout_editor_absoluteX="10dp" />
+                    android:textSize="@dimen/_12ssp"/>
 
                 <RelativeLayout
                     android:id="@+id/unhide_title_btn_cont"
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_20sdp"
-                    android:layout_marginEnd="@dimen/_4sdp"
-                    android:layout_marginRight="@dimen/_4sdp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    tools:ignore="MissingConstraints">
+                    android:layout_marginEnd="@dimen/_12sdp"
+                    android:layout_marginRight="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true">
 
                     <Button
                         android:id="@+id/unhide_btn1"
@@ -144,7 +142,7 @@
 
                 </RelativeLayout>
 
-            </android.support.constraint.ConstraintLayout>
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/title_desc_1"

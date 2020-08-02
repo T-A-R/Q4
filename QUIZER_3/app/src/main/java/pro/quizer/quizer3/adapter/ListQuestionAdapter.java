@@ -297,6 +297,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 openAnswerCont.setVisibility(View.VISIBLE);
             }
 
+            Log.d("T-L.ListQuestionAdapter", "???????????????? question.getElementOptionsR().getOrder(): " + item.getRelative_id() + " / " + question.getElementOptionsR().getOrder());
             if (!canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder())) {
                 answerTitle.setTextColor(Color.parseColor("#AAAAAA"));
                 item.setEnabled(false);

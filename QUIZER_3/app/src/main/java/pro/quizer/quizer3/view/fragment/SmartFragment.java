@@ -575,6 +575,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public List<Integer> getPassedQuotasBlock(int max) {
         List<Integer> passedQuotasBlock = new ArrayList<>();
         List<ElementPassedR> passedElements = getDao().getAllElementsPassedR(getQuestionnaire().getToken());
+        Log.d("T-L.SmartFragment", "???????? getPassedQuotasBlock: " + passedElements);
         if (passedElements == null || passedElements.size() == 0) {
             return null;
         }
@@ -594,6 +595,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 passedQuotasBlockNew.add(passedQuotasBlock.get(i));
             }
         }
+        Log.d("T-L.SmartFragment", "????? getPassedQuotasBlock: " + passedQuotasBlockNew);
         return passedQuotasBlockNew;
     }
 

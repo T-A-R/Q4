@@ -550,7 +550,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         showContent(currentElement, questionImagesCont);
 
         if (getMainActivity().getConfig().isPhotoQuestionnaire() && currentElement.getElementOptionsR().isTake_photo()) {
+            Log.d("T-L.ElementFragment", "TAKE PHOTO");
             shotPicture(getLoginAdmin(), getQuestionnaire().getToken(), currentElement.getRelative_id(), getCurrentUserId(), getQuestionnaire().getProject_id(), getCurrentUser().getLogin());
+        } else {
+            Log.d("T-L.ElementFragment", "NOT TAKE PHOTO");
         }
     }
 
@@ -1349,7 +1352,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 answerStatesRestored.add(answerStateNew);
             }
             adapterList.setAnswers(answerStatesRestored);
-            adapterList.setPressed();
+//            adapterList.setPressed();
             adapterList.setRestored(true);
             if (!currentElement.getElementOptionsR().isPolyanswer())
                 adapterList.setLastSelectedPosition(lastSelectedPosition);

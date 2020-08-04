@@ -1,10 +1,12 @@
 package pro.quizer.quizer3.adapter;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -61,7 +63,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     public boolean isOpen = false;
     public boolean isMulti;
     public boolean isRank = false;
-    public List<Boolean> isPressed;
+    public Integer isPressed;
     public boolean isRestored = false;
     private String openType;
     private MainActivity mActivity;
@@ -111,17 +113,14 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         }
         this.isMulti = question.getElementOptionsR().isPolyanswer();
         this.answersState = new ArrayList<>();
-        this.isPressed = new ArrayList<>();
+//        this.isPressed = new ArrayList<>();
         for (int i = 0; i < answersList.size(); i++) {
-            if (isRank)
-                this.answersState.add(new AnswerState(answersList.get(i).getRelative_id(), true, ""));
-            else
-                this.answersState.add(new AnswerState(answersList.get(i).getRelative_id(), false, ""));
-            this.isPressed.add(false);
+            this.answersState.add(new AnswerState(answersList.get(i).getRelative_id(), false, ""));
+//            this.isPressed.add(false);
         }
 
         titles = new ArrayList<>();
-        for(ElementItemR element : answersList) {
+        for (ElementItemR element : answersList) {
             if (element.getElementOptionsR().isShow_in_card()) {
                 String text = counter + ". " + element.getElementOptionsR().getTitle();
                 titles.add(text);
@@ -219,7 +218,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             holder.answerDesc.setTextColor(mActivity.getResources().getColor(R.color.black));
         }
 
-        holder.myCustomEditTextListener.updatePosition(position);
+//        holder.myCustomEditTextListener.updatePosition(position);
         holder.answerEditText.setText(answersState.get(position).getData());
 
     }
@@ -234,7 +233,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         TextView answerPosition;
         TextView answerTitle;
         TextView answerDesc;
-        public EditText answerEditText;
+        public TextView answerEditText;
         ImageView button;
         ImageView editButton;
         ImageView image1;
@@ -246,7 +245,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         LinearLayout cont;
         boolean isChecked = false;
 
-        public MyCustomEditTextListener myCustomEditTextListener;
+        //        public MyCustomEditTextListener myCustomEditTextListener;
         OnAnswerClickListener onUserClickListener;
 
         public ListObjectViewHolder(@NonNull View itemView, OnAnswerClickListener onUserClickListener) {
@@ -255,7 +254,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             answerPosition = (TextView) itemView.findViewById(R.id.position);
             answerTitle = (TextView) itemView.findViewById(R.id.answer);
             answerDesc = (TextView) itemView.findViewById(R.id.answer_desc);
-            answerEditText = (EditText) itemView.findViewById(R.id.edit_answer);
+            answerEditText = (TextView) itemView.findViewById(R.id.edit_answer);
             button = (ImageView) itemView.findViewById(R.id.radio_button);
             editButton = (ImageView) itemView.findViewById(R.id.edit_button);
             image1 = (ImageView) itemView.findViewById(R.id.answer_image_1);
@@ -273,8 +272,8 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
             this.onUserClickListener = onUserClickListener;
 
-            myCustomEditTextListener = new MyCustomEditTextListener();
-            this.answerEditText.addTextChangedListener(myCustomEditTextListener);
+//            myCustomEditTextListener = new MyCustomEditTextListener();
+//            this.answerEditText.addTextChangedListener(myCustomEditTextListener);
 
         }
 
@@ -306,6 +305,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             if (item.isEnabled()) {
                 cont.setOnClickListener(this);
                 editButton.setOnClickListener(this);
+                answerEditText.setOnClickListener(this);
             }
 
             setChecked(item, position);
@@ -406,18 +406,26 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 editButton.setVisibility(View.GONE);
                 answerEditText.setVisibility(View.VISIBLE);
                 answerEditText.setText(answersState.get(position).getData());
-                if (isPressed.get(position)) {
+                if (isPressed != null && isPressed.equals(position)) {
                     if (position == lastSelectedPosition) {
                         if (item.getElementOptionsR().getOpen_type().equals(TEXT)) {
-                            answerEditText.setEnabled(true);
-                            answerEditText.requestFocus();
-                            answerEditText.setInputType(InputType.TYPE_CLASS_TEXT);
-                            mActivity.showKeyboard();
+                            showInputDialog(answerEditText, position);
+                            answerEditText.setFocusable(false);
+                            answerEditText.setFocusableInTouchMode(false);
+//                            answerEditText.setEnabled(false);
+//                            answerEditText.setEnabled(true);
+//                            answerEditText.requestFocus();
+//                            answerEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+//                            mActivity.showKeyboard();
                         } else if (item.getElementOptionsR().getOpen_type().equals(NUMBER)) {
-                            answerEditText.setEnabled(true);
-                            answerEditText.requestFocus();
-                            answerEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                            mActivity.showKeyboard();
+                            showInputDialog(answerEditText, position);
+                            answerEditText.setFocusable(false);
+                            answerEditText.setFocusableInTouchMode(false);
+//                            answerEditText.setEnabled(false);
+//                            answerEditText.setEnabled(true);
+//                            answerEditText.requestFocus();
+//                            answerEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+//                            mActivity.showKeyboard();
                         } else if (item.getElementOptionsR().getOpen_type().equals(TIME)) {
                             setTime(answerEditText);
                             answersState.get(position).setData(answerEditText.getText().toString());
@@ -430,6 +438,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                     } else {
                         answerEditText.setEnabled(false);
                     }
+                    isPressed = null;
                 }
             } else {
                 answerEditText.setVisibility(View.GONE);
@@ -471,7 +480,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
             }
             if (emptyAnswersState || isFilled() || answersState.get(getAdapterPosition()).isChecked()) {
-                isPressed.set(getAdapterPosition(), true);
+                isPressed = getAdapterPosition();
                 int oldPosition = lastSelectedPosition;
                 lastSelectedPosition = getAdapterPosition();
 
@@ -483,7 +492,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                             if (answersState.get(lastSelectedPosition).isChecked()) {
                                 answersState.get(lastSelectedPosition).setChecked(false);
                                 lastSelectedPosition = oldPosition;
-                                isPressed.set(getAdapterPosition(), false);
+                                isPressed = null;
                             } else {
                                 answersState.get(lastSelectedPosition).setChecked(true);
                                 lastCheckedElement = lastSelectedPosition;
@@ -525,11 +534,13 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     }
 
     public void unselectOther(int position) {
+
         for (int i = 0; i < answersState.size(); i++) {
-            if (i != position)
+            if (i != position) {
                 answersState.get(i).setChecked(false);
-            //TODO Enable if have to clear text
-            answersState.get(i).setData("");
+                //TODO Enable if have to clear text
+//                answersState.get(i).setData("");
+            }
         }
     }
 
@@ -537,45 +548,45 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         void onAnswerClick(int position, boolean enabled, String answer);
     }
 
-    private class MyCustomEditTextListener implements TextWatcher {
-        private int position;
-        private boolean canDelete = false;
-
-        public void updatePosition(int position) {
-            this.position = position;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            if (charSequence.length() == 1) canDelete = true;
-            else canDelete = false;
-            if (lastSelectedPosition != -1) {
-                textBefore = answersState.get(getLastSelectedPosition()).getData();
-            }
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            if (isOpen && lastSelectedPosition != -1 && isPressed.get(lastSelectedPosition) && charSequence != null && charSequence.length() > 0) {
-                textAfter = charSequence.toString();
-                int delta = textAfter.length() - textBefore.length();
-                if ((delta == 1 && textAfter.contains(textBefore)) || (delta == -1 && textBefore.contains(textAfter))) {
-                    answersState.get(lastSelectedPosition).setData(textAfter);
-                }
-            }
-            if (charSequence == null || charSequence.length() == 0)
-                if (canDelete) {
-                    answersState.get(lastSelectedPosition).setData(charSequence.toString());
-                }
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-            if (lastSelectedPosition != -1 && !answersState.get(lastSelectedPosition).getData().equals(textBefore) && !answersList.get(lastSelectedPosition).getElementOptionsR().getOpen_type().equals("checkbox")) {
-                clearOldPassed();
-            }
-        }
-    }
+//    private class MyCustomEditTextListener implements TextWatcher {
+//        private int position;
+//        private boolean canDelete = false;
+//
+//        public void updatePosition(int position) {
+//            this.position = position;
+//        }
+//
+//        @Override
+//        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+//            if (charSequence.length() == 1) canDelete = true;
+//            else canDelete = false;
+//            if (lastSelectedPosition != -1) {
+//                textBefore = answersState.get(getLastSelectedPosition()).getData();
+//            }
+//        }
+//
+//        @Override
+//        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+//            if (isOpen && lastSelectedPosition != -1 && isPressed.get(lastSelectedPosition) && charSequence != null && charSequence.length() > 0) {
+//                textAfter = charSequence.toString();
+//                int delta = textAfter.length() - textBefore.length();
+//                if ((delta == 1 && textAfter.contains(textBefore)) || (delta == -1 && textBefore.contains(textAfter))) {
+//                    answersState.get(lastSelectedPosition).setData(textAfter);
+//                }
+//            }
+//            if (charSequence == null || charSequence.length() == 0)
+//                if (canDelete) {
+//                    answersState.get(lastSelectedPosition).setData(charSequence.toString());
+//                }
+//        }
+//
+//        @Override
+//        public void afterTextChanged(Editable editable) {
+//            if (lastSelectedPosition != -1 && !answersState.get(lastSelectedPosition).getData().equals(textBefore) && !answersList.get(lastSelectedPosition).getElementOptionsR().getOpen_type().equals("checkbox")) {
+//                clearOldPassed();
+//            }
+//        }
+//    }
 
     public List<AnswerState> getAnswers() {
         return answersState;
@@ -615,16 +626,16 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         }
     }
 
-    public void setPressed() {
-        for (int i = 0; i < answersState.size(); i++) {
-            isPressed.set(i, answersState.get(i).isChecked());
-        }
-    }
+//    public void setPressed() {
+//        for (int i = 0; i < answersState.size(); i++) {
+//            isPressed.set(i, answersState.get(i).isChecked());
+//        }
+//    }
 
     private Calendar mCalendar = Calendar.getInstance();
 
     // отображаем диалоговое окно для выбора даты
-    public void setDate(final EditText pEditText) {
+    public void setDate(final TextView pEditText) {
         if (!mActivity.isFinishing()) {
             new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
                 public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -642,7 +653,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     }
 
     // отображаем диалоговое окно для выбора времени
-    public void setTime(final EditText pEditText) {
+    public void setTime(final TextView pEditText) {
         if (!mActivity.isFinishing()) {
             new TimePickerDialog(mActivity, new TimePickerDialog.OnTimeSetListener() {
                 @Override
@@ -659,7 +670,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     }
 
     @SuppressLint("SimpleDateFormat")
-    private void setInitialDateTime(final EditText mEditText, final boolean pIsDate) {
+    private void setInitialDateTime(final TextView mEditText, final boolean pIsDate) {
         SimpleDateFormat dateFormat;
 
         if (pIsDate) {
@@ -729,5 +740,55 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             }
         }
         return ok;
+    }
+
+    private void showInputDialog(final TextView pEditText, int position) {
+        final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mActivity);
+        final View mView = layoutInflaterAndroid.inflate(mActivity.isAutoZoom() ? R.layout.dialog_input_answer_auto : R.layout.dialog_input_answer, null);
+        final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
+        dialog.setView(mView);
+
+        final EditText mEditText = mView.findViewById(R.id.input_answer);
+        final View mNextBtn = mView.findViewById(R.id.view_ok);
+
+        if (answersList.get(position).getElementOptionsR().getOpen_type().equals(NUMBER)) {
+            mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        }
+
+        String hint = answersList.get(position).getElementOptionsR().getPlaceholder();
+        String answer = answersState.get(position).getData();
+        if (answer != null && answer.length() > 0) {
+            mEditText.setText(answersState.get(position).getData());
+        } else {
+            if (hint != null && hint.length() > 0) {
+                mEditText.setHint(hint);
+            } else {
+                mEditText.setHint("Введите ответ");
+            }
+        }
+
+        mEditText.setFocusable(true);
+        mEditText.requestFocus();
+        mActivity.showKeyboard();
+
+        dialog.setCancelable(false);
+        final AlertDialog alertDialog = dialog.create();
+
+        mNextBtn.setOnClickListener(v -> {
+            if (mEditText.getText() != null && mEditText.getText().length() > 0) {
+                answersState.get(position).setChecked(true);
+                answersState.get(position).setData(mEditText.getText().toString());
+                pEditText.setText(mEditText.getText().toString());
+            } else
+                mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
+            if (mActivity != null && !mActivity.isFinishing()) {
+                mActivity.hideKeyboardFrom(mEditText);
+                alertDialog.dismiss();
+            }
+        });
+
+        if (mActivity != null && !mActivity.isFinishing()) {
+            alertDialog.show();
+        }
     }
 }

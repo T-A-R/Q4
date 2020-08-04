@@ -8,7 +8,7 @@
     android:keepScreenOn="true"
     android:id="@+id/input_cont">
 
-    <EditText
+    <pro.quizer.quizer3.view.element.edittext.ResizableEditText
         android:id="@+id/input_answer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

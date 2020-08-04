@@ -119,13 +119,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <pro.quizer.quizer3.view.element.edittext.ResizableEditText
+        <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
             android:id="@+id/edit_answer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/_8sdp"
             android:layout_marginRight="@dimen/_8sdp"
-            android:inputType="text"
+            android:layout_marginBottom="@dimen/_3sdp"
             android:maxLines="1"
             android:textSize="@dimen/_12ssp" />
 

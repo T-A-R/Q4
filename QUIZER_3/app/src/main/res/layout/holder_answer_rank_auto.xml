@@ -107,17 +107,15 @@
         android:layout_height="wrap_content"
         android:visibility="visible">
 
-        <EditText
+        <TextView
             android:id="@+id/edit_answer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/_8sdp"
             android:layout_marginRight="@dimen/_8sdp"
             android:layout_marginBottom="@dimen/_3sdp"
-            android:inputType="text"
             android:maxLines="1"
-            android:textSize="@dimen/_10ssp"
-            android:focusableInTouchMode="false"/>
+            android:textSize="@dimen/_10ssp" />
 
         <ImageView
             android:id="@+id/edit_button"

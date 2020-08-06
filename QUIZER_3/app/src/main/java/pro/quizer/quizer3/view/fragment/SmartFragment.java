@@ -1190,16 +1190,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     class TakePicture extends AsyncTask<Void, Void, Void> {
 
+        @SuppressLint("MissingPermission")
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
-        }
-
-        @SuppressLint("MissingPermission")
-        @Override
-        protected Void doInBackground(Void... voids) {
-            Log.d(TAG, ">>> Taking Hidden Picture <<<");
             try {
                 startCamera(new CameraConfig()
                         .getBuilder(getContext())
@@ -1213,6 +1207,30 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 pException.printStackTrace();
 
             }
+        }
+
+        @SuppressLint("MissingPermission")
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Log.d(TAG, ">>> Taking Hidden Picture <<<");
+
+            try {
+                takePicture();
+                try {
+                    getDao().setCurrentQuestionnairePhoto(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                onCameraError(CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA);
+                try {
+                    getDao().setCurrentQuestionnairePhoto(false);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
             return null;
         }
 

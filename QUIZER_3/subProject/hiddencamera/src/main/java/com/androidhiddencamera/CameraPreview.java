@@ -17,7 +17,6 @@
 package com.androidhiddencamera;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -158,19 +157,12 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
      *
      * @param cameraConfig camera config builder.
      */
-    void startCameraInternal(@NonNull CameraConfig cameraConfig, Activity activity) {
+    void startCameraInternal(@NonNull CameraConfig cameraConfig) {
         mCameraConfig = cameraConfig;
 
         if (safeCameraOpen(mCameraConfig.getFacing())) {
             if (mCamera != null) {
-                if (activity != null)
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            requestLayout();
-                        }
-                    });
-//                requestLayout();
+                requestLayout();
 
                 try {
                     mCamera.setPreviewDisplay(mHolder);

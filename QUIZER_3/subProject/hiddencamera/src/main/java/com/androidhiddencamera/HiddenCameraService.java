@@ -17,7 +17,6 @@
 package com.androidhiddencamera;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -84,7 +83,7 @@ public abstract class HiddenCameraService extends Service implements CameraCallb
 
             //Add the camera preview surface to the root of the activity view.
             if (mCameraPreview == null) mCameraPreview = addPreView();
-            mCameraPreview.startCameraInternal(cameraConfig, null);
+            mCameraPreview.startCameraInternal(cameraConfig);
         }
     }
 

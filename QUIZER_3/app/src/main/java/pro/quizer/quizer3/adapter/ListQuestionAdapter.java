@@ -70,8 +70,6 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     private List<Integer> passedQuotaBlock;
     private ElementItemR[][] quotaTree;
     private Context mContext;
-    private String textBefore;
-    private String textAfter;
     private int counter = 1;
     private List<String> titles;
 
@@ -218,9 +216,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             holder.answerDesc.setTextColor(mActivity.getResources().getColor(R.color.black));
         }
 
-//        holder.myCustomEditTextListener.updatePosition(position);
         holder.answerEditText.setText(answersState.get(position).getData());
-
     }
 
     @Override
@@ -245,7 +241,6 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         LinearLayout cont;
         boolean isChecked = false;
 
-        //        public MyCustomEditTextListener myCustomEditTextListener;
         OnAnswerClickListener onUserClickListener;
 
         public ListObjectViewHolder(@NonNull View itemView, OnAnswerClickListener onUserClickListener) {
@@ -266,20 +261,16 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             contentCont = (LinearLayout) itemView.findViewById(R.id.answer_images_cont);
 
             answerTitle.setTypeface(Fonts.getFuturaPtBook());
+            answerPosition.setTypeface(Fonts.getFuturaPtBook());
             answerDesc.setTypeface(Fonts.getFuturaPtBook());
             answerEditText.setTypeface(Fonts.getFuturaPtBook());
             answerEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
             this.onUserClickListener = onUserClickListener;
-
-//            myCustomEditTextListener = new MyCustomEditTextListener();
-//            this.answerEditText.addTextChangedListener(myCustomEditTextListener);
-
         }
 
         public void bind(final ElementItemR item, int position) {
 
-//            answerTitle.setText(item.getElementOptionsR().getTitle());
             answerTitle.setText(titles.get(position));
             if (item.getElementOptionsR().getDescription() != null) {
                 answerDesc.setVisibility(View.VISIBLE);
@@ -296,7 +287,6 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 openAnswerCont.setVisibility(View.VISIBLE);
             }
 
-            Log.d("T-L.ListQuestionAdapter", "???????????????? question.getElementOptionsR().getOrder(): " + item.getRelative_id() + " / " + question.getElementOptionsR().getOrder());
             if (!canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder())) {
                 answerTitle.setTextColor(Color.parseColor("#AAAAAA"));
                 item.setEnabled(false);
@@ -412,20 +402,10 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                             showInputDialog(answerEditText, position);
                             answerEditText.setFocusable(false);
                             answerEditText.setFocusableInTouchMode(false);
-//                            answerEditText.setEnabled(false);
-//                            answerEditText.setEnabled(true);
-//                            answerEditText.requestFocus();
-//                            answerEditText.setInputType(InputType.TYPE_CLASS_TEXT);
-//                            mActivity.showKeyboard();
                         } else if (item.getElementOptionsR().getOpen_type().equals(NUMBER)) {
                             showInputDialog(answerEditText, position);
                             answerEditText.setFocusable(false);
                             answerEditText.setFocusableInTouchMode(false);
-//                            answerEditText.setEnabled(false);
-//                            answerEditText.setEnabled(true);
-//                            answerEditText.requestFocus();
-//                            answerEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
-//                            mActivity.showKeyboard();
                         } else if (item.getElementOptionsR().getOpen_type().equals(TIME)) {
                             setTime(answerEditText);
                             answersState.get(position).setData(answerEditText.getText().toString());
@@ -514,11 +494,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                             unselectOther(lastSelectedPosition);
                         }
 
-                        if (isChecked) {
-                            isChecked = false;
-                        } else {
-                            isChecked = true;
-                        }
+                        isChecked = !isChecked;
 
                         String answer = null;
                         if (answerEditText.getText() != null)
@@ -547,46 +523,6 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     public interface OnAnswerClickListener {
         void onAnswerClick(int position, boolean enabled, String answer);
     }
-
-//    private class MyCustomEditTextListener implements TextWatcher {
-//        private int position;
-//        private boolean canDelete = false;
-//
-//        public void updatePosition(int position) {
-//            this.position = position;
-//        }
-//
-//        @Override
-//        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-//            if (charSequence.length() == 1) canDelete = true;
-//            else canDelete = false;
-//            if (lastSelectedPosition != -1) {
-//                textBefore = answersState.get(getLastSelectedPosition()).getData();
-//            }
-//        }
-//
-//        @Override
-//        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-//            if (isOpen && lastSelectedPosition != -1 && isPressed.get(lastSelectedPosition) && charSequence != null && charSequence.length() > 0) {
-//                textAfter = charSequence.toString();
-//                int delta = textAfter.length() - textBefore.length();
-//                if ((delta == 1 && textAfter.contains(textBefore)) || (delta == -1 && textBefore.contains(textAfter))) {
-//                    answersState.get(lastSelectedPosition).setData(textAfter);
-//                }
-//            }
-//            if (charSequence == null || charSequence.length() == 0)
-//                if (canDelete) {
-//                    answersState.get(lastSelectedPosition).setData(charSequence.toString());
-//                }
-//        }
-//
-//        @Override
-//        public void afterTextChanged(Editable editable) {
-//            if (lastSelectedPosition != -1 && !answersState.get(lastSelectedPosition).getData().equals(textBefore) && !answersList.get(lastSelectedPosition).getElementOptionsR().getOpen_type().equals("checkbox")) {
-//                clearOldPassed();
-//            }
-//        }
-//    }
 
     public List<AnswerState> getAnswers() {
         return answersState;
@@ -626,24 +562,15 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         }
     }
 
-//    public void setPressed() {
-//        for (int i = 0; i < answersState.size(); i++) {
-//            isPressed.set(i, answersState.get(i).isChecked());
-//        }
-//    }
-
     private Calendar mCalendar = Calendar.getInstance();
 
-    // отображаем диалоговое окно для выбора даты
     public void setDate(final TextView pEditText) {
         if (!mActivity.isFinishing()) {
-            new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
-                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                    mCalendar.set(Calendar.YEAR, year);
-                    mCalendar.set(Calendar.MONTH, monthOfYear);
-                    mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                    setInitialDateTime(pEditText, true);
-                }
+            new DatePickerDialog(mActivity, (view, year, monthOfYear, dayOfMonth) -> {
+                mCalendar.set(Calendar.YEAR, year);
+                mCalendar.set(Calendar.MONTH, monthOfYear);
+                mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                setInitialDateTime(pEditText, true);
             },
                     mCalendar.get(Calendar.YEAR),
                     mCalendar.get(Calendar.MONTH),
@@ -652,16 +579,12 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         }
     }
 
-    // отображаем диалоговое окно для выбора времени
     public void setTime(final TextView pEditText) {
         if (!mActivity.isFinishing()) {
-            new TimePickerDialog(mActivity, new TimePickerDialog.OnTimeSetListener() {
-                @Override
-                public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                    mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                    mCalendar.set(Calendar.MINUTE, minute);
-                    setInitialDateTime(pEditText, false);
-                }
+            new TimePickerDialog(mActivity, (view, hourOfDay, minute) -> {
+                mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                mCalendar.set(Calendar.MINUTE, minute);
+                setInitialDateTime(pEditText, false);
             },
                     mCalendar.get(Calendar.HOUR_OF_DAY),
                     mCalendar.get(Calendar.MINUTE), true)

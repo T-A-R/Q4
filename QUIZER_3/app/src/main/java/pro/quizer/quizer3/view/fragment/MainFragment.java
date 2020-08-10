@@ -300,12 +300,7 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
                     .setCancelable(false)
                     .setTitle(R.string.view_exit)
                     .setMessage(R.string.dialog_change_user)
-                    .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
-                            startActivity(new Intent(getContext(), MainActivity.class));
-                        }
-                    })
+                    .setPositiveButton(R.string.view_yes, (dialog, which) -> activity.restartActivity())
                     .setNegativeButton(R.string.view_no, null).show();
         }
     }

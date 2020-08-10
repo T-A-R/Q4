@@ -1,17 +1,13 @@
 package pro.quizer.quizer3.view.fragment;
 
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatSeekBar;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -36,7 +32,6 @@ import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
-import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.utils.Fonts.FONT_SIZE_MODELS;
 
 public class SettingsFragment extends ScreenFragment implements View.OnClickListener, ICallback {
@@ -126,10 +121,6 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         mMemorySwitch = findViewById(R.id.memory_switch);
         mDarkModeSwitch = findViewById(R.id.dark_switch);
 
-
-//        LinearLayout textSettingsCont = findViewById(R.id.text_settings_cont);
-//        textSettingsCont.setVisibility(View.GONE);
-
         mDeleteUser.setOnClickListener(this);
         mUpdateConfig.setOnClickListener(this);
 
@@ -138,14 +129,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         mUpdateConfig.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
         mToolbar.setTitle(getString(R.string.settings_screen));
-        mToolbar.showCloseView(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-//                getMainActivity().setHomeFragmentStarted(false);
-//                Log.d(TAG, "start Home: 6");
-                replaceFragment(new HomeFragment());
-            }
-        });
+        mToolbar.showCloseView(v -> replaceFragment(new HomeFragment()));
 
         answerMargin = mBaseActivity.getAnswerMargin();
         mMarginSeekBar.setProgress(answerMargin);
@@ -230,7 +214,6 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     mBaseActivity.setFontSizePosition(position);
-
                     if (position != selectedPosition) {
                         refreshFragment();
                     }
@@ -278,7 +261,6 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     reserveChannelModel.selectPhone(position);
-
                     updateConfig(currentUser, configModel);
                 }
 
@@ -295,9 +277,6 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
     }
 
     public void refreshFragment() {
-        // TODO: 2/5/2019 notify drawer
-//        mBaseActivity.getDrawerLayout().notifyAll();
-
         if (!mBaseActivity.isFinishing()) {
             mFontSizeSpinner.setSelection(mBaseActivity.getFontSizePosition());
             FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -337,30 +316,22 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
                     .setCancelable(false)
                     .setTitle(R.string.dialog_remove_user_title)
                     .setMessage(R.string.dialog_remove_user_body)
-                    .setPositiveButton(R.string.view_yes, new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.view_yes, (dialog, which) -> new RemoveUserExecutable(mBaseActivity, new ICallback() {
                         @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
-                            new RemoveUserExecutable(mBaseActivity, new ICallback() {
-                                @Override
-                                public void onStarting() {
+                        public void onStarting() {
 
-                                }
-
-                                @Override
-                                public void onSuccess() {
-                                    startActivity(new Intent(getContext(), MainActivity.class));
-                                }
-//                                public void onSuccess() {
-//                                    replaceFragment(new AuthFragment());
-//                                }
-
-                                @Override
-                                public void onError(Exception pException) {
-                                    showErrorRemoveUserDialog();
-                                }
-                            }).execute();
                         }
-                    })
+
+                        @Override
+                        public void onSuccess() {
+                            mBaseActivity.restartActivity();
+                        }
+
+                        @Override
+                        public void onError(Exception pException) {
+                            showErrorRemoveUserDialog();
+                        }
+                    }).execute())
                     .setNegativeButton(R.string.view_no, null).show();
         }
     }
@@ -371,12 +342,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
                     .setCancelable(false)
                     .setTitle(R.string.dialog_error_remove_user_title)
                     .setMessage(R.string.dialog_error_remove_user_body)
-                    .setPositiveButton(R.string.dialog_go_to, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
-                            replaceFragment(new SyncFragment());
-                        }
-                    })
+                    .setPositiveButton(R.string.dialog_go_to, (dialog, which) -> replaceFragment(new SyncFragment()))
                     .setNegativeButton(R.string.view_cancel, null).show();
         }
     }

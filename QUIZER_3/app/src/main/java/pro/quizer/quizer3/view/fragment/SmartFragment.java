@@ -885,6 +885,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         questionnaireDatabaseModel.setUser_id(getCurrentUserId());
         questionnaireDatabaseModel.setPassw(getCurrentUser().getPassword());
         questionnaireDatabaseModel.setQuestionnaire_id(getMainActivity().getConfig().getProjectInfo().getQuestionnaireId());
+        Log.d("T-L.SmartFragment", "saveQuestionnaireToDatabase PROJECT ID: " + getMainActivity().getConfig().getProjectInfo().getProjectId());
         questionnaireDatabaseModel.setProject_id(getMainActivity().getConfig().getProjectInfo().getProjectId());
         questionnaireDatabaseModel.setUser_project_id(user_project_id);
         questionnaireDatabaseModel.setGps(currentQuiz.getGps());

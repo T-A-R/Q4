@@ -508,10 +508,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         SPUtils.saveFontSizePosition(this, pPosition);
     }
 
-    public void restartActivity() {
-        startActivity(new Intent(this, MainActivity.class));
-    }
-
     public boolean checkPermission() {
         final int location = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
         final int camera = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
@@ -1305,12 +1301,24 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void closeApp() {
         if (getAndroidVersion() < Build.VERSION_CODES.JELLY_BEAN) {
+            Log.d("T-L.MainActivity", "closeApp: 1");
             this.finish();
             Process.killProcess(Process.myPid());
         } else if (getAndroidVersion() < Build.VERSION_CODES.LOLLIPOP) {
+            Log.d("T-L.MainActivity", "closeApp: 2");
             this.finishAffinity();
+//            Process.killProcess(Process.myPid());
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Log.d("T-L.MainActivity", "closeApp: 3");
             finishAndRemoveTask();
+//            Process.killProcess(Process.myPid());
+        } else {
+            Log.d("T-L.MainActivity", "closeApp: 4");
         }
+    }
+
+    public void restartActivity() {
+        this.finish();
+        startActivity(new Intent(this, MainActivity.class));
     }
 }

@@ -45,6 +45,7 @@ import pro.quizer.quizer3.adapter.ListQuestionAdapter;
 import pro.quizer.quizer3.adapter.RankQuestionAdapter;
 import pro.quizer.quizer3.adapter.ScaleQuestionAdapter;
 import pro.quizer.quizer3.adapter.TableQuestionAdapter;
+import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
@@ -323,8 +324,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if (view == btnNext) {
-            DoNext next = new DoNext();
-            next.execute();
+            if(nextElementId == null) {
+                showRestartDialog();
+            } else {
+                DoNext next = new DoNext();
+                next.execute();
+            }
         } else if (view == btnPrev) {
             deactivateButtons();
             TransFragment fragment = new TransFragment();
@@ -1694,7 +1699,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         protected Void doInBackground(Void... voids) {
             if (saveElement()) {
                 try {
-                    if (nextElementId == null || nextElementId == 0) {
+                    if (nextElementId == null) {
+                        showRestartDialog();
+                    } else if (nextElementId == 0) {
                         if (saveQuestionnaire(false)) {
                             exitQuestionnaire();
                         } else {
@@ -1825,6 +1832,31 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         MainActivity activity = getMainActivity();
         if (activity != null && !activity.isFinishing())
             infoDialog.show();
+    }
+
+    public void showRestartDialog() {
+        MainActivity activity = getMainActivity();
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                if (!activity.isFinishing()) {
+                    new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
+                            .setCancelable(false)
+                            .setTitle("Ошибка обработки анкеты.")
+                            .setMessage("Продолжить с перезагрузкой приложения приложения или попробовать продолжить без перезапуска?")
+                            .setPositiveButton("Продолжить", (dialog, which) -> {
+                                dialog.dismiss();
+                                getDao().insertCrashLog(new CrashLogs(DateUtils.getCurrentTimeMillis(), "Ошибка обработки анкеты. NextElementId не обнаружен.", true));
+                                replaceFragment(new HomeFragment());
+                            })
+                            .setNegativeButton("Перезапустить", (dialog, which) -> {
+                                dialog.dismiss();
+                                getDao().insertCrashLog(new CrashLogs(DateUtils.getCurrentTimeMillis(), "Ошибка обработки анкеты. NextElementId не обнаружен.", true));
+                                activity.restartActivity();
+                            })
+                            .show();
+                }
+            }
+        });
     }
 }
 

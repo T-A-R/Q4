@@ -1842,7 +1842,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
                             .setCancelable(false)
                             .setTitle("Ошибка обработки анкеты.")
-                            .setMessage("Продолжить с перезагрузкой приложения приложения или попробовать продолжить без перезапуска?")
+                            .setMessage("Продолжить с перезагрузкой приложения или попробовать продолжить без перезапуска?")
                             .setPositiveButton("Продолжить", (dialog, which) -> {
                                 dialog.dismiss();
                                 getDao().insertCrashLog(new CrashLogs(DateUtils.getCurrentTimeMillis(), "Ошибка обработки анкеты. NextElementId не обнаружен.", true));

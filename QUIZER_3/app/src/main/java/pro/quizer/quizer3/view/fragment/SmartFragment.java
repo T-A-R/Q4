@@ -367,7 +367,22 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public void saveCurrentUserId(final int pUserId) {
-        SPUtils.saveCurrentUserId(getContext(), pUserId);
+        int oldUserId = SPUtils.getCurrentUserId(getContext());
+        if(oldUserId != pUserId ) {
+            SPUtils.saveCurrentUserId(getContext(), pUserId);
+            try {
+                MainActivity activity = getMainActivity();
+                activity.getMainDao().clearCurrentQuestionnaireR();
+                activity.getMainDao().clearPrevElementsR();
+                activity.setCurrentQuestionnaireNull();
+                activity.getMainDao().deleteQuestionnaireStatusByUserId(oldUserId);
+                activity.getMainDao().clearElementDatabaseModelR();
+                activity.getMainDao().clearElementPassedR();
+                activity.getMainDao().clearElementItemR();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void saveUser(final String pLogin, final String pPassword, final AuthResponseModel pModel, final ConfigModel pConfigModel) throws Exception {

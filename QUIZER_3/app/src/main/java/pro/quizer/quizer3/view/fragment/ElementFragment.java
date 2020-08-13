@@ -324,12 +324,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if (view == btnNext) {
-            if(nextElementId == null) {
-                showRestartDialog();
-            } else {
-                DoNext next = new DoNext();
-                next.execute();
-            }
+            DoNext next = new DoNext();
+            next.execute();
         } else if (view == btnPrev) {
             deactivateButtons();
             TransFragment fragment = new TransFragment();
@@ -1697,8 +1693,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Log.d("T-L.ElementFragment", "NEXT 1: " + nextElementId);
             if (saveElement()) {
                 try {
+                    Log.d("T-L.ElementFragment", "NEXT 2: " + nextElementId);
                     if (nextElementId == null) {
                         showRestartDialog();
                     } else if (nextElementId == 0) {
@@ -1824,7 +1822,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         listView.setAdapter(adapter);
 
 
-        dialogBuilder.setView(layoutView, 10, 10, 10 ,10);
+        dialogBuilder.setView(layoutView, 10, 10, 10, 10);
         infoDialog = dialogBuilder.create();
         infoDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;

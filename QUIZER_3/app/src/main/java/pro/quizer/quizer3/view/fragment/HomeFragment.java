@@ -233,6 +233,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
             setEventsListener(this);
             checkConfigUpdateDate();
+            if(isNeedUpdate)
+            btnStart.setText(getString(R.string.button_set_config));
+
             checkProjectActive();
         }
 
@@ -375,7 +378,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             if (currentQuestionnaire == null) {
                 updateLocalConfig();
             } else {
-                btnStart.setText(getString(R.string.button_update_config));
+                btnStart.setText(getString(R.string.button_set_config));
                 isNeedUpdate = true;
             }
 

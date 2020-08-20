@@ -1,6 +1,7 @@
 package pro.quizer.quizer3.view.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -11,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -44,6 +46,7 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.ListQuestionAdapter;
 import pro.quizer.quizer3.adapter.RankQuestionAdapter;
 import pro.quizer.quizer3.adapter.ScaleQuestionAdapter;
+import pro.quizer.quizer3.adapter.SpinnerAdapter;
 import pro.quizer.quizer3.adapter.TableQuestionAdapter;
 import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
@@ -602,7 +605,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         answersList = new ArrayList<>();
         List<String> itemsList = new ArrayList<>();
 
-        if (answerType.equals(ElementSubtype.LIST)|| answerType.equals(ElementSubtype.RANK)) {
+        if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.RANK)) {
             rvAnswers.setVisibility(View.VISIBLE);
         } else if (answerType.equals(ElementSubtype.SELECT)) {
             spinnerCont.setVisibility(View.VISIBLE);
@@ -641,7 +644,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         switch (answerType) {
             case ElementSubtype.LIST:
                 MainActivity activity = getMainActivity();
-                if(isQuota) {
+                if (isQuota) {
 
                     adapterList = new ListQuestionAdapter(activity, currentElement, answersList,
                             getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), this);
@@ -762,65 +765,154 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     });
 //            ===============================================================================================
                 } else {
+                    Log.d("T-L.ElementFragment", "SINGLE LINE SPINNER: ");
                     isMultiSpinner = false;
+                    spinnerAnswers.setVisibility(View.VISIBLE);
+                    List<Integer> passedQuotaBlock;
+                    ElementItemR[][] quotaTree;
+                    Integer order;
+                    if (isQuota) {
+                        passedQuotaBlock = getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder());
+                        quotaTree = getMainActivity().getTree(null);
+                        order = currentElement.getElementOptionsR().getOrder();
+                    } else {
+                        passedQuotaBlock = null;
+                        quotaTree = null;
+                        order = null;
+                    }
 
                     itemsList.add(getString(R.string.select_spinner));
-                    adapterSpinner = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, itemsList) {
 
-                        public int getCount() {
-                            return (itemsList.size() - 1);
-                        }
+                    String[] _methodStrings = new String[]{"Item A", "Item B:False","Item C:False","Last Item"};
 
-                        @Override
-                        public boolean isEnabled(int position) {
-                            if (position == 0) {
-                                return false;
-                            } else {
-                                return true;
-                            }
-                        }
+                    final ArrayList<String> reasonArray = new ArrayList<String>();
+                    for(int i = 0; i <_methodStrings.length;i ++)
+                    {
+                        reasonArray.add(_methodStrings[i]);
+                    }
 
-                        @Override
-                        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                            View view = super.getDropDownView(position + 1, convertView, parent);
-                            TextView tv = (TextView) view;
-                            if (position == itemsList.size() - 1) {
-                                tv.setTextColor(Color.GRAY);
-                            } else {
-                                tv.setTextColor(Color.BLACK);
-                            }
-                            return view;
-                        }
-                    };
-                    adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinnerAnswers.setVisibility(View.VISIBLE);
-                    spinnerAnswers.setAdapter(adapterSpinner);
-                    spinnerAnswers.setSelection(itemsList.size() - 1);
-                    spinnerAnswers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> parent, View view, int position, long selectionId) {
-                            if (position != answersList.size()) {
-                                if (isRestored) {
-                                    if (position != spinnerSelection) {
-                                        try {
-                                            isRestored = false;
-                                            int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
-                                            getDao().deleteOldElementsPassedR(id);
-                                            showToast(getString(R.string.data_changed));
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }
-                                spinnerSelection = position;
-                            }
-                        }
+                    ArrayAdapter<String> methodAdapter = new SpinnerAdapter(getMainActivity(), android.R.layout.simple_spinner_item, reasonArray);
+//                    {
 
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parent) {
-                            showToast("Выберите ответ (не выбрано)");
-                        }
-                    });
+//                        @Override
+//                        public boolean isEnabled(int position) {
+//                            String val = reasonArray.get(position);
+//                            // In my case added :False to the end of strings I wanted effected for some call
+//                            boolean isFalse = val.contains(":False");
+//                            return !isFalse;
+//                        }
+
+//                        @Override
+//                        public boolean areAllItemsEnabled() {
+//                            return false;
+//                        }
+
+//                        @Override
+//                        public View getDropDownView(int position, View convertView,android.view.ViewGroup parent){
+//                            View v = convertView;
+//                            if (v == null) {
+//                                Context mContext = this.getContext();
+//                                LayoutInflater vi = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//                                // Androids orginal spinner view item
+//                                v = vi.inflate(android.R.layout.simple_spinner_dropdown_item, null);
+//                            }
+//                            // The text view of the spinner list view
+//                            TextView tv = (TextView) v.findViewById(android.R.id.text1);
+//                            String val = reasonArray.get(position);
+//                            // remove the extra text here
+//                            tv.setText(val.replace(":False", ""));
+//
+//                            boolean disabled = !isEnabled(position);
+//                            if(disabled){tv.setTextColor(Color.GRAY);}
+//                            else{tv.setTextColor(Color.BLACK);}
+//
+//                            return v;
+//                        }
+//                    };
+
+                    methodAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinnerAnswers.setAdapter(methodAdapter);
+
+//                    adapterSpinner = new ArrayAdapter<String>(getMainActivity(), android.R.layout.simple_spinner_item, itemsList) {
+//
+//                        public int getCount() {
+//                            return (itemsList.size() - 1);
+//                        }
+//
+//                        @Override
+//                        public boolean areAllItemsEnabled() {
+//                            return false;
+//                        }
+//
+//                        @Override
+//                        public boolean isEnabled(int position) {
+//                            if (isQuota && position != 0 && !canShow(quotaTree, passedQuotaBlock, answersList.get(position - 1).getRelative_id(), order)) {
+//                                Log.d("T-L.ElementFragment", "-------------- isEnabled: false / " + position);
+//                                return false;
+//                            } else if (position == 0) {
+//                                Log.d("T-L.ElementFragment", "-------------- isEnabled: false / " + "0");
+//                                return false;
+//                            } else {
+//                                Log.d("T-L.ElementFragment", "-------------- isEnabled: true / " + position);
+//                                return true;
+//                            }
+//                        }
+//
+//                        @Override
+//                        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+////                            View view = super.getDropDownView(position + 1, convertView, parent);
+////                            TextView tv = (TextView) view;
+//                            Log.d("T-L.ElementFragment", "getDropDownView: ???????????????????????");
+//                            View v = convertView;
+//                            if (v == null) {
+//                                Context mContext = this.getContext();
+//                                LayoutInflater vi = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//                                // Androids orginal spinner view item
+//                                v = vi.inflate(android.R.layout.simple_spinner_dropdown_item, null);
+//                            }
+//                            // The text view of the spinner list view
+//                            TextView tv = (TextView) v.findViewById(android.R.id.text1);
+//
+//                            if (position == itemsList.size() - 1) {
+//                                tv.setTextColor(Color.GRAY);
+//                            } else {
+//                                tv.setTextColor(Color.BLACK);
+//                            }
+//                            if(!isEnabled(position)) {
+//                                tv.setTextColor(Color.GRAY);
+//                            }
+//                            return v;
+//                        }
+//                    };
+//                    adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//                    spinnerAnswers.setVisibility(View.VISIBLE);
+//                    spinnerAnswers.setAdapter(adapterSpinner);
+//                    spinnerAnswers.setSelection(itemsList.size() - 1);
+//                    spinnerAnswers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                        @Override
+//                        public void onItemSelected(AdapterView<?> parent, View view, int position, long selectionId) {
+//                            if (position != answersList.size()) {
+//                                if (isRestored) {
+//                                    if (position != spinnerSelection) {
+//                                        try {
+//                                            isRestored = false;
+//                                            int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
+//                                            getDao().deleteOldElementsPassedR(id);
+//                                            showToast(getString(R.string.data_changed));
+//                                        } catch (Exception e) {
+//                                            e.printStackTrace();
+//                                        }
+//                                    }
+//                                }
+//                                spinnerSelection = position;
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onNothingSelected(AdapterView<?> parent) {
+//                            showToast("Выберите ответ (не выбрано)");
+//                        }
+//                    });
                 }
                 break;
             case ElementSubtype.TABLE:
@@ -969,7 +1061,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         answerPassedR.setToken(getQuestionnaire().getToken());
                         answerPassedR.setValue(answerStates.get(i).getData());
                         answerPassedR.setRank(i + 1);
-                        if (answerType.equals(ElementSubtype.QUOTA)) {
+//                        if (answerType.equals(ElementSubtype.QUOTA)) {
+                        if (isQuota) {
                             answerPassedR.setFrom_quotas_block(true);
                         } else {
                             answerPassedR.setFrom_quotas_block(false);
@@ -1069,6 +1162,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     answerPassedR.setRelative_id(answersList.get(spinnerSelection).getRelative_id());
                     answerPassedR.setProject_id(currentElement.getProjectId());
                     answerPassedR.setToken(getQuestionnaire().getToken());
+                    if (isQuota) {
+                        answerPassedR.setFrom_quotas_block(true);
+                    } else {
+                        answerPassedR.setFrom_quotas_block(false);
+                    }
 
                     try {
                         if (!isRestored) {
@@ -1793,7 +1891,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void st(String notes) {
-        MainActivity.showTime(notes);
+//        MainActivity.showTime(notes);
     }
 
     @SuppressLint("RestrictedApi")
@@ -1853,6 +1951,41 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
             }
         });
+    }
+
+    public boolean canShow(ElementItemR[][] tree, List<Integer> passedElementsId, Integer relativeId, Integer order) {
+
+        if (tree == null || order == null || relativeId == null) {
+            return true;
+        }
+
+        if (order == 1) {
+            for (int k = 0; k < tree[0].length; k++) {
+                if (tree[0][k].getRelative_id().equals(relativeId)) {
+                    if (tree[0][k].isEnabled())
+                        return true;
+                }
+            }
+            return false;
+        } else {
+            int endPassedElement = order - 1;
+
+            for (int k = 0; k < tree[0].length; k++) {
+                for (int i = 0; i < endPassedElement; ) {
+                    if (tree[i][k].getRelative_id().equals(passedElementsId.get(i))) {
+                        if (i == (endPassedElement - 1)) { // Если последний, то
+                            if (tree[i + 1][k].getRelative_id().equals(relativeId)) { // Если следующий за последним равен Relative ID
+                                if (tree[i + 1][k].isEnabled()) {
+                                    return true;
+                                }
+                            }
+                        }
+                        i++;
+                    } else break;
+                }
+            }
+        }
+        return false;
     }
 }
 

@@ -590,7 +590,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public List<Integer> getPassedQuotasBlock(int max) {
         List<Integer> passedQuotasBlock = new ArrayList<>();
         List<ElementPassedR> passedElements = getDao().getAllElementsPassedR(getQuestionnaire().getToken());
-        Log.d("T-L.SmartFragment", "???????? getPassedQuotasBlock: " + passedElements);
+//        Log.d("T-L.SmartFragment", "???????? getPassedQuotasBlock: " + passedElements);
         if (passedElements == null || passedElements.size() == 0) {
             return null;
         }
@@ -604,16 +604,16 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 //            Log.d(TAG, "getPassedQuotasBlock: " + id);
 //        }
         List<Integer> passedQuotasBlockNew = new ArrayList<>();
-        Log.d(TAG, "getPassedQuotasBlock SIZE: " + max);
-        for(int i = 0; i < passedQuotasBlock.size(); i++) {
-            Log.d("T-L.SmartFragment", "??? getPassedQuotasBlock: " + passedQuotasBlock.get(i));
-        }
+//        Log.d(TAG, "getPassedQuotasBlock SIZE: " + max);
+//        for(int i = 0; i < passedQuotasBlock.size(); i++) {
+//            Log.d("T-L.SmartFragment", "??? getPassedQuotasBlock: " + passedQuotasBlock.get(i));
+//        }
         if (passedQuotasBlock.size() > 0) {
             for (int i = 0; i < max - 1; i++) {
                 passedQuotasBlockNew.add(passedQuotasBlock.get(i));
             }
         }
-        Log.d("T-L.SmartFragment", "????? getPassedQuotasBlock: " + passedQuotasBlockNew);
+//        Log.d("T-L.SmartFragment", "????? getPassedQuotasBlock: " + passedQuotasBlockNew);
         return passedQuotasBlockNew;
     }
 

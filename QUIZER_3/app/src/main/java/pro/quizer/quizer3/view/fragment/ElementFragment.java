@@ -133,7 +133,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private boolean isTitle2Hided = false;
     private boolean isRestored = false;
     private boolean isMultiSpinner = false;
-    private boolean conditions = false;
+    private boolean isQuota = false;
     private int lastCheckedElement = -103;
     private int titles = 0;
 
@@ -214,8 +214,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         btnPrev.setOnClickListener(this);
         btnExit.setOnClickListener(this);
         closeImage1.setOnClickListener(this);
-//        titleCont1.setOnClickListener(this);
-//        titleCont2.setOnClickListener(this);
         closeImage2.setOnClickListener(this);
         closeQuestion.setOnClickListener(this);
         unhideCont.setOnClickListener(this);
@@ -455,14 +453,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void setQuestionType() {
+        if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0 &&
+                getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
+            isQuota = true;
+        }
         switch (currentElement.getSubtype()) {
             case ElementSubtype.LIST:
-                if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0 &&
-                        getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
-                    answerType = ElementSubtype.QUOTA;
-                } else {
-                    answerType = ElementSubtype.LIST;
-                }
+                answerType = ElementSubtype.LIST;
                 break;
             case ElementSubtype.SELECT:
                 answerType = ElementSubtype.SELECT;
@@ -605,7 +602,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         answersList = new ArrayList<>();
         List<String> itemsList = new ArrayList<>();
 
-        if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.QUOTA) || answerType.equals(ElementSubtype.RANK)) {
+        if (answerType.equals(ElementSubtype.LIST)|| answerType.equals(ElementSubtype.RANK)) {
             rvAnswers.setVisibility(View.VISIBLE);
         } else if (answerType.equals(ElementSubtype.SELECT)) {
             spinnerCont.setVisibility(View.VISIBLE);
@@ -643,8 +640,15 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
         switch (answerType) {
             case ElementSubtype.LIST:
-                adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList,
-                        null, null, this);
+                MainActivity activity = getMainActivity();
+                if(isQuota) {
+
+                    adapterList = new ListQuestionAdapter(activity, currentElement, answersList,
+                            getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), this);
+                } else {
+                    adapterList = new ListQuestionAdapter(activity, currentElement, answersList,
+                            null, null, this);
+                }
                 rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
                 rvAnswers.setAdapter(adapterList);
                 break;
@@ -676,12 +680,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         super.onSelectedChanged(viewHolder, actionState);
 
                         if (actionState == ItemTouchHelper.ACTION_STATE_IDLE && mOrderChanged) {
-//                            adapterList.setAnswers(answers);
-//                            adapterList.setPressed();
-//                            adapterList.setRestored(true);
-                            for (AnswerState state : answers) {
-                                Log.d(TAG, ">>>>>>>>>>>>>> onSelectedChanged: " + state.getRelative_id() + " / " + state.getData());
-                            }
                             adapterRank.setLastSelectedPosition(-1);
                             adapterRank.setAnswers(answers);
                             adapterRank.notifyDataSetChanged();
@@ -697,13 +695,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 });
                 itemTouchHelper.attachToRecyclerView(rvAnswers);
                 break;
-            case ElementSubtype.QUOTA:
-                MainActivity activity = getMainActivity();
-                adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList,
-                        getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), this);
-                rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
-                rvAnswers.setAdapter(adapterList);
-                break;
+//            case ElementSubtype.QUOTA:
+//                MainActivity activity = getMainActivity();
+//                adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList,
+//                        getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), this);
+//                rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
+//                rvAnswers.setAdapter(adapterList);
+//                break;
             case ElementSubtype.SELECT:
                 if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isRotation()) {
                     List<ElementItemR> shuffleList = new ArrayList<>();

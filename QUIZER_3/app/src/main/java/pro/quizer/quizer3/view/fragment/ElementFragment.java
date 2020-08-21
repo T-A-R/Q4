@@ -1,6 +1,7 @@
 package pro.quizer.quizer3.view.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -11,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -29,6 +31,7 @@ import android.widget.Spinner;
 import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
 import com.multispinner.MultiSelectSpinner;
 import com.squareup.picasso.Picasso;
+import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -96,7 +99,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private WebView infoText;
     private RecyclerView rvAnswers;
     private RecyclerView rvScale;
-    private Spinner spinnerAnswers;
+    private SearchableSpinner spinnerAnswers;
     private AdaptiveTableLayout tableLayout;
     private RelativeLayout unhideTitleCont;
     private RelativeLayout unhideAnswerCont;
@@ -133,7 +136,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private boolean isTitle2Hided = false;
     private boolean isRestored = false;
     private boolean isMultiSpinner = false;
-    private boolean conditions = false;
+    private boolean isQuota = false;
     private int lastCheckedElement = -103;
     private int titles = 0;
 
@@ -175,7 +178,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         tableCont = (FrameLayout) findViewById(R.id.table_cont);
         rvAnswers = (RecyclerView) findViewById(R.id.answers_recyclerview);
         rvScale = (RecyclerView) findViewById(R.id.scale_recyclerview);
-        spinnerAnswers = (Spinner) findViewById(R.id.answers_spinner);
+//        spinnerAnswers = (SearchableSpinner) findViewById(R.id.answers_spinner);
         tableLayout = (AdaptiveTableLayout) findViewById(R.id.table_question_layout);
         tvUnhide = (TextView) findViewById(R.id.unhide_title);
         tvTitle1 = (TextView) findViewById(R.id.title_1);
@@ -214,8 +217,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         btnPrev.setOnClickListener(this);
         btnExit.setOnClickListener(this);
         closeImage1.setOnClickListener(this);
-//        titleCont1.setOnClickListener(this);
-//        titleCont2.setOnClickListener(this);
         closeImage2.setOnClickListener(this);
         closeQuestion.setOnClickListener(this);
         unhideCont.setOnClickListener(this);
@@ -324,12 +325,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if (view == btnNext) {
-            if(nextElementId == null) {
-                showRestartDialog();
-            } else {
-                DoNext next = new DoNext();
-                next.execute();
-            }
+            DoNext next = new DoNext();
+            next.execute();
         } else if (view == btnPrev) {
             deactivateButtons();
             TransFragment fragment = new TransFragment();
@@ -459,14 +456,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void setQuestionType() {
+        if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0 &&
+                getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
+            isQuota = true;
+        }
         switch (currentElement.getSubtype()) {
             case ElementSubtype.LIST:
-                if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0 &&
-                        getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
-                    answerType = ElementSubtype.QUOTA;
-                } else {
-                    answerType = ElementSubtype.LIST;
-                }
+                answerType = ElementSubtype.LIST;
                 break;
             case ElementSubtype.SELECT:
                 answerType = ElementSubtype.SELECT;
@@ -609,7 +605,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         answersList = new ArrayList<>();
         List<String> itemsList = new ArrayList<>();
 
-        if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.QUOTA) || answerType.equals(ElementSubtype.RANK)) {
+        if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.RANK)) {
             rvAnswers.setVisibility(View.VISIBLE);
         } else if (answerType.equals(ElementSubtype.SELECT)) {
             spinnerCont.setVisibility(View.VISIBLE);
@@ -647,8 +643,15 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
         switch (answerType) {
             case ElementSubtype.LIST:
-                adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList,
-                        null, null, this);
+                MainActivity activity = getMainActivity();
+                if (isQuota) {
+
+                    adapterList = new ListQuestionAdapter(activity, currentElement, answersList,
+                            getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), this);
+                } else {
+                    adapterList = new ListQuestionAdapter(activity, currentElement, answersList,
+                            null, null, this);
+                }
                 rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
                 rvAnswers.setAdapter(adapterList);
                 break;
@@ -680,12 +683,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         super.onSelectedChanged(viewHolder, actionState);
 
                         if (actionState == ItemTouchHelper.ACTION_STATE_IDLE && mOrderChanged) {
-//                            adapterList.setAnswers(answers);
-//                            adapterList.setPressed();
-//                            adapterList.setRestored(true);
-                            for (AnswerState state : answers) {
-                                Log.d(TAG, ">>>>>>>>>>>>>> onSelectedChanged: " + state.getRelative_id() + " / " + state.getData());
-                            }
                             adapterRank.setLastSelectedPosition(-1);
                             adapterRank.setAnswers(answers);
                             adapterRank.notifyDataSetChanged();
@@ -701,13 +698,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 });
                 itemTouchHelper.attachToRecyclerView(rvAnswers);
                 break;
-            case ElementSubtype.QUOTA:
-                MainActivity activity = getMainActivity();
-                adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList,
-                        getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), this);
-                rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
-                rvAnswers.setAdapter(adapterList);
-                break;
+//            case ElementSubtype.QUOTA:
+//                MainActivity activity = getMainActivity();
+//                adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList,
+//                        getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), this);
+//                rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
+//                rvAnswers.setAdapter(adapterList);
+//                break;
             case ElementSubtype.SELECT:
                 if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isRotation()) {
                     List<ElementItemR> shuffleList = new ArrayList<>();
@@ -769,37 +766,31 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //            ===============================================================================================
                 } else {
                     isMultiSpinner = false;
+                    List<Boolean> enabled = new ArrayList<>();
+
+                    if (isQuota) {
+                        List<Integer> passedQuotaBlock = getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder());
+                        ElementItemR[][] quotaTree = getMainActivity().getTree(null);
+                        Integer order = currentElement.getElementOptionsR().getOrder();
+                        for (ElementItemR item : answersList) {
+                            enabled.add(canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), order));
+                        }
+                    }
+
+                    spinnerAnswers = new SearchableSpinner(getMainActivity(), null, enabled);
+                    spinnerAnswers = (SearchableSpinner) findViewById(R.id.answers_spinner);
+                    spinnerAnswers.setVisibility(View.VISIBLE);
 
                     itemsList.add(getString(R.string.select_spinner));
-                    adapterSpinner = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, itemsList) {
 
+                    adapterSpinner = new ArrayAdapter<String>(getMainActivity(), android.R.layout.simple_spinner_item, itemsList) {
                         public int getCount() {
                             return (itemsList.size() - 1);
-                        }
-
-                        @Override
-                        public boolean isEnabled(int position) {
-                            if (position == 0) {
-                                return false;
-                            } else {
-                                return true;
-                            }
-                        }
-
-                        @Override
-                        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                            View view = super.getDropDownView(position + 1, convertView, parent);
-                            TextView tv = (TextView) view;
-                            if (position == itemsList.size() - 1) {
-                                tv.setTextColor(Color.GRAY);
-                            } else {
-                                tv.setTextColor(Color.BLACK);
-                            }
-                            return view;
                         }
                     };
                     adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerAnswers.setVisibility(View.VISIBLE);
+                    spinnerAnswers.setEnabledList(enabled);
                     spinnerAnswers.setAdapter(adapterSpinner);
                     spinnerAnswers.setSelection(itemsList.size() - 1);
                     spinnerAnswers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -975,7 +966,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         answerPassedR.setToken(getQuestionnaire().getToken());
                         answerPassedR.setValue(answerStates.get(i).getData());
                         answerPassedR.setRank(i + 1);
-                        if (answerType.equals(ElementSubtype.QUOTA)) {
+//                        if (answerType.equals(ElementSubtype.QUOTA)) {
+                        if (isQuota) {
                             answerPassedR.setFrom_quotas_block(true);
                         } else {
                             answerPassedR.setFrom_quotas_block(false);
@@ -1075,6 +1067,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     answerPassedR.setRelative_id(answersList.get(spinnerSelection).getRelative_id());
                     answerPassedR.setProject_id(currentElement.getProjectId());
                     answerPassedR.setToken(getQuestionnaire().getToken());
+                    if (isQuota) {
+                        answerPassedR.setFrom_quotas_block(true);
+                    } else {
+                        answerPassedR.setFrom_quotas_block(false);
+                    }
 
                     try {
                         if (!isRestored) {
@@ -1697,8 +1694,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Log.d("T-L.ElementFragment", "NEXT 1: " + nextElementId);
             if (saveElement()) {
                 try {
+                    Log.d("T-L.ElementFragment", "NEXT 2: " + nextElementId);
                     if (nextElementId == null) {
                         showRestartDialog();
                     } else if (nextElementId == 0) {
@@ -1797,7 +1796,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void st(String notes) {
-        MainActivity.showTime(notes);
+//        MainActivity.showTime(notes);
     }
 
     @SuppressLint("RestrictedApi")
@@ -1824,7 +1823,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         listView.setAdapter(adapter);
 
 
-        dialogBuilder.setView(layoutView, 10, 10, 10 ,10);
+        dialogBuilder.setView(layoutView, 10, 10, 10, 10);
         infoDialog = dialogBuilder.create();
         infoDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
@@ -1857,6 +1856,41 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
             }
         });
+    }
+
+    public boolean canShow(ElementItemR[][] tree, List<Integer> passedElementsId, Integer relativeId, Integer order) {
+
+        if (tree == null || order == null || relativeId == null) {
+            return true;
+        }
+
+        if (order == 1) {
+            for (int k = 0; k < tree[0].length; k++) {
+                if (tree[0][k].getRelative_id().equals(relativeId)) {
+                    if (tree[0][k].isEnabled())
+                        return true;
+                }
+            }
+            return false;
+        } else {
+            int endPassedElement = order - 1;
+
+            for (int k = 0; k < tree[0].length; k++) {
+                for (int i = 0; i < endPassedElement; ) {
+                    if (tree[i][k].getRelative_id().equals(passedElementsId.get(i))) {
+                        if (i == (endPassedElement - 1)) { // Если последний, то
+                            if (tree[i + 1][k].getRelative_id().equals(relativeId)) { // Если следующий за последним равен Relative ID
+                                if (tree[i + 1][k].isEnabled()) {
+                                    return true;
+                                }
+                            }
+                        }
+                        i++;
+                    } else break;
+                }
+            }
+        }
+        return false;
     }
 }
 

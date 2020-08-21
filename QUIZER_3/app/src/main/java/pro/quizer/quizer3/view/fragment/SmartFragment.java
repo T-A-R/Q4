@@ -367,7 +367,22 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public void saveCurrentUserId(final int pUserId) {
-        SPUtils.saveCurrentUserId(getContext(), pUserId);
+        int oldUserId = SPUtils.getCurrentUserId(getContext());
+        if(oldUserId != pUserId ) {
+            SPUtils.saveCurrentUserId(getContext(), pUserId);
+            try {
+                MainActivity activity = getMainActivity();
+                activity.getMainDao().clearCurrentQuestionnaireR();
+                activity.getMainDao().clearPrevElementsR();
+                activity.setCurrentQuestionnaireNull();
+                activity.getMainDao().deleteQuestionnaireStatusByUserId(oldUserId);
+                activity.getMainDao().clearElementDatabaseModelR();
+                activity.getMainDao().clearElementPassedR();
+                activity.getMainDao().clearElementItemR();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void saveUser(final String pLogin, final String pPassword, final AuthResponseModel pModel, final ConfigModel pConfigModel) throws Exception {
@@ -575,7 +590,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public List<Integer> getPassedQuotasBlock(int max) {
         List<Integer> passedQuotasBlock = new ArrayList<>();
         List<ElementPassedR> passedElements = getDao().getAllElementsPassedR(getQuestionnaire().getToken());
-        Log.d("T-L.SmartFragment", "???????? getPassedQuotasBlock: " + passedElements);
+//        Log.d("T-L.SmartFragment", "???????? getPassedQuotasBlock: " + passedElements);
         if (passedElements == null || passedElements.size() == 0) {
             return null;
         }
@@ -590,12 +605,15 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 //        }
         List<Integer> passedQuotasBlockNew = new ArrayList<>();
 //        Log.d(TAG, "getPassedQuotasBlock SIZE: " + max);
+//        for(int i = 0; i < passedQuotasBlock.size(); i++) {
+//            Log.d("T-L.SmartFragment", "??? getPassedQuotasBlock: " + passedQuotasBlock.get(i));
+//        }
         if (passedQuotasBlock.size() > 0) {
             for (int i = 0; i < max - 1; i++) {
                 passedQuotasBlockNew.add(passedQuotasBlock.get(i));
             }
         }
-        Log.d("T-L.SmartFragment", "????? getPassedQuotasBlock: " + passedQuotasBlockNew);
+//        Log.d("T-L.SmartFragment", "????? getPassedQuotasBlock: " + passedQuotasBlockNew);
         return passedQuotasBlockNew;
     }
 

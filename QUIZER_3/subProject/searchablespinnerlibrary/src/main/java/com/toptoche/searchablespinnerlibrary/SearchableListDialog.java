@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import java.io.Serializable;
 import java.util.List;
@@ -25,20 +27,14 @@ public class SearchableListDialog extends DialogFragment implements
         SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
     private static final String ITEMS = "items";
-
     private ArrayAdapter listAdapter;
-
     private ListView _listViewItems;
-
     private SearchableItem _searchableItem;
-
     private OnSearchTextChanged _onSearchTextChanged;
-
     private SearchView _searchView;
-
     private String _strTitle;
-
     private String _strPositiveButtonText;
+    private static List<Boolean> enabledList;
 
     private DialogInterface.OnClickListener _onClickListener;
 
@@ -46,12 +42,16 @@ public class SearchableListDialog extends DialogFragment implements
 
     }
 
-    public static SearchableListDialog newInstance(List items) {
+    public static SearchableListDialog newInstance(List items, List enabled) {
         SearchableListDialog multiSelectExpandableFragment = new
                 SearchableListDialog();
-
         Bundle args = new Bundle();
         args.putSerializable(ITEMS, (Serializable) items);
+        try {
+            enabledList = (List<Boolean>) enabled;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         multiSelectExpandableFragment.setArguments(args);
 
@@ -151,14 +151,35 @@ public class SearchableListDialog extends DialogFragment implements
                 .INPUT_METHOD_SERVICE);
         mgr.hideSoftInputFromWindow(_searchView.getWindowToken(), 0);
 
-
-        List items = (List) getArguments().getSerializable(ITEMS);
+        final List items = (List) getArguments().getSerializable(ITEMS);
 
         _listViewItems = (ListView) rootView.findViewById(R.id.listItems);
 
         //create the adapter by passing your ArrayList data
-        listAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1,
-                items);
+        listAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, items) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (enabledList != null && position < enabledList.size()) {
+                    return enabledList.get(position);
+                }
+                return true;
+            }
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+
+                tv.setText(items.get(position).toString());
+                if (!isEnabled(position)) {
+                    tv.setTextColor(Color.GRAY);
+                } else {
+                    tv.setTextColor(Color.BLACK);
+                }
+                return view;
+            }
+        };
         //attach the adapter to the list
         _listViewItems.setAdapter(listAdapter);
 
@@ -179,8 +200,7 @@ public class SearchableListDialog extends DialogFragment implements
     }
 
     @Override
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
         dismiss();
     }

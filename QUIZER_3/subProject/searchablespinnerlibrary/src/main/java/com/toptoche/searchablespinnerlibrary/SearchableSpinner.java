@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -22,6 +23,7 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
     public static final int NO_ITEM_SELECTED = -1;
     private Context _context;
     private List _items;
+    private List<Boolean> enabled;
     private SearchableListDialog _searchableListDialog;
 
     private boolean _isDirty;
@@ -50,6 +52,22 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
         init();
     }
 
+    public SearchableSpinner(Context context, AttributeSet attrs, List<Boolean> enabled) {
+        super(context, attrs);
+        this._context = context;
+        this.enabled = enabled;
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SearchableSpinner);
+        final int N = a.getIndexCount();
+        for (int i = 0; i < N; ++i) {
+            int attr = a.getIndex(i);
+            if (attr == R.styleable.SearchableSpinner_hintText) {
+                _strHintText = a.getString(attr);
+            }
+        }
+        a.recycle();
+        init();
+    }
+
     public SearchableSpinner(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this._context = context;
@@ -58,8 +76,10 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
 
     private void init() {
         _items = new ArrayList();
+        if (enabled == null)
+            enabled = new ArrayList();
         _searchableListDialog = SearchableListDialog.newInstance
-                (_items);
+                (_items, enabled);
         _searchableListDialog.setOnSearchableItemClickListener(this);
         setOnTouchListener(this);
 
@@ -129,6 +149,10 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
 
     public void setTitle(String strTitle) {
         _searchableListDialog.setTitle(strTitle);
+    }
+
+    public void setEnabledList(List<Boolean> enabled) {
+        this.enabled = enabled;
     }
 
     public void setPositiveButton(String strPositiveButtonText) {

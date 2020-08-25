@@ -35,7 +35,6 @@ public class SearchableListDialog extends DialogFragment implements
     private String _strTitle;
     private String _strPositiveButtonText;
     private static List<Boolean> enabledList;
-
     private DialogInterface.OnClickListener _onClickListener;
 
     public SearchableListDialog() {
@@ -151,12 +150,14 @@ public class SearchableListDialog extends DialogFragment implements
                 .INPUT_METHOD_SERVICE);
         mgr.hideSoftInputFromWindow(_searchView.getWindowToken(), 0);
 
-        final List items = (List) getArguments().getSerializable(ITEMS);
+
+        List items = (List) getArguments().getSerializable(ITEMS);
 
         _listViewItems = (ListView) rootView.findViewById(R.id.listItems);
 
         //create the adapter by passing your ArrayList data
-        listAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, items) {
+        listAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, items)
+        {
             @Override
             public boolean isEnabled(int position) {
                 if (enabledList != null && position < enabledList.size()) {
@@ -171,7 +172,7 @@ public class SearchableListDialog extends DialogFragment implements
                 View view = super.getDropDownView(position, convertView, parent);
                 TextView tv = (TextView) view;
 
-                tv.setText(items.get(position).toString());
+//                tv.setText(items.get(position).toString());
                 if (!isEnabled(position)) {
                     tv.setTextColor(Color.GRAY);
                 } else {
@@ -180,6 +181,8 @@ public class SearchableListDialog extends DialogFragment implements
                 return view;
             }
         };
+
+
         //attach the adapter to the list
         _listViewItems.setAdapter(listAdapter);
 
@@ -200,7 +203,8 @@ public class SearchableListDialog extends DialogFragment implements
     }
 
     @Override
-    public void onPause() {
+    public void onPause()
+    {
         super.onPause();
         dismiss();
     }

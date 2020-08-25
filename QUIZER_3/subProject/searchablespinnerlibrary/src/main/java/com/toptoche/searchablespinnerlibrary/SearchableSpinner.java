@@ -23,9 +23,8 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
     public static final int NO_ITEM_SELECTED = -1;
     private Context _context;
     private List _items;
-    private List<Boolean> enabled;
     private SearchableListDialog _searchableListDialog;
-
+    private List<Boolean> enabled;
     private boolean _isDirty;
     private ArrayAdapter _arrayAdapter;
     private String _strHintText;
@@ -34,6 +33,7 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
     public SearchableSpinner(Context context) {
         super(context);
         this._context = context;
+        Log.d("T-L.SearchableSpinner", "SearchableSpinner: 1");
         init();
     }
 
@@ -49,6 +49,7 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
             }
         }
         a.recycle();
+        Log.d("T-L.SearchableSpinner", "SearchableSpinner: 2");
         init();
     }
 
@@ -65,12 +66,14 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
             }
         }
         a.recycle();
+        Log.d("T-L.SearchableSpinner", "SearchableSpinner: 3");
         init();
     }
 
     public SearchableSpinner(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this._context = context;
+        Log.d("T-L.SearchableSpinner", "SearchableSpinner: 4 ");
         init();
     }
 
@@ -138,15 +141,13 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
 
     @Override
     public void onSearchableItemClicked(Object item, int position) {
-//        if(enabled.get(position)) {
-            setSelection(_items.indexOf(item));
+        setSelection(_items.indexOf(item));
 
-            if (!_isDirty) {
-                _isDirty = true;
-                setAdapter(_arrayAdapter);
-                setSelection(_items.indexOf(item));
-            }
-//        }
+        if (!_isDirty) {
+            _isDirty = true;
+            setAdapter(_arrayAdapter);
+            setSelection(_items.indexOf(item));
+        }
     }
 
     public void setTitle(String strTitle) {

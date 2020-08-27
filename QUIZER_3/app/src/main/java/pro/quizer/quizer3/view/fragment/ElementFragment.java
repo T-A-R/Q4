@@ -778,6 +778,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
 
                     spinnerAnswers = new SearchableSpinner(getMainActivity(), null, enabled);
+//                    spinnerAnswers = new SearchableSpinner(getMainActivity(), null);
                     spinnerAnswers = (SearchableSpinner) findViewById(R.id.answers_spinner);
                     spinnerAnswers.setVisibility(View.VISIBLE);
 

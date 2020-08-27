@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -23,9 +22,8 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
     public static final int NO_ITEM_SELECTED = -1;
     private Context _context;
     private List _items;
-    private List<Boolean> enabled;
     private SearchableListDialog _searchableListDialog;
-
+    private List<Boolean> enabled;
     private boolean _isDirty;
     private ArrayAdapter _arrayAdapter;
     private String _strHintText;

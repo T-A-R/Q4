@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -33,7 +32,6 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
     public SearchableSpinner(Context context) {
         super(context);
         this._context = context;
-        Log.d("T-L.SearchableSpinner", "SearchableSpinner: 1");
         init();
     }
 
@@ -49,7 +47,6 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
             }
         }
         a.recycle();
-        Log.d("T-L.SearchableSpinner", "SearchableSpinner: 2");
         init();
     }
 
@@ -66,14 +63,12 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
             }
         }
         a.recycle();
-        Log.d("T-L.SearchableSpinner", "SearchableSpinner: 3");
         init();
     }
 
     public SearchableSpinner(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this._context = context;
-        Log.d("T-L.SearchableSpinner", "SearchableSpinner: 4 ");
         init();
     }
 

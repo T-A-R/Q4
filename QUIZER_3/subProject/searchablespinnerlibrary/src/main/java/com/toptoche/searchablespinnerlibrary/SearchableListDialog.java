@@ -16,11 +16,13 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SearchableListDialog extends DialogFragment implements
@@ -35,7 +37,9 @@ public class SearchableListDialog extends DialogFragment implements
     private String _strTitle;
     private String _strPositiveButtonText;
     private static List<Boolean> enabledList;
+    public List<Boolean> originalEnabled;
     private DialogInterface.OnClickListener _onClickListener;
+    private List<String> itemsList;
 
     public SearchableListDialog() {
 
@@ -60,7 +64,13 @@ public class SearchableListDialog extends DialogFragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        originalEnabled = new ArrayList<>(enabledList);
+    }
 
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        enabledList = originalEnabled;
     }
 
     @Override
@@ -93,7 +103,12 @@ public class SearchableListDialog extends DialogFragment implements
         alertDialog.setView(rootView);
 
         String strPositiveButton = _strPositiveButtonText == null ? "CLOSE" : _strPositiveButtonText;
-        alertDialog.setPositiveButton(strPositiveButton, _onClickListener);
+        alertDialog.setPositiveButton(strPositiveButton, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                enabledList = originalEnabled;
+            }
+        });
 
         String strTitle = _strTitle == null ? "Select Item" : _strTitle;
         alertDialog.setTitle(strTitle);
@@ -152,12 +167,25 @@ public class SearchableListDialog extends DialogFragment implements
 
 
         List items = (List) getArguments().getSerializable(ITEMS);
+        itemsList = new ArrayList<String>(items);
 
         _listViewItems = (ListView) rootView.findViewById(R.id.listItems);
 
-        //create the adapter by passing your ArrayList data
-        listAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, items)
-        {
+        listAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, itemsList) {
+
+            private ArrayList<String> originalList = new ArrayList<>(itemsList);
+
+            private ArrayList<String> titlesList = new ArrayList<>(itemsList);
+            private ItemFilter filter;
+
+            @Override
+            public Filter getFilter() {
+                if (filter == null) {
+                    filter = new ItemFilter();
+                }
+                return filter;
+            }
+
             @Override
             public boolean isEnabled(int position) {
                 if (enabledList != null && position < enabledList.size()) {
@@ -172,7 +200,6 @@ public class SearchableListDialog extends DialogFragment implements
                 View view = super.getDropDownView(position, convertView, parent);
                 TextView tv = (TextView) view;
 
-//                tv.setText(items.get(position).toString());
                 if (!isEnabled(position)) {
                     tv.setTextColor(Color.GRAY);
                 } else {
@@ -180,10 +207,55 @@ public class SearchableListDialog extends DialogFragment implements
                 }
                 return view;
             }
+
+
+            class ItemFilter extends Filter {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+
+
+                    FilterResults result = new FilterResults();
+                    if (constraint != null && constraint.toString().length() > 0) {
+                        constraint = constraint.toString().toLowerCase();
+                        ArrayList<String> filteredItems = new ArrayList<>();
+                        ArrayList<Boolean> filteredEnabled = new ArrayList<>();
+
+                        for (int i = 0, l = originalList.size(); i < l; i++) {
+                            String element = originalList.get(i);
+                            if (element.toLowerCase().contains(constraint)) {
+                                filteredItems.add(element);
+                                filteredEnabled.add(originalEnabled.get(i));
+                            }
+                        }
+                        enabledList = filteredEnabled;
+                        result.count = filteredItems.size();
+                        result.values = filteredItems;
+                    } else {
+                        synchronized (this) {
+                            enabledList = originalEnabled;
+                            result.values = originalList;
+                            result.count = originalList.size();
+                        }
+                    }
+                    return result;
+                }
+
+                @SuppressWarnings("unchecked")
+                @Override
+                protected void publishResults(CharSequence constraint,
+                                              FilterResults results) {
+
+                    itemsList = (ArrayList<String>) results.values;
+                    notifyDataSetChanged();
+                    clear();
+                    for (int i = 0, l = itemsList.size(); i < l; i++)
+                        add(itemsList.get(i));
+                    notifyDataSetInvalidated();
+//                    enabledList = originalEnabled;
+                }
+            }
         };
 
-
-        //attach the adapter to the list
         _listViewItems.setAdapter(listAdapter);
 
         _listViewItems.setTextFilterEnabled(true);
@@ -192,6 +264,7 @@ public class SearchableListDialog extends DialogFragment implements
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 _searchableItem.onSearchableItemClicked(listAdapter.getItem(position), position);
+                enabledList = originalEnabled;
                 getDialog().dismiss();
             }
         });
@@ -203,8 +276,7 @@ public class SearchableListDialog extends DialogFragment implements
     }
 
     @Override
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
         dismiss();
     }
@@ -217,9 +289,7 @@ public class SearchableListDialog extends DialogFragment implements
 
     @Override
     public boolean onQueryTextChange(String s) {
-//        listAdapter.filterData(s);
         if (TextUtils.isEmpty(s)) {
-//                _listViewItems.clearTextFilter();
             ((ArrayAdapter) _listViewItems.getAdapter()).getFilter().filter(null);
         } else {
             ((ArrayAdapter) _listViewItems.getAdapter()).getFilter().filter(s);

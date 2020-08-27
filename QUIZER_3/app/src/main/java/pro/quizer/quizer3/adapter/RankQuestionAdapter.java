@@ -149,7 +149,7 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         TextView answerTitle;
         TextView answerDesc;
         public TextView answerEditText;
-        ImageView editButton;
+        public ImageView editButton;
         ImageView image1;
         ImageView image2;
         ImageView image3;
@@ -315,8 +315,8 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
                         case TEXT:
                         case NUMBER:
                             showInputDialog(answerEditText, position);
-                            answerEditText.setFocusable(false);
-                            answerEditText.setFocusableInTouchMode(false);
+//                            answerEditText.setFocusable(false);
+//                            answerEditText.setFocusableInTouchMode(false);
                             break;
                         case TIME:
                             setTime(answerEditText);
@@ -329,18 +329,20 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
                     }
                 }
             } else {
-                answerEditText.setEnabled(false);
+                editButton.setVisibility(View.VISIBLE);
+//                answerEditText.setEnabled(false);
             }
         }
 
         @Override
         public void onClick(View v) {
+
             if (v == cont) {
                 cont.setFocusable(true);
                 cont.requestFocus();
                 return;
             }
-            if (lastSelectedPosition != getAdapterPosition()) {
+//            if (lastSelectedPosition != getAdapterPosition()) {
                 lastSelectedPosition = getAdapterPosition();
                 boolean isOpen = !answersList.get(getAdapterPosition()).getElementOptionsR().getOpen_type().equals(CHECKBOX);
 
@@ -352,7 +354,7 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
                         answer = answerEditText.getText().toString();
                     onUserClickListener.onAnswerClick(lastSelectedPosition, isChecked, answer);
                 }
-            }
+//            }
         }
     }
 
@@ -484,12 +486,15 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         final AlertDialog alertDialog = dialog.create();
 
         mNextBtn.setOnClickListener(v -> {
-            if (mEditText.getText() != null && mEditText.getText().length() > 0) {
+            if ((mEditText.getText() != null && mEditText.getText().length() > 0) || answersList.get(position).getElementOptionsR().isUnnecessary_fill_open()) {
                 answersState.get(position).setChecked(true);
                 answersState.get(position).setData(mEditText.getText().toString());
                 pEditText.setText(mEditText.getText().toString());
-            } else
+            } else {
                 mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
+//                editButton.setVisibility(View.VISIBLE);
+                pEditText.setEnabled(true);
+            }
             if (mActivity != null && !mActivity.isFinishing()) {
                 mActivity.hideKeyboardFrom(mEditText);
                 alertDialog.dismiss();

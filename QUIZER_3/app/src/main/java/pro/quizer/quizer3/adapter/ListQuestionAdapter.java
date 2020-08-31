@@ -698,7 +698,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         final AlertDialog alertDialog = dialog.create();
 
         mNextBtn.setOnClickListener(v -> {
-            if (mEditText.getText() != null && mEditText.getText().length() > 0) {
+            if ((mEditText.getText() != null && mEditText.getText().length() > 0) || answersList.get(position).getElementOptionsR().isUnnecessary_fill_open()) {
                 answersState.get(position).setChecked(true);
                 answersState.get(position).setData(mEditText.getText().toString());
                 pEditText.setText(mEditText.getText().toString());

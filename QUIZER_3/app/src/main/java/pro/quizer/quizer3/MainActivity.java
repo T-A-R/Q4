@@ -50,6 +50,7 @@ import java.util.TimerTask;
 
 import pro.quizer.quizer3.broadcast.StartSmsSender;
 import pro.quizer.quizer3.database.QuizerDao;
+import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
@@ -69,6 +70,7 @@ import pro.quizer.quizer3.model.config.OptionsModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.model.config.StagesModel;
 import pro.quizer.quizer3.utils.DateUtils;
+import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.SPUtils;
@@ -592,28 +594,27 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             alertDialog.show();
     }
 
-    public static void addLog(String login,
-                              String type,
-                              String object,
-                              String action,
-                              String result,
-                              String desc,
-                              String data) {
-//        AppLogsR appLogsR = new AppLogsR();
-//        appLogsR.setLogin(login);
-//        appLogsR.setDevice(DeviceUtils.getDeviceInfo());
-//        appLogsR.setAppversion(DeviceUtils.getAppVersion());
-//        appLogsR.setPlatform(DeviceUtils.getAndroidVersion());
-//        appLogsR.setDate(String.valueOf(DateUtils.getCurrentTimeMillis()));
-//        appLogsR.setType(type);
-//        appLogsR.setObject(object);
-//        appLogsR.setAction(action);
-//        appLogsR.setResult(result);
-//        appLogsR.setDescription(desc);
-//        if (data != null)
-//            appLogsR.setInfo(data.substring(0, Math.min(data.length(), 5000)));
-//
-//        getStaticDao().insertAppLogsR(appLogsR);
+    public void addLog(String object,
+                       String action,
+                       String result,
+                       String desc,
+                       String data) {
+        AppLogsR appLogsR = new AppLogsR();
+        String login = getCurrentUser().getLogin();
+        if (login == null) login = "no_login";
+        appLogsR.setLogin(login);
+        appLogsR.setDevice(DeviceUtils.getDeviceInfo());
+        appLogsR.setAppversion(DeviceUtils.getAppVersion());
+        appLogsR.setPlatform(DeviceUtils.getAndroidVersion());
+        appLogsR.setDate(String.valueOf(DateUtils.getCurrentTimeMillis()));
+        appLogsR.setObject(object);
+        appLogsR.setAction(action);
+        appLogsR.setResult(result);
+        appLogsR.setDescription(desc);
+        if (data != null)
+            appLogsR.setInfo(data.substring(0, Math.min(data.length(), 5000)));
+
+        getMainDao().insertAppLogsR(appLogsR);
     }
 
     public void startRecording(int relativeId, String token) {
@@ -622,11 +623,13 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
             if (mediaCntrlr == null) {
                 mIsAudioStarted = false;
+                addLog(Constants.LogObject.AUDIO, "startRecording", Constants.LogResult.ERROR, "Cant start audio", "mediaCntrlr == null");
                 return;
             }
             final String mediaID = mediaCntrlr.getMetadata().getDescription().getMediaId();
             if (mediaID == null) {
                 mIsAudioStarted = false;
+                addLog(Constants.LogObject.AUDIO, "startRecording", Constants.LogResult.ERROR, "Cant start audio", "mediaID == null");
                 return;
             }
             final int pbState = mediaCntrlr.getPlaybackState().getState();
@@ -636,6 +639,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 callRecord();
                 showToastfromActivity(getString(R.string.start_audio_error_check_microphone));
                 mIsAudioStarted = false;
+                addLog(Constants.LogObject.AUDIO, "startRecording", Constants.LogResult.ERROR, "Cant start audio", "pbState == PlaybackStateCompat.STATE_ERROR");
                 return;
             }
             if (pbState != PlaybackStateCompat.STATE_PLAYING) {
@@ -647,6 +651,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                     getMainDao().setAudioNumber(audioNumber + 1);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    addLog(Constants.LogObject.AUDIO, "startRecording", Constants.LogResult.ERROR, "Cant start audio", "getCurrentQuestionnaireForce().getAudio_number()");
+
                 }
                 audioTime = DateUtils.getCurrentTimeMillis();
                 mToken = token;
@@ -709,6 +715,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 });
 
             }
+        } else {
+            addLog(Constants.LogObject.AUDIO, "startRecording", Constants.LogResult.ERROR, "Cant start audio", "mIsMediaConnected == false");
         }
         RECORDING = true;
     }
@@ -793,6 +801,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 final MediaControllerCompat mediaCntrlr = new MediaControllerCompat(MainActivity.this, sesTok);
                 MediaControllerCompat.setMediaController(MainActivity.this, mediaCntrlr);
             } catch (final RemoteException ignored) {
+                addLog(Constants.LogObject.AUDIO, "onConnected", Constants.LogResult.ERROR, "Cant start audio", ignored.toString());
+
                 Log.d(TAG, "onConnected ERROR: " + ignored);
             }
 
@@ -802,12 +812,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         @Override
         public void onConnectionSuspended() {
             mIsMediaConnected = false;
+            addLog(Constants.LogObject.AUDIO, "onConnectionSuspended", Constants.LogResult.ERROR, "Cant start audio", null);
             super.onConnectionSuspended();
         }
 
         @Override
         public void onConnectionFailed() {
             mIsMediaConnected = false;
+            addLog(Constants.LogObject.AUDIO, "onConnectionFailed", Constants.LogResult.ERROR, "Cant start audio", null);
             super.onConnectionFailed();
         }
     };
@@ -828,11 +840,13 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
         @Override
         public void onError(@NonNull final String parentId) {
+            addLog(Constants.LogObject.AUDIO, "onError 1", Constants.LogResult.ERROR, "Cant start audio", null);
             onError(parentId, new Bundle());
         }
 
         @Override
         public void onError(@NonNull final String parentId, @NonNull final Bundle options) {
+            addLog(Constants.LogObject.AUDIO, "onError 2", Constants.LogResult.ERROR, "Cant start audio", null);
             callStopReady();
         }
     };

@@ -1068,10 +1068,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                                             .setNegativeButton(R.string.view_cancel, (dialog, which) -> dialog.cancel())
                                             .show();
                                 } catch (Exception e) {
-                                    if (getCurrentUser() != null)
-                                        addLog(getCurrentUser().getLogin(), Constants.LogType.DIALOG, Constants.LogObject.SMS, getString(R.string.show_sms_dialog), Constants.LogResult.ERROR, getString(R.string.cant_show_dialog), e.toString());
-                                    else
-                                        addLog("android", Constants.LogType.DIALOG, Constants.LogObject.SMS, getString(R.string.show_sms_dialog), Constants.LogResult.ERROR, getString(R.string.cant_show_dialog), e.toString());
+//                                    if (getCurrentUser() != null)
+//                                        addLog(getCurrentUser().getLogin(), Constants.LogType.DIALOG, Constants.LogObject.SMS, getString(R.string.show_sms_dialog), Constants.LogResult.ERROR, getString(R.string.cant_show_dialog), e.toString());
+//                                    else
+//                                        addLog("android", Constants.LogType.DIALOG, Constants.LogObject.SMS, getString(R.string.show_sms_dialog), Constants.LogResult.ERROR, getString(R.string.cant_show_dialog), e.toString());
                                 }
                             }
                         }

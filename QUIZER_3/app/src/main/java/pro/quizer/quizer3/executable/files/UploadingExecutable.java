@@ -98,7 +98,7 @@ public class UploadingExecutable extends BaseExecutable {
             try {
                 crashLogsList = mContext.getMainDao().getCrashLogs();
             } catch (Exception e) {
-                MainActivity.addLog("android", Constants.LogType.DATABASE, Constants.LogObject.LOG, mContext.getString(R.string.load_crashlog_from_db), Constants.LogResult.ERROR, mContext.getString(R.string.db_load_error), e.getMessage());
+//                MainActivity.addLog("android", Constants.LogType.DATABASE, Constants.LogObject.LOG, mContext.getString(R.string.load_crashlog_from_db), Constants.LogResult.ERROR, mContext.getString(R.string.db_load_error), e.getMessage());
             }
             if (crashLogsList != null && crashLogsList.size() > 0) {
                 for (CrashLogs crash : crashLogsList) {
@@ -117,7 +117,8 @@ public class UploadingExecutable extends BaseExecutable {
                 FileUtils.createTxtFile(UPLOADING_PATH, String.format(UPLOADING_CRASH_FILE_NAME, "android", DateUtils.getCurrentTimeMillis()), json);
                 mContext.getMainDao().clearCrashLogs();
             } catch (final IOException pE) {
-                MainActivity.addLog("android", Constants.LogType.FILE, Constants.LogObject.LOG, mContext.getString(R.string.save_crashlog_to_file), Constants.LogResult.ERROR, mContext.getString(R.string.save_ctashlog_error), pE.getMessage());
+                pE.printStackTrace();
+//                MainActivity.addLog("android", Constants.LogType.FILE, Constants.LogObject.LOG, mContext.getString(R.string.save_crashlog_to_file), Constants.LogResult.ERROR, mContext.getString(R.string.save_ctashlog_error), pE.getMessage());
             }
         }
     }

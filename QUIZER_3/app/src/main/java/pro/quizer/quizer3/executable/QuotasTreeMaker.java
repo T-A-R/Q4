@@ -265,7 +265,7 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
 
         } catch (Exception e) {
             e.printStackTrace();
-            MainActivity.addLog(activity.getCurrentUser().getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, activity.getString(R.string.get_quotas), Constants.LogResult.ERROR, activity.getString(R.string.log_error_102_desc), e.toString());
+//            MainActivity.addLog(activity.getCurrentUser().getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, activity.getString(R.string.get_quotas), Constants.LogResult.ERROR, activity.getString(R.string.log_error_102_desc), e.toString());
         }
         Log.d(TAG, "getLocalQuotas: " + counter);
         return counter;

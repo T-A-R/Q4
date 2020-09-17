@@ -118,7 +118,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
         Gson gson = new Gson();
         String json = gson.toJson(requestModel);
 
-        MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.SENT, mBaseActivity.getString(R.string.send_quiz_attempt), json);
+//        MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.SENT, mBaseActivity.getString(R.string.send_quiz_attempt), json);
         Log.d(TAG, "================== sendViaInternetWithRetrofit: =====================");
         QuizerAPI.sendQuestionnaires(mServerUrl, json, this);
     }
@@ -126,7 +126,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
     @Override
     public void onSendQuestionnaires(ResponseBody responseBody) {
         if (responseBody == null) {
-            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.log_error_201_desc), null);
+//            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.log_error_201_desc), null);
             onError(new Exception(mBaseActivity.getString(R.string.server_response_error) + " " + mBaseActivity.getString(R.string.error_201)));
             Log.d(TAG, "onSendQuestionnaires: responseBody = null!");
             return;
@@ -136,7 +136,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
         try {
             responseJson = responseBody.string();
         } catch (IOException e) {
-            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.log_error_202_desc), null);
+//            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.log_error_202_desc), null);
             onError(new Exception(mBaseActivity.getString(R.string.server_response_error) + " " + mBaseActivity.getString(R.string.error_202)));
             return;
         }
@@ -145,7 +145,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
         try {
             deletingListResponseModel = new GsonBuilder().create().fromJson(responseJson, DeletingListResponseModel.class);
         } catch (Exception pE) {
-            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.log_error_203_desc), responseJson);
+//            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.log_error_203_desc), responseJson);
             onError(new Exception(mBaseActivity.getString(R.string.server_response_error) + " " + mBaseActivity.getString(R.string.error_203)));
             return;
         }
@@ -182,28 +182,28 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                 final List<String> tokensToRemove = deletingListResponseModel.getAccepted();
 
                 if (tokensToRemove == null || tokensToRemove.isEmpty()) {
-                    MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.error_204) + mBaseActivity.getString(R.string.empty_tokens_list_error), responseJson);
+//                    MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.error_204) + mBaseActivity.getString(R.string.empty_tokens_list_error), responseJson);
                     onError(new Exception(deletingListResponseModel.getMessage() + " " + mBaseActivity.getString(R.string.error_204)));
                 } else {
-                    MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.quiz_sent), null);
+//                    MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.quiz_sent), null);
 
                     for (final String token : tokensToRemove) {
                         try {
-                            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.set_quiz_status), Constants.LogResult.SENT, mBaseActivity.getString(R.string.set_sent_quiz_status), null);
+//                            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.set_quiz_status), Constants.LogResult.SENT, mBaseActivity.getString(R.string.set_sent_quiz_status), null);
                             mBaseActivity.getMainDao().insertToken(new TokensCounterR(token, mUserModel.getUser_id()));
                             mBaseActivity.getMainDao().deleteQuestionnaireByToken(token);
                             mBaseActivity.getMainDao().deleteElementDatabaseModelByToken(token);
                             mBaseActivity.setSettings(Constants.Settings.SENT_TIME, String.valueOf(DateUtils.getFullCurrentTime()));
 
                         } catch (Exception e) {
-                            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.set_quiz_status), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.db_save_error), e.getMessage());
+//                            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.set_quiz_status), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.db_save_error), e.getMessage());
                         }
                     }
 
                     try {
                         mBaseActivity.getMainDao().clearWarningsR();
                     } catch (Exception e) {
-                        MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.WARNINGS, mBaseActivity.getString(R.string.clear_warnings_db), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.db_clear_error), e.getMessage());
+//                        MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.WARNINGS, mBaseActivity.getString(R.string.clear_warnings_db), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.db_clear_error), e.getMessage());
                     }
                     onSuccess();
 
@@ -215,7 +215,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                 }
             } else {
                 onError(new Exception(deletingListResponseModel.getError() + " " + mBaseActivity.getString(R.string.error_205)));
-                MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.ERROR, " " + mBaseActivity.getString(R.string.error_205) + deletingListResponseModel.getError(), null);
+//                MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.ERROR, " " + mBaseActivity.getString(R.string.error_205) + deletingListResponseModel.getError(), null);
 
             }
         } else {

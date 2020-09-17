@@ -58,7 +58,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
 
         String mServerUrl = configModel.getServerUrl();
 
-        MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.SENT, mContext.getString(R.string.sending_request), json);
+//        MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.SENT, mContext.getString(R.string.sending_request), json);
 
         QuizerAPI.getQuotas(mServerUrl, json, this);
     }
@@ -66,7 +66,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
     @Override
     public void onGetQuotasCallback(ResponseBody responseBody) {
         if (responseBody == null) {
-            MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.ERROR, mContext.getString(R.string.log_error_101_desc), null);
+//            MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.ERROR, mContext.getString(R.string.log_error_101_desc), null);
             onError(new Exception(mContext.getString(R.string.load_quotas_error) + " " + mContext.getString(R.string.error_101)));
             return;
         }
@@ -74,17 +74,16 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
         try {
             responseJson = responseBody.string();
         } catch (IOException e) {
-            MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.ERROR, mContext.getString(R.string.log_error_102_desc), null);
+//            MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.ERROR, mContext.getString(R.string.log_error_102_desc), null);
             onError(new Exception(mContext.getString(R.string.load_quotas_error) + " " + mContext.getString(R.string.error_102)));
             return;
         }
-//        Log.d(TAG, "&&&&&&&&&&&&&&^^^^^^^^^^^^^^^^^  onGetQuotasCallback: " + responseJson);
         QuotaResponseModel quotaResponseModel;
 
         try {
             quotaResponseModel = new GsonBuilder().create().fromJson(responseJson, QuotaResponseModel.class);
         } catch (final Exception pE) {
-            MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.ERROR, mContext.getString(R.string.log_error_103_desc), responseJson);
+//            MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.ERROR, mContext.getString(R.string.log_error_103_desc), responseJson);
             onError(new Exception(mContext.getString(R.string.load_quotas_error) + " " + mContext.getString(R.string.error_103)));
             return;
         }
@@ -101,7 +100,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
 
             if (quotaResponseModel.getResult() != 0) {
                 try {
-                    MainActivity.addLog(userModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUOTA, mContext.getString(R.string.save_quotas), Constants.LogResult.SENT, mContext.getString(R.string.save_quotas_to_db), null);
+//                    MainActivity.addLog(userModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUOTA, mContext.getString(R.string.save_quotas), Constants.LogResult.SENT, mContext.getString(R.string.save_quotas_to_db), null);
                     Log.d(TAG, "onGetQuotasCallback: " + responseJson);
 //                    mainActivity.getMainDao().updateQuotas(responseJson, userProjectId);
                     if(quotaResponseModel.getQuotas() != null && quotaResponseModel.getQuotas().size() > 0){
@@ -119,10 +118,10 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
                     }
                 } catch (Exception e) {
                     Log.d(TAG, mContext.getString(R.string.db_save_error));
-                    MainActivity.addLog(userModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUOTA, mContext.getString(R.string.save_quotas), Constants.LogResult.ERROR, e.getMessage(), null);
+//                    MainActivity.addLog(userModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUOTA, mContext.getString(R.string.save_quotas), Constants.LogResult.ERROR, e.getMessage(), null);
 
                 }
-                MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.SUCCESS, mContext.getString(R.string.quotas_renew), null);
+//                MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.SUCCESS, mContext.getString(R.string.quotas_renew), null);
 //                mainActivity.getTree();
                 onSuccess();
             } else {

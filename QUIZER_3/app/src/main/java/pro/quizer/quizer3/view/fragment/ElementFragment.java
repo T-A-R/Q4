@@ -1773,6 +1773,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             try {
                 activity.startRecording(currentElement.getRelative_id(), getQuestionnaire().getToken());
             } catch (Exception e) {
+                activity.addLog(Constants.LogObject.AUDIO, "startRecording", Constants.LogResult.ERROR, "Cant start audio", e.toString());
                 e.printStackTrace();
             }
         }
@@ -1780,6 +1781,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             try {
                 activity.startRecording(0, getQuestionnaire().getToken());
             } catch (Exception e) {
+                activity.addLog(Constants.LogObject.AUDIO, "startRecording", Constants.LogResult.ERROR, "Cant start audio", e.toString());
                 e.printStackTrace();
             }
         }

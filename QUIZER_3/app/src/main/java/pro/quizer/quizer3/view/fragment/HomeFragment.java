@@ -269,12 +269,15 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             isStartBtnPressed = true;
             if (isTimeToDownloadConfig) {
+                activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. Reload config", null);
                 reloadConfig();
             } else if (currentQuestionnaire == null && !isNeedUpdate) {
+                activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. Without delete old", null);
                 if (checkTime() && checkGps() && checkMemory()) {
                     new StartNewQuiz().execute();
                 }
             } else {
+                activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. With delete old", null);
                 showStartDialog();
             }
         } else if (view == btnInfo) {
@@ -282,6 +285,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         } else if (view == btnQuotas) {
             replaceFragment(new QuotasFragment());
         } else if (view == btnContinue) {
+            activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Continue", null);
             try {
                 getDao().setCurrentQuestionnairePaused(false);
                 currentQuestionnaire.setPaused(false);
@@ -606,6 +610,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             try {
                 Objects.requireNonNull(activity).startRecording(0, currentQuestionnaire.getToken());
             } catch (Exception e) {
+                activity.addLog(Constants.LogObject.AUDIO, "startRecording", Constants.LogResult.ERROR, "Cant start audio", e.toString());
                 e.printStackTrace();
             }
         }
@@ -819,7 +824,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             } catch (Exception e) {
                 e.printStackTrace();
-                MainActivity.addLog(activity.getCurrentUser().getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, activity.getString(R.string.get_quotas), Constants.LogResult.ERROR, activity.getString(R.string.log_error_102_desc), e.toString());
+//                MainActivity.addLog(activity.getCurrentUser().getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, activity.getString(R.string.get_quotas), Constants.LogResult.ERROR, activity.getString(R.string.log_error_102_desc), e.toString());
             }
 
             return counter;
@@ -865,7 +870,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 @Override
                 public void onSuccess() {
                     mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.quotas_renew));
-                    MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.quotas_renew), null);
+//                    MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.quotas_renew), null);
                     if (!isQuotaUpdated) {
                         if (!mIsStartAfterAuth) {
                             isQuotaUpdated = true;
@@ -877,7 +882,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 @Override
                 public void onError(Exception pException) {
                     mBaseActivity.showToastfromActivity(pException.getMessage());
-                    MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.ERROR, pException.getMessage(), pException.toString());
+//                    MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.ERROR, pException.getMessage(), pException.toString());
                     if (!isQuotaUpdated) {
                         if (!mIsStartAfterAuth) {
                             isQuotaUpdated = true;

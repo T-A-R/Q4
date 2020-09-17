@@ -86,6 +86,7 @@ public final class Constants {
         String BUTTON = "button";
         String FILE = "file";
         String DIALOG = "dialog";
+        String AUDIO = "dialog";
     }
 
     public interface LogObject {

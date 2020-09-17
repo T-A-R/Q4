@@ -22,6 +22,7 @@ import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.CoreApplication;
 import pro.quizer.quizer3.API.models.request.FileRequestModel;
 import pro.quizer.quizer3.API.models.response.AuthResponseModel;
+import pro.quizer.quizer3.model.FileInfo;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -262,12 +263,16 @@ public class QuizerAPI {
 
         String fileName = "files[%1$s]";
 
-        RequestBody description = RequestBody.create(MultipartBody.FORM, new Gson().toJson(new FileRequestModel(pNameForm)));
         List<MultipartBody.Part> parts = new ArrayList<>();
+        List<FileInfo> fileInfos = new ArrayList<>();
 
         for (int i = 0; i < files.size(); i++) {
             parts.add(prepareFilePart(String.format(fileName, i), files.get(i), pMediaType));
+            fileInfos.add(new FileInfo(files.get(i).getName(), files.get(i).length() / 1024 + " KB"));
+            Log.d("T-L.QuizerAPI", "sendFiles: " + pNameForm + " " + files.get(i).getName() + " " + (files.get(i).length() / 1024) + " KB");
         }
+
+        RequestBody description = RequestBody.create(MultipartBody.FORM, new Gson().toJson(new FileRequestModel(pNameForm, fileInfos)));
 
         CoreApplication.getQuizerApi().sendFiles(url, description, parts).enqueue(new Callback<ResponseBody>() {
             @Override

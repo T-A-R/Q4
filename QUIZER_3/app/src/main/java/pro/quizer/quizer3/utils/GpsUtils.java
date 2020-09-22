@@ -43,6 +43,7 @@ public final class GpsUtils {
         } else {
             Log.d(TAG, "checkGps: GPS SETTINGS DIALOG");
 //            gps.showSettingsAlert();
+            gps.stopUsingGPS();
             return null;
         }
 
@@ -51,6 +52,7 @@ public final class GpsUtils {
 //            return null;
 //        }
 
+        gps.stopUsingGPS();
         return new GPSModel(lon, lat, lonN, latN, time, timeNetwork, isFakeGPS, isConZeroLoc);
     }
 }

@@ -138,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private boolean isHomeFragmentStarted = false;
     private int audioNumber = 1;
     private Long audioTime;
+    private Boolean mHomeRestart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     @Override
     protected void onResume() {
         super.onResume();
+        mHomeRestart = getIntent().getBooleanExtra("HOME", false);
     }
 
     public boolean dispatchTouchEvent(MotionEvent event) {
@@ -1333,6 +1335,21 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void restartActivity() {
         this.finish();
+        System.gc();
+//        recreate();
         startActivity(new Intent(this, MainActivity.class));
+    }
+
+    public void restartHome() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("HOME", true);
+        this.finish();
+        System.gc();
+        startActivity(intent);
+    }
+
+    public Boolean isHomeRestart() {
+        if (mHomeRestart == null) mHomeRestart = false;
+        return mHomeRestart;
     }
 }

@@ -40,7 +40,8 @@
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="relaunch.activity.ACTIVITY_SELF_START_INTENT" />
+                <category android:name = "android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

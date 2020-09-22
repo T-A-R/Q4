@@ -126,6 +126,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         return this;
     }
 
+
     @Override
     protected void onReady() {
         activity = (MainActivity) getActivity();

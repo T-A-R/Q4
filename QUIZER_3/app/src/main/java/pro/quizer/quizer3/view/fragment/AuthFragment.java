@@ -92,6 +92,10 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
         MainFragment.disableSideMenu();
 
+        if(getMainActivity().isHomeRestart()) {
+            replaceFragment(new HomeFragment());
+        }
+
         btnSend.setOnClickListener(this);
         tvVersionView.setOnClickListener(this);
 

@@ -317,8 +317,6 @@ public abstract class ScreenFragment extends SmartFragment {
         View view = getView();
         if (screenListener != null && view != null)
             view.post(() -> screenListener.fragmentReplace(newScreen, false));
-//            view.post(() -> screenListener.fragmentReplace(ScreenFragment.this, newScreen, false));
-
     }
 
     protected void replaceFragmentBack(ScreenFragment newScreen) {

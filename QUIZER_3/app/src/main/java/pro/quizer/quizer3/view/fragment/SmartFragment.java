@@ -1281,4 +1281,9 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             }
         });
     }
+
+//    public void restartHome() {
+//        Bundle bundle = new Bundle();
+//        bundle.putBoolean("home", true);
+//    }
 }

@@ -14,6 +14,8 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 
+import java.lang.ref.WeakReference;
+
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 
@@ -21,7 +23,8 @@ import static pro.quizer.quizer3.MainActivity.IS_AFTER_AUTH;
 
 public class GPSTracker extends Service implements LocationListener {
 
-    private final Activity mActivity;
+//    private final Activity mActivity;
+    private final WeakReference<Activity> mActivity;
     // flag for GPS status
     boolean isGPSEnabled = false;
     // flag for network status
@@ -42,17 +45,19 @@ public class GPSTracker extends Service implements LocationListener {
     // The minimum time between updates in milliseconds
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
     // Declaring a Location Manager
-    protected LocationManager locationManager;
+//    protected LocationManager locationManager;
+    protected  LocationManager locationManager;
 
     public GPSTracker(Activity context) {
-        this.mActivity = context;
+//        this.mActivity = context;
+        this.mActivity = new WeakReference<>(context);
         getLocation();
     }
 
     @SuppressLint("MissingPermission")
     public Location getLocation() {
         try {
-            locationManager = (LocationManager) mActivity
+            locationManager = (LocationManager) mActivity.get()
                     .getSystemService(LOCATION_SERVICE);
 
             // getting GPS status
@@ -149,7 +154,7 @@ public class GPSTracker extends Service implements LocationListener {
     }
 
     public void showSettingsAlert() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity, R.style.AlertDialogTheme);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity.get(), R.style.AlertDialogTheme);
         alertDialog.setCancelable(false);
         alertDialog.setTitle(R.string.dialog_please_turn_on_gps);
         alertDialog.setMessage(R.string.dialog_you_need_to_turn_on_gps);
@@ -157,17 +162,17 @@ public class GPSTracker extends Service implements LocationListener {
 
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                mActivity.startActivity(intent);
+                mActivity.get().startActivity(intent);
             }
         });
 
-        if (!mActivity.isFinishing()) {
+        if (!mActivity.get().isFinishing()) {
             alertDialog.show();
         }
     }
 
     public void showNoGpsAlert(boolean isForceGps) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity, R.style.AlertDialogTheme);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity.get(), R.style.AlertDialogTheme);
         alertDialog.setCancelable(false);
         alertDialog.setTitle(R.string.dialog_no_gps);
         if (isForceGps) {
@@ -202,7 +207,7 @@ public class GPSTracker extends Service implements LocationListener {
                 dialog.dismiss();
             }
         });
-        if (!mActivity.isFinishing()) {
+        if (!mActivity.get().isFinishing()) {
             alertDialog.show();
         }
     }
@@ -235,7 +240,7 @@ public class GPSTracker extends Service implements LocationListener {
             } else {
                 String mockLocation = "0";
                 try {
-                    mockLocation = Settings.Secure.getString(mActivity.getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION);
+                    mockLocation = Settings.Secure.getString(mActivity.get().getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -244,5 +249,17 @@ public class GPSTracker extends Service implements LocationListener {
         } else {
             return false;
         }
+    }
+
+    public void stopUsingGPS() {
+        if (locationManager != null) {
+            locationManager.removeUpdates(GPSTracker.this);
+        }
+    }
+    @Override
+    public void onDestroy() {
+//        Log.d(TAG,"onDestroy Called");
+        stopUsingGPS();
+        super.onDestroy();
     }
 }

@@ -1,7 +1,6 @@
 package pro.quizer.quizer3.view.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -12,9 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.AdapterView;
@@ -26,7 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Spinner;
 
 import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
 import com.multispinner.MultiSelectSpinner;
@@ -70,7 +66,6 @@ import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class ElementFragment extends ScreenFragment implements View.OnClickListener, ListQuestionAdapter.OnAnswerClickListener, RankQuestionAdapter.OnAnswerClickListener, ScaleQuestionAdapter.OnAnswerClickListener, TableQuestionAdapter.OnTableAnswerClickListener {
 
-    private Toolbar toolbar;
     private Button btnNext;
     private Button btnPrev;
     private Button btnExit;
@@ -78,7 +73,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private Button btnHideTitle2;
     private Button btnUnhideTitle;
     private Button btnUnhideQuestion;
-    private RelativeLayout cont;
     private LinearLayout unhideCont;
     private LinearLayout titleCont1;
     private LinearLayout titleCont2;
@@ -89,7 +83,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private LinearLayout spinnerCont;
     private LinearLayout infoCont;
     private FrameLayout tableCont;
-    private TextView tvUnhide;
     private TextView tvTitle1;
     private TextView tvTitle2;
     private TextView tvQuestion;
@@ -101,8 +94,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private RecyclerView rvScale;
     private SearchableSpinner spinnerAnswers;
     private AdaptiveTableLayout tableLayout;
-    private RelativeLayout unhideTitleCont;
-    private RelativeLayout unhideAnswerCont;
+    //    private RelativeLayout unhideTitleCont;
+//    private RelativeLayout unhideAnswerCont;
     private ImageView title1Image1;
     private ImageView title1Image2;
     private ImageView title1Image3;
@@ -120,9 +113,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     private boolean isQuestionHided = false;
     private boolean hasQuestionImage = false;
-    private boolean isPrevBtnPressed = false;
-    private boolean isExit = false;
-    private int currentQuestionId;
+    //    private boolean isPrevBtnPressed = false;
+//    private boolean isExit = false;
+//    private int currentQuestionId;
     private ElementItemR currentElement = null;
     List<ElementItemR> answersList;
     private Long startTime;
@@ -133,11 +126,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private int spinnerSelection = -1;
     private List<Integer> spinnerMultipleSelection;
     private boolean isTitle1Hided = false;
-    private boolean isTitle2Hided = false;
+    //    private boolean isTitle2Hided = false;
     private boolean isRestored = false;
     private boolean isMultiSpinner = false;
     private boolean isQuota = false;
-    private int lastCheckedElement = -103;
+    //    private int lastCheckedElement = -103;
     private int titles = 0;
 
     private ListQuestionAdapter adapterList;
@@ -163,9 +156,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     protected void onReady() {
         st("START");
         setRetainInstance(true);
-        toolbar = new Toolbar(getMainActivity());
+        Toolbar toolbar = new Toolbar(getMainActivity());
         toolbar = findViewById(R.id.toolbar);
-        cont = (RelativeLayout) findViewById(R.id.cont_element_fragment);
+        RelativeLayout cont = (RelativeLayout) findViewById(R.id.cont_element_fragment);
         unhideCont = (LinearLayout) findViewById(R.id.unhide_cont);
         titleCont1 = (LinearLayout) findViewById(R.id.title_cont_1);
         titleCont2 = (LinearLayout) findViewById(R.id.title_cont_2);
@@ -207,7 +200,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         btnNext = (Button) findViewById(R.id.next_btn);
         btnPrev = (Button) findViewById(R.id.back_btn);
         btnExit = (Button) findViewById(R.id.exit_btn);
-        unhideTitleCont = (RelativeLayout) findViewById(R.id.unhide_title_btn_cont);
+//        unhideTitleCont = (RelativeLayout) findViewById(R.id.unhide_title_btn_cont);
 
         btnNext.setTransformationMethod(null);
         btnPrev.setTransformationMethod(null);
@@ -381,11 +374,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             isTitle1Hided = true;
             titleCont2.setVisibility(View.GONE);
             unhideCont.setVisibility(View.VISIBLE);
-            isTitle2Hided = true;
+//            isTitle2Hided = true;
         } else if (view == unhideCont || view == btnUnhideTitle) {
             if (isTitle1Hided) {
                 isTitle1Hided = false;
-                isTitle2Hided = false;
+//                isTitle2Hided = false;
                 if (titles == 1) {
                     titleCont2.setVisibility(View.VISIBLE);
                 }
@@ -1274,11 +1267,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private void updatePrevElement() {
         if (prevList != null) {
             prevList = getDao().getPrevElementsR();
-            getDao().insertPrevElementsR(new PrevElementsR(startElementId, nextElementId));
         } else {
             prevList = new ArrayList<>();
-            getDao().insertPrevElementsR(new PrevElementsR(startElementId, nextElementId));
         }
+        getDao().insertPrevElementsR(new PrevElementsR(startElementId, nextElementId));
     }
 
     @Override
@@ -1489,7 +1481,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     public boolean saveQuestionnaire(boolean aborted) {
         stopAllRecording();
-        if (!aborted || (getMainActivity().getConfig().isSaveAborted() && aborted)) {
+        if (!aborted || getMainActivity().getConfig().isSaveAborted()) {
             if (saveQuestionnaireToDatabase(getQuestionnaire(), aborted)) {
                 try {
                     getDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");
@@ -1518,7 +1510,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             e.printStackTrace();
         }
 
-        replaceFragment(new HomeFragment());
+//        replaceFragment(new HomeFragment());
+        getMainActivity().restartHome();
     }
 
     private void stopAllRecording() {
@@ -1685,6 +1678,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             infoDialog.show();
     }
 
+    @SuppressLint("StaticFieldLeak")
     class DoNext extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -1894,6 +1888,63 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             }
         }
         return false;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        clearViews();
+    }
+
+    private void clearViews() {
+        btnNext = null;
+        btnPrev = null;
+        btnExit = null;
+        btnHideTitle = null;
+        btnHideTitle2 = null;
+        btnUnhideTitle = null;
+        btnUnhideQuestion = null;
+        unhideCont = null;
+        titleCont1 = null;
+        titleCont2 = null;
+        titleImagesCont1 = null;
+        titleImagesCont2 = null;
+        questionCont = null;
+        questionImagesCont = null;
+        spinnerCont = null;
+        infoCont = null;
+        tableCont = null;
+        tvTitle1 = null;
+        tvTitle2 = null;
+        tvQuestion = null;
+        tvTitleDesc1 = null;
+        tvTitleDesc2 = null;
+        tvQuestionDesc = null;
+        infoText = null;
+        rvAnswers = null;
+        rvScale = null;
+        spinnerAnswers = null;
+        tableLayout = null;
+        title1Image1 = null;
+        title1Image2 = null;
+        title1Image3 = null;
+        title2Image1 = null;
+        title2Image2 = null;
+        title2Image3 = null;
+        questionImage1 = null;
+        questionImage2 = null;
+        questionImage3 = null;
+        closeImage1 = null;
+        closeImage2 = null;
+        closeQuestion = null;
+        dialogBuilder = null;
+        infoDialog = null;
+        adapterList = null;
+        adapterRank = null;
+        adapterScale = null;
+        adapterSpinner = null;
+        adapterTable = null;
+        multiSelectionSpinner = null;
     }
 }
 

@@ -65,6 +65,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="16dp"
+                android:foregroundGravity="center_vertical"
+                android:gravity="center_horizontal"
                 android:textSize="18sp"
                 tools:text="Версия 3.0.1" />
 

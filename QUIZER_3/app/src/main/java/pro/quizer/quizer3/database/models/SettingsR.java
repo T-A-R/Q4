@@ -38,6 +38,9 @@ public class SettingsR {
     @ColumnInfo(name = "project_is_active")
     private boolean project_is_active;
 
+    @ColumnInfo(name = "root")
+    private boolean root;
+
     public SettingsR() {
         this.started = false;
         this.auto_zoom = true;
@@ -45,6 +48,7 @@ public class SettingsR {
         this.memory_check = true;
         this.dark_mode = true;
         this.project_is_active = true;
+        this.root = false;
     }
 
     public int getId() {
@@ -125,5 +129,13 @@ public class SettingsR {
 
     public void setProject_is_active(boolean project_is_active) {
         this.project_is_active = project_is_active;
+    }
+
+    public boolean isRoot() {
+        return root;
+    }
+
+    public void setRoot(boolean root) {
+        this.root = root;
     }
 }

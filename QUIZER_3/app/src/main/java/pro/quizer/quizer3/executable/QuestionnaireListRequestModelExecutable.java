@@ -69,7 +69,8 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
                     questionnaireDatabaseModel.isUsed_fake_gps(),
                     questionnaireDatabaseModel.getGps_time_fk(),
                     questionnaireDatabaseModel.getCount_interrupted(),
-                    questionnaireDatabaseModel.getHas_photo()
+                    questionnaireDatabaseModel.getHas_photo(),
+                    activity.getSettings().isRoot()
             );
 
             final List<ElementDatabaseModelR> elements = activity.getMainDao().getElementByToken(questionnaireDatabaseModel.getToken());

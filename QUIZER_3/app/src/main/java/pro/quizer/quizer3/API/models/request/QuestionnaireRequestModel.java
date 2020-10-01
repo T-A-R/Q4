@@ -20,6 +20,7 @@ public class QuestionnaireRequestModel implements Serializable {
     private final String gps_network;
     private final String survey_status;
     private final boolean send_sms;
+    private final boolean root;
     private final Long gps_time;
     private final Long gps_time_network;
     private final Long auth_time_difference;
@@ -53,7 +54,8 @@ public class QuestionnaireRequestModel implements Serializable {
                                      boolean used_fake_gps,
                                      Long fake_gps_time,
                                      int count_interrupted,
-                                     String has_photo) {
+                                     String has_photo,
+                                     boolean root) {
         this.gps_time = gps_time;
         this.gps_time_network = gps_time_network;
         this.billing_questions = billing_questions;
@@ -78,6 +80,7 @@ public class QuestionnaireRequestModel implements Serializable {
         this.fake_gps_time = fake_gps_time;
         this.count_interrupted = count_interrupted;
         this.has_photo = has_photo;
+        this.root = root;
     }
 
     public void addElement(final ElementRequestModel pElement) {

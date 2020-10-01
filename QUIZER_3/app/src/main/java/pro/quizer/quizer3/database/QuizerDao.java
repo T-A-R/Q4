@@ -321,6 +321,9 @@ public interface QuizerDao {
     @Query("UPDATE SettingsR SET auto_zoom = :data")
     void setSettingsAutoZoom(boolean data);
 
+    @Query("UPDATE SettingsR SET root = :data")
+    void setSettingsRoot(boolean data);
+
     @Query("UPDATE SettingsR SET table_speed = :data")
     void setSettingsTableSpeed(boolean data);
 

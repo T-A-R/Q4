@@ -58,8 +58,6 @@ public class TempFragment extends ScreenFragment implements View.OnClickListener
 
     @Override
     public boolean onBackPressed() {
-
-
         return true;
     }
 }

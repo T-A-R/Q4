@@ -768,6 +768,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         for (ElementItemR item : answersList) {
                             enabled.add(canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), order));
                         }
+                    } else {
+                        for (ElementItemR item : answersList) {
+                            enabled.add(true);
+                        }
                     }
 
                     spinnerAnswers = new SearchableSpinner(getMainActivity(), null, enabled);

@@ -1,6 +1,7 @@
 package pro.quizer.quizer3.view.fragment;
 
 import android.annotation.SuppressLint;
+import android.arch.persistence.room.util.StringUtil;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -35,6 +36,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.functions.Function;
 import pro.quizer.quizer3.API.QuizerAPI;
 import pro.quizer.quizer3.API.models.request.AuthRequestModel;
 import pro.quizer.quizer3.API.models.request.ConfigRequestModel;
@@ -62,6 +65,7 @@ import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.Statistics;
+import pro.quizer.quizer3.model.SubString;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
@@ -73,6 +77,7 @@ import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.FontUtils;
 import pro.quizer.quizer3.utils.SPUtils;
+import pro.quizer.quizer3.utils.StringUtils;
 
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
@@ -368,7 +373,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public void saveCurrentUserId(final int pUserId) {
         int oldUserId = SPUtils.getCurrentUserId(getContext());
-        if(oldUserId != pUserId ) {
+        if (oldUserId != pUserId) {
             SPUtils.saveCurrentUserId(getContext(), pUserId);
             try {
                 MainActivity activity = getMainActivity();
@@ -1286,4 +1291,42 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 //        Bundle bundle = new Bundle();
 //        bundle.putBoolean("home", true);
 //    }
+
+    public Observable<String> getConvertedTitle(String title) {
+        return Observable.just(title).map(s -> {
+
+            String startString = s;
+            final String startValue = "<# $e.";
+            final String endValue = "#>";
+            List<SubString> list = new ArrayList<>();
+            boolean end = false;
+
+            if (s.contains(startValue) && s.contains(endValue)) {
+                String convertedTitle = "";
+                final String valueTAG = "value";
+                final String titleTAG = "title";
+                while (!end) {
+                    SubString subString = StringUtils.findSubstring(startValue, startString);
+                    if (subString != null) {
+                        list.add(subString);
+                        startString = startString.substring(subString.getEnd() + 1);
+
+                    } else end = true;
+                }
+
+                convertedTitle = s;
+
+                for (SubString string : list) {
+                    Log.d("T-L", "Found: " + string.getValue() + " : " + string.getType() + " / " + string.getRelativeId());
+                    if (string.getType().equals(titleTAG)) {
+                        convertedTitle = convertedTitle.replace(string.getValue(), getElement(string.getRelativeId()).getElementOptionsR().getTitle());
+                    } else if (string.getType().equals(valueTAG)) {
+                        convertedTitle = convertedTitle.replace(string.getValue(), getDao().getElementPassedR(getQuestionnaire().getToken(), string.getRelativeId()).getValue());
+                    }
+                }
+
+                return convertedTitle;
+            } else return s;
+        });
+    }
 }

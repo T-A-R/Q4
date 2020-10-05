@@ -248,9 +248,11 @@ public class SearchableListDialog extends DialogFragment implements
                     itemsList = (ArrayList<String>) results.values;
                     notifyDataSetChanged();
                     clear();
-                    for (int i = 0, l = itemsList.size(); i < l; i++)
-                        add(itemsList.get(i));
-                    notifyDataSetInvalidated();
+                    if(itemsList != null) {
+                        for (int i = 0, l = itemsList.size(); i < l; i++)
+                            add(itemsList.get(i));
+                        notifyDataSetInvalidated();
+                    }
 //                    enabledList = originalEnabled;
                 }
             }

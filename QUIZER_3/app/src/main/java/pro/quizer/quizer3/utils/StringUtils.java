@@ -1,6 +1,10 @@
 package pro.quizer.quizer3.utils;
 
+import android.util.Log;
+
 import pro.quizer.quizer3.Constants;
+import pro.quizer.quizer3.model.SubString;
+
 import static pro.quizer.quizer3.utils.DateUtils.PATTERN_TOKEN;
 
 public final class StringUtils {
@@ -24,5 +28,68 @@ public final class StringUtils {
 
     public static String cutString(String longString, int maxLenght) {
         return longString.substring(0, Math.min(longString.length(), maxLenght));
+    }
+
+    public static SubString findSubstring(String smallString, String fullString) {
+        int k = 0;
+        int start = 0;
+        final String valueTAG = "value";
+        final String titleTAG = "title";
+
+        for (int i = 0; i < fullString.length(); i++) {
+            if (smallString.charAt(k) == fullString.charAt(i)) {
+                if (k == 0) start = i;
+                k++;
+
+                if (k == smallString.length()) {
+                    for (int n = i + 1; n < fullString.length(); n++) {
+                        if (fullString.charAt(n) == '<') {
+                            Log.d("T-L", "NULL: 1");
+                            return null;
+                        }
+                        if (fullString.charAt(n) == '>') {
+                            String value;
+                            String type;
+                            Integer relativeId = null;
+                            try {
+                                value = fullString.substring(start, n + 1);
+                                if (value.contains(valueTAG)) {
+                                    type = valueTAG;
+                                } else if (value.contains(titleTAG)) {
+                                    type = titleTAG;
+                                } else {
+                                    Log.d("T-L", "NULL: 2");
+                                    return null;
+                                }
+
+                                for (int m = 6; m < value.length(); m++) {
+                                    if (value.charAt(m) == '.') {
+                                        String id = value.substring(6, m);
+                                        relativeId = Integer.parseInt(id);
+                                        break;
+                                    }
+                                }
+
+                                if (relativeId == null) {
+                                    Log.d("T-L", "NULL: 3");
+                                    return null;
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.d("T-L", "NULL: 4");
+                                return null;
+                            }
+                            return new SubString(true, start, n, value, type, relativeId);
+                        }
+                    }
+
+                }
+            } else {
+                k = 0;
+                start = 0;
+            }
+        }
+        return null;
     }
 }

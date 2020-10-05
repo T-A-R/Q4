@@ -1690,36 +1690,40 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         @Override
         protected Void doInBackground(Void... voids) {
             Log.d("T-L.ElementFragment", "NEXT 1: " + nextElementId);
-            if (saveElement()) {
-                try {
-                    Log.d("T-L.ElementFragment", "NEXT 2: " + nextElementId);
-                    if (nextElementId == null) {
-                        showRestartDialog();
-                    } else if (nextElementId == 0) {
-                        if (saveQuestionnaire(false)) {
-                            exitQuestionnaire();
-                        } else {
-                            activateButtons();
-                        }
-                    } else if (nextElementId == -1) {
-                        if (getMainActivity().getConfig().isSaveAborted()) {
-                            if (saveQuestionnaire(true)) {
+            try {
+                if (saveElement()) {
+                    try {
+                        Log.d("T-L.ElementFragment", "NEXT 2: " + nextElementId);
+                        if (nextElementId == null) {
+                            showRestartDialog();
+                        } else if (nextElementId == 0) {
+                            if (saveQuestionnaire(false)) {
                                 exitQuestionnaire();
                             } else {
                                 activateButtons();
                             }
+                        } else if (nextElementId == -1) {
+                            if (getMainActivity().getConfig().isSaveAborted()) {
+                                if (saveQuestionnaire(true)) {
+                                    exitQuestionnaire();
+                                } else {
+                                    activateButtons();
+                                }
+                            } else {
+                                exitQuestionnaire();
+                            }
                         } else {
-                            exitQuestionnaire();
+                            checkAndLoadNext();
+                            updatePrevElement();
                         }
-                    } else {
-                        checkAndLoadNext();
-                        updatePrevElement();
+                    } catch (Exception e) {
+                        activateButtons();
                     }
-                } catch (Exception e) {
+                } else {
                     activateButtons();
                 }
-            } else {
-                activateButtons();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             return null;
         }
@@ -1727,7 +1731,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            activateButtons();
+            try {
+                activateButtons();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -107,6 +107,9 @@ public class OptionsModelNew implements Serializable {
     @SerializedName("show_in_card")
     private Boolean show_in_card;
 
+    @SerializedName("auto_check")
+    private boolean auto_check;
+
     public String getData() {
         return data;
     }
@@ -308,5 +311,13 @@ public class OptionsModelNew implements Serializable {
 
     public void setShowInCard(boolean show_in_card) {
         this.show_in_card = show_in_card;
+    }
+
+    public boolean isAutoCheck() {
+        return auto_check;
+    }
+
+    public void setAuto_check(boolean auto_check) {
+        this.auto_check = auto_check;
     }
 }

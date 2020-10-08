@@ -1338,9 +1338,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                if (answerStateRestored != null) {
+                if (answerStateRestored != null || adapterList.isAutoChecked(answersList.get(i))) {
                     answerStateNew.setChecked(true);
-                    answerStateNew.setData(answerStateRestored.getValue());
+                    answerStateNew.setData(answerStateRestored != null ? answerStateRestored.getValue() : "");
                     lastSelectedPosition = i;
                 } else {
                     answerStateNew.setChecked(false);

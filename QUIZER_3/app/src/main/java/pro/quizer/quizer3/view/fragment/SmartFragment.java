@@ -784,8 +784,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                                             }
                                         }).loadMultiple(fileUris);
                             }
-//                            UpdateQuiz task = new UpdateQuiz();
-//                            task.execute();
                         } else {
                             showToast(configResponseModel.getError());
 //                            addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, configResponseModel.getError(), configResponseJson);
@@ -1041,22 +1039,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                             final int pUserId,
                             final int pProjectId,
                             final String pUserLogin) {
-//        Log.d(TAG, ">>> Taking Hidden Picture <<<");
-//
-//        try {
-//            startCamera(new CameraConfig()
-//                    .getBuilder(getContext())
-//                    .setCameraFacing(CameraFacing.FRONT_FACING_CAMERA)
-//                    .setCameraResolution(CameraResolution.LOW_RESOLUTION)
-//                    .setImageFormat(CameraImageFormat.FORMAT_JPEG)
-//                    .setImageRotation(CameraRotation.ROTATION_270)
-//                    .build());
-//        } catch (final Exception pException) {
-//            showToast("Не удается стартануть камеру");
-//            pException.printStackTrace();
-//            return;
-//        }
-
         mProjectId = pProjectId;
         mUserLogin = pUserLogin;
         mLoginAdmin = pLoginAdmin;
@@ -1066,29 +1048,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
         TakePicture take = new TakePicture();
         take.execute();
-
-//        final Handler handler = new Handler();
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    takePicture();
-//                    try {
-//                        getDao().setCurrentQuestionnairePhoto(true);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    onCameraError(CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA);
-//                    try {
-//                        getDao().setCurrentQuestionnairePhoto(false);
-//                    } catch (Exception ex) {
-//                        ex.printStackTrace();
-//                    }
-//                }
-//            }
-//        }, 1000);
     }
 
     public void sendCrashLogs() {
@@ -1128,20 +1087,17 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             CrashRequestModel crashRequestModel = new CrashRequestModel(getLoginAdmin(), crashList);
             Gson gson = new Gson();
             String json = gson.toJson(crashRequestModel);
-            QuizerAPI.sendCrash(getServer(), json, new QuizerAPI.SendCrashCallback() {
-                @Override
-                public void onSendCrash(boolean ok, String message) {
-                    if (ok) {
-                        try {
-                            getDao().clearCrashLogs();
-                            Log.d(TAG, "Crash Logs Cleared");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.d(TAG, "Crash Logs Clear Error: " + e);
-                        }
-                    } else {
-                        Log.d(TAG, "Crash Logs Not Sent: " + message);
+            QuizerAPI.sendCrash(getServer(), json, (ok, message) -> {
+                if (ok) {
+                    try {
+                        getDao().clearCrashLogs();
+                        Log.d(TAG, "Crash Logs Cleared");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.d(TAG, "Crash Logs Clear Error: " + e);
                     }
+                } else {
+                    Log.d(TAG, "Crash Logs Not Sent: " + message);
                 }
             });
         }
@@ -1287,16 +1243,11 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         });
     }
 
-//    public void restartHome() {
-//        Bundle bundle = new Bundle();
-//        bundle.putBoolean("home", true);
-//    }
-
     public Observable<String> getConvertedTitle(String title) {
         return Observable.just(title).map(s -> {
 
             String startString = s;
-            final String startValue = "<# $e.";
+            final String startValue = "<#";
             final String endValue = "#>";
             List<SubString> list = new ArrayList<>();
             boolean end = false;

@@ -2,6 +2,9 @@ package pro.quizer.quizer3.utils;
 
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.model.SubString;
 
@@ -91,5 +94,32 @@ public final class StringUtils {
             }
         }
         return null;
+    }
+
+    public static List<String> findExpressions(String startString) {
+        List<String> expressions = new ArrayList<>();
+
+        for (int i = 0; i < startString.length() - 4; i++) {
+            if (startString.charAt(i) == '<' && startString.charAt(i + 1) == '#') {
+                for (int k = i + 2; k < startString.length() - 1; k++) {
+                    if (startString.charAt(k) == '#' && startString.charAt(k + 1) == '>') {
+                        expressions.add(startString.substring(i, k + 1));
+                        i = k + 2;
+                        if (i > startString.length() - 4) {
+                            return expressions;
+                        }
+                    }
+                }
+            }
+        }
+
+        return expressions;
+    }
+
+    public static String convertExpression(String expression) {
+        String text = "";
+
+
+        return text;
     }
 }

@@ -87,15 +87,6 @@ public class ExpressionUtils {
                                 String value = activity.getMainDao().getElementPassedR(activity.getToken(), relativeId).getValue();
                                 decodedExpression.append(value);
                             } else if (expression.charAt(k + nextSymbol + 1) == 'c') { // CHECKED
-                                List<ElementPassedR> elements = activity.getMainDao().getAllElementsPassedR(activity.getToken());
-
-//                                if(elements != null && elements.size() >0) {
-//                                    for(ElementPassedR passedR : elements) {
-//                                        Log.d("T-L.ExpressionUtils", "elements passed: " + passedR.getRelative_id());
-//                                    }
-//                                } else Log.d("T-L.ExpressionUtils", "elements passed: NULL " + activity.getToken());
-
-
                                 Boolean isChecked = activity.getMainDao().getElementPassedR(activity.getToken(), relativeId) != null;
                                 Log.d("T-L.ExpressionUtils", "decodeExpression: " + relativeId + " " + isChecked.toString());
                                 return isChecked.toString();

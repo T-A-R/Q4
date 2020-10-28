@@ -24,6 +24,11 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
@@ -31,9 +36,11 @@ import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.state.AnswerState;
+import pro.quizer.quizer3.model.view.TitleModel;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
+import pro.quizer.quizer3.utils.UiUtils;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.model.OptionsOpenType.CHECKBOX;
@@ -66,13 +73,15 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     private Context mContext;
     private int counter = 1;
     private List<String> titles;
+    private Map<Integer, TitleModel> titlesMap;
 
-    public ListQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> passedQuotaBlock, ElementItemR[][] quotaTree, OnAnswerClickListener onAnswerClickListener) {
+    public ListQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> passedQuotaBlock, ElementItemR[][] quotaTree, Map<Integer, TitleModel> titlesMap, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
         this.question = question;
         this.passedQuotaBlock = passedQuotaBlock;
         this.quotaTree = quotaTree;
         this.mContext = context;
+        this.titlesMap = titlesMap;
 
         if (question.getSubtype().equals(ElementSubtype.RANK)) isRank = true;
 
@@ -96,7 +105,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         this.answersList = answersList;
 
         this.onAnswerClickListener = onAnswerClickListener;
-        if (question.getElementOptionsR().getOpen_type() != null) {
+        if (question.getElementOptionsR() != null && question.getElementOptionsR().getOpen_type() != null) {
             this.isOpen = true;
             this.openType = question.getElementOptionsR().getOpen_type();
         }
@@ -107,13 +116,14 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         }
 
         titles = new ArrayList<>();
+
         for (ElementItemR element : answersList) {
             if (element.getElementOptionsR().isShow_in_card()) {
-                String text = counter + ". " + element.getElementOptionsR().getTitle();
+                String text = counter + ". " + Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle();
                 titles.add(text);
                 counter++;
             } else {
-                titles.add(element.getElementOptionsR().getTitle());
+                titles.add(Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle());
             }
         }
     }
@@ -265,9 +275,9 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         public void bind(final ElementItemR item, int position) {
 
             answerTitle.setText(titles.get(position));
-            if (item.getElementOptionsR().getDescription() != null) {
+            if (item.getElementOptionsR().getDescription() != null && titlesMap.get(item.getRelative_id()) != null) {
                 answerDesc.setVisibility(View.VISIBLE);
-                answerDesc.setText(item.getElementOptionsR().getDescription());
+                answerDesc.setText(Objects.requireNonNull(titlesMap.get(item.getRelative_id())).getDescription());
             } else {
                 answerDesc.setVisibility(View.GONE);
             }
@@ -387,7 +397,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         public void setChecked(final ElementItemR item, int position) {
 
             if (answersState.get(position).isChecked()) {
-                if(answersState.get(position).getData() != null && !answersState.get(position).getData().equals("")) {
+                if (answersState.get(position).getData() != null && !answersState.get(position).getData().equals("")) {
                     editButton.setVisibility(View.GONE);
                     answerEditText.setVisibility(View.VISIBLE);
                     answerEditText.setText(answersState.get(position).getData());
@@ -425,9 +435,9 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
         private void hideEditButton(int position) {
 //            if(answersState.get(position).getData() != null && !answersState.get(position).getData().equals("")) {
-                editButton.setVisibility(View.GONE);
-                answerEditText.setVisibility(View.VISIBLE);
-                answerEditText.setText(answersState.get(position).getData());
+            editButton.setVisibility(View.GONE);
+            answerEditText.setVisibility(View.VISIBLE);
+            answerEditText.setText(answersState.get(position).getData());
 //            }
         }
 

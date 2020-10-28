@@ -76,7 +76,7 @@ public class UsersLogRecyclerAdapter extends RecyclerView.Adapter<UsersLogRecycl
         public void bind(final AppLogsR item) {
 
             mDate.setText(DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, Long.parseLong(item.getDate()) * 1000));
-            mType.setText("Тип: " + item.getType());
+            mType.setText("Тип: " + item.getAction());
             mObject.setText("Объект: " + item.getObject());
             mResult.setText("Результат: " + item.getResult());
             mDesc.setText("Описание: " + item.getDescription());

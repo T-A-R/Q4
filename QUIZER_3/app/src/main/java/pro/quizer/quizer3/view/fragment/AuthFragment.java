@@ -82,7 +82,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     @Override
     protected void onReady() {
 
-        LinearLayout image = (LinearLayout) findViewById(R.id.cont_image);
         btnSend = (Button) findViewById(R.id.btn_send_auth);
         esLogin = (EditSpinner) findViewById(R.id.login_spinner);
         etPass = (EditText) findViewById(R.id.auth_password_edit_text);
@@ -274,26 +273,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         }
     }
 
-    private void updateQuotas() {
-        new UpdateQuotasExecutable(getActivity(), new ICallback() {
-            @Override
-            public void onStarting() {
-//                showScreensaver(false);
-            }
-
-            @Override
-            public void onSuccess() {
-//                hideScreensaver();
-            }
-
-            @Override
-            public void onError(Exception pException) {
-//                hideScreensaver();
-                showToast(pException.toString());
-            }
-        }).execute();
-    }
-
     private void saveUserAndLogin(final ConfigResponseModel pConfigResponseModel,
                                   final AuthResponseModel pAuthResponseModel,
                                   final String pLogin,
@@ -357,12 +336,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         }).execute();
     }
 
-    private void onLoggedIn(final String pLogin,
-                            final String pPassword,
-                            final AuthResponseModel pAuthResponseModel) {
-
-//        SPUtils.resetSendedQInSession(getContext());
-
+    private void onLoggedIn(final String pLogin, final String pPassword, final AuthResponseModel pAuthResponseModel) {
         updateDatabaseUserByUserId(pLogin, pPassword, pAuthResponseModel.getConfigId(), pAuthResponseModel.getUserId(), pAuthResponseModel.getRoleId(), pAuthResponseModel.getUserProjectId());
         onLoggedInWithoutUpdateLocalData(pAuthResponseModel.getUserId());
     }
@@ -445,15 +419,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         });
     }
 
-//    private void createElementsItems(String mLogin) {
-//        try {
-//            List<ElementModelNew> mElements = getCurrentUser().getConfigR().getProjectInfo().getElements();
-//        } catch (Exception e) {
-//            showToast(getString(R.string.make_elements_error));
-//            addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.make_elements_error), e.getMessage());
-//        }
-//    }
-
     private void downloadFiles(final ConfigResponseModel pConfigResponseModel,
                                final AuthResponseModel pAuthResponseModel,
                                final String pLogin,
@@ -492,91 +457,93 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onAuthUser(ResponseBody responseBody) {
 
-        if (responseBody == null) {
-            showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_401));
-//            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_401_desc), "");
+        try {
+            if (responseBody == null) {
+                showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_401));
+    //            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_401_desc), "");
 
-            final UserModelR savedUserModel = getLocalUserModel(login, passwordMD5);
+                final UserModelR savedUserModel = getLocalUserModel(login, passwordMD5);
 
-            if (savedUserModel != null) {
-                showToast(getString(R.string.saved_data_login));
-//                addLog(savedUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SUCCESS, getString(R.string.saved_data_login), "");
-                onLoggedInWithoutUpdateLocalData(savedUserModel.getUser_id());
-            } else {
-                showToast(getString(R.string.wrong_login_or_pass));
-//                addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.wrong_login_or_pass), "login: " + login + " pass: " + password);
+                if (savedUserModel != null) {
+                    showToast(getString(R.string.saved_data_login));
+    //                addLog(savedUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SUCCESS, getString(R.string.saved_data_login), "");
+                    onLoggedInWithoutUpdateLocalData(savedUserModel.getUser_id());
+                } else {
+                    showToast(getString(R.string.wrong_login_or_pass));
+    //                addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.wrong_login_or_pass), "login: " + login + " pass: " + password);
+                }
+
+                activateButtons();
+                return;
             }
 
-            activateButtons();
-            return;
-        }
-
-//        sendCrashLogs();
-
-        String responseJson;
-        try {
-            responseJson = responseBody.string();
-        } catch (IOException e) {
-            e.printStackTrace();
-            showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_402));
-//            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_402_desc), e.getMessage());
-
-            responseJson = null;
-            activateButtons();
-        }
-
-        AuthResponseModel authResponseModel = null;
-        try {
-            authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
-        } catch (final Exception pE) {
-            activateButtons();
-//            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_403_desc), responseJson);
-        }
-
-        if (authResponseModel == null) {
-            final UserModelR savedUserModel = getLocalUserModel(login, passwordMD5);
-
-            if (savedUserModel != null) {
-                showToast(getString(R.string.saved_data_login));
-//                addLog(savedUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SUCCESS, getString(R.string.saved_data_login), "");
-                onLoggedInWithoutUpdateLocalData(savedUserModel.getUser_id());
-            } else {
-                showToast(getString(R.string.wrong_login_or_pass));
-//                addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.wrong_login_or_pass), "login: " + login + " pass: " + password);
-            }
-
-            activateButtons();
-            return;
-        }
-
-        if (authResponseModel.isProjectActive() != null) {
+            String responseJson;
             try {
-                getDao().setProjectActive(authResponseModel.isProjectActive());
-            } catch (Exception e) {
+                responseJson = responseBody.string();
+            } catch (IOException e) {
                 e.printStackTrace();
+                showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_402));
+    //            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_402_desc), e.getMessage());
+
+                responseJson = null;
+                activateButtons();
             }
-        }
 
-        if (authResponseModel.getServerTime() != null) {
-            SPUtils.saveAuthTimeDifference(getContext(), authResponseModel.getServerTime());
-        } else {
-            showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_404));
-            activateButtons();
-//            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_404_desc), responseJson);
-        }
+            AuthResponseModel authResponseModel = null;
+            try {
+                authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
+            } catch (final Exception pE) {
+                activateButtons();
+    //            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_403_desc), responseJson);
+            }
 
-        if (authResponseModel.getResult() != 0) {
-//            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SUCCESS, getString(R.string.new_data_login), "");
+            if (authResponseModel == null) {
+                final UserModelR savedUserModel = getLocalUserModel(login, passwordMD5);
 
-            if (isNeedDownloadConfig(authResponseModel)) {
-                downloadConfig(login, passwordMD5, authResponseModel);
+                if (savedUserModel != null) {
+                    showToast(getString(R.string.saved_data_login));
+    //                addLog(savedUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SUCCESS, getString(R.string.saved_data_login), "");
+                    onLoggedInWithoutUpdateLocalData(savedUserModel.getUser_id());
+                } else {
+                    showToast(getString(R.string.wrong_login_or_pass));
+    //                addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.wrong_login_or_pass), "login: " + login + " pass: " + password);
+                }
+
+                activateButtons();
+                return;
+            }
+
+            if (authResponseModel.isProjectActive() != null) {
+                try {
+                    getDao().setProjectActive(authResponseModel.isProjectActive());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (authResponseModel.getServerTime() != null) {
+                SPUtils.saveAuthTimeDifference(getContext(), authResponseModel.getServerTime());
             } else {
-                onLoggedIn(login, passwordMD5, authResponseModel);
+                showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_404));
+                activateButtons();
+    //            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_404_desc), responseJson);
             }
-        } else {
-            showToast(authResponseModel.getError());
-            activateButtons();
-//            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, authResponseModel.getError(), "");
+
+            if (authResponseModel.getResult() != 0) {
+    //            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SUCCESS, getString(R.string.new_data_login), "");
+
+                if (isNeedDownloadConfig(authResponseModel)) {
+                    downloadConfig(login, passwordMD5, authResponseModel);
+                } else {
+                    onLoggedIn(login, passwordMD5, authResponseModel);
+                }
+            } else {
+                showToast(authResponseModel.getError());
+                activateButtons();
+    //            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, authResponseModel.getError(), "");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -592,15 +559,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     private void activateButtons() {
         hideScreensaver();
         setViewBackground(btnSend, true, true);
-//        btnSend.setEnabled(true);
-//
-//        final int sdk = android.os.Build.VERSION.SDK_INT;
-//
-//        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-//            btnSend.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_red : R.drawable.button_background_green));
-//        } else {
-//            btnSend.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_red : R.drawable.button_background_green));
-//        }
     }
 
     private void deactivateButtons() {

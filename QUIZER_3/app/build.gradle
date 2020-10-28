@@ -6,8 +6,8 @@ android {
         applicationId "pro.quizer.quizer3"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 3080201
-        versionName "3.8.2.1"
+        versionCode 3090000
+        versionName "3.9.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         project.ext.set("archivesBaseName", "Quizer_ " + defaultConfig.versionName)
 //        project.ext.set("archivesBaseName", "Rossiya_ " + defaultConfig.versionName)
@@ -71,7 +71,7 @@ dependencies {
     // Check root on device
     implementation 'com.scottyab:rootbeer-lib:0.0.8'
 
-    //RxJava2
+    // RxJava2
     implementation "io.reactivex.rxjava2:rxjava:2.2.7"
     implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
 

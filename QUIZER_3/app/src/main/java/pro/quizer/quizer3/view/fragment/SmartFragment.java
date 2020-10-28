@@ -1,7 +1,6 @@
 package pro.quizer.quizer3.view.fragment;
 
 import android.annotation.SuppressLint;
-import android.arch.persistence.room.util.StringUtil;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -36,12 +35,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.functions.Function;
 import pro.quizer.quizer3.API.QuizerAPI;
 import pro.quizer.quizer3.API.models.request.AuthRequestModel;
 import pro.quizer.quizer3.API.models.request.ConfigRequestModel;
 import pro.quizer.quizer3.API.models.request.CrashRequestModel;
+import pro.quizer.quizer3.API.models.request.QuestionnaireListRequestModel;
+import pro.quizer.quizer3.API.models.request.QuestionnaireRequestModel;
 import pro.quizer.quizer3.API.models.response.AuthResponseModel;
 import pro.quizer.quizer3.API.models.response.ConfigResponseModel;
 import pro.quizer.quizer3.Constants;
@@ -50,7 +49,6 @@ import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.QuizerDao;
 import pro.quizer.quizer3.database.models.ActivationModelR;
-import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
@@ -59,28 +57,25 @@ import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.OptionsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.UserModelR;
-import pro.quizer.quizer3.executable.QuotasViewModelExecutable;
+import pro.quizer.quizer3.executable.QuestionnaireListRequestModelExecutable;
+import pro.quizer.quizer3.executable.QuestionnaireRequestModelExecutable;
 import pro.quizer.quizer3.model.ElementDatabaseType;
 import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
-import pro.quizer.quizer3.model.Statistics;
-import pro.quizer.quizer3.model.SubString;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.model.logs.Crash;
-import pro.quizer.quizer3.model.quota.QuotaModel;
-import pro.quizer.quizer3.model.view.QuotasViewModel;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.FontUtils;
 import pro.quizer.quizer3.utils.SPUtils;
-import pro.quizer.quizer3.utils.StringUtils;
 
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
+import static pro.quizer.quizer3.executable.files.UploadingExecutable.UPLOADING_PATH;
 import static pro.quizer.quizer3.utils.FileUtils.AMR;
 import static pro.quizer.quizer3.utils.FileUtils.JPEG;
 
@@ -380,8 +375,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 activity.getMainDao().clearCurrentQuestionnaireR();
                 activity.getMainDao().clearPrevElementsR();
                 activity.setCurrentQuestionnaireNull();
-                activity.getMainDao().deleteQuestionnaireStatusByUserId(oldUserId);
-                activity.getMainDao().clearElementDatabaseModelR();
                 activity.getMainDao().clearElementPassedR();
                 activity.getMainDao().clearElementItemR();
             } catch (Exception e) {
@@ -856,6 +849,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public boolean saveQuestionnaireToDatabase(CurrentQuestionnaireR currentQuiz, boolean aborted) {
 
+        getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.ATTEMPT, currentQuiz.getToken(), null);
+
         boolean saved = true;
         countElements = 0;
         countScreens = 0;
@@ -920,10 +915,12 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         try {
             getDao().insertQuestionnaire(questionnaireDatabaseModel);
             getMainActivity().setSettings(Constants.Settings.QUIZ_TIME, String.valueOf(DateUtils.getFullCurrentTime()));
-//            addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.SUCCESS, getString(R.string.save_question_to_db_success), null);
+            Log.d("T-L.SmartFragment", "saveQuestionnaireToDatabase: " + questionnaireDatabaseModel.toString());
+            saveQuizToFile(questionnaireDatabaseModel.getToken());
+            getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.SUCCESS, questionnaireDatabaseModel.getToken(), null);
         } catch (Exception e) {
             showToast(getString(R.string.db_save_error));
-//            addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.ERROR, getString(R.string.save_question_to_db_error), e.toString());
+            getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.ERROR, currentQuiz.getToken(), null);
             saved = false;
         }
 
@@ -947,6 +944,22 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         Log.d(TAG, "saveQuestionnaireToDatabase finished: " + saved);
         return saved;
 
+    }
+
+    private void saveQuizToFile(String token) {
+        UserModelR user = getCurrentUser();
+        final QuestionnaireRequestModel requestModel = new QuestionnaireRequestModelExecutable(getMainActivity(), token).execute();
+        if (requestModel != null) {
+            Gson gson = new Gson();
+            String json = gson.toJson(requestModel);
+            try {
+                FileUtils.createTxtFile(UPLOADING_PATH, String.format("data_%1$s_%2$s" + FileUtils.JSON, user.getLogin(), DateUtils.getCurrentTimeMillis()), json);
+                getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_FILE", Constants.LogResult.ATTEMPT, token, json);
+
+            } catch (final IOException pE) {
+
+            }
+        }
     }
 
     private boolean saveElement(CurrentQuestionnaireR currentQuiz, final ElementPassedR element) {
@@ -1240,44 +1253,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                             .show();
                 }
             }
-        });
-    }
-
-    public Observable<String> getConvertedTitle(String title) {
-        return Observable.just(title).map(s -> {
-
-            String startString = s;
-            final String startValue = "<#";
-            final String endValue = "#>";
-            List<SubString> list = new ArrayList<>();
-            boolean end = false;
-
-            if (s.contains(startValue) && s.contains(endValue)) {
-                String convertedTitle = "";
-                final String valueTAG = "value";
-                final String titleTAG = "title";
-                while (!end) {
-                    SubString subString = StringUtils.findSubstring(startValue, startString);
-                    if (subString != null) {
-                        list.add(subString);
-                        startString = startString.substring(subString.getEnd() + 1);
-
-                    } else end = true;
-                }
-
-                convertedTitle = s;
-
-                for (SubString string : list) {
-                    Log.d("T-L", "Found: " + string.getValue() + " : " + string.getType() + " / " + string.getRelativeId());
-                    if (string.getType().equals(titleTAG)) {
-                        convertedTitle = convertedTitle.replace(string.getValue(), getElement(string.getRelativeId()).getElementOptionsR().getTitle());
-                    } else if (string.getType().equals(valueTAG)) {
-                        convertedTitle = convertedTitle.replace(string.getValue(), getDao().getElementPassedR(getQuestionnaire().getToken(), string.getRelativeId()).getValue());
-                    }
-                }
-
-                return convertedTitle;
-            } else return s;
         });
     }
 }

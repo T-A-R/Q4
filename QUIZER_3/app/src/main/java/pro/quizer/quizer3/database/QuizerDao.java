@@ -159,6 +159,9 @@ public interface QuizerDao {
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId")
     List<QuestionnaireDatabaseModelR> getQuestionnaireByUserId(int userId);
 
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE token = :token LIMIT 1")
+    QuestionnaireDatabaseModelR getQuestionnaireByToken(String token);
+
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status AND user_id = :userId AND user_project_id = :userProjectId")
     List<QuestionnaireDatabaseModelR> getQuestionnaireByUserIdAndProjectIdWithStatus(int userId, int userProjectId, String status);
 

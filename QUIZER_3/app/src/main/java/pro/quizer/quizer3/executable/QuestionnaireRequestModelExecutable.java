@@ -2,50 +2,27 @@ package pro.quizer.quizer3.executable;
 
 import java.util.List;
 
+import pro.quizer.quizer3.API.models.request.ElementRequestModel;
+import pro.quizer.quizer3.API.models.request.QuestionnaireRequestModel;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
-import pro.quizer.quizer3.database.models.UserModelR;
-import pro.quizer.quizer3.model.QuestionnaireStatus;
-import pro.quizer.quizer3.model.config.ConfigModel;
-import pro.quizer.quizer3.API.models.request.ElementRequestModel;
-import pro.quizer.quizer3.API.models.request.QuestionnaireListRequestModel;
-import pro.quizer.quizer3.API.models.request.QuestionnaireRequestModel;
 
-public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable<QuestionnaireListRequestModel> {
+public class QuestionnaireRequestModelExecutable extends BaseModelExecutable<QuestionnaireRequestModel> {
 
-    private final int mUserId;
-    private final String mLoginAdmin;
-    private final String mLogin;
-    private final String mPassword;
-    private final boolean mGetAllQuestionnaires;
+    private final String mToken;
     private MainActivity activity;
 
-
-    public QuestionnaireListRequestModelExecutable(MainActivity activity, final UserModelR pUserModel, final boolean pGetAllQuestionnaires) {
+    public QuestionnaireRequestModelExecutable(MainActivity activity, final String token) {
         super();
         this.activity = activity;
-        final ConfigModel configModel = activity.getConfig();
-
-        mUserId = pUserModel.getUser_id();
-        mLoginAdmin = configModel.getLoginAdmin();
-        mLogin = pUserModel.getLogin();
-        mPassword = pUserModel.getPassword();
-        mGetAllQuestionnaires = pGetAllQuestionnaires;
-
+        mToken = token;
     }
 
     @Override
-    public QuestionnaireListRequestModel execute() {
-        final QuestionnaireListRequestModel requestModel = new QuestionnaireListRequestModel(mLoginAdmin, mLogin, mPassword);
-        List<QuestionnaireDatabaseModelR> questionnaires;
-        if (mGetAllQuestionnaires) {
-            questionnaires = activity.getMainDao().getQuestionnaireByUserId(mUserId);
-        } else {
-            questionnaires = activity.getMainDao().getQuestionnaireByUserIdWithStatus(mUserId, QuestionnaireStatus.NOT_SENT);
-        }
+    public QuestionnaireRequestModel execute() {
+        QuestionnaireDatabaseModelR questionnaireDatabaseModel = activity.getMainDao().getQuestionnaireByToken(mToken);
 
-        for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : questionnaires) {
             final QuestionnaireRequestModel questionnaireRequestModel = new QuestionnaireRequestModel(
                     questionnaireDatabaseModel.getBilling_questions(),
                     questionnaireDatabaseModel.getQuestionnaire_id(),
@@ -88,13 +65,6 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
                 questionnaireRequestModel.addElement(elementRequestModel);
             }
 
-            requestModel.addQuestionnaire(questionnaireRequestModel);
-        }
-
-        if (!requestModel.containsQuestionnairies()) {
-            return null;
-        }
-
-        return requestModel;
+        return questionnaireRequestModel;
     }
 }

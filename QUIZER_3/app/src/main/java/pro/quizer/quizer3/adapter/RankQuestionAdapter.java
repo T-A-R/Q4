@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
@@ -38,6 +39,7 @@ import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.state.AnswerState;
+import pro.quizer.quizer3.model.view.TitleModel;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
@@ -64,13 +66,15 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
     private List<Integer> passedQuotaBlock;
     private ElementItemR[][] quotaTree;
     private Context mContext;
+    private Map<Integer, TitleModel> titlesMap;
 
-    public RankQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> passedQuotaBlock, ElementItemR[][] quotaTree, OnAnswerClickListener onAnswerClickListener) {
+    public RankQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> passedQuotaBlock, ElementItemR[][] quotaTree, Map<Integer, TitleModel> titlesMap, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
         this.question = question;
         this.passedQuotaBlock = passedQuotaBlock;
         this.quotaTree = quotaTree;
         this.mContext = context;
+        this.titlesMap = titlesMap;
 
         if (question.getSubtype().equals(ElementSubtype.RANK)) {
             isRank = true;
@@ -187,10 +191,10 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         }
 
         public void bind(final ElementItemR item, int position) {
-            answerTitle.setText(item.getElementOptionsR().getTitle());
+            answerTitle.setText(Objects.requireNonNull(titlesMap.get(item.getRelative_id())).getTitle());
             if (item.getElementOptionsR().getDescription() != null && item.getElementOptionsR().getDescription().length() > 0) {
                 answerDesc.setVisibility(View.VISIBLE);
-                answerDesc.setText(item.getElementOptionsR().getDescription());
+                answerDesc.setText(Objects.requireNonNull(titlesMap.get(item.getRelative_id())).getDescription());
             } else {
                 answerDesc.setVisibility(View.GONE);
             }
@@ -391,7 +395,7 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         }
     }
 
-    private Calendar mCalendar = Calendar.getInstance();
+    private final Calendar mCalendar = Calendar.getInstance();
 
     public void setDate(final TextView pEditText) {
         if (!mActivity.isFinishing()) {

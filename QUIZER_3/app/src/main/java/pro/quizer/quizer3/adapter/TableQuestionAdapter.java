@@ -23,9 +23,12 @@ import com.cleveroad.adaptivetablelayout.ViewHolderImpl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 import pro.quizer.quizer3.MainActivity;
@@ -35,6 +38,7 @@ import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.model.OptionsOpenType;
+import pro.quizer.quizer3.model.view.TitleModel;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.element.CustomCheckableButton;
@@ -63,8 +67,11 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private OnTableAnswerClickListener mOnTableAnswerClickListener;
     private boolean isSpeedMode;
     private List<String> titles;
+    private Map<Integer, TitleModel> titlesMap;
 
-    public TableQuestionAdapter(final ElementItemR pCurrentElement, List<ElementItemR> questions, final Context context, final Runnable pRefreshRunnable, OnTableAnswerClickListener pOnTableAnswerClickListener) {
+    public TableQuestionAdapter(final ElementItemR pCurrentElement, List<ElementItemR> questions, Map<Integer, TitleModel> pTitlesMap, final Context context, final Runnable pRefreshRunnable, OnTableAnswerClickListener pOnTableAnswerClickListener) {
+
+        titlesMap = pTitlesMap;
         mCurrentElement = pCurrentElement;
         mOnTableAnswerClickListener = pOnTableAnswerClickListener;
         setOnItemClickListener(this);
@@ -78,9 +85,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         mQuestions = questions;
         if(!isSpeedMode) {
             mLine = new boolean[mQuestions.size()];
-            for (int i = 0; i < mLine.length; i++) {
-                mLine[i] = false;
-            }
+            Arrays.fill(mLine, false);
         }
 
         if (mCurrentElement != null && mCurrentElement.getElementOptionsR() != null && mCurrentElement.getElementOptionsR().isRotation()) {
@@ -137,11 +142,11 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         titles = new ArrayList<>();
         for(ElementItemR element : mQuestions) {
             if (element.getElementOptionsR().isShow_in_card()) {
-                String text = counter + ". " + element.getElementOptionsR().getTitle();
+                String text = counter + ". " + titlesMap.get(element.getRelative_id());
                 titles.add(text);
                 counter++;
             } else {
-                titles.add(element.getElementOptionsR().getTitle());
+                titles.add(Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle());
             }
         }
     }
@@ -236,7 +241,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final TableHeaderColumnViewHolder vh = (TableHeaderColumnViewHolder) viewHolder;
         final ElementOptionsR optionsModel = mTopSide.get(column - 1).getElementOptionsR();
 
-        UiUtils.setTextOrHide(vh.mHeaderColumnTextView, mIsFlipColsAndRows ? titles.get(column - 1) : optionsModel.getTitle());
+        vh.mHeaderColumnTextView.setText(mIsFlipColsAndRows ? titles.get(column - 1) : Objects.requireNonNull(titlesMap.get(mTopSide.get(column - 1).getRelative_id())).getTitle());
+//        UiUtils.setTextOrHide(vh.mHeaderColumnTextView, mIsFlipColsAndRows ? titles.get(column - 1) : optionsModel.getTitle());
 //        UiUtils.setTextOrHide(vh.mHeaderColumnDescriptionTextView, optionsModel.getDescription());
         if(!isSpeedMode) {
             if (mIsFlipColsAndRows) {
@@ -254,7 +260,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final TableHeaderRowViewHolder vh = (TableHeaderRowViewHolder) viewHolder;
         final ElementOptionsR optionsModel = mLeftSide.get(row - 1).getElementOptionsR();
 
-        UiUtils.setTextOrHide(vh.mHeaderRowTextView, !mIsFlipColsAndRows ? titles.get(row - 1) : optionsModel.getTitle());
+        vh.mHeaderRowTextView.setText(!mIsFlipColsAndRows ? titles.get(row - 1) : Objects.requireNonNull(titlesMap.get(mLeftSide.get(row - 1).getRelative_id())).getTitle());
+//        UiUtils.setTextOrHide(vh.mHeaderRowTextView, !mIsFlipColsAndRows ? titles.get(row - 1) : optionsModel.getTitle());
         UiUtils.setTextOrHide(vh.mHeaderRowDescriptionTextView, optionsModel.getDescription());
         if(!isSpeedMode) {
             if (!mIsFlipColsAndRows) {
@@ -507,9 +514,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 alertDialog.show();
             }
         } else {
-            if(!isPolyanswer && isElementChecked) {
-
-            } else {
+            if (isPolyanswer || !isElementChecked) {
                 if (!mIsFlipColsAndRows) {
                     mAnswersState[row - 1][column - 1].setChecked(!isElementChecked);
                 } else {
@@ -584,6 +589,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 for (int k = 0; k < mAnswersState[0].length; k++) {
                     if (mAnswersState[i][k].isChecked()) {
                         checked = true;
+                        break;
                     }
                 }
                 mLine[i] = checked;
@@ -615,7 +621,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final TextView title = mView.findViewById(R.id.title);
         final TextView description = mView.findViewById(R.id.description);
 
-        UiUtils.setTextOrHide(title, pOptionsModel.getTitle());
+        title.setText(Objects.requireNonNull(titlesMap.get(pOptionsModel.getRelative_id())).getTitle());
         UiUtils.setTextOrHide(description, pOptionsModel.getDescription());
 
         dialog.setCancelable(false)

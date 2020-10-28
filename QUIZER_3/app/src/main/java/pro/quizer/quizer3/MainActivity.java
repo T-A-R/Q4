@@ -47,9 +47,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import io.reactivex.Observable;
 import pro.quizer.quizer3.broadcast.StartSmsSender;
 import pro.quizer.quizer3.database.QuizerDao;
 import pro.quizer.quizer3.database.models.AppLogsR;
@@ -71,8 +73,10 @@ import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.model.config.OptionsModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.model.config.StagesModel;
+import pro.quizer.quizer3.model.view.TitleModel;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
+import pro.quizer.quizer3.utils.ExpressionUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.SPUtils;
@@ -624,6 +628,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void startRecording(int relativeId, String token) {
         Log.d(TAG, "******************* ATTEMPT startRecording: **********************");
+        Log.d(TAG, "startRecording token: " + token);
         if (mIsMediaConnected) {
             final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
             if (mediaCntrlr == null) {
@@ -1357,5 +1362,92 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public Boolean isHomeRestart() {
         if (mHomeRestart == null) mHomeRestart = false;
         return mHomeRestart;
+    }
+
+    public String getToken() {
+        return getCurrentQuestionnaire().getToken();
+    }
+
+    public Observable<String> getConvertedTitle(String title) {
+
+        //TODO Observable<String> observable =
+
+        return Observable.just(title).map(s -> {
+
+            String endString = s;
+            ExpressionUtils expressionUtils = new ExpressionUtils(this);
+            List<String> expressions;
+
+
+            expressions = expressionUtils.findExpressions(s);
+
+            if (expressions.size() > 0) {
+                for (String expression : expressions) {
+                    endString = endString.replace("<# " + expression + " #>", expressionUtils.decodeExpression(expression));
+                }
+
+                return endString;
+            } else return s;
+        });
+    }
+
+    public Observable<List<String>> getConvertedTitles(List<String> titles) {
+
+        //TODO Observable<String> observable =
+
+        return Observable.just(titles).map(s -> {
+            List<String> endStrings = new ArrayList<>();
+            ExpressionUtils expressionUtils = new ExpressionUtils(this);
+
+            for (String text : s) {
+                List<String> expressions = expressionUtils.findExpressions(text);
+
+                if (expressions.size() > 0) {
+                    for (String expression : expressions) {
+                        text = text.replace("<# " + expression + " #>", expressionUtils.decodeExpression(expression));
+                    }
+                }
+                endStrings.add(text);
+            }
+            return endStrings;
+        });
+    }
+
+    public Observable<Map<Integer, TitleModel>> getConvertedTitles(Map<Integer, TitleModel> titles) {
+
+        //TODO Observable<String> observable =
+
+        return Observable.just(titles).map(map -> {
+            Map<Integer, TitleModel> endStrings = new HashMap<>();
+            ExpressionUtils expressionUtils = new ExpressionUtils(this);
+
+            for (Integer id : map.keySet()) {
+                String title = map.get(id) != null ? map.get(id).getTitle() : null;
+                String desc = map.get(id) != null ? map.get(id).getDescription() : null;
+
+                if (title != null) {
+                    List<String> titleExpressions = expressionUtils.findExpressions(title);
+
+                    if (titleExpressions.size() > 0) {
+                        for (String expression : titleExpressions) {
+                            title = title.replace("<# " + expression + " #>", expressionUtils.decodeExpression(expression));
+                        }
+                    }
+                }
+
+                if (desc != null) {
+                    List<String> descExpressions = expressionUtils.findExpressions(desc);
+
+                    if (descExpressions.size() > 0) {
+                        for (String expression : descExpressions) {
+                            desc = desc.replace("<# " + expression + " #>", expressionUtils.decodeExpression(expression));
+                        }
+                    }
+                }
+
+                endStrings.put(id, new TitleModel(title, desc));
+            }
+            return endStrings;
+        });
     }
 }

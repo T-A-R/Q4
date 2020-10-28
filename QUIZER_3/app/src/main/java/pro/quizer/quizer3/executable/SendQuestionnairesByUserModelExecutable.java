@@ -182,17 +182,15 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                 final List<String> tokensToRemove = deletingListResponseModel.getAccepted();
 
                 if (tokensToRemove == null || tokensToRemove.isEmpty()) {
-//                    MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.error_204) + mBaseActivity.getString(R.string.empty_tokens_list_error), responseJson);
                     onError(new Exception(deletingListResponseModel.getMessage() + " " + mBaseActivity.getString(R.string.error_204)));
                 } else {
-//                    MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.send_quiz), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.quiz_sent), null);
-
                     for (final String token : tokensToRemove) {
                         try {
-//                            MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, mBaseActivity.getString(R.string.set_quiz_status), Constants.LogResult.SENT, mBaseActivity.getString(R.string.set_sent_quiz_status), null);
+                            mBaseActivity.addLog(Constants.LogObject.QUESTIONNAIRE, "SENT", Constants.LogResult.SUCCESS, token, null);
                             mBaseActivity.getMainDao().insertToken(new TokensCounterR(token, mUserModel.getUser_id()));
                             mBaseActivity.getMainDao().deleteQuestionnaireByToken(token);
                             mBaseActivity.getMainDao().deleteElementDatabaseModelByToken(token);
+                            mBaseActivity.addLog(Constants.LogObject.QUESTIONNAIRE, "DELETE", Constants.LogResult.SUCCESS, token, null);
                             mBaseActivity.setSettings(Constants.Settings.SENT_TIME, String.valueOf(DateUtils.getFullCurrentTime()));
 
                         } catch (Exception e) {

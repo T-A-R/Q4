@@ -495,6 +495,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 //            getDao().clearElementContentsR();
 //            getDao().clearElementOptionsR();
             Log.d(TAG, "Rebuilding Elements Database............. ");
+            getMainActivity().setTree(null);
             getMainActivity().getMap(true);
         } catch (Exception e) {
             e.printStackTrace();

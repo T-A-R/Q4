@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -220,6 +221,7 @@ public class SearchableListDialog extends DialogFragment implements
                         ArrayList<String> filteredItems = new ArrayList<>();
                         ArrayList<Boolean> filteredEnabled = new ArrayList<>();
 
+                        Log.d("T-L.SearchableListDialo", "performFiltering: ");
                         for (int i = 0, l = originalList.size(); i < l; i++) {
                             String element = originalList.get(i);
                             if (element.toLowerCase().contains(constraint)) {
@@ -237,6 +239,7 @@ public class SearchableListDialog extends DialogFragment implements
                             result.count = originalList.size();
                         }
                     }
+                    Log.d("T-L.SearchableListDialo", "RESULT: " + result);
                     return result;
                 }
 
@@ -245,12 +248,15 @@ public class SearchableListDialog extends DialogFragment implements
                 protected void publishResults(CharSequence constraint,
                                               FilterResults results) {
 
+                    Log.d("T-L.SearchableListDialo", "publishResults: " + results);
                     itemsList = (ArrayList<String>) results.values;
                     notifyDataSetChanged();
                     clear();
-                    for (int i = 0, l = itemsList.size(); i < l; i++)
-                        add(itemsList.get(i));
-                    notifyDataSetInvalidated();
+                    if(itemsList != null) {
+                        for (int i = 0, l = itemsList.size(); i < l; i++)
+                            add(itemsList.get(i));
+                        notifyDataSetInvalidated();
+                    }
 //                    enabledList = originalEnabled;
                 }
             }

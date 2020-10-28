@@ -102,6 +102,9 @@ public class ElementOptionsR {
     @ColumnInfo(name = "show_in_card")
     private boolean show_in_card;
 
+    @ColumnInfo(name = "auto_check")
+    private boolean auto_check;
+
     public ElementOptionsR() {
     }
 
@@ -112,7 +115,7 @@ public class ElementOptionsR {
                            boolean fixed_order, Integer min_answers, Integer max_answers,
                            String open_type, String placeholder, boolean unchecker,
                            Integer start_value, Integer end_value, String type_behavior,
-                           boolean show_scale, boolean show_images, boolean unnecessary_fill_open, Integer type_end) {
+                           boolean show_scale, boolean show_images, boolean unnecessary_fill_open, Integer type_end, boolean auto_check) {
         this.relative_id = relative_id;
         this.title = title;
         this.jump = jump;
@@ -141,6 +144,7 @@ public class ElementOptionsR {
         this.show_images = show_images;
         this.unnecessary_fill_open = unnecessary_fill_open;
         this.type_end = type_end;
+        this.auto_check = auto_check;
     }
 
     public int getId() {
@@ -389,5 +393,17 @@ public class ElementOptionsR {
 
     public void setShow_in_card(boolean show_in_card) {
         this.show_in_card = show_in_card;
+    }
+
+    public boolean isAutoChecked() {
+        return auto_check;
+    }
+
+    public boolean isAuto_check() {
+        return auto_check;
+    }
+
+    public void setAuto_check(boolean auto_check) {
+        this.auto_check = auto_check;
     }
 }

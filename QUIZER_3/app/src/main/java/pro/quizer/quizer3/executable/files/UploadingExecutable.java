@@ -36,7 +36,7 @@ import static pro.quizer.quizer3.utils.FileUtils.moveFile;
 
 public class UploadingExecutable extends BaseExecutable {
 
-    private final String UPLOADING_QUESTIONNAIRE_FILE_NAME = "data_%1$s_%2$s" + FileUtils.JSON;
+    public final String UPLOADING_QUESTIONNAIRE_FILE_NAME = "data_%1$s_%2$s" + FileUtils.JSON;
     private final String UPLOADING_CRASH_FILE_NAME = "quizer_crashlog_%1$s_%2$s" + FileUtils.JSON;
     private final String UPLOADING_LOGS_FILE_NAME = "quizer_applogs_%1$s_%2$s" + FileUtils.JSON;
     public static final String UPLOADING_FOLDER_NAME = "data_quizer";

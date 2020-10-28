@@ -33,10 +33,18 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.DisposableContainer;
+import io.reactivex.schedulers.Schedulers;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
@@ -54,6 +62,7 @@ import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.state.AnswerState;
+import pro.quizer.quizer3.model.view.TitleModel;
 import pro.quizer.quizer3.utils.ConditionUtils;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.FileUtils;
@@ -94,8 +103,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private RecyclerView rvScale;
     private SearchableSpinner spinnerAnswers;
     private AdaptiveTableLayout tableLayout;
-    //    private RelativeLayout unhideTitleCont;
-//    private RelativeLayout unhideAnswerCont;
     private ImageView title1Image1;
     private ImageView title1Image2;
     private ImageView title1Image3;
@@ -113,9 +120,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     private boolean isQuestionHided = false;
     private boolean hasQuestionImage = false;
-    //    private boolean isPrevBtnPressed = false;
-//    private boolean isExit = false;
-//    private int currentQuestionId;
     private ElementItemR currentElement = null;
     List<ElementItemR> answersList;
     private Long startTime;
@@ -126,11 +130,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private int spinnerSelection = -1;
     private List<Integer> spinnerMultipleSelection;
     private boolean isTitle1Hided = false;
-    //    private boolean isTitle2Hided = false;
     private boolean isRestored = false;
     private boolean isMultiSpinner = false;
     private boolean isQuota = false;
-    //    private int lastCheckedElement = -103;
     private int titles = 0;
 
     private ListQuestionAdapter adapterList;
@@ -140,6 +142,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private TableQuestionAdapter adapterTable;
     private MultiSelectSpinner multiSelectionSpinner;
     private List<PrevElementsR> prevList = null;
+    private Map<Integer, TitleModel> titlesMap;
+    private CompositeDisposable disposables;
 
     public ElementFragment() {
         super(R.layout.fragment_element);
@@ -155,6 +159,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     @Override
     protected void onReady() {
         st("START");
+        disposables = new CompositeDisposable();
         setRetainInstance(true);
         Toolbar toolbar = new Toolbar(getMainActivity());
         toolbar = findViewById(R.id.toolbar);
@@ -171,7 +176,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         tableCont = (FrameLayout) findViewById(R.id.table_cont);
         rvAnswers = (RecyclerView) findViewById(R.id.answers_recyclerview);
         rvScale = (RecyclerView) findViewById(R.id.scale_recyclerview);
-//        spinnerAnswers = (SearchableSpinner) findViewById(R.id.answers_spinner);
         tableLayout = (AdaptiveTableLayout) findViewById(R.id.table_question_layout);
         tvUnhide = (TextView) findViewById(R.id.unhide_title);
         tvTitle1 = (TextView) findViewById(R.id.title_1);
@@ -200,7 +204,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         btnNext = (Button) findViewById(R.id.next_btn);
         btnPrev = (Button) findViewById(R.id.back_btn);
         btnExit = (Button) findViewById(R.id.exit_btn);
-//        unhideTitleCont = (RelativeLayout) findViewById(R.id.unhide_title_btn_cont);
 
         btnNext.setTransformationMethod(null);
         btnPrev.setTransformationMethod(null);
@@ -244,13 +247,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             btnPrev.setVisibility(View.INVISIBLE);
             cont.startAnimation(Anim.getAppear(getContext()));
             btnNext.startAnimation(Anim.getAppearSlide(getContext(), 500));
-            btnExit.startAnimation(Anim.getAppearSlide(getContext(), 500));
         } else {
             cont.startAnimation(Anim.getAppear(getContext()));
             btnNext.startAnimation(Anim.getAppearSlide(getContext(), 500));
             btnPrev.startAnimation(Anim.getAppearSlide(getContext(), 500));
-            btnExit.startAnimation(Anim.getAppearSlide(getContext(), 500));
         }
+        btnExit.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
         st("load prev elements");
 
@@ -274,17 +276,66 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 st("init views 2");
                 updateCurrentQuestionnaire();
                 st("upd curr quest");
-                initRecyclerView();
-                st("init recycler");
-                if (isRestored || wasReloaded()) {
-                    loadSavedData();
-                    st("load rest data");
+
+                setAnswersList();
+
+                titlesMap = new HashMap<>();
+                List<String> titles = new ArrayList<>();
+                for (ElementItemR element : answersList) {
+                    titles.add(element.getElementOptionsR().getTitle());
+                    titlesMap.put(element.getRelative_id(), new TitleModel(element.getElementOptionsR().getTitle(), element.getElementOptionsR().getDescription()));
                 }
+
+                if (currentElement.getSubtype().equals(ElementSubtype.TABLE)) {
+                    for (ElementItemR element : answersList) {
+                        for (ElementItemR answer : element.getElements()) {
+                            titlesMap.put(answer.getRelative_id(), new TitleModel(answer.getElementOptionsR().getTitle(), answer.getElementOptionsR().getDescription()));
+                        }
+                    }
+                }
+
+                Disposable subscribeTitles = getMainActivity().getConvertedTitles(titlesMap).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnSubscribe(disposable -> disposables.add(disposable))
+                        .subscribe(
+                                (Map<Integer, TitleModel> convertedTitles) -> {
+                                    titlesMap = convertedTitles;
+
+                                    initRecyclerView();
+                                    if (isRestored || wasReloaded()) {
+                                        loadSavedData();
+                                    }
+                                    hideScreensaver();
+                                    activateButtons();
+                                },
+                                Throwable::printStackTrace,
+                                () -> {
+                                });
+
+//                Disposable subscribeTitles = getMainActivity().getConvertedTitles(titles).subscribeOn(Schedulers.io())
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .doOnSubscribe(disposable -> disposables.add(disposable))
+//                        .subscribe(
+//                                (List<String> convertedTitles) -> {
+//                                    for (int i = 0; i < answersList.size(); i++) {
+//                                        titlesMap.put(answersList.get(i).getRelative_id(), convertedTitles.get(i));
+//                                    }
+//
+//                                    initRecyclerView();
+//                                    if (isRestored || wasReloaded()) {
+//                                        loadSavedData();
+//                                    }
+//                                    hideScreensaver();
+//                                    activateButtons();
+//                                },
+//                                Throwable::printStackTrace,
+//                                () -> {
+//                                });
+
             } else {
                 checkAndLoadNext();
             }
-            hideScreensaver();
-            activateButtons();
+
             st("activ btns");
             try {
                 getMainActivity().activateExitReminder();
@@ -397,11 +448,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 isQuestionHided = true;
             } else {
                 tvQuestion.setVisibility(View.VISIBLE);
-                tvQuestion.setText(currentElement.getElementOptionsR().getTitle());
+                tvQuestion.setText(Objects.requireNonNull(titlesMap.get(currentElement.getRelative_id())).getTitle());
                 closeQuestion.setImageResource(R.drawable.arrow_up_white_wide);
                 if (hasQuestionImage) questionImagesCont.setVisibility(View.VISIBLE);
-                if (currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().getDescription() != null)
+                if (currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().getDescription() != null) {
+                    tvQuestionDesc.setText(Objects.requireNonNull(titlesMap.get(currentElement.getRelative_id())).getDescription());
                     tvQuestionDesc.setVisibility(View.VISIBLE);
+                }
                 isQuestionHided = false;
             }
         }
@@ -479,7 +532,18 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void initViews() {
-        tvQuestion.setText(currentElement.getElementOptionsR().getTitle());
+
+        Disposable subscribeTitle;
+        if (currentElement.getElementOptionsR().getTitle() != null)
+            subscribeTitle = getMainActivity().getConvertedTitle(currentElement.getElementOptionsR().getTitle()).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe(disposable -> disposables.add(disposable))
+                    .subscribe(
+                            (String convertedText) -> tvQuestion.setText(convertedText),
+                            Throwable::printStackTrace,
+                            () -> {
+                            });
+
         if (currentElement.getElementOptionsR().getDescription() != null) {
             tvQuestionDesc.setVisibility(View.VISIBLE);
             tvQuestionDesc.setText(currentElement.getElementOptionsR().getDescription());
@@ -501,7 +565,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     getDao().setWasElementShown(true, parentElement.getRelative_id(), parentElement.getUserId(), parentElement.getProjectId());
                     getDao().setShownId(currentElement.getRelative_id(), parentElement.getRelative_id(), parentElement.getUserId(), parentElement.getProjectId());
                     titleCont2.setVisibility(View.VISIBLE);
-                    UiUtils.setTextOrHide(tvTitle2, parentElement.getElementOptionsR().getTitle());
+
+                    Disposable subscribeTitle2 = getMainActivity().getConvertedTitle(parentElement.getElementOptionsR().getTitle()).subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .doOnSubscribe(disposable -> disposables.add(disposable))
+                            .subscribe(
+                                    (String convertedText) -> UiUtils.setTextOrHide(tvTitle2, convertedText),
+                                    Throwable::printStackTrace,
+                                    () -> {
+                                    });
+
+//                    UiUtils.setTextOrHide(tvTitle2, parentElement.getElementOptionsR().getTitle());
                     if (parentElement.getElementOptionsR().getDescription() != null) {
                         tvTitleDesc2.setVisibility(View.VISIBLE);
                         tvTitleDesc2.setText(parentElement.getElementOptionsR().getDescription());
@@ -526,7 +600,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                 getDao().setWasElementShown(true, parentElement2.getRelative_id(), parentElement2.getUserId(), parentElement2.getProjectId());
                                 getDao().setShownId(currentElement.getRelative_id(), parentElement2.getRelative_id(), parentElement2.getUserId(), parentElement2.getProjectId());
                                 titleCont1.setVisibility(View.VISIBLE);
-                                UiUtils.setTextOrHide(tvTitle1, parentElement2.getElementOptionsR().getTitle());
+
+                                Disposable subscribeTitle1 = getMainActivity().getConvertedTitle(parentElement2.getElementOptionsR().getTitle()).subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .doOnSubscribe(disposable -> disposables.add(disposable))
+                                        .subscribe(
+                                                (String convertedText) -> UiUtils.setTextOrHide(tvTitle1, convertedText),
+                                                Throwable::printStackTrace,
+                                                () -> {
+                                                });
+
+//                                UiUtils.setTextOrHide(tvTitle1, parentElement2.getElementOptionsR().getTitle());
                                 if (parentElement2.getElementOptionsR().getDescription() != null) {
                                     tvTitleDesc1.setVisibility(View.VISIBLE);
                                     tvTitleDesc1.setText(parentElement2.getElementOptionsR().getDescription());
@@ -594,23 +678,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 .into(view);
     }
 
-    private void initRecyclerView() {
+    private void setAnswersList() {
         answersList = new ArrayList<>();
-        List<String> itemsList = new ArrayList<>();
-
-        if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.RANK)) {
-            rvAnswers.setVisibility(View.VISIBLE);
-        } else if (answerType.equals(ElementSubtype.SELECT)) {
-            spinnerCont.setVisibility(View.VISIBLE);
-        } else if (answerType.equals(ElementSubtype.TABLE)) {
-            tableCont.setVisibility(View.VISIBLE);
-        } else if (answerType.equals(ElementSubtype.HTML) || answerType.equals(ElementSubtype.END)) {
-            questionCont.setVisibility(View.GONE);
-            infoCont.setVisibility(View.VISIBLE);
-            infoText.loadData(currentElement.getElementOptionsR().getData(), "text/html; charset=UTF-8", null);
-        } else if (answerType.equals(ElementSubtype.SCALE)) {
-            rvScale.setVisibility(View.VISIBLE);
-        }
 
         answersList = currentElement.getElements();
         List<ElementItemR> checkedAnswersList = new ArrayList<>();
@@ -629,9 +698,31 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } else {
             answersList = checkedAnswersList;
         }
+    }
+
+    private void initRecyclerView() {
+
+        List<String> itemsList = new ArrayList<>();
+
+        if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.RANK)) {
+            rvAnswers.setVisibility(View.VISIBLE);
+        } else if (answerType.equals(ElementSubtype.SELECT)) {
+            spinnerCont.setVisibility(View.VISIBLE);
+        } else if (answerType.equals(ElementSubtype.TABLE)) {
+            questionCont.setVisibility(View.GONE);
+            tableCont.setVisibility(View.VISIBLE);
+        } else if (answerType.equals(ElementSubtype.HTML) || answerType.equals(ElementSubtype.END)) {
+            questionCont.setVisibility(View.GONE);
+            infoCont.setVisibility(View.VISIBLE);
+            infoText.loadData(currentElement.getElementOptionsR().getData(), "text/html; charset=UTF-8", null);
+        } else if (answerType.equals(ElementSubtype.SCALE)) {
+            rvScale.setVisibility(View.VISIBLE);
+        }
+
 
         for (ElementItemR element : answersList) {
-            itemsList.add(element.getElementOptionsR().getTitle());
+//            itemsList.add(element.getElementOptionsR().getTitle());
+            itemsList.add(Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle());
         }
 
         switch (answerType) {
@@ -640,17 +731,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 if (isQuota) {
 
                     adapterList = new ListQuestionAdapter(activity, currentElement, answersList,
-                            getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), this);
+                            getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), titlesMap, this);
                 } else {
                     adapterList = new ListQuestionAdapter(activity, currentElement, answersList,
-                            null, null, this);
+                            null, null, titlesMap, this);
                 }
                 rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
                 rvAnswers.setAdapter(adapterList);
                 break;
             case ElementSubtype.RANK:
                 adapterRank = new RankQuestionAdapter(getActivity(), currentElement, answersList,
-                        null, null, this);
+                        null, null, titlesMap, this);
                 rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
                 rvAnswers.setAdapter(adapterRank);
                 ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
@@ -691,13 +782,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 });
                 itemTouchHelper.attachToRecyclerView(rvAnswers);
                 break;
-//            case ElementSubtype.QUOTA:
-//                MainActivity activity = getMainActivity();
-//                adapterList = new ListQuestionAdapter(getActivity(), currentElement, answersList,
-//                        getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), this);
-//                rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
-//                rvAnswers.setAdapter(adapterList);
-//                break;
+
             case ElementSubtype.SELECT:
                 if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isRotation()) {
                     List<ElementItemR> shuffleList = new ArrayList<>();
@@ -721,7 +806,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
                 Integer unchecker = null;
                 for (int i = 0; i < answersList.size(); i++) {
-                    itemsList.add(answersList.get(i).getElementOptionsR().getTitle());
+//                    itemsList.add(answersList.get(i).getElementOptionsR().getTitle());
+                    itemsList.add(Objects.requireNonNull(titlesMap.get(answersList.get(i).getRelative_id())).getTitle());
                     if (answersList.get(i).getElementOptionsR().isUnchecker()) unchecker = i;
                 }
 
@@ -767,6 +853,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         Integer order = currentElement.getElementOptionsR().getOrder();
                         for (ElementItemR item : answersList) {
                             enabled.add(canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), order));
+                        }
+                    } else {
+                        for (ElementItemR item : answersList) {
+                            enabled.add(true);
                         }
                     }
 
@@ -815,7 +905,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
                 break;
             case ElementSubtype.TABLE:
-                adapterTable = new TableQuestionAdapter(currentElement, answersList, getActivity(), mRefreshRecyclerViewRunnable, this);
+                adapterTable = new TableQuestionAdapter(currentElement, answersList, titlesMap, getActivity(), mRefreshRecyclerViewRunnable, this);
                 tableLayout.setAdapter(adapterTable);
                 tableLayout.setLongClickable(false);
                 tableLayout.setDrawingCacheEnabled(true);
@@ -827,6 +917,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 rvScale.setAdapter(adapterScale);
                 break;
         }
+        //END HERE
     }
 
     private void updateCurrentQuestionnaire() {
@@ -1334,9 +1425,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                if (answerStateRestored != null) {
+                if (answerStateRestored != null || adapterList.isAutoChecked(answersList.get(i))) {
                     answerStateNew.setChecked(true);
-                    answerStateNew.setData(answerStateRestored.getValue());
+                    answerStateNew.setData(answerStateRestored != null ? answerStateRestored.getValue() : "");
                     lastSelectedPosition = i;
                 } else {
                     answerStateNew.setChecked(false);
@@ -1510,7 +1601,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             e.printStackTrace();
         }
 
-//        replaceFragment(new HomeFragment());
         getMainActivity().restartHome();
     }
 
@@ -1690,36 +1780,40 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         @Override
         protected Void doInBackground(Void... voids) {
             Log.d("T-L.ElementFragment", "NEXT 1: " + nextElementId);
-            if (saveElement()) {
-                try {
-                    Log.d("T-L.ElementFragment", "NEXT 2: " + nextElementId);
-                    if (nextElementId == null) {
-                        showRestartDialog();
-                    } else if (nextElementId == 0) {
-                        if (saveQuestionnaire(false)) {
-                            exitQuestionnaire();
-                        } else {
-                            activateButtons();
-                        }
-                    } else if (nextElementId == -1) {
-                        if (getMainActivity().getConfig().isSaveAborted()) {
-                            if (saveQuestionnaire(true)) {
+            try {
+                if (saveElement()) {
+                    try {
+                        Log.d("T-L.ElementFragment", "NEXT 2: " + nextElementId);
+                        if (nextElementId == null) {
+                            showRestartDialog();
+                        } else if (nextElementId == 0) {
+                            if (saveQuestionnaire(false)) {
                                 exitQuestionnaire();
                             } else {
                                 activateButtons();
                             }
+                        } else if (nextElementId == -1) {
+                            if (getMainActivity().getConfig().isSaveAborted()) {
+                                if (saveQuestionnaire(true)) {
+                                    exitQuestionnaire();
+                                } else {
+                                    activateButtons();
+                                }
+                            } else {
+                                exitQuestionnaire();
+                            }
                         } else {
-                            exitQuestionnaire();
+                            checkAndLoadNext();
+                            updatePrevElement();
                         }
-                    } else {
-                        checkAndLoadNext();
-                        updatePrevElement();
+                    } catch (Exception e) {
+                        activateButtons();
                     }
-                } catch (Exception e) {
+                } else {
                     activateButtons();
                 }
-            } else {
-                activateButtons();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             return null;
         }
@@ -1727,7 +1821,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            activateButtons();
+            try {
+                activateButtons();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -1742,6 +1840,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 checkAndLoadNext();
             }
         } else {
+            hideScreensaver();
             activateButtons();
         }
     }
@@ -1810,7 +1909,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         List<String> values = new ArrayList<>();
         for (ElementItemR element : answersList) {
             if (element.getElementOptionsR() != null && element.getElementOptionsR().isShow_in_card()) {
-                values.add(counter + ". " + element.getElementOptionsR().getTitle());
+                values.add(counter + ". " + Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle());
                 counter++;
             }
         }
@@ -1894,6 +1993,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     public void onDestroyView() {
         super.onDestroyView();
         clearViews();
+        disposables.clear();
     }
 
     private void clearViews() {

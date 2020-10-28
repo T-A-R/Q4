@@ -6,18 +6,14 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
 import android.text.InputType;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,17 +24,23 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.model.ElementSubtype;
-import pro.quizer.quizer3.model.quota.QuotaUtils;
 import pro.quizer.quizer3.model.state.AnswerState;
+import pro.quizer.quizer3.model.view.TitleModel;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
+import pro.quizer.quizer3.utils.UiUtils;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.model.OptionsOpenType.CHECKBOX;
@@ -48,7 +50,6 @@ import static pro.quizer.quizer3.model.OptionsOpenType.TEXT;
 import static pro.quizer.quizer3.model.OptionsOpenType.TIME;
 
 import android.util.Log;
-import android.widget.TimePicker;
 
 import com.squareup.picasso.Picasso;
 
@@ -72,18 +73,17 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     private Context mContext;
     private int counter = 1;
     private List<String> titles;
+    private Map<Integer, TitleModel> titlesMap;
 
-    public ListQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> passedQuotaBlock, ElementItemR[][] quotaTree, OnAnswerClickListener onAnswerClickListener) {
+    public ListQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> passedQuotaBlock, ElementItemR[][] quotaTree, Map<Integer, TitleModel> titlesMap, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
         this.question = question;
         this.passedQuotaBlock = passedQuotaBlock;
         this.quotaTree = quotaTree;
         this.mContext = context;
+        this.titlesMap = titlesMap;
 
-
-        if (question.getSubtype().equals(ElementSubtype.RANK)) {
-            isRank = true;
-        }
+        if (question.getSubtype().equals(ElementSubtype.RANK)) isRank = true;
 
         if (question.getElementOptionsR() != null && question.getElementOptionsR().isRotation()) {
             List<ElementItemR> shuffleList = new ArrayList<>();
@@ -105,30 +105,33 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         this.answersList = answersList;
 
         this.onAnswerClickListener = onAnswerClickListener;
-        if (question.getElementOptionsR().getOpen_type() != null) {
+        if (question.getElementOptionsR() != null && question.getElementOptionsR().getOpen_type() != null) {
             this.isOpen = true;
             this.openType = question.getElementOptionsR().getOpen_type();
         }
         this.isMulti = question.getElementOptionsR().isPolyanswer();
         this.answersState = new ArrayList<>();
-//        this.isPressed = new ArrayList<>();
         for (int i = 0; i < answersList.size(); i++) {
-            this.answersState.add(new AnswerState(answersList.get(i).getRelative_id(), false, ""));
-//            this.isPressed.add(false);
+            this.answersState.add(new AnswerState(answersList.get(i).getRelative_id(), isAutoChecked(answersList.get(i)), ""));
         }
 
         titles = new ArrayList<>();
+
         for (ElementItemR element : answersList) {
             if (element.getElementOptionsR().isShow_in_card()) {
-                String text = counter + ". " + element.getElementOptionsR().getTitle();
+                String text = counter + ". " + Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle();
                 titles.add(text);
                 counter++;
             } else {
-                titles.add(element.getElementOptionsR().getTitle());
+                titles.add(Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle());
             }
         }
     }
 
+    public boolean isAutoChecked(ElementItemR element) {
+        return element.getElementOptionsR().isAutoChecked();
+//        return true;
+    }
 
     @NonNull
     @Override
@@ -272,9 +275,9 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         public void bind(final ElementItemR item, int position) {
 
             answerTitle.setText(titles.get(position));
-            if (item.getElementOptionsR().getDescription() != null) {
+            if (item.getElementOptionsR().getDescription() != null && titlesMap.get(item.getRelative_id()) != null) {
                 answerDesc.setVisibility(View.VISIBLE);
-                answerDesc.setText(item.getElementOptionsR().getDescription());
+                answerDesc.setText(Objects.requireNonNull(titlesMap.get(item.getRelative_id())).getDescription());
             } else {
                 answerDesc.setVisibility(View.GONE);
             }
@@ -392,10 +395,13 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         }
 
         public void setChecked(final ElementItemR item, int position) {
+
             if (answersState.get(position).isChecked()) {
-                editButton.setVisibility(View.GONE);
-                answerEditText.setVisibility(View.VISIBLE);
-                answerEditText.setText(answersState.get(position).getData());
+                if (answersState.get(position).getData() != null && !answersState.get(position).getData().equals("")) {
+                    editButton.setVisibility(View.GONE);
+                    answerEditText.setVisibility(View.VISIBLE);
+                    answerEditText.setText(answersState.get(position).getData());
+                }
                 if (isPressed != null && isPressed.equals(position)) {
                     if (position == lastSelectedPosition) {
                         if (item.getElementOptionsR().getOpen_type().equals(TEXT)) {
@@ -415,6 +421,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                             answersState.get(position).setData(answerEditText.getText().toString());
                             answerEditText.setEnabled(false);
                         }
+                        hideEditButton(position);
                     } else {
                         answerEditText.setEnabled(false);
                     }
@@ -426,11 +433,19 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             }
         }
 
+        private void hideEditButton(int position) {
+//            if(answersState.get(position).getData() != null && !answersState.get(position).getData().equals("")) {
+            editButton.setVisibility(View.GONE);
+            answerEditText.setVisibility(View.VISIBLE);
+            answerEditText.setText(answersState.get(position).getData());
+//            }
+        }
+
         public void setEnabled(int position) {
             if (answersList.get(position).getElementOptionsR().isUnchecker()) {
                 if (answersState.get(position).isChecked()) {
                     for (int i = 0; i < answersState.size(); i++) {
-                        if (i != position) {
+                        if (i != position && !isAutoChecked(answersList.get(i))) {
                             answersList.get(i).setEnabled(false);
                         }
                     }
@@ -454,10 +469,13 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
         @Override
         public void onClick(View v) {
+
             boolean emptyAnswersState = true;
             for (AnswerState answer : answersState) {
-                if (answer.isChecked()) emptyAnswersState = false;
-
+                if (answer.isChecked()) {
+                    emptyAnswersState = false;
+                    break;
+                }
             }
             if (emptyAnswersState || isFilled() || answersState.get(getAdapterPosition()).isChecked()) {
                 isPressed = getAdapterPosition();
@@ -469,7 +487,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                     if (answersList.get(lastSelectedPosition).isEnabled()) {
                         notifyItemChanged(lastSelectedPosition);
                         if (isMulti && !answersList.get(lastSelectedPosition).getElementOptionsR().isUnchecker()) {
-                            if (answersState.get(lastSelectedPosition).isChecked()) {
+                            if (answersState.get(lastSelectedPosition).isChecked() && !isAutoChecked(answersList.get(lastSelectedPosition))) {
                                 answersState.get(lastSelectedPosition).setChecked(false);
                                 lastSelectedPosition = oldPosition;
                                 isPressed = null;
@@ -510,12 +528,9 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     }
 
     public void unselectOther(int position) {
-
         for (int i = 0; i < answersState.size(); i++) {
-            if (i != position) {
+            if (i != position && !isAutoChecked(answersList.get(position))) {
                 answersState.get(i).setChecked(false);
-                //TODO Enable if have to clear text
-//                answersState.get(i).setData("");
             }
         }
     }
@@ -532,26 +547,17 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         this.lastSelectedPosition = lastSelectedPosition;
     }
 
-    public int getLastSelectedPosition() {
-        return lastSelectedPosition;
-    }
-
-    public int getLastCheckedElement() {
-        return lastCheckedElement;
-    }
-
     public void setData(List<ElementItemR> elements) {
         this.answersList = elements;
     }
 
     public void setAnswers(List<AnswerState> answers) {
-        Log.d(TAG, "=============================");
         if (answers != null) {
             this.answersState = answers;
             for (int i = 0; i < answers.size(); i++) {
                 if (answersList.get(i).getElementOptionsR().isUnchecker() && answers.get(i).isChecked()) {
                     for (int k = 0; k < answersList.size(); k++) {
-                        if (k != i) {
+                        if (k != i && !isAutoChecked(answersList.get(k))) {
                             answersList.get(k).setEnabled(false);
                         }
                     }
@@ -607,6 +613,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         answersState.get(lastSelectedPosition).setData(dateFormat.format(mCalendar.getTime()));
     }
 
+    // FOR TESTS
     public void showAnswers() {
         Log.d(TAG, "============== Answers ==============");
         for (int i = 0; i < answersState.size(); i++) {
@@ -614,6 +621,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         }
     }
 
+    // FOR TESTS
     private void showDisableToLog(String name) {
         Log.d(TAG, "XXXXXX Disabled: " + name);
     }

@@ -234,12 +234,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
             setEventsListener(this);
             checkConfigUpdateDate();
-            if(isNeedUpdate)
-            btnStart.setText(getString(R.string.button_set_config));
+            if (isNeedUpdate)
+                btnStart.setText(getString(R.string.button_set_config));
 
             checkProjectActive();
         }
-
+        activity.stopRecording();
     }
 
     @Override
@@ -607,7 +607,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     private void startRecording() {
         if (activity.getConfig().isAudio() && activity.getConfig().isAudioRecordAll()) {
-            MainActivity activity = (MainActivity) getActivity();
             try {
                 Objects.requireNonNull(activity).startRecording(0, currentQuestionnaire.getToken());
             } catch (Exception e) {
@@ -1300,6 +1299,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         getDao().clearPrevElementsR();
                         getDao().clearElementPassedR();
                         activity.setCurrentQuestionnaireNull();
+                        currentQuestionnaire = null;
                     }
                 }
             }
@@ -1324,13 +1324,16 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 getDao().insertCurrentQuestionnaireR(questionnaire);
                 getDao().clearWasElementShown(false);
 
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateCurrentQuestionnaire();
-                        getQuestionnaireFromDB();
-                    }
-                });
+//                activity.runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        updateCurrentQuestionnaire();
+//                        getQuestionnaireFromDB();
+//                    }
+//                });
+
+                updateCurrentQuestionnaire();
+                getQuestionnaireFromDB();
 
                 if (mIsUsedFakeGps) {
                     canStart = false;
@@ -1396,6 +1399,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
 
             if (canStart) {
+                activity.addLog(Constants.LogObject.QUESTIONNAIRE, "START", Constants.LogResult.SUCCESS, currentQuestionnaire.getToken(), null);
                 hideScreensaver();
                 replaceFragment(new ElementFragment());
             }

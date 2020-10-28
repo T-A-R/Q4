@@ -39,6 +39,8 @@ import pro.quizer.quizer3.API.QuizerAPI;
 import pro.quizer.quizer3.API.models.request.AuthRequestModel;
 import pro.quizer.quizer3.API.models.request.ConfigRequestModel;
 import pro.quizer.quizer3.API.models.request.CrashRequestModel;
+import pro.quizer.quizer3.API.models.request.QuestionnaireListRequestModel;
+import pro.quizer.quizer3.API.models.request.QuestionnaireRequestModel;
 import pro.quizer.quizer3.API.models.response.AuthResponseModel;
 import pro.quizer.quizer3.API.models.response.ConfigResponseModel;
 import pro.quizer.quizer3.Constants;
@@ -47,7 +49,6 @@ import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.QuizerDao;
 import pro.quizer.quizer3.database.models.ActivationModelR;
-import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
@@ -56,18 +57,16 @@ import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.OptionsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.UserModelR;
-import pro.quizer.quizer3.executable.QuotasViewModelExecutable;
+import pro.quizer.quizer3.executable.QuestionnaireListRequestModelExecutable;
+import pro.quizer.quizer3.executable.QuestionnaireRequestModelExecutable;
 import pro.quizer.quizer3.model.ElementDatabaseType;
 import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
-import pro.quizer.quizer3.model.Statistics;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.model.logs.Crash;
-import pro.quizer.quizer3.model.quota.QuotaModel;
-import pro.quizer.quizer3.model.view.QuotasViewModel;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
@@ -76,6 +75,7 @@ import pro.quizer.quizer3.utils.SPUtils;
 
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
+import static pro.quizer.quizer3.executable.files.UploadingExecutable.UPLOADING_PATH;
 import static pro.quizer.quizer3.utils.FileUtils.AMR;
 import static pro.quizer.quizer3.utils.FileUtils.JPEG;
 
@@ -368,15 +368,13 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public void saveCurrentUserId(final int pUserId) {
         int oldUserId = SPUtils.getCurrentUserId(getContext());
-        if(oldUserId != pUserId ) {
+        if (oldUserId != pUserId) {
             SPUtils.saveCurrentUserId(getContext(), pUserId);
             try {
                 MainActivity activity = getMainActivity();
                 activity.getMainDao().clearCurrentQuestionnaireR();
                 activity.getMainDao().clearPrevElementsR();
                 activity.setCurrentQuestionnaireNull();
-                activity.getMainDao().deleteQuestionnaireStatusByUserId(oldUserId);
-                activity.getMainDao().clearElementDatabaseModelR();
                 activity.getMainDao().clearElementPassedR();
                 activity.getMainDao().clearElementItemR();
             } catch (Exception e) {
@@ -779,8 +777,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                                             }
                                         }).loadMultiple(fileUris);
                             }
-//                            UpdateQuiz task = new UpdateQuiz();
-//                            task.execute();
                         } else {
                             showToast(configResponseModel.getError());
 //                            addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, configResponseModel.getError(), configResponseJson);
@@ -853,6 +849,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public boolean saveQuestionnaireToDatabase(CurrentQuestionnaireR currentQuiz, boolean aborted) {
 
+        getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.ATTEMPT, currentQuiz.getToken(), null);
+
         boolean saved = true;
         countElements = 0;
         countScreens = 0;
@@ -917,10 +915,12 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         try {
             getDao().insertQuestionnaire(questionnaireDatabaseModel);
             getMainActivity().setSettings(Constants.Settings.QUIZ_TIME, String.valueOf(DateUtils.getFullCurrentTime()));
-//            addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.SUCCESS, getString(R.string.save_question_to_db_success), null);
+            Log.d("T-L.SmartFragment", "saveQuestionnaireToDatabase: " + questionnaireDatabaseModel.toString());
+            saveQuizToFile(questionnaireDatabaseModel.getToken());
+            getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.SUCCESS, questionnaireDatabaseModel.getToken(), null);
         } catch (Exception e) {
             showToast(getString(R.string.db_save_error));
-//            addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUESTIONNAIRE, getString(R.string.save_question_to_db), Constants.LogResult.ERROR, getString(R.string.save_question_to_db_error), e.toString());
+            getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.ERROR, currentQuiz.getToken(), null);
             saved = false;
         }
 
@@ -944,6 +944,22 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         Log.d(TAG, "saveQuestionnaireToDatabase finished: " + saved);
         return saved;
 
+    }
+
+    private void saveQuizToFile(String token) {
+        UserModelR user = getCurrentUser();
+        final QuestionnaireRequestModel requestModel = new QuestionnaireRequestModelExecutable(getMainActivity(), token).execute();
+        if (requestModel != null) {
+            Gson gson = new Gson();
+            String json = gson.toJson(requestModel);
+            try {
+                FileUtils.createTxtFile(UPLOADING_PATH, String.format("data_%1$s_%2$s" + FileUtils.JSON, user.getLogin(), DateUtils.getCurrentTimeMillis()), json);
+                getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_FILE", Constants.LogResult.ATTEMPT, token, json);
+
+            } catch (final IOException pE) {
+
+            }
+        }
     }
 
     private boolean saveElement(CurrentQuestionnaireR currentQuiz, final ElementPassedR element) {
@@ -1036,22 +1052,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                             final int pUserId,
                             final int pProjectId,
                             final String pUserLogin) {
-//        Log.d(TAG, ">>> Taking Hidden Picture <<<");
-//
-//        try {
-//            startCamera(new CameraConfig()
-//                    .getBuilder(getContext())
-//                    .setCameraFacing(CameraFacing.FRONT_FACING_CAMERA)
-//                    .setCameraResolution(CameraResolution.LOW_RESOLUTION)
-//                    .setImageFormat(CameraImageFormat.FORMAT_JPEG)
-//                    .setImageRotation(CameraRotation.ROTATION_270)
-//                    .build());
-//        } catch (final Exception pException) {
-//            showToast("Не удается стартануть камеру");
-//            pException.printStackTrace();
-//            return;
-//        }
-
         mProjectId = pProjectId;
         mUserLogin = pUserLogin;
         mLoginAdmin = pLoginAdmin;
@@ -1061,29 +1061,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
         TakePicture take = new TakePicture();
         take.execute();
-
-//        final Handler handler = new Handler();
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    takePicture();
-//                    try {
-//                        getDao().setCurrentQuestionnairePhoto(true);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    onCameraError(CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA);
-//                    try {
-//                        getDao().setCurrentQuestionnairePhoto(false);
-//                    } catch (Exception ex) {
-//                        ex.printStackTrace();
-//                    }
-//                }
-//            }
-//        }, 1000);
     }
 
     public void sendCrashLogs() {
@@ -1123,20 +1100,17 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             CrashRequestModel crashRequestModel = new CrashRequestModel(getLoginAdmin(), crashList);
             Gson gson = new Gson();
             String json = gson.toJson(crashRequestModel);
-            QuizerAPI.sendCrash(getServer(), json, new QuizerAPI.SendCrashCallback() {
-                @Override
-                public void onSendCrash(boolean ok, String message) {
-                    if (ok) {
-                        try {
-                            getDao().clearCrashLogs();
-                            Log.d(TAG, "Crash Logs Cleared");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.d(TAG, "Crash Logs Clear Error: " + e);
-                        }
-                    } else {
-                        Log.d(TAG, "Crash Logs Not Sent: " + message);
+            QuizerAPI.sendCrash(getServer(), json, (ok, message) -> {
+                if (ok) {
+                    try {
+                        getDao().clearCrashLogs();
+                        Log.d(TAG, "Crash Logs Cleared");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.d(TAG, "Crash Logs Clear Error: " + e);
                     }
+                } else {
+                    Log.d(TAG, "Crash Logs Not Sent: " + message);
                 }
             });
         }
@@ -1281,9 +1255,4 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             }
         });
     }
-
-//    public void restartHome() {
-//        Bundle bundle = new Bundle();
-//        bundle.putBoolean("home", true);
-//    }
 }

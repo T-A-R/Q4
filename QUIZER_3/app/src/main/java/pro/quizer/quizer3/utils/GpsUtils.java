@@ -1,6 +1,12 @@
 package pro.quizer.quizer3.utils;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.telephony.TelephonyManager;
+import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
@@ -24,6 +30,21 @@ public final class GpsUtils {
 
         if (gps.canGetLocation()) {
             try {
+                TelephonyManager manager = (TelephonyManager) pContext.getSystemService(Context.TELEPHONY_SERVICE);
+
+                if (ActivityCompat.checkSelfPermission(pContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(pContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    Log.d("T-L.GPSTracker", "getLocationAlternative 3: NO PERMISSIONS!");
+                } else {
+                    GsmCellLocation loc = (GsmCellLocation) manager.getCellLocation();
+                    if (loc != null) {
+                        Log.d("T-L.GPSTracker", "getLocationAlternative 2: " + loc.getPsc() + " lac=" + loc.getLac() + " cid=" + loc.getCid());
+//                        latitudeNetwork = loc.getLatitude();
+//                        longitudeNetwork = loc.getLongitude();
+//                        gpstimeNetwork = loc.getTime();
+                    }
+
+                }
+
                 lat = gps.getLatitude();
                 lon = gps.getLongitude();
                 latN = gps.getLatitudeNetwork();

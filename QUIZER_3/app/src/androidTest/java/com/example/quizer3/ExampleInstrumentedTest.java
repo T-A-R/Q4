@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.quizer.template", appContext.getPackageName());
+        assertEquals("pro.quizer.quizer3", appContext.getPackageName());
     }
 }

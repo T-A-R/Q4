@@ -84,6 +84,10 @@ public class ElementModelNew implements Serializable {
         return list;
     }
 
+    public void setOptions(OptionsModelNew options) {
+        this.options = options;
+    }
+
     public int getRelativeID() {
         return relative_id;
     }

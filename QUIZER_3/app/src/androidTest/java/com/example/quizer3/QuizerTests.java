@@ -1,13 +1,8 @@
 package com.example.quizer3;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -32,7 +27,7 @@ import static org.mockito.Mockito.when;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
-public class ExampleInstrumentedTest  {
+public class QuizerTests {
 
     private MainActivity mMainActivity;
     private QuizerDao mQuizerDao;
@@ -44,9 +39,6 @@ public class ExampleInstrumentedTest  {
     private ElementPassedR mElementWithId21;
     private Map<Integer, ElementModelNew> mMap;
     private ElementModelNew mElementModelNew;
-
-//    @Rule
-//    public ActivityTestRule<MainActivity> activityActivityTestRule = new ActivityTestRule<MainActivity>(MainActivity.class);
 
     @Before
     public void setUp() throws Exception {
@@ -92,8 +84,8 @@ public class ExampleInstrumentedTest  {
 
         when(mMainActivity.getMap(false)).thenReturn((HashMap<Integer, ElementModelNew>) mMap); // Запрос анкеты
 
-//        assertEquals(getConvertedString(text) , answerTRUE); // Если после выполнения пребразований мы получили ожидаемую строку то тест пройден
-        assertEquals(getConvertedString(text) , answerFALSE); // Если после выполнения пребразований мы получили ожидаемую строку то тест пройден
+        assertEquals(getConvertedString(text) , answerTRUE); // Если после выполнения пребразований мы получили ожидаемую строку то тест пройден
+//        assertEquals(getConvertedString(text) , answerFALSE); // Если после выполнения пребразований мы получили ожидаемую строку то тест пройден
 
     }
 

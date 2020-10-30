@@ -11,7 +11,8 @@ import static org.junit.Assert.*;
  */
 public class ExampleUnitTest {
 
-
+//    @Rule
+//    public ActivityTestRule<MainActivity> activityActivityTestRule = new ActivityTestRule<MainActivity>(MainActivity.class);
 
         //    public void addition_isCorrect() {
 //        assertEquals(4, 2 + 2);

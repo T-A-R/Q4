@@ -1370,8 +1370,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public Observable<String> getConvertedTitle(String title) {
 
-        //TODO Observable<String> observable =
-
         return Observable.just(title).map(s -> {
 
             String endString = s;
@@ -1393,8 +1391,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public Observable<List<String>> getConvertedTitles(List<String> titles) {
 
-        //TODO Observable<String> observable =
-
         return Observable.just(titles).map(s -> {
             List<String> endStrings = new ArrayList<>();
             ExpressionUtils expressionUtils = new ExpressionUtils(this);
@@ -1414,8 +1410,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public Observable<Map<Integer, TitleModel>> getConvertedTitles(Map<Integer, TitleModel> titles) {
-
-        //TODO Observable<String> observable =
 
         return Observable.just(titles).map(map -> {
             Map<Integer, TitleModel> endStrings = new HashMap<>();

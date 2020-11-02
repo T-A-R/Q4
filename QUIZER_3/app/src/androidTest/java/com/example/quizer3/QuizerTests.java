@@ -62,13 +62,11 @@ public class QuizerTests {
         mElementWithId20 = new ElementPassedR(); mElementWithId20.setRelative_id(20); mElementWithId20.setValue("Ответ на вопрос с ID=20");
         mElementWithId21 = new ElementPassedR(); mElementWithId21.setRelative_id(21); mElementWithId21.setValue("Ответ на вопрос с ID=21");
 
-        // Опции элемента c ID=3
-        mOptionsModelNew = new OptionsModelNew(); mOptionsModelNew.setTitle("Title элемента с ID=3");
     }
 
     @Test
-    public void testExpression() {
-        String text = "ВОПРОС. Проверка выражения , <# {($e.2.checked || !$e.3.checked) && !(!($e.19.checked && !$e.20.checked) || $e.21.checked)} ? {ПРОШЕЛ УСЛОВИЕ $e.2.vaule} : {НЕ ПРОШЕЛ УСЛОВИЕ (пояснение к тексту 2) } #> здесь продолжается вопрос <# текст3 $e.3.title текст4 (пояснение к тексту 4) #> тоже продолжается текст <# здесь за каким-то хреном просто влепили текст в теги, но хрен с ним выводим всё равно #>";
+    public void testExpressionFASLSE() {
+        String text = "ВОПРОС. Проверка выражения , <# {($e.2.checked || !$e.3.checked) && !(!($e.19.checked && !$e.20.checked) || $e.21.checked)} ? {ПРОШЕЛ УСЛОВИЕ $e.2.value} : {НЕ ПРОШЕЛ УСЛОВИЕ (пояснение к тексту 2) } #> здесь продолжается вопрос <# текст3 $e.3.title текст4 (пояснение к тексту 4) #> тоже продолжается текст <# здесь за каким-то хреном просто влепили текст в теги, но хрен с ним выводим всё равно #>";
 
         String answerTRUE = "ВОПРОС. Проверка выражения , ПРОШЕЛ УСЛОВИЕ Ответ на вопрос с ID=2 здесь продолжается вопрос текст3 Title элемента с ID=3 текст4 (пояснение к тексту 4) тоже продолжается текст здесь за каким-то хреном просто влепили текст в теги, но хрен с ним выводим всё равно";
         String answerFALSE = "ВОПРОС. Проверка выражения , НЕ ПРОШЕЛ УСЛОВИЕ (пояснение к тексту 2)  здесь продолжается вопрос текст3 Title элемента с ID=3 текст4 (пояснение к тексту 4) тоже продолжается текст здесь за каким-то хреном просто влепили текст в теги, но хрен с ним выводим всё равно";
@@ -81,6 +79,48 @@ public class QuizerTests {
         when(mMainActivity.getMainDao().getElementPassedR("1234567890", 19)).thenReturn(mElementWithId19);
         when(mMainActivity.getMainDao().getElementPassedR("1234567890", 20)).thenReturn(mElementWithId20);
         when(mMainActivity.getMainDao().getElementPassedR("1234567890", 21)).thenReturn(mElementWithId21);
+
+        when(mMainActivity.getMap(false)).thenReturn((HashMap<Integer, ElementModelNew>) mMap); // Запрос анкеты
+
+//        assertEquals(getConvertedString(text) , answerTRUE); // Если после выполнения пребразований мы получили ожидаемую строку то тест пройден
+        assertEquals(getConvertedString(text) , answerFALSE); // Если после выполнения пребразований мы получили ожидаемую строку то тест пройден
+
+    }
+
+    @Test
+    public void testExpressionTRUE() {
+        String text = "ВОПРОС. Проверка выражения , <# {($e.2.checked || !$e.3.checked) && !(!($e.19.checked && !$e.20.checked) || $e.21.checked)} ? {ПРОШЕЛ УСЛОВИЕ $e.2.value} : {НЕ ПРОШЕЛ УСЛОВИЕ (пояснение к тексту 2) } #> здесь продолжается вопрос <# текст3 $e.3.title текст4 (пояснение к тексту 4) #> тоже продолжается текст <# здесь за каким-то хреном просто влепили текст в теги, но хрен с ним выводим всё равно #>";
+
+        String answerTRUE = "ВОПРОС. Проверка выражения , ПРОШЕЛ УСЛОВИЕ Ответ на вопрос с ID=2 здесь продолжается вопрос текст3 Title элемента с ID=3 текст4 (пояснение к тексту 4) тоже продолжается текст здесь за каким-то хреном просто влепили текст в теги, но хрен с ним выводим всё равно";
+        String answerFALSE = "ВОПРОС. Проверка выражения , НЕ ПРОШЕЛ УСЛОВИЕ (пояснение к тексту 2)  здесь продолжается вопрос текст3 Title элемента с ID=3 текст4 (пояснение к тексту 4) тоже продолжается текст здесь за каким-то хреном просто влепили текст в теги, но хрен с ним выводим всё равно";
+
+        when(mMainActivity.getToken()).thenReturn("1234567890"); // Запрос на токен
+        when(mMainActivity.getMainDao()).thenReturn(mQuizerDao); // Запрос на базу данных
+
+        when(mMainActivity.getMainDao().getElementPassedR("1234567890", 2)).thenReturn(mElementWithId2); // Запросы пройденных элементов
+        when(mMainActivity.getMainDao().getElementPassedR("1234567890", 3)).thenReturn(mElementWithId3);
+        when(mMainActivity.getMainDao().getElementPassedR("1234567890", 19)).thenReturn(mElementWithId19);
+
+        when(mMainActivity.getMap(false)).thenReturn((HashMap<Integer, ElementModelNew>) mMap); // Запрос анкеты
+
+        assertEquals(getConvertedString(text) , answerTRUE); // Если после выполнения пребразований мы получили ожидаемую строку то тест пройден
+//        assertEquals(getConvertedString(text) , answerFALSE); // Если после выполнения пребразований мы получили ожидаемую строку то тест пройден
+
+    }
+
+    @Test
+    public void testExpressionTRUE2() {
+        String text = "ВОПРОС. Проверка выражения , <# {($e.2.checked && !$e.3.checked)} ? {ПРОШЕЛ УСЛОВИЕ $e.2.value} : {НЕ ПРОШЕЛ УСЛОВИЕ (пояснение к тексту 2) } #> здесь продолжается вопрос <# текст3 $e.3.title текст4 (пояснение к тексту 4) #> тоже продолжается текст <# здесь за каким-то хреном просто влепили текст в теги, но хрен с ним выводим всё равно #>";
+
+        String answerTRUE = "ВОПРОС. Проверка выражения , ПРОШЕЛ УСЛОВИЕ Ответ на вопрос с ID=2 здесь продолжается вопрос текст3 Title элемента с ID=3 текст4 (пояснение к тексту 4) тоже продолжается текст здесь за каким-то хреном просто влепили текст в теги, но хрен с ним выводим всё равно";
+        String answerFALSE = "ВОПРОС. Проверка выражения , НЕ ПРОШЕЛ УСЛОВИЕ (пояснение к тексту 2)  здесь продолжается вопрос текст3 Title элемента с ID=3 текст4 (пояснение к тексту 4) тоже продолжается текст здесь за каким-то хреном просто влепили текст в теги, но хрен с ним выводим всё равно";
+
+        when(mMainActivity.getToken()).thenReturn("1234567890"); // Запрос на токен
+        when(mMainActivity.getMainDao()).thenReturn(mQuizerDao); // Запрос на базу данных
+
+        when(mMainActivity.getMainDao().getElementPassedR("1234567890", 2)).thenReturn(mElementWithId2); // Запросы пройденных элементов
+//        when(mMainActivity.getMainDao().getElementPassedR("1234567890", 3)).thenReturn(mElementWithId3);
+        when(mMainActivity.getMainDao().getElementPassedR("1234567890", 19)).thenReturn(mElementWithId19);
 
         when(mMainActivity.getMap(false)).thenReturn((HashMap<Integer, ElementModelNew>) mMap); // Запрос анкеты
 

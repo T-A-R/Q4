@@ -321,7 +321,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             @Override
             public void onSuccess() {
-                if (!isQuotaUpdated) {
+                if (!isQuotaUpdated && !mIsStartAfterAuth) {
                     makeQuotaTree();
                     isQuotaUpdated = true;
                 }
@@ -1195,7 +1195,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void checkProjectActive() {
-        Log.d(TAG, "checkProjectActive: " + activity.getSettings().isProject_is_active());
         if (!activity.getSettings().isProject_is_active()) {
             deactivateStartButtons();
             tvProjectStatus.setVisibility(View.VISIBLE);

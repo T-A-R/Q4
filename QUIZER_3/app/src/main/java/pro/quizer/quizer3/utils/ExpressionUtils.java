@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pro.quizer.quizer3.MainActivity;
-import pro.quizer.quizer3.database.models.ElementPassedR;
 
 public class ExpressionUtils {
 

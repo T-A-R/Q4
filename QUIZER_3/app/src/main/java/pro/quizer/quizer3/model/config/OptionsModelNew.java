@@ -199,6 +199,10 @@ public class OptionsModelNew implements Serializable {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getPre_condition() {
         return pre_condition;
     }

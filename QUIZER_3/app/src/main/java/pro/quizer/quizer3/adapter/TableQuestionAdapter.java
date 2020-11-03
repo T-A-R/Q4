@@ -142,7 +142,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         titles = new ArrayList<>();
         for(ElementItemR element : mQuestions) {
             if (element.getElementOptionsR().isShow_in_card()) {
-                String text = counter + ". " + titlesMap.get(element.getRelative_id());
+                String text = counter + ". " + Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle();
                 titles.add(text);
                 counter++;
             } else {

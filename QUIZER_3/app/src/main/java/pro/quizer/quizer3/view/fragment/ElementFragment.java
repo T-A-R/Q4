@@ -48,6 +48,7 @@ import io.reactivex.schedulers.Schedulers;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.adapter.CardAdapter;
 import pro.quizer.quizer3.adapter.ListQuestionAdapter;
 import pro.quizer.quizer3.adapter.RankQuestionAdapter;
 import pro.quizer.quizer3.adapter.ScaleQuestionAdapter;
@@ -59,6 +60,7 @@ import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementOptionsR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
+import pro.quizer.quizer3.model.CardItem;
 import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.state.AnswerState;
@@ -1897,18 +1899,32 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         mCloseBtn.setOnClickListener(v -> infoDialog.dismiss());
 
         int counter = 1;
-        List<String> values = new ArrayList<>();
-        for (ElementItemR element : answersList) {
-            if (element.getElementOptionsR() != null && element.getElementOptionsR().isShow_in_card()) {
-                values.add(counter + ". " + Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle());
-                counter++;
+        if (currentElement.getSubtype().equals(ElementSubtype.TABLE)) {
+            List<String> values = new ArrayList<>();
+            for (ElementItemR element : answersList) {
+                if (element.getElementOptionsR() != null && element.getElementOptionsR().isShow_in_card()) {
+                    values.add(counter + ". " + titlesMap.get(element.getRelative_id()).getTitle());
+                    counter++;
+                }
             }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getMainActivity(),
+                    getMainActivity().isAutoZoom() ? R.layout.holder_table_card_auto : R.layout.holder_table_card, android.R.id.text1, values);
+            listView.setAdapter(adapter);
+        } else {
+            List<CardItem> items = new ArrayList<>();
+            for (ElementItemR element : answersList) {
+                if (element.getElementOptionsR() != null && element.getElementOptionsR().isShow_in_card()) {
+                    String title = counter + ". " + Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle();
+                    items.add(new CardItem(element.getRelative_id(), title, "", element.getElementOptionsR().isUnchecker(), false));
+                    counter++;
+                }
+            }
+
+            CardAdapter adapter = new CardAdapter(getMainActivity(),
+                    getMainActivity().isAutoZoom() ? R.layout.holder_card_auto : R.layout.holder_card, items, currentElement.getElementOptionsR().isPolyanswer());
+            listView.setAdapter(adapter);
         }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getMainActivity(),
-                getMainActivity().isAutoZoom() ? R.layout.holder_card_auto : R.layout.holder_card, android.R.id.text1, values);
-        listView.setAdapter(adapter);
-
 
         dialogBuilder.setView(layoutView, 10, 10, 10, 10);
         infoDialog = dialogBuilder.create();

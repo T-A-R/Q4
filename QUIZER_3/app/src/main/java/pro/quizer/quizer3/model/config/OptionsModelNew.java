@@ -53,6 +53,9 @@ public class OptionsModelNew implements Serializable {
     @SerializedName("flip_cols_and_rows")
     private boolean flip_cols_and_rows;
 
+    @SerializedName("small_column")
+    private boolean small_column;
+
     @SerializedName("rotation")
     private boolean rotation;
 
@@ -323,5 +326,13 @@ public class OptionsModelNew implements Serializable {
 
     public void setAuto_check(boolean auto_check) {
         this.auto_check = auto_check;
+    }
+
+    public boolean isSmallColumns() {
+        return small_column;
+    }
+
+    public void setSmallColumns(boolean small_column) {
+        this.small_column = small_column;
     }
 }

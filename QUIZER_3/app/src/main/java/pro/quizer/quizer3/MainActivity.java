@@ -370,6 +370,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                         elementOptionsR.setTake_photo(optionsModelNew.isTakePhoto());
                         elementOptionsR.setDescription(optionsModelNew.getDescription());
                         elementOptionsR.setFlip_cols_and_rows(optionsModelNew.isFlipColsAndRows());
+                        elementOptionsR.setSmall_column(optionsModelNew.isSmallColumns());
                         boolean isRotation = optionsModelNew.isRotation();
                         if (isRotation && element.getSubtype() != null && element.getSubtype().equals(ElementSubtype.CONTAINER)) {
                             hasRotationContainer = true;

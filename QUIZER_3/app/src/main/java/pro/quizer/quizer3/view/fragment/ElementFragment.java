@@ -1549,6 +1549,54 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         }
     }
 
+    private void loadFromCard(List<CardItem> items) {
+        List<AnswerState> answerStatesAdapter = adapterList.getAnswers();
+        List<AnswerState> answerStatesRestored = new ArrayList<>();
+        Map<Integer, CardItem> itemsMap = convertCardsListToMap(items);
+        if (itemsMap != null && itemsMap.size() > 0) {
+            int lastSelectedPosition = -1;
+            for (int i = 0; i < answerStatesAdapter.size(); i++) {
+                AnswerState answerStateNew = new AnswerState();
+
+                if (itemsMap.get(answerStatesAdapter.get(i).getRelative_id()) != null || adapterList.isAutoChecked(answersList.get(i))) {
+                    answerStateNew.setChecked(itemsMap.get(answerStatesAdapter.get(i).getRelative_id()).isChecked());
+                    if (itemsMap.get(answerStatesAdapter.get(i).getRelative_id()).getData() != null
+                            && !itemsMap.get(answerStatesAdapter.get(i).getRelative_id()).getData().equals("")) {
+                        answerStateNew.setData(itemsMap.get(answerStatesAdapter.get(i).getRelative_id()).getData());
+                    }
+                    if (answerStateNew.isChecked()) lastSelectedPosition = i;
+                } else {
+                    answerStateNew.setChecked(false);
+                    answerStateNew.setData("");
+                }
+
+                answerStateNew.setRelative_id(answerStatesAdapter.get(i).getRelative_id());
+                answerStatesRestored.add(answerStateNew);
+            }
+            adapterList.setAnswers(answerStatesRestored);
+            adapterList.setRestored(true);
+            if (!currentElement.getElementOptionsR().isPolyanswer())
+                adapterList.setLastSelectedPosition(lastSelectedPosition);
+            adapterList.notifyDataSetChanged();
+        }
+    }
+
+    private Map<Integer, CardItem> convertCardsListToMap(List<CardItem> list) {
+        Map<Integer, CardItem> map = new HashMap<>();
+        for (CardItem cardItem : list) {
+            map.put(cardItem.getId(), cardItem);
+        }
+        return map;
+    }
+
+    private Map<Integer, AnswerState> convertAnswersListToMap(List<AnswerState> list) {
+        Map<Integer, AnswerState> map = new HashMap<>();
+        for (AnswerState cardItem : list) {
+            map.put(cardItem.getRelative_id(), cardItem);
+        }
+        return map;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -1898,7 +1946,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         View mCloseBtn = layoutView.findViewById(R.id.view_close);
         ListView listView = (ListView) layoutView.findViewById(R.id.card_list);
 
-        mCloseBtn.setOnClickListener(v -> infoDialog.dismiss());
+        mCloseBtn.setOnClickListener(v -> {
+            infoDialog.dismiss();
+        });
 
         int counter = 1;
         if (currentElement.getSubtype().equals(ElementSubtype.TABLE)) {
@@ -1913,8 +1963,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getMainActivity(),
                     getMainActivity().isAutoZoom() ? R.layout.holder_table_card_auto : R.layout.holder_table_card, android.R.id.text1, values);
             listView.setAdapter(adapter);
+            mCloseBtn.setOnClickListener(v -> {
+                infoDialog.dismiss();
+            });
         } else {
             List<CardItem> items = new ArrayList<>();
+            Map<Integer, AnswerState> answerStateMap = convertAnswersListToMap(adapterList.getAnswers());
             for (ElementItemR element : answersList) {
                 if (element.getElementOptionsR() != null && element.getElementOptionsR().isShow_in_card()) {
                     String title = counter + ". " + Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle();
@@ -1923,9 +1977,22 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
             }
 
+            if (answerStateMap != null && answerStateMap.size() > 0)
+                for (int i = 0; i < items.size(); i++) {
+                    if (answerStateMap.get(items.get(i).getId()) != null) {
+                        items.get(i).setChecked(answerStateMap.get(items.get(i).getId()).isChecked());
+                        items.get(i).setData(answerStateMap.get(items.get(i).getId()).getData());
+                    }
+                }
+
             CardAdapter adapter = new CardAdapter(getMainActivity(),
                     getMainActivity().isAutoZoom() ? R.layout.holder_card_auto : R.layout.holder_card, items, currentElement.getElementOptionsR().isPolyanswer());
             listView.setAdapter(adapter);
+//            adapter.setItems(items);
+            mCloseBtn.setOnClickListener(v -> {
+                loadFromCard(adapter.getItems());
+                infoDialog.dismiss();
+            });
         }
 
         dialogBuilder.setView(layoutView, 10, 10, 10, 10);

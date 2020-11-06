@@ -4,6 +4,7 @@ public class CardItem {
     int id;
     String title;
     String desc;
+    String data;
     boolean isUnChecker;
     boolean checked;
 
@@ -53,5 +54,13 @@ public class CardItem {
 
     public void setUnChecker(boolean isUnChecker) {
         this.isUnChecker = isUnChecker;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 }

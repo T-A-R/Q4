@@ -22,7 +22,7 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
     private int resourceLayout;
     private Context mContext;
     private List<CardItem> mItems;
-    private boolean isMulti = false;
+    private boolean isMulti;
 
     public CardAdapter(Context context, int resource, List<CardItem> items, boolean isMulti) {
         super(context, resource, items);
@@ -69,7 +69,7 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
                 } else {
                     checker.setImageResource(checked ? R.drawable.radio_button_checked : R.drawable.radio_button_unchecked);
                 }
-//                checker.setVisibility(View.VISIBLE);
+                checker.setVisibility(View.VISIBLE);
 
                 textView.setText(text);
                 cont.setOnClickListener(v -> checkItem(position));
@@ -98,4 +98,12 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
         notifyDataSetChanged();
     }
 
+    public List<CardItem> getItems() {
+        return mItems;
+    }
+
+    public void setItems(List<CardItem> mItems) {
+        this.mItems = mItems;
+        notifyDataSetChanged();
+    }
 }

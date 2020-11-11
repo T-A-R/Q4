@@ -153,64 +153,64 @@ public class GPSTracker extends Service implements LocationListener {
         return this.canGetLocation;
     }
 
-    public void showSettingsAlert() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity.get(), R.style.AlertDialogTheme);
-        alertDialog.setCancelable(false);
-        alertDialog.setTitle(R.string.dialog_please_turn_on_gps);
-        alertDialog.setMessage(R.string.dialog_you_need_to_turn_on_gps);
-        alertDialog.setPositiveButton(R.string.dialog_turn_on, new DialogInterface.OnClickListener() {
+//    public void showSettingsAlert() {
+//        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity.get(), R.style.AlertDialogTheme);
+//        alertDialog.setCancelable(false);
+//        alertDialog.setTitle(R.string.dialog_please_turn_on_gps);
+//        alertDialog.setMessage(R.string.dialog_you_need_to_turn_on_gps);
+//        alertDialog.setPositiveButton(R.string.dialog_turn_on, new DialogInterface.OnClickListener() {
+//
+//            public void onClick(DialogInterface dialog, int which) {
+//                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                mActivity.get().startActivity(intent);
+//            }
+//        });
+//
+//        if (!mActivity.get().isFinishing()) {
+//            alertDialog.show();
+//        }
+//    }
 
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                mActivity.get().startActivity(intent);
-            }
-        });
-
-        if (!mActivity.get().isFinishing()) {
-            alertDialog.show();
-        }
-    }
-
-    public void showNoGpsAlert(boolean isForceGps) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity.get(), R.style.AlertDialogTheme);
-        alertDialog.setCancelable(false);
-        alertDialog.setTitle(R.string.dialog_no_gps);
-        if (isForceGps) {
-            alertDialog.setMessage(R.string.dialog_no_gps_empty_text);
-            alertDialog.setPositiveButton(R.string.dialog_next, new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface dialog, int which) {
-                    continueWithZeroLocation = true;
-                    dialog.dismiss();
-                }
-            });
-            alertDialog.setNegativeButton(R.string.view_yes, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-        } else {
-            alertDialog.setMessage(R.string.dialog_no_gps_text_warning);
-            alertDialog.setPositiveButton(R.string.dialog_next, new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface dialog, int which) {
-                    continueWithZeroLocation = true;
-                    dialog.dismiss();
-                }
-            });
-        }
-        alertDialog.setNegativeButton(R.string.view_retry, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                getLocation();
-                dialog.dismiss();
-            }
-        });
-        if (!mActivity.get().isFinishing()) {
-            alertDialog.show();
-        }
-    }
+//    public void showNoGpsAlert(boolean isForceGps) {
+//        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mActivity.get(), R.style.AlertDialogTheme);
+//        alertDialog.setCancelable(false);
+//        alertDialog.setTitle(R.string.dialog_no_gps);
+//        if (isForceGps) {
+//            alertDialog.setMessage(R.string.dialog_no_gps_empty_text);
+//            alertDialog.setPositiveButton(R.string.dialog_next, new DialogInterface.OnClickListener() {
+//
+//                public void onClick(DialogInterface dialog, int which) {
+//                    continueWithZeroLocation = true;
+//                    dialog.dismiss();
+//                }
+//            });
+//            alertDialog.setNegativeButton(R.string.view_yes, new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//
+//                }
+//            });
+//        } else {
+//            alertDialog.setMessage(R.string.dialog_no_gps_text_warning);
+//            alertDialog.setPositiveButton(R.string.dialog_next, new DialogInterface.OnClickListener() {
+//
+//                public void onClick(DialogInterface dialog, int which) {
+//                    continueWithZeroLocation = true;
+//                    dialog.dismiss();
+//                }
+//            });
+//        }
+//        alertDialog.setNegativeButton(R.string.view_retry, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                getLocation();
+//                dialog.dismiss();
+//            }
+//        });
+//        if (!mActivity.get().isFinishing()) {
+//            alertDialog.show();
+//        }
+//    }
 
     @Override
     public void onLocationChanged(Location location) {
@@ -258,7 +258,6 @@ public class GPSTracker extends Service implements LocationListener {
     }
     @Override
     public void onDestroy() {
-//        Log.d(TAG,"onDestroy Called");
         stopUsingGPS();
         super.onDestroy();
     }

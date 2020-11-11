@@ -54,6 +54,9 @@ public class ElementOptionsR {
     @ColumnInfo(name = "flip_cols_and_rows")
     private boolean flip_cols_and_rows;
 
+    @ColumnInfo(name = "small_column")
+    private boolean small_column;
+
     @ColumnInfo(name = "rotation")
     private boolean rotation;
 
@@ -405,5 +408,13 @@ public class ElementOptionsR {
 
     public void setAuto_check(boolean auto_check) {
         this.auto_check = auto_check;
+    }
+
+    public boolean isSmall_column() {
+        return small_column;
+    }
+
+    public void setSmall_column(boolean small_column) {
+        this.small_column = small_column;
     }
 }

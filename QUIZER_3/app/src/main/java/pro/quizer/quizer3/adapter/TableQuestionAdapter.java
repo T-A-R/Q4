@@ -63,6 +63,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private Runnable mRefreshRunnable;
     private ElementItemR mCurrentElement;
     private boolean mIsFlipColsAndRows;
+    private boolean mIsSmallColumns;
     private MainActivity mContext;
     private OnTableAnswerClickListener mOnTableAnswerClickListener;
     private boolean isSpeedMode;
@@ -80,6 +81,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final Resources res = context.getResources();
         final ElementOptionsR optionsModel = pCurrentElement.getElementOptionsR();
         mIsFlipColsAndRows = optionsModel.isFlip_cols_and_rows();
+        mIsSmallColumns = optionsModel.isSmall_column();
+//        mIsSmallColumns = true;
         mContext = (MainActivity) context;
         isSpeedMode = mContext.isTableSpeedMode();
         mQuestions = questions;
@@ -132,7 +135,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         mRowHeight = res.getDimensionPixelSize(R.dimen.row_height);
 
-        mHeaderHeight = res.getDimensionPixelSize(R.dimen.column_header_height);
+        mHeaderHeight = res.getDimensionPixelSize(mIsSmallColumns ? R.dimen.column_small_header_height : R.dimen.column_header_height);
 
         final int widthIndex = mTopSide.size() + 1 >= CELL_COUNT ? CELL_COUNT : HALF;
         mHeaderWidth = UiUtils.getDisplayWidth(context) / widthIndex;
@@ -142,7 +145,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         titles = new ArrayList<>();
         for(ElementItemR element : mQuestions) {
             if (element.getElementOptionsR().isShow_in_card()) {
-                String text = counter + ". " + titlesMap.get(element.getRelative_id());
+                String text = counter + ". " + Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle();
                 titles.add(text);
                 counter++;
             } else {

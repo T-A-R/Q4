@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pro.quizer.quizer3.MainActivity;
-import pro.quizer.quizer3.database.models.ElementPassedR;
 
 public class ExpressionUtils {
 
@@ -87,17 +86,7 @@ public class ExpressionUtils {
                                 String value = activity.getMainDao().getElementPassedR(activity.getToken(), relativeId).getValue();
                                 decodedExpression.append(value);
                             } else if (expression.charAt(k + nextSymbol + 1) == 'c') { // CHECKED
-                                List<ElementPassedR> elements = activity.getMainDao().getAllElementsPassedR(activity.getToken());
-
-//                                if(elements != null && elements.size() >0) {
-//                                    for(ElementPassedR passedR : elements) {
-//                                        Log.d("T-L.ExpressionUtils", "elements passed: " + passedR.getRelative_id());
-//                                    }
-//                                } else Log.d("T-L.ExpressionUtils", "elements passed: NULL " + activity.getToken());
-
-
                                 Boolean isChecked = activity.getMainDao().getElementPassedR(activity.getToken(), relativeId) != null;
-                                Log.d("T-L.ExpressionUtils", "decodeExpression: " + relativeId + " " + isChecked.toString());
                                 return isChecked.toString();
                             } else {
                                 return expression;
@@ -130,9 +119,7 @@ public class ExpressionUtils {
 
     public boolean checkIfExpression(String expression) {
         Boolean result = null;
-
         expression = expression.replaceAll(" ", "");
-        Log.d("T-L.StringUtils", "checkIfExpression: " + expression);
 
         for (int i = 0; i < expression.length(); i++) {
             List<Boolean> hasOpen = new ArrayList<>();

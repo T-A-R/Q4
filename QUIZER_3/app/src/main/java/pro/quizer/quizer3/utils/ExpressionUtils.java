@@ -87,7 +87,6 @@ public class ExpressionUtils {
                                 decodedExpression.append(value);
                             } else if (expression.charAt(k + nextSymbol + 1) == 'c') { // CHECKED
                                 Boolean isChecked = activity.getMainDao().getElementPassedR(activity.getToken(), relativeId) != null;
-                                Log.d("T-L.ExpressionUtils", "decodeExpression: " + relativeId + " " + isChecked.toString());
                                 return isChecked.toString();
                             } else {
                                 return expression;
@@ -120,9 +119,7 @@ public class ExpressionUtils {
 
     public boolean checkIfExpression(String expression) {
         Boolean result = null;
-
         expression = expression.replaceAll(" ", "");
-        Log.d("T-L.StringUtils", "checkIfExpression: " + expression);
 
         for (int i = 0; i < expression.length(); i++) {
             List<Boolean> hasOpen = new ArrayList<>();

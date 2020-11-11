@@ -97,9 +97,10 @@ public class QuizerTests {
         when(mMainActivity.getToken()).thenReturn("1234567890"); // Запрос на токен
         when(mMainActivity.getMainDao()).thenReturn(mQuizerDao); // Запрос на базу данных
 
-        when(mMainActivity.getMainDao().getElementPassedR("1234567890", 2)).thenReturn(mElementWithId2); // Запросы пройденных элементов
-        when(mMainActivity.getMainDao().getElementPassedR("1234567890", 3)).thenReturn(mElementWithId3);
-        when(mMainActivity.getMainDao().getElementPassedR("1234567890", 19)).thenReturn(mElementWithId19);
+//        when(mMainActivity.getMainDao().getElementPassedR("1234567890", 2)).thenReturn(mElementWithId2); // Запросы пройденных элементов
+//        when(mMainActivity.getMainDao().getElementPassedR("1234567890", 3)).thenReturn(mElementWithId3);
+//        when(mMainActivity.getMainDao().getElementPassedR("1234567890", 19)).thenReturn(mElementWithId19);
+        when(mMainActivity.getMainDao().getElementPassedR("1234567890", 21)).thenReturn(mElementWithId21);
 
         when(mMainActivity.getMap(false)).thenReturn((HashMap<Integer, ElementModelNew>) mMap); // Запрос анкеты
 

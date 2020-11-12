@@ -393,7 +393,7 @@ public interface QuizerDao {
     @Query("SELECT * FROM QuotaR WHERE config_id =:config_id")
     List<QuotaR> getQuotaR(String config_id);
 
-    @Query("DELETE FROM QuotaR")
-    void clearQuotaR();
+    @Query("DELETE FROM QuotaR WHERE config_id =:config_id")
+    void clearQuotaR(String config_id);
 
 }

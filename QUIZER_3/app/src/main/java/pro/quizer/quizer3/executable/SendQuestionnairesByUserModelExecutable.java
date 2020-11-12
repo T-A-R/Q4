@@ -169,7 +169,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                     quotaRList.add(new QuotaR(model.getSequence(), model.getLimit(), model.getSent(), configId));
                 }
                 try {
-                    mBaseActivity.getMainDao().clearQuotaR();
+                    mBaseActivity.getMainDao().clearQuotaR(configId);
                     mBaseActivity.getMainDao().insertQuotaR(quotaRList);
                     mBaseActivity.setSettings(Constants.Settings.QUOTA_TIME, String.valueOf(DateUtils.getFullCurrentTime()));
                 } catch (Exception e) {

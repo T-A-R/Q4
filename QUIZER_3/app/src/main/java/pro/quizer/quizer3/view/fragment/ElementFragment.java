@@ -1972,7 +1972,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             for (ElementItemR element : answersList) {
                 if (element.getElementOptionsR() != null && element.getElementOptionsR().isShow_in_card()) {
                     String title = counter + ". " + Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle();
-                    items.add(new CardItem(element.getRelative_id(), title, "", element.getElementOptionsR().isUnchecker(), false));
+                    items.add(new CardItem(element.getRelative_id(), title, "",
+                            element.getElementOptionsR().isUnchecker(),
+                            false,
+                            element.getElementOptionsR().getOpen_type(),
+                            element.getElementOptionsR().getPlaceholder(),
+                            element.getElementOptionsR().isUnnecessary_fill_open()));
                     counter++;
                 }
             }

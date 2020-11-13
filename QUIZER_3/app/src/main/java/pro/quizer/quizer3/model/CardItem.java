@@ -7,13 +7,19 @@ public class CardItem {
     String data;
     boolean isUnChecker;
     boolean checked;
+    boolean unnecessaryFillOpen;
+    String open;
+    String hint;
 
-    public CardItem(int id, String title, String desc, boolean isUnChecker, boolean checked) {
+    public CardItem(int id, String title, String desc, boolean isUnChecker, boolean checked, String open, String hint , boolean unnecessaryFillOpen) {
         this.id = id;
         this.title = title;
         this.desc = desc;
         this.isUnChecker = isUnChecker;
         this.checked = checked;
+        this.open = open;
+        this.hint = hint;
+        this.unnecessaryFillOpen = unnecessaryFillOpen;
     }
 
     public int getId() {
@@ -62,5 +68,29 @@ public class CardItem {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    public String getOpen() {
+        return open;
+    }
+
+    public void setOpen(String open) {
+        this.open = open;
+    }
+
+    public String getHint() {
+        return hint;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint;
+    }
+
+    public boolean isUnnecessaryFillOpen() {
+        return unnecessaryFillOpen;
+    }
+
+    public void setUnnecessaryFillOpen(boolean unnecessaryFillOpen) {
+        this.unnecessaryFillOpen = unnecessaryFillOpen;
     }
 }

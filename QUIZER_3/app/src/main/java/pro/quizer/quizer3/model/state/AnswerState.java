@@ -13,6 +13,9 @@ public class AnswerState implements Serializable {
     @SerializedName("checked")
     private boolean checked;
 
+    @SerializedName("open")
+    private boolean open;
+
     @SerializedName("data")
     private String data;
 
@@ -47,5 +50,13 @@ public class AnswerState implements Serializable {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public void setOpen(boolean open) {
+        this.open = open;
     }
 }

@@ -26,12 +26,26 @@
             android:textSize="@dimen/_14ssp"
             android:visibility="visible" />
 
+        <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+            android:id="@+id/card_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_toStartOf="@+id/checker"
+            android:layout_toLeftOf="@+id/checker"
+            android:layout_below="@+id/text1"
+            android:textColor="@color/brand_color_dark"
+            android:textSize="@dimen/_14ssp"
+            android:visibility="gone" />
+
         <ImageView
             android:id="@+id/checker"
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_20sdp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:visibility="gone" />
 
     </RelativeLayout>

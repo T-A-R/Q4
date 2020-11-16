@@ -1,6 +1,9 @@
 package pro.quizer.quizer3.adapter;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.text.InputType;
@@ -15,6 +18,8 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
@@ -100,9 +105,20 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
 
                 textView.setText(text);
                 cont.setOnClickListener(v -> {
-                    if ((open && !getItem(position).isChecked()) || getItem(position).isAutoCkecker())
-                        showInputDialog(cardInput, position);
-                    else
+                    if ((open && !getItem(position).isChecked()) || (open && getItem(position).isAutoCkecker())) {
+                        switch (getItem(position).getOpen()) {
+                            case "text":
+                            case "number":
+                                showInputDialog(cardInput, position);
+                                break;
+                            case "date":
+                                setDate(cardInput, position);
+                                break;
+                            case "time":
+                                setTime(cardInput, position);
+                                break;
+                        }
+                    } else
                         checkItem(position);
                 });
             }
@@ -114,9 +130,7 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
     private void checkItem(int position) {
         if (mItems.get(position).isChecked() && mItems.get(position).getOpen().equals("checkbox")) return;
         if (mItems.get(position).isAutoCkecker()) return;
-        Log.d("T-L.CardAdapter", "checkItem 1: " + mItems.get(position).isChecked());
         mItems.get(position).setChecked(!mItems.get(position).isChecked());
-        Log.d("T-L.CardAdapter", "checkItem 2: " + mItems.get(position).isChecked());
         if (!isMulti || mItems.get(position).isUnChecker()) {
             for (int i = 0; i < mItems.size(); i++) {
                 if (i != position) {
@@ -131,7 +145,6 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
                 }
             }
         }
-        Log.d("T-L.CardAdapter", "checkItem 3: " + mItems.get(position).isChecked());
         notifyDataSetChanged();
     }
 
@@ -183,7 +196,7 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
                 mItems.get(position).setData(mEditText.getText().toString());
                 pEditText.setText(mEditText.getText().toString());
                 checkItem(position);
-                notifyDataSetChanged();
+//                notifyDataSetChanged();
             } else
                 mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
             if (mActivity != null && !mActivity.isFinishing()) {
@@ -195,5 +208,54 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
         if (mActivity != null && !mActivity.isFinishing()) {
             alertDialog.show();
         }
+    }
+
+    private Calendar mCalendar = Calendar.getInstance();
+
+    public void setDate(final TextView pEditText, int position) {
+        MainActivity mActivity = (MainActivity) mContext;
+        if (!mActivity.isFinishing()) {
+            new DatePickerDialog(mActivity, (view, year, monthOfYear, dayOfMonth) -> {
+                mCalendar.set(Calendar.YEAR, year);
+                mCalendar.set(Calendar.MONTH, monthOfYear);
+                mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                setInitialDateTime(pEditText, true, position);
+            },
+                    mCalendar.get(Calendar.YEAR),
+                    mCalendar.get(Calendar.MONTH),
+                    mCalendar.get(Calendar.DAY_OF_MONTH))
+                    .show();
+        }
+    }
+
+    public void setTime(final TextView pEditText, int position) {
+        MainActivity mActivity = (MainActivity) mContext;
+        if (!mActivity.isFinishing()) {
+            new TimePickerDialog(mActivity, (view, hourOfDay, minute) -> {
+                mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                mCalendar.set(Calendar.MINUTE, minute);
+                setInitialDateTime(pEditText, false, position);
+            },
+                    mCalendar.get(Calendar.HOUR_OF_DAY),
+                    mCalendar.get(Calendar.MINUTE), true)
+                    .show();
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private void setInitialDateTime(final TextView mTextView, final boolean pIsDate, int position) {
+        SimpleDateFormat dateFormat;
+
+        if (pIsDate) {
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        } else {
+            dateFormat = new SimpleDateFormat("HH:mm");
+        }
+
+        dateFormat.setTimeZone(mCalendar.getTimeZone());
+        mTextView.setText(dateFormat.format(mCalendar.getTime()));
+        mItems.get(position).setData(dateFormat.format(mCalendar.getTime()));
+        checkItem(position);
+//        notifyDataSetChanged();
     }
 }

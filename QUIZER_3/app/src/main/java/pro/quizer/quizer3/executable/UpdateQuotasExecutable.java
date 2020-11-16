@@ -83,7 +83,6 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
         try {
             quotaResponseModel = new GsonBuilder().create().fromJson(responseJson, QuotaResponseModel.class);
         } catch (final Exception pE) {
-//            MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.ERROR, mContext.getString(R.string.log_error_103_desc), responseJson);
             onError(new Exception(mContext.getString(R.string.load_quotas_error) + " " + mContext.getString(R.string.error_103)));
             return;
         }
@@ -100,29 +99,21 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
 
             if (quotaResponseModel.getResult() != 0) {
                 try {
-//                    MainActivity.addLog(userModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUOTA, mContext.getString(R.string.save_quotas), Constants.LogResult.SENT, mContext.getString(R.string.save_quotas_to_db), null);
                     Log.d(TAG, "onGetQuotasCallback: " + responseJson);
-//                    mainActivity.getMainDao().updateQuotas(responseJson, userProjectId);
                     if(quotaResponseModel.getQuotas() != null && quotaResponseModel.getQuotas().size() > 0){
                         List<QuotaR> quotaRList = new ArrayList<>();
-                        String configId = mainActivity.getCurrentUser().getConfigR().getConfigId();
-                        if (configId == null)
-                            configId = mainActivity.getCurrentUser().getConfig_id();
                         for(QuotaModel model : quotaResponseModel.getQuotas()) {
-                            quotaRList.add(new QuotaR(model.getSequence(), model.getLimit(), model.getSent(), configId));
+                            quotaRList.add(new QuotaR(model.getSequence(), model.getLimit(), model.getSent(), userProjectId));
                         }
-                        mainActivity.getMainDao().clearQuotaR(configId);
+                        mainActivity.getMainDao().clearQuotaR(userProjectId);
                         mainActivity.getMainDao().insertQuotaR(quotaRList);
                         mainActivity.setSettings(Constants.Settings.QUOTA_TIME, String.valueOf(DateUtils.getFullCurrentTime()));
 
                     }
                 } catch (Exception e) {
                     Log.d(TAG, mContext.getString(R.string.db_save_error));
-//                    MainActivity.addLog(userModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.QUOTA, mContext.getString(R.string.save_quotas), Constants.LogResult.ERROR, e.getMessage(), null);
-
                 }
-//                MainActivity.addLog(userModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mContext.getString(R.string.get_quotas), Constants.LogResult.SUCCESS, mContext.getString(R.string.quotas_renew), null);
-//                mainActivity.getTree();
+
                 onSuccess();
             } else {
                 onError(new Exception(mContext.getString(R.string.load_quotas_error) + " " + mContext.getString(R.string.error_104)));

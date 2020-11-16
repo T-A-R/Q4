@@ -390,10 +390,10 @@ public interface QuizerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertQuotaR(List<QuotaR> quotaRList);
 
-    @Query("SELECT * FROM QuotaR WHERE config_id =:config_id")
-    List<QuotaR> getQuotaR(String config_id);
+    @Query("SELECT * FROM QuotaR WHERE userProjectId =:userProjectId")
+    List<QuotaR> getQuotaR(Integer userProjectId);
 
-    @Query("DELETE FROM QuotaR WHERE config_id =:config_id")
-    void clearQuotaR(String config_id);
+    @Query("DELETE FROM QuotaR WHERE userProjectId =:userProjectId")
+    void clearQuotaR(Integer userProjectId);
 
 }

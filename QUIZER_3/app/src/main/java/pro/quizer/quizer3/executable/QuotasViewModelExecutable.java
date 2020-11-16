@@ -47,11 +47,7 @@ public class QuotasViewModelExecutable extends BaseModelExecutable<QuotasViewMod
 
         List<QuotaModel> quotas = new ArrayList<>();
 
-        String configId = mMainActivity.getCurrentUser().getConfigR().getConfigId();
-        if (configId == null)
-            configId = mMainActivity.getCurrentUser().getConfig_id();
-
-        final List<QuotaR> quotasR = mMainActivity.getMainDao().getQuotaR(configId);
+        final List<QuotaR> quotasR = mMainActivity.getMainDao().getQuotaR(user_project_id);
         for (QuotaR quotaR : quotasR) {
             quotas.add(new QuotaModel(quotaR.getSequence(), quotaR.getLimit(), quotaR.getDone(), user_id, user_project_id));
         }

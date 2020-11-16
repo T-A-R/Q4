@@ -162,14 +162,14 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
 
             if (deletingListResponseModel.getQuotas() != null && deletingListResponseModel.getQuotas().size() > 0) {
                 List<QuotaR> quotaRList = new ArrayList<>();
-                String configId = mBaseActivity.getCurrentUser().getConfigR().getConfigId();
-                if (configId == null)
-                    configId = mBaseActivity.getCurrentUser().getConfig_id();
+                Integer userProjectId = mBaseActivity.getCurrentUser().getConfigR().getUserProjectId();
+                if (userProjectId == null)
+                    userProjectId = mBaseActivity.getCurrentUser().getUser_project_id();
                 for (QuotaModel model : deletingListResponseModel.getQuotas()) {
-                    quotaRList.add(new QuotaR(model.getSequence(), model.getLimit(), model.getSent(), configId));
+                    quotaRList.add(new QuotaR(model.getSequence(), model.getLimit(), model.getSent(), userProjectId));
                 }
                 try {
-                    mBaseActivity.getMainDao().clearQuotaR(configId);
+                    mBaseActivity.getMainDao().clearQuotaR(userProjectId);
                     mBaseActivity.getMainDao().insertQuotaR(quotaRList);
                     mBaseActivity.setSettings(Constants.Settings.QUOTA_TIME, String.valueOf(DateUtils.getFullCurrentTime()));
                 } catch (Exception e) {

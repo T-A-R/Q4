@@ -423,5 +423,6 @@
     <string name="header_quiz_insert_error">Ошибка создания анкеты.</string>
     <string name="error_next_element_id_null">Ошибка обработки анкеты</string>
     <string name="enter_answer_empty">Выберите ответ (не выбрано)</string>
+    <string name="enter_answer">Введите ответ</string>
 
 </resources>

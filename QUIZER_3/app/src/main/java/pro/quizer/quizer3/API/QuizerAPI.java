@@ -189,6 +189,7 @@ public class QuizerAPI {
     static public void getQuotas(String url, String json, final GetQuotasCallback listener) {
 
 //        Log.d(TAG, "getQuotas: " + json);
+        Log.d("T-L.QuizerAPI", "============= getQuotas: " + url);
 
         Map<String, String> fields = new HashMap<>();
         fields.put(Constants.ServerFields.JSON_DATA, json);

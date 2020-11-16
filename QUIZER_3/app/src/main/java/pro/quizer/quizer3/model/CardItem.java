@@ -8,10 +8,11 @@ public class CardItem {
     boolean isUnChecker;
     boolean checked;
     boolean unnecessaryFillOpen;
+    boolean isAutoCkecker;
     String open;
     String hint;
 
-    public CardItem(int id, String title, String desc, boolean isUnChecker, boolean checked, String open, String hint , boolean unnecessaryFillOpen) {
+    public CardItem(int id, String title, String desc, boolean isUnChecker, boolean checked, String open, String hint , boolean unnecessaryFillOpen, boolean isAutoCkecker) {
         this.id = id;
         this.title = title;
         this.desc = desc;
@@ -20,6 +21,7 @@ public class CardItem {
         this.open = open;
         this.hint = hint;
         this.unnecessaryFillOpen = unnecessaryFillOpen;
+        this.isAutoCkecker = isAutoCkecker;
     }
 
     public int getId() {
@@ -92,5 +94,13 @@ public class CardItem {
 
     public void setUnnecessaryFillOpen(boolean unnecessaryFillOpen) {
         this.unnecessaryFillOpen = unnecessaryFillOpen;
+    }
+
+    public boolean isAutoCkecker() {
+        return isAutoCkecker;
+    }
+
+    public void setAutoCkecker(boolean autoCkecker) {
+        isAutoCkecker = autoCkecker;
     }
 }

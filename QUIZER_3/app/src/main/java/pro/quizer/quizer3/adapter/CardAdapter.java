@@ -68,13 +68,27 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
             if (text != null) {
                 boolean checked = Objects.requireNonNull(getItem(position)).isChecked();
                 String openType = Objects.requireNonNull(getItem(position)).getOpen();
+                String data = Objects.requireNonNull(getItem(position)).getData();
+                String hint = Objects.requireNonNull(getItem(position)).getHint();
                 boolean open = !openType.equals("checkbox");
-                Log.d("T-L.CardAdapter", "openType: " + openType);
+
                 CardView cont = holder.findViewById(R.id.cont_card);
                 TextView textView = holder.findViewById(R.id.text1);
                 TextView cardInput = holder.findViewById(R.id.card_input);
                 ImageView checker = holder.findViewById(R.id.checker);
-                cardInput.setText(getItem(position).getData());
+
+                Log.d("T-L.CardAdapter", "========: (" + position + ") " + checked);
+
+                if (data != null && data.length() > 0) {
+                    cardInput.setTextColor(mContext.getResources().getColor(R.color.brand_color_dark));
+                    cardInput.setText(data);
+                } else if (hint != null && hint.length() > 0) {
+                    cardInput.setTextColor(mContext.getResources().getColor(R.color.gray));
+                    cardInput.setText(hint);
+                } else {
+                    cardInput.setTextColor(mContext.getResources().getColor(R.color.gray));
+                    cardInput.setText(R.string.enter_answer);
+                }
                 cardInput.setVisibility(open ? View.VISIBLE : View.GONE);
 
                 if (isMulti) {
@@ -86,7 +100,7 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
 
                 textView.setText(text);
                 cont.setOnClickListener(v -> {
-                    if (open && !getItem(position).isChecked())
+                    if ((open && !getItem(position).isChecked()) || getItem(position).isAutoCkecker())
                         showInputDialog(cardInput, position);
                     else
                         checkItem(position);
@@ -98,8 +112,11 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
     }
 
     private void checkItem(int position) {
+        if (mItems.get(position).isChecked() && mItems.get(position).getOpen().equals("checkbox")) return;
+        if (mItems.get(position).isAutoCkecker()) return;
+        Log.d("T-L.CardAdapter", "checkItem 1: " + mItems.get(position).isChecked());
         mItems.get(position).setChecked(!mItems.get(position).isChecked());
-
+        Log.d("T-L.CardAdapter", "checkItem 2: " + mItems.get(position).isChecked());
         if (!isMulti || mItems.get(position).isUnChecker()) {
             for (int i = 0; i < mItems.size(); i++) {
                 if (i != position) {
@@ -114,6 +131,7 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
                 }
             }
         }
+        Log.d("T-L.CardAdapter", "checkItem 3: " + mItems.get(position).isChecked());
         notifyDataSetChanged();
     }
 
@@ -161,10 +179,11 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
 
         mNextBtn.setOnClickListener(v -> {
             if ((mEditText.getText() != null && mEditText.getText().length() > 0) || mItems.get(position).isUnnecessaryFillOpen()) {
-                mItems.get(position).setChecked(true);
+//                mItems.get(position).setChecked(true);
                 mItems.get(position).setData(mEditText.getText().toString());
                 pEditText.setText(mEditText.getText().toString());
                 checkItem(position);
+                notifyDataSetChanged();
             } else
                 mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
             if (mActivity != null && !mActivity.isFinishing()) {

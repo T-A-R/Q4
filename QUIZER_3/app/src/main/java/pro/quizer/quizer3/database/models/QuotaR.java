@@ -5,7 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity(indices = {@Index("config_id")})
+@Entity(indices = {@Index("userProjectId")})
 public class QuotaR {
 
     @PrimaryKey(autoGenerate = true)
@@ -21,17 +21,17 @@ public class QuotaR {
     @ColumnInfo(name = "done")
     private int done;
 
-    @ColumnInfo(name = "config_id")
-    private String config_id;
+    @ColumnInfo(name = "userProjectId")
+    private Integer userProjectId;
 
     public QuotaR() {
     }
 
-    public QuotaR(String sequence, int limit, int done, String config_id) {
+    public QuotaR(String sequence, int limit, int done, Integer userProjectId) {
         this.sequence = sequence;
         this.limit = limit;
         this.done = done;
-        this.config_id = config_id;
+        this.userProjectId = userProjectId;
     }
 
     public int getId() {
@@ -66,11 +66,11 @@ public class QuotaR {
         this.done = done;
     }
 
-    public String getConfig_id() {
-        return config_id;
+    public Integer getUserProjectId() {
+        return userProjectId;
     }
 
-    public void setConfig_id(String config_id) {
-        this.config_id = config_id;
+    public void setUserProjectId(Integer userProjectId) {
+        this.userProjectId = userProjectId;
     }
 }

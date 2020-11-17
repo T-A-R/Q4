@@ -1972,7 +1972,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             for (ElementItemR element : answersList) {
                 if (element.getElementOptionsR() != null && element.getElementOptionsR().isShow_in_card()) {
                     String title = counter + ". " + Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle();
-                    items.add(new CardItem(element.getRelative_id(), title, "", element.getElementOptionsR().isUnchecker(), false));
+                    items.add(new CardItem(element.getRelative_id(), title, "",
+                            element.getElementOptionsR().isUnchecker(),
+                            false,
+                            element.getElementOptionsR().getOpen_type(),
+                            element.getElementOptionsR().getPlaceholder(),
+                            element.getElementOptionsR().isUnnecessary_fill_open(),
+                            element.getElementOptionsR().isAutoChecked()));
                     counter++;
                 }
             }
@@ -1988,14 +1994,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             CardAdapter adapter = new CardAdapter(getMainActivity(),
                     getMainActivity().isAutoZoom() ? R.layout.holder_card_auto : R.layout.holder_card, items, currentElement.getElementOptionsR().isPolyanswer());
             listView.setAdapter(adapter);
-//            adapter.setItems(items);
             mCloseBtn.setOnClickListener(v -> {
                 loadFromCard(adapter.getItems());
                 infoDialog.dismiss();
             });
         }
 
-        dialogBuilder.setView(layoutView, 10, 10, 10, 10);
+        dialogBuilder.setView(layoutView, 10, 40, 10, 10);
         infoDialog = dialogBuilder.create();
         infoDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;

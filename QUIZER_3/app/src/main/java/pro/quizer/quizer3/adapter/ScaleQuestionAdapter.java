@@ -4,27 +4,19 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.InputType;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
@@ -37,24 +29,19 @@ import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
-import static pro.quizer.quizer3.model.OptionsOpenType.CHECKBOX;
-import static pro.quizer.quizer3.model.OptionsOpenType.DATE;
-import static pro.quizer.quizer3.model.OptionsOpenType.NUMBER;
-import static pro.quizer.quizer3.model.OptionsOpenType.TEXT;
-import static pro.quizer.quizer3.model.OptionsOpenType.TIME;
 
 public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdapter.ScaleObjectViewHolder> {
 
-    private OnAnswerClickListener onAnswerClickListener;
-    private ElementItemR question;
-    private List<ElementItemR> answersList;
+    private final OnAnswerClickListener onAnswerClickListener;
+    private final ElementItemR question;
+    private final List<ElementItemR> answersList;
     private List<AnswerState> answersState;
     private int lastSelectedPosition = -1;
     public boolean isPressed = false;
-    private MainActivity mActivity;
+    private final MainActivity mActivity;
     private String typeBehavior;
-    public boolean show_scale = true;
-    public boolean show_images = true;
+    public boolean show_scale;
+    public boolean show_images;
 
     public ScaleQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
@@ -77,29 +64,12 @@ public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdap
     public ScaleObjectViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(mActivity.isAutoZoom() ? R.layout.holder_answer_scale_auto : R.layout.holder_answer_scale, viewGroup, false);
-        ScaleObjectViewHolder vh = new ScaleObjectViewHolder(view, onAnswerClickListener);
-        return vh;
+        return new ScaleObjectViewHolder(view, onAnswerClickListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ScaleObjectViewHolder holder, int position) {
-//
         holder.bind(answersList.get(position), position, typeBehavior);
-
-//        if (!answersList.get(position).isEnabled()) {
-//            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-//                holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bg_gray_shadow));
-//            } else {
-//                holder.cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_gray_shadow));
-//            }
-//        } else {
-//            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-//                holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bg_shadow));
-//            } else {
-//                holder.cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_shadow));
-//            }
-//        }
-
     }
 
     @Override
@@ -119,18 +89,16 @@ public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdap
         public ScaleObjectViewHolder(@NonNull View itemView, OnAnswerClickListener onUserClickListener) {
             super(itemView);
 
-            cont = (LinearLayout) itemView.findViewById(R.id.scale_cont);
-            scaleText = (TextView) itemView.findViewById(R.id.scale_text);
-            divider = (TextView) itemView.findViewById(R.id.divider);
-            scaleImage = (ImageView) itemView.findViewById(R.id.scale_image);
+            cont = itemView.findViewById(R.id.scale_cont);
+            scaleText = itemView.findViewById(R.id.scale_text);
+            divider = itemView.findViewById(R.id.divider);
+            scaleImage = itemView.findViewById(R.id.scale_image);
             scaleText.setTypeface(Fonts.getFuturaPtBook());
 
             this.onUserClickListener = onUserClickListener;
-
         }
 
         public void bind(final ElementItemR item, int position, String type) {
-
             cont.setOnClickListener(this);
             if (show_scale) {
                 scaleText.setText(item.getElementOptionsR().getTitle());
@@ -149,7 +117,6 @@ public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdap
         }
 
         private void showContent(ElementItemR element, View cont, View text, String type, int position) {
-//            final List<ElementContentsR> contents = element.getElementContentsR();
             final List<ElementContentsR> contents = mActivity.getMainDao().getElementContentsR(element.getRelative_id());
 
             String data1 = null;
@@ -206,15 +173,11 @@ public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdap
 
         private void showPic(View cont, ImageView view, String data) {
             if (show_images) {
-
                 final String filePhotooPath = getFilePath(data);
                 if (StringUtils.isEmpty(filePhotooPath)) {
                     return;
                 }
-
                 cont.setVisibility(View.VISIBLE);
-//            view.setVisibility(View.VISIBLE);
-
                 Picasso.with(mActivity)
                         .load(new File(filePhotooPath))
                         .into(view);
@@ -223,13 +186,12 @@ public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdap
 
         private String getFilePath(final String data) {
             final String path = FileUtils.getFilesStoragePath(mActivity);
-            final String url = data;
 
-            if (StringUtils.isEmpty(url)) {
+            if (StringUtils.isEmpty(data)) {
                 return Constants.Strings.EMPTY;
             }
 
-            final String fileName = FileUtils.getFileName(url);
+            final String fileName = FileUtils.getFileName(data);
 
             return path + FileUtils.FOLDER_DIVIDER + fileName;
         }
@@ -240,11 +202,7 @@ public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdap
             lastSelectedPosition = getAdapterPosition();
 
             for (int a = 0; a < answersState.size(); a++) {
-                if (a == lastSelectedPosition) {
-                    answersState.get(a).setChecked(true);
-                } else {
-                    answersState.get(a).setChecked(false);
-                }
+                answersState.get(a).setChecked(a == lastSelectedPosition);
             }
 
             notifyDataSetChanged();
@@ -263,11 +221,6 @@ public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdap
     public void setLastSelectedPosition(int lastSelectedPosition) {
         this.lastSelectedPosition = lastSelectedPosition;
         Log.d(TAG, "setLastSelectedPosition: " + lastSelectedPosition);
-    }
-
-    public int getLastSelectedPosition() {
-        Log.d(TAG, "getLastSelectedPosition: " + lastSelectedPosition);
-        return lastSelectedPosition;
     }
 
     public void setAnswers(List<AnswerState> answers) {

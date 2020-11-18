@@ -40,8 +40,7 @@ public class QuotasViewModelExecutable extends BaseModelExecutable<QuotasViewMod
         final UserModelR currentUser = mMainActivity.getCurrentUserForce();
         int user_id = currentUser.getUser_id();
 
-        Integer user_project_id = null;
-        user_project_id = currentUser.getConfigR().getUserProjectId();
+        Integer user_project_id = currentUser.getConfigR().getUserProjectId();
         if (user_project_id == null)
             user_project_id = currentUser.getUser_project_id();
 
@@ -52,8 +51,7 @@ public class QuotasViewModelExecutable extends BaseModelExecutable<QuotasViewMod
             quotas.add(new QuotaModel(quotaR.getSequence(), quotaR.getLimit(), quotaR.getDone(), user_id, user_project_id));
         }
 
-
-        if (quotas == null || quotas.isEmpty()) {
+        if (quotas.isEmpty()) {
             return quotasViewModel;
         }
 

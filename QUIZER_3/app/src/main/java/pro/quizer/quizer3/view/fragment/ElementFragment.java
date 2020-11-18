@@ -32,18 +32,15 @@ import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.internal.disposables.DisposableContainer;
 import io.reactivex.schedulers.Schedulers;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
@@ -165,47 +162,47 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         setRetainInstance(true);
         Toolbar toolbar = new Toolbar(getMainActivity());
         toolbar = findViewById(R.id.toolbar);
-        RelativeLayout cont = (RelativeLayout) findViewById(R.id.cont_element_fragment);
-        unhideCont = (LinearLayout) findViewById(R.id.unhide_cont);
-        titleCont1 = (LinearLayout) findViewById(R.id.title_cont_1);
-        titleCont2 = (LinearLayout) findViewById(R.id.title_cont_2);
-        titleImagesCont1 = (LinearLayout) findViewById(R.id.title_images_cont_1);
-        titleImagesCont2 = (LinearLayout) findViewById(R.id.title_images_cont_2);
-        questionCont = (LinearLayout) findViewById(R.id.question_cont);
-        questionImagesCont = (LinearLayout) findViewById(R.id.question_images_cont);
-        spinnerCont = (LinearLayout) findViewById(R.id.spinner_cont);
-        infoCont = (LinearLayout) findViewById(R.id.info_cont);
-        tableCont = (FrameLayout) findViewById(R.id.table_cont);
-        rvAnswers = (RecyclerView) findViewById(R.id.answers_recyclerview);
-        rvScale = (RecyclerView) findViewById(R.id.scale_recyclerview);
-        tableLayout = (AdaptiveTableLayout) findViewById(R.id.table_question_layout);
-        tvUnhide = (TextView) findViewById(R.id.unhide_title);
-        tvTitle1 = (TextView) findViewById(R.id.title_1);
-        tvTitle2 = (TextView) findViewById(R.id.title_2);
-        tvTitleDesc1 = (TextView) findViewById(R.id.title_desc_1);
-        tvTitleDesc2 = (TextView) findViewById(R.id.title_desc_2);
-        tvQuestion = (TextView) findViewById(R.id.question);
-        tvQuestionDesc = (TextView) findViewById(R.id.question_desc);
-        infoText = (WebView) findViewById(R.id.info_text);
-        title1Image1 = (ImageView) findViewById(R.id.title_1_image_1);
-        title1Image2 = (ImageView) findViewById(R.id.title_1_image_2);
-        title1Image3 = (ImageView) findViewById(R.id.title_1_image_3);
-        title2Image1 = (ImageView) findViewById(R.id.title_2_image_1);
-        title2Image2 = (ImageView) findViewById(R.id.title_2_image_2);
-        title2Image3 = (ImageView) findViewById(R.id.title_2_image_3);
-        questionImage1 = (ImageView) findViewById(R.id.question_image_1);
-        questionImage2 = (ImageView) findViewById(R.id.question_image_2);
-        questionImage3 = (ImageView) findViewById(R.id.question_image_3);
-        closeImage1 = (ImageView) findViewById(R.id.image_close_1);
-        closeImage2 = (ImageView) findViewById(R.id.image_close_2);
-        closeQuestion = (ImageView) findViewById(R.id.question_close);
-        btnUnhideTitle = (Button) findViewById(R.id.unhide_btn);
-        btnHideTitle = (Button) findViewById(R.id.unhide_btn1);
-        btnHideTitle2 = (Button) findViewById(R.id.unhide_btn2);
-        btnUnhideQuestion = (Button) findViewById(R.id.down_btn);
-        btnNext = (Button) findViewById(R.id.next_btn);
-        btnPrev = (Button) findViewById(R.id.back_btn);
-        btnExit = (Button) findViewById(R.id.exit_btn);
+        RelativeLayout cont = findViewById(R.id.cont_element_fragment);
+        unhideCont = findViewById(R.id.unhide_cont);
+        titleCont1 = findViewById(R.id.title_cont_1);
+        titleCont2 = findViewById(R.id.title_cont_2);
+        titleImagesCont1 = findViewById(R.id.title_images_cont_1);
+        titleImagesCont2 = findViewById(R.id.title_images_cont_2);
+        questionCont = findViewById(R.id.question_cont);
+        questionImagesCont = findViewById(R.id.question_images_cont);
+        spinnerCont = findViewById(R.id.spinner_cont);
+        infoCont = findViewById(R.id.info_cont);
+        tableCont = findViewById(R.id.table_cont);
+        rvAnswers = findViewById(R.id.answers_recyclerview);
+        rvScale = findViewById(R.id.scale_recyclerview);
+        tableLayout = findViewById(R.id.table_question_layout);
+        tvUnhide = findViewById(R.id.unhide_title);
+        tvTitle1 = findViewById(R.id.title_1);
+        tvTitle2 = findViewById(R.id.title_2);
+        tvTitleDesc1 = findViewById(R.id.title_desc_1);
+        tvTitleDesc2 = findViewById(R.id.title_desc_2);
+        tvQuestion = findViewById(R.id.question);
+        tvQuestionDesc = findViewById(R.id.question_desc);
+        infoText = findViewById(R.id.info_text);
+        title1Image1 = findViewById(R.id.title_1_image_1);
+        title1Image2 = findViewById(R.id.title_1_image_2);
+        title1Image3 = findViewById(R.id.title_1_image_3);
+        title2Image1 = findViewById(R.id.title_2_image_1);
+        title2Image2 = findViewById(R.id.title_2_image_2);
+        title2Image3 = findViewById(R.id.title_2_image_3);
+        questionImage1 = findViewById(R.id.question_image_1);
+        questionImage2 = findViewById(R.id.question_image_2);
+        questionImage3 = findViewById(R.id.question_image_3);
+        closeImage1 = findViewById(R.id.image_close_1);
+        closeImage2 = findViewById(R.id.image_close_2);
+        closeQuestion = findViewById(R.id.question_close);
+        btnUnhideTitle = findViewById(R.id.unhide_btn);
+        btnHideTitle = findViewById(R.id.unhide_btn1);
+        btnHideTitle2 = findViewById(R.id.unhide_btn2);
+        btnUnhideQuestion = findViewById(R.id.down_btn);
+        btnNext = findViewById(R.id.next_btn);
+        btnPrev = findViewById(R.id.back_btn);
+        btnExit = findViewById(R.id.exit_btn);
 
         btnNext.setTransformationMethod(null);
         btnPrev.setTransformationMethod(null);
@@ -282,9 +279,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 setAnswersList();
 
                 titlesMap = new HashMap<>();
-                List<String> titles = new ArrayList<>();
                 for (ElementItemR element : answersList) {
-                    titles.add(element.getElementOptionsR().getTitle());
                     titlesMap.put(element.getRelative_id(), new TitleModel(element.getElementOptionsR().getTitle(), element.getElementOptionsR().getDescription()));
                 }
 
@@ -644,10 +639,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         final List<ElementContentsR> contents = getDao().getElementContentsR(element.getRelative_id());
 
         if (contents != null && !contents.isEmpty()) {
-            String data1 = null;
+            String data1 = contents.get(0).getData();
             String data2 = null;
             String data3 = null;
-            data1 = contents.get(0).getData();
             if (contents.size() > 1)
                 data2 = contents.get(1).getData();
             if (contents.size() > 2)
@@ -709,23 +703,30 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
         List<String> itemsList = new ArrayList<>();
 
-        if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.RANK)) {
-            rvAnswers.setVisibility(View.VISIBLE);
-        } else if (answerType.equals(ElementSubtype.SELECT)) {
-            spinnerCont.setVisibility(View.VISIBLE);
-        } else if (answerType.equals(ElementSubtype.TABLE)) {
-            tableCont.setVisibility(View.VISIBLE);
-        } else if (answerType.equals(ElementSubtype.HTML) || answerType.equals(ElementSubtype.END)) {
-            questionCont.setVisibility(View.GONE);
-            infoCont.setVisibility(View.VISIBLE);
-            infoText.loadData(currentElement.getElementOptionsR().getData(), "text/html; charset=UTF-8", null);
-        } else if (answerType.equals(ElementSubtype.SCALE)) {
-            rvScale.setVisibility(View.VISIBLE);
+        switch (answerType) {
+            case ElementSubtype.LIST:
+            case ElementSubtype.RANK:
+                rvAnswers.setVisibility(View.VISIBLE);
+                break;
+            case ElementSubtype.SELECT:
+                spinnerCont.setVisibility(View.VISIBLE);
+                break;
+            case ElementSubtype.TABLE:
+                tableCont.setVisibility(View.VISIBLE);
+                break;
+            case ElementSubtype.HTML:
+            case ElementSubtype.END:
+                questionCont.setVisibility(View.GONE);
+                infoCont.setVisibility(View.VISIBLE);
+                infoText.loadData(currentElement.getElementOptionsR().getData(), "text/html; charset=UTF-8", null);
+                break;
+            case ElementSubtype.SCALE:
+                rvScale.setVisibility(View.VISIBLE);
+                break;
         }
 
 
         for (ElementItemR element : answersList) {
-//            itemsList.add(element.getElementOptionsR().getTitle());
             itemsList.add(Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle());
         }
 
@@ -816,7 +817,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
                 if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isPolyanswer()) {
                     isMultiSpinner = true;
-                    multiSelectionSpinner = (MultiSelectSpinner) findViewById(R.id.answers_multi_spinner);
+                    multiSelectionSpinner = findViewById(R.id.answers_multi_spinner);
                     multiSelectionSpinner.setVisibility(View.VISIBLE);
                     multiSelectionSpinner.setItems(itemsList);
                     if (unchecker != null)
@@ -864,7 +865,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
 
                     spinnerAnswers = new SearchableSpinner(getMainActivity(), null, enabled);
-                    spinnerAnswers = (SearchableSpinner) findViewById(R.id.answers_spinner);
+                    spinnerAnswers = findViewById(R.id.answers_spinner);
                     spinnerAnswers.setVisibility(View.VISIBLE);
 
                     itemsList.add(getString(R.string.select_spinner));
@@ -979,53 +980,50 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         }
     }
 
-    private void showNextFragment(int id) {
-        TransFragment fragment = new TransFragment();
-        fragment.setStartElement(id);
-        stopRecording();
-        replaceFragment(fragment);
-    }
-
     private boolean saveElement() {
         boolean saved = false;
-        if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.QUOTA) || answerType.equals(ElementSubtype.SCALE) || answerType.equals(ElementSubtype.RANK)) {
-            List<AnswerState> answerStates;
-            if (answerType.equals(ElementSubtype.SCALE)) {
-                answerStates = adapterScale.getAnswers();
-            } else if (answerType.equals(ElementSubtype.RANK)) {
-                answerStates = adapterRank.getAnswers();
-            } else {
-                answerStates = adapterList.getAnswers();
-            }
-            if (answerStates != null && notEmpty(answerStates)) {
-                if (answerType.equals(ElementSubtype.RANK)) {
-                    //TODO GET RANK ANSWERS
+        switch (answerType) {
+            case ElementSubtype.LIST:
+            case ElementSubtype.QUOTA:
+            case ElementSubtype.SCALE:
+            case ElementSubtype.RANK: {
+                List<AnswerState> answerStates;
+                if (answerType.equals(ElementSubtype.SCALE)) {
+                    answerStates = adapterScale.getAnswers();
+                } else if (answerType.equals(ElementSubtype.RANK)) {
+                    answerStates = adapterRank.getAnswers();
+                } else {
+                    answerStates = adapterList.getAnswers();
+                }
+                if (answerStates != null && notEmpty(answerStates)) {
+                    if (answerType.equals(ElementSubtype.RANK)) {
+                        //TODO GET RANK ANSWERS
 
-                    List<AnswerState> answerStatesRang = new ArrayList<>();
-                    for (int i = 0; i < answersList.size(); i++) {
-                        Integer id = answersList.get(i).getRelative_id();
-                        String data = "";
-                        for (int k = 0; k < answerStates.size(); k++) {
-                            if (id.equals(answerStates.get(k).getRelative_id())) {
-                                data = answerStates.get(k).getData();
+                        List<AnswerState> answerStatesRang = new ArrayList<>();
+                        for (int i = 0; i < answersList.size(); i++) {
+                            Integer id = answersList.get(i).getRelative_id();
+                            String data = "";
+                            for (int k = 0; k < answerStates.size(); k++) {
+                                if (id.equals(answerStates.get(k).getRelative_id())) {
+                                    data = answerStates.get(k).getData();
+                                }
+                            }
+                            answerStatesRang.add(new AnswerState(id, true, data));
+                        }
+                        answerStates = answerStatesRang;
+                        nextElementId = currentElement.getElementOptionsR().getJump();
+                        if (nextElementId == null)
+                            nextElementId = answersList.get(0).getElementOptionsR().getJump();
+                    } else {
+                        for (int i = 0; i < answerStates.size(); i++) {
+                            if (answerStates.get(i).isChecked()) {
+                                int id = answerStates.get(i).getRelative_id();
+                                nextElementId = getElement(id).getElementOptionsR().getJump();
                             }
                         }
-                        answerStatesRang.add(new AnswerState(id, true, data));
                     }
-                    answerStates = answerStatesRang;
-                    nextElementId = currentElement.getElementOptionsR().getJump();
-                    if (nextElementId == null)
-                        nextElementId = answersList.get(0).getElementOptionsR().getJump();
-                } else {
-                    for (int i = 0; i < answerStates.size(); i++) {
-                        if (answerStates.get(i).isChecked()) {
-                            int id = answerStates.get(i).getRelative_id();
-                            nextElementId = getElement(id).getElementOptionsR().getJump();
-                        }
-                    }
-                }
 
-                //TODO вернуть для ротации вопросов
+                    //TODO вернуть для ротации вопросов
 //                if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
 //                    nextElementId = currentElement.getElementOptionsR().getJump();
 //                    if (nextElementId == -2) {
@@ -1034,83 +1032,64 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //                    st("init SAVE 3");
 //                }
 
-                ElementPassedR elementPassedR = new ElementPassedR();
-                elementPassedR.setRelative_id(currentElement.getRelative_id());
-                elementPassedR.setProject_id(currentElement.getProjectId());
-                elementPassedR.setToken(getQuestionnaire().getToken());
-                elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
-                elementPassedR.setFrom_quotas_block(false);
-
-                getDao().insertElementPassedR(elementPassedR);
-                getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
-                saved = true;
-
-                for (int i = 0; i < answerStates.size(); i++) {
-                    if (answerStates.get(i).isChecked()) {
-                        ElementPassedR answerPassedR = new ElementPassedR();
-                        answerPassedR.setRelative_id(answerStates.get(i).getRelative_id());
-                        answerPassedR.setProject_id(currentElement.getProjectId());
-                        answerPassedR.setToken(getQuestionnaire().getToken());
-                        answerPassedR.setValue(answerStates.get(i).getData());
-                        answerPassedR.setRank(i + 1);
-                        if (isQuota) {
-                            answerPassedR.setFrom_quotas_block(true);
-                        } else {
-                            answerPassedR.setFrom_quotas_block(false);
-                        }
-
-                        try {
-                            getDao().insertElementPassedR(answerPassedR);
-                            saved = true;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            saved = false;
-                            return saved;
-                        }
-                    }
-                }
-            }
-        } else if (answerType.equals(ElementSubtype.SELECT)) {
-            if (isMultiSpinner) {
-                if (checkMultipleSpinner()) {
                     ElementPassedR elementPassedR = new ElementPassedR();
-                    nextElementId = currentElement.getElementOptionsR().getJump();
-                    if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
-                        nextElementId = currentElement.getElementOptionsR().getJump();
-                        if (nextElementId == null || nextElementId.equals(-2)) {
-                            nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
-                        }
-                    }
-                    if (nextElementId == null) {
-                        nextElementId = answersList.get(spinnerMultipleSelection.get(0)).getElementOptionsR().getJump();
-                    }
-
                     elementPassedR.setRelative_id(currentElement.getRelative_id());
                     elementPassedR.setProject_id(currentElement.getProjectId());
                     elementPassedR.setToken(getQuestionnaire().getToken());
                     elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
+                    elementPassedR.setFrom_quotas_block(false);
 
-                    try {
-                        if (!isRestored) {
-                            getDao().insertElementPassedR(elementPassedR);
-                            getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
+                    getDao().insertElementPassedR(elementPassedR);
+                    getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
+                    saved = true;
+
+                    for (int i = 0; i < answerStates.size(); i++) {
+                        if (answerStates.get(i).isChecked()) {
+                            ElementPassedR answerPassedR = new ElementPassedR();
+                            answerPassedR.setRelative_id(answerStates.get(i).getRelative_id());
+                            answerPassedR.setProject_id(currentElement.getProjectId());
+                            answerPassedR.setToken(getQuestionnaire().getToken());
+                            answerPassedR.setValue(answerStates.get(i).getData());
+                            answerPassedR.setRank(i + 1);
+                            answerPassedR.setFrom_quotas_block(isQuota);
+
+                            try {
+                                getDao().insertElementPassedR(answerPassedR);
+                                saved = true;
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                saved = false;
+                                return saved;
+                            }
                         }
-                        saved = true;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        saved = false;
-                        return saved;
                     }
-                    for (int i = 0; i < spinnerMultipleSelection.size(); i++) {
+                }
+                break;
+            }
+            case ElementSubtype.SELECT:
+                if (isMultiSpinner) {
+                    if (checkMultipleSpinner()) {
+                        ElementPassedR elementPassedR = new ElementPassedR();
+                        nextElementId = currentElement.getElementOptionsR().getJump();
+                        if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+                            nextElementId = currentElement.getElementOptionsR().getJump();
+                            if (nextElementId == null || nextElementId.equals(-2)) {
+                                nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                            }
+                        }
+                        if (nextElementId == null) {
+                            nextElementId = answersList.get(spinnerMultipleSelection.get(0)).getElementOptionsR().getJump();
+                        }
 
-                        ElementPassedR answerPassedR = new ElementPassedR();
-                        answerPassedR.setRelative_id(answersList.get(spinnerMultipleSelection.get(i)).getRelative_id());
-                        answerPassedR.setProject_id(currentElement.getProjectId());
-                        answerPassedR.setToken(getQuestionnaire().getToken());
+                        elementPassedR.setRelative_id(currentElement.getRelative_id());
+                        elementPassedR.setProject_id(currentElement.getProjectId());
+                        elementPassedR.setToken(getQuestionnaire().getToken());
+                        elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
 
                         try {
                             if (!isRestored) {
-                                getDao().insertElementPassedR(answerPassedR);
+                                getDao().insertElementPassedR(elementPassedR);
+                                getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
                             }
                             saved = true;
                         } catch (Exception e) {
@@ -1118,107 +1097,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             saved = false;
                             return saved;
                         }
-                    }
-                }
+                        for (int i = 0; i < spinnerMultipleSelection.size(); i++) {
 
-            } else {
-                if (spinnerSelection != -1) {
-                    ElementPassedR elementPassedR = new ElementPassedR();
-                    nextElementId = answersList.get(spinnerSelection).getElementOptionsR().getJump();
-                    if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
-                        nextElementId = currentElement.getElementOptionsR().getJump();
-                        if (nextElementId.equals(-2)) {
-                            nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
-                        }
-                    }
-
-                    elementPassedR.setRelative_id(currentElement.getRelative_id());
-                    elementPassedR.setProject_id(currentElement.getProjectId());
-                    elementPassedR.setToken(getQuestionnaire().getToken());
-                    elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
-
-                    try {
-                        if (!isRestored) {
-                            getDao().insertElementPassedR(elementPassedR);
-                            getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
-                        }
-                        saved = true;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        saved = false;
-                        return saved;
-                    }
-
-                    ElementPassedR answerPassedR = new ElementPassedR();
-                    answerPassedR.setRelative_id(answersList.get(spinnerSelection).getRelative_id());
-                    answerPassedR.setProject_id(currentElement.getProjectId());
-                    answerPassedR.setToken(getQuestionnaire().getToken());
-                    if (isQuota) {
-                        answerPassedR.setFrom_quotas_block(true);
-                    } else {
-                        answerPassedR.setFrom_quotas_block(false);
-                    }
-
-                    try {
-                        if (!isRestored) {
-                            getDao().insertElementPassedR(answerPassedR);
-                        }
-                        saved = true;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        saved = false;
-                        return saved;
-                    }
-                }
-            }
-        } else if (answerType.equals(ElementSubtype.TABLE)) {
-            AnswerState[][] answerStates = adapterTable.getmAnswersState();
-            if (answerStates != null && answerStates[0] != null) {
-                for (int i = 0; i < answerStates.length; i++) {
-                    String text = i + ": ";
-                    for (int k = 0; k < answerStates[0].length; k++) {
-                        text = text.concat(answerStates[i][k].getRelative_id() + "/" + answerStates[i][k].isChecked() + " ");
-                    }
-                }
-            }
-            if (answerStates != null && answerStates[0][0].getRelative_id() != null && adapterTable.isCompleted()) {
-                if (currentElement.getElementOptionsR().getJump() != null)
-                    nextElementId = currentElement.getElementOptionsR().getJump();
-                else
-                    nextElementId = getElement(answerStates[0][0].getRelative_id()).getElementOptionsR().getJump();
-
-                if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
-                    nextElementId = currentElement.getElementOptionsR().getJump();
-                    if (nextElementId == -2) {
-                        nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
-                    }
-                }
-
-                ElementPassedR elementPassedR = new ElementPassedR();
-                elementPassedR.setRelative_id(currentElement.getRelative_id());
-                elementPassedR.setProject_id(currentElement.getProjectId());
-                elementPassedR.setToken(getQuestionnaire().getToken());
-                elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
-                try {
-                    if (!isRestored) {
-                        getDao().insertElementPassedR(elementPassedR);
-                        getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
-                    }
-                    saved = true;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    saved = false;
-                    return saved;
-                }
-
-                for (int i = 0; i < answerStates.length; i++) {
-                    for (int k = 0; k < answerStates[i].length; k++) {
-                        if (answerStates[i][k].isChecked()) {
                             ElementPassedR answerPassedR = new ElementPassedR();
-                            answerPassedR.setRelative_id(answerStates[i][k].getRelative_id());
-                            answerPassedR.setValue(answerStates[i][k].getData());
+                            answerPassedR.setRelative_id(answersList.get(spinnerMultipleSelection.get(i)).getRelative_id());
                             answerPassedR.setProject_id(currentElement.getProjectId());
                             answerPassedR.setToken(getQuestionnaire().getToken());
+
                             try {
                                 if (!isRestored) {
                                     getDao().insertElementPassedR(answerPassedR);
@@ -1231,49 +1116,159 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             }
                         }
                     }
+
+                } else {
+                    if (spinnerSelection != -1) {
+                        ElementPassedR elementPassedR = new ElementPassedR();
+                        nextElementId = answersList.get(spinnerSelection).getElementOptionsR().getJump();
+                        if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+                            nextElementId = currentElement.getElementOptionsR().getJump();
+                            if (nextElementId.equals(-2)) {
+                                nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                            }
+                        }
+
+                        elementPassedR.setRelative_id(currentElement.getRelative_id());
+                        elementPassedR.setProject_id(currentElement.getProjectId());
+                        elementPassedR.setToken(getQuestionnaire().getToken());
+                        elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
+
+                        try {
+                            if (!isRestored) {
+                                getDao().insertElementPassedR(elementPassedR);
+                                getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
+                            }
+                            saved = true;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+
+                        ElementPassedR answerPassedR = new ElementPassedR();
+                        answerPassedR.setRelative_id(answersList.get(spinnerSelection).getRelative_id());
+                        answerPassedR.setProject_id(currentElement.getProjectId());
+                        answerPassedR.setToken(getQuestionnaire().getToken());
+                        answerPassedR.setFrom_quotas_block(isQuota);
+
+                        try {
+                            if (!isRestored) {
+                                getDao().insertElementPassedR(answerPassedR);
+                            }
+                            saved = true;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+                    }
                 }
+                break;
+            case ElementSubtype.TABLE: {
+                AnswerState[][] answerStates = adapterTable.getmAnswersState();
+                if (answerStates != null && answerStates[0] != null) {
+                    for (int i = 0; i < answerStates.length; i++) {
+                        String text = i + ": ";
+                        for (int k = 0; k < answerStates[0].length; k++) {
+                            text = text.concat(answerStates[i][k].getRelative_id() + "/" + answerStates[i][k].isChecked() + " ");
+                        }
+                    }
+                }
+                if (answerStates != null && answerStates[0][0].getRelative_id() != null && adapterTable.isCompleted()) {
+                    if (currentElement.getElementOptionsR().getJump() != null)
+                        nextElementId = currentElement.getElementOptionsR().getJump();
+                    else
+                        nextElementId = getElement(answerStates[0][0].getRelative_id()).getElementOptionsR().getJump();
+
+                    if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+                        nextElementId = currentElement.getElementOptionsR().getJump();
+                        if (nextElementId == -2) {
+                            nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                        }
+                    }
+
+                    ElementPassedR elementPassedR = new ElementPassedR();
+                    elementPassedR.setRelative_id(currentElement.getRelative_id());
+                    elementPassedR.setProject_id(currentElement.getProjectId());
+                    elementPassedR.setToken(getQuestionnaire().getToken());
+                    elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
+                    try {
+                        if (!isRestored) {
+                            getDao().insertElementPassedR(elementPassedR);
+                            getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
+                        }
+                        saved = true;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        saved = false;
+                        return saved;
+                    }
+
+                    for (int i = 0; i < answerStates.length; i++) {
+                        for (int k = 0; k < answerStates[i].length; k++) {
+                            if (answerStates[i][k].isChecked()) {
+                                ElementPassedR answerPassedR = new ElementPassedR();
+                                answerPassedR.setRelative_id(answerStates[i][k].getRelative_id());
+                                answerPassedR.setValue(answerStates[i][k].getData());
+                                answerPassedR.setProject_id(currentElement.getProjectId());
+                                answerPassedR.setToken(getQuestionnaire().getToken());
+                                try {
+                                    if (!isRestored) {
+                                        getDao().insertElementPassedR(answerPassedR);
+                                    }
+                                    saved = true;
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    saved = false;
+                                    return saved;
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
             }
-        } else if (answerType.equals(ElementSubtype.HTML) || answerType.equals(ElementSubtype.END)) {
-            ElementPassedR elementPassedR = new ElementPassedR();
-            if (answerType.equals(ElementSubtype.END)) {
-                nextElementId = currentElement.getElementOptionsR().getType_end();
-            } else {
-                nextElementId = currentElement.getElementOptionsR().getJump();
-                if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+            case ElementSubtype.HTML:
+            case ElementSubtype.END:
+                ElementPassedR elementPassedR = new ElementPassedR();
+                if (answerType.equals(ElementSubtype.END)) {
+                    nextElementId = currentElement.getElementOptionsR().getType_end();
+                } else {
                     nextElementId = currentElement.getElementOptionsR().getJump();
-                    if (nextElementId == -2) {
-                        nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                    if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+                        nextElementId = currentElement.getElementOptionsR().getJump();
+                        if (nextElementId == -2) {
+                            nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                        }
                     }
-                }
 
-                if (nextElementId > 0) {
-                    ElementItemR nextElement = getElement(nextElementId);
-                    final ElementOptionsR options = nextElement.getElementOptionsR();
-                    final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), (MainActivity) getActivity());
+                    if (nextElementId > 0) {
+                        ElementItemR nextElement = getElement(nextElementId);
+                        final ElementOptionsR options = nextElement.getElementOptionsR();
+                        final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), (MainActivity) getActivity());
 
-                    if (showValue != ConditionUtils.CAN_SHOW) {
-                        nextElementId = options.getJump();
+                        if (showValue != ConditionUtils.CAN_SHOW) {
+                            nextElementId = options.getJump();
+                        }
                     }
+
                 }
 
-            }
+                elementPassedR.setRelative_id(currentElement.getRelative_id());
+                elementPassedR.setProject_id(currentElement.getProjectId());
+                elementPassedR.setToken(getQuestionnaire().getToken());
+                elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
 
-            elementPassedR.setRelative_id(currentElement.getRelative_id());
-            elementPassedR.setProject_id(currentElement.getProjectId());
-            elementPassedR.setToken(getQuestionnaire().getToken());
-            elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
-
-            try {
-                if (!isRestored) {
-                    getDao().insertElementPassedR(elementPassedR);
-                    getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
+                try {
+                    if (!isRestored) {
+                        getDao().insertElementPassedR(elementPassedR);
+                        getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
+                    }
+                    saved = true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    saved = false;
+                    return saved;
                 }
-                saved = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-                saved = false;
-                return saved;
-            }
+                break;
         }
         return saved;
     }
@@ -1414,138 +1409,148 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     public void loadSavedData() {
-        if (answerType.equals(ElementSubtype.LIST) || answerType.equals(ElementSubtype.QUOTA)) {
-            List<AnswerState> answerStatesAdapter = adapterList.getAnswers();
-            List<AnswerState> answerStatesRestored = new ArrayList<>();
-            int lastSelectedPosition = -1;
-            for (int i = 0; i < answerStatesAdapter.size(); i++) {
-                AnswerState answerStateNew = new AnswerState();
-                ElementPassedR answerStateRestored = null;
-                try {
-                    answerStateRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answerStatesAdapter.get(i).getRelative_id());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (answerStateRestored != null || adapterList.isAutoChecked(answersList.get(i))) {
-                    answerStateNew.setChecked(true);
-                    answerStateNew.setData(answerStateRestored != null ? answerStateRestored.getValue() : "");
-                    lastSelectedPosition = i;
-                } else {
-                    answerStateNew.setChecked(false);
-                    answerStateNew.setData("");
-                }
-
-                answerStateNew.setRelative_id(answerStatesAdapter.get(i).getRelative_id());
-                answerStatesRestored.add(answerStateNew);
-            }
-            adapterList.setAnswers(answerStatesRestored);
-            adapterList.setRestored(true);
-            if (!currentElement.getElementOptionsR().isPolyanswer())
-                adapterList.setLastSelectedPosition(lastSelectedPosition);
-            adapterList.notifyDataSetChanged();
-        } else if (answerType.equals(ElementSubtype.RANK)) {
-            List<ElementPassedR> elementPassedRList = new ArrayList<>();
-            List<AnswerState> answerStatesRestored = new ArrayList<>();
-            List<ElementItemR> answerListRestored = new ArrayList<>();
-            for (int i = 0; i < answersList.size(); i++) {
-                ElementPassedR answerPassedRestored;
-                answerPassedRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answersList.get(i).getRelative_id());
-                if (answerPassedRestored != null) {
-                    elementPassedRList.add(answerPassedRestored);
-                }
-            }
-            if (elementPassedRList.size() > 0) {
-                Collections.sort(elementPassedRList, (lhs, rhs) -> lhs.getRank().compareTo(rhs.getRank()));
-
-                for (ElementPassedR itemR : elementPassedRList) {
-                    answerStatesRestored.add(new AnswerState(itemR.getRelative_id(), true, itemR.getValue()));
-                    for (int i = 0; i < answersList.size(); i++) {
-                        if (answersList.get(i).getRelative_id().equals(itemR.getRelative_id())) {
-                            answerListRestored.add(answersList.get(i));
-                        }
-                    }
-                }
-                answersList = answerListRestored;
-                adapterRank.setData(answersList);
-                adapterRank.setAnswers(answerStatesRestored);
-                adapterRank.setRestored(true);
-                adapterRank.notifyDataSetChanged();
-            }
-        } else if (answerType.equals(ElementSubtype.SELECT)) {
-
-            spinnerSelection = -1;
-            spinnerMultipleSelection = new ArrayList<>();
-
-            for (int i = 0; i < answersList.size(); i++) {
-                ElementPassedR answerStateRestored = null;
-                try {
-                    answerStateRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answersList.get(i).getRelative_id());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (answerStateRestored != null) {
-                    if (isMultiSpinner) {
-                        spinnerMultipleSelection.add(i);
-                    } else {
-                        spinnerSelection = i;
-                        spinnerAnswers.setSelection(spinnerSelection);
-                    }
-                }
-
-            }
-            if (isMultiSpinner) {
-                int[] array = new int[spinnerMultipleSelection.size()];
-                for (int i = 0; i < spinnerMultipleSelection.size(); i++) {
-                    array[i] = spinnerMultipleSelection.get(i);
-                }
-                multiSelectionSpinner.setSelection(array);
-            }
-        } else if (answerType.equals(ElementSubtype.TABLE)) {
-            AnswerState[][] answersTableState = adapterTable.getmAnswersState();
-
-            for (int i = 0; i < answersTableState.length; i++) {
-                for (int k = 0; k < answersTableState[i].length; k++) {
+        switch (answerType) {
+            case ElementSubtype.LIST:
+            case ElementSubtype.QUOTA: {
+                List<AnswerState> answerStatesAdapter = adapterList.getAnswers();
+                List<AnswerState> answerStatesRestored = new ArrayList<>();
+                int lastSelectedPosition = -1;
+                for (int i = 0; i < answerStatesAdapter.size(); i++) {
+                    AnswerState answerStateNew = new AnswerState();
                     ElementPassedR answerStateRestored = null;
                     try {
-                        answerStateRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answersTableState[i][k].getRelative_id());
+                        answerStateRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answerStatesAdapter.get(i).getRelative_id());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if (answerStateRestored != null || adapterList.isAutoChecked(answersList.get(i))) {
+                        answerStateNew.setChecked(true);
+                        answerStateNew.setData(answerStateRestored != null ? answerStateRestored.getValue() : "");
+                        lastSelectedPosition = i;
+                    } else {
+                        answerStateNew.setChecked(false);
+                        answerStateNew.setData("");
+                    }
+
+                    answerStateNew.setRelative_id(answerStatesAdapter.get(i).getRelative_id());
+                    answerStatesRestored.add(answerStateNew);
+                }
+                adapterList.setAnswers(answerStatesRestored);
+                adapterList.setRestored(true);
+                if (!currentElement.getElementOptionsR().isPolyanswer())
+                    adapterList.setLastSelectedPosition(lastSelectedPosition);
+                adapterList.notifyDataSetChanged();
+                break;
+            }
+            case ElementSubtype.RANK: {
+                List<ElementPassedR> elementPassedRList = new ArrayList<>();
+                List<AnswerState> answerStatesRestored = new ArrayList<>();
+                List<ElementItemR> answerListRestored = new ArrayList<>();
+                for (int i = 0; i < answersList.size(); i++) {
+                    ElementPassedR answerPassedRestored;
+                    answerPassedRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answersList.get(i).getRelative_id());
+                    if (answerPassedRestored != null) {
+                        elementPassedRList.add(answerPassedRestored);
+                    }
+                }
+                if (elementPassedRList.size() > 0) {
+                    Collections.sort(elementPassedRList, (lhs, rhs) -> lhs.getRank().compareTo(rhs.getRank()));
+
+                    for (ElementPassedR itemR : elementPassedRList) {
+                        answerStatesRestored.add(new AnswerState(itemR.getRelative_id(), true, itemR.getValue()));
+                        for (int i = 0; i < answersList.size(); i++) {
+                            if (answersList.get(i).getRelative_id().equals(itemR.getRelative_id())) {
+                                answerListRestored.add(answersList.get(i));
+                            }
+                        }
+                    }
+                    answersList = answerListRestored;
+                    adapterRank.setData(answersList);
+                    adapterRank.setAnswers(answerStatesRestored);
+                    adapterRank.setRestored(true);
+                    adapterRank.notifyDataSetChanged();
+                }
+                break;
+            }
+            case ElementSubtype.SELECT:
+
+                spinnerSelection = -1;
+                spinnerMultipleSelection = new ArrayList<>();
+
+                for (int i = 0; i < answersList.size(); i++) {
+                    ElementPassedR answerStateRestored = null;
+                    try {
+                        answerStateRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answersList.get(i).getRelative_id());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     if (answerStateRestored != null) {
-                        answersTableState[i][k].setChecked(true);
-                        answersTableState[i][k].setData(answerStateRestored.getValue());
+                        if (isMultiSpinner) {
+                            spinnerMultipleSelection.add(i);
+                        } else {
+                            spinnerSelection = i;
+                            spinnerAnswers.setSelection(spinnerSelection);
+                        }
+                    }
+
+                }
+                if (isMultiSpinner) {
+                    int[] array = new int[spinnerMultipleSelection.size()];
+                    for (int i = 0; i < spinnerMultipleSelection.size(); i++) {
+                        array[i] = spinnerMultipleSelection.get(i);
+                    }
+                    multiSelectionSpinner.setSelection(array);
+                }
+                break;
+            case ElementSubtype.TABLE:
+                AnswerState[][] answersTableState = adapterTable.getmAnswersState();
+
+                for (int i = 0; i < answersTableState.length; i++) {
+                    for (int k = 0; k < answersTableState[i].length; k++) {
+                        ElementPassedR answerStateRestored = null;
+                        try {
+                            answerStateRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answersTableState[i][k].getRelative_id());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (answerStateRestored != null) {
+                            answersTableState[i][k].setChecked(true);
+                            answersTableState[i][k].setData(answerStateRestored.getValue());
+                        }
                     }
                 }
-            }
 
-            adapterTable.setmAnswersState(answersTableState);
-        } else if (answerType.equals(ElementSubtype.SCALE)) {
-            List<AnswerState> answerStatesAdapter = adapterScale.getAnswers();
-            List<AnswerState> answerStatesRestored = new ArrayList<>();
-            int lastSelectedPosition = 0;
-            for (int i = 0; i < answerStatesAdapter.size(); i++) {
-                AnswerState answerStateNew = new AnswerState();
-                ElementPassedR answerStateRestored = null;
-                try {
-                    answerStateRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answerStatesAdapter.get(i).getRelative_id());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (answerStateRestored != null) {
-                    answerStateNew.setChecked(true);
-                    answerStateNew.setData(answerStateRestored.getValue());
-                    lastSelectedPosition = i;
-                } else {
-                    answerStateNew.setChecked(false);
-                    answerStateNew.setData("");
-                }
+                adapterTable.setmAnswersState(answersTableState);
+                break;
+            case ElementSubtype.SCALE: {
+                List<AnswerState> answerStatesAdapter = adapterScale.getAnswers();
+                List<AnswerState> answerStatesRestored = new ArrayList<>();
+                int lastSelectedPosition = 0;
+                for (int i = 0; i < answerStatesAdapter.size(); i++) {
+                    AnswerState answerStateNew = new AnswerState();
+                    ElementPassedR answerStateRestored = null;
+                    try {
+                        answerStateRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answerStatesAdapter.get(i).getRelative_id());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if (answerStateRestored != null) {
+                        answerStateNew.setChecked(true);
+                        answerStateNew.setData(answerStateRestored.getValue());
+                        lastSelectedPosition = i;
+                    } else {
+                        answerStateNew.setChecked(false);
+                        answerStateNew.setData("");
+                    }
 
-                answerStateNew.setRelative_id(answerStatesAdapter.get(i).getRelative_id());
-                answerStatesRestored.add(answerStateNew);
+                    answerStateNew.setRelative_id(answerStatesAdapter.get(i).getRelative_id());
+                    answerStatesRestored.add(answerStateNew);
+                }
+                adapterScale.setAnswers(answerStatesRestored);
+                adapterScale.setLastSelectedPosition(lastSelectedPosition);
+                adapterScale.notifyDataSetChanged();
+                break;
             }
-            adapterScale.setAnswers(answerStatesRestored);
-            adapterScale.setLastSelectedPosition(lastSelectedPosition);
-            adapterScale.notifyDataSetChanged();
         }
     }
 
@@ -1649,27 +1654,20 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     private void stopAllRecording() {
         try {
-//            addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getMainActivity().getString(R.string.stop_audio_recording), Constants.LogResult.ATTEMPT, getString(R.string.stop_audio_recording_attempt), null);
             getMainActivity().stopRecording();
         } catch (Exception e) {
-            try {
-//                addLog(getCurrentUser().getLogin(), Constants.LogType.FILE, Constants.LogObject.AUDIO, getMainActivity().getString(R.string.stop_audio_recording), Constants.LogResult.ERROR, getString(R.string.stop_audio_recording_error), e.toString());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
             e.printStackTrace();
         }
     }
 
     private String getFilePath(final String data) {
         final String path = FileUtils.getFilesStoragePath(getMainActivity());
-        final String url = data;
 
-        if (StringUtils.isEmpty(url)) {
+        if (StringUtils.isEmpty(data)) {
             return Constants.Strings.EMPTY;
         }
 
-        final String fileName = FileUtils.getFileName(url);
+        final String fileName = FileUtils.getFileName(data);
 
         return path + FileUtils.FOLDER_DIVIDER + fileName;
     }
@@ -1677,7 +1675,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     public void showExitPoolAlertDialog() {
         activateButtons();
         MainActivity activity = getMainActivity();
-//            addLog(getCurrentUser().getLogin(), Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_exit), null);
         if (activity != null && !activity.isFinishing()) {
             new AlertDialog.Builder(Objects.requireNonNull(getContext()), R.style.AlertDialogTheme)
                     .setCancelable(false)
@@ -1736,15 +1733,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             btnExit.setEnabled(true);
                             btnNext.setEnabled(true);
 
-                            if (getMainActivity().getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                                btnPrev.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_green));
-                                btnExit.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_red));
-                                btnNext.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_green));
-                            } else {
-                                btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_green));
-                                btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_red));
-                                btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_green));
-                            }
+                            btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_green));
+                            btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_red));
+                            btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_green));
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -1768,17 +1760,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 btnExit.setEnabled(false);
                 btnNext.setEnabled(false);
 
-                final int sdk = android.os.Build.VERSION.SDK_INT;
+                btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+                btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+                btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
 
-                if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                    btnPrev.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-                    btnExit.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-                    btnNext.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-                } else {
-                    btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-                    btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-                    btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1804,7 +1789,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
         dialogBuilder.setView(layoutView);
         infoDialog = dialogBuilder.create();
-        infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+        try {
+            infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         MainActivity activity = getMainActivity();
         if (activity != null && !activity.isFinishing())
@@ -1822,11 +1811,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Log.d("T-L.ElementFragment", "NEXT 1: " + nextElementId);
             try {
                 if (saveElement()) {
                     try {
-                        Log.d("T-L.ElementFragment", "NEXT 2: " + nextElementId);
                         if (nextElementId == null) {
                             showRestartDialog();
                         } else if (nextElementId == 0) {
@@ -1944,7 +1931,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         View layoutView = getLayoutInflater().inflate(R.layout.dialog_card, null);
 
         View mCloseBtn = layoutView.findViewById(R.id.view_close);
-        ListView listView = (ListView) layoutView.findViewById(R.id.card_list);
+        ListView listView = layoutView.findViewById(R.id.card_list);
 
         mCloseBtn.setOnClickListener(v -> {
             infoDialog.dismiss();
@@ -1983,7 +1970,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
             }
 
-            if (answerStateMap != null && answerStateMap.size() > 0)
+            if (answerStateMap.size() > 0)
                 for (int i = 0; i < items.size(); i++) {
                     if (answerStateMap.get(items.get(i).getId()) != null) {
                         items.get(i).setChecked(answerStateMap.get(items.get(i).getId()).isChecked());

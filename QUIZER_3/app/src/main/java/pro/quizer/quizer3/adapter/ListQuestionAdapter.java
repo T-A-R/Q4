@@ -24,11 +24,6 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
@@ -40,7 +35,6 @@ import pro.quizer.quizer3.model.view.TitleModel;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
-import pro.quizer.quizer3.utils.UiUtils;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.model.OptionsOpenType.CHECKBOX;
@@ -55,8 +49,8 @@ import com.squareup.picasso.Picasso;
 
 public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapter.ListObjectViewHolder> {
 
-    private OnAnswerClickListener onAnswerClickListener;
-    private ElementItemR question;
+    private final OnAnswerClickListener onAnswerClickListener;
+    private final ElementItemR question;
     private List<ElementItemR> answersList;
     private List<AnswerState> answersState;
     private int lastSelectedPosition = -1;
@@ -66,14 +60,13 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
     public boolean isRank = false;
     public Integer isPressed;
     public boolean isRestored = false;
-    private String openType;
-    private MainActivity mActivity;
-    private List<Integer> passedQuotaBlock;
-    private ElementItemR[][] quotaTree;
-    private Context mContext;
+    private final MainActivity mActivity;
+    private final List<Integer> passedQuotaBlock;
+    private final ElementItemR[][] quotaTree;
+    private final Context mContext;
     private int counter = 1;
-    private List<String> titles;
-    private Map<Integer, TitleModel> titlesMap;
+    private final List<String> titles;
+    private final Map<Integer, TitleModel> titlesMap;
 
     public ListQuestionAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> passedQuotaBlock, ElementItemR[][] quotaTree, Map<Integer, TitleModel> titlesMap, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
@@ -107,9 +100,8 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         this.onAnswerClickListener = onAnswerClickListener;
         if (question.getElementOptionsR() != null && question.getElementOptionsR().getOpen_type() != null) {
             this.isOpen = true;
-            this.openType = question.getElementOptionsR().getOpen_type();
         }
-        this.isMulti = question.getElementOptionsR().isPolyanswer();
+        this.isMulti = Objects.requireNonNull(question.getElementOptionsR()).isPolyanswer();
         this.answersState = new ArrayList<>();
         for (int i = 0; i < answersList.size(); i++) {
             this.answersState.add(new AnswerState(answersList.get(i).getRelative_id(), isAutoChecked(answersList.get(i)), ""));
@@ -130,7 +122,6 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
     public boolean isAutoChecked(ElementItemR element) {
         return element.getElementOptionsR().isAutoChecked();
-//        return true;
     }
 
     @NonNull
@@ -147,8 +138,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.holder_answer_list_auto, viewGroup, false);
         else
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.holder_answer_list, viewGroup, false);
-        ListObjectViewHolder vh = new ListObjectViewHolder(view, onAnswerClickListener);
-        return vh;
+        return new ListObjectViewHolder(view, onAnswerClickListener);
     }
 
     @Override
@@ -197,24 +187,12 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 holder.answerDesc.setTextColor(mActivity.getResources().getColor(R.color.gray));
             }
             if (!mActivity.isDarkkMode()) {
-                if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                    holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bg_gray_shadow));
-                } else {
-                    holder.cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_gray_shadow));
-                }
+                holder.cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_gray_shadow));
             } else {
-                if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                    holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bg_dark_gray_shadow));
-                } else {
-                    holder.cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_dark_gray_shadow));
-                }
+                holder.cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_dark_gray_shadow));
             }
         } else {
-            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bg_shadow));
-            } else {
-                holder.cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_shadow));
-            }
+            holder.cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_shadow));
             holder.answerTitle.setTextColor(mActivity.getResources().getColor(R.color.black));
             holder.answerDesc.setTextColor(mActivity.getResources().getColor(R.color.black));
         }
@@ -249,19 +227,19 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         public ListObjectViewHolder(@NonNull View itemView, OnAnswerClickListener onUserClickListener) {
             super(itemView);
 
-            answerPosition = (TextView) itemView.findViewById(R.id.position);
-            answerTitle = (TextView) itemView.findViewById(R.id.answer);
-            answerDesc = (TextView) itemView.findViewById(R.id.answer_desc);
-            answerEditText = (TextView) itemView.findViewById(R.id.edit_answer);
-            button = (ImageView) itemView.findViewById(R.id.radio_button);
-            editButton = (ImageView) itemView.findViewById(R.id.edit_button);
-            image1 = (ImageView) itemView.findViewById(R.id.answer_image_1);
-            image2 = (ImageView) itemView.findViewById(R.id.answer_image_2);
-            image3 = (ImageView) itemView.findViewById(R.id.answer_image_3);
-            openQuestionCont = (RelativeLayout) itemView.findViewById(R.id.open_question);
-            openAnswerCont = (RelativeLayout) itemView.findViewById(R.id.open_cont);
-            cont = (LinearLayout) itemView.findViewById(R.id.answer_cont);
-            contentCont = (LinearLayout) itemView.findViewById(R.id.answer_images_cont);
+            answerPosition = itemView.findViewById(R.id.position);
+            answerTitle = itemView.findViewById(R.id.answer);
+            answerDesc = itemView.findViewById(R.id.answer_desc);
+            answerEditText = itemView.findViewById(R.id.edit_answer);
+            button = itemView.findViewById(R.id.radio_button);
+            editButton = itemView.findViewById(R.id.edit_button);
+            image1 = itemView.findViewById(R.id.answer_image_1);
+            image2 = itemView.findViewById(R.id.answer_image_2);
+            image3 = itemView.findViewById(R.id.answer_image_3);
+            openQuestionCont = itemView.findViewById(R.id.open_question);
+            openAnswerCont = itemView.findViewById(R.id.open_cont);
+            cont = itemView.findViewById(R.id.answer_cont);
+            contentCont = itemView.findViewById(R.id.answer_images_cont);
 
             answerTitle.setTypeface(Fonts.getFuturaPtBook());
             answerPosition.setTypeface(Fonts.getFuturaPtBook());
@@ -383,13 +361,12 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
         private String getFilePath(final String data) {
             final String path = FileUtils.getFilesStoragePath(mActivity);
-            final String url = data;
 
-            if (StringUtils.isEmpty(url)) {
+            if (StringUtils.isEmpty(data)) {
                 return Constants.Strings.EMPTY;
             }
 
-            final String fileName = FileUtils.getFileName(url);
+            final String fileName = FileUtils.getFileName(data);
 
             return path + FileUtils.FOLDER_DIVIDER + fileName;
         }
@@ -568,7 +545,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         }
     }
 
-    private Calendar mCalendar = Calendar.getInstance();
+    private final Calendar mCalendar = Calendar.getInstance();
 
     public void setDate(final TextView pEditText) {
         if (!mActivity.isFinishing()) {
@@ -630,19 +607,6 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         isRestored = restored;
     }
 
-    public void clearOldPassed() {
-        if (isRestored) {
-            try {
-                int id = mActivity.getMainDao().getElementPassedR(mActivity.getCurrentQuestionnaire().getToken(), question.getRelative_id()).getId();
-                mActivity.getMainDao().deleteOldElementsPassedR(id);
-                mActivity.showToastfromActivity(mActivity.getString(R.string.data_changed));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            isRestored = false;
-        }
-    }
-
     public boolean isFilled() {
         if (!isOpen) {
             return true;
@@ -656,9 +620,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         if (answersList.get(lastSelectedPosition).getElementOptionsR().isUnnecessary_fill_open()) {
             return true;
         }
-        if (answersList.get(lastSelectedPosition).getElementOptionsR().getOpen_type().equals("checkbox") || isAllHaveData()) {
-            return true;
-        } else return false;
+        return answersList.get(lastSelectedPosition).getElementOptionsR().getOpen_type().equals("checkbox") || isAllHaveData();
     }
 
     private boolean isAllHaveData() {
@@ -712,13 +674,13 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 pEditText.setText(mEditText.getText().toString());
             } else
                 mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
-            if (mActivity != null && !mActivity.isFinishing()) {
+            if (!mActivity.isFinishing()) {
                 mActivity.hideKeyboardFrom(mEditText);
                 alertDialog.dismiss();
             }
         });
 
-        if (mActivity != null && !mActivity.isFinishing()) {
+        if (!mActivity.isFinishing()) {
             alertDialog.show();
         }
     }

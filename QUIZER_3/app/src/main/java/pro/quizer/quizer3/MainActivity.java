@@ -249,10 +249,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         return CoreApplication.getQuizerDatabase().getQuizerDao();
     }
 
-//    public static QuizerDao getStaticDao() {
-//        return CoreApplication.getQuizerDatabase().getQuizerDao();
-//    }
-
     public void showKeyboard() {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
@@ -264,14 +260,11 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public HashMap<Integer, ElementModelNew> getMap(boolean rebuild) {
 
         if (rebuild) {
-            Log.d(TAG, "Rebuilding Elements Database............. 2");
             mMap = new HashMap<>();
-            Log.d(TAG, "Rebuilding Elements Database............. 3");
             getMainDao().clearElementItemR();
             getMainDao().clearElementContentsR();
             getMainDao().clearElementOptionsR();
 
-            Log.d(TAG, "Rebuilding Elements Database............. 4");
             initDataForRebuild();
             currentElementsList = new ArrayList<>();
             generateMap(getElements(), true);
@@ -281,7 +274,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 showToastfromActivity("Пустая таблица!");
             }
 
-            Log.d(TAG, "Rebuilding Elements Database............. END");
             return mMap;
         } else {
             if (mMap == null) {
@@ -476,16 +468,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         return user;
     }
 
-    public List<File> getAllPhotos() {
-        return FileUtils.getFilesRecursion(JPEG, FileUtils.getPhotosStoragePath(this));
-    }
-
     public List<File> getPhotosByUserId(final int pUserId) {
         return FileUtils.getFilesRecursion(JPEG, FileUtils.getPhotosStoragePath(this) + FileUtils.FOLDER_DIVIDER + pUserId);
-    }
-
-    public List<File> getAllAudio() {
-        return FileUtils.getFilesRecursion(AMR, FileUtils.getAudioStoragePath(this));
     }
 
     public List<File> getAudioByUserId(final int pUserId) {
@@ -587,17 +571,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         alertDialog.setCancelable(false);
         alertDialog.setTitle(R.string.dialog_please_give_permissions);
         alertDialog.setMessage(R.string.dialog_you_need_to_turn_on_permissions);
-        alertDialog.setPositiveButton(R.string.dialog_perm_on, new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + BuildConfig.APPLICATION_ID));
-                startActivity(intent);
-                if (alertDialog != null) {
-                    dialog.dismiss();
-                    mIsPermDialogShow = false;
-                }
-
+        alertDialog.setPositiveButton(R.string.dialog_perm_on, (dialog, which) -> {
+            Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + BuildConfig.APPLICATION_ID));
+            startActivity(intent);
+            if (alertDialog != null) {
+                dialog.dismiss();
+                mIsPermDialogShow = false;
             }
+
         });
 
         if (!isFinishing())
@@ -1093,10 +1074,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                                             .setNegativeButton(R.string.view_cancel, (dialog, which) -> dialog.cancel())
                                             .show();
                                 } catch (Exception e) {
-//                                    if (getCurrentUser() != null)
-//                                        addLog(getCurrentUser().getLogin(), Constants.LogType.DIALOG, Constants.LogObject.SMS, getString(R.string.show_sms_dialog), Constants.LogResult.ERROR, getString(R.string.cant_show_dialog), e.toString());
-//                                    else
-//                                        addLog("android", Constants.LogType.DIALOG, Constants.LogObject.SMS, getString(R.string.show_sms_dialog), Constants.LogResult.ERROR, getString(R.string.cant_show_dialog), e.toString());
+                                    e.printStackTrace();
                                 }
                             }
                         }
@@ -1329,26 +1307,18 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void closeApp() {
         if (getAndroidVersion() < Build.VERSION_CODES.JELLY_BEAN) {
-            Log.d("T-L.MainActivity", "closeApp: 1");
             this.finish();
             Process.killProcess(Process.myPid());
         } else if (getAndroidVersion() < Build.VERSION_CODES.LOLLIPOP) {
-            Log.d("T-L.MainActivity", "closeApp: 2");
             this.finishAffinity();
-//            Process.killProcess(Process.myPid());
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Log.d("T-L.MainActivity", "closeApp: 3");
             finishAndRemoveTask();
-//            Process.killProcess(Process.myPid());
-        } else {
-            Log.d("T-L.MainActivity", "closeApp: 4");
         }
     }
 
     public void restartActivity() {
         this.finish();
         System.gc();
-//        recreate();
         startActivity(new Intent(this, MainActivity.class));
     }
 

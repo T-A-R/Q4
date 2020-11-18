@@ -132,23 +132,23 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         activity = (MainActivity) getActivity();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
-        RelativeLayout cont = (RelativeLayout) findViewById(R.id.cont_home_fragment);
-        contContinue = (LinearLayout) findViewById(R.id.cont_continue);
-        btnContinue = (Button) findViewById(R.id.btn_continue);
-        btnDelete = (Button) findViewById(R.id.btn_delete);
-        btnStart = (Button) findViewById(R.id.btn_start);
-        btnInfo = (Button) findViewById(R.id.btn_info);
-        btnQuotas = (Button) findViewById(R.id.btn_quotas);
-        btnExit = (Button) findViewById(R.id.btn_exit);
-        tvConfigAgreement = (TextView) findViewById(R.id.config_agreement);
-        tvConfigName = (TextView) findViewById(R.id.config_name);
-        tvQuotasClosed = (TextView) findViewById(R.id.quotas_closed);
-        tvCurrentUser = (TextView) findViewById(R.id.current_user);
-        tvPbText = (TextView) findViewById(R.id.tv_pb_text);
-        tvProjectStatus = (TextView) findViewById(R.id.project_status);
-        tvCountAll = (TextView) findViewById(R.id.count_all);
-        tvCountSent = (TextView) findViewById(R.id.count_sent);
-        pb = (ProgressBar) findViewById(R.id.progressBarQuota);
+        RelativeLayout cont = findViewById(R.id.cont_home_fragment);
+        contContinue = findViewById(R.id.cont_continue);
+        btnContinue = findViewById(R.id.btn_continue);
+        btnDelete = findViewById(R.id.btn_delete);
+        btnStart = findViewById(R.id.btn_start);
+        btnInfo = findViewById(R.id.btn_info);
+        btnQuotas = findViewById(R.id.btn_quotas);
+        btnExit = findViewById(R.id.btn_exit);
+        tvConfigAgreement = findViewById(R.id.config_agreement);
+        tvConfigName = findViewById(R.id.config_name);
+        tvQuotasClosed = findViewById(R.id.quotas_closed);
+        tvCurrentUser = findViewById(R.id.current_user);
+        tvPbText = findViewById(R.id.tv_pb_text);
+        tvProjectStatus = findViewById(R.id.project_status);
+        tvCountAll = findViewById(R.id.count_all);
+        tvCountSent = findViewById(R.id.count_sent);
+        pb = findViewById(R.id.progressBarQuota);
 
         MainFragment.enableSideMenu(true, getMainActivity().isExit());
 
@@ -190,7 +190,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             sendQuestionnaires();
 
         } else {
-//            btnExit.setVisibility(View.GONE);
             cont.startAnimation(Anim.getAppear(getContext()));
             btnContinue.startAnimation(Anim.getAppearSlide(getContext(), 500));
             btnDelete.startAnimation(Anim.getAppearSlide(getContext(), 500));
@@ -341,7 +340,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     public void makeQuotaTree() {
         Log.d(TAG, "====== makeQuotaTree: ========");
         getMainActivity().getCurrentUserForce();
-        new UpdateQuotasTree().execute(activity.getQuotasElements());
+        List<ElementItemR> quotasElements = activity.getQuotasElements();
+        if (quotasElements != null && quotasElements.size() > 0)
+            new UpdateQuotasTree().execute(quotasElements);
     }
 
     public void initViews() {
@@ -475,23 +476,24 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 showToast(getString(R.string.not_enough_space));
                 return false;
             }
-            return true;
-        } else return true;
+        }
+        return true;
     }
 
     private boolean checkGps() {
         GPSModel mGPSModel = null;
         isForceGps = activity.getConfig().isForceGps();
         mIsUsedFakeGps = false;
-        if (activity.getConfig().isGps() && mGPSModel == null) {
+        if (activity.getConfig().isGps()) {
             try {
                 mGPSModel = GpsUtils.getCurrentGps(getActivity(), isForceGps);
-                mGpsString = mGPSModel.getGPS();
-                mGpsNetworkString = mGPSModel.getGPSNetwork();
-                mIsUsedFakeGps = mGPSModel.isFakeGPS();
-                mGpsTime = mGPSModel.getTime();
-                mGpsTimeNetwork = mGPSModel.getTimeNetwork();
-//                }
+                if (mGPSModel != null) {
+                    mGpsString = mGPSModel.getGPS();
+                    mGpsNetworkString = mGPSModel.getGPSNetwork();
+                    mIsUsedFakeGps = mGPSModel.isFakeGPS();
+                    mGpsTime = mGPSModel.getTime();
+                    mGpsTimeNetwork = mGPSModel.getTimeNetwork();
+                }
             } catch (final Exception e) {
                 e.printStackTrace();
                 Log.d(TAG, "startGps: " + e.getMessage());
@@ -675,12 +677,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             List<ElementItemR> questions = new ArrayList<>();
             int answersTotal = 1;
             int answersMultiple = 1;
-            List<Integer> answersCounters = new ArrayList<>();
 
             for (ElementItemR element : quotasBlock) {
                 if (element.getType().equals(ElementType.QUESTION)) {
                     questions.add(element);
-                    answersCounters.add(element.getElements().size());
                     answersTotal = answersTotal * element.getElements().size(); // element.getElements() - список ответов
                 }
             }
@@ -714,7 +714,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             Log.d(TAG, "============== fillQuotas ======================= 1");
             int user_id = activity.getCurrentUserId();
 
-            Integer user_project_id = null;
+            Integer user_project_id;
             user_project_id = getCurrentUser().getConfigR().getUserProjectId();
             if (user_project_id == null)
                 user_project_id = getCurrentUser().getUser_project_id();
@@ -726,7 +726,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 quotas.add(new QuotaModel(quotaR.getSequence(), quotaR.getLimit(), quotaR.getDone(), user_id, user_project_id));
             }
             offlineQuestionnaires = activity.getMainDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), user_project_id, QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
-            if (quotas == null || quotas.isEmpty()) {
+            if (quotas.isEmpty()) {
                 return tree;
             }
 
@@ -820,7 +820,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             } catch (Exception e) {
                 e.printStackTrace();
-//                MainActivity.addLog(activity.getCurrentUser().getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, activity.getString(R.string.get_quotas), Constants.LogResult.ERROR, activity.getString(R.string.log_error_102_desc), e.toString());
             }
 
             return counter;
@@ -839,8 +838,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void deactivateButtons() {
-        Log.d(TAG, "=== deactivateButtons ===");
-
         setViewBackground(btnContinue, false, true);
         setViewBackground(btnStart, false, true);
         setViewBackground(btnQuotas, false, true);
@@ -848,7 +845,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void deactivateStartButtons() {
-
         setViewBackground(btnContinue, false, true);
         setViewBackground(btnStart, false, true);
     }
@@ -866,7 +862,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 @Override
                 public void onSuccess() {
                     mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.quotas_renew));
-//                    MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.SUCCESS, mBaseActivity.getString(R.string.quotas_renew), null);
                     if (!isQuotaUpdated) {
                         if (!mIsStartAfterAuth) {
                             isQuotaUpdated = true;
@@ -878,7 +873,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 @Override
                 public void onError(Exception pException) {
                     mBaseActivity.showToastfromActivity(pException.getMessage());
-//                    MainActivity.addLog(mUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.QUOTA, mBaseActivity.getString(R.string.get_quotas), Constants.LogResult.ERROR, pException.getMessage(), pException.toString());
                     if (!isQuotaUpdated) {
                         if (!mIsStartAfterAuth) {
                             isQuotaUpdated = true;
@@ -907,7 +901,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 pQuotasList = quotasViewModel.getQuotas();
                 if (pQuotasList != null) {
                     for (QuotaModel quota : pQuotasList) {
-                        int doneInt = 0;
+                        int doneInt;
                         if (activity.getSettings().isProject_is_active()) {
                             doneInt = quota.getDone(activity);
                         } else {
@@ -961,12 +955,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     private void getInfo() {
         btnInfo.setEnabled(false);
-        final int sdk = android.os.Build.VERSION.SDK_INT;
-        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-        } else {
             btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-        }
+
         UserModelR userModel = activity.getCurrentUser();
         ConfigModel configModel = activity.getConfig();
         StatisticsRequestModel requestModel = new StatisticsRequestModel(configModel.getLoginAdmin(), userModel.getPassword(), userModel.getLogin());
@@ -974,50 +964,47 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         String json = gson.toJson(requestModel);
         String mServerUrl = configModel.getServerUrl();
 
-        QuizerAPI.getStatistics(mServerUrl, json, new QuizerAPI.GetStatisticsCallback() {
-            @Override
-            public void onGetStatisticsCallback(ResponseBody responseBody) {
-                if (responseBody == null) {
-                    showStatistics(null);
-                    return;
-                }
-                String responseJson;
-                try {
-                    responseJson = responseBody.string();
-                } catch (IOException e) {
-                    showStatistics(null);
-                    return;
-                }
+        QuizerAPI.getStatistics(mServerUrl, json, responseBody -> {
+            if (responseBody == null) {
+                showStatistics(null);
+                return;
+            }
+            String responseJson;
+            try {
+                responseJson = responseBody.string();
+            } catch (IOException e) {
+                showStatistics(null);
+                return;
+            }
 
-                StatisticsResponseModel statisticsResponseModel;
+            StatisticsResponseModel statisticsResponseModel;
 
-                try {
-                    statisticsResponseModel = new GsonBuilder().create().fromJson(responseJson, StatisticsResponseModel.class);
-                } catch (final Exception pE) {
-                    showStatistics(null);
-                    return;
-                }
+            try {
+                statisticsResponseModel = new GsonBuilder().create().fromJson(responseJson, StatisticsResponseModel.class);
+            } catch (final Exception pE) {
+                showStatistics(null);
+                return;
+            }
 
-                if (statisticsResponseModel != null) {
-                    if (statisticsResponseModel.isProjectActive() != null) {
-                        try {
-                            getDao().setProjectActive(statisticsResponseModel.isProjectActive());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+            if (statisticsResponseModel != null) {
+                if (statisticsResponseModel.isProjectActive() != null) {
+                    try {
+                        getDao().setProjectActive(statisticsResponseModel.isProjectActive());
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    if (statisticsResponseModel.getResult() != 0) {
-                        activity.setAborted(statisticsResponseModel.getStatistics().getAborted());
-                        showStatistics(statisticsResponseModel.getStatistics());
-                        return;
-                    } else {
-                        showStatistics(null);
-                        return;
-                    }
+                }
+                if (statisticsResponseModel.getResult() != 0) {
+                    activity.setAborted(statisticsResponseModel.getStatistics().getAborted());
+                    showStatistics(statisticsResponseModel.getStatistics());
+                    return;
                 } else {
                     showStatistics(null);
                     return;
                 }
+            } else {
+                showStatistics(null);
+                return;
             }
         });
     }
@@ -1101,20 +1088,17 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         if (activity != null && !activity.isFinishing())
             infoDialog.show();
-        infoDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                btnInfo.setEnabled(true);
-                final int sdk = android.os.Build.VERSION.SDK_INT;
-                try {
-                    if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
-                        btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-                    } else {
-                        btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+        infoDialog.setOnDismissListener(dialog -> {
+            btnInfo.setEnabled(true);
+            final int sdk = Build.VERSION.SDK_INT;
+            try {
+                if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
+                    btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                } else {
+                    btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }
@@ -1319,14 +1303,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 getDao().insertCurrentQuestionnaireR(questionnaire);
                 getDao().clearWasElementShown(false);
 
-//                activity.runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        updateCurrentQuestionnaire();
-//                        getQuestionnaireFromDB();
-//                    }
-//                });
-
                 updateCurrentQuestionnaire();
                 getQuestionnaireFromDB();
 
@@ -1358,24 +1334,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
 
             if (canStart) {
-//                activity.runOnUiThread(new Runnable() {
-//                    public void run() {
-//                        startRecording();
-//                    }
-//                });
                 startRecording();
-                //TODO CHECK LATER START AUDIO
-//                if (!activity.ismIsAudioStarted()) {
-//                    if (activity.getConfig().isForce_Audio()) {
-//                        showErrorDialog(getString(R.string.header_cant_start_record_audio), getString(R.string.message_contact_support));
-//                        canStart = false;
-//                    } else {
-//                        showToast("Не удалось начать запись аудио.");
-//                    }
-//                }
-            }
-
-            if (canStart) {
                 //TODO Ротацию вопросов!
 
 //                        for (ElementItemR elementItemR : getCurrentElements()) {

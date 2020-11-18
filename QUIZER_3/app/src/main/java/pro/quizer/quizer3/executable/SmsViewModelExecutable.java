@@ -30,7 +30,6 @@ public class SmsViewModelExecutable extends BaseModelExecutable<SmsViewModel> {
     @Override
     public SmsViewModel execute() {
         final SmsViewModel smsViewModel = new SmsViewModel();
-        final UserModelR currentUser = mBaseActivity.getCurrentUser();
         final ConfigModel configModel = mBaseActivity.getConfig();
         final ProjectInfoModel projectInfoModel = configModel.getProjectInfo();
         final ReserveChannelModel reserveChannelModel = projectInfoModel.getReserveChannel();

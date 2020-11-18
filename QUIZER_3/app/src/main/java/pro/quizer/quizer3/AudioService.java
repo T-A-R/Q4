@@ -79,11 +79,9 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
     private static final int IC_NOTIF_PAUSE = R.drawable.ic_notif_pause;
     private static final int IC_NOTIF_STOP = R.drawable.ic_notif_stop;
     private static final int VISUALIZER_CAPTURE_SIZE = 512; // default is max 1024, min 128 (2^n)
-    //private static final int VISUALIZER_SAMPLE_RATE = 4000; old
     private static final int VISUALIZER_SAMPLE_RATE = 8000;
     private static final int AMPLITUDE_CHK_RATE = 500;
     public static String mFileName = "unknown.m4a";
-    //private static final int AMPLITUDE_CHK_RATE = 200; // test
 
     public File audioFilesPath;
 
@@ -101,13 +99,11 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
     private MediaControllerCompat.TransportControls transCntrl;
     private PlaybackStateCompat.Builder stateBuilderImplFacility; // use method instead
     private MediaMetadataCompat.Builder metadataBuilder;
-//    private NotificationCompat.Builder notifBuilder;
 
     private boolean isRecorderInitialized = false;
     private MediaRecorder recorder;
     private MediaPlayer player;
     private Visualizer vslr;
-    // visualizer data
     private ArrayList<Byte> alWaveFormVal = new ArrayList<>();
     private ArrayList<Byte> alFftVal = new ArrayList<>();
 
@@ -115,12 +111,7 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
     @SuppressLint("SimpleDateFormat")
     private SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 
-    private FileFilter audioFileFilter = new FileFilter() {
-        @Override
-        public boolean accept(File pathname) {
-            return pathname.exists() && pathname.isFile() && pathname.getName().endsWith(VOICE_REC_EXT);
-        }
-    };
+    private FileFilter audioFileFilter = pathname -> pathname.exists() && pathname.isFile() && pathname.getName().endsWith(VOICE_REC_EXT);
 
     private SaveVslDataATask saveVslData;
     private HandlerThread hThread = new HandlerThread("AudioServiceHandlerThread");
@@ -498,7 +489,6 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                                 .setSubtitle(getString(R.string.record_audio_playing))
                                 .setDescription(file.getAbsolutePath())
                                 .setIconBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_mic))
-                                //.setMediaUri(Uri.fromFile(file)) // wrong pattern
                                 .setMediaUri(new Uri.Builder().encodedPath(file.getAbsolutePath()).build())
                                 .build(),
                                 MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));

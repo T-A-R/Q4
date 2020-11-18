@@ -14,7 +14,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import pro.quizer.quizer3.API.QuizerAPI;
-import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.UserModelR;
@@ -43,14 +42,11 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
     AlertDialog.Builder mDialogBuilder;
     AlertDialog mAlertDialog;
 
-    public static Comparator<File> FILE_COMPARATOR = new Comparator<File>() {
+    public static Comparator<File> FILE_COMPARATOR = (s1, s2) -> {
+        long firstFile = s1.length();
+        long secondFile = s2.length();
 
-        public int compare(File s1, File s2) {
-            long firstFile = s1.length();
-            long secondFile = s2.length();
-
-            return (int) (firstFile - secondFile);
-        }
+        return (int) (firstFile - secondFile);
     };
 
     public AbstractFilesSendingByUserModelExecutable(final MainActivity pContext, final UserModelR pUserModel, final ICallback pCallback) {
@@ -177,12 +173,9 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
 
         final List<File> file = Collections.singletonList(mNotSendFiles.get(position));
 
-//        MainActivity.addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, mBaseActivity.getString(R.string.sending) + " " + getMediaType(), Constants.LogResult.SENT, mBaseActivity.getString(R.string.try_to_send) + " " + getMediaType() + " " + mBaseActivity.getString(R.string.to_server),null);
-
         QuizerAPI.sendFiles(mServerUrl, file, getNameForm(), getMediaType(), responseBody -> {
             if (responseBody == null) {
                 pSendingFileCallback.onError(position);
-//                MainActivity.addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, mBaseActivity.getString(R.string.sending) + " " + getMediaType(), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.log_error_301_desc), null);
                 onError(new Exception(mBaseActivity.getString(R.string.server_response_error) + " " + mBaseActivity.getString(R.string.error_301)));
                 return;
             }
@@ -192,7 +185,6 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
                 responseJson = responseBody.string();
             } catch (IOException e) {
                 e.printStackTrace();
-//                MainActivity.addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, mBaseActivity.getString(R.string.sending) + " " + getMediaType(), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.log_error_302_desc), null);
                 onError(new Exception(mBaseActivity.getString(R.string.server_response_error) + " " + mBaseActivity.getString(R.string.error_302)));
             }
 
@@ -201,7 +193,6 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
             try {
                 deletingListResponseModel = new GsonBuilder().create().fromJson(responseJson, DeletingListResponseModel.class);
             } catch (Exception pE) {
-//                MainActivity.addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, mBaseActivity.getString(R.string.sending) + " " + getMediaType(), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.log_error_303_desc), responseJson);
                 onError(new Exception(mBaseActivity.getString(R.string.server_response_error) + " " + mBaseActivity.getString(R.string.error_303)));
             }
 
@@ -219,18 +210,14 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
                     if (tokensToRemove == null || tokensToRemove.isEmpty()) {
                         Log.d(TAG, "sendFile: TOKEN = NULL");
                         pSendingFileCallback.onError(position);
-//                        MainActivity.addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, mBaseActivity.getString(R.string.sending) + " " + getMediaType(), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.log_error_304_desc), responseJson);
                         onError(new Exception(mBaseActivity.getString(R.string.empty_tokens_list_error) + " " + mBaseActivity.getString(R.string.error_304)));
                     } else {
-//                        MainActivity.addLog(mLogin, Constants.LogType.FILE, Constants.LogObject.FILE, mBaseActivity.getString(R.string.deleting) + " " + getMediaType(), Constants.LogResult.SENT, mBaseActivity.getString(R.string.got_fileslist_to_delete) + " ", responseJson);
-
                         for (final String token : tokensToRemove) {
                             Log.d(TAG, "sendFile: TOKEN = " + token);
                             final String path = FileUtils.getFullPathByFileName(file, token);
 
                             if (StringUtils.isNotEmpty(path)) {
                                 final boolean isDeleted = new File(path).delete();
-//                                MainActivity.addLog(mLogin, Constants.LogType.FILE, Constants.LogObject.FILE, mBaseActivity.getString(R.string.deleting) + " " + getMediaType(), Constants.LogResult.SENT, (isDeleted ? "NOT" : "") + " DELETED: " + path, null);
                                 Log.d("Deleting audio", (isDeleted ? "NOT" : "") + " DELETED: " + path);
                             }
                         }
@@ -240,7 +227,6 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
                     }
                 } else {
                     pSendingFileCallback.onError(position);
-//                    MainActivity.addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, mBaseActivity.getString(R.string.sending) + " " + getMediaType(), Constants.LogResult.ERROR, mBaseActivity.getString(R.string.error_305) + " (" + deletingListResponseModel.getError() + ")", null);
                     onError(new Exception(deletingListResponseModel.getError() + " " + mBaseActivity.getString(R.string.error_305)));
                 }
             } else {
@@ -249,6 +235,4 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
             }
         });
     }
-
-
 }

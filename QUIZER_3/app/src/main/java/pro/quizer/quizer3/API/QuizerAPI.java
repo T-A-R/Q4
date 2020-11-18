@@ -34,12 +34,6 @@ public class QuizerAPI {
 
     /**
      * Отправка ключа.
-     * <p>
-     * Код ошибок 5.хх
-     *
-     * @param url
-     * @param json
-     * @param listener
      */
     static public void sendKey(String url, String json, final SendKeyCallback listener) {
 
@@ -69,12 +63,6 @@ public class QuizerAPI {
 
     /**
      * Запрос конфига.
-     * <p>
-     * Код ошибок 6.хх
-     *
-     * @param url
-     * @param json
-     * @param listener
      */
     static public void getConfig(String url, String json, final GetConfigCallback listener) {
 
@@ -104,12 +92,6 @@ public class QuizerAPI {
 
     /**
      * Авторизация.
-     * <p>
-     * Код ошибок 4.хх
-     *
-     * @param url
-     * @param json
-     * @param listener
      */
 
     static public void authUser(String url, String json, final AuthUserCallback listener) {
@@ -141,17 +123,9 @@ public class QuizerAPI {
 
     /**
      * Отправка анкет.
-     * <p>
-     * Код ошибок 2.хх
-     *
-     * @param url
-     * @param json
-     * @param listener
      */
 
     static public void sendQuestionnaires(String url, String json, final SendQuestionnairesCallback listener) {
-
-//        Log.d(TAG, "sendQuestionnaires: " + json);
 
         Map<String, String> fields = new HashMap<>();
         fields.put(Constants.ServerFields.JSON_DATA, json);
@@ -175,21 +149,11 @@ public class QuizerAPI {
         void onSendQuestionnaires(ResponseBody data);
     }
 
-
     /**
      * Получение квот.
-     * <p>
-     * Код ошибок 1.хх
-     *
-     * @param url
-     * @param json
-     * @param listener
      */
 
     static public void getQuotas(String url, String json, final GetQuotasCallback listener) {
-
-//        Log.d(TAG, "getQuotas: " + json);
-        Log.d("T-L.QuizerAPI", "============= getQuotas: " + url);
 
         Map<String, String> fields = new HashMap<>();
         fields.put(Constants.ServerFields.JSON_DATA, json);
@@ -215,17 +179,9 @@ public class QuizerAPI {
 
     /**
      * Получение статистики.
-     * <p>
-     * Код ошибок ?.хх
-     *
-     * @param url
-     * @param json
-     * @param listener
      */
 
     static public void getStatistics(String url, String json, final GetStatisticsCallback listener) {
-
-        Log.d(TAG, "getStatistics: " + json);
 
         Map<String, String> fields = new HashMap<>();
         fields.put(Constants.ServerFields.JSON_DATA, json);
@@ -251,14 +207,6 @@ public class QuizerAPI {
 
     /**
      * Отправка файлов (аудио и фото).
-     * <p>
-     * Код ошибок 3.хх
-     *
-     * @param url
-     * @param files
-     * @param pNameForm
-     * @param pMediaType
-     * @param listener
      */
     static public void sendFiles(String url, List<File> files, String pNameForm, String pMediaType, final SendFilesCallback listener) {
 
@@ -303,9 +251,6 @@ public class QuizerAPI {
     /**
      * Отправка crash-логов.
      *
-     * @param url
-     * @param json
-     * @param listener
      */
 
     static public void sendCrash(String url, String json, final SendCrashCallback listener) {
@@ -339,9 +284,6 @@ public class QuizerAPI {
     /**
      * Отправка логов.
      *
-     * @param url
-     * @param json
-     * @param listener
      */
 
     static public void sendLogs(String url, String json, final SendLogsCallback listener) {

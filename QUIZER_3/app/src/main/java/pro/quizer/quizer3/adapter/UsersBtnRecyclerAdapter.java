@@ -30,9 +30,6 @@ public class UsersBtnRecyclerAdapter extends RecyclerView.Adapter<UsersBtnRecycl
         return new ListObjectViewHolder(view, mOnUserClickListener);
     }
 
-    @NonNull
-
-
     @Override
     public void onBindViewHolder(ListObjectViewHolder holder, int position) {
         holder.bind(mItemList.get(position));
@@ -53,7 +50,7 @@ public class UsersBtnRecyclerAdapter extends RecyclerView.Adapter<UsersBtnRecycl
         public ListObjectViewHolder(@NonNull View itemView, OnUserClickListener onUserClickListener) {
             super(itemView);
 
-            btn = (Button) itemView.findViewById(R.id.user_logs_btn);
+            btn = itemView.findViewById(R.id.user_logs_btn);
 
             this.onUserClickListener = onUserClickListener;
             btn.setOnClickListener(this);

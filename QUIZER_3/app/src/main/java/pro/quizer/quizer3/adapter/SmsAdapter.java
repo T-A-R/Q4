@@ -18,12 +18,11 @@ import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.model.sms.SmsStage;
 import pro.quizer.quizer3.utils.DateUtils;
-import pro.quizer.quizer3.model.sms.SmsStage;
 
 public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
 
-    private List<SmsStage> mSmsStages;
-    private MainActivity mBaseActivity;
+    private final List<SmsStage> mSmsStages;
+    private final MainActivity mBaseActivity;
 
     class SmsViewHolder extends RecyclerView.ViewHolder {
 
@@ -45,7 +44,7 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
             mRetryButton = view.findViewById(R.id.sms_retry);
             cont = view.findViewById(R.id.sms_stage_cont);
 
-            recyclerView = (RecyclerView) view.findViewById(R.id.sms_rv);
+            recyclerView = view.findViewById(R.id.sms_rv);
         }
     }
 
@@ -78,30 +77,17 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
         final String timeFromString = DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, timeFrom);
         final String timeToString = DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, timeTo);
         final String timeInterval = String.format(mBaseActivity.getString(R.string.view_sms_time_interval), timeFromString, timeToString);
-        final String smsStatus = smsStage.getStatus();
 
 
         holder.mTimeInterval.setText(timeInterval);
 
-        final boolean availableToSend = currentTime > timeFrom;
-
         final boolean finished = currentTime > timeTo;
-        final int sdk = android.os.Build.VERSION.SDK_INT;
         if (finished) {
             holder.mSmsStatus.setText(Constants.Sms.ENDED);
-
-            if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_gray_shadow));
-            } else {
-                holder.cont.setBackground(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_gray_shadow));
-            }
+            holder.cont.setBackground(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_gray_shadow));
         } else {
             holder.mSmsStatus.setText(Constants.Sms.NOT_ENDED);
-            if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                holder.cont.setBackgroundDrawable(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_shadow));
-            } else {
-                holder.cont.setBackground(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_shadow));
-            }
+            holder.cont.setBackground(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_shadow));
         }
     }
 

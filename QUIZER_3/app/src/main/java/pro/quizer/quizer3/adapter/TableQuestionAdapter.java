@@ -82,7 +82,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final ElementOptionsR optionsModel = pCurrentElement.getElementOptionsR();
         mIsFlipColsAndRows = optionsModel.isFlip_cols_and_rows();
         mIsSmallColumns = optionsModel.isSmall_column();
-//        mIsSmallColumns = true;
         mContext = (MainActivity) context;
         isSpeedMode = mContext.isTableSpeedMode();
         mQuestions = questions;
@@ -173,7 +172,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     @NonNull
     @Override
     public ViewHolderImpl onCreateColumnHeaderViewHolder(@NonNull final ViewGroup parent) {
-//        return new TableHeaderColumnViewHolder(mLayoutInflater.inflate(mContext.isAutoZoom() ? R.layout.adapter_table_item_header_column_auto : R.layout.adapter_table_item_header_column, parent, false));
         return new TableHeaderColumnViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item_header_column_auto, parent, false));
     }
 
@@ -242,11 +240,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     @Override
     public void onBindHeaderColumnViewHolder(@NonNull final ViewHolderImpl viewHolder, final int column) {
         final TableHeaderColumnViewHolder vh = (TableHeaderColumnViewHolder) viewHolder;
-        final ElementOptionsR optionsModel = mTopSide.get(column - 1).getElementOptionsR();
 
         vh.mHeaderColumnTextView.setText(mIsFlipColsAndRows ? titles.get(column - 1) : Objects.requireNonNull(titlesMap.get(mTopSide.get(column - 1).getRelative_id())).getTitle());
-//        UiUtils.setTextOrHide(vh.mHeaderColumnTextView, mIsFlipColsAndRows ? titles.get(column - 1) : optionsModel.getTitle());
-//        UiUtils.setTextOrHide(vh.mHeaderColumnDescriptionTextView, optionsModel.getDescription());
         if(!isSpeedMode) {
             if (mIsFlipColsAndRows) {
                 if (mLine[column - 1]) {
@@ -264,7 +259,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final ElementOptionsR optionsModel = mLeftSide.get(row - 1).getElementOptionsR();
 
         vh.mHeaderRowTextView.setText(!mIsFlipColsAndRows ? titles.get(row - 1) : Objects.requireNonNull(titlesMap.get(mLeftSide.get(row - 1).getRelative_id())).getTitle());
-//        UiUtils.setTextOrHide(vh.mHeaderRowTextView, !mIsFlipColsAndRows ? titles.get(row - 1) : optionsModel.getTitle());
         UiUtils.setTextOrHide(vh.mHeaderRowDescriptionTextView, optionsModel.getDescription());
         if(!isSpeedMode) {
             if (!mIsFlipColsAndRows) {
@@ -336,7 +330,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         }
     }
 
-    private Calendar mCalendar = Calendar.getInstance();
+    private final Calendar mCalendar = Calendar.getInstance();
 
     public void setDate(final EditText pEditText) {
         if (mContext != null && !mContext.isFinishing()) {
@@ -439,7 +433,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                         if (!StringUtils.isEmpty(answer) || options.isUnnecessary_fill_open()) {
 
                         } else {
-                            Log.d(TAG, "?????????????? notEmpty: 2");
                             mContext.showToastfromActivity(mContext.getString(R.string.empty_string_warning));
                             return;
                         }
@@ -663,13 +656,11 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         TextView mHeaderColumnTextView;
         RelativeLayout mColumnCont;
-//        TextView mHeaderColumnDescriptionTextView;
 
         private TableHeaderColumnViewHolder(@NonNull final View itemView) {
             super(itemView);
             mHeaderColumnTextView = itemView.findViewById(R.id.table_header_column_text_view);
             mColumnCont = itemView.findViewById(R.id.column_cont);
-//            mHeaderColumnDescriptionTextView = itemView.findViewById(R.id.table_header_column_description_text_view);
         }
     }
 

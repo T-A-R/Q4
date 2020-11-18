@@ -1,5 +1,6 @@
 package pro.quizer.quizer3.adapter;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,8 +17,8 @@ import pro.quizer.quizer3.utils.StringUtils;
 
 public class UsersLogRecyclerAdapter extends RecyclerView.Adapter<UsersLogRecyclerAdapter.ListObjectViewHolder> {
 
-    private List<AppLogsR> mItemList;
-    private boolean mAutoZoom;
+    private final List<AppLogsR> mItemList;
+    private final boolean mAutoZoom;
 
     public UsersLogRecyclerAdapter(List<AppLogsR> mItemList, boolean pAutoZoom) {
         this.mItemList = mItemList;
@@ -63,16 +64,17 @@ public class UsersLogRecyclerAdapter extends RecyclerView.Adapter<UsersLogRecycl
         public ListObjectViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            mDate = (TextView) itemView.findViewById(R.id.log_date);
-            mType = (TextView) itemView.findViewById(R.id.log_type);
-            mObject = (TextView) itemView.findViewById(R.id.log_object);
-            mResult = (TextView) itemView.findViewById(R.id.log_result);
-            mDesc = (TextView) itemView.findViewById(R.id.log_desc);
-            mData = (TextView) itemView.findViewById(R.id.log_data);
+            mDate = itemView.findViewById(R.id.log_date);
+            mType = itemView.findViewById(R.id.log_type);
+            mObject = itemView.findViewById(R.id.log_object);
+            mResult = itemView.findViewById(R.id.log_result);
+            mDesc = itemView.findViewById(R.id.log_desc);
+            mData = itemView.findViewById(R.id.log_data);
 
 
         }
 
+        @SuppressLint("SetTextI18n")
         public void bind(final AppLogsR item) {
 
             mDate.setText(DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, Long.parseLong(item.getDate()) * 1000));

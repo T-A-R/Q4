@@ -83,7 +83,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
             final String index = match.getSmsNum();
             List<ElementDatabaseModelR> elementsByQuestionId = getElementsByParentId(allElements, match.getQuestionId());
 
-            if (elementsByQuestionId != null && !elementsByQuestionId.isEmpty()) {
+            if (!elementsByQuestionId.isEmpty()) {
                 final SmsAnswer smsAnswer = result.get(index);
                 final int answersCount = smsAnswer.getAnswersCount();
 
@@ -93,7 +93,6 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
                 }
 
                 result.put(index, smsAnswer);
-//                mSmsStage.setStatus(pStatus);
             }
         }
     }

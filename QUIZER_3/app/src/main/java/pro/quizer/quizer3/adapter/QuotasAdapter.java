@@ -105,14 +105,10 @@ public class QuotasAdapter extends RecyclerView.Adapter<QuotasAdapter.QuotaViewH
         } else {
             count = mMainActivity.getString(R.string.view_status_more_than_done) + count;
         }
-        final int sdk = android.os.Build.VERSION.SDK_INT;
         if (mHoldersState.get(position) == 1) {
             holder.mRecyclerView.setVisibility(View.VISIBLE);
-            if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                holder.mCount.setBackgroundDrawable(ContextCompat.getDrawable(mMainActivity, R.drawable.button_background_gray_light));
-            } else {
-                holder.mCount.setBackground(ContextCompat.getDrawable(mMainActivity, R.drawable.button_background_gray_light));
-            }
+            holder.mCount.setBackground(ContextCompat.getDrawable(mMainActivity, R.drawable.button_background_gray_light));
+
         } else {
             holder.mRecyclerView.setVisibility(View.GONE);
             holder.mCount.setBackgroundColor(0xFFFFFF);

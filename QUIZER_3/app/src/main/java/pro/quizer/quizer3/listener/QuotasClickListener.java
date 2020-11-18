@@ -30,22 +30,18 @@ public class QuotasClickListener implements View.OnClickListener {
             @Override
             public void onSuccess() {
 //                pMainActivity.hideProgressBar();
-//
 //                pMainActivity.showQuotasFragment();
             }
 
             @Override
             public void onError(Exception pException) {
-//                pMainActivity.hideProgressBar();
-////                pBaseActivity.showToast(pException.toString());
-//                pMainActivity.showQuotasFragment();
+
             }
         });
     }
 
     @Override
     public void onClick(View view) {
-        Log.d(TAG, "onClick: QQQQQQQQQQQQQQQQQQQQQQQQQQ");
         new UpdateQuotasExecutable(mMainActivity, mCallback).execute();
     }
 }

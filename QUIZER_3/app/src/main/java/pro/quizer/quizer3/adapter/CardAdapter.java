@@ -192,11 +192,9 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
 
         mNextBtn.setOnClickListener(v -> {
             if ((mEditText.getText() != null && mEditText.getText().length() > 0) || mItems.get(position).isUnnecessaryFillOpen()) {
-//                mItems.get(position).setChecked(true);
                 mItems.get(position).setData(mEditText.getText().toString());
                 pEditText.setText(mEditText.getText().toString());
                 checkItem(position);
-//                notifyDataSetChanged();
             } else
                 mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
             if (mActivity != null && !mActivity.isFinishing()) {
@@ -256,6 +254,5 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
         mTextView.setText(dateFormat.format(mCalendar.getTime()));
         mItems.get(position).setData(dateFormat.format(mCalendar.getTime()));
         checkItem(position);
-//        notifyDataSetChanged();
     }
 }

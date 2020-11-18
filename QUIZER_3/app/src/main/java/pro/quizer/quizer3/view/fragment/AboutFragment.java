@@ -3,6 +3,8 @@ package pro.quizer.quizer3.view.fragment;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.Objects;
+
 import pro.quizer.quizer3.BuildConfig;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.utils.EmailUtils;
@@ -30,12 +32,7 @@ public class AboutFragment extends ScreenFragment {
         findViewById(R.id.contacts_phone).setOnClickListener(v -> {
 //                PhoneUtils.startCall(getContext(), "+79092144833");
         });
-        findViewById(R.id.contacts_email).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EmailUtils.sendEmail(getContext(), "sales@quizer.pro");
-            }
-        });
+        findViewById(R.id.contacts_email).setOnClickListener(v -> EmailUtils.sendEmail(Objects.requireNonNull(getContext()), "sales@quizer.pro"));
     }
 
     @Override

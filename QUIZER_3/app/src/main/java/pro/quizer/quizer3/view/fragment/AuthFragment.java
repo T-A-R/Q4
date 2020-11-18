@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -53,11 +52,10 @@ import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class AuthFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.AuthUserCallback, SmartFragment.Events {
 
-    private static int MAX_USERS = 5;
-    private static int MAX_VERSION_TAP_COUNT = 5;
+    private static final int MAX_USERS = 5;
+    private static final int MAX_VERSION_TAP_COUNT = 5;
 
     private TextView tvVersionWarning;
-    private TextView tvUsers;
     private TextView tvVersionView;
     private EditSpinner esLogin;
     private EditText etPass;
@@ -82,16 +80,16 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     @Override
     protected void onReady() {
 
-        btnSend = (Button) findViewById(R.id.btn_send_auth);
-        esLogin = (EditSpinner) findViewById(R.id.login_spinner);
-        etPass = (EditText) findViewById(R.id.auth_password_edit_text);
-        tvVersionWarning = (TextView) findViewById(R.id.version_warning);
-        tvUsers = (TextView) findViewById(R.id.users_count);
-        tvVersionView = (TextView) findViewById(R.id.version_view);
+        btnSend = findViewById(R.id.btn_send_auth);
+        esLogin = findViewById(R.id.login_spinner);
+        etPass = findViewById(R.id.auth_password_edit_text);
+        tvVersionWarning = findViewById(R.id.version_warning);
+        TextView tvUsers = findViewById(R.id.users_count);
+        tvVersionView = findViewById(R.id.version_view);
 
         MainFragment.disableSideMenu();
 
-        if(getMainActivity().isHomeRestart()) {
+        if (getMainActivity().isHomeRestart()) {
             replaceFragment(new HomeFragment());
         }
 
@@ -105,7 +103,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             btnSend.setTransformationMethod(null);
         }
 
-        RelativeLayout cont = (RelativeLayout) findViewById(R.id.cont_auth_fragment);
+        RelativeLayout cont = findViewById(R.id.cont_auth_fragment);
         cont.startAnimation(Anim.getAppear(getContext()));
 
         btnSend.startAnimation(Anim.getAppearSlide(getContext(), 500));
@@ -146,7 +144,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     public void onClick(View view) {
         if (view == btnSend) {
             deactivateButtons();
-            if(isAvia()) {
+            if (isAvia()) {
                 //TODO ADD AVIA SCREENSAVER
             } else showScreensaver(R.string.please_wait_quiz, true);
             onLoginClick();
@@ -186,7 +184,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         mVersionTapCount++;
 
         if (mVersionTapCount == MAX_VERSION_TAP_COUNT) {
-//            addLog("android", Constants.LogType.BUTTON, null, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_version), "");
             mVersionTapCount = 0;
             replaceFragment(new ServiceFragment());
         }
@@ -226,7 +223,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
         if (mSavedUsers != null && mSavedUsers.size() >= MAX_USERS && !mSavedUsers.contains(login)) {
             showToast(String.format(getString(R.string.notification_max_users), String.valueOf(MAX_USERS)));
-//            addLog(null, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.notification_max_users), "");
             activateButtons();
             return;
         }
@@ -236,8 +232,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         AuthRequestModel post = new AuthRequestModel(getLoginAdmin(), passwordMD5, login);
         Gson gson = new Gson();
         String json = gson.toJson(post);
-
-//        addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SENT, getString(R.string.send_auth_request), json);
 
         QuizerAPI.authUser(getServer(), json, this);
     }
@@ -366,14 +360,10 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         Gson gson = new Gson();
         String json = gson.toJson(configRequestModel);
 
-//        addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SENT, getString(R.string.try_to_get_config), json);
-
         QuizerAPI.getConfig(getServer(), json, responseBody -> {
 
             if (responseBody == null) {
                 showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_601));
-//                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_601_desc), "");
-
                 return;
             }
 
@@ -383,8 +373,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 Log.d(TAG, "downloadConfig: " + responseJson);
             } catch (IOException e) {
                 showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_602));
-//                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_602_desc), e.getMessage());
-
             }
             final GsonBuilder gsonBuilder = new GsonBuilder();
             ConfigResponseModel configResponseModel = null;
@@ -393,7 +381,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
             } catch (final Exception pE) {
                 showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_603));
-//                addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_603_desc), responseJson);
             }
 
             if (configResponseModel != null) {
@@ -405,13 +392,10 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                     }
                 }
                 if (configResponseModel.getResult() != 0) {
-//                    addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SUCCESS, getString(R.string.get_config_success), responseJson);
-//                    createElementsItems(pLogin);
                     isRebuildDB = true;
                     downloadFiles(configResponseModel, pModel, pLogin, pPassword);
                 } else {
                     showToast(configResponseModel.getError());
-//                    addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, configResponseModel.getError(), responseJson);
                 }
             } else {
                 showToast(getString(R.string.server_response_error) + " " + configResponseModel.getError());
@@ -423,7 +407,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                                final AuthResponseModel pAuthResponseModel,
                                final String pLogin,
                                final String pPassword) {
-//        addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.loading_files), Constants.LogResult.SENT, getString(R.string.try_to_load_files), "");
 
         final String[] fileUris = pConfigResponseModel.getConfig().getProjectInfo().getMediaFiles();
 
@@ -448,7 +431,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                         public void onError(final Exception e, final int progress) {
                             super.onError(e, progress);
                             showToast(getString(R.string.download_files_error));
-//                            addLog(pLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.downloading_media_files), Constants.LogResult.ERROR, getString(R.string.download_files_error), "");
                         }
                     }).loadMultiple(fileUris);
         }
@@ -460,17 +442,14 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         try {
             if (responseBody == null) {
                 showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_401));
-    //            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_401_desc), "");
 
                 final UserModelR savedUserModel = getLocalUserModel(login, passwordMD5);
 
                 if (savedUserModel != null) {
                     showToast(getString(R.string.saved_data_login));
-    //                addLog(savedUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SUCCESS, getString(R.string.saved_data_login), "");
                     onLoggedInWithoutUpdateLocalData(savedUserModel.getUser_id());
                 } else {
                     showToast(getString(R.string.wrong_login_or_pass));
-    //                addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.wrong_login_or_pass), "login: " + login + " pass: " + password);
                 }
 
                 activateButtons();
@@ -483,7 +462,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             } catch (IOException e) {
                 e.printStackTrace();
                 showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_402));
-    //            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_402_desc), e.getMessage());
 
                 responseJson = null;
                 activateButtons();
@@ -494,7 +472,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
             } catch (final Exception pE) {
                 activateButtons();
-    //            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_403_desc), responseJson);
             }
 
             if (authResponseModel == null) {
@@ -502,11 +479,9 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
                 if (savedUserModel != null) {
                     showToast(getString(R.string.saved_data_login));
-    //                addLog(savedUserModel.getLogin(), Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SUCCESS, getString(R.string.saved_data_login), "");
                     onLoggedInWithoutUpdateLocalData(savedUserModel.getUser_id());
                 } else {
                     showToast(getString(R.string.wrong_login_or_pass));
-    //                addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.wrong_login_or_pass), "login: " + login + " pass: " + password);
                 }
 
                 activateButtons();
@@ -526,11 +501,9 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             } else {
                 showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_404));
                 activateButtons();
-    //            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, getString(R.string.log_error_404_desc), responseJson);
             }
 
             if (authResponseModel.getResult() != 0) {
-    //            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.SUCCESS, getString(R.string.new_data_login), "");
 
                 if (isNeedDownloadConfig(authResponseModel)) {
                     downloadConfig(login, passwordMD5, authResponseModel);
@@ -540,7 +513,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             } else {
                 showToast(authResponseModel.getError());
                 activateButtons();
-    //            addLog(login, Constants.LogType.SERVER, Constants.LogObject.AUTH, getString(R.string.user_auth), Constants.LogResult.ERROR, authResponseModel.getError(), "");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -564,14 +536,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     private void deactivateButtons() {
         setViewBackground(btnSend, false, false);
         btnSend.setEnabled(false);
-
-        final int sdk = android.os.Build.VERSION.SDK_INT;
-
-        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            btnSend.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_gray_avia : R.drawable.button_background_gray) );
-        } else {
-            btnSend.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_gray_avia : R.drawable.button_background_gray));
-        }
+        btnSend.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_gray_avia : R.drawable.button_background_gray));
     }
 }
 

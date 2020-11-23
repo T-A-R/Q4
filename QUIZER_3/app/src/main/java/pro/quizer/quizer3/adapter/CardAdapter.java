@@ -108,6 +108,7 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
 
                 cont.setOnClickListener(v -> {
                     if ((open && !getItem(position).isChecked()) || (open && getItem(position).isAutoCkecker())) {
+                        Log.d("T-L.CardAdapter", "CLICK: 1");
                         switch (getItem(position).getOpen()) {
                             case "text":
                             case "number":
@@ -120,8 +121,10 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
                                 setTime(cardInput, position);
                                 break;
                         }
-                    } else
+                    } else {
+                        Log.d("T-L.CardAdapter", "CLICK: 2");
                         checkItem(position);
+                    }
                 });
             }
         }
@@ -130,7 +133,11 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
     }
 
     private void checkItem(int position) {
-        if (mItems.get(position).isChecked() && mItems.get(position).getOpen().equals("checkbox")) return;
+        if (mItems.get(position).isChecked() && !isMulti) {
+            Log.d("T-L.CardAdapter", "CLICK: 3");
+
+            return;
+        }
         if (mItems.get(position).isAutoCkecker()) return;
         mItems.get(position).setChecked(!mItems.get(position).isChecked());
         if (!isMulti || mItems.get(position).isUnChecker()) {
@@ -140,6 +147,7 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
                 }
             }
         }
+        Log.d("T-L.CardAdapter", "????????? checkItem: " + mItems.get(position).isChecked());
         if (isMulti) {
             for (int i = 0; i < mItems.size(); i++) {
                 if (i != position && mItems.get(i).isUnChecker()) {

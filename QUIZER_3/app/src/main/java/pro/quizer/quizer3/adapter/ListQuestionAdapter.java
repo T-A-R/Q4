@@ -669,14 +669,16 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
         final AlertDialog alertDialog = dialog.create();
 
         mNextBtn.setOnClickListener(v -> {
-            if ((mEditText.getText() != null && mEditText.getText().length() > 0) || answersList.get(position).getElementOptionsR().isUnnecessary_fill_open()) {
+            String text = mEditText.getText().toString();
+            if ((text.length() > 0) || answersList.get(position).getElementOptionsR().isUnnecessary_fill_open()) {
                 answersState.get(position).setChecked(true);
-                answersState.get(position).setData(mEditText.getText().toString());
-                pEditText.setText(mEditText.getText().toString());
+                answersState.get(position).setData(text);
+                pEditText.setText(text);
                 if (!mActivity.isFinishing()) {
                     mActivity.hideKeyboardFrom(mEditText);
                     alertDialog.dismiss();
                 }
+                notifyDataSetChanged();
             } else
                 mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
 

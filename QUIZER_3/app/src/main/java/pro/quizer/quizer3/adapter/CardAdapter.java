@@ -26,6 +26,7 @@ import java.util.Objects;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.model.CardItem;
+import pro.quizer.quizer3.utils.UiUtils;
 
 import static pro.quizer.quizer3.model.OptionsOpenType.NUMBER;
 
@@ -103,7 +104,8 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
                 }
                 checker.setVisibility(View.VISIBLE);
 
-                textView.setText(text);
+                UiUtils.setTextOrHide(textView, text);
+
                 cont.setOnClickListener(v -> {
                     if ((open && !getItem(position).isChecked()) || (open && getItem(position).isAutoCkecker())) {
                         switch (getItem(position).getOpen()) {

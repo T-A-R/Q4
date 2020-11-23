@@ -35,6 +35,7 @@ import pro.quizer.quizer3.model.view.TitleModel;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
+import pro.quizer.quizer3.utils.UiUtils;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.model.OptionsOpenType.CHECKBOX;
@@ -197,7 +198,8 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             holder.answerDesc.setTextColor(mActivity.getResources().getColor(R.color.black));
         }
 
-        holder.answerEditText.setText(answersState.get(position).getData());
+//        holder.answerEditText.setText(answersState.get(position).getData());
+        UiUtils.setTextOrHide(holder.answerEditText, answersState.get(position).getData());
     }
 
     @Override
@@ -252,10 +254,10 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
 
         public void bind(final ElementItemR item, int position) {
 
-            answerTitle.setText(titles.get(position));
+            UiUtils.setTextOrHide(answerTitle, titles.get(position));
             if (item.getElementOptionsR().getDescription() != null && titlesMap.get(item.getRelative_id()) != null) {
                 answerDesc.setVisibility(View.VISIBLE);
-                answerDesc.setText(Objects.requireNonNull(titlesMap.get(item.getRelative_id())).getDescription());
+                UiUtils.setTextOrHide(answerDesc, Objects.requireNonNull(titlesMap.get(item.getRelative_id())).getDescription());
             } else {
                 answerDesc.setVisibility(View.GONE);
             }
@@ -377,7 +379,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 if (answersState.get(position).getData() != null && !answersState.get(position).getData().equals("")) {
                     editButton.setVisibility(View.GONE);
                     answerEditText.setVisibility(View.VISIBLE);
-                    answerEditText.setText(answersState.get(position).getData());
+                    answerEditText.setText(answersState.get(position).getData()); //TODO ??????????????????????????????????????
                 }
                 if (isPressed != null && isPressed.equals(position)) {
                     if (position == lastSelectedPosition) {

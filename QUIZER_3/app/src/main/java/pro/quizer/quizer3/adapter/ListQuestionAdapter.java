@@ -198,8 +198,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
             holder.answerDesc.setTextColor(mActivity.getResources().getColor(R.color.black));
         }
 
-//        holder.answerEditText.setText(answersState.get(position).getData());
-        UiUtils.setTextOrHide(holder.answerEditText, answersState.get(position).getData());
+        holder.answerEditText.setText(answersState.get(position).getData());
     }
 
     @Override
@@ -379,7 +378,7 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 if (answersState.get(position).getData() != null && !answersState.get(position).getData().equals("")) {
                     editButton.setVisibility(View.GONE);
                     answerEditText.setVisibility(View.VISIBLE);
-                    answerEditText.setText(answersState.get(position).getData()); //TODO ??????????????????????????????????????
+                    answerEditText.setText(answersState.get(position).getData());
                 }
                 if (isPressed != null && isPressed.equals(position)) {
                     if (position == lastSelectedPosition) {
@@ -674,12 +673,13 @@ public class ListQuestionAdapter extends RecyclerView.Adapter<ListQuestionAdapte
                 answersState.get(position).setChecked(true);
                 answersState.get(position).setData(mEditText.getText().toString());
                 pEditText.setText(mEditText.getText().toString());
+                if (!mActivity.isFinishing()) {
+                    mActivity.hideKeyboardFrom(mEditText);
+                    alertDialog.dismiss();
+                }
             } else
                 mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
-            if (!mActivity.isFinishing()) {
-                mActivity.hideKeyboardFrom(mEditText);
-                alertDialog.dismiss();
-            }
+
         });
 
         if (!mActivity.isFinishing()) {

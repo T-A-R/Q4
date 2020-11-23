@@ -1309,7 +1309,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
 
                 if (openType && !element.getElementOptionsR().isUnnecessary_fill_open()) {
-                    if (state.getData().equals("") || state.getData() == null) {
+                    if (state.getData() == null || state.getData().equals("")) {
                         if (answerType.equals(ElementSubtype.RANK))
                             showToast(getString(R.string.empty_rank_warning));
                         else showToast(getString(R.string.empty_string_warning));

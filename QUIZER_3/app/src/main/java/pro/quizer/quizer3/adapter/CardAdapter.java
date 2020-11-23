@@ -193,12 +193,10 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
         final AlertDialog alertDialog = dialog.create();
 
         mNextBtn.setOnClickListener(v -> {
-            if ((mEditText.getText() != null && mEditText.getText().length() > 0) || mItems.get(position).isUnnecessaryFillOpen()) {
-                mItems.get(position).setData(mEditText.getText().toString());
-                pEditText.setText(mEditText.getText().toString());
-                checkItem(position);
-            } else
-                mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
+            mItems.get(position).setData(mEditText.getText().toString());
+            pEditText.setText(mEditText.getText().toString());
+            checkItem(position);
+
             if (mActivity != null && !mActivity.isFinishing()) {
                 mActivity.hideKeyboardFrom(mEditText);
                 alertDialog.dismiss();

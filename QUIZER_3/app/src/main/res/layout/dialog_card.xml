@@ -9,7 +9,7 @@
     android:orientation="vertical"
     android:id="@+id/card_cont">
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/view_close"
         android:layout_width="@dimen/_26sdp"
         android:layout_height="@dimen/_26sdp"

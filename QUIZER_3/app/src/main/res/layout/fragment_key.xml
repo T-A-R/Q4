@@ -13,7 +13,7 @@
         android:layout_marginTop="@dimen/_42sdp"
         android:orientation="vertical">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/quizer" />

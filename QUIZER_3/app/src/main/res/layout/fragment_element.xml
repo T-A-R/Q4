@@ -33,7 +33,7 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_8sdp"
@@ -78,7 +78,7 @@
 
             </RelativeLayout>
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <include layout="@layout/view_divider" />
 
@@ -365,7 +365,7 @@
 
             </RelativeLayout>
 
-            <android.support.v4.widget.NestedScrollView
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -456,7 +456,7 @@
 
                 </LinearLayout>
 
-            </android.support.v4.widget.NestedScrollView>
+            </androidx.core.widget.NestedScrollView>
 
             <!--SPINNER-->
             <LinearLayout
@@ -485,7 +485,7 @@
             </LinearLayout>
 
             <!--LIST-->
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/answers_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -523,7 +523,7 @@
         </FrameLayout>
 
         <!--SCALE-->
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/scale_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -544,7 +544,7 @@
     </LinearLayout>
 
     <!--BUTTONS-->
-    <android.support.v7.widget.LinearLayoutCompat
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/button_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -592,6 +592,6 @@
             android:text="Вперед"
             android:textSize="@dimen/_12ssp" />
 
-    </android.support.v7.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </RelativeLayout>

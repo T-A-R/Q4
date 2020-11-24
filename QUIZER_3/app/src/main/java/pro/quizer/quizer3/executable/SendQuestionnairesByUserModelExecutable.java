@@ -1,6 +1,6 @@
 package pro.quizer.quizer3.executable;
 
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 

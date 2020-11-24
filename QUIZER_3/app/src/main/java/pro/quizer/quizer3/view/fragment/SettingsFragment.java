@@ -1,8 +1,8 @@
 package pro.quizer.quizer3.view.fragment;
 
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AppCompatSeekBar;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatSeekBar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;

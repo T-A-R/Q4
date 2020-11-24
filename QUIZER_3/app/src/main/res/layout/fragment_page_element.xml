@@ -61,7 +61,7 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <android.support.constraint.ConstraintLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
 
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
                                 tools:ignore="MissingConstraints"
                                 tools:layout_editor_absoluteY="2dp" />
 
-                        </android.support.constraint.ConstraintLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <include layout="@layout/view_divider" />
 
@@ -103,7 +103,7 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <android.support.constraint.ConstraintLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_8sdp"
@@ -129,7 +129,7 @@
                                 tools:ignore="MissingConstraints"
                                 tools:layout_editor_absoluteY="2dp" />
 
-                        </android.support.constraint.ConstraintLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                             android:id="@+id/title_desc_1"
@@ -195,7 +195,7 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <android.support.constraint.ConstraintLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_8sdp"
@@ -221,7 +221,7 @@
                                 tools:ignore="MissingConstraints"
                                 tools:layout_editor_absoluteY="2dp" />
 
-                        </android.support.constraint.ConstraintLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                             android:id="@+id/title_desc_2"
@@ -356,7 +356,7 @@
 
                     </LinearLayout>
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/answers_recyclerview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -382,7 +382,7 @@
 
                 </LinearLayout>
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/scale_recyclerview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -429,7 +429,7 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <android.support.constraint.ConstraintLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
 
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -457,7 +457,7 @@
                                 tools:ignore="MissingConstraints"
                                 tools:layout_editor_absoluteY="2dp" />
 
-                        </android.support.constraint.ConstraintLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <include layout="@layout/view_divider" />
 
@@ -471,7 +471,7 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <android.support.constraint.ConstraintLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_8sdp"
@@ -497,7 +497,7 @@
                                 tools:ignore="MissingConstraints"
                                 tools:layout_editor_absoluteY="2dp" />
 
-                        </android.support.constraint.ConstraintLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                             android:id="@+id/title_desc_1_2"
@@ -563,7 +563,7 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <android.support.constraint.ConstraintLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_8sdp"
@@ -589,7 +589,7 @@
                                 tools:ignore="MissingConstraints"
                                 tools:layout_editor_absoluteY="2dp" />
 
-                        </android.support.constraint.ConstraintLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                             android:id="@+id/title_desc_2_2"
@@ -724,7 +724,7 @@
 
                     </LinearLayout>
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/answers_recyclerview_2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -750,7 +750,7 @@
 
                 </LinearLayout>
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/scale_recyclerview_2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -797,7 +797,7 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <android.support.constraint.ConstraintLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
 
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -825,7 +825,7 @@
                                 tools:ignore="MissingConstraints"
                                 tools:layout_editor_absoluteY="2dp" />
 
-                        </android.support.constraint.ConstraintLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <include layout="@layout/view_divider" />
 
@@ -839,7 +839,7 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <android.support.constraint.ConstraintLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_8sdp"
@@ -865,7 +865,7 @@
                                 tools:ignore="MissingConstraints"
                                 tools:layout_editor_absoluteY="2dp" />
 
-                        </android.support.constraint.ConstraintLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                             android:id="@+id/title_desc_1_3"
@@ -931,7 +931,7 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <android.support.constraint.ConstraintLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_8sdp"
@@ -957,7 +957,7 @@
                                 tools:ignore="MissingConstraints"
                                 tools:layout_editor_absoluteY="2dp" />
 
-                        </android.support.constraint.ConstraintLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                             android:id="@+id/title_desc_2_3"
@@ -1092,7 +1092,7 @@
 
                     </LinearLayout>
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/answers_recyclerview_3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1118,7 +1118,7 @@
 
                 </LinearLayout>
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/scale_recyclerview_3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -1165,7 +1165,7 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <android.support.constraint.ConstraintLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
 
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -1193,7 +1193,7 @@
                                 tools:ignore="MissingConstraints"
                                 tools:layout_editor_absoluteY="2dp" />
 
-                        </android.support.constraint.ConstraintLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <include layout="@layout/view_divider" />
 
@@ -1207,7 +1207,7 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <android.support.constraint.ConstraintLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_8sdp"
@@ -1233,7 +1233,7 @@
                                 tools:ignore="MissingConstraints"
                                 tools:layout_editor_absoluteY="2dp" />
 
-                        </android.support.constraint.ConstraintLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                             android:id="@+id/title_desc_1_4"
@@ -1299,7 +1299,7 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <android.support.constraint.ConstraintLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_8sdp"
@@ -1325,7 +1325,7 @@
                                 tools:ignore="MissingConstraints"
                                 tools:layout_editor_absoluteY="2dp" />
 
-                        </android.support.constraint.ConstraintLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                             android:id="@+id/title_desc_2_4"
@@ -1460,7 +1460,7 @@
 
                     </LinearLayout>
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/answers_recyclerview_4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1486,7 +1486,7 @@
 
                 </LinearLayout>
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/scale_recyclerview_4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -1533,7 +1533,7 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <android.support.constraint.ConstraintLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
 
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -1561,7 +1561,7 @@
                                 tools:ignore="MissingConstraints"
                                 tools:layout_editor_absoluteY="2dp" />
 
-                        </android.support.constraint.ConstraintLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <include layout="@layout/view_divider" />
 
@@ -1575,7 +1575,7 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <android.support.constraint.ConstraintLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_8sdp"
@@ -1601,7 +1601,7 @@
                                 tools:ignore="MissingConstraints"
                                 tools:layout_editor_absoluteY="2dp" />
 
-                        </android.support.constraint.ConstraintLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                             android:id="@+id/title_desc_1_5"
@@ -1667,7 +1667,7 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <android.support.constraint.ConstraintLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_8sdp"
@@ -1693,7 +1693,7 @@
                                 tools:ignore="MissingConstraints"
                                 tools:layout_editor_absoluteY="2dp" />
 
-                        </android.support.constraint.ConstraintLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                             android:id="@+id/title_desc_2_5"
@@ -1828,7 +1828,7 @@
 
                     </LinearLayout>
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/answers_recyclerview_5"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1854,7 +1854,7 @@
 
                 </LinearLayout>
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/scale_recyclerview_5"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -1865,7 +1865,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/button_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -1907,6 +1907,6 @@
             android:text="Вперед"
             android:textSize="@dimen/_12ssp" />
 
-    </android.support.v7.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </RelativeLayout>

@@ -1,7 +1,7 @@
 package pro.quizer.quizer3;
 
 import android.app.Application;
-import android.arch.persistence.room.Room;
+import androidx.room.Room;
 
 import com.activeandroid.ActiveAndroid;
 

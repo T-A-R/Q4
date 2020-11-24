@@ -39,7 +39,7 @@
             android:textSize="@dimen/_12ssp"
             android:text="Не отправлено" />
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/sms_copy_btn"
             android:layout_width="24dp"
             android:layout_height="24dp"

@@ -1,14 +1,13 @@
 package pro.quizer.quizer3.view.element.textview;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.util.AttributeSet;
 
 import pro.quizer.quizer3.utils.ResizableViewUtils;
 
 //import pro.quizer.quizer3.view.element.ResizableViewUtils;
 
-public abstract class AbstractResizableTextView extends android.support.v7.widget.AppCompatTextView {
+public abstract class AbstractResizableTextView extends androidx.appcompat.widget.AppCompatTextView {
 
     public AbstractResizableTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);

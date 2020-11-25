@@ -1559,7 +1559,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         List<AnswerState> answerStatesRestored = new ArrayList<>();
         Map<Integer, CardItem> itemsMap = convertCardsListToMap(items);
         if (itemsMap != null && itemsMap.size() > 0) {
-            int lastSelectedPosition = -1;
             for (int i = 0; i < answerStatesAdapter.size(); i++) {
                 AnswerState answerStateNew = new AnswerState();
 
@@ -1569,7 +1568,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             && !itemsMap.get(answerStatesAdapter.get(i).getRelative_id()).getData().equals("")) {
                         answerStateNew.setData(itemsMap.get(answerStatesAdapter.get(i).getRelative_id()).getData());
                     }
-                    if (answerStateNew.isChecked()) lastSelectedPosition = i;
                 } else {
                     answerStateNew.setChecked(false);
                     answerStateNew.setData("");
@@ -1580,8 +1578,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             }
             adapterList.setAnswers(answerStatesRestored);
             adapterList.setRestored(true);
-//            if (!currentElement.getElementOptionsR().isPolyanswer())
-//                adapterList.setLastSelectedPosition(lastSelectedPosition);
             adapterList.notifyDataSetChanged();
         }
     }

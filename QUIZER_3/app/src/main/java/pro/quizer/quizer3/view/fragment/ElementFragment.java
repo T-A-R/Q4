@@ -46,7 +46,7 @@ import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.CardAdapter;
-import pro.quizer.quizer3.adapter.ListQuestionAdapter;
+import pro.quizer.quizer3.adapter.ListAnswersAdapter;
 import pro.quizer.quizer3.adapter.RankQuestionAdapter;
 import pro.quizer.quizer3.adapter.ScaleQuestionAdapter;
 import pro.quizer.quizer3.adapter.TableQuestionAdapter;
@@ -72,7 +72,7 @@ import pro.quizer.quizer3.view.Toolbar;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class ElementFragment extends ScreenFragment implements View.OnClickListener, ListQuestionAdapter.OnAnswerClickListener, RankQuestionAdapter.OnAnswerClickListener, ScaleQuestionAdapter.OnAnswerClickListener, TableQuestionAdapter.OnTableAnswerClickListener {
+public class ElementFragment extends ScreenFragment implements View.OnClickListener, ListAnswersAdapter.OnAnswerClickListener, RankQuestionAdapter.OnAnswerClickListener, ScaleQuestionAdapter.OnAnswerClickListener, TableQuestionAdapter.OnTableAnswerClickListener {
 
     private Button btnNext;
     private Button btnPrev;
@@ -134,7 +134,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private boolean isQuota = false;
     private int titles = 0;
 
-    private ListQuestionAdapter adapterList;
+    private ListAnswersAdapter adapterList;
     private RankQuestionAdapter adapterRank;
     private ScaleQuestionAdapter adapterScale;
     private ArrayAdapter adapterSpinner;
@@ -735,10 +735,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 MainActivity activity = getMainActivity();
                 if (isQuota) {
 
-                    adapterList = new ListQuestionAdapter(activity, currentElement, answersList,
+                    adapterList = new ListAnswersAdapter(activity, currentElement, answersList,
                             getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), titlesMap, this);
                 } else {
-                    adapterList = new ListQuestionAdapter(activity, currentElement, answersList,
+                    adapterList = new ListAnswersAdapter(activity, currentElement, answersList,
                             null, null, titlesMap, this);
                 }
                 rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -1423,7 +1423,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    if (answerStateRestored != null || adapterList.isAutoChecked(answersList.get(i))) {
+                    if (answerStateRestored != null || adapterList.isAutoChecked(i)) {
                         answerStateNew.setChecked(true);
                         answerStateNew.setData(answerStateRestored != null ? answerStateRestored.getValue() : "");
                         lastSelectedPosition = i;
@@ -1437,8 +1437,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
                 adapterList.setAnswers(answerStatesRestored);
                 adapterList.setRestored(true);
-                if (!currentElement.getElementOptionsR().isPolyanswer())
-                    adapterList.setLastSelectedPosition(lastSelectedPosition);
+//                if (!currentElement.getElementOptionsR().isPolyanswer())
+//                    adapterList.setLastSelectedPosition(lastSelectedPosition);
                 adapterList.notifyDataSetChanged();
                 break;
             }
@@ -1563,7 +1563,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             for (int i = 0; i < answerStatesAdapter.size(); i++) {
                 AnswerState answerStateNew = new AnswerState();
 
-                if (itemsMap.get(answerStatesAdapter.get(i).getRelative_id()) != null || adapterList.isAutoChecked(answersList.get(i))) {
+                if (itemsMap.get(answerStatesAdapter.get(i).getRelative_id()) != null || adapterList.isAutoChecked(i)) {
                     answerStateNew.setChecked(itemsMap.get(answerStatesAdapter.get(i).getRelative_id()).isChecked());
                     if (itemsMap.get(answerStatesAdapter.get(i).getRelative_id()).getData() != null
                             && !itemsMap.get(answerStatesAdapter.get(i).getRelative_id()).getData().equals("")) {
@@ -1580,8 +1580,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             }
             adapterList.setAnswers(answerStatesRestored);
             adapterList.setRestored(true);
-            if (!currentElement.getElementOptionsR().isPolyanswer())
-                adapterList.setLastSelectedPosition(lastSelectedPosition);
+//            if (!currentElement.getElementOptionsR().isPolyanswer())
+//                adapterList.setLastSelectedPosition(lastSelectedPosition);
             adapterList.notifyDataSetChanged();
         }
     }

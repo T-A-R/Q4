@@ -55,6 +55,7 @@
     <string name="button_send">Отправить</string>
     <string name="et_enter_key">Введите ключ</string>
     <string name="empty_key">Ключ активации пуст. Пожалуйста, введите ключ и повторите попытку.</string>
+    <string name="wrong_key">Неверный ключ</string>
     <string name="auth_version_warning">Внимание!\nВы работаете на устройстве с версией android %1$s. Стабильная работа приложения не гарантируется.</string>
     <string name="auth_users_on_device">Количество пользователей на данном устройстве: %1$s</string>
     <string name="auth_enter_login">Введите логин</string>
@@ -424,5 +425,6 @@
     <string name="error_next_element_id_null">Ошибка обработки анкеты</string>
     <string name="enter_answer_empty">Выберите ответ (не выбрано)</string>
     <string name="enter_answer">Введите ответ</string>
+    <string name="data_on_login">Данные в рамках логина:</string>
 
 </resources>

@@ -1,7 +1,9 @@
 package com.example.quizer3;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -80,6 +82,12 @@ public class NavigationTestJava {
     public GrantPermissionRule permissionRule11 = GrantPermissionRule.grant(Manifest.permission.VIBRATE);
     @Rule
     public GrantPermissionRule permissionRule12 = GrantPermissionRule.grant(Manifest.permission.READ_PHONE_STATE);
+    @Rule
+    public GrantPermissionRule permissionRule14 = GrantPermissionRule.grant(Manifest.permission.ACCESS_WIFI_STATE);
+    @Rule
+    public GrantPermissionRule permissionRule15 = GrantPermissionRule.grant(Manifest.permission.UPDATE_DEVICE_STATS);
+    @Rule
+    public GrantPermissionRule permissionRule16 = GrantPermissionRule.grant(Manifest.permission.CHANGE_WIFI_STATE);
 
     @Rule
     public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule(MainActivity.class);
@@ -99,8 +107,8 @@ public class NavigationTestJava {
         String no = "Нет";
 
         ActivityScenario<MainActivity> activityScenario = ActivityScenario.launch(MainActivity.class);
-
         allowPermissionsIfNeeded();
+        WifiManager wifi = (WifiManager) activityRule.getActivity().getSystemService(Context.WIFI_SERVICE);
 
         // Ввод ключа
         if (!viewIsDisplayed(R.id.cont_key_fragment)) {
@@ -289,6 +297,12 @@ public class NavigationTestJava {
         int biggest = locationSettingsIdTitle[3];
         assertTrue(biggest > big);
 
+        // Главный экран на большом шрифте
+        onView(withId(R.id.drawer_cont)).perform(DrawerActions.open());
+        onView(withText(R.string.drawer_home)).perform(click());
+        onView(withId(R.id.btn_start)).check(matches(isDisplayed()));
+        onView(withId(R.id.btn_quotas)).check(matches(isDisplayed()));
+        onView(withId(R.id.btn_info)).check(matches(isDisplayed()));
 
 
         onView(withId(R.id.auto_zoom_switch)).perform(scrollTo()).check(matches(isDisplayed())).perform(click());
@@ -296,6 +310,9 @@ public class NavigationTestJava {
         runOnUiThread(() -> getInstrumentation().callActivityOnPause(activityRule.getActivity()));
         Thread.sleep(2000);
         runOnUiThread(() -> getInstrumentation().callActivityOnResume(activityRule.getActivity()));
+
+
+        wifi.setWifiEnabled(false);
 
 //        // Инфо
 //        onView(withId(R.id.btn_info)).perform(click());

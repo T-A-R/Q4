@@ -6,21 +6,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.SOURCE)
-@StringDef({ElementType.BOX,
-        ElementType.QUESTION,
-        ElementType.TABLE,
-        ElementType.ROUTER,
-        ElementType.FUNNEL,
-        ElementType.CONTENT,
-        ElementType.ANSWER})
-public @interface ElementType {
+@StringDef({Operators.LESS,
+        Operators.MORE,
+        Operators.LOE,
+        Operators.MOE,
+        Operators.EQ,
+        Operators.NOT})
+public @interface Operators {
 
-    String INFO = "info";
-    String QUESTION = "question";
-    String BOX = "box";
-    String TABLE = "table";
-    String ROUTER = "router";
-    String FUNNEL = "funnel";
-    String CONTENT = "content";
-    String ANSWER = "answer";
+    String LESS = "<";
+    String MORE = ">";
+    String LOE = "<=";
+    String MOE = ">=";
+    String EQ = "==";
+    String NOT = "!=";
 }

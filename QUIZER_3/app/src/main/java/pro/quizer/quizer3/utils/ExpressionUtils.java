@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pro.quizer.quizer3.MainActivity;
+import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.database.models.ElementPassedR;
+import pro.quizer.quizer3.model.Operators;
 
 public class ExpressionUtils {
 
@@ -181,5 +184,48 @@ public class ExpressionUtils {
         }
 
         return result == null ? false : result;
+    }
+
+    public boolean checkHiddenExpression(String expression) {
+        expression = "(18<=$e.108.value<=35)";
+        expression = expression.replaceAll(" ", "");
+        expression = expression.replaceAll("\\(", "");
+        expression = expression.replaceAll("\\)", "");
+
+        int $position = findSymbol('$', expression);
+        int eposition = findSymbol('u', expression) + 1; // Position of symbol after 'E' in "value"
+        String before = expression.substring(0, $position - 1);
+        String idString = expression.substring($position + 2, eposition - 6);
+        String after = expression.substring(eposition);
+        Integer relativeId = Integer.parseInt(idString);
+        Integer value = null;
+        if (relativeId != null) {
+            ElementPassedR element = activity.getMainDao().getElementPassedR(activity.getToken(), relativeId);
+            if (element != null) value = Integer.parseInt(element.getValue());
+            if (value != null) return checkHiddenOperator(before, value, true) && checkHiddenOperator(after, value, false);
+        }
+
+        return false;
+    }
+
+    private boolean checkHiddenOperator(String textWithOperator, int value, boolean isLeftPart) {
+        Integer number = Integer.parseInt(textWithOperator.replaceAll("\\D+",""));
+        if(number == null) return false;
+        if(textWithOperator == null || textWithOperator.length() == 0) return true;
+        if(textWithOperator.contains(Operators.LESS)) {
+            return isLeftPart ? number < value : value < number;
+        } else if(textWithOperator.contains(Operators.MORE)) {
+            return isLeftPart ? number > value : value > number;
+        } else if(textWithOperator.contains(Operators.LOE)) {
+            return isLeftPart ? number <= value : value <= number;
+        } else if(textWithOperator.contains(Operators.MOE)) {
+            return isLeftPart ? number >= value : value >= number;
+        } else if(textWithOperator.contains(Operators.EQ)) {
+            return number == value;
+        } else if(textWithOperator.contains(Operators.NOT)) {
+            return number != value;
+        }
+
+        return false;
     }
 }

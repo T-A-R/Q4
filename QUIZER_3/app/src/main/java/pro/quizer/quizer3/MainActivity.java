@@ -353,6 +353,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                         elementOptionsR.setSearch(optionsModelNew.isSearch());
                         elementOptionsR.setPre_condition(optionsModelNew.getPre_condition());
                         elementOptionsR.setPost_condition(optionsModelNew.getPost_condition());
+                        elementOptionsR.setPrev_condition(optionsModelNew.getPrevCondition());
                         elementOptionsR.setOrder(optionsModelNew.getOrder());
                         if (optionsModelNew.getNumber() != null)
                             elementOptionsR.setNumber(optionsModelNew.getNumber());

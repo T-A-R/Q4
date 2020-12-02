@@ -15,6 +15,7 @@ import java.lang.annotation.RetentionPolicy;
         ElementSubtype.VIDEO,
         ElementSubtype.CONTAINER,
         ElementSubtype.ABORTED,
+        ElementSubtype.HIDDEN,
         ElementSubtype.SLIDER})
 public @interface ElementSubtype {
 
@@ -37,4 +38,5 @@ public @interface ElementSubtype {
     String SLIDER = "slider";
     String QUOTA = "quota";
     String ABORTED = "aborted";
+    String HIDDEN = "hidden";
 }

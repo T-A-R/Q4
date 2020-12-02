@@ -426,5 +426,8 @@
     <string name="enter_answer_empty">Выберите ответ (не выбрано)</string>
     <string name="enter_answer">Введите ответ</string>
     <string name="data_on_login">Данные в рамках логина:</string>
+    <string name="damn_symbol_open">(</string>
+    <string name="damn_symbol_close">)</string>
+
 
 </resources>

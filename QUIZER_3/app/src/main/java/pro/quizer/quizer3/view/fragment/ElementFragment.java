@@ -4,12 +4,14 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
+
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -64,6 +66,7 @@ import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.model.view.TitleModel;
 import pro.quizer.quizer3.utils.ConditionUtils;
 import pro.quizer.quizer3.utils.DateUtils;
+import pro.quizer.quizer3.utils.ExpressionUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
@@ -997,8 +1000,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
                 if (answerStates != null && notEmpty(answerStates)) {
                     if (answerType.equals(ElementSubtype.RANK)) {
-                        //TODO GET RANK ANSWERS
-
                         List<AnswerState> answerStatesRang = new ArrayList<>();
                         for (int i = 0; i < answersList.size(); i++) {
                             Integer id = answersList.get(i).getRelative_id();
@@ -1858,6 +1859,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private void checkAndLoadNext() {
         if (nextElementId != null && !nextElementId.equals(0) && !nextElementId.equals(-1)) {
             if (checkConditions(getElement(nextElementId))) {
+                checkHidden();
                 TransFragment fragment = new TransFragment();
                 fragment.setStartElement(nextElementId);
                 stopRecording();
@@ -2109,6 +2111,61 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         adapterSpinner = null;
         adapterTable = null;
         multiSelectionSpinner = null;
+    }
+
+    private void checkHidden() {
+        ElementItemR nextElement = getElement(nextElementId);
+        if (nextElement.getSubtype().equals(ElementSubtype.HIDDEN)) {
+            boolean saved = false;
+            for (PrevElementsR prevElement : prevList) {
+                if (prevElement.getPrevId().equals(nextElementId)) {
+                    saved = true;
+                    break;
+                }
+            }
+            if (!saved) {
+                List<AnswerState> answerStatesHidden = new ArrayList<>();
+                List<ElementItemR> answers = nextElement.getElements();
+                ExpressionUtils expressionUtils = new ExpressionUtils(getMainActivity());
+                for (ElementItemR answer : answers) {
+                    String expression = answer.getElementOptionsR().getPrev_condition();
+                    if (expression == null || expression.length() == 0 || expressionUtils.checkHiddenExpression(expression)) {
+                        answerStatesHidden.add(new AnswerState(answer.getRelative_id(), true, answer.getElementOptionsR().getTitle()));
+                    }
+                }
+
+                ElementPassedR elementPassedR = new ElementPassedR();
+                elementPassedR.setRelative_id(nextElement.getRelative_id());
+                elementPassedR.setProject_id(nextElement.getProjectId());
+                elementPassedR.setToken(getQuestionnaire().getToken());
+                elementPassedR.setDuration(1L);
+                elementPassedR.setFrom_quotas_block(false);
+
+                getDao().insertElementPassedR(elementPassedR);
+                getDao().setWasElementShown(true, nextElement.getRelative_id(), nextElement.getUserId(), nextElement.getProjectId());
+
+                if (answerStatesHidden.size() > 0)
+                    for (int i = 0; i < answerStatesHidden.size(); i++) {
+                        if (answerStatesHidden.get(i).isChecked()) {
+                            ElementPassedR answerPassedR = new ElementPassedR();
+                            answerPassedR.setRelative_id(answerStatesHidden.get(i).getRelative_id());
+                            answerPassedR.setProject_id(nextElement.getProjectId());
+                            answerPassedR.setToken(getQuestionnaire().getToken());
+                            answerPassedR.setValue(answerStatesHidden.get(i).getData());
+                            answerPassedR.setFrom_quotas_block(false);
+
+                            try {
+                                getDao().insertElementPassedR(answerPassedR);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                getDao().insertPrevElementsR(new PrevElementsR(nextElementId, nextElement.getElementOptionsR().getJump()));
+            }
+            nextElementId = nextElement.getElementOptionsR().getJump();
+            checkAndLoadNext();
+        }
     }
 }
 

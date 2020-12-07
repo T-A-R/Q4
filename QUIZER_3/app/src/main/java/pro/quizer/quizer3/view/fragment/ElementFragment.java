@@ -148,7 +148,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private CompositeDisposable disposables;
 
     public ElementFragment() {
-        super(R.layout.fragment_element_new);
+        super(R.layout.fragment_element);
     }
 
     public ElementFragment setStartElement(Integer startElementId, boolean restored) {

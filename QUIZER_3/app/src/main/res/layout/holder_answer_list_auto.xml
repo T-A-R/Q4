@@ -84,15 +84,16 @@
                     android:layout_height="wrap_content"
                     android:text="Answer"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/_10ssp" />
+                    android:textSize="@dimen/_12ssp" />
 
                 <TextView
                     android:id="@+id/answer_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_2sdp"
                     android:text="Answer"
                     android:textColor="@android:color/darker_gray"
-                    android:textSize="@dimen/_8ssp"
+                    android:textSize="@dimen/_10ssp"
                     android:textStyle="italic"
                     android:visibility="gone" />
 
@@ -118,6 +119,7 @@
         android:id="@+id/open_cont"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_4sdp"
         android:visibility="visible">
 
         <TextView
@@ -126,16 +128,14 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/_8sdp"
             android:layout_marginRight="@dimen/_8sdp"
-            android:layout_marginBottom="@dimen/_3sdp"
             android:maxLines="1"
-            android:textSize="@dimen/_10ssp" />
+            android:textSize="@dimen/_12ssp" />
 
         <ImageView
             android:id="@+id/edit_button"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_20sdp"
             android:layout_margin="@dimen/_4sdp"
-            android:layout_marginBottom="@dimen/_3sdp"
             android:src="@drawable/button_background_transparent" />
 
     </RelativeLayout>

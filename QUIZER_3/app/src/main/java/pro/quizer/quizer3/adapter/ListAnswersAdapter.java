@@ -236,7 +236,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                     cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_dark_gray_shadow));
                 }
             } else {
-                cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_shadow));
+                cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.shadow_2));
                 answerTitle.setTextColor(mActivity.getResources().getColor(R.color.black));
                 answerDesc.setTextColor(mActivity.getResources().getColor(R.color.black));
             }

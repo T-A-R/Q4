@@ -3,7 +3,7 @@
     android:id="@+id/answer_cont"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_shadow"
+    android:background="@drawable/shadow_2"
     android:orientation="vertical"
     android:visibility="visible">
 
@@ -47,7 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_3sdp"
-        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
         android:visibility="visible">
 
         <LinearLayout

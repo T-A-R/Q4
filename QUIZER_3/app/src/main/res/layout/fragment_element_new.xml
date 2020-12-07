@@ -373,6 +373,8 @@
                 android:id="@+id/spinner_cont"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
                 android:background="@drawable/shadow_2"
                 android:orientation="vertical"
                 android:visibility="gone">
@@ -418,6 +420,8 @@
             android:id="@+id/table_cont"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
             android:background="@drawable/shadow_2"
             android:visibility="gone">
 

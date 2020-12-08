@@ -387,7 +387,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 editButton.setOnClickListener(v -> onClick(answerEditText, position));
             }
 
-            showEnabled();
+//            showEnabled();
         }
 
         public void onClick(TextView cardInput, int position) {

@@ -2096,6 +2096,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void checkHidden() {
+//        ExpressionUtils expressionUtilsTest = new ExpressionUtils(getMainActivity());
+//        Log.d("T-L.ElementFragment", "?????? checkHidden: " + expressionUtilsTest.checkHiddenExpression(null));
+        //============================================================================
         ElementItemR nextElement = getElement(nextElementId);
         if (nextElement.getSubtype().equals(ElementSubtype.HIDDEN)) {
             boolean saved = false;

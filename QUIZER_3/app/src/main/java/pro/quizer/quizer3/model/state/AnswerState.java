@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
 public class AnswerState implements Serializable {
-//public class AnswerState {
 
     @SerializedName("relative_id")
     private Integer relative_id;
@@ -19,13 +18,26 @@ public class AnswerState implements Serializable {
     @SerializedName("data")
     private String data;
 
+    @SerializedName("enabled")
+    private boolean enabled;
+
     public AnswerState() {
+        this.enabled = true;
     }
 
     public AnswerState(Integer relative_id, boolean checked, String data) {
         this.relative_id = relative_id;
         this.checked = checked;
         this.data = data;
+        this.enabled = true;
+    }
+
+    public AnswerState(Integer relative_id, boolean checked, boolean open, String data, boolean enabled) {
+        this.relative_id = relative_id;
+        this.checked = checked;
+        this.open = open;
+        this.data = data;
+        this.enabled = enabled;
     }
 
     public Integer getRelative_id() {
@@ -58,5 +70,13 @@ public class AnswerState implements Serializable {
 
     public void setOpen(boolean open) {
         this.open = open;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

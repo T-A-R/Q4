@@ -253,6 +253,7 @@
     <string name="exit_questionnaire_warning">Вы уверены, что хотите принудительно прервать анкету? \nЕё содержимое будет потеряно.</string>
     <string name="exit_questionnaire_with_saving_warning">Вы действительно хотите выйти и прервать текущую анкету?</string>
     <string name="exit_quiz_header">Завершить анкету</string>
+    <string name="hidden_quotas_header">Выполнение квот</string>
     <string name="set_last_element_error">Ошибка обновления таблицы переходов</string>
     <string name="select_spinner">Выбрать…</string>
     <string name="default_placeholder">Введите ответ</string>
@@ -262,6 +263,8 @@
     <string name="cancel">Отмена</string>
     <string name="table_label">ВОПРОС&lt;br /&gt;ОТВЕТ</string>
     <string name="view_OK">ОК</string>
+    <string name="view_continue">Продолжить</string>
+    <string name="view_finish_quiz">Завершить анкету</string>
     <string name="empty_string_warning">Заполните текстовое поле в выбранных вариантах ответа.</string>
     <string name="empty_rank_warning">Не заполнен открытый ответ.</string>
     <string name="empty_input_warning">Заполните текстовое поле.</string>

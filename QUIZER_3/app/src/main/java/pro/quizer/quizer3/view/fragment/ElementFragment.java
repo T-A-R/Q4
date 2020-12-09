@@ -404,7 +404,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 btnHideTitle.setImageResource(R.drawable.minus_green);
             }
         } else if (view == closeQuestion || view == tvQuestion) {
-            if(questionBox.getVisibility() == View.VISIBLE) {
+            if (questionBox.getVisibility() == View.VISIBLE) {
                 questionBox.setVisibility(View.GONE);
                 tvHiddenQuestion.setText(tvQuestion.getText());
                 tvHiddenQuestion.setVisibility(View.VISIBLE);
@@ -2111,45 +2111,154 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             if (!saved) {
                 List<AnswerState> answerStatesHidden = new ArrayList<>();
                 List<ElementItemR> answers = nextElement.getElements();
+                List<ElementItemR> answersHidden = new ArrayList<>();
                 ExpressionUtils expressionUtils = new ExpressionUtils(getMainActivity());
+                boolean hiddenInQuotaBox = false;
+                int enabledCounter = 0;
+
+                //=========================================================================================================
+
+                if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0 &&
+                        getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
+
+                    hiddenInQuotaBox = true;
+                    List<Integer> passedQuotaBlock = getPassedQuotasBlock(nextElement.getElementOptionsR().getOrder());
+                    ElementItemR[][] quotaTree = getMainActivity().getTree(null);
+                    Integer order = nextElement.getElementOptionsR().getOrder();
+
+                    for (int index = 0; index < answers.size(); index++) {
+                        answers.get(index).setEnabled(canShow(quotaTree, passedQuotaBlock, answers.get(index).getRelative_id(), order));
+                    }
+                }
+
                 for (ElementItemR answer : answers) {
                     String expression = answer.getElementOptionsR().getPrev_condition();
                     if (expression == null || expression.length() == 0 || expressionUtils.checkHiddenExpression(expression)) {
+                        if (hiddenInQuotaBox) {
+                            answersHidden.add(answer);
+                            if (answer.isEnabled()) enabledCounter++;
+                        }
                         answerStatesHidden.add(new AnswerState(answer.getRelative_id(), true, answer.getElementOptionsR().getTitle()));
                     }
                 }
 
-                ElementPassedR elementPassedR = new ElementPassedR();
-                elementPassedR.setRelative_id(nextElement.getRelative_id());
-                elementPassedR.setProject_id(nextElement.getProjectId());
-                elementPassedR.setToken(getQuestionnaire().getToken());
-                elementPassedR.setDuration(1L);
-                elementPassedR.setFrom_quotas_block(false);
-
-                getDao().insertElementPassedR(elementPassedR);
-                getDao().setWasElementShown(true, nextElement.getRelative_id(), nextElement.getUserId(), nextElement.getProjectId());
-
-                if (answerStatesHidden.size() > 0)
-                    for (int i = 0; i < answerStatesHidden.size(); i++) {
-                        if (answerStatesHidden.get(i).isChecked()) {
-                            ElementPassedR answerPassedR = new ElementPassedR();
-                            answerPassedR.setRelative_id(answerStatesHidden.get(i).getRelative_id());
-                            answerPassedR.setProject_id(nextElement.getProjectId());
-                            answerPassedR.setToken(getQuestionnaire().getToken());
-                            answerPassedR.setValue(answerStatesHidden.get(i).getData());
-                            answerPassedR.setFrom_quotas_block(false);
-
-                            try {
-                                getDao().insertElementPassedR(answerPassedR);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                if (hiddenInQuotaBox) {
+                    if (answersHidden.size() == 1 && enabledCounter == 0) {
+                        String message = "Квота по варианту ответа \"" + answersHidden.get(0).getElementOptionsR().getTitle() + "\" закончилась";
+                        showHiddenExitAlertDialog(message);
+                    } else if (answersHidden.size() != enabledCounter) {
+                        String message = "";
+                        for (ElementItemR answer : answersHidden) {
+                            if (answer.isEnabled())
+                                message = message + "\"" + answer.getElementOptionsR().getTitle() + "\" - будет выбран\n";
+                            else
+                                message = message + "\"" + answer.getElementOptionsR().getTitle() + "\" квота закончилась - не будет выбран\n";
                         }
+                        showHiddenAlertDialog(message, nextElement, answerStatesHidden, answersHidden);
                     }
-                getDao().insertPrevElementsR(new PrevElementsR(nextElementId, nextElement.getElementOptionsR().getJump()));
+                } else {
+                    saveHidden(nextElement, answerStatesHidden);
+                }
             }
             nextElementId = nextElement.getElementOptionsR().getJump();
             checkAndLoadNext();
+        }
+    }
+
+    private void saveHidden(ElementItemR nextElement, List<AnswerState> answerStatesHidden) {
+        ElementPassedR elementPassedR = new ElementPassedR();
+        elementPassedR.setRelative_id(nextElement.getRelative_id());
+        elementPassedR.setProject_id(nextElement.getProjectId());
+        elementPassedR.setToken(getQuestionnaire().getToken());
+        elementPassedR.setDuration(1L);
+        elementPassedR.setFrom_quotas_block(false);
+
+        getDao().insertElementPassedR(elementPassedR);
+        getDao().setWasElementShown(true, nextElement.getRelative_id(), nextElement.getUserId(), nextElement.getProjectId());
+
+        if (answerStatesHidden.size() > 0)
+            for (int i = 0; i < answerStatesHidden.size(); i++) {
+                if (answerStatesHidden.get(i).isChecked()) {
+                    ElementPassedR answerPassedR = new ElementPassedR();
+                    answerPassedR.setRelative_id(answerStatesHidden.get(i).getRelative_id());
+                    answerPassedR.setProject_id(nextElement.getProjectId());
+                    answerPassedR.setToken(getQuestionnaire().getToken());
+                    answerPassedR.setValue(answerStatesHidden.get(i).getData());
+                    answerPassedR.setFrom_quotas_block(false);
+
+                    try {
+                        getDao().insertElementPassedR(answerPassedR);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        getDao().insertPrevElementsR(new PrevElementsR(nextElementId, nextElement.getElementOptionsR().getJump()));
+    }
+
+    private void showHiddenExitAlertDialog(String message) {
+        stopAllRecording();
+        try {
+            getDao().clearCurrentQuestionnaireR();
+            getDao().clearElementPassedR();
+            getDao().clearPrevElementsR();
+            getDao().deleteElementDatabaseModelByToken(getMainActivity().getCurrentQuestionnaireForce().getToken());
+            getDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");
+            getMainActivity().setCurrentQuestionnaireNull();
+        } catch (Exception e) {
+            e.printStackTrace();
+            activateButtons();
+        }
+
+        if (getMainActivity() != null && !getMainActivity().isFinishing()) {
+            new AlertDialog.Builder(Objects.requireNonNull(getContext()), R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.exit_quiz_header)
+                    .setMessage(message)
+                    .setPositiveButton(R.string.view_OK, (dialog, which) -> {
+                        dialog.dismiss();
+                        getMainActivity().restartHome();
+                    })
+                    .show();
+        }
+    }
+
+    private void showHiddenAlertDialog(String message, ElementItemR nextElement, List<AnswerState> answerStatesHidden, List<ElementItemR> answersHidden) {
+        if (getMainActivity() != null && !getMainActivity().isFinishing()) {
+            new AlertDialog.Builder(Objects.requireNonNull(getContext()), R.style.AlertDialogTheme)
+                    .setCancelable(false)
+                    .setTitle(R.string.hidden_quotas_header)
+                    .setMessage(message)
+                    .setPositiveButton(R.string.view_continue, (dialog, which) -> {
+                        List<AnswerState> answersStatesEnabled = new ArrayList<>();
+                        for (int index = 0; index < answersHidden.size(); index++) {
+                            if (answersHidden.get(index).isEnabled()) {
+                                answersStatesEnabled.add(answerStatesHidden.get(index));
+                            }
+                        }
+                        saveHidden(nextElement, answersStatesEnabled);
+                        nextElementId = nextElement.getElementOptionsR().getJump();
+                        dialog.dismiss();
+                        checkAndLoadNext();
+                    })
+                    .setNegativeButton(R.string.view_cancel, (dialog, which) -> dialog.dismiss())
+                    .setNeutralButton(R.string.view_finish_quiz, (dialog, which) -> {
+                        stopAllRecording();
+                        try {
+                            getDao().clearCurrentQuestionnaireR();
+                            getDao().clearElementPassedR();
+                            getDao().clearPrevElementsR();
+                            getDao().deleteElementDatabaseModelByToken(getMainActivity().getCurrentQuestionnaireForce().getToken());
+                            getDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");
+                            getMainActivity().setCurrentQuestionnaireNull();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            activateButtons();
+                        }
+                        dialog.dismiss();
+                        getMainActivity().restartHome();
+                    })
+                    .show();
         }
     }
 }

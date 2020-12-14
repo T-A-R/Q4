@@ -47,7 +47,11 @@ public class QuestionnaireRequestModelExecutable extends BaseModelExecutable<Que
                     questionnaireDatabaseModel.getGps_time_fk(),
                     questionnaireDatabaseModel.getCount_interrupted(),
                     questionnaireDatabaseModel.getHas_photo(),
-                    activity.getSettings().isRoot()
+                    activity.getSettings().isRoot(),
+                    questionnaireDatabaseModel.getConfig_id(),
+                    questionnaireDatabaseModel.getQuota_time(),
+                    questionnaireDatabaseModel.getLast_login_time(),
+                    questionnaireDatabaseModel.isIs_online()
             );
 
             final List<ElementDatabaseModelR> elements = activity.getMainDao().getElementByToken(questionnaireDatabaseModel.getToken());

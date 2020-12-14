@@ -141,6 +141,9 @@ public interface QuizerDao {
     @Query("UPDATE QuestionnaireDatabaseModelR SET status = :status WHERE token = :token")
     void setQuestionnaireStatus(String status, String token);
 
+    @Query("UPDATE QuestionnaireDatabaseModelR SET is_online = :status")
+    void setQuestionnaireSentOnline(Boolean status);
+
     @Query("UPDATE QuestionnaireDatabaseModelR SET send_sms = :send_sms WHERE token = :token")
     void setQuestionnaireSendSms(boolean send_sms, String token);
 
@@ -341,6 +344,9 @@ public interface QuizerDao {
 
     @Query("UPDATE SettingsR SET last_quota_time = :data")
     void setLastQuotaTime(Long data);
+
+    @Query("UPDATE SettingsR SET last_login_time = :data")
+    void setLastLoginTime(Long data);
 
     @Query("UPDATE SettingsR SET last_quiz_time = :data")
     void setLastQuizTime(Long data);

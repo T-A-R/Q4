@@ -55,6 +55,7 @@ import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.OptionsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
+import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.QuestionnaireRequestModelExecutable;
 import pro.quizer.quizer3.model.ElementDatabaseType;
@@ -877,7 +878,11 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         }
         final long endTime = DateUtils.getCurrentTimeMillis();
         final QuestionnaireDatabaseModelR questionnaireDatabaseModel = new QuestionnaireDatabaseModelR();
+        final SettingsR settings = getMainActivity().getSettings();
         questionnaireDatabaseModel.setStatus(QuestionnaireStatus.NOT_SENT);
+        questionnaireDatabaseModel.setConfig_id(getMainActivity().getConfigId());
+        questionnaireDatabaseModel.setQuota_time(settings.getLast_quota_time());
+        questionnaireDatabaseModel.setLast_login_time(settings.getLast_login_time());
         questionnaireDatabaseModel.setToken(currentQuiz.getToken());
         questionnaireDatabaseModel.setLogin_admin(getLoginAdmin());
         questionnaireDatabaseModel.setLogin(getCurrentUser().getLogin());

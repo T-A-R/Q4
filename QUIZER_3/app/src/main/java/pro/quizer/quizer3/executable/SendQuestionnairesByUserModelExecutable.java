@@ -1,6 +1,7 @@
 package pro.quizer.quizer3.executable;
 
 import androidx.appcompat.app.AlertDialog;
+
 import android.util.Log;
 import android.widget.Toast;
 
@@ -124,6 +125,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
 
     @Override
     public void onSendQuestionnaires(ResponseBody responseBody) {
+        setSendStatus();
         if (responseBody == null) {
             onError(new Exception(mBaseActivity.getString(R.string.server_response_error) + " " + mBaseActivity.getString(R.string.error_201)));
             Log.d(TAG, "onSendQuestionnaires: responseBody = null!");
@@ -214,6 +216,14 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
             }
         } else {
             onError(new Exception(mBaseActivity.getString(R.string.server_response_error) + " " + mBaseActivity.getString(R.string.error_206)));
+        }
+    }
+
+    private void setSendStatus() {
+        try {
+            mBaseActivity.getMainDao().setQuestionnaireSentOnline(false);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

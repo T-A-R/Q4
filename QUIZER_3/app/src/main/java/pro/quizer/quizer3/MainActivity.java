@@ -314,6 +314,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             configId = getCurrentUser().getConfig_id();
     }
 
+    public String getConfigId() {
+        String configId;
+        configId = getCurrentUser().getConfigR().getConfigId();
+        if (configId == null)
+            configId = getCurrentUser().getConfig_id();
+        return configId;
+    }
+
     private void generateMap(final List<ElementModelNew> elements, boolean rebuild) {
 
         for (final ElementModelNew element : elements) {
@@ -1235,6 +1243,9 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                     break;
                 case Constants.Settings.QUOTA_TIME:
                     getMainDao().setLastQuotaTime(Long.parseLong(data));
+                    break;
+                case Constants.Settings.LAST_LOGIN_TIME:
+                    getMainDao().setLastLoginTime(Long.parseLong(data));
                     break;
             }
         }

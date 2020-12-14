@@ -29,6 +29,9 @@ public class SettingsR {
     @ColumnInfo(name = "last_quota_time")
     private Long last_quota_time;
 
+    @ColumnInfo(name = "last_login_time")
+    private Long last_login_time;
+
     @ColumnInfo(name = "last_quiz_time")
     private Long last_quiz_time;
 
@@ -137,5 +140,13 @@ public class SettingsR {
 
     public void setRoot(boolean root) {
         this.root = root;
+    }
+
+    public Long getLast_login_time() {
+        return last_login_time;
+    }
+
+    public void setLast_login_time(Long last_login_time) {
+        this.last_login_time = last_login_time;
     }
 }

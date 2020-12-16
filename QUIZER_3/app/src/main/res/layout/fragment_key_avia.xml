@@ -24,7 +24,7 @@
             android:orientation="vertical"
             android:src="@drawable/ic_rossya" />
 
-        <androidx.appcompat.widget.AppCompatEditText
+        <pro.quizer.quizer3.view.element.edittext.ResizableEditText
             android:id="@+id/et_activation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,14 +34,15 @@
             android:maxLines="1"
             android:textColor="@android:color/white"
             android:textColorHint="@color/gray"
-            app:backgroundTint="@android:color/white"
+            android:backgroundTint="@android:color/white"
             android:textSize="@dimen/_10ssp" />
 
-        <Button
+        <pro.quizer.quizer3.view.element.button.ResizableButton
             android:id="@+id/btn_send_activation"
             style="@style/ButtonAvia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textAllCaps="true"
             android:textSize="@dimen/_10ssp"
             android:text="@string/button_send" />
 

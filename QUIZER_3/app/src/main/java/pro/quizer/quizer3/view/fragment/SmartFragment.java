@@ -5,11 +5,13 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AlertDialog;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,41 +110,42 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         boolean isAutoZoom = getMainActivity().isAutoZoom();
-        if (isAutoZoom)
-            switch (layoutSrc) {
-                case R.layout.fragment_settings:
-                    layoutSrc = R.layout.fragment_settings_auto;
-                    break;
-                case R.layout.fragment_auth:
-                    layoutSrc = isAvia() ? R.layout.fragment_auth_avia : R.layout.fragment_auth_auto;
-                    break;
-                case R.layout.fragment_home:
-                    layoutSrc = isAvia() ? R.layout.fragment_home_avia : R.layout.fragment_home_auto;
-                    break;
-                case R.layout.fragment_sync:
-                    layoutSrc = R.layout.fragment_sync_auto;
-                    break;
-                case R.layout.fragment_service:
-                    layoutSrc = R.layout.fragment_service_auto;
-                    break;
-                case R.layout.fragment_quotas:
-                    layoutSrc = R.layout.fragment_quotas_auto;
-                    break;
-                case R.layout.fragment_logs:
-                    layoutSrc = R.layout.fragment_logs_auto;
-                    break;
-                case R.layout.fragment_key:
-                    layoutSrc = isAvia() ? R.layout.fragment_key_avia : R.layout.fragment_key_auto;
-                    break;
-                case R.layout.fragment_about:
-                    layoutSrc = R.layout.fragment_about_auto;
-                    break;
-                case R.layout.fragment_element:
-                    layoutSrc = R.layout.fragment_element_auto;
-                    break;
+//        if (isAutoZoom)
+        switch (layoutSrc) {
+            case R.layout.fragment_settings:
+                layoutSrc = isAutoZoom ? R.layout.fragment_settings_auto : layoutSrc;
+                break;
+            case R.layout.fragment_auth:
+                layoutSrc = isAvia() ? R.layout.fragment_auth_avia : isAutoZoom ? R.layout.fragment_auth_auto : layoutSrc;
+                break;
+            case R.layout.fragment_home:
+                layoutSrc = isAvia() ? R.layout.fragment_home_avia : isAutoZoom ? R.layout.fragment_home_auto : layoutSrc;
+                break;
+            case R.layout.fragment_sync:
+                layoutSrc = isAutoZoom ? R.layout.fragment_sync_auto : layoutSrc;
+                break;
+            case R.layout.fragment_service:
+                layoutSrc = isAutoZoom ? R.layout.fragment_service_auto : layoutSrc;
+                break;
+            case R.layout.fragment_quotas:
+                layoutSrc = isAutoZoom ? R.layout.fragment_quotas_auto : layoutSrc;
+                break;
+            case R.layout.fragment_logs:
+                layoutSrc = isAutoZoom ? R.layout.fragment_logs_auto : layoutSrc;
+                break;
+            case R.layout.fragment_key:
+                layoutSrc = isAvia() ? R.layout.fragment_key_avia : isAutoZoom ? R.layout.fragment_key_auto : layoutSrc;
+                break;
+            case R.layout.fragment_about:
+                layoutSrc = isAutoZoom ? R.layout.fragment_about_auto : layoutSrc;
+                break;
+            case R.layout.fragment_element:
+                layoutSrc = isAutoZoom ? R.layout.fragment_element_auto : layoutSrc;
+                break;
 
-                default:
-            }
+            default:
+        }
+
         return inflater.inflate(layoutSrc, container, false);
     }
 

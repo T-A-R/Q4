@@ -52,7 +52,8 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
         if (isAvia()) {
             etKey.setTypeface(Fonts.getAviaText());
             btnSend.setTypeface(Fonts.getAviaButton());
-            btnSend.setTransformationMethod(null);
+//            btnSend.setText("ОТПРАВИТЬ");
+//            btnSend.setTransformationMethod(null);
         }
 
         btnSend.setOnClickListener(this);

@@ -82,7 +82,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private TextView tvConfigAgreement;
     private TextView tvCurrentUser;
     private TextView tvConfigName;
-    private TextView tvQuotasClosed;
     private TextView tvPbText;
     private TextView tvProjectStatus;
     private TextView tvCountAll;
@@ -140,7 +139,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         btnExit = findViewById(R.id.btn_exit);
         tvConfigAgreement = findViewById(R.id.config_agreement);
         tvConfigName = findViewById(R.id.config_name);
-        tvQuotasClosed = findViewById(R.id.quotas_closed);
         tvCurrentUser = findViewById(R.id.current_user);
         tvPbText = findViewById(R.id.tv_pb_text);
         tvProjectStatus = findViewById(R.id.project_status);
@@ -157,7 +155,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             btnExit.setOnClickListener(this);
         tvConfigAgreement.setTypeface(Fonts.getFuturaPtBook());
         tvConfigName.setTypeface(Fonts.getFuturaPtBook());
-        tvQuotasClosed.setTypeface(Fonts.getFuturaPtBook());
         tvCurrentUser.setTypeface(Fonts.getFuturaPtBook());
 
         if (isAvia()) {

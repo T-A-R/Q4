@@ -103,7 +103,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             esLogin.setTypeface(Fonts.getAviaText());
             etPass.setTypeface(Fonts.getAviaText());
             btnSend.setTypeface(Fonts.getAviaButton());
-            btnSend.setTransformationMethod(null);
+//            btnSend.setTransformationMethod(null);
         }
 
         RelativeLayout cont = findViewById(R.id.cont_auth_fragment);

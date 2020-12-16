@@ -27,7 +27,7 @@
                 android:orientation="vertical"
                 android:src="@drawable/ic_rossya" />
 
-            <TextView
+            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                 android:id="@+id/version_warning"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
                 android:textSize="16sp"
                 android:visibility="gone" />
 
-            <TextView
+            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                 android:id="@+id/users_count"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
                 android:visibility="gone"
                 tools:text="@string/auth_users_on_device" />
 
-            <pro.quizer.quizer3.view.element.editspinner.AutoEditSpinner
+            <pro.quizer.quizer3.view.element.editspinner.ResizableEditSpinner
                 android:id="@+id/login_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
                 android:textColorHint="@color/gray"
                 android:textSize="@dimen/_10ssp" />
 
-            <EditText
+            <pro.quizer.quizer3.view.element.edittext.ResizableEditText
                 android:id="@+id/auth_password_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
                 android:textColorHint="@color/gray"
                 android:textSize="@dimen/_10ssp" />
 
-            <Button
+            <pro.quizer.quizer3.view.element.button.ResizableButton
                 android:id="@+id/btn_send_auth"
                 style="@style/ButtonAvia"
                 android:layout_width="224dp"
@@ -85,7 +85,7 @@
 
         </LinearLayout>
 
-        <TextView
+        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
             android:id="@+id/version_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

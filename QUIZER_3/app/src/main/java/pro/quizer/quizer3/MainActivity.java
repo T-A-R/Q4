@@ -97,7 +97,7 @@ import static pro.quizer.quizer3.utils.FileUtils.JPEG;
 public class MainActivity extends AppCompatActivity implements ViewTreeObserver.OnGlobalLayoutListener {
 
     static public String TAG = "TARLOGS";
-    static public boolean AVIA = true;
+    static public boolean AVIA = false;
     static public boolean EXIT = false;
     static public boolean SMS = false;
     public static final String IS_AFTER_AUTH = "IS_AFTER_AUTH";

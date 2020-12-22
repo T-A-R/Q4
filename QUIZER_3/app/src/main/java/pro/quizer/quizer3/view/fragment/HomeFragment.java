@@ -7,8 +7,10 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.Settings;
+
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -41,6 +43,7 @@ import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
+import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.QuotasViewModelExecutable;
@@ -931,7 +934,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 totalAborted = aborted + savedAborted + unfinished;
             }
 
-            finalStatistics = new Statistics(quotas, totalAborted, 0, 0);
+            //TODO GET STATISTICS BY NAME ===================================================================================
+
+            finalStatistics = new Statistics(quotas, totalAborted, 0, 0, 0, 0, 0, 0);
             return null;
         }
 
@@ -950,11 +955,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     private void getInfo() {
         btnInfo.setEnabled(false);
-            btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+        btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
 
         UserModelR userModel = activity.getCurrentUser();
         ConfigModel configModel = activity.getConfig();
-        StatisticsRequestModel requestModel = new StatisticsRequestModel(configModel.getLoginAdmin(), userModel.getPassword(), userModel.getLogin());
+        SettingsR settings = activity.getSettings();
+        StatisticsRequestModel requestModel = new StatisticsRequestModel(configModel.getLoginAdmin(), userModel.getPassword(), userModel.getLogin(), settings.getUser_name(), settings.getUser_date());
         Gson gson = new Gson();
         String json = gson.toJson(requestModel);
         String mServerUrl = configModel.getServerUrl();

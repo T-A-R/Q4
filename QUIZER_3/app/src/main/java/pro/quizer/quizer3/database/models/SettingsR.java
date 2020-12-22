@@ -44,6 +44,12 @@ public class SettingsR {
     @ColumnInfo(name = "root")
     private boolean root;
 
+    @ColumnInfo(name = "user_name")
+    private String user_name;
+
+    @ColumnInfo(name = "user_date")
+    private String user_date;
+
     public SettingsR() {
         this.started = false;
         this.auto_zoom = true;
@@ -148,5 +154,21 @@ public class SettingsR {
 
     public void setLast_login_time(Long last_login_time) {
         this.last_login_time = last_login_time;
+    }
+
+    public String getUser_name() {
+        return user_name;
+    }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
+
+    public String getUser_date() {
+        return user_date;
+    }
+
+    public void setUser_date(String user_date) {
+        this.user_date = user_date;
     }
 }

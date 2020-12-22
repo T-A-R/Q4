@@ -51,7 +51,9 @@ public class QuestionnaireRequestModelExecutable extends BaseModelExecutable<Que
                     questionnaireDatabaseModel.getConfig_id(),
                     questionnaireDatabaseModel.getQuota_time(),
                     questionnaireDatabaseModel.getLast_login_time(),
-                    questionnaireDatabaseModel.isIs_online()
+                    questionnaireDatabaseModel.isIs_online(),
+                    questionnaireDatabaseModel.getUser_name(),
+                    questionnaireDatabaseModel.getUser_date()
             );
 
             final List<ElementDatabaseModelR> elements = activity.getMainDao().getElementByToken(questionnaireDatabaseModel.getToken());

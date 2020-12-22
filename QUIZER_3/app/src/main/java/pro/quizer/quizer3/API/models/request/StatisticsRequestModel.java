@@ -15,8 +15,10 @@ public class StatisticsRequestModel implements Serializable {
     private final long device_time;
     private final String app_version;
     private final String device_info;
+    private final String user_name;
+    private final String user_date;
 
-    public StatisticsRequestModel(final String pLoginAdmin, final String pPassword, final String pLogin) {
+    public StatisticsRequestModel(final String pLoginAdmin, final String pPassword, final String pLogin, final String user_name, final String user_date) {
         name_form = Constants.NameForm.STATISTICS;
         login_admin = pLoginAdmin;
         passw = pPassword;
@@ -24,6 +26,8 @@ public class StatisticsRequestModel implements Serializable {
         device_time = DateUtils.getCurrentTimeMillis();
         device_info = DeviceUtils.getDeviceInfo();
         this.app_version = DeviceUtils.getAppVersion();
+        this.user_name = user_name;
+        this.user_date = user_date;
     }
 
 }

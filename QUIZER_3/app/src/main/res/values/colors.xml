@@ -5,7 +5,7 @@
     <color name="colorAccent">@color/brand_color</color>
 
     <color name="brand_color_dark">#21843E</color>
-    <color name="brand_color">#D0112B</color>
+    <color name="brand_color">#209A47</color>
     <color name="brand_color_light">#BEBEBE</color>
 
     <color name="green">#7ed084</color>

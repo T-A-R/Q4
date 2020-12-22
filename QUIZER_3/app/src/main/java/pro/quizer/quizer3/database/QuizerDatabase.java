@@ -1,7 +1,7 @@
 package pro.quizer.quizer3.database;
 
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.RoomDatabase;
+import androidx.room.Database;
+import androidx.room.RoomDatabase;
 
 import pro.quizer.quizer3.database.models.ActivationModelR;
 import pro.quizer.quizer3.database.models.AppLogsR;
@@ -42,7 +42,7 @@ import pro.quizer.quizer3.database.models.WarningsR;
         ElementStatusImageR.class,
         CurrentQuestionnaireR.class,
         ElementDatabaseModelR.class,
-        QuestionnaireDatabaseModelR.class}, version = 58)
+        QuestionnaireDatabaseModelR.class}, version = 60)
 public abstract class QuizerDatabase extends RoomDatabase {
     public abstract QuizerDao getQuizerDao();
 }

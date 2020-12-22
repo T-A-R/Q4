@@ -1,6 +1,6 @@
 package pro.quizer.quizer3.view.fragment;
 
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;

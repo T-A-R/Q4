@@ -21,7 +21,7 @@
             android:layout_gravity="center"
             android:orientation="vertical">
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="match_parent"
                 android:layout_height="112dp"
                 android:orientation="vertical"

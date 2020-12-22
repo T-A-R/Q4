@@ -15,7 +15,7 @@
         android:layout_above="@+id/login_cont"
         android:orientation="vertical">
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="match_parent"
             android:layout_height="@dimen/_90sdp"
             android:layout_marginLeft="@dimen/_40sdp"

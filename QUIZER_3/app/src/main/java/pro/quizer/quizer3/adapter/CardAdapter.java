@@ -5,7 +5,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.support.v7.widget.CardView;
+import androidx.cardview.widget.CardView;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -83,8 +83,6 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
                 TextView cardInput = holder.findViewById(R.id.card_input);
                 ImageView checker = holder.findViewById(R.id.checker);
 
-                Log.d("T-L.CardAdapter", "========: (" + position + ") " + checked);
-
                 if (data != null && data.length() > 0) {
                     cardInput.setTextColor(mContext.getResources().getColor(R.color.brand_color_dark));
                     cardInput.setText(data);
@@ -108,7 +106,6 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
 
                 cont.setOnClickListener(v -> {
                     if ((open && !getItem(position).isChecked()) || (open && getItem(position).isAutoCkecker())) {
-                        Log.d("T-L.CardAdapter", "CLICK: 1");
                         switch (getItem(position).getOpen()) {
                             case "text":
                             case "number":
@@ -122,7 +119,6 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
                                 break;
                         }
                     } else {
-                        Log.d("T-L.CardAdapter", "CLICK: 2");
                         checkItem(position);
                     }
                 });
@@ -134,8 +130,6 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
 
     private void checkItem(int position) {
         if (mItems.get(position).isChecked() && !isMulti) {
-            Log.d("T-L.CardAdapter", "CLICK: 3");
-
             return;
         }
         if (mItems.get(position).isAutoCkecker()) return;
@@ -147,7 +141,6 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
                 }
             }
         }
-        Log.d("T-L.CardAdapter", "????????? checkItem: " + mItems.get(position).isChecked());
         if (isMulti) {
             for (int i = 0; i < mItems.size(); i++) {
                 if (i != position && mItems.get(i).isUnChecker()) {

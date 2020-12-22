@@ -2,7 +2,7 @@ package pro.quizer.quizer3.view.element;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.util.AttributeSet;
 
 import pro.quizer.quizer3.R;

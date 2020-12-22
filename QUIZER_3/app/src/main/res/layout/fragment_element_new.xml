@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cont_element_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:keepScreenOn="true"
+    android:saveEnabled="false">
+
+    <!--TOOLBAR-->
+    <pro.quizer.quizer3.view.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/element_cont"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/button_panel"
+        android:layout_below="@+id/toolbar"
+        android:layout_gravity="top"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:layout_marginBottom="@dimen/_4sdp"
+        android:orientation="vertical">
+
+        <!--TITLE-->
+        <RelativeLayout
+            android:id="@+id/title_cont"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_6sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:background="@drawable/button_background_transparent"
+            android:visibility="gone">
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/hide_btn">
+
+                <LinearLayout
+                    android:id="@+id/title_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:orientation="vertical">
+
+                    <!--TITLE 1-->
+                    <LinearLayout
+                        android:id="@+id/title_cont_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/_4sdp"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+                            android:id="@+id/title_1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_8sdp"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_16ssp"
+                            android:visibility="visible" />
+
+                        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                            android:id="@+id/title_desc_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_8sdp"
+                            android:layout_marginEnd="@dimen/_12sdp"
+                            android:layout_marginBottom="@dimen/_2sdp"
+                            android:text="Описание бокса 1"
+                            android:textColor="@color/cardview_dark_background"
+                            android:textSize="@dimen/_10ssp"
+                            android:visibility="visible" />
+
+                        <LinearLayout
+                            android:id="@+id/title_images_cont_1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/_8ssp"
+                            android:layout_marginRight="@dimen/_8ssp"
+                            android:layout_marginBottom="@dimen/_8ssp"
+                            android:orientation="horizontal"
+                            android:visibility="gone">
+
+                            <com.zolad.zoominimageview.ZoomInImageView
+                                android:id="@+id/title_1_image_1"
+                                android:layout_width="@dimen/_120sdp"
+                                android:layout_height="@dimen/_80sdp"
+                                android:layout_weight="1"
+                                android:adjustViewBounds="true"
+                                android:scaleType="centerCrop"
+                                android:visibility="visible" />
+
+                            <com.zolad.zoominimageview.ZoomInImageView
+                                android:id="@+id/title_1_image_2"
+                                android:layout_width="@dimen/_120sdp"
+                                android:layout_height="@dimen/_80sdp"
+                                android:layout_weight="1"
+                                android:adjustViewBounds="true"
+                                android:scaleType="centerCrop"
+                                android:visibility="visible" />
+
+                            <com.zolad.zoominimageview.ZoomInImageView
+                                android:id="@+id/title_1_image_3"
+                                android:layout_width="@dimen/_120sdp"
+                                android:layout_height="@dimen/_80sdp"
+                                android:layout_weight="1"
+                                android:adjustViewBounds="true"
+                                android:scaleType="centerCrop"
+                                android:visibility="visible" />
+
+                        </LinearLayout>
+
+                        <include layout="@layout/view_divider" />
+
+                    </LinearLayout>
+
+                    <!--TITLE 2-->
+                    <LinearLayout
+                        android:id="@+id/title_cont_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/_4sdp"
+                        android:layout_toStartOf="@+id/hide_btn"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+                            android:id="@+id/title_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_8sdp"
+                            android:text="Тайтл бокса 2"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_16ssp"
+                            android:visibility="visible" />
+
+                        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                            android:id="@+id/title_desc_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_8sdp"
+                            android:layout_marginEnd="@dimen/_12sdp"
+                            android:layout_marginBottom="@dimen/_6sdp"
+                            android:text="Описание бокса 2"
+                            android:textColor="@color/cardview_dark_background"
+                            android:textSize="@dimen/_10ssp"
+                            android:visibility="visible" />
+
+                        <LinearLayout
+                            android:id="@+id/title_images_cont_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/_8ssp"
+                            android:layout_marginRight="@dimen/_8ssp"
+                            android:layout_marginBottom="@dimen/_8ssp"
+                            android:orientation="horizontal"
+                            android:visibility="gone">
+
+                            <com.zolad.zoominimageview.ZoomInImageView
+                                android:id="@+id/title_2_image_1"
+                                android:layout_width="@dimen/_120sdp"
+                                android:layout_height="@dimen/_80sdp"
+                                android:layout_weight="1"
+                                android:adjustViewBounds="true"
+                                android:scaleType="centerCrop"
+                                android:visibility="visible" />
+
+                            <com.zolad.zoominimageview.ZoomInImageView
+                                android:id="@+id/title_2_image_2"
+                                android:layout_width="@dimen/_120sdp"
+                                android:layout_height="@dimen/_80sdp"
+                                android:layout_weight="1"
+                                android:adjustViewBounds="true"
+                                android:scaleType="centerCrop"
+                                android:visibility="visible" />
+
+                            <com.zolad.zoominimageview.ZoomInImageView
+                                android:id="@+id/title_2_image_3"
+                                android:layout_width="@dimen/_120sdp"
+                                android:layout_height="@dimen/_80sdp"
+                                android:layout_weight="1"
+                                android:adjustViewBounds="true"
+                                android:scaleType="centerCrop"
+                                android:visibility="visible" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.core.widget.NestedScrollView>
+
+            <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+                android:id="@+id/hidden_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:layout_toStartOf="@+id/hide_btn"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="Тайтл бокса длинный длинный длинный"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_16ssp"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/hide_btn"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_6sdp"
+                android:layout_marginBottom="@dimen/_1sdp"
+                android:src="@drawable/minus_green" />
+
+        </RelativeLayout>
+
+        <!--INFO-->
+        <LinearLayout
+            android:id="@+id/info_cont"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <WebView
+                android:id="@+id/info_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/_4sdp" />
+
+        </LinearLayout>
+
+        <!--QUESTION-->
+        <LinearLayout
+            android:id="@+id/question_cont"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:background="@drawable/button_simple_green">
+
+                <androidx.core.widget.NestedScrollView
+                    android:id="@+id/question_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@+id/question_close">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+                            android:id="@+id/question"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginStart="@dimen/_8sdp"
+                            android:layout_marginEnd="@dimen/_8sdp"
+                            android:layout_marginBottom="@dimen/_8sdp"
+                            android:text="Question"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_14ssp"
+                            android:visibility="visible" />
+
+                        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                            android:id="@+id/question_desc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_8sdp"
+                            android:layout_marginEnd="@dimen/_8sdp"
+                            android:layout_marginBottom="@dimen/_8sdp"
+                            android:text="Description"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_10ssp"
+                            android:visibility="gone" />
+
+                        <!--IMAGES-->
+                        <LinearLayout
+                            android:id="@+id/question_images_cont"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/_8ssp"
+                            android:layout_marginRight="@dimen/_8ssp"
+                            android:layout_marginBottom="@dimen/_8ssp"
+                            android:orientation="horizontal"
+                            android:visibility="gone">
+
+                            <com.zolad.zoominimageview.ZoomInImageView
+                                android:id="@+id/question_image_1"
+                                android:layout_width="@dimen/_120sdp"
+                                android:layout_height="@dimen/_80sdp"
+                                android:layout_weight="1"
+                                android:adjustViewBounds="true"
+                                android:scaleType="centerCrop"
+                                android:visibility="visible" />
+
+                            <com.zolad.zoominimageview.ZoomInImageView
+                                android:id="@+id/question_image_2"
+                                android:layout_width="@dimen/_120sdp"
+                                android:layout_height="@dimen/_80sdp"
+                                android:layout_weight="1"
+                                android:adjustViewBounds="true"
+                                android:scaleType="centerCrop"
+                                android:visibility="visible" />
+
+                            <com.zolad.zoominimageview.ZoomInImageView
+                                android:id="@+id/question_image_3"
+                                android:layout_width="@dimen/_120sdp"
+                                android:layout_height="@dimen/_80sdp"
+                                android:layout_weight="1"
+                                android:adjustViewBounds="true"
+                                android:scaleType="centerCrop"
+                                android:visibility="visible" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </androidx.core.widget.NestedScrollView>
+
+                <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+                    android:id="@+id/hidden_question_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_8sdp"
+                    android:layout_toStartOf="@+id/question_close"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="Question"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14ssp"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/question_close"
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="@dimen/_16sdp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginEnd="@dimen/_6sdp"
+                    android:src="@drawable/minus_white" />
+
+            </RelativeLayout>
+
+            <!--SPINNER-->
+            <LinearLayout
+                android:id="@+id/spinner_cont"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@drawable/shadow_2"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    android:id="@+id/answers_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:visibility="gone" />
+
+                <com.multispinner.MultiSelectSpinner
+                    android:id="@+id/answers_multi_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:visibility="gone"
+                    app:hintText="Выберите варианты ответа" />
+
+            </LinearLayout>
+
+            <!--LIST-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/answers_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_6sdp"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:layout_marginBottom="@dimen/_8sdp"
+                android:fadeScrollbars="false"
+                android:scrollbarAlwaysDrawVerticalTrack="false"
+                android:scrollbarSize="@dimen/_16sdp"
+                android:scrollbarStyle="outsideInset"
+                android:scrollbarThumbVertical="@drawable/button_background_green"
+                android:scrollbarTrackVertical="@color/lightGray2"
+                android:scrollbars="vertical"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!--TABLE-->
+        <FrameLayout
+            android:id="@+id/table_cont"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:background="@drawable/shadow_2"
+            android:visibility="gone">
+
+            <com.cleveroad.adaptivetablelayout.AdaptiveTableLayout
+                android:id="@+id/table_question_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_4sdp"
+                app:cellMargin="1dp"
+                app:dragAndDropEnabled="false"
+                tools:ignore="UnknownIdInLayout" />
+
+        </FrameLayout>
+
+        <!--SCALE-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/scale_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:layout_marginRight="@dimen/_4sdp"
+            android:fadeScrollbars="false"
+            android:scrollbarAlwaysDrawVerticalTrack="false"
+            android:scrollbarSize="@dimen/_16sdp"
+            android:scrollbarThumbVertical="@drawable/button_background_green"
+            android:scrollbarTrackVertical="@color/lightGray2"
+            android:scrollbars="vertical"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <!--BUTTONS-->
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/button_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/back_btn"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="Назад"
+            android:textSize="@dimen/_12ssp" />
+
+        <Button
+            android:id="@+id/exit_btn"
+            style="@style/ButtonRed"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="Выход"
+            android:textColor="#fff"
+            android:textSize="@dimen/_12ssp" />
+
+        <Button
+            android:id="@+id/next_btn"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="Вперед"
+            android:textSize="@dimen/_12ssp" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</RelativeLayout>

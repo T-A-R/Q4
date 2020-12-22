@@ -1,7 +1,9 @@
 package pro.quizer.quizer3.view.fragment;
 
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
+
+import androidx.core.content.ContextCompat;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -40,6 +42,7 @@ import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
 import pro.quizer.quizer3.model.config.QuestionsMatchesModel;
 import pro.quizer.quizer3.model.config.StagesModel;
+import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.MD5Utils;
@@ -504,7 +507,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             }
 
             if (authResponseModel.getResult() != 0) {
-
+                getMainActivity().setSettings(Constants.Settings.LAST_LOGIN_TIME, String.valueOf(DateUtils.getFullCurrentTime()));
                 if (isNeedDownloadConfig(authResponseModel)) {
                     downloadConfig(login, passwordMD5, authResponseModel);
                 } else {

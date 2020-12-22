@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/button_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -45,6 +45,6 @@
             android:textSize="@dimen/_12ssp"
             android:text="Вперед" />
 
-    </android.support.v7.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </merge>

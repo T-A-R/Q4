@@ -136,5 +136,6 @@ public final class Constants {
         String QUIZ_TIME = "quiz_time";
         String SENT_TIME = "sent_time";
         String QUOTA_TIME = "quota_time";
+        String LAST_LOGIN_TIME = "last_login_time";
     }
 }

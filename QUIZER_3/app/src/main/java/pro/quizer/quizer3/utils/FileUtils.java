@@ -4,7 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.StatFs;
-import android.support.v4.content.FileProvider;
+import androidx.core.content.FileProvider;
 import android.util.Log;
 
 import java.io.BufferedWriter;

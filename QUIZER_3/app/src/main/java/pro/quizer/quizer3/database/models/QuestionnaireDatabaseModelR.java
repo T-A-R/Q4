@@ -1,9 +1,9 @@
 package pro.quizer.quizer3.database.models;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Index;
-import android.arch.persistence.room.PrimaryKey;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
 
 @Entity(indices = {@Index("token")})
 public class QuestionnaireDatabaseModelR {
@@ -96,9 +96,20 @@ public class QuestionnaireDatabaseModelR {
     @ColumnInfo(name = "count_interrupted")
     private int count_interrupted;
 
+    @ColumnInfo(name = "is_online")
+    private boolean is_online;
 
+    @ColumnInfo(name = "config_id")
+    private String config_id;
+
+    @ColumnInfo(name = "quota_time")
+    private Long quota_time;
+
+    @ColumnInfo(name = "last_login_time")
+    private Long last_login_time;
 
     public QuestionnaireDatabaseModelR() {
+        this.is_online = true;
     }
 
     public QuestionnaireDatabaseModelR(String token, String login_admin, String login, int user_id, String passw, int questionnaire_id, int project_id, int billing_questions, int user_project_id, long date_interview, String gps, String gps_network, Long gps_time, Long gps_time_network, int questions_passed, int screens_passed, int selected_questions, int duration_time_questionnaire, Long quota_time_difference, Long send_time_difference, Long auth_time_difference, String status, String survey_status, String has_photo, boolean used_fake_gps) {
@@ -130,6 +141,7 @@ public class QuestionnaireDatabaseModelR {
         this.send_sms = false;
         this.used_fake_gps = used_fake_gps;
         this.count_interrupted = 0;
+        this.is_online = true;
     }
 
     public Long getGps_time_fk() {
@@ -362,5 +374,37 @@ public class QuestionnaireDatabaseModelR {
 
     public void setCount_interrupted(int count_interrupted) {
         this.count_interrupted = count_interrupted;
+    }
+
+    public boolean isIs_online() {
+        return is_online;
+    }
+
+    public void setIs_online(boolean is_online) {
+        this.is_online = is_online;
+    }
+
+    public String getConfig_id() {
+        return config_id;
+    }
+
+    public void setConfig_id(String config_id) {
+        this.config_id = config_id;
+    }
+
+    public Long getQuota_time() {
+        return quota_time;
+    }
+
+    public void setQuota_time(Long quota_time) {
+        this.quota_time = quota_time;
+    }
+
+    public Long getLast_login_time() {
+        return last_login_time;
+    }
+
+    public void setLast_login_time(Long last_login_time) {
+        this.last_login_time = last_login_time;
     }
 }

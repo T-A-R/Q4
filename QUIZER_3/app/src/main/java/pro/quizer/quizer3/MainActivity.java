@@ -5,7 +5,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -20,16 +19,16 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Process;
 import android.os.RemoteException;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -315,6 +314,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             configId = getCurrentUser().getConfig_id();
     }
 
+    public String getConfigId() {
+        String configId;
+        configId = getCurrentUser().getConfigR().getConfigId();
+        if (configId == null)
+            configId = getCurrentUser().getConfig_id();
+        return configId;
+    }
+
     private void generateMap(final List<ElementModelNew> elements, boolean rebuild) {
 
         for (final ElementModelNew element : elements) {
@@ -354,6 +361,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                         elementOptionsR.setSearch(optionsModelNew.isSearch());
                         elementOptionsR.setPre_condition(optionsModelNew.getPre_condition());
                         elementOptionsR.setPost_condition(optionsModelNew.getPost_condition());
+                        elementOptionsR.setPrev_condition(optionsModelNew.getPrevCondition());
                         elementOptionsR.setOrder(optionsModelNew.getOrder());
                         if (optionsModelNew.getNumber() != null)
                             elementOptionsR.setNumber(optionsModelNew.getNumber());
@@ -1235,6 +1243,9 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                     break;
                 case Constants.Settings.QUOTA_TIME:
                     getMainDao().setLastQuotaTime(Long.parseLong(data));
+                    break;
+                case Constants.Settings.LAST_LOGIN_TIME:
+                    getMainDao().setLastLoginTime(Long.parseLong(data));
                     break;
             }
         }

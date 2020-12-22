@@ -1,9 +1,9 @@
 package pro.quizer.quizer3.database.models;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Index;
-import android.arch.persistence.room.PrimaryKey;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
 
 @Entity(indices = {@Index("relative_id")})
 public class ElementOptionsR {
@@ -29,6 +29,9 @@ public class ElementOptionsR {
 
     @ColumnInfo(name = "post_condition")
     private String post_condition;
+
+    @ColumnInfo(name = "prev_condition")
+    private String prev_condition;
 
     @ColumnInfo(name = "data")
     private String data;
@@ -416,5 +419,13 @@ public class ElementOptionsR {
 
     public void setSmall_column(boolean small_column) {
         this.small_column = small_column;
+    }
+
+    public String getPrev_condition() {
+        return prev_condition;
+    }
+
+    public void setPrev_condition(String prev_condition) {
+        this.prev_condition = prev_condition;
     }
 }

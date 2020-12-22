@@ -2,7 +2,7 @@ package pro.quizer.quizer3.executable.files;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 
 import com.google.gson.GsonBuilder;

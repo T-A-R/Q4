@@ -55,6 +55,7 @@
     <string name="button_send">Отправить</string>
     <string name="et_enter_key">Введите ключ</string>
     <string name="empty_key">Ключ активации пуст. Пожалуйста, введите ключ и повторите попытку.</string>
+    <string name="wrong_key">Неверный ключ</string>
     <string name="auth_version_warning">Внимание!\nВы работаете на устройстве с версией android %1$s. Стабильная работа приложения не гарантируется.</string>
     <string name="auth_users_on_device">Количество пользователей на данном устройстве: %1$s</string>
     <string name="auth_enter_login">Введите логин</string>
@@ -252,6 +253,7 @@
     <string name="exit_questionnaire_warning">Вы уверены, что хотите принудительно прервать анкету? \nЕё содержимое будет потеряно.</string>
     <string name="exit_questionnaire_with_saving_warning">Вы действительно хотите выйти и прервать текущую анкету?</string>
     <string name="exit_quiz_header">Завершить анкету</string>
+    <string name="hidden_quotas_header">Выполнение квот</string>
     <string name="set_last_element_error">Ошибка обновления таблицы переходов</string>
     <string name="select_spinner">Выбрать…</string>
     <string name="default_placeholder">Введите ответ</string>
@@ -261,6 +263,8 @@
     <string name="cancel">Отмена</string>
     <string name="table_label">ВОПРОС&lt;br /&gt;ОТВЕТ</string>
     <string name="view_OK">ОК</string>
+    <string name="view_continue">Продолжить</string>
+    <string name="view_finish_quiz">Завершить анкету</string>
     <string name="empty_string_warning">Заполните текстовое поле в выбранных вариантах ответа.</string>
     <string name="empty_rank_warning">Не заполнен открытый ответ.</string>
     <string name="empty_input_warning">Заполните текстовое поле.</string>
@@ -424,5 +428,9 @@
     <string name="error_next_element_id_null">Ошибка обработки анкеты</string>
     <string name="enter_answer_empty">Выберите ответ (не выбрано)</string>
     <string name="enter_answer">Введите ответ</string>
+    <string name="data_on_login">Данные в рамках логина:</string>
+    <string name="damn_symbol_open">(</string>
+    <string name="damn_symbol_close">)</string>
+
 
 </resources>

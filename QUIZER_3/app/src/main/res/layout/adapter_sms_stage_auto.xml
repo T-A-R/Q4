@@ -45,7 +45,7 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/sms_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -89,7 +89,7 @@
                 android:layout_weight="0.6"
                 android:text="Не отправлено" />
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/sms_copy"
                 android:layout_width="@dimen/_18sdp"
                 android:layout_height="@dimen/_18sdp"

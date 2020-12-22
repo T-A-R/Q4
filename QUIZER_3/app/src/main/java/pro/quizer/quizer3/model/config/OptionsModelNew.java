@@ -113,6 +113,9 @@ public class OptionsModelNew implements Serializable {
     @SerializedName("auto_check")
     private boolean auto_check;
 
+    @SerializedName("prev_condition")
+    private String prev_condition;
+
     public String getData() {
         return data;
     }
@@ -334,5 +337,9 @@ public class OptionsModelNew implements Serializable {
 
     public void setSmallColumns(boolean small_column) {
         this.small_column = small_column;
+    }
+
+    public String getPrevCondition() {
+        return prev_condition;
     }
 }

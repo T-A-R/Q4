@@ -1,21 +1,12 @@
 package pro.quizer.quizer3.database.models;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-import android.util.Log;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import pro.quizer.quizer3.model.config.ConfigModel;
-import pro.quizer.quizer3.model.quota.QuotaModel;
-import pro.quizer.quizer3.API.models.response.QuotaResponseModel;
-
-import static pro.quizer.quizer3.MainActivity.TAG;
-import static pro.quizer.quizer3.view.fragment.SmartFragment.getDao;
 
 @Entity
 public class UserModelR {

@@ -63,7 +63,7 @@ public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdap
     @Override
     public ScaleObjectViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(mActivity.isAutoZoom() ? R.layout.holder_answer_scale_auto : R.layout.holder_answer_scale, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(MainActivity.AVIA ? R.layout.holder_answer_scale_avia : mActivity.isAutoZoom() ? R.layout.holder_answer_scale_auto : R.layout.holder_answer_scale, viewGroup, false);
         return new ScaleObjectViewHolder(view, onAnswerClickListener);
     }
 
@@ -82,7 +82,7 @@ public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdap
         TextView scaleText;
         TextView divider;
         ImageView scaleImage;
-        LinearLayout cont;
+        View cont;
 
         OnAnswerClickListener onUserClickListener;
 

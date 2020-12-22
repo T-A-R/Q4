@@ -46,8 +46,8 @@
         android:id="@+id/open_question"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_3sdp"
-        android:layout_marginBottom="@dimen/_8sdp"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:layout_marginBottom="@dimen/_2sdp"
         android:visibility="visible">
 
         <LinearLayout
@@ -102,8 +102,8 @@
 
         <ImageView
             android:id="@+id/radio_button"
-            android:layout_width="@dimen/_16sdp"
-            android:layout_height="@dimen/_16sdp"
+            android:layout_width="@dimen/_12sdp"
+            android:layout_height="@dimen/_12sdp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
@@ -111,7 +111,7 @@
             android:layout_marginLeft="@dimen/_8sdp"
             android:layout_marginEnd="@dimen/_8sdp"
             android:layout_marginRight="@dimen/_8sdp"
-            android:src="@drawable/radio_button_unchecked" />
+            android:src="@drawable/radio_button_unchecked_red" />
 
     </RelativeLayout>
 

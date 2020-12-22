@@ -151,7 +151,6 @@
                             android:layout_marginStart="@dimen/_8sdp"
                             android:layout_marginEnd="@dimen/_12sdp"
                             android:layout_marginBottom="@dimen/_6sdp"
-                            android:text="Описание бокса 2"
                             android:textColor="@color/cardview_dark_background"
                             android:textSize="@dimen/_10ssp"
                             android:visibility="visible" />

@@ -41,11 +41,11 @@ public class Statistics {
         return user_quoted;
     }
 
-    public Integer getUserUnfinished() {
+    public Integer getUserAborted() {
         return user_unfinished;
     }
 
-    public Integer getUserRejected() {
+    public Integer getUserDefective() {
         return user_rejected;
     }
 

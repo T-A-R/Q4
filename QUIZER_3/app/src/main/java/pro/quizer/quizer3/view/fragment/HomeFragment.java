@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -1025,16 +1026,22 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getMainActivity());
         View layoutView = getLayoutInflater().inflate(getMainActivity().isAutoZoom() ? R.layout.dialog_statistics_auto : R.layout.dialog_statistics, null);
         TextView deviceTitle = layoutView.findViewById(R.id.device_title);
+        TextView loginTitle = layoutView.findViewById(R.id.login_title);
+        TextView userTitle = layoutView.findViewById(R.id.user_title);
         TextView quotasCount = layoutView.findViewById(R.id.quotas_count);
+        TextView userQuotasCount = layoutView.findViewById(R.id.user_quotas_count);
         TextView abortedCount = layoutView.findViewById(R.id.aborted_count);
-        TextView devectiveCount = layoutView.findViewById(R.id.defective_count);
+        TextView userAbortedCount = layoutView.findViewById(R.id.user_aborted_count);
+        TextView defectiveCount = layoutView.findViewById(R.id.defective_count);
+        TextView userDefectiveCount = layoutView.findViewById(R.id.user_defective_count);
         TextView testCount = layoutView.findViewById(R.id.test_count);
-        TextView complitedCount = layoutView.findViewById(R.id.completed_count);
+        TextView userTestCount = layoutView.findViewById(R.id.user_test_count);
+        TextView completedCount = layoutView.findViewById(R.id.completed_count);
         TextView sentCount = layoutView.findViewById(R.id.sent_count);
         TextView notSentCount = layoutView.findViewById(R.id.not_sent_count);
         TextView unfinishedCount = layoutView.findViewById(R.id.unfinished_count);
         TextView inactiveCount = layoutView.findViewById(R.id.inactive_count);
-        LinearLayout cont = layoutView.findViewById(R.id.cont);
+        ImageView closeBtn = layoutView.findViewById(R.id.btn_dialog_close);
 
         if (activity != null && !activity.getSettings().isProject_is_active()) {
             int count = getDao().getQuestionnaireSurveyStatus(activity.getCurrentUserId(), Constants.QuestionnaireStatuses.COMPLETED, Constants.LogStatus.NOT_SENT).size();
@@ -1043,7 +1050,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             inactiveCount.setVisibility(View.VISIBLE);
         }
 
-        cont.setOnClickListener(v -> {
+        closeBtn.setOnClickListener(v -> {
             btnInfo.setEnabled(true);
             final int sdk = Build.VERSION.SDK_INT;
             try {
@@ -1058,13 +1065,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             infoDialog.dismiss();
         });
 
+        UiUtils.setTextOrHide(loginTitle, (String.format(getString(R.string.data_by_login), getCurrentUser().getLogin())));
         UiUtils.setTextOrHide(quotasCount, (String.format(getString(R.string.collected_quotas), String.valueOf(finalStatistics.getQuotas()))));
         if (finalStatistics.getAborted() == -1) {
             UiUtils.setTextOrHide(abortedCount, (String.format(getString(R.string.collected_aborted), "нет данных")));
         } else {
             UiUtils.setTextOrHide(abortedCount, (String.format(getString(R.string.collected_aborted), String.valueOf(finalStatistics.getAborted()))));
         }
-        UiUtils.setTextOrHide(devectiveCount, (String.format(getString(R.string.collected_defective), String.valueOf(finalStatistics.getDefective()))));
+        UiUtils.setTextOrHide(defectiveCount, (String.format(getString(R.string.collected_defective), String.valueOf(finalStatistics.getDefective()))));
         if (server && finalStatistics.getTests() != 0) {
             testCount.setVisibility(View.VISIBLE);
             UiUtils.setTextOrHide(testCount, (String.format(getString(R.string.collected_tests), String.valueOf(finalStatistics.getTests()))));
@@ -1072,8 +1080,24 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             testCount.setVisibility(View.GONE);
         }
 
-        UiUtils.setTextOrHide(deviceTitle, "Данные по устройству: (логин: " + getCurrentUser().getLogin() + ")");
-        UiUtils.setTextOrHide(complitedCount, (String.format(getString(R.string.collected_questions), String.valueOf(completedCounter))));
+
+        UiUtils.setTextOrHide(userTitle, (String.format(getString(R.string.data_by_user), activity.getSettings().getUser_name(), getCurrentUser().getLogin())));
+        UiUtils.setTextOrHide(userQuotasCount, (String.format(getString(R.string.collected_quotas), String.valueOf(finalStatistics.getUserQuoted()))));
+        if (finalStatistics.getUserAborted() == -1) {
+            UiUtils.setTextOrHide(userAbortedCount, (String.format(getString(R.string.collected_aborted), "нет данных")));
+        } else {
+            UiUtils.setTextOrHide(userAbortedCount, (String.format(getString(R.string.collected_aborted), String.valueOf(finalStatistics.getUserAborted()))));
+        }
+        UiUtils.setTextOrHide(userDefectiveCount, (String.format(getString(R.string.collected_defective), String.valueOf(finalStatistics.getUserDefective()))));
+        if (server && finalStatistics.getUserTested() != 0) {
+            userTestCount.setVisibility(View.VISIBLE);
+            UiUtils.setTextOrHide(userTestCount, (String.format(getString(R.string.collected_tests), String.valueOf(finalStatistics.getUserTested()))));
+        } else {
+            userTestCount.setVisibility(View.GONE);
+        }
+
+        UiUtils.setTextOrHide(deviceTitle, (String.format(getString(R.string.data_by_device), getCurrentUser().getLogin())));
+        UiUtils.setTextOrHide(completedCount, (String.format(getString(R.string.collected_questions), String.valueOf(completedCounter))));
         UiUtils.setTextOrHide(sentCount, (String.format(getString(R.string.questions_sent_from_device), String.valueOf(sentCounter))));
         UiUtils.setTextOrHide(notSentCount, (String.format(getString(R.string.questions_not_sent_from_device), String.valueOf(notSentCounter))));
 

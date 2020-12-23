@@ -431,6 +431,9 @@
     <string name="data_on_login">Данные в рамках логина:</string>
     <string name="damn_symbol_open">(</string>
     <string name="damn_symbol_close">)</string>
+    <string name="data_by_login">Данные по логину %1$s</string>
+    <string name="data_by_device">Данные по устройству под логином %1$s</string>
+    <string name="data_by_user">Данные интервьюера %1$s под логином %2$s</string>
 
 
 </resources>

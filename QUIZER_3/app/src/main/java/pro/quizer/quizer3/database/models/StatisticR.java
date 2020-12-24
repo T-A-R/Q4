@@ -1,13 +1,13 @@
 package pro.quizer.quizer3.database.models;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-import androidx.annotation.NonNull;
 
 @Entity(indices = {@Index("user_id")})
-public class TokensCounterR {
+public class StatisticR {
 
     @NonNull
     @PrimaryKey
@@ -26,10 +26,10 @@ public class TokensCounterR {
     @ColumnInfo(name = "user_project_id")
     private String user_project_id;
 
-    public TokensCounterR() {
+    public StatisticR() {
     }
 
-    public TokensCounterR(String token, int user_id) {
+    public StatisticR(String token, int user_id) {
         this.token = token;
         this.user_id = user_id;
     }

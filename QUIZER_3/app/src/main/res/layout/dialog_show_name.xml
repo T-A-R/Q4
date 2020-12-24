@@ -9,33 +9,37 @@
     android:keepScreenOn="true"
     android:orientation="vertical">
 
-    <TextView
+    <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
         android:id="@+id/title_show_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginEnd="@dimen/_4sdp"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
         android:text="@string/are_you"
         android:textColor="@color/black"
         android:textSize="@dimen/_16ssp" />
 
-    <TextView
+    <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
         android:id="@+id/show_name"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/_4sdp"
-        android:layout_marginEnd="@dimen/_4sdp"
-        android:text="@string/enter_your_name"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
         android:textSize="@dimen/_16ssp" />
 
-    <TextView
+    <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
         android:id="@+id/show_birthdate"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/_4sdp"
-        android:layout_marginEnd="@dimen/_4sdp"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
         android:focusableInTouchMode="false"
-        android:text="@string/enter_your_birthdate"
         android:textSize="@dimen/_16ssp" />
 
     <LinearLayout
@@ -43,6 +47,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/_16sdp"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
         android:orientation="horizontal">
 
         <Button

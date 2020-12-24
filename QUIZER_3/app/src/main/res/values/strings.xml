@@ -234,8 +234,9 @@
     <string name="button_quotas">Квоты</string>
     <string name="button_info">Инфо</string>
     <string name="collected_quotas">Квот закрыто: %1$s</string>
+    <string name="collected_questionnaires">Корректных анкет: %1$s</string>
     <string name="collected_aborted">Незавершённых и прерванных: %1$s</string>
-    <string name="collected_defective">Забракованных: %1$s</string>
+    <string name="collected_defective">Забраковано: %1$s</string>
     <string name="collected_tests">Тестовых: %1$s</string>
     <string name="collected_questions">Собрано анкет: %1$s</string>
     <string name="questions_sent_from_device">Отправлено анкет: %1$s</string>
@@ -434,6 +435,10 @@
     <string name="data_by_login">Данные по логину %1$s</string>
     <string name="data_by_device">Данные по устройству под логином %1$s</string>
     <string name="data_by_user">Данные интервьюера %1$s под логином %2$s</string>
+    <string name="enter_your_name">Введите ваше имя</string>
+    <string name="enter_your_birthdate">Введите дату рождения</string>
+    <string name="are_you">Это Вы?</string>
+    <string name="please_enter_name_and_birthdate">Пожалуста заполните имя и дату рождения</string>
 
 
 </resources>

@@ -354,6 +354,12 @@ public interface QuizerDao {
     @Query("UPDATE SettingsR SET last_sent_quiz_time = :data")
     void setLastSentQuizTime(Long data);
 
+    @Query("UPDATE SettingsR SET user_date = :data")
+    void setUserBirthDate(Long data);
+
+    @Query("UPDATE SettingsR SET user_name = :data")
+    void setUserName(String data);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertToken(TokensCounterR token);
 

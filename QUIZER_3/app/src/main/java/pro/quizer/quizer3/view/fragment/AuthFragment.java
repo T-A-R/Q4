@@ -1,7 +1,12 @@
 package pro.quizer.quizer3.view.fragment;
 
+import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 
 import android.util.Log;
@@ -9,6 +14,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -21,7 +27,9 @@ import com.reginald.editspinner.EditSpinner;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
@@ -75,6 +83,8 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     private List<String> mSavedUsers;
     private List<UserModelR> mSavedUserModels;
+
+    private AlertDialog infoDialog;
 
     public AuthFragment() {
         super(R.layout.fragment_auth);
@@ -251,7 +261,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         } else {
             HomeFragment fragment = new HomeFragment();
             fragment.setStartAfterAuth();
-            replaceFragment(fragment);
+            startHomeFragment(fragment);
         }
     }
 
@@ -265,7 +275,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             case 2:
                 HomeFragment fragment = new HomeFragment();
                 fragment.setStartAfterAuth();
-                replaceFragment(fragment);
+                startHomeFragment(fragment);
                 break;
         }
     }
@@ -540,6 +550,104 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         setViewBackground(btnSend, false, false);
         btnSend.setEnabled(false);
         btnSend.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_gray_avia : R.drawable.button_background_gray));
+    }
+
+    private void startHomeFragment(HomeFragment fragment) {
+        if (getMainActivity() != null && getMainActivity().getSettings().getUser_name() != null) {
+            showNameDialog(fragment);
+        } else {
+            showInputNameDialog(fragment);
+        }
+    }
+
+    private void showNameDialog(HomeFragment fragment) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getMainActivity());
+        dialogBuilder.setCancelable(false);
+        View layoutView = getLayoutInflater().inflate(getMainActivity().isAutoZoom() ? R.layout.dialog_show_name_auto : R.layout.dialog_show_name, null);
+        TextView name = layoutView.findViewById(R.id.show_name);
+        TextView date = layoutView.findViewById(R.id.show_birthdate);
+        Button noBtn = layoutView.findViewById(R.id.btn_wrong_name);
+        Button yesBtn = layoutView.findViewById(R.id.btn_right_name);
+
+        try {
+            UiUtils.setTextOrHide(name, getMainActivity().getSettings().getUser_name());
+            UiUtils.setTextOrHide(date, DateUtils.getDate(getMainActivity().getSettings().getUser_date()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        noBtn.setOnClickListener(v -> {
+            infoDialog.dismiss();
+            showInputNameDialog(fragment);
+        });
+
+        yesBtn.setOnClickListener(v -> {
+            infoDialog.dismiss();
+            replaceFragment(fragment);
+        });
+
+        dialogBuilder.setView(layoutView);
+        infoDialog = dialogBuilder.create();
+        infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+        infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if (getMainActivity() != null && !getMainActivity().isFinishing())
+            infoDialog.show();
+
+    }
+
+    private void showInputNameDialog(HomeFragment fragment) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getMainActivity());
+        dialogBuilder.setCancelable(false);
+        View layoutView = getLayoutInflater().inflate(getMainActivity().isAutoZoom() ? R.layout.dialog_input_name_auto : R.layout.dialog_input_name, null);
+        EditText name = layoutView.findViewById(R.id.input_name);
+        EditText date = layoutView.findViewById(R.id.input_birthdate);
+        Button sendBtn = layoutView.findViewById(R.id.btn_send_name);
+        date.setOnClickListener(v -> setDate((EditText) v));
+
+        sendBtn.setOnClickListener(v -> {
+            String nameString = name.getText().toString();
+            String dateString = date.getText().toString();
+            if (StringUtils.isNotEmpty(nameString) && StringUtils.isNotEmpty(dateString)) {
+                getDao().setUserName(nameString);
+                infoDialog.dismiss();
+                replaceFragment(fragment);
+            } else {
+                showToast(getString(R.string.please_enter_name_and_birthdate));
+            }
+        });
+
+        dialogBuilder.setView(layoutView);
+        infoDialog = dialogBuilder.create();
+        infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+        infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if (getMainActivity() != null && !getMainActivity().isFinishing())
+            infoDialog.show();
+    }
+
+    private final Calendar mCalendar = Calendar.getInstance();
+
+    public void setDate(final TextView pEditText) {
+        if (!getMainActivity().isFinishing()) {
+            new DatePickerDialog(getMainActivity(), (view, year, monthOfYear, dayOfMonth) -> {
+                mCalendar.set(Calendar.YEAR, year);
+                mCalendar.set(Calendar.MONTH, monthOfYear);
+                mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                setInitialDateTime(pEditText);
+            },
+                    mCalendar.get(Calendar.YEAR),
+                    mCalendar.get(Calendar.MONTH),
+                    mCalendar.get(Calendar.DAY_OF_MONTH))
+                    .show();
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private void setInitialDateTime(final TextView mEditText) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
+        dateFormat.setTimeZone(mCalendar.getTimeZone());
+        mEditText.setText(dateFormat.format(mCalendar.getTime()));
+        getDao().setUserBirthDate(mCalendar.getTimeInMillis() / 1000);
     }
 }
 

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_round"
+    android:fitsSystemWindows="true"
+    android:keepScreenOn="true"
+    android:orientation="vertical"
+    android:id="@+id/input_name_cont">
+
+    <pro.quizer.quizer3.view.element.edittext.ResizableEditText
+        android:id="@+id/input_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_4sdp"
+        android:hint="@string/enter_your_name"/>
+
+    <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+        android:id="@+id/input_birthdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_2sdp"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:text="@string/enter_your_birthdate"
+        android:textColor="@color/gray" />
+
+    <Button
+        android:id="@+id/btn_send_name"
+        style="@style/ButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_36sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:maxLines="1"
+        android:text="@string/button_send"
+        android:textSize="@dimen/_14ssp" />
+
+</LinearLayout>

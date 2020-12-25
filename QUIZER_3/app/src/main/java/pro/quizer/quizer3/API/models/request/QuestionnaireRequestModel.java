@@ -36,7 +36,7 @@ public class QuestionnaireRequestModel implements Serializable {
     private final boolean is_online;
     private final String config_id;
     private final String user_name;
-    private final String user_date;
+    private final Long user_date;
 
     public QuestionnaireRequestModel(int billing_questions,
                                      int questionnaire_id,
@@ -67,7 +67,7 @@ public class QuestionnaireRequestModel implements Serializable {
                                      Long last_login_time,
                                      boolean is_online,
                                      String user_name,
-                                     String user_date) {
+                                     Long user_date) {
         this.gps_time = gps_time;
         this.gps_time_network = gps_time_network;
         this.billing_questions = billing_questions;

@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+        <pro.quizer.quizer3.view.element.textview.LargeResizableTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"

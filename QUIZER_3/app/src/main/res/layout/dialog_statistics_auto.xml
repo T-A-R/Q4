@@ -22,7 +22,7 @@
             android:layout_marginRight="@dimen/_8sdp"
             android:text="Инфо:"
             android:textColor="@android:color/black"
-            android:textSize="@dimen/_16ssp"/>
+            android:textSize="@dimen/_14ssp"/>
 
         <ImageView
             android:id="@+id/btn_dialog_close"
@@ -75,7 +75,7 @@
                     android:text="@string/data_by_login"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
                 <include layout="@layout/view_divider" />
 
@@ -89,7 +89,7 @@
                     android:layout_marginRight="@dimen/_8sdp"
                     android:text="@string/collected_quotas"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
                 <TextView
                     android:id="@+id/finished_count"
@@ -101,7 +101,7 @@
                     android:layout_marginRight="@dimen/_8sdp"
                     android:text="@string/collected_questionnaires"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
                 <TextView
                     android:id="@+id/aborted_count"
@@ -113,7 +113,7 @@
                     android:layout_marginRight="@dimen/_8sdp"
                     android:text="@string/collected_aborted"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
                 <TextView
                     android:id="@+id/defective_count"
@@ -125,7 +125,7 @@
                     android:layout_marginRight="@dimen/_8sdp"
                     android:text="@string/collected_defective"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
                 <TextView
                     android:id="@+id/test_count"
@@ -137,7 +137,7 @@
                     android:layout_marginRight="@dimen/_8sdp"
                     android:text="@string/collected_tests"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
             </LinearLayout>
 
@@ -160,7 +160,7 @@
                     android:text="@string/data_by_user"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
                 <include layout="@layout/view_divider" />
 
@@ -174,7 +174,7 @@
                     android:layout_marginRight="@dimen/_8sdp"
                     android:text="@string/collected_quotas"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
                 <TextView
                     android:id="@+id/user_finished_count"
@@ -186,7 +186,7 @@
                     android:layout_marginRight="@dimen/_8sdp"
                     android:text="@string/collected_questionnaires"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
                 <TextView
                     android:id="@+id/user_aborted_count"
@@ -198,7 +198,7 @@
                     android:layout_marginRight="@dimen/_8sdp"
                     android:text="@string/collected_aborted"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
                 <TextView
                     android:id="@+id/user_defective_count"
@@ -210,7 +210,7 @@
                     android:layout_marginRight="@dimen/_8sdp"
                     android:text="@string/collected_defective"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
                 <TextView
                     android:id="@+id/user_test_count"
@@ -222,7 +222,7 @@
                     android:layout_marginRight="@dimen/_8sdp"
                     android:text="@string/collected_tests"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
             </LinearLayout>
 
@@ -244,7 +244,7 @@
                     android:text="@string/data_by_device"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
                 <TextView
                     android:id="@+id/device_title_desc"
@@ -258,7 +258,7 @@
                     android:layout_marginBottom="@dimen/_8sdp"
                     android:text="(в т.ч. неполные, прерванные и забракованные)"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
                 <include layout="@layout/view_divider" />
 
@@ -272,7 +272,7 @@
                     android:layout_marginRight="@dimen/_8sdp"
                     android:text="Собрано анкет: 25"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
                 <TextView
                     android:id="@+id/sent_count"
@@ -284,7 +284,7 @@
                     android:layout_marginRight="@dimen/_8sdp"
                     android:text="Отправлено анкет: 23"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
                 <TextView
                     android:id="@+id/not_sent_count"
@@ -296,7 +296,7 @@
                     android:layout_marginRight="@dimen/_8sdp"
                     android:text="Отправлено анкет: 23"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
                 <TextView
                     android:id="@+id/unfinished_count"
@@ -310,7 +310,7 @@
                     android:text="Возможно продолжить анкет: 1"
                     android:textColor="@android:color/black"
                     android:visibility="gone"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
                 <TextView
                     android:id="@+id/inactive_count"
@@ -324,7 +324,7 @@
                     android:text="Неактуальных квотных: 1"
                     android:textColor="@android:color/black"
                     android:visibility="gone"
-                    android:textSize="@dimen/_11ssp"/>
+                    android:textSize="@dimen/_10ssp"/>
 
             </LinearLayout>
 

@@ -45,6 +45,7 @@ import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
 import pro.quizer.quizer3.database.models.SettingsR;
+import pro.quizer.quizer3.database.models.StatisticR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.QuotasViewModelExecutable;
@@ -53,7 +54,6 @@ import pro.quizer.quizer3.executable.SyncInfoExecutable;
 import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
-import pro.quizer.quizer3.model.Statistics;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.ProjectInfoModel;
 import pro.quizer.quizer3.model.quota.QuotaModel;
@@ -110,7 +110,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private boolean isQuotaUpdated = false;
     private boolean isNeedUpdate = false;
     private boolean isTimeToDownloadConfig = false;
-    private Statistics finalStatistics;
+    private StatisticR finalStatistics;
     private AlertDialog infoDialog;
     private int completedCounter = 0;
     private int sentCounter = 0;
@@ -280,7 +280,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 showStartDialog();
             }
         } else if (view == btnInfo) {
-            getInfo();
+            getInfo(true);
         } else if (view == btnQuotas) {
             replaceFragment(new QuotasFragment());
         } else if (view == btnContinue) {
@@ -325,6 +325,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 }
 
                 hideScreensaver();
+                getInfo(false);
                 initSyncInfoViews();
             }
 
@@ -896,6 +897,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             QuotasViewModel quotasViewModel = new QuotasViewModelExecutable(activity.getMap(false), activity, Constants.Strings.EMPTY, false).execute();
             List<QuotaModel> pQuotasList;
             int quotas = 0;
+            int userQuotas = 0;
             if (quotasViewModel != null) {
                 pQuotasList = quotasViewModel.getQuotas();
                 if (pQuotasList != null) {
@@ -907,37 +909,49 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                             doneInt = quota.getSent();
                         }
                         quotas = quotas + doneInt;
+                        userQuotas = userQuotas + quota.getLocalUserDoneCount(activity);
                     }
                 }
             }
             int userId = getCurrentUserId();
-            int savedAborted = activity.getAborted();
-            int aborted = 0;
-            int unfinished = 0;
+
+            StatisticR savedStatistics = getDao().getStatistics(userId);
+            if (savedStatistics == null) savedStatistics = new StatisticR(userId);
+            SettingsR settings = activity.getSettings();
             List<QuestionnaireDatabaseModelR> abortedQuestionnairesList = null;
-            List<QuestionnaireDatabaseModelR> unfinishedQuestionnairesList = null;
+            List<QuestionnaireDatabaseModelR> abortedUserQuestionnairesList = null;
+            List<QuestionnaireDatabaseModelR> correctedQuestionnairesList = null;
+            List<QuestionnaireDatabaseModelR> correctedUserQuestionnairesList = null;
             try {
+                abortedUserQuestionnairesList = getDao().getQuestionnaireByStatusAndName(userId, settings.getUser_name(), settings.getUser_date(), Constants.QuestionnaireStatuses.ABORTED, Constants.LogStatus.NOT_SENT);
                 abortedQuestionnairesList = getDao().getQuestionnaireSurveyStatus(userId, Constants.QuestionnaireStatuses.ABORTED, Constants.LogStatus.NOT_SENT);
-                unfinishedQuestionnairesList = getDao().getQuestionnaireSurveyStatus(userId, Constants.QuestionnaireStatuses.ABORTED, Constants.LogStatus.NOT_SENT);
+                correctedUserQuestionnairesList = getDao().getQuestionnaireByStatusAndName(userId, settings.getUser_name(), settings.getUser_date(), Constants.QuestionnaireStatuses.COMPLETED, Constants.LogStatus.NOT_SENT);
+                correctedQuestionnairesList = getDao().getQuestionnaireSurveyStatus(userId, Constants.QuestionnaireStatuses.COMPLETED, Constants.LogStatus.NOT_SENT);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            if (abortedQuestionnairesList != null) {
-                aborted = abortedQuestionnairesList.size();
-            }
+            int aborted = abortedQuestionnairesList != null ? abortedQuestionnairesList.size() : 0;
+            int userAborted = abortedUserQuestionnairesList != null ? abortedUserQuestionnairesList.size() : 0;
+            int totalAborted = savedStatistics.getUnfinished() != null ? aborted + savedStatistics.getUnfinished() : -1;
+            int totalUserAborted = savedStatistics.getUser_unfinished() != null ? userAborted + savedStatistics.getUser_unfinished() : -1;
 
-            if (unfinishedQuestionnairesList != null) {
-                unfinished = unfinishedQuestionnairesList.size();
-            }
-            int totalAborted = -1;
-            if (savedAborted != -1) {
-                totalAborted = aborted + savedAborted + unfinished;
-            }
 
-            //TODO GET STATISTICS BY NAME ===================================================================================
-
-            finalStatistics = new Statistics(quotas, totalAborted, 0, 0, 0, 0, 0, 0);
+            finalStatistics = new StatisticR(userId);
+            finalStatistics.setQuoted(quotas);
+            finalStatistics.setUser_quoted(savedStatistics.getUser_quoted() == null ? userQuotas : userQuotas + savedStatistics.getUser_quoted());
+            finalStatistics.setUnfinished(totalAborted);
+            finalStatistics.setUser_unfinished(totalUserAborted);
+            finalStatistics.setCorrect(savedStatistics.getCorrect() == null ?
+                    correctedQuestionnairesList != null ? correctedQuestionnairesList.size() : 0 :
+                    savedStatistics.getCorrect() + (correctedQuestionnairesList != null ? correctedQuestionnairesList.size() : 0));
+            finalStatistics.setUser_correct(savedStatistics.getUser_correct() == null ?
+                    correctedUserQuestionnairesList != null ? correctedUserQuestionnairesList.size() : 0 :
+                    savedStatistics.getUser_correct() + (correctedUserQuestionnairesList != null ? correctedUserQuestionnairesList.size() : 0));
+            finalStatistics.setRejected(savedStatistics.getRejected() == null ? 0 : savedStatistics.getRejected());
+            finalStatistics.setUser_rejected(savedStatistics.getUser_rejected() == null ? 0 : savedStatistics.getUser_rejected());
+            finalStatistics.setTested(savedStatistics.getTested() == null ? 0 : savedStatistics.getTested());
+            finalStatistics.setUser_tested(savedStatistics.getUser_tested() == null ? 0 : savedStatistics.getUser_tested());
             return null;
         }
 
@@ -954,7 +968,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         }
     }
 
-    private void getInfo() {
+    private void getInfo(boolean showDialog) {
         btnInfo.setEnabled(false);
         btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
 
@@ -968,14 +982,16 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         QuizerAPI.getStatistics(mServerUrl, json, responseBody -> {
             if (responseBody == null) {
-                showStatistics(null);
+                if (showDialog)
+                    showStatistics(null);
                 return;
             }
             String responseJson;
             try {
                 responseJson = responseBody.string();
             } catch (IOException e) {
-                showStatistics(null);
+                if (showDialog)
+                    showStatistics(null);
                 return;
             }
 
@@ -984,7 +1000,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             try {
                 statisticsResponseModel = new GsonBuilder().create().fromJson(responseJson, StatisticsResponseModel.class);
             } catch (final Exception pE) {
-                showStatistics(null);
+                if (showDialog)
+                    showStatistics(null);
                 return;
             }
 
@@ -997,21 +1014,27 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     }
                 }
                 if (statisticsResponseModel.getResult() != 0) {
-                    activity.setAborted(statisticsResponseModel.getStatistics().getAborted());
-                    showStatistics(statisticsResponseModel.getStatistics());
+                    activity.setAborted(statisticsResponseModel.getStatistics().getUnfinished());
+                    StatisticR statistics = statisticsResponseModel.getStatistics();
+                    statistics.setUser_id(getCurrentUserId());
+                    getDao().insertStatisticR(statistics);
+                    if (showDialog)
+                        showStatistics(statisticsResponseModel.getStatistics());
                     return;
                 } else {
-                    showStatistics(null);
+                    if (showDialog)
+                        showStatistics(null);
                     return;
                 }
             } else {
-                showStatistics(null);
+                if (showDialog)
+                    showStatistics(null);
                 return;
             }
         });
     }
 
-    private void showStatistics(Statistics statistics) {
+    private void showStatistics(StatisticR statistics) {
 
         if (statistics == null) {
             ShowStatistics task = new ShowStatistics();
@@ -1027,6 +1050,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         View layoutView = getLayoutInflater().inflate(getMainActivity().isAutoZoom() ? R.layout.dialog_statistics_auto : R.layout.dialog_statistics, null);
         TextView deviceTitle = layoutView.findViewById(R.id.device_title);
         TextView loginTitle = layoutView.findViewById(R.id.login_title);
+        TextView correct = layoutView.findViewById(R.id.finished_count);
+        TextView userCorrect = layoutView.findViewById(R.id.user_finished_count);
         TextView userTitle = layoutView.findViewById(R.id.user_title);
         TextView quotasCount = layoutView.findViewById(R.id.quotas_count);
         TextView userQuotasCount = layoutView.findViewById(R.id.user_quotas_count);
@@ -1066,32 +1091,34 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         });
 
         UiUtils.setTextOrHide(loginTitle, (String.format(getString(R.string.data_by_login), getCurrentUser().getLogin())));
-        UiUtils.setTextOrHide(quotasCount, (String.format(getString(R.string.collected_quotas), String.valueOf(finalStatistics.getQuotas()))));
-        if (finalStatistics.getAborted() == -1) {
+        UiUtils.setTextOrHide(quotasCount, (String.format(getString(R.string.collected_quotas), String.valueOf(finalStatistics.getQuoted()))));
+        if (finalStatistics.getUnfinished() == -1) {
             UiUtils.setTextOrHide(abortedCount, (String.format(getString(R.string.collected_aborted), "нет данных")));
         } else {
-            UiUtils.setTextOrHide(abortedCount, (String.format(getString(R.string.collected_aborted), String.valueOf(finalStatistics.getAborted()))));
+            UiUtils.setTextOrHide(abortedCount, (String.format(getString(R.string.collected_aborted), String.valueOf(finalStatistics.getUnfinished()))));
         }
-        UiUtils.setTextOrHide(defectiveCount, (String.format(getString(R.string.collected_defective), String.valueOf(finalStatistics.getDefective()))));
-        if (server && finalStatistics.getTests() != 0) {
+        UiUtils.setTextOrHide(correct, (String.format(getString(R.string.collected_questionnaires), String.valueOf(finalStatistics.getCorrect()))));
+        UiUtils.setTextOrHide(defectiveCount, (String.format(getString(R.string.collected_defective), String.valueOf(finalStatistics.getRejected()))));
+        if (server && finalStatistics.getTested() != 0) {
             testCount.setVisibility(View.VISIBLE);
-            UiUtils.setTextOrHide(testCount, (String.format(getString(R.string.collected_tests), String.valueOf(finalStatistics.getTests()))));
+            UiUtils.setTextOrHide(testCount, (String.format(getString(R.string.collected_tests), String.valueOf(finalStatistics.getTested()))));
         } else {
             testCount.setVisibility(View.GONE);
         }
 
 
         UiUtils.setTextOrHide(userTitle, (String.format(getString(R.string.data_by_user), activity.getSettings().getUser_name(), getCurrentUser().getLogin())));
-        UiUtils.setTextOrHide(userQuotasCount, (String.format(getString(R.string.collected_quotas), String.valueOf(finalStatistics.getUserQuoted()))));
-        if (finalStatistics.getUserAborted() == -1) {
+        UiUtils.setTextOrHide(userQuotasCount, (String.format(getString(R.string.collected_quotas), String.valueOf(finalStatistics.getUser_quoted()))));
+        if (finalStatistics.getUser_unfinished() == -1) {
             UiUtils.setTextOrHide(userAbortedCount, (String.format(getString(R.string.collected_aborted), "нет данных")));
         } else {
-            UiUtils.setTextOrHide(userAbortedCount, (String.format(getString(R.string.collected_aborted), String.valueOf(finalStatistics.getUserAborted()))));
+            UiUtils.setTextOrHide(userAbortedCount, (String.format(getString(R.string.collected_aborted), String.valueOf(finalStatistics.getUser_unfinished()))));
         }
-        UiUtils.setTextOrHide(userDefectiveCount, (String.format(getString(R.string.collected_defective), String.valueOf(finalStatistics.getUserDefective()))));
-        if (server && finalStatistics.getUserTested() != 0) {
+        UiUtils.setTextOrHide(userCorrect, (String.format(getString(R.string.collected_questionnaires), String.valueOf(finalStatistics.getUser_correct()))));
+        UiUtils.setTextOrHide(userDefectiveCount, (String.format(getString(R.string.collected_defective), String.valueOf(finalStatistics.getUser_rejected()))));
+        if (server && finalStatistics.getUser_tested() != 0) {
             userTestCount.setVisibility(View.VISIBLE);
-            UiUtils.setTextOrHide(userTestCount, (String.format(getString(R.string.collected_tests), String.valueOf(finalStatistics.getUserTested()))));
+            UiUtils.setTextOrHide(userTestCount, (String.format(getString(R.string.collected_tests), String.valueOf(finalStatistics.getUser_tested()))));
         } else {
             userTestCount.setVisibility(View.GONE);
         }

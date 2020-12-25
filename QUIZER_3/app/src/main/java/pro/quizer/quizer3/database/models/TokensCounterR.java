@@ -24,14 +24,9 @@ public class TokensCounterR {
     private Long date;
 
     @ColumnInfo(name = "user_project_id")
-    private String user_project_id;
+    private int user_project_id;
 
     public TokensCounterR() {
-    }
-
-    public TokensCounterR(String token, int user_id) {
-        this.token = token;
-        this.user_id = user_id;
     }
 
     public String getToken() {
@@ -66,11 +61,11 @@ public class TokensCounterR {
         this.date = date;
     }
 
-    public String getUser_project_id() {
+    public int getUser_project_id() {
         return user_project_id;
     }
 
-    public void setUser_project_id(String user_project_id) {
+    public void setUser_project_id(int user_project_id) {
         this.user_project_id = user_project_id;
     }
 }

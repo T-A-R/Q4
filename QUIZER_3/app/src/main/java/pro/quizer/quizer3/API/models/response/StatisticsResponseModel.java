@@ -1,12 +1,8 @@
 package pro.quizer.quizer3.API.models.response;
 
 import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
-import java.util.List;
-
-import pro.quizer.quizer3.model.Statistics;
-import pro.quizer.quizer3.model.quota.QuotaModel;
+import pro.quizer.quizer3.database.models.StatisticR;
 
 public class StatisticsResponseModel implements Serializable {
 
@@ -20,7 +16,7 @@ public class StatisticsResponseModel implements Serializable {
     private Long server_time;
 
     @SerializedName("statistics")
-    private Statistics statistics;
+    private StatisticR statistics;
 
     @SerializedName("project_is_active")
     private Boolean project_is_active;
@@ -40,7 +36,7 @@ public class StatisticsResponseModel implements Serializable {
         return server_time;
     }
 
-    public Statistics getStatistics() {
+    public StatisticR getStatistics() {
         return statistics;
     }
 

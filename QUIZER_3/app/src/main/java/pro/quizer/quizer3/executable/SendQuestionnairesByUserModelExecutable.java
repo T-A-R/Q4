@@ -192,6 +192,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                             tokensCounter.setUser_id(mUserModel.getUser_id());
                             tokensCounter.setName(mBaseActivity.getSettings().getUser_name());
                             tokensCounter.setDate(mBaseActivity.getSettings().getUser_date());
+                            tokensCounter.setUser_project_id(mUserModel.getUser_project_id());
                             mBaseActivity.getMainDao().insertToken(tokensCounter);
                             mBaseActivity.getMainDao().deleteQuestionnaireByToken(token);
                             mBaseActivity.getMainDao().deleteElementDatabaseModelByToken(token);

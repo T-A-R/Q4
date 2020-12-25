@@ -112,7 +112,7 @@ public class QuestionnaireDatabaseModelR {
     private String user_name;
 
     @ColumnInfo(name = "user_date")
-    private String user_date;
+    private Long user_date;
 
     public QuestionnaireDatabaseModelR() {
         this.is_online = true;
@@ -422,11 +422,11 @@ public class QuestionnaireDatabaseModelR {
         this.user_name = user_name;
     }
 
-    public String getUser_date() {
+    public Long getUser_date() {
         return user_date;
     }
 
-    public void setUser_date(String user_date) {
+    public void setUser_date(Long user_date) {
         this.user_date = user_date;
     }
 }

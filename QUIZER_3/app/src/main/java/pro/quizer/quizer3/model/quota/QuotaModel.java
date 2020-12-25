@@ -28,6 +28,7 @@ public class QuotaModel implements Serializable {
     private int done;
 
     private Integer mLocalCount = null;
+    private Integer mLocalUserCount = null;
     private List<QuotaTimeLineModel> mStringList = null;
     private Set<Integer> mSet = null;
     private Integer[] mArray = null;
@@ -72,10 +73,18 @@ public class QuotaModel implements Serializable {
 
     private int getLocalCount(MainActivity activity) {
         if (mLocalCount == null) {
-            mLocalCount = new QuestionnairesCountBySequenceExecutable(activity, userId, userProjectId, getSet()).execute();
+            mLocalCount = new QuestionnairesCountBySequenceExecutable(activity, userId, userProjectId, getSet(), false).execute();
         }
 
         return mLocalCount;
+    }
+
+    public int getLocalUserDoneCount(MainActivity activity) {
+        if (mLocalUserCount == null) {
+            mLocalUserCount = new QuestionnairesCountBySequenceExecutable(activity, userId, userProjectId, getSet(), true).execute();
+        }
+
+        return mLocalUserCount;
     }
 
     public boolean containsString(final MainActivity pMainActivity, final HashMap<Integer, ElementModelNew> pMap, final String pString) {

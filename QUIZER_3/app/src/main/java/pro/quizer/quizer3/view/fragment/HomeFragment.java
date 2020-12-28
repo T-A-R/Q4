@@ -166,13 +166,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             tvCountSent.setTypeface(Fonts.getAviaText());
             btnStart.setTypeface(Fonts.getAviaButton());
             btnContinue.setTypeface(Fonts.getAviaButton());
+            btnDelete.setTypeface(Fonts.getAviaButton());
             btnExit.setTypeface(Fonts.getAviaButton());
             btnStart.setTransformationMethod(null);
             btnContinue.setTransformationMethod(null);
             btnExit.setTransformationMethod(null);
 
             btnExit.setVisibility(View.VISIBLE);
-            btnDelete.setVisibility(View.GONE);
             btnInfo.setVisibility(View.GONE);
             btnQuotas.setVisibility(View.GONE);
             toolbar.setVisibility(View.GONE);
@@ -181,10 +181,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             btnContinue.startAnimation(Anim.getAppearSlide(getContext(), 500));
             btnStart.startAnimation(Anim.getAppearSlide(getContext(), 500));
             btnExit.startAnimation(Anim.getAppearSlide(getContext(), 500));
+            btnDelete.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
             MainFragment.disableSideMenu();
 
             initViews();
+            initSyncAviaInfoViews();
             sendCrashLogs();
             sendQuestionnaires();
 
@@ -838,15 +840,19 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void deactivateButtons() {
-        setViewBackground(btnContinue, false, true);
-        setViewBackground(btnStart, false, true);
-        setViewBackground(btnQuotas, false, true);
-        setViewBackground(btnInfo, false, true);
+        if(!AVIA) {
+            setViewBackground(btnContinue, false, true);
+            setViewBackground(btnStart, false, true);
+            setViewBackground(btnQuotas, false, true);
+            setViewBackground(btnInfo, false, true);
+        }
     }
 
     private void deactivateStartButtons() {
-        setViewBackground(btnContinue, false, true);
-        setViewBackground(btnStart, false, true);
+        if(!AVIA) {
+            setViewBackground(btnContinue, false, true);
+            setViewBackground(btnStart, false, true);
+        }
     }
 
     private void quotaUpdate() {
@@ -1423,6 +1429,30 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
             isCanBackPress = true;
         }
+    }
+
+    private void initSyncAviaInfoViews() {
+        activity.runOnUiThread(() -> {
+
+            final View pView = getView();
+
+            if (pView == null) {
+                return;
+            }
+
+//            final TextView count_all = pView.findViewById(R.id.count_all);
+//            final TextView count_sent = pView.findViewById(R.id.count_sent);
+
+            final SyncViewModel syncViewModel = new SyncInfoExecutable(getContext()).execute();
+
+            UiUtils.setTextOrHide(tvCountAll, (String
+                    .format(activity.getString(R.string.view_all_count),
+                            String.valueOf(syncViewModel.getmAllQuestionnaireModels().size()))));
+            UiUtils.setTextOrHide(tvCountSent, (String
+                    .format(activity.getString(R.string.view_sent_count),
+                            String.valueOf(syncViewModel.getTokensCounter()))));
+
+        });
     }
 }
 

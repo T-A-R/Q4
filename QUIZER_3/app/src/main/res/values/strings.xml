@@ -439,6 +439,8 @@
     <string name="enter_your_birthdate">Введите дату рождения</string>
     <string name="are_you">Это Вы?</string>
     <string name="please_enter_name_and_birthdate">Пожалуста заполните имя и дату рождения</string>
+    <string name="view_all_count">Всего собрано анкет: %1$s</string>
+    <string name="view_sent_count">Отправлено анкет: %1$s</string>
 
 
 </resources>

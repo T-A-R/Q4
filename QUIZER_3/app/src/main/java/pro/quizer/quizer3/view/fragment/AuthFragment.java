@@ -59,6 +59,7 @@ import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 
+import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class AuthFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.AuthUserCallback, SmartFragment.Events {
@@ -547,16 +548,22 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void deactivateButtons() {
-        setViewBackground(btnSend, false, false);
-        btnSend.setEnabled(false);
-        btnSend.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_gray_avia : R.drawable.button_background_gray));
+        if (!AVIA) {
+            setViewBackground(btnSend, false, false);
+            btnSend.setEnabled(false);
+            btnSend.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_gray_avia : R.drawable.button_background_gray));
+        }
     }
 
     private void startHomeFragment(HomeFragment fragment) {
-        if (getMainActivity() != null && getMainActivity().getSettings().getUser_name() != null) {
-            showNameDialog(fragment);
+        if (AVIA) {
+            replaceFragment(fragment);
         } else {
-            showInputNameDialog(fragment);
+            if (getMainActivity() != null && getMainActivity().getSettings().getUser_name() != null) {
+                showNameDialog(fragment);
+            } else {
+                showInputNameDialog(fragment);
+            }
         }
     }
 

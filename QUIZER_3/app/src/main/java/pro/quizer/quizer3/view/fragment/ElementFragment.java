@@ -2,6 +2,7 @@ package pro.quizer.quizer3.view.fragment;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 
@@ -215,6 +216,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             tvTitle2.setTypeface(Fonts.getAviaText());
             tvTitleDesc1.setTypeface(Fonts.getAviaText());
             tvTitleDesc2.setTypeface(Fonts.getAviaText());
+//            tvTitleDesc1.setTypeface(tvTitleDesc1.getTypeface(), Typeface.BOLD);
+//            tvTitleDesc2.setTypeface(tvTitleDesc2.getTypeface(), Typeface.BOLD);
             tvQuestion.setTypeface(Fonts.getAviaText());
             tvHiddenQuestion.setTypeface(Fonts.getAviaText());
             tvQuestionDesc.setTypeface(Fonts.getAviaText());
@@ -1736,9 +1739,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             btnExit.setEnabled(true);
                             btnNext.setEnabled(true);
 
-                            btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_green));
-                            btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), isAvia() ? R.drawable.button_background_green : R.drawable.button_background_red));
-                            btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_green));
+                            btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), isAvia() ? R.drawable.button_background_avia : R.drawable.button_background_green));
+                            btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), isAvia() ? R.drawable.button_background_avia : R.drawable.button_background_red));
+                            btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), isAvia() ? R.drawable.button_background_avia : R.drawable.button_background_green));
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -1763,9 +1766,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 btnExit.setEnabled(false);
                 btnNext.setEnabled(false);
 
-                btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-                btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-                btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+                btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_gray_avia : R.drawable.button_background_gray));
+                btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_gray_avia : R.drawable.button_background_gray));
+                btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_gray_avia : R.drawable.button_background_gray));
 
             } catch (Exception e) {
                 e.printStackTrace();

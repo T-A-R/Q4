@@ -13,7 +13,8 @@
     <pro.quizer.quizer3.view.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/element_cont"
@@ -22,7 +23,6 @@
         android:layout_above="@+id/button_panel"
         android:layout_below="@+id/toolbar"
         android:layout_gravity="top"
-        android:layout_marginTop="@dimen/_4sdp"
         android:layout_marginBottom="@dimen/_4sdp"
         android:orientation="vertical">
 
@@ -31,11 +31,7 @@
             android:id="@+id/title_cont"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginTop="@dimen/_4sdp"
-            android:layout_marginEnd="@dimen/_8sdp"
-            android:layout_marginBottom="@dimen/_6sdp"
-            android:background="@drawable/button_background_transparent"
+            android:background="@color/brand_color_avia"
             android:visibility="gone">
 
             <androidx.core.widget.NestedScrollView
@@ -47,7 +43,7 @@
                     android:id="@+id/title_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
+                    android:paddingTop="@dimen/_14sdp"
                     android:orientation="vertical">
 
                     <!--TITLE 1-->
@@ -55,7 +51,9 @@
                         android:id="@+id/title_cont_1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/_4sdp"
+                        android:layout_marginEnd="@dimen/_20sdp"
+                        android:layout_marginStart="@dimen/_20sdp"
+                        android:layout_marginBottom="@dimen/_6sdp"
                         android:orientation="vertical"
                         android:visibility="gone">
 
@@ -63,22 +61,19 @@
                             android:id="@+id/title_1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_8sdp"
                             android:layout_marginTop="@dimen/_4sdp"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/_12ssp"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_9ssp"
                             android:visibility="visible" />
 
                         <TextView
                             android:id="@+id/title_desc_1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_8sdp"
-                            android:layout_marginEnd="@dimen/_12sdp"
                             android:layout_marginBottom="@dimen/_2sdp"
                             android:text="Описание бокса 1"
-                            android:textColor="@color/cardview_dark_background"
-                            android:textSize="@dimen/_8ssp"
+                            android:textColor="@color/gray"
+                            android:textSize="@dimen/_7ssp"
                             android:visibility="gone" />
 
                         <LinearLayout
@@ -120,7 +115,6 @@
 
                         </LinearLayout>
 
-                        <include layout="@layout/view_divider" />
 
                     </LinearLayout>
 
@@ -129,7 +123,8 @@
                         android:id="@+id/title_cont_2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/_4sdp"
+                        android:layout_marginEnd="@dimen/_20sdp"
+                        android:layout_marginStart="@dimen/_20sdp"
                         android:layout_toStartOf="@+id/hide_btn"
                         android:orientation="vertical"
                         android:visibility="gone">
@@ -138,21 +133,18 @@
                             android:id="@+id/title_2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_8sdp"
                             android:text="Тайтл бокса 2"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/_12ssp"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_9ssp"
                             android:visibility="visible" />
 
                         <TextView
                             android:id="@+id/title_desc_2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_8sdp"
-                            android:layout_marginEnd="@dimen/_12sdp"
                             android:layout_marginBottom="@dimen/_6sdp"
-                            android:textColor="@color/cardview_dark_background"
-                            android:textSize="@dimen/_8ssp"
+                            android:textColor="@color/gray"
+                            android:textSize="@dimen/_7ssp"
                             android:visibility="gone" />
 
                         <LinearLayout
@@ -213,8 +205,8 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:text="Тайтл бокса длинный длинный длинный"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_16ssp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_9ssp"
                 android:visibility="gone" />
 
             <ImageView
@@ -255,15 +247,15 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
                 android:layout_marginBottom="@dimen/_4sdp"
-                android:background="@drawable/button_simple_green">
+                android:background="@color/brand_color_avia">
 
                 <androidx.core.widget.NestedScrollView
                     android:id="@+id/question_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_marginEnd="@dimen/_20sdp"
                     android:layout_toStartOf="@+id/question_close">
 
                     <LinearLayout
@@ -275,23 +267,19 @@
                             android:id="@+id/question"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_8sdp"
-                            android:layout_marginEnd="@dimen/_8sdp"
                             android:text="Question"
                             android:textColor="@color/white"
-                            android:textSize="@dimen/_12ssp"
+                            android:textSize="@dimen/_9ssp"
                             android:visibility="visible" />
 
                         <TextView
                             android:id="@+id/question_desc"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_8sdp"
-                            android:layout_marginEnd="@dimen/_8sdp"
                             android:layout_marginBottom="@dimen/_8sdp"
                             android:text="Description"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/_10ssp"
+                            android:textColor="@color/gray"
+                            android:textSize="@dimen/_7ssp"
                             android:visibility="gone" />
 
                         <!--IMAGES-->
@@ -299,8 +287,6 @@
                             android:id="@+id/question_images_cont"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/_8ssp"
-                            android:layout_marginRight="@dimen/_8ssp"
                             android:layout_marginBottom="@dimen/_8ssp"
                             android:orientation="horizontal"
                             android:visibility="gone">
@@ -343,9 +329,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    android:layout_marginStart="@dimen/_8sdp"
                     android:layout_marginTop="@dimen/_4sdp"
-                    android:layout_marginEnd="@dimen/_8sdp"
                     android:layout_marginBottom="@dimen/_8sdp"
                     android:layout_toStartOf="@+id/question_close"
                     android:ellipsize="end"
@@ -353,7 +337,7 @@
                     android:singleLine="true"
                     android:text="Question"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/_12ssp"
+                    android:textSize="@dimen/_9ssp"
                     android:visibility="gone" />
 
                 <ImageView
@@ -363,7 +347,8 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="@dimen/_2sdp"
                     android:layout_marginEnd="@dimen/_6sdp"
-                    android:src="@drawable/minus_white" />
+                    android:src="@drawable/minus_white"
+                    android:visibility="gone"/>
 
             </RelativeLayout>
 
@@ -401,16 +386,7 @@
                 android:id="@+id/answers_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_6sdp"
-                android:layout_marginEnd="@dimen/_6sdp"
                 android:layout_marginBottom="@dimen/_8sdp"
-                android:fadeScrollbars="false"
-                android:scrollbarAlwaysDrawVerticalTrack="false"
-                android:scrollbarSize="@dimen/_16sdp"
-                android:scrollbarStyle="outsideInset"
-                android:scrollbarThumbVertical="@drawable/button_background_green"
-                android:scrollbarTrackVertical="@color/lightGray2"
-                android:scrollbars="vertical"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -452,7 +428,17 @@
             android:scrollbars="horizontal"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:visibility="visible" />
+            android:visibility="gone" />
+
+        <!--PAGE-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/page_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_6sdp"
+            android:layout_marginEnd="@dimen/_6sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:visibility="gone" />
 
     </LinearLayout>
 
@@ -466,7 +452,7 @@
 
         <Button
             android:id="@+id/back_btn"
-            style="@style/ButtonStyle"
+            style="@style/ButtonAvia"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_24sdp"
             android:layout_marginStart="@dimen/_20sdp"
@@ -480,7 +466,7 @@
 
         <Button
             android:id="@+id/exit_btn"
-            style="@style/ButtonStyle"
+            style="@style/ButtonAvia"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_24sdp"
             android:layout_marginStart="@dimen/_20sdp"
@@ -494,7 +480,7 @@
 
         <Button
             android:id="@+id/next_btn"
-            style="@style/ButtonStyle"
+            style="@style/ButtonAvia"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_24sdp"
             android:layout_alignParentBottom="true"

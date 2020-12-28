@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cont"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/dialog_round"
-    android:orientation="vertical"
-    android:id="@+id/cont">
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/info"
@@ -13,26 +13,26 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-    <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_8sdp"
-        android:layout_marginLeft="@dimen/_8sdp"
-        android:layout_marginTop="@dimen/_4sdp"
-        android:layout_marginRight="@dimen/_8sdp"
-        android:text="Инфо:"
-        android:textColor="@android:color/black" />
+        <pro.quizer.quizer3.view.element.textview.LargeResizableTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginRight="@dimen/_8sdp"
+            android:text="Инфо:"
+            android:textColor="@android:color/black" />
 
         <ImageView
-            android:id="@+id/toolbar_view_close"
+            android:id="@+id/btn_dialog_close"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_30sdp"
-            android:layout_gravity="center_vertical"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center_vertical"
             android:layout_marginTop="@dimen/_4sdp"
             android:src="@drawable/ic_close"
-            android:tint="@color/brand_color"/>
+            android:tint="@color/brand_color" />
 
 
     </RelativeLayout>
@@ -48,8 +48,7 @@
         android:scrollbarStyle="outsideInset"
         android:scrollbarThumbVertical="@drawable/button_background_green"
         android:scrollbarTrackVertical="@color/lightGray2"
-        android:scrollbars="vertical"
-        >
+        android:scrollbars="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -72,7 +71,7 @@
                     android:layout_marginEnd="@dimen/_8sdp"
                     android:layout_marginRight="@dimen/_8sdp"
                     android:layout_marginBottom="@dimen/_4sdp"
-                    android:text="Данные в рамках логина:"
+                    android:text="@string/data_by_login"
                     android:textColor="@android:color/black"
                     android:textStyle="bold" />
 
@@ -86,7 +85,18 @@
                     android:layout_marginLeft="@dimen/_8sdp"
                     android:layout_marginTop="@dimen/_4sdp"
                     android:layout_marginRight="@dimen/_8sdp"
-                    android:text="Квотных анкет: 15"
+                    android:text="@string/collected_quotas"
+                    android:textColor="@android:color/black" />
+
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                    android:id="@+id/finished_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:text="@string/collected_questionnaires"
                     android:textColor="@android:color/black" />
 
                 <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
@@ -97,7 +107,7 @@
                     android:layout_marginLeft="@dimen/_8sdp"
                     android:layout_marginTop="@dimen/_4sdp"
                     android:layout_marginRight="@dimen/_8sdp"
-                    android:text="Незавершённых и прерванных: 9"
+                    android:text="@string/collected_aborted"
                     android:textColor="@android:color/black" />
 
                 <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
@@ -108,7 +118,7 @@
                     android:layout_marginLeft="@dimen/_8sdp"
                     android:layout_marginTop="@dimen/_4sdp"
                     android:layout_marginRight="@dimen/_8sdp"
-                    android:text="Забракованных: 3"
+                    android:text="@string/collected_defective"
                     android:textColor="@android:color/black" />
 
                 <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
@@ -119,7 +129,86 @@
                     android:layout_marginLeft="@dimen/_8sdp"
                     android:layout_marginTop="@dimen/_4sdp"
                     android:layout_marginRight="@dimen/_8sdp"
-                    android:text="Тестовых: 1"
+                    android:text="@string/collected_tests"
+                    android:textColor="@android:color/black" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/user_cont"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                    android:id="@+id/user_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    android:text="@string/data_by_user"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold" />
+
+                <include layout="@layout/view_divider" />
+
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                    android:id="@+id/user_quotas_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:text="@string/collected_quotas"
+                    android:textColor="@android:color/black" />
+
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                    android:id="@+id/user_finished_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:text="@string/collected_questionnaires"
+                    android:textColor="@android:color/black" />
+
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                    android:id="@+id/user_aborted_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:text="@string/collected_aborted"
+                    android:textColor="@android:color/black" />
+
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                    android:id="@+id/user_defective_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:text="@string/collected_defective"
+                    android:textColor="@android:color/black" />
+
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                    android:id="@+id/user_test_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:text="@string/collected_tests"
                     android:textColor="@android:color/black" />
 
             </LinearLayout>
@@ -139,7 +228,7 @@
                     android:layout_marginLeft="@dimen/_8sdp"
                     android:layout_marginTop="@dimen/_16sdp"
                     android:layout_marginRight="@dimen/_8sdp"
-                    android:text="Данные по устройству:"
+                    android:text="@string/data_by_device"
                     android:textColor="@android:color/black"
                     android:textStyle="bold" />
 

@@ -22,6 +22,7 @@ import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
 import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.SmsItemR;
+import pro.quizer.quizer3.database.models.StatisticR;
 import pro.quizer.quizer3.database.models.TokensCounterR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.database.models.WarningsR;
@@ -137,6 +138,9 @@ public interface QuizerDao {
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status AND user_id = :userId AND user_project_id = :projectId AND survey_status = :surveyStatus")
     List<QuestionnaireDatabaseModelR> getQuestionnaireForQuotas(int userId, int projectId, String status, String surveyStatus);
 
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status AND user_id = :userId AND user_project_id = :projectId AND survey_status = :surveyStatus AND user_name = :name AND user_date = :date")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireForQuotasByUser(int userId, int projectId, String status, String surveyStatus, String name, Long date);
+
     //TODO RENAME TO setQuestionnaireStatusByToken
     @Query("UPDATE QuestionnaireDatabaseModelR SET status = :status WHERE token = :token")
     void setQuestionnaireStatus(String status, String token);
@@ -152,6 +156,9 @@ public interface QuizerDao {
 
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND survey_status = :survey AND status = :status")
     List<QuestionnaireDatabaseModelR> getQuestionnaireSurveyStatus(int userId, String survey, String status);
+
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND survey_status = :survey AND status = :status AND user_name = :name AND user_date = :data")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireByStatusAndName(int userId, String name, Long data, String survey, String status);
 
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status AND send_sms = :send_sms AND survey_status = :survey")
     List<QuestionnaireDatabaseModelR> getQuestionnaireForStage(int userId, String status, String survey, boolean send_sms);
@@ -354,6 +361,12 @@ public interface QuizerDao {
     @Query("UPDATE SettingsR SET last_sent_quiz_time = :data")
     void setLastSentQuizTime(Long data);
 
+    @Query("UPDATE SettingsR SET user_date = :data")
+    void setUserBirthDate(Long data);
+
+    @Query("UPDATE SettingsR SET user_name = :data")
+    void setUserName(String data);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertToken(TokensCounterR token);
 
@@ -402,4 +415,12 @@ public interface QuizerDao {
     @Query("DELETE FROM QuotaR WHERE userProjectId =:userProjectId")
     void clearQuotaR(Integer userProjectId);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertStatisticR(StatisticR statistics);
+
+    @Query("SELECT * FROM StatisticR WHERE user_id = :userId LIMIT 1")
+    StatisticR getStatistics(int userId);
+
+    @Query("DELETE FROM StatisticR WHERE user_id = :user_id")
+    void clearStatisticR(Integer user_id);
 }

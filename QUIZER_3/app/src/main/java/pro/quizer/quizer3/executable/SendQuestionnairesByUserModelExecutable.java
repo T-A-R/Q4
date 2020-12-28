@@ -187,7 +187,13 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                     for (final String token : tokensToRemove) {
                         try {
                             mBaseActivity.addLog(Constants.LogObject.QUESTIONNAIRE, "SENT", Constants.LogResult.SUCCESS, token, null);
-                            mBaseActivity.getMainDao().insertToken(new TokensCounterR(token, mUserModel.getUser_id()));
+                            TokensCounterR tokensCounter = new TokensCounterR();
+                            tokensCounter.setToken(token);
+                            tokensCounter.setUser_id(mUserModel.getUser_id());
+                            tokensCounter.setName(mBaseActivity.getSettings().getUser_name());
+                            tokensCounter.setDate(mBaseActivity.getSettings().getUser_date());
+                            tokensCounter.setUser_project_id(mUserModel.getUser_project_id());
+                            mBaseActivity.getMainDao().insertToken(tokensCounter);
                             mBaseActivity.getMainDao().deleteQuestionnaireByToken(token);
                             mBaseActivity.getMainDao().deleteElementDatabaseModelByToken(token);
                             mBaseActivity.addLog(Constants.LogObject.QUESTIONNAIRE, "DELETE", Constants.LogResult.SUCCESS, token, null);

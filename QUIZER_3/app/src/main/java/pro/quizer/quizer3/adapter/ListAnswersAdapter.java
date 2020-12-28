@@ -138,7 +138,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         if (activity != null) {
             mAutoZoom = activity.isAutoZoom();
         }
-        return new ListObjectViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(mAutoZoom ? R.layout.holder_answer_list_auto : R.layout.holder_answer_list, viewGroup, false));
+        return new ListObjectViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(MainActivity.AVIA ? R.layout.holder_answer_list_avia : mAutoZoom ? R.layout.holder_answer_list_auto : R.layout.holder_answer_list, viewGroup, false));
     }
 
     @Override
@@ -251,7 +251,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             if (!isMulti) {
                 if (isChecked(position)) {
                     editButton.setVisibility(View.GONE);
-                    button.setImageResource(R.drawable.radio_button_checked);
+                    button.setImageResource(MainActivity.AVIA ? R.drawable.radio_button_checked_red : R.drawable.radio_button_checked);
                     if (isOpen(position)) {
                         answerEditText.setVisibility(View.VISIBLE);
                     } else {
@@ -259,7 +259,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                         editButton.setVisibility(View.GONE);
                     }
                 } else {
-                    button.setImageResource(R.drawable.radio_button_unchecked);
+                    button.setImageResource(MainActivity.AVIA ? R.drawable.radio_button_unchecked_red : R.drawable.radio_button_unchecked);
                     if (isOpen(position)) {
                         answerEditText.setVisibility(View.GONE);
                         editButton.setVisibility(View.VISIBLE);
@@ -270,9 +270,9 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 }
             } else {
                 if (isChecked(position)) {
-                    button.setImageResource(R.drawable.checkbox_checked);
+                    button.setImageResource(MainActivity.AVIA ? R.drawable.checkbox_checked_red : R.drawable.checkbox_checked);
                 } else {
-                    button.setImageResource(R.drawable.checkbox_unchecked);
+                    button.setImageResource(MainActivity.AVIA ? R.drawable.checkbox_unchecked_red : R.drawable.checkbox_unchecked);
                 }
             }
 

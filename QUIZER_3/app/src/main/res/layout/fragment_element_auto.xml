@@ -76,7 +76,6 @@
                             android:layout_marginStart="@dimen/_8sdp"
                             android:layout_marginEnd="@dimen/_12sdp"
                             android:layout_marginBottom="@dimen/_2sdp"
-                            android:text="Описание бокса 1"
                             android:textColor="@color/cardview_dark_background"
                             android:textSize="@dimen/_10ssp"
                             android:visibility="visible" />
@@ -151,7 +150,6 @@
                             android:layout_marginStart="@dimen/_8sdp"
                             android:layout_marginEnd="@dimen/_12sdp"
                             android:layout_marginBottom="@dimen/_6sdp"
-                            android:text="Описание бокса 2"
                             android:textColor="@color/cardview_dark_background"
                             android:textSize="@dimen/_10ssp"
                             android:visibility="visible" />
@@ -375,7 +373,7 @@
             <LinearLayout
                 android:id="@+id/spinner_cont"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_24sdp"
                 android:layout_marginStart="@dimen/_4sdp"
                 android:layout_marginEnd="@dimen/_4sdp"
                 android:background="@drawable/shadow_2"
@@ -385,15 +383,19 @@
                 <com.toptoche.searchablespinnerlibrary.SearchableSpinner
                     android:id="@+id/answers_spinner"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     android:padding="5dp"
+                    android:textSize="@dimen/_14ssp"
                     android:visibility="gone" />
 
                 <com.multispinner.MultiSelectSpinner
                     android:id="@+id/answers_multi_spinner"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     android:padding="5dp"
+                    android:textSize="@dimen/_14ssp"
                     android:visibility="gone"
                     app:hintText="Выберите варианты ответа" />
 

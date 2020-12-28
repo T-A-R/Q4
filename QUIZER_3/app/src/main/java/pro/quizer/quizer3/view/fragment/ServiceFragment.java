@@ -22,6 +22,7 @@ import pro.quizer.quizer3.executable.files.UploadingExecutable;
 import pro.quizer.quizer3.executable.files.UploadingFTPExecutable;
 import pro.quizer.quizer3.model.view.ServiceViewModel;
 import pro.quizer.quizer3.utils.DeviceUtils;
+import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
@@ -77,6 +78,18 @@ public class ServiceFragment extends ScreenFragment {
         mUnsendedAudio = findViewById(R.id.unsended_audio_files_count);
         mUnsendePhoto = findViewById(R.id.unsended_photo_files_count);
         mDeviceId = findViewById(R.id.device_id);
+
+        if(isAvia()) {
+             mSendDataButton.setTypeface(Fonts.getAviaText());
+             mSendAudioButton.setTypeface(Fonts.getAviaText());
+             mSendPhotoButton.setTypeface(Fonts.getAviaText());
+             mClearFiles.setTypeface(Fonts.getAviaText());
+             mClearDbButton.setTypeface(Fonts.getAviaText());
+             mUploadDataButton.setTypeface(Fonts.getAviaText());
+             mUploadFTPDataButton.setTypeface(Fonts.getAviaText());
+             mLogsButton.setTypeface(Fonts.getAviaText());
+        }
+
         Toolbar mToolbar = findViewById(R.id.toolbar);
         mToolbar.setTitle(getString(R.string.service_title));
         mToolbar.showCloseView(v -> replaceFragment(new AuthFragment()));

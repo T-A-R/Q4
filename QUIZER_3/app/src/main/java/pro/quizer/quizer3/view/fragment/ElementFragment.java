@@ -69,6 +69,7 @@ import pro.quizer.quizer3.utils.ConditionUtils;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.ExpressionUtils;
 import pro.quizer.quizer3.utils.FileUtils;
+import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
@@ -206,9 +207,22 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         btnPrev = findViewById(R.id.back_btn);
         btnExit = findViewById(R.id.exit_btn);
 
-        btnNext.setTransformationMethod(null);
-        btnPrev.setTransformationMethod(null);
-        btnExit.setTransformationMethod(null);
+        if (isAvia()) {
+            btnNext.setTypeface(Fonts.getAviaText());
+            btnPrev.setTypeface(Fonts.getAviaText());
+            btnExit.setTypeface(Fonts.getAviaButton());
+            tvTitle1.setTypeface(Fonts.getAviaText());
+            tvTitle2.setTypeface(Fonts.getAviaText());
+            tvTitleDesc1.setTypeface(Fonts.getAviaText());
+            tvTitleDesc2.setTypeface(Fonts.getAviaText());
+            tvQuestion.setTypeface(Fonts.getAviaText());
+            tvHiddenQuestion.setTypeface(Fonts.getAviaText());
+            tvQuestionDesc.setTypeface(Fonts.getAviaText());
+        } else {
+            btnNext.setTransformationMethod(null);
+            btnPrev.setTransformationMethod(null);
+            btnExit.setTransformationMethod(null);
+        }
 
         btnNext.setOnClickListener(this);
         btnPrev.setOnClickListener(this);
@@ -219,10 +233,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         btnHideTitle.setOnClickListener(this);
 
         deactivateButtons();
-        toolbar.setTitle(getString(R.string.app_name));
-        toolbar.showOptionsView(v -> MainFragment.showDrawer(), v -> showInfoDialog());
-        toolbar.showInfoView();
-        MainFragment.enableSideMenu(false, getMainActivity().isExit());
+        if (!isAvia()) {
+            toolbar.setTitle(getString(R.string.app_name));
+            toolbar.showOptionsView(v -> MainFragment.showDrawer(), v -> showInfoDialog());
+            toolbar.showInfoView();
+            MainFragment.enableSideMenu(false, getMainActivity().isExit());
+        }
 
         st("init views 1");
 
@@ -907,11 +923,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             case ElementSubtype.SCALE:
                 adapterScale = new ScaleQuestionAdapter(getActivity(), currentElement, answersList,
                         this);
-                rvScale.setLayoutManager(new LinearLayoutManager(getContext()));
+                if (isAvia())
+                    rvScale.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+                else
+                    rvScale.setLayoutManager(new LinearLayoutManager(getContext()));
                 rvScale.setAdapter(adapterScale);
                 break;
         }
-        //END HERE
     }
 
     private void updateCurrentQuestionnaire() {
@@ -1719,7 +1737,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             btnNext.setEnabled(true);
 
                             btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_green));
-                            btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_red));
+                            btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), isAvia() ? R.drawable.button_background_green : R.drawable.button_background_red));
                             btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_green));
 
                         } catch (Exception e) {

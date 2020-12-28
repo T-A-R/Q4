@@ -1219,6 +1219,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         SettingsR settings = getMainDao().getSettings();
         if (settings == null) {
             settings = new SettingsR();
+            if(AVIA) settings.setAuto_zoom(false);
             getMainDao().insertSettings(settings);
             checkRoot();
         }

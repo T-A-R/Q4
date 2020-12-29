@@ -1780,15 +1780,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         TextView dQuota2 = layoutView.findViewById(R.id.quota_2);
         TextView dQuota3 = layoutView.findViewById(R.id.quota_3);
         LinearLayout cont = layoutView.findViewById(R.id.cont);
-        LinearLayout quota1Cont = layoutView.findViewById(R.id.quota_1_cont);
-        LinearLayout quota2Cont = layoutView.findViewById(R.id.quota_2_cont);
 
         cont.setOnClickListener(v -> infoDialog.dismiss());
 
         dQuota1.setTextColor(getResources().getColor(R.color.black));
+        dQuota2.setTextColor(getResources().getColor(R.color.black));
         dQuota1.setText(getString(R.string.label_login, getMainActivity().getCurrentUser().getLogin()));
+        dQuota2.setText(getUserName());
         dQuota3.setText(getMainActivity().getConfig().getProjectInfo().getName());
-        quota2Cont.setVisibility(View.GONE);
 
         dialogBuilder.setView(layoutView);
         infoDialog = dialogBuilder.create();

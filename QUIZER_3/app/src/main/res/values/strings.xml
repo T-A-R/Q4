@@ -328,6 +328,7 @@
     <string name="button_update_config">Обновить конфиг</string>
     <string name="button_set_config">Применить конфиг</string>
     <string name="button_get_config">Получить конфиг</string>
+    <string name="button_update_username">Изменить интервьюера</string>
     <string name="view_config_title">Конфигурация</string>
     <string name="view_id">ID: %1$s</string>
     <string name="view_date">Дата: %1$s</string>

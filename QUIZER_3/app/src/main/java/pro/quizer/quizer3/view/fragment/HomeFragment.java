@@ -83,6 +83,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private Button btnInfo;
     private Button btnQuotas;
     private Button btnExit;
+    private TextView tvUserName;
     private TextView tvConfigAgreement;
     private TextView tvCurrentUser;
     private TextView tvConfigName;
@@ -141,6 +142,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         btnInfo = findViewById(R.id.btn_info);
         btnQuotas = findViewById(R.id.btn_quotas);
         btnExit = findViewById(R.id.btn_exit);
+        tvUserName = findViewById(R.id.user_name);
         tvConfigAgreement = findViewById(R.id.config_agreement);
         tvConfigName = findViewById(R.id.config_name);
         tvCurrentUser = findViewById(R.id.current_user);
@@ -199,6 +201,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             toolbar.setTitle(getString(R.string.home_screen));
             toolbar.showOptionsView(v -> MainFragment.showDrawer(), null);
 
+            tvUserName.setText(getUserName());
 
             try {
                 hideScreensaver();

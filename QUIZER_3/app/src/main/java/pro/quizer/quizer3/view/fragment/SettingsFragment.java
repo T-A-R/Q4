@@ -3,10 +3,17 @@ package pro.quizer.quizer3.view.fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSeekBar;
+
+import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -14,7 +21,9 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import pro.quizer.quizer3.MainActivity;
@@ -28,9 +37,11 @@ import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.PhoneModel;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.model.view.SettingsViewModel;
+import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
+import pro.quizer.quizer3.view.fragment.ScreenFragment;
 
 import static pro.quizer.quizer3.utils.Fonts.FONT_SIZE_MODELS;
 
@@ -42,6 +53,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
     private TextView mConfigIdView;
     private TextView mAnswerMarginView;
     private TextView mSpinnerTitle;
+    private View mUpdateUserName;
     private View mDeleteUser;
     private String mConfigDateString;
     private String mAnswerMarginString;
@@ -59,6 +71,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
 
     private MainActivity mBaseActivity;
     private int answerMargin;
+    private AlertDialog infoDialog;
 
     public SettingsFragment() {
         super(R.layout.fragment_settings);
@@ -92,6 +105,8 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
             showRemoveUserDialog();
         } else if (view == mUpdateConfig) {
             reloadConfig();
+        } else if(view == mUpdateUserName) {
+            showInputNameDialog();
         }
     }
 
@@ -114,6 +129,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         mConfigDateView = findViewById(R.id.settings_date);
         mConfigIdView = findViewById(R.id.settings_id);
         mSpinnerTitle = findViewById(R.id.spinner_title);
+        mUpdateUserName = findViewById(R.id.update_username);
         mDeleteUser = findViewById(R.id.delete_user);
         mUpdateConfig = findViewById(R.id.update_config);
         mAutoZoomSwitch = findViewById(R.id.auto_zoom_switch);
@@ -121,10 +137,12 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         mMemorySwitch = findViewById(R.id.memory_switch);
         mDarkModeSwitch = findViewById(R.id.dark_switch);
 
+        mUpdateUserName.setOnClickListener(this);
         mDeleteUser.setOnClickListener(this);
         mUpdateConfig.setOnClickListener(this);
 
         cont.startAnimation(Anim.getAppear(getContext()));
+        mUpdateUserName.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mDeleteUser.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mUpdateConfig.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
@@ -376,5 +394,59 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         if (isAdded()) {
             updateData(new SettingViewModelExecutable(getContext()).execute());
         }
+    }
+
+    private void showInputNameDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getMainActivity());
+        dialogBuilder.setCancelable(false);
+        View layoutView = getLayoutInflater().inflate(getMainActivity().isAutoZoom() ? R.layout.dialog_input_name_auto : R.layout.dialog_input_name, null);
+        EditText name = layoutView.findViewById(R.id.input_name);
+        EditText date = layoutView.findViewById(R.id.input_birthdate);
+        Button sendBtn = layoutView.findViewById(R.id.btn_send_name);
+        date.setOnClickListener(v -> setDate((EditText) v));
+
+        sendBtn.setOnClickListener(v -> {
+            String nameString = name.getText().toString();
+            String dateString = date.getText().toString();
+            if (StringUtils.isNotEmpty(nameString) && StringUtils.isNotEmpty(dateString)) {
+                getDao().setUserName(nameString);
+                infoDialog.dismiss();
+            } else {
+                showToast(getString(R.string.please_enter_name_and_birthdate));
+            }
+        });
+
+        dialogBuilder.setView(layoutView);
+        infoDialog = dialogBuilder.create();
+        infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+        infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if (getMainActivity() != null && !getMainActivity().isFinishing())
+            infoDialog.show();
+    }
+
+    private final Calendar mCalendar = Calendar.getInstance();
+
+    public void setDate(final TextView pEditText) {
+        if (!getMainActivity().isFinishing()) {
+            new DatePickerDialog(getMainActivity(), (view, year, monthOfYear, dayOfMonth) -> {
+                mCalendar.set(Calendar.YEAR, year);
+                mCalendar.set(Calendar.MONTH, monthOfYear);
+                mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                setInitialDateTime(pEditText);
+            },
+                    mCalendar.get(Calendar.YEAR),
+                    mCalendar.get(Calendar.MONTH),
+                    mCalendar.get(Calendar.DAY_OF_MONTH))
+                    .show();
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private void setInitialDateTime(final TextView mEditText) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
+        dateFormat.setTimeZone(mCalendar.getTimeZone());
+        mEditText.setText(dateFormat.format(mCalendar.getTime()));
+        getDao().setUserBirthDate(mCalendar.getTimeInMillis() / 1000);
     }
 }

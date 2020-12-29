@@ -22,14 +22,25 @@
         android:layout_marginRight="@dimen/_40sdp"
         android:src="@drawable/quizer" />
 
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:gravity="center|top"
+        android:textColor="@color/gray"
+        android:textSize="@dimen/_10ssp"
+        tools:text="User 29.12.2020" />
+
     <LinearLayout
         android:id="@+id/buttons_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/user_name"
         android:layout_marginLeft="@dimen/_40sdp"
         android:layout_marginRight="@dimen/_40sdp"
-        android:layout_marginBottom="@dimen/_30sdp"
+        android:layout_marginBottom="@dimen/_2sdp"
         android:orientation="vertical">
 
         <ProgressBar

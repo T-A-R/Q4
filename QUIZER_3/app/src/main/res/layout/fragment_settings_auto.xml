@@ -203,6 +203,7 @@
 
             </LinearLayout>
 
+
             <Button
                 android:id="@+id/update_config"
                 style="@style/ButtonGreen"
@@ -214,6 +215,16 @@
                 android:text="@string/button_get_config"
                 android:textSize="@dimen/_12ssp" />
 
+            <Button
+                android:id="@+id/update_username"
+                style="@style/ButtonGreen"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:maxLines="1"
+                android:text="@string/button_update_username"
+                android:textSize="@dimen/_12ssp" />
 
             <Button
                 android:id="@+id/delete_user"

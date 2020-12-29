@@ -1264,4 +1264,11 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             }
         });
     }
+
+    public String getUserName() {
+        SettingsR settings = getMainActivity().getSettings();
+        String userName = settings.getUser_name() + " "
+                + DateUtils.getFormattedDate(DateUtils.PATTERN_DATE, settings.getUser_date() * 1000);
+        return userName;
+    }
 }

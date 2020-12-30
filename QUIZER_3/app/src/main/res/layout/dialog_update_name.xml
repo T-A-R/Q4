@@ -9,41 +9,60 @@
     android:keepScreenOn="true"
     android:orientation="vertical">
 
-    <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+    <pro.quizer.quizer3.view.element.edittext.ResizableEditText
         android:id="@+id/input_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
-        android:layout_marginTop="@dimen/_8sdp"
         android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginTop="@dimen/_8sdp"
         android:layout_marginEnd="@dimen/_8sdp"
         android:hint="@string/enter_your_name"
+        android:inputType="text"
         android:textSize="@dimen/_16ssp" />
 
-    <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+    <pro.quizer.quizer3.view.element.edittext.ResizableEditText
         android:id="@+id/input_birthdate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="date"
-        android:layout_marginTop="@dimen/_4sdp"
         android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginTop="@dimen/_4sdp"
         android:layout_marginEnd="@dimen/_8sdp"
         android:focusableInTouchMode="false"
         android:hint="@string/enter_your_birthdate"
+        android:inputType="date"
         android:textColor="@color/gray"
         android:textSize="@dimen/_16ssp" />
 
-    <Button
-        android:id="@+id/btn_send_name"
-        style="@style/ButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_36sdp"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/_10sdp"
-        android:layout_marginStart="@dimen/_8sdp"
-        android:layout_marginEnd="@dimen/_8sdp"
         android:layout_marginBottom="@dimen/_8sdp"
-        android:maxLines="1"
-        android:text="@string/button_send"
-        android:textSize="@dimen/_14ssp" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_cancel"
+            style="@style/ButtonRed"
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:maxLines="1"
+            android:text="@string/cancel"
+            android:textSize="@dimen/_14ssp" />
+
+        <Button
+            android:id="@+id/btn_send_name"
+            style="@style/ButtonStyle"
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:maxLines="1"
+            android:text="@string/button_send"
+            android:textSize="@dimen/_14ssp" />
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -68,6 +68,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
     private Switch mMemorySwitch;
     private Switch mDarkModeSwitch;
     private boolean isCanBackPress = true;
+    private Long dateLong = null;
 
     private MainActivity mBaseActivity;
     private int answerMargin;
@@ -86,7 +87,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         setEventsListener(id -> {
             switch (id) {
                 case 1:
-                    showScreensaver("Идет обновление конфига",true);
+                    showScreensaver("Идет обновление конфига", true);
                     isCanBackPress = false;
                     break;
                 case 2:
@@ -105,7 +106,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
             showRemoveUserDialog();
         } else if (view == mUpdateConfig) {
             reloadConfig();
-        } else if(view == mUpdateUserName) {
+        } else if (view == mUpdateUserName) {
             showInputNameDialog();
         }
     }
@@ -397,23 +398,31 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
     }
 
     private void showInputNameDialog() {
+//        getDao().setUserName(null);
+//        getDao().setUserBirthDate(null);
+        dateLong = null;
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getMainActivity());
         dialogBuilder.setCancelable(false);
-        View layoutView = getLayoutInflater().inflate(getMainActivity().isAutoZoom() ? R.layout.dialog_input_name_auto : R.layout.dialog_input_name, null);
+        View layoutView = getLayoutInflater().inflate(getMainActivity().isAutoZoom() ? R.layout.dialog_update_name_auto : R.layout.dialog_update_name, null);
         EditText name = layoutView.findViewById(R.id.input_name);
         EditText date = layoutView.findViewById(R.id.input_birthdate);
         Button sendBtn = layoutView.findViewById(R.id.btn_send_name);
+        Button cancelBtn = layoutView.findViewById(R.id.btn_cancel);
         date.setOnClickListener(v -> setDate((EditText) v));
 
         sendBtn.setOnClickListener(v -> {
             String nameString = name.getText().toString();
-            String dateString = date.getText().toString();
-            if (StringUtils.isNotEmpty(nameString) && StringUtils.isNotEmpty(dateString)) {
-                getDao().setUserName(nameString);
-                infoDialog.dismiss();
-            } else {
-                showToast(getString(R.string.please_enter_name_and_birthdate));
+
+            if (StringUtils.isEmpty(nameString)) {
+                nameString = " ";
             }
+            getDao().setUserName(nameString);
+            getDao().setUserBirthDate(dateLong);
+            infoDialog.dismiss();
+        });
+
+        cancelBtn.setOnClickListener(v -> {
+            infoDialog.dismiss();
         });
 
         dialogBuilder.setView(layoutView);
@@ -447,6 +456,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
 
         dateFormat.setTimeZone(mCalendar.getTimeZone());
         mEditText.setText(dateFormat.format(mCalendar.getTime()));
-        getDao().setUserBirthDate(mCalendar.getTimeInMillis() / 1000);
+//        getDao().setUserBirthDate(mCalendar.getTimeInMillis() / 1000);
+        dateLong = (mCalendar.getTimeInMillis() / 1000);
     }
 }

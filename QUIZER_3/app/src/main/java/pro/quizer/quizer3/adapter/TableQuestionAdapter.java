@@ -7,6 +7,8 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import androidx.annotation.NonNull;
+
+import android.graphics.Typeface;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,6 +41,7 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.model.OptionsOpenType;
 import pro.quizer.quizer3.model.view.TitleModel;
+import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.element.CustomCheckableButton;
@@ -259,6 +262,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final ElementOptionsR optionsModel = mLeftSide.get(row - 1).getElementOptionsR();
 
         vh.mHeaderRowTextView.setText(!mIsFlipColsAndRows ? titles.get(row - 1) : Objects.requireNonNull(titlesMap.get(mLeftSide.get(row - 1).getRelative_id())).getTitle());
+        vh.mHeaderRowDescriptionTextView.setTypeface(vh.mHeaderRowDescriptionTextView.getTypeface(), Typeface.ITALIC);
         UiUtils.setTextOrHide(vh.mHeaderRowDescriptionTextView, optionsModel.getDescription());
         if(!isSpeedMode) {
             if (!mIsFlipColsAndRows) {
@@ -616,6 +620,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         final TextView title = mView.findViewById(R.id.title);
         final TextView description = mView.findViewById(R.id.description);
+        description.setTypeface(description.getTypeface(), Typeface.ITALIC);
 
         title.setText(Objects.requireNonNull(titlesMap.get(pOptionsModel.getRelative_id())).getTitle());
         UiUtils.setTextOrHide(description, pOptionsModel.getDescription());
@@ -675,6 +680,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mHeaderRowTextView = itemView.findViewById(R.id.table_header_row_text_view);
             mHeaderRowDescriptionTextView = itemView.findViewById(R.id.table_header_row_description_text_view);
             mRowCont = itemView.findViewById(R.id.row_cont);
+            mHeaderRowDescriptionTextView.setTypeface(mHeaderRowDescriptionTextView.getTypeface(), Typeface.ITALIC);
         }
     }
 

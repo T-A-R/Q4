@@ -417,6 +417,8 @@
     <string name="quiz_saved">Анкета сохранена</string>
     <string name="quiz_save_error">Ошибка сохранения анкеты. Попробуйте еще раз</string>
     <string name="label_login">Login: %1$s</string>
+    <string name="label_inter">Интервьюер: %1$s</string>
+    <string name="label_project">Проект: %1$s</string>
     <string name="update_config_delay">Обновление конфигурации получено. У Вас есть незавершённая активная анкета. Данное обновление конфигурации будет автоматически применено как только Вы её завершите или прервёте.</string>
     <string name="config_update">Идет обновление конфига</string>
     <string name="wait_starting_new_quiz">Подождите,  идет запуск анкеты</string>

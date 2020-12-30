@@ -11,6 +11,7 @@
         android:id="@+id/answer_images_cont"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
         android:layout_marginLeft="@dimen/_8ssp"
         android:layout_marginRight="@dimen/_8ssp"
         android:orientation="horizontal"

@@ -972,8 +972,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void getInfo(boolean showDialog) {
-        btnInfo.setEnabled(false);
-        btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+        if (showDialog) {
+            btnInfo.setEnabled(false);
+            btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+        }
 
         UserModelR userModel = activity.getCurrentUser();
         ConfigModel configModel = activity.getConfig();
@@ -1038,7 +1040,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void showStatistics(StatisticR statistics) {
-
+        Log.d("T-L.HomeFragment", "showStatistics: " + statistics);
         if (statistics == null) {
             ShowStatistics task = new ShowStatistics();
             task.execute();
@@ -1112,14 +1114,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         UiUtils.setTextOrHide(userTitle, (String.format(getString(R.string.data_by_user), activity.getSettings().getUser_name(), getCurrentUser().getLogin())));
         UiUtils.setTextOrHide(userQuotasCount, (String.format(getString(R.string.collected_quotas), String.valueOf(finalStatistics.getUser_quoted()))));
-        if (finalStatistics.getUser_unfinished() == -1) {
+        if (finalStatistics.getUser_unfinished() == null || finalStatistics.getUser_unfinished() == -1) {
             UiUtils.setTextOrHide(userAbortedCount, (String.format(getString(R.string.collected_aborted), "нет данных")));
         } else {
             UiUtils.setTextOrHide(userAbortedCount, (String.format(getString(R.string.collected_aborted), String.valueOf(finalStatistics.getUser_unfinished()))));
         }
         UiUtils.setTextOrHide(userCorrect, (String.format(getString(R.string.collected_questionnaires), String.valueOf(finalStatistics.getUser_correct()))));
         UiUtils.setTextOrHide(userDefectiveCount, (String.format(getString(R.string.collected_defective), String.valueOf(finalStatistics.getUser_rejected()))));
-        if (server && finalStatistics.getUser_tested() != 0) {
+        if (server && finalStatistics.getUser_tested() != null && finalStatistics.getUser_tested() != 0) {
             userTestCount.setVisibility(View.VISIBLE);
             UiUtils.setTextOrHide(userTestCount, (String.format(getString(R.string.collected_tests), String.valueOf(finalStatistics.getUser_tested()))));
         } else {

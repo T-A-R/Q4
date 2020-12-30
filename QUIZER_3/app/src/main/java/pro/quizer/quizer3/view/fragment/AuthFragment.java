@@ -553,10 +553,14 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void startHomeFragment(HomeFragment fragment) {
-        if (getMainActivity() != null && getMainActivity().getSettings().getUser_name() != null) {
+        if (getMainActivity() != null && getMainActivity().getSettings().getUser_name() == null) {
+            showInputNameDialog(fragment);
+        } else if (getMainActivity() != null && getMainActivity().getSettings().getUser_name() != null
+                && !getMainActivity().getSettings().getUser_name().equals("null")
+                && !getMainActivity().getSettings().getUser_name().equals(" ")) {
             showNameDialog(fragment);
         } else {
-            showInputNameDialog(fragment);
+            showEmptyNameDialog(fragment);
         }
     }
 
@@ -596,6 +600,8 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void showInputNameDialog(HomeFragment fragment) {
+        getDao().setUserName(null);
+        getDao().setUserBirthDate(null);
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getMainActivity());
         dialogBuilder.setCancelable(false);
         View layoutView = getLayoutInflater().inflate(getMainActivity().isAutoZoom() ? R.layout.dialog_input_name_auto : R.layout.dialog_input_name, null);
@@ -606,14 +612,13 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
         sendBtn.setOnClickListener(v -> {
             String nameString = name.getText().toString();
-            String dateString = date.getText().toString();
-            if (StringUtils.isNotEmpty(nameString) && StringUtils.isNotEmpty(dateString)) {
-                getDao().setUserName(nameString);
-                infoDialog.dismiss();
-                replaceFragment(fragment);
-            } else {
-                showToast(getString(R.string.please_enter_name_and_birthdate));
+
+            if (StringUtils.isEmpty(nameString)) {
+                nameString = " ";
             }
+            getDao().setUserName(nameString);
+            infoDialog.dismiss();
+            replaceFragment(fragment);
         });
 
         dialogBuilder.setView(layoutView);
@@ -648,6 +653,43 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         dateFormat.setTimeZone(mCalendar.getTimeZone());
         mEditText.setText(dateFormat.format(mCalendar.getTime()));
         getDao().setUserBirthDate(mCalendar.getTimeInMillis() / 1000);
+    }
+
+    private void showEmptyNameDialog(HomeFragment fragment) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getMainActivity());
+        dialogBuilder.setCancelable(false);
+        View layoutView = getLayoutInflater().inflate(getMainActivity().isAutoZoom() ? R.layout.dialog_show_name_auto : R.layout.dialog_show_name, null);
+        TextView title = layoutView.findViewById(R.id.title_show_name);
+        TextView name = layoutView.findViewById(R.id.show_name);
+        name.setVisibility(View.GONE);
+        TextView date = layoutView.findViewById(R.id.show_birthdate);
+        Button noBtn = layoutView.findViewById(R.id.btn_wrong_name);
+        Button yesBtn = layoutView.findViewById(R.id.btn_right_name);
+
+        try {
+            UiUtils.setTextOrHide(title, "Имя интервьюера не указано.");
+            UiUtils.setTextOrHide(date, "Хотите указать?");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        yesBtn.setOnClickListener(v -> {
+            infoDialog.dismiss();
+            showInputNameDialog(fragment);
+        });
+
+        noBtn.setOnClickListener(v -> {
+            infoDialog.dismiss();
+            replaceFragment(fragment);
+        });
+
+        dialogBuilder.setView(layoutView);
+        infoDialog = dialogBuilder.create();
+        infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+        infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if (getMainActivity() != null && !getMainActivity().isFinishing())
+            infoDialog.show();
+
     }
 }
 

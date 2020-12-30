@@ -183,7 +183,7 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
 
             answerTitle.setTypeface(Fonts.getFuturaPtBook());
             answerPosition.setTypeface(Fonts.getFuturaPtBook());
-            answerDesc.setTypeface(Fonts.getFuturaPtBook());
+//            answerDesc.setTypeface(Fonts.getFuturaPtBook());
             answerEditText.setTypeface(Fonts.getFuturaPtBook());
             answerEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
 

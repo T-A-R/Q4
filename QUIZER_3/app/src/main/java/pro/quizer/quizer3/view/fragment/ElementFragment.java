@@ -1786,8 +1786,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         dQuota1.setTextColor(getResources().getColor(R.color.black));
         dQuota2.setTextColor(getResources().getColor(R.color.black));
         dQuota1.setText(getString(R.string.label_login, getMainActivity().getCurrentUser().getLogin()));
-        dQuota2.setText(getUserName());
-        dQuota3.setText(getMainActivity().getConfig().getProjectInfo().getName());
+        dQuota2.setText(getString(R.string.label_inter, getUserName()));
+        dQuota3.setText(getString(R.string.label_project, getMainActivity().getConfig().getProjectInfo().getName()));
 
         dialogBuilder.setView(layoutView);
         infoDialog = dialogBuilder.create();

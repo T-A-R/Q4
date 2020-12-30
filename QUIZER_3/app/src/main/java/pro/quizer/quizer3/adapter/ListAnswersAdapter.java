@@ -186,7 +186,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
             answerTitle.setTypeface(Fonts.getFuturaPtBook());
             answerPosition.setTypeface(Fonts.getFuturaPtBook());
-            answerDesc.setTypeface(Fonts.getFuturaPtBook());
+//            answerDesc.setTypeface(Fonts.getFuturaPtBook());
             answerEditText.setTypeface(Fonts.getFuturaPtBook());
             answerEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
@@ -247,7 +247,6 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         }
 
         public void setChecked(int position) {
-
             if (!isMulti) {
                 if (isChecked(position)) {
                     editButton.setVisibility(View.GONE);
@@ -271,6 +270,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             } else {
                 if (isChecked(position)) {
                     button.setImageResource(MainActivity.AVIA ? R.drawable.checkbox_checked_red : R.drawable.checkbox_checked);
+                    if(answersState.get(position).getData() != null && !answersState.get(position).getData().equals("")) editButton.setVisibility(View.GONE);
                 } else {
                     button.setImageResource(MainActivity.AVIA ? R.drawable.checkbox_unchecked_red : R.drawable.checkbox_unchecked);
                 }
@@ -415,7 +415,10 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         if (isChecked(position) && !isMulti) {
             return;
         }
-        if (isAutoChecked(position)) return;
+        if (isAutoChecked(position)) {
+            notifyDataSetChanged();
+            return;
+        }
         answersState.get(position).setChecked(!isChecked(position));
         if (!isMulti || isUnChecker(position)) {
             for (int i = 0; i < answersState.size(); i++) {

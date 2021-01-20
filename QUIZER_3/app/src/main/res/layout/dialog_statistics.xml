@@ -157,6 +157,18 @@
                 <include layout="@layout/view_divider" />
 
                 <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                    android:id="@+id/name_warning"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:text="@string/offline_name_warning"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:visibility="gone"/>
+
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
                     android:id="@+id/user_quotas_count"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

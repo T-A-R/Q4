@@ -5,12 +5,17 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(indices = {@Index("user_id")})
+@Entity(indices = {@Index("user_id"), @Index("user_name"), @Index("user_date")})
 public class StatisticR {
 
     @PrimaryKey
     @ColumnInfo(name = "user_id")
     private int user_id;
+
+    @ColumnInfo(name = "user_name")
+    private String user_name;
+    @ColumnInfo(name = "user_date")
+    private Long user_date;
 
     @ColumnInfo(name = "quoted")
     private Integer quoted;
@@ -43,6 +48,22 @@ public class StatisticR {
 
     public void setUser_id(int user_id) {
         this.user_id = user_id;
+    }
+
+    public String getUser_name() {
+        return user_name;
+    }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
+
+    public Long getUser_date() {
+        return user_date;
+    }
+
+    public void setUser_date(Long user_date) {
+        this.user_date = user_date;
     }
 
     public Integer getQuoted() {

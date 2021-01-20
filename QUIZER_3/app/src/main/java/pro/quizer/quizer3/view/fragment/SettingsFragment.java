@@ -401,17 +401,28 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
 //        getDao().setUserName(null);
 //        getDao().setUserBirthDate(null);
         dateLong = null;
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getMainActivity());
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getMainActivity(), android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar);
         dialogBuilder.setCancelable(false);
         View layoutView = getLayoutInflater().inflate(getMainActivity().isAutoZoom() ? R.layout.dialog_update_name_auto : R.layout.dialog_update_name, null);
         EditText name = layoutView.findViewById(R.id.input_name);
         EditText date = layoutView.findViewById(R.id.input_birthdate);
         Button sendBtn = layoutView.findViewById(R.id.btn_send_name);
         Button cancelBtn = layoutView.findViewById(R.id.btn_cancel);
-        date.setOnClickListener(v -> setDate((EditText) v));
+
+        date.setOnClickListener(v -> {
+            String nameString = name.getText().toString();
+            nameString = nameString.replaceAll(" ", "");
+            if (StringUtils.isEmpty(nameString) || nameString.length() == 0) {
+                showToast(getString(R.string.please_enter_name));
+            } else {
+                setDate((EditText) v);
+            }
+        });
 
         sendBtn.setOnClickListener(v -> {
             String nameString = name.getText().toString();
+            String shortName = nameString.replaceAll(" ", "");
+            if(shortName.length() == 0) nameString = " ";
 
             if (StringUtils.isEmpty(nameString)) {
                 nameString = " ";
@@ -441,6 +452,10 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
                 mCalendar.set(Calendar.YEAR, year);
                 mCalendar.set(Calendar.MONTH, monthOfYear);
                 mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                mCalendar.set(Calendar.HOUR, 0);
+                mCalendar.set(Calendar.MINUTE, 0);
+                mCalendar.set(Calendar.SECOND, 0);
+                mCalendar.set(Calendar.MILLISECOND, 0);
                 setInitialDateTime(pEditText);
             },
                     mCalendar.get(Calendar.YEAR),

@@ -406,12 +406,14 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 }
             } else {
                 checkItem(position);
+                onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
             }
 
         }
     }
 
     private void checkItem(int position) {
+
         if (isChecked(position) && !isMulti) {
             return;
         }
@@ -467,6 +469,9 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     public void setAnswers(List<AnswerState> answers) {
         if (answers != null) {
             this.answersState = answers;
+            for (int i = 0; i < answers.size(); i++) {
+                answersList.get(i).setEnabled(true);
+            }
             for (int i = 0; i < answers.size(); i++) {
                 if (answersList.get(i).getElementOptionsR().isUnchecker() && answers.get(i).isChecked()) {
                     for (int k = 0; k < answersList.size(); k++) {

@@ -8,6 +8,7 @@ import java.util.List;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.model.Operators;
+import pro.quizer.quizer3.model.config.ElementModelNew;
 
 public class ExpressionUtils {
 
@@ -82,10 +83,12 @@ public class ExpressionUtils {
                         try {
                             relativeId = Integer.parseInt(expression.substring(k + 1, k + nextSymbol));
                             if (expression.charAt(k + nextSymbol + 1) == 't') { // TITLE
-                                String title = activity.getMap(false).get(relativeId).getOptions().getTitle();
+                                ElementModelNew elementModelNew = activity.getMap(false).get(relativeId);
+                                String title = elementModelNew != null ? elementModelNew.getOptions().getTitle() : expression.substring(i);
                                 decodedExpression.append(title);
                             } else if (expression.charAt(k + nextSymbol + 1) == 'v') { // VALUE
-                                String value = activity.getMainDao().getElementPassedR(activity.getToken(), relativeId).getValue();
+                                ElementPassedR element = activity.getMainDao().getElementPassedR(activity.getToken(), relativeId);
+                                String value = element != null ? element.getValue() : expression.substring(i);
                                 decodedExpression.append(value);
                             } else if (expression.charAt(k + nextSymbol + 1) == 'c') { // CHECKED
                                 Boolean isChecked = activity.getMainDao().getElementPassedR(activity.getToken(), relativeId) != null;

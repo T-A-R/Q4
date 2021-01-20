@@ -171,7 +171,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                 try {
                     mBaseActivity.getMainDao().clearQuotaR(userProjectId);
                     mBaseActivity.getMainDao().insertQuotaR(quotaRList);
-                    mBaseActivity.setSettings(Constants.Settings.QUOTA_TIME, String.valueOf(DateUtils.getFullCurrentTime()));
+                    mBaseActivity.setSettings(Constants.Settings.QUOTA_TIME, String.valueOf(DateUtils.getCurrentTimeMillis()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -197,7 +197,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                             mBaseActivity.getMainDao().deleteQuestionnaireByToken(token);
                             mBaseActivity.getMainDao().deleteElementDatabaseModelByToken(token);
                             mBaseActivity.addLog(Constants.LogObject.QUESTIONNAIRE, "DELETE", Constants.LogResult.SUCCESS, token, null);
-                            mBaseActivity.setSettings(Constants.Settings.SENT_TIME, String.valueOf(DateUtils.getFullCurrentTime()));
+                            mBaseActivity.setSettings(Constants.Settings.SENT_TIME, String.valueOf(DateUtils.getCurrentTimeMillis()));
 
                         } catch (Exception e) {
                             e.printStackTrace();

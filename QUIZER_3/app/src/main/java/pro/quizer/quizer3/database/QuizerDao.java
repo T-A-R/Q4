@@ -138,8 +138,8 @@ public interface QuizerDao {
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status AND user_id = :userId AND user_project_id = :projectId AND survey_status = :surveyStatus")
     List<QuestionnaireDatabaseModelR> getQuestionnaireForQuotas(int userId, int projectId, String status, String surveyStatus);
 
-    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status AND user_id = :userId AND user_project_id = :projectId AND survey_status = :surveyStatus AND user_name = :name AND user_date = :date")
-    List<QuestionnaireDatabaseModelR> getQuestionnaireForQuotasByUser(int userId, int projectId, String status, String surveyStatus, String name, Long date);
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status AND user_id = :userId AND user_project_id = :projectId AND survey_status = :surveyStatus AND user_name = :name AND (user_date = :user_date or (user_date is null and :user_date is null))")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireForQuotasByUser(int userId, int projectId, String status, String surveyStatus, String name, Long user_date);
 
     //TODO RENAME TO setQuestionnaireStatusByToken
     @Query("UPDATE QuestionnaireDatabaseModelR SET status = :status WHERE token = :token")
@@ -157,8 +157,8 @@ public interface QuizerDao {
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND survey_status = :survey AND status = :status")
     List<QuestionnaireDatabaseModelR> getQuestionnaireSurveyStatus(int userId, String survey, String status);
 
-    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND survey_status = :survey AND status = :status AND user_name = :name AND user_date = :data")
-    List<QuestionnaireDatabaseModelR> getQuestionnaireByStatusAndName(int userId, String name, Long data, String survey, String status);
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND survey_status = :survey AND status = :status AND user_name = :name AND (user_date = :user_date or (user_date is null and :user_date is null))")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireByStatusAndName(int userId, String name, Long user_date, String survey, String status);
 
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status AND send_sms = :send_sms AND survey_status = :survey")
     List<QuestionnaireDatabaseModelR> getQuestionnaireForStage(int userId, String status, String survey, boolean send_sms);

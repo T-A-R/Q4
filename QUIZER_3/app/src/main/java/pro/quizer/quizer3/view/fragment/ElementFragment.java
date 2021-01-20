@@ -136,6 +136,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private boolean isRestored = false;
     private boolean isMultiSpinner = false;
     private boolean isQuota = false;
+    private boolean canBack = true;
     private int titles = 0;
 
     private ListAnswersAdapter adapterList;
@@ -358,12 +359,16 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if (view == btnNext) {
+            if(answerType.equals(ElementSubtype.END)) {
+                nextElementId = currentElement.getElementOptionsR().getJump();
+                Log.d("T-L.ElementFragment", "onClick NEXT: " + nextElementId);
+            }
             DoNext next = new DoNext();
             next.execute();
         } else if (view == btnPrev) {
             deactivateButtons();
             TransFragment fragment = new TransFragment();
-
+//            showToast("1: " + prevList.size());
             if (prevElementId != 0) {
                 prevElementId = prevList.get(prevList.size() - 1).getPrevId();
                 prevList.remove(prevList.size() - 1);
@@ -376,6 +381,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
                 fragment.setStartElement(prevElementId, true);
                 stopRecording();
+//                showToast("2: " + prevList.size());
                 replaceFragmentBack(fragment);
             } else {
                 showExitPoolAlertDialog();
@@ -722,10 +728,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 tableCont.setVisibility(View.VISIBLE);
                 break;
             case ElementSubtype.HTML:
+                questionCont.setVisibility(View.GONE);
+                infoCont.setVisibility(View.VISIBLE);
+                infoText.loadData(currentElement.getElementOptionsR().getData(), "text/html; charset=UTF-8", null);
             case ElementSubtype.END:
                 questionCont.setVisibility(View.GONE);
                 infoCont.setVisibility(View.VISIBLE);
                 infoText.loadData(currentElement.getElementOptionsR().getData(), "text/html; charset=UTF-8", null);
+                btnExit.setVisibility(View.GONE);
+                btnPrev.setVisibility(View.GONE);
+                btnNext.setText(R.string.button_finish);
+                canBack = false;
                 break;
             case ElementSubtype.SCALE:
                 rvScale.setVisibility(View.VISIBLE);
@@ -1583,6 +1596,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 answerStateNew.setRelative_id(answerStatesAdapter.get(i).getRelative_id());
                 answerStatesRestored.add(answerStateNew);
             }
+
+//            for (int i = 0; i < answerStatesRestored.size(); i++) {
+//                if(answerStatesRestored.get(i).is)
+//            }
+
             adapterList.setAnswers(answerStatesRestored);
             adapterList.setRestored(true);
             adapterList.notifyDataSetChanged();
@@ -1617,7 +1635,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     @Override
     public boolean onBackPressed() {
-        onClick(btnPrev);
+        if (canBack)
+            onClick(btnPrev);
         return true;
     }
 
@@ -1816,6 +1835,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             try {
                 if (saveElement()) {
                     try {
+                        if(answerType.equals(ElementSubtype.END)) {
+                            nextElementId = currentElement.getElementOptionsR().getJump();
+                        }
                         if (nextElementId == null) {
                             showRestartDialog();
                         } else if (nextElementId == 0) {

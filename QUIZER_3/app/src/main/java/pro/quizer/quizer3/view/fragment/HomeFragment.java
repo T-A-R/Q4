@@ -925,6 +925,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             List<QuestionnaireDatabaseModelR> abortedUserQuestionnairesList = null;
             List<QuestionnaireDatabaseModelR> correctedQuestionnairesList = null;
             List<QuestionnaireDatabaseModelR> correctedUserQuestionnairesList = null;
+            Log.d("T-L.HomeFragment", "==================================== START");
             try {
                 abortedUserQuestionnairesList = getDao().getQuestionnaireByStatusAndName(userId, settings.getUser_name(), settings.getUser_date(), Constants.QuestionnaireStatuses.ABORTED, Constants.LogStatus.NOT_SENT);
                 abortedQuestionnairesList = getDao().getQuestionnaireSurveyStatus(userId, Constants.QuestionnaireStatuses.ABORTED, Constants.LogStatus.NOT_SENT);
@@ -937,24 +938,51 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             int aborted = abortedQuestionnairesList != null ? abortedQuestionnairesList.size() : 0;
             int userAborted = abortedUserQuestionnairesList != null ? abortedUserQuestionnairesList.size() : 0;
             int totalAborted = savedStatistics.getUnfinished() != null ? aborted + savedStatistics.getUnfinished() : -1;
-            int totalUserAborted = savedStatistics.getUser_unfinished() != null ? userAborted + savedStatistics.getUser_unfinished() : -1;
+            int totalUserAborted = -1;
+            int userQuoted = userQuotas;
+            int userCorrected = 0;
+            int userRejected = 0;
+            int userTested = 0;
+            boolean offlineName = true;
+            Log.d("T-L.HomeFragment", "OFF STATS: \n"
+                    + settings.getUser_name() + "\n"
+                    + savedStatistics.getUser_name() + "\n"
+                    + settings.getUser_date() + "\n"
+                    + savedStatistics.getUser_date() + "\n"
 
+            );
+            if (savedStatistics.getUser_name() != null
+                    && savedStatistics.getUser_name().equals(settings.getUser_name())
+                    && ((savedStatistics.getUser_date() != null && savedStatistics.getUser_date().equals(settings.getUser_date())
+                    || (savedStatistics.getUser_date() == null && settings.getUser_date() == null)))) {
 
+                totalUserAborted = savedStatistics.getUser_unfinished() != null ? userAborted + savedStatistics.getUser_unfinished() : -1;
+                userQuoted = savedStatistics.getUser_quoted() != null ? userQuoted + savedStatistics.getUser_quoted() : userQuoted;
+                userCorrected = savedStatistics.getUser_correct() == null ?
+                        correctedUserQuestionnairesList != null ? correctedUserQuestionnairesList.size() : 0 :
+                        savedStatistics.getUser_correct() + (correctedUserQuestionnairesList != null ? correctedUserQuestionnairesList.size() : 0);
+                userRejected = savedStatistics.getUser_rejected() == null ? 0 : savedStatistics.getUser_rejected();
+                userTested = savedStatistics.getUser_tested() == null ? 0 : savedStatistics.getUser_tested();
+                offlineName = false;
+            } else {
+                userCorrected = correctedUserQuestionnairesList.size();
+                totalUserAborted = abortedUserQuestionnairesList.size();
+            }
+            Log.d("T-L.HomeFragment", "OFF NAME: " + offlineName);
             finalStatistics = new StatisticR(userId);
             finalStatistics.setQuoted(quotas);
-            finalStatistics.setUser_quoted(savedStatistics.getUser_quoted() == null ? userQuotas : userQuotas + savedStatistics.getUser_quoted());
+            finalStatistics.setUser_quoted(userQuoted);
             finalStatistics.setUnfinished(totalAborted);
             finalStatistics.setUser_unfinished(totalUserAborted);
             finalStatistics.setCorrect(savedStatistics.getCorrect() == null ?
                     correctedQuestionnairesList != null ? correctedQuestionnairesList.size() : 0 :
                     savedStatistics.getCorrect() + (correctedQuestionnairesList != null ? correctedQuestionnairesList.size() : 0));
-            finalStatistics.setUser_correct(savedStatistics.getUser_correct() == null ?
-                    correctedUserQuestionnairesList != null ? correctedUserQuestionnairesList.size() : 0 :
-                    savedStatistics.getUser_correct() + (correctedUserQuestionnairesList != null ? correctedUserQuestionnairesList.size() : 0));
+            finalStatistics.setUser_correct(userCorrected);
             finalStatistics.setRejected(savedStatistics.getRejected() == null ? 0 : savedStatistics.getRejected());
-            finalStatistics.setUser_rejected(savedStatistics.getUser_rejected() == null ? 0 : savedStatistics.getUser_rejected());
+            finalStatistics.setUser_rejected(userRejected);
             finalStatistics.setTested(savedStatistics.getTested() == null ? 0 : savedStatistics.getTested());
-            finalStatistics.setUser_tested(savedStatistics.getUser_tested() == null ? 0 : savedStatistics.getUser_tested());
+            finalStatistics.setUser_tested(userTested);
+            finalStatistics.setUser_name(offlineName ? "offlineName" : settings.getUser_name());
             return null;
         }
 
@@ -965,7 +993,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        showInfoDialog(false);
+                        try {
+                            showInfoDialog(false);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
         }
@@ -1022,6 +1054,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     activity.setAborted(statisticsResponseModel.getStatistics().getUnfinished());
                     StatisticR statistics = statisticsResponseModel.getStatistics();
                     statistics.setUser_id(getCurrentUserId());
+                    statistics.setUser_name(settings.getUser_name());
+                    statistics.setUser_date(settings.getUser_date());
                     getDao().insertStatisticR(statistics);
                     if (showDialog)
                         showStatistics(statisticsResponseModel.getStatistics());
@@ -1051,113 +1085,122 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void showInfoDialog(boolean server) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getMainActivity());
-        View layoutView = getLayoutInflater().inflate(getMainActivity().isAutoZoom() ? R.layout.dialog_statistics_auto : R.layout.dialog_statistics, null);
-        TextView deviceTitle = layoutView.findViewById(R.id.device_title);
-        TextView loginTitle = layoutView.findViewById(R.id.login_title);
-        TextView correct = layoutView.findViewById(R.id.finished_count);
-        TextView userCorrect = layoutView.findViewById(R.id.user_finished_count);
-        TextView userTitle = layoutView.findViewById(R.id.user_title);
-        TextView quotasCount = layoutView.findViewById(R.id.quotas_count);
-        TextView userQuotasCount = layoutView.findViewById(R.id.user_quotas_count);
-        TextView abortedCount = layoutView.findViewById(R.id.aborted_count);
-        TextView userAbortedCount = layoutView.findViewById(R.id.user_aborted_count);
-        TextView defectiveCount = layoutView.findViewById(R.id.defective_count);
-        TextView userDefectiveCount = layoutView.findViewById(R.id.user_defective_count);
-        TextView testCount = layoutView.findViewById(R.id.test_count);
-        TextView userTestCount = layoutView.findViewById(R.id.user_test_count);
-        TextView completedCount = layoutView.findViewById(R.id.completed_count);
-        TextView sentCount = layoutView.findViewById(R.id.sent_count);
-        TextView notSentCount = layoutView.findViewById(R.id.not_sent_count);
-        TextView unfinishedCount = layoutView.findViewById(R.id.unfinished_count);
-        TextView inactiveCount = layoutView.findViewById(R.id.inactive_count);
-        ImageView closeBtn = layoutView.findViewById(R.id.btn_dialog_close);
+        try {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getMainActivity());
+            View layoutView = getLayoutInflater().inflate(getMainActivity().isAutoZoom() ? R.layout.dialog_statistics_auto : R.layout.dialog_statistics, null);
+            TextView deviceTitle = layoutView.findViewById(R.id.device_title);
+            TextView loginTitle = layoutView.findViewById(R.id.login_title);
+            TextView correct = layoutView.findViewById(R.id.finished_count);
+            TextView userCorrect = layoutView.findViewById(R.id.user_finished_count);
+            TextView userTitle = layoutView.findViewById(R.id.user_title);
+            TextView quotasCount = layoutView.findViewById(R.id.quotas_count);
+            TextView userQuotasCount = layoutView.findViewById(R.id.user_quotas_count);
+            TextView abortedCount = layoutView.findViewById(R.id.aborted_count);
+            TextView userAbortedCount = layoutView.findViewById(R.id.user_aborted_count);
+            TextView defectiveCount = layoutView.findViewById(R.id.defective_count);
+            TextView userDefectiveCount = layoutView.findViewById(R.id.user_defective_count);
+            TextView testCount = layoutView.findViewById(R.id.test_count);
+            TextView userTestCount = layoutView.findViewById(R.id.user_test_count);
+            TextView completedCount = layoutView.findViewById(R.id.completed_count);
+            TextView sentCount = layoutView.findViewById(R.id.sent_count);
+            TextView notSentCount = layoutView.findViewById(R.id.not_sent_count);
+            TextView unfinishedCount = layoutView.findViewById(R.id.unfinished_count);
+            TextView inactiveCount = layoutView.findViewById(R.id.inactive_count);
+            TextView offlineNameWarning = layoutView.findViewById(R.id.name_warning);
+            ImageView closeBtn = layoutView.findViewById(R.id.btn_dialog_close);
 
-        if (activity != null && !activity.getSettings().isProject_is_active()) {
-            int count = getDao().getQuestionnaireSurveyStatus(activity.getCurrentUserId(), Constants.QuestionnaireStatuses.COMPLETED, Constants.LogStatus.NOT_SENT).size();
-            UiUtils.setTextOrHide(inactiveCount, (String.format(getString(R.string.inactive_on_device),
-                    String.valueOf(count))));
-            inactiveCount.setVisibility(View.VISIBLE);
-        }
-
-        closeBtn.setOnClickListener(v -> {
-            btnInfo.setEnabled(true);
-            final int sdk = Build.VERSION.SDK_INT;
-            try {
-                if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
-                    btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-                } else {
-                    btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (activity != null && !activity.getSettings().isProject_is_active()) {
+                int count = getDao().getQuestionnaireSurveyStatus(activity.getCurrentUserId(), Constants.QuestionnaireStatuses.COMPLETED, Constants.LogStatus.NOT_SENT).size();
+                UiUtils.setTextOrHide(inactiveCount, (String.format(getString(R.string.inactive_on_device),
+                        String.valueOf(count))));
+                inactiveCount.setVisibility(View.VISIBLE);
             }
-            infoDialog.dismiss();
-        });
 
-        UiUtils.setTextOrHide(loginTitle, (String.format(getString(R.string.data_by_login), getCurrentUser().getLogin())));
-        UiUtils.setTextOrHide(quotasCount, (String.format(getString(R.string.collected_quotas), String.valueOf(finalStatistics.getQuoted()))));
-        if (finalStatistics.getUnfinished() == -1) {
-            UiUtils.setTextOrHide(abortedCount, (String.format(getString(R.string.collected_aborted), "нет данных")));
-        } else {
-            UiUtils.setTextOrHide(abortedCount, (String.format(getString(R.string.collected_aborted), String.valueOf(finalStatistics.getUnfinished()))));
-        }
-        UiUtils.setTextOrHide(correct, (String.format(getString(R.string.collected_questionnaires), String.valueOf(finalStatistics.getCorrect()))));
-        UiUtils.setTextOrHide(defectiveCount, (String.format(getString(R.string.collected_defective), String.valueOf(finalStatistics.getRejected()))));
-        if (server && finalStatistics.getTested() != 0) {
-            testCount.setVisibility(View.VISIBLE);
-            UiUtils.setTextOrHide(testCount, (String.format(getString(R.string.collected_tests), String.valueOf(finalStatistics.getTested()))));
-        } else {
-            testCount.setVisibility(View.GONE);
-        }
-
-
-        UiUtils.setTextOrHide(userTitle, (String.format(getString(R.string.data_by_user), activity.getSettings().getUser_name(), getCurrentUser().getLogin())));
-        UiUtils.setTextOrHide(userQuotasCount, (String.format(getString(R.string.collected_quotas), String.valueOf(finalStatistics.getUser_quoted()))));
-        if (finalStatistics.getUser_unfinished() == null || finalStatistics.getUser_unfinished() == -1) {
-            UiUtils.setTextOrHide(userAbortedCount, (String.format(getString(R.string.collected_aborted), "нет данных")));
-        } else {
-            UiUtils.setTextOrHide(userAbortedCount, (String.format(getString(R.string.collected_aborted), String.valueOf(finalStatistics.getUser_unfinished()))));
-        }
-        UiUtils.setTextOrHide(userCorrect, (String.format(getString(R.string.collected_questionnaires), String.valueOf(finalStatistics.getUser_correct()))));
-        UiUtils.setTextOrHide(userDefectiveCount, (String.format(getString(R.string.collected_defective), String.valueOf(finalStatistics.getUser_rejected()))));
-        if (server && finalStatistics.getUser_tested() != null && finalStatistics.getUser_tested() != 0) {
-            userTestCount.setVisibility(View.VISIBLE);
-            UiUtils.setTextOrHide(userTestCount, (String.format(getString(R.string.collected_tests), String.valueOf(finalStatistics.getUser_tested()))));
-        } else {
-            userTestCount.setVisibility(View.GONE);
-        }
-
-        UiUtils.setTextOrHide(deviceTitle, (String.format(getString(R.string.data_by_device), getCurrentUser().getLogin())));
-        UiUtils.setTextOrHide(completedCount, (String.format(getString(R.string.collected_questions), String.valueOf(completedCounter))));
-        UiUtils.setTextOrHide(sentCount, (String.format(getString(R.string.questions_sent_from_device), String.valueOf(sentCounter))));
-        UiUtils.setTextOrHide(notSentCount, (String.format(getString(R.string.questions_not_sent_from_device), String.valueOf(notSentCounter))));
-
-        if (currentQuestionnaire != null) {
-            unfinishedCount.setVisibility(View.VISIBLE);
-        } else {
-            unfinishedCount.setVisibility(View.GONE);
-        }
-
-        dialogBuilder.setView(layoutView);
-        infoDialog = dialogBuilder.create();
-        infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
-        infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        if (activity != null && !activity.isFinishing())
-            infoDialog.show();
-        infoDialog.setOnDismissListener(dialog -> {
-            btnInfo.setEnabled(true);
-            final int sdk = Build.VERSION.SDK_INT;
-            try {
-                if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
-                    btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
-                } else {
-                    btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+            closeBtn.setOnClickListener(v -> {
+                btnInfo.setEnabled(true);
+                final int sdk = Build.VERSION.SDK_INT;
+                try {
+                    if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
+                        btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                    } else {
+                        btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+                infoDialog.dismiss();
+            });
+
+            if (finalStatistics.getUser_name().equals("offlineName")) {
+                offlineNameWarning.setVisibility(View.VISIBLE);
             }
-        });
+
+            UiUtils.setTextOrHide(loginTitle, (String.format(getString(R.string.data_by_login), getCurrentUser().getLogin())));
+            UiUtils.setTextOrHide(quotasCount, (String.format(getString(R.string.collected_quotas), String.valueOf(finalStatistics.getQuoted()))));
+            if (finalStatistics.getUnfinished() == -1) {
+                UiUtils.setTextOrHide(abortedCount, (String.format(getString(R.string.collected_aborted), "нет данных")));
+            } else {
+                UiUtils.setTextOrHide(abortedCount, (String.format(getString(R.string.collected_aborted), String.valueOf(finalStatistics.getUnfinished()))));
+            }
+            UiUtils.setTextOrHide(correct, (String.format(getString(R.string.collected_questionnaires), String.valueOf(finalStatistics.getCorrect()))));
+            UiUtils.setTextOrHide(defectiveCount, (String.format(getString(R.string.collected_defective), String.valueOf(finalStatistics.getRejected()))));
+            if (server && finalStatistics.getTested() != 0) {
+                testCount.setVisibility(View.VISIBLE);
+                UiUtils.setTextOrHide(testCount, (String.format(getString(R.string.collected_tests), String.valueOf(finalStatistics.getTested()))));
+            } else {
+                testCount.setVisibility(View.GONE);
+            }
+
+
+            UiUtils.setTextOrHide(userTitle, (String.format(getString(R.string.data_by_user), activity.getSettings().getUser_name(), getCurrentUser().getLogin())));
+            UiUtils.setTextOrHide(userQuotasCount, (String.format(getString(R.string.collected_quotas), String.valueOf(finalStatistics.getUser_quoted()))));
+            if (finalStatistics.getUser_unfinished() == null || finalStatistics.getUser_unfinished() == -1) {
+                UiUtils.setTextOrHide(userAbortedCount, (String.format(getString(R.string.collected_aborted), "нет данных")));
+            } else {
+                UiUtils.setTextOrHide(userAbortedCount, (String.format(getString(R.string.collected_aborted), String.valueOf(finalStatistics.getUser_unfinished()))));
+            }
+            UiUtils.setTextOrHide(userCorrect, (String.format(getString(R.string.collected_questionnaires), String.valueOf(finalStatistics.getUser_correct()))));
+            UiUtils.setTextOrHide(userDefectiveCount, (String.format(getString(R.string.collected_defective), String.valueOf(finalStatistics.getUser_rejected()))));
+            if (server && finalStatistics.getUser_tested() != null && finalStatistics.getUser_tested() != 0) {
+                userTestCount.setVisibility(View.VISIBLE);
+                UiUtils.setTextOrHide(userTestCount, (String.format(getString(R.string.collected_tests), String.valueOf(finalStatistics.getUser_tested()))));
+            } else {
+                userTestCount.setVisibility(View.GONE);
+            }
+
+            UiUtils.setTextOrHide(deviceTitle, (String.format(getString(R.string.data_by_device), getCurrentUser().getLogin())));
+            UiUtils.setTextOrHide(completedCount, (String.format(getString(R.string.collected_questions), String.valueOf(completedCounter))));
+            UiUtils.setTextOrHide(sentCount, (String.format(getString(R.string.questions_sent_from_device), String.valueOf(sentCounter))));
+            UiUtils.setTextOrHide(notSentCount, (String.format(getString(R.string.questions_not_sent_from_device), String.valueOf(notSentCounter))));
+
+            if (currentQuestionnaire != null) {
+                unfinishedCount.setVisibility(View.VISIBLE);
+            } else {
+                unfinishedCount.setVisibility(View.GONE);
+            }
+
+            dialogBuilder.setView(layoutView);
+            infoDialog = dialogBuilder.create();
+            infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+            infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            if (activity != null && !activity.isFinishing())
+                infoDialog.show();
+            infoDialog.setOnDismissListener(dialog -> {
+                btnInfo.setEnabled(true);
+                final int sdk = Build.VERSION.SDK_INT;
+                try {
+                    if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
+                        btnInfo.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                    } else {
+                        btnInfo.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void showDeleteDialog() {

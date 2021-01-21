@@ -454,6 +454,15 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:visibility="visible" />
 
+        <!--PAGE-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/page_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:visibility="gone"/>
+
     </LinearLayout>
 
     <!--BUTTONS-->
@@ -466,7 +475,7 @@
 
         <Button
             android:id="@+id/back_btn"
-            style="@style/ButtonStyle"
+            style="@style/ButtonAvia"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_24sdp"
             android:layout_marginStart="@dimen/_20sdp"
@@ -480,7 +489,7 @@
 
         <Button
             android:id="@+id/exit_btn"
-            style="@style/ButtonStyle"
+            style="@style/ButtonAvia"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_24sdp"
             android:layout_marginStart="@dimen/_20sdp"
@@ -494,7 +503,7 @@
 
         <Button
             android:id="@+id/next_btn"
-            style="@style/ButtonStyle"
+            style="@style/ButtonAvia"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_24sdp"
             android:layout_alignParentBottom="true"

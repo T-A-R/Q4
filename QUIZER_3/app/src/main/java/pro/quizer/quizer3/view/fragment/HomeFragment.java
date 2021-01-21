@@ -1455,7 +1455,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             if (canStart) {
                 activity.addLog(Constants.LogObject.QUESTIONNAIRE, "START", Constants.LogResult.SUCCESS, currentQuestionnaire.getToken(), null);
                 hideScreensaver();
-                replaceFragment(new ElementFragment());
+                replaceFragment(isAvia() ? new ElementAviaFragment() : new ElementFragment());
             }
             return null;
         }

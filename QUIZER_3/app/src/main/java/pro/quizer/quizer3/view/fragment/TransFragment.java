@@ -2,6 +2,8 @@ package pro.quizer.quizer3.view.fragment;
 
 import pro.quizer.quizer3.R;
 
+import static pro.quizer.quizer3.MainActivity.AVIA;
+
 public class TransFragment extends ScreenFragment {
 
     private int startElementId;
@@ -27,12 +29,23 @@ public class TransFragment extends ScreenFragment {
     protected void onReady() {
 
 //        PageElementFragment fragment = new PageElementFragment();
-        ElementFragment fragment = new ElementFragment();
-        fragment.setStartElement(startElementId, restored);
-        if (!restored)
-            replaceFragment(fragment);
-        else
-            replaceFragmentBack(fragment);
+        if(!AVIA) {
+            ElementFragment fragment = new ElementFragment();
+            fragment.setStartElement(startElementId, restored);
+            if (!restored)
+                replaceFragment(fragment);
+            else
+                replaceFragmentBack(fragment);
+        } else {
+            ElementAviaFragment fragment = new ElementAviaFragment();
+            fragment.setStartElement(startElementId, restored);
+            if (!restored)
+                replaceFragment(fragment);
+            else
+                replaceFragmentBack(fragment);
+        }
+
+
 
     }
 }

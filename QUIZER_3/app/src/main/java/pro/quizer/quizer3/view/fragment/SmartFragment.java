@@ -140,7 +140,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 layoutSrc = isAutoZoom ? R.layout.fragment_about_auto : layoutSrc;
                 break;
             case R.layout.fragment_element:
-                layoutSrc = isAvia() ? R.layout.fragment_element_avia : isAutoZoom ? R.layout.fragment_element_auto : layoutSrc;
+                layoutSrc = isAutoZoom ? R.layout.fragment_element_auto : layoutSrc;
                 break;
 
             default:

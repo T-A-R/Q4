@@ -44,6 +44,7 @@ public class MultiSelectSpinner extends Spinner implements DialogInterface.OnMul
         Log.d("TARLOGS", "ADAPTER 1");
         c = context;
         simple_adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item) {
+//        simple_adapter = new ArrayAdapter<String>(context, android.R.layout.simple_expandable_list_item_1) {
             @Override
             public boolean isEnabled(int position) {
                 if (!mEnabled[position]) {
@@ -58,13 +59,17 @@ public class MultiSelectSpinner extends Spinner implements DialogInterface.OnMul
             }
         };
         simple_adapter.setDropDownViewResource(R.layout.spinner_selector);
+//        simple_adapter.setDropDownViewR1111esource(R.layout.spinner_selector);
+//        simple_adapter.setDropDownViewResource(Android.Resource.Layout.SimpleExpandableListItem1);
+
         super.setAdapter(simple_adapter);
     }
 
     public MultiSelectSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
-        simple_adapter = new ArrayAdapter<String>(context,
-                android.R.layout.simple_spinner_item) {
+        Log.d("TARLOGS", "ADAPTER 2");
+//        simple_adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item) {
+        simple_adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item) {
             @Override
             public boolean isEnabled(int position) {
                 if (!mEnabled[position]) {

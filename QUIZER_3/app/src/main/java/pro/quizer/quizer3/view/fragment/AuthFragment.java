@@ -59,6 +59,7 @@ import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 
+import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class AuthFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.AuthUserCallback, SmartFragment.Events {
@@ -553,14 +554,18 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void startHomeFragment(HomeFragment fragment) {
-        if (getMainActivity() != null && getMainActivity().getSettings().getUser_name() == null) {
-            showInputNameDialog(fragment);
-        } else if (getMainActivity() != null && getMainActivity().getSettings().getUser_name() != null
-                && !getMainActivity().getSettings().getUser_name().equals("null")
-                && !getMainActivity().getSettings().getUser_name().equals(" ")) {
-            showNameDialog(fragment);
+        if(!AVIA) {
+            if (getMainActivity() != null && getMainActivity().getSettings().getUser_name() == null) {
+                showInputNameDialog(fragment);
+            } else if (getMainActivity() != null && getMainActivity().getSettings().getUser_name() != null
+                    && !getMainActivity().getSettings().getUser_name().equals("null")
+                    && !getMainActivity().getSettings().getUser_name().equals(" ")) {
+                showNameDialog(fragment);
+            } else {
+                showEmptyNameDialog(fragment);
+            }
         } else {
-            showEmptyNameDialog(fragment);
+            replaceFragment(fragment);
         }
     }
 

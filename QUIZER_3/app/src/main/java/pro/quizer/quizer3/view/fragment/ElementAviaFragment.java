@@ -4,15 +4,6 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
-
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.ItemTouchHelper;
-
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -26,6 +17,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
 import com.multispinner.MultiSelectSpinner;
@@ -75,10 +74,9 @@ import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
-import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class ElementFragment extends ScreenFragment implements View.OnClickListener, ListAnswersAdapter.OnAnswerClickListener, RankQuestionAdapter.OnAnswerClickListener, ScaleQuestionAdapter.OnAnswerClickListener, TableQuestionAdapter.OnTableAnswerClickListener {
+public class ElementAviaFragment extends ScreenFragment implements View.OnClickListener, ListAnswersAdapter.OnAnswerClickListener, RankQuestionAdapter.OnAnswerClickListener, ScaleQuestionAdapter.OnAnswerClickListener, TableQuestionAdapter.OnTableAnswerClickListener {
 
     private Button btnNext;
     private Button btnPrev;
@@ -150,11 +148,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private Map<Integer, TitleModel> titlesMap;
     private CompositeDisposable disposables;
 
-    public ElementFragment() {
-        super(R.layout.fragment_element);
+    public ElementAviaFragment() {
+        super(R.layout.fragment_element_avia);
     }
 
-    public ElementFragment setStartElement(Integer startElementId, boolean restored) {
+    public ElementAviaFragment setStartElement(Integer startElementId, boolean restored) {
         this.startElementId = startElementId;
         this.isRestored = restored;
         st("setting element");
@@ -1756,9 +1754,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             btnExit.setEnabled(true);
                             btnNext.setEnabled(true);
                             
-                            btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_green));
-                            btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), isAvia() ? R.drawable.button_background_green : R.drawable.button_background_red));
-                            btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_green));
+                            btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_avia));
+                            btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_avia));
+                            btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_avia));
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -1783,9 +1781,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 btnExit.setEnabled(false);
                 btnNext.setEnabled(false);
 
-                btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-                btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-                btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+                btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray_avia));
+                btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray_avia));
+                btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray_avia));
 
             } catch (Exception e) {
                 e.printStackTrace();

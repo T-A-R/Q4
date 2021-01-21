@@ -80,4 +80,12 @@
     <style name="ButtonAviaWithoutBorder" parent="ButtonStyle">
         <item name="android:background">@drawable/button_background_red_without_border</item>
     </style>
+
+    <style name="spinnerItemStyle" parent="android:Widget.TextView.SpinnerItem">
+
+    </style>
+
+    <style name="spinnerDropDownItemStyle" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
+
+    </style>
 </resources>

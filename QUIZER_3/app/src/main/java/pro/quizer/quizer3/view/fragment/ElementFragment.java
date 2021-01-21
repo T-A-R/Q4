@@ -75,6 +75,7 @@ import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
+import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class ElementFragment extends ScreenFragment implements View.OnClickListener, ListAnswersAdapter.OnAnswerClickListener, RankQuestionAdapter.OnAnswerClickListener, ScaleQuestionAdapter.OnAnswerClickListener, TableQuestionAdapter.OnTableAnswerClickListener {
@@ -843,6 +844,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     if (unchecker != null)
                         multiSelectionSpinner.hasNoneOption(true, unchecker);
                     multiSelectionSpinner.setSelection(new int[]{});
+
                     multiSelectionSpinner.setListener(new MultiSelectSpinner.OnMultipleItemsSelectedListener() {
                         @Override
                         public void selectedIndices(List<Integer> indices) {
@@ -1837,7 +1839,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     try {
                         if(answerType.equals(ElementSubtype.END)) {
                             nextElementId = currentElement.getElementOptionsR().getJump();
+                            Log.d("T-L.ElementFragment", "=== END NEXT ELEMENT: " + nextElementId);
+                            showToast("=== END NEXT ELEMENT: " + nextElementId);
+                        } else {
+                            showToast("=== NEXT ELEMENT: " + nextElementId);
                         }
+                        Log.d("T-L.ElementFragment", "=== NEXT ELEMENT: " + nextElementId);
                         if (nextElementId == null) {
                             showRestartDialog();
                         } else if (nextElementId == 0) {

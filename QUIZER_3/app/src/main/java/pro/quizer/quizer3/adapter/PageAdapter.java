@@ -103,14 +103,16 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
         public void bind(final ElementItemR item, int position) {
             questionText.setText(item.getElementOptionsR().getTitle());
             StringBuilder answerTextBuilder = null;
-            for (AnswerState answerState : pageAnswersStates.get(item.getRelative_id())) {
-                if (answerState.isChecked() && answerState.getData() != null && answerState.getData().length() > 0) {
+            List<AnswerState> answerStates = pageAnswersStates.get(item.getRelative_id());
+            List<ElementItemR> answersList = item.getElements();
+            for (int i =0; i < answerStates.size(); i ++) {
+                if (answerStates.get(i).isChecked()) {
                     if (answerTextBuilder == null) {
                         answerTextBuilder = new StringBuilder();
                     } else {
                         answerTextBuilder.append("; ");
                     }
-                    answerTextBuilder.append(answerState.getData());
+                    answerTextBuilder.append(answersList.get(i).getElementOptionsR().getTitle());
                 }
             }
             if (answerTextBuilder != null) {
@@ -135,7 +137,6 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
                     List<AnswerState> answerStates = pageAnswersStates.get(item.getRelative_id());
                     AnswerState state = answerStates.get(position);
                     state.setChecked(enabled);
-                    state.setData(answer);
                     answerStates.set(position, state);
                     pageAnswersStates.put(item.getRelative_id(), answerStates);
                 }

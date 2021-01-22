@@ -1,22 +1,31 @@
 package pro.quizer.quizer3.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
@@ -30,138 +39,135 @@ import pro.quizer.quizer3.utils.StringUtils;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageObjectViewHolder> {
+public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectViewHolder> {
 
     private final OnAnswerClickListener onAnswerClickListener;
-    private final ElementItemR question;
-    private final List<ElementItemR> answersList;
-    private List<AnswerState> answersState;
+    private final List<ElementItemR> questions;
+    private Map<Integer, List<AnswerState>> pageAnswersStates;
     private int lastSelectedPosition = -1;
     public boolean isPressed = false;
     private final MainActivity mActivity;
-    private String typeBehavior;
-    public boolean show_scale;
-    public boolean show_images;
 
-    public PageAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, OnAnswerClickListener onAnswerClickListener) {
+    public PageAdapter(final Context context, List<ElementItemR> questions, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
-        this.question = question;
-        this.answersList = answersList;
+        this.questions = questions;
         this.onAnswerClickListener = onAnswerClickListener;
-        if (question.getElementOptionsR().getType_behavior() != null) {
-            this.typeBehavior = question.getElementOptionsR().getType_behavior();
-        }
-        this.show_scale = question.getElementOptionsR().isShow_scale();
-        this.show_images = question.getElementOptionsR().isShow_images();
-        this.answersState = new ArrayList<>();
-        for (int i = 0; i < answersList.size(); i++) {
-            this.answersState.add(new AnswerState(answersList.get(i).getRelative_id(), false, ""));
+        this.pageAnswersStates = new HashMap<>();
+        for (int i = 0; i < questions.size(); i++) {
+            List<AnswerState> answersStates = new ArrayList<>();
+            List<ElementItemR> answers = questions.get(i).getElements();
+            for (int k = 0; k < questions.get(i).getElements().size(); k++) {
+                answersStates.add(new AnswerState(answers.get(k).getRelative_id(), false, ""));
+            }
+            pageAnswersStates.put(questions.get(i).getRelative_id(), answersStates);
         }
     }
 
     @NonNull
     @Override
-    public PageObjectViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(MainActivity.AVIA ? R.layout.holder_answer_scale_avia : mActivity.isAutoZoom() ? R.layout.holder_answer_scale_auto : R.layout.holder_answer_scale, viewGroup, false);
-        return new PageObjectViewHolder(view, onAnswerClickListener);
+    public PageSelectViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.element_select_avia, viewGroup, false);
+        return new PageSelectViewHolder(view, onAnswerClickListener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PageObjectViewHolder holder, int position) {
-        holder.bind(answersList.get(position), position, typeBehavior);
+    public void onBindViewHolder(@NonNull PageSelectViewHolder holder, int position) {
+        holder.bind(questions.get(position), position);
     }
 
     @Override
     public int getItemCount() {
-        return answersList.size();
+        return questions.size();
     }
 
-    public class PageObjectViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class PageSelectViewHolder extends RecyclerView.ViewHolder {
 
-        TextView scaleText;
-        TextView divider;
-        ImageView scaleImage;
+        TextView questionText;
+        TextView answerText;
         View cont;
 
-        OnAnswerClickListener onUserClickListener;
+        OnAnswerClickListener onItemClickListener;
 
-        public PageObjectViewHolder(@NonNull View itemView, OnAnswerClickListener onUserClickListener) {
+        public PageSelectViewHolder(@NonNull View itemView, OnAnswerClickListener onItemClickListener) {
             super(itemView);
 
-            cont = itemView.findViewById(R.id.scale_cont);
-            scaleText = itemView.findViewById(R.id.scale_text);
-            divider = itemView.findViewById(R.id.divider);
-            scaleImage = itemView.findViewById(R.id.scale_image);
-            scaleText.setTypeface(Fonts.getFuturaPtBook());
+            cont = itemView.findViewById(R.id.cont_select_holder);
+            questionText = itemView.findViewById(R.id.select_answer_title);
+            answerText = itemView.findViewById(R.id.answer_select_text);
+            questionText.setTypeface(Fonts.getFuturaPtBook());
+            answerText.setTypeface(Fonts.getFuturaPtBook());
 
-            this.onUserClickListener = onUserClickListener;
+            this.onItemClickListener = onItemClickListener;
         }
 
-        public void bind(final ElementItemR item, int position, String type) {
-            cont.setOnClickListener(this);
-            if (show_scale) {
-                scaleText.setText(item.getElementOptionsR().getTitle());
-            } else {
-                scaleText.setVisibility(View.GONE);
-                divider.setVisibility(View.GONE);
+        public void bind(final ElementItemR item, int position) {
+            questionText.setText(item.getElementOptionsR().getTitle());
+            StringBuilder answerTextBuilder = null;
+            for (AnswerState answerState : pageAnswersStates.get(item.getRelative_id())) {
+                if (answerState.isChecked() && answerState.getData() != null && answerState.getData().length() > 0) {
+                    if (answerTextBuilder == null) {
+                        answerTextBuilder = new StringBuilder();
+                    } else {
+                        answerTextBuilder.append("; ");
+                    }
+                    answerTextBuilder.append(answerState.getData());
+                }
+            }
+            if (answerTextBuilder != null) {
+                answerText.setText(answerTextBuilder.toString());
             }
 
-            if (show_images) {
-                scaleImage.setVisibility(View.VISIBLE);
-            } else {
-                scaleImage.setVisibility(View.GONE);
-                divider.setVisibility(View.GONE);
-            }
+            cont.setOnClickListener(v -> showSelectDialog(item));
         }
 
+        @SuppressLint("RestrictedApi")
+        public void showSelectDialog(final ElementItemR item) {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mActivity);
+            View layoutView = mActivity.getLayoutInflater().inflate(R.layout.dialog_select, null);
+            View mOkBtn = layoutView.findViewById(R.id.select_ok_button);
+            RecyclerView recyclerView = layoutView.findViewById(R.id.select_recyclerview);
+            TextView questionTitle = layoutView.findViewById(R.id.select_title);
+            questionTitle.setText(item.getElementOptionsR().getTitle());
+            EditText selectInput = layoutView.findViewById(R.id.select_input);
+            SelectAdapter selectAdapter = new SelectAdapter(mActivity, item.getElements(), new SelectAdapter.OnAnswerClickListener() {
+                @Override
+                public void onAnswerClick(int position, boolean enabled, String answer) {
+                    List<AnswerState> answerStates = pageAnswersStates.get(item.getRelative_id());
+                    AnswerState state = answerStates.get(position);
+                    state.setChecked(enabled);
+                    state.setData(answer);
+                    answerStates.set(position, state);
+                    pageAnswersStates.put(item.getRelative_id(), answerStates);
+                }
+            });
+            recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
+            recyclerView.setAdapter(selectAdapter);
 
-        @Override
-        public void onClick(View v) {
-            isPressed = true;
-            lastSelectedPosition = getAdapterPosition();
+            dialogBuilder.setView(layoutView, 10, 40, 10, 10);
+            AlertDialog selectDialog = dialogBuilder.create();
+            selectDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            selectDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+            selectDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-            for (int a = 0; a < answersState.size(); a++) {
-                answersState.get(a).setChecked(a == lastSelectedPosition);
-            }
+            mOkBtn.setOnClickListener(v -> {
+                selectDialog.dismiss();
+                notifyDataSetChanged();
+                onItemClickListener.onAnswerClick(item.getRelative_id(), true, null);
+            });
 
-            notifyDataSetChanged();
-            onUserClickListener.onAnswerClick(lastSelectedPosition, true, null);
+            if (mActivity != null && !mActivity.isFinishing()) selectDialog.show();
         }
     }
 
     public interface OnAnswerClickListener {
-        void onAnswerClick(int position, boolean enabled, String answer);
+        void onAnswerClick(int relativeId, boolean enabled, String answer);
     }
 
-    public List<AnswerState> getAnswers() {
-        return answersState;
+    public Map<Integer, List<AnswerState>> getAnswers() {
+        return pageAnswersStates;
     }
 
-    public void setLastSelectedPosition(int lastSelectedPosition) {
-        this.lastSelectedPosition = lastSelectedPosition;
-        Log.d(TAG, "setLastSelectedPosition: " + lastSelectedPosition);
-    }
-
-    public void setAnswers(List<AnswerState> answers) {
-        Log.d(TAG, "=============================");
-        if (answers != null) {
-            for (int i = 0; i < answers.size(); i++) {
-                Log.d(TAG, i + ": " + answers.get(i).getRelative_id() + " : " + answers.get(i).getData() + " : " + answers.get(i).isChecked());
-            }
-            this.answersState = answers;
-            for (int i = 0; i < answers.size(); i++) {
-                if (answersList.get(i).getElementOptionsR().isUnchecker() && answers.get(i).isChecked()) {
-                    for (int k = 0; k < answersList.size(); k++) {
-                        if (k != i) {
-                            Log.d(TAG, "set false 5: " + k);
-                            answersList.get(k).setEnabled(false);
-                        }
-                    }
-                }
-            }
-        } else {
-            Log.d(TAG, "setAnswers: NULL");
-        }
+    public void setAnswers(Map<Integer, List<AnswerState>> pageAnswersStates) {
+        this.pageAnswersStates = pageAnswersStates;
     }
 }

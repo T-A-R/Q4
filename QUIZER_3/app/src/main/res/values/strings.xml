@@ -445,6 +445,8 @@
     <string name="offline_name_warning">После изменения имени ещё не было связи с сервером. Чтобы увидеть полную информацию по данному имени подключитесь к Интернету!</string>
     <string name="please_enter_name">Пожалуйста введите имя.</string>
     <string name="button_finish">Завершить</string>
+    <string name="select_input_hint">Поиск</string>
+    <string name="answer_selector">Ответить</string>
 
 
 </resources>

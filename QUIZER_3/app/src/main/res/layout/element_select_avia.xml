@@ -18,20 +18,23 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_gravity="center_vertical"
-            android:layout_toStartOf="@+id/select_checker"
+            android:layout_toStartOf="@+id/answer_select_text"
             android:text=""
             android:textColor="@color/black"
-            android:textSize="@dimen/_14ssp"
+            android:textSize="12sp"
             android:visibility="visible" />
 
-        <ImageView
-            android:id="@+id/select_checker"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_20sdp"
-            android:layout_marginStart="4dp"
+        <TextView
+            android:id="@+id/answer_select_text"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/radio_button_dark_gray"
+            android:layout_marginStart="10dp"
+            android:text="@string/answer_selector"
+            android:textAlignment="textEnd"
+            android:textColor="@color/black"
+            android:textSize="12sp"
             android:visibility="visible" />
 
     </RelativeLayout>

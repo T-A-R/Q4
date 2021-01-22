@@ -5,34 +5,25 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
-import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.model.state.AnswerState;
-import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
-import pro.quizer.quizer3.utils.StringUtils;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectViewHolder> {
+public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.PageSelectViewHolder> {
 
     private final OnAnswerClickListener onAnswerClickListener;
     private final List<ElementItemR> questions;
@@ -41,7 +32,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
     public boolean isPressed = false;
     private final MainActivity mActivity;
 
-    public PageAdapter(final Context context, List<ElementItemR> questions, OnAnswerClickListener onAnswerClickListener) {
+    public SelectAdapter(final Context context, List<ElementItemR> questions, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
         this.questions = questions;
         this.onAnswerClickListener = onAnswerClickListener;

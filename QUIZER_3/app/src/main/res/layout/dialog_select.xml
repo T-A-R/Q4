@@ -20,29 +20,52 @@
         android:background="@drawable/bg_shadow"
         android:orientation="vertical">
 
-        <FrameLayout
-            android:layout_alignParentTop="true"
-            android:id="@+id/dialog_content_element"
-            android:layout_above="@+id/dialog_ok_button"
+        <TextView
+            android:id="@+id/select_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp"
+            android:layout_alignParentTop="true"
+            android:text="Вопрос"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/select_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp"
+            android:layout_below="@+id/select_title"
+            android:hint="@string/select_input_hint"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:textSize="12sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/select_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp"
+            android:layout_above="@+id/select_ok_button"
+            android:layout_below="@+id/select_input"
             tools:ignore="UnknownIdInLayout" />
 
-        <pro.quizer.quizerexit.view.resizeble.textview.MediumResizableTextView
-            android:id="@+id/dialog_ok_button"
+        <TextView
+            android:id="@+id/select_ok_button"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="28dp"
-            android:layout_marginRight="56dp"
             android:layout_marginBottom="20dp"
-            android:text="@string/VIEW_OK"
-            android:textColor="@color/brand_color"
-            android:layout_alignParentRight="true" />
-
+            android:text="@string/view_OK"
+            android:textColor="@color/brand_color_avia" />
 
     </RelativeLayout>
 

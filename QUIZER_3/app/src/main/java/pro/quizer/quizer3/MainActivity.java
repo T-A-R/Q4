@@ -1210,11 +1210,11 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         currentQuestionnaire = null;
     }
 
-//    @Override
-//    protected void onSaveInstanceState(Bundle InstanceState) {
-//        super.onSaveInstanceState(InstanceState);
-//        InstanceState.clear();
-//    }
+    @Override
+    protected void onSaveInstanceState(Bundle InstanceState) {
+        super.onSaveInstanceState(InstanceState);
+        InstanceState.clear();
+    }
 
     public SettingsR getSettings() {
         SettingsR settings = getMainDao().getSettings();
@@ -1429,15 +1429,15 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         });
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putBoolean("mIsFirstStart", false);
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        mIsFirstStart = savedInstanceState.getBoolean("mIsFirstStart");
-    }
+//    @Override
+//    public void onSaveInstanceState(Bundle savedInstanceState) {
+//        savedInstanceState.putBoolean("mIsFirstStart", false);
+//        super.onSaveInstanceState(savedInstanceState);
+//    }
+//
+//    @Override
+//    public void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//        mIsFirstStart = savedInstanceState.getBoolean("mIsFirstStart");
+//    }
 }

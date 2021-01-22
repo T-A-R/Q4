@@ -93,7 +93,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
 
             cont = itemView.findViewById(R.id.cont_select_holder);
             questionText = itemView.findViewById(R.id.select_answer_title);
-            answerText = itemView.findViewById(R.id.answer_select_text);
+            answerText = itemView.findViewById(R.id.selected_answers);
             questionText.setTypeface(Fonts.getFuturaPtBook());
             answerText.setTypeface(Fonts.getFuturaPtBook());
 
@@ -109,6 +109,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
                 if (answerStates.get(i).isChecked()) {
                     if (answerTextBuilder == null) {
                         answerTextBuilder = new StringBuilder();
+                        answerText.setVisibility(View.VISIBLE);
                     } else {
                         answerTextBuilder.append("; ");
                     }
@@ -131,15 +132,12 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
             TextView questionTitle = layoutView.findViewById(R.id.select_title);
             questionTitle.setText(item.getElementOptionsR().getTitle());
             EditText selectInput = layoutView.findViewById(R.id.select_input);
-            SelectAdapter selectAdapter = new SelectAdapter(mActivity, item.getElements(), new SelectAdapter.OnAnswerClickListener() {
-                @Override
-                public void onAnswerClick(int position, boolean enabled, String answer) {
-                    List<AnswerState> answerStates = pageAnswersStates.get(item.getRelative_id());
-                    AnswerState state = answerStates.get(position);
-                    state.setChecked(enabled);
-                    answerStates.set(position, state);
-                    pageAnswersStates.put(item.getRelative_id(), answerStates);
-                }
+            SelectAdapter selectAdapter = new SelectAdapter(mActivity, item.getElements(), (position, enabled, answer) -> {
+                List<AnswerState> answerStates = pageAnswersStates.get(item.getRelative_id());
+                AnswerState state = answerStates.get(position);
+                state.setChecked(enabled);
+                answerStates.set(position, state);
+                pageAnswersStates.put(item.getRelative_id(), answerStates);
             });
             recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
             recyclerView.setAdapter(selectAdapter);
@@ -149,6 +147,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
             selectDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
             selectDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
             selectDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            selectDialog.setCancelable(false);
 
             mOkBtn.setOnClickListener(v -> {
                 selectDialog.dismiss();

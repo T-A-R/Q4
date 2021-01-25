@@ -4,48 +4,35 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
-import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.model.state.AnswerState;
-import pro.quizer.quizer3.utils.FileUtils;
+import pro.quizer.quizer3.model.state.SelectItem;
 import pro.quizer.quizer3.utils.Fonts;
-import pro.quizer.quizer3.utils.StringUtils;
-
-import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectViewHolder> {
 
     private final OnAnswerClickListener onAnswerClickListener;
     private final List<ElementItemR> questions;
     private Map<Integer, List<AnswerState>> pageAnswersStates;
-    private int lastSelectedPosition = -1;
-    public boolean isPressed = false;
     private final MainActivity mActivity;
 
     public PageAdapter(final Context context, List<ElementItemR> questions, OnAnswerClickListener onAnswerClickListener) {
@@ -84,6 +71,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
 
         TextView questionText;
         TextView answerText;
+        TextView answerSelectText;
         View cont;
 
         OnAnswerClickListener onItemClickListener;
@@ -94,8 +82,10 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
             cont = itemView.findViewById(R.id.cont_select_holder);
             questionText = itemView.findViewById(R.id.select_answer_title);
             answerText = itemView.findViewById(R.id.selected_answers);
+            answerSelectText = itemView.findViewById(R.id.answer_select_text);
             questionText.setTypeface(Fonts.getFuturaPtBook());
             answerText.setTypeface(Fonts.getFuturaPtBook());
+            answerSelectText.setTypeface(Fonts.getFuturaPtBook());
 
             this.onItemClickListener = onItemClickListener;
         }
@@ -105,7 +95,8 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
             StringBuilder answerTextBuilder = null;
             List<AnswerState> answerStates = pageAnswersStates.get(item.getRelative_id());
             List<ElementItemR> answersList = item.getElements();
-            for (int i =0; i < answerStates.size(); i ++) {
+
+            for (int i = 0; i < answerStates.size(); i++) {
                 if (answerStates.get(i).isChecked()) {
                     if (answerTextBuilder == null) {
                         answerTextBuilder = new StringBuilder();
@@ -120,11 +111,11 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
                 answerText.setText(answerTextBuilder.toString());
             }
 
-            cont.setOnClickListener(v -> showSelectDialog(item));
+            cont.setOnClickListener(v -> showSelectDialog(item, answerStates));
         }
 
         @SuppressLint("RestrictedApi")
-        public void showSelectDialog(final ElementItemR item) {
+        public void showSelectDialog(final ElementItemR item, final List<AnswerState> answerStates) {
             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mActivity);
             View layoutView = mActivity.getLayoutInflater().inflate(R.layout.dialog_select, null);
             View mOkBtn = layoutView.findViewById(R.id.select_ok_button);
@@ -132,11 +123,15 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
             TextView questionTitle = layoutView.findViewById(R.id.select_title);
             questionTitle.setText(item.getElementOptionsR().getTitle());
             EditText selectInput = layoutView.findViewById(R.id.select_input);
-            SelectAdapter selectAdapter = new SelectAdapter(mActivity, item.getElements(), (position, enabled, answer) -> {
-                List<AnswerState> answerStates = pageAnswersStates.get(item.getRelative_id());
-                AnswerState state = answerStates.get(position);
-                state.setChecked(enabled);
-                answerStates.set(position, state);
+            List<ElementItemR> elementItems = item.getElements();
+            List<SelectItem> selectItems = new ArrayList<>();
+            for (int i = 0; i < elementItems.size(); i++) {
+                selectItems.add(new SelectItem(elementItems.get(i).getElementOptionsR().getTitle(), answerStates.get(i).isChecked(), answerStates.get(i).isEnabled()));
+            }
+            SelectAdapter selectAdapter = new SelectAdapter(selectItems, item.getElementOptionsR().isPolyanswer(), (answers) -> {
+                for(int i = 0; i < answerStates.size(); i++) {
+                    answerStates.get(i).setChecked(answers.get(i).isChecked());
+                }
                 pageAnswersStates.put(item.getRelative_id(), answerStates);
             });
             recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));

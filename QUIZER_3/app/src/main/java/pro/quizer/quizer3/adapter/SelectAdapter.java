@@ -1,73 +1,53 @@
 package pro.quizer.quizer3.adapter;
 
-import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
-import pro.quizer.quizer3.database.models.ElementItemR;
-import pro.quizer.quizer3.model.state.AnswerState;
+import pro.quizer.quizer3.model.state.SelectItem;
 import pro.quizer.quizer3.utils.Fonts;
-
-import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.PageSelectViewHolder> {
 
     private final OnAnswerClickListener onAnswerClickListener;
-    private final List<ElementItemR> questions;
-    private Map<Integer, List<AnswerState>> pageAnswersStates;
-    private int lastSelectedPosition = -1;
-    public boolean isPressed = false;
-    private final MainActivity mActivity;
+    private List<SelectItem> answers;
+    private boolean isMulti;
 
-    public SelectAdapter(final Context context, List<ElementItemR> questions, OnAnswerClickListener onAnswerClickListener) {
-        this.mActivity = (MainActivity) context;
-        this.questions = questions;
+    public SelectAdapter(List<SelectItem> answers, boolean isMulti, OnAnswerClickListener onAnswerClickListener) {
+        this.answers = answers;
+        this.isMulti = isMulti;
         this.onAnswerClickListener = onAnswerClickListener;
-        this.pageAnswersStates = new HashMap<>();
-        for (int i = 0; i < questions.size(); i++) {
-            List<AnswerState> answersStates = new ArrayList<>();
-            List<ElementItemR> answers = questions.get(i).getElements();
-            for (int k = 0; k < questions.get(i).getElements().size(); k++) {
-                answersStates.add(new AnswerState(answers.get(k).getRelative_id(), false, ""));
-            }
-            pageAnswersStates.put(questions.get(i).getRelative_id(), answersStates);
-        }
     }
 
     @NonNull
     @Override
     public PageSelectViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.element_select_avia, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.holder_select_avia, viewGroup, false);
         return new PageSelectViewHolder(view, onAnswerClickListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull PageSelectViewHolder holder, int position) {
-        holder.bind(questions.get(position), position);
+        holder.bind(answers.get(position), position);
     }
 
     @Override
     public int getItemCount() {
-        return questions.size();
+        return answers.size();
     }
 
-    public class PageSelectViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class PageSelectViewHolder extends RecyclerView.ViewHolder {
 
-        TextView questionText;
         TextView answerText;
+        ImageView checker;
         View cont;
 
         OnAnswerClickListener onItemClickListener;
@@ -76,75 +56,46 @@ public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.PageSelect
             super(itemView);
 
             cont = itemView.findViewById(R.id.cont_select_holder);
-            questionText = itemView.findViewById(R.id.select_answer_title);
-            answerText = itemView.findViewById(R.id.answer_select_text);
-            questionText.setTypeface(Fonts.getFuturaPtBook());
+            answerText = itemView.findViewById(R.id.select_answer_title);
+            checker = itemView.findViewById(R.id.select_checker);
             answerText.setTypeface(Fonts.getFuturaPtBook());
 
             this.onItemClickListener = onItemClickListener;
         }
 
-        public void bind(final ElementItemR item, int position) {
-            questionText.setText(item.getElementOptionsR().getTitle());
-            StringBuilder answerTextBuilder = null;
-            for(AnswerState answerState : pageAnswersStates.get(item.getRelative_id())) {
-                if(answerState.isChecked() && answerState.getData() != null && answerState.getData().length() > 0) {
-                    if(answerTextBuilder == null) {
-                        answerTextBuilder = new StringBuilder();
-                    } else {
-                        answerTextBuilder.append("; ");
+        public void bind(final SelectItem item, int position) {
+            answerText.setText(item.getTitle());
+            answerText.setEnabled(item.isEnabled());
+            checker.setImageResource(isMulti ? item.isChecked() ? R.drawable.checkbox_checked_red : R.drawable.checkbox_unchecked_dark_gray
+                    : item.isChecked() ? R.drawable.radio_button_checked_red : R.drawable.radio_button_dark_gray);
+
+            cont.setOnClickListener(v -> checkItem(position));
+        }
+
+        public void checkItem(int position) {
+            if (isMulti) {
+                SelectItem item = answers.get(position);
+                item.setChecked(!item.isChecked());
+                answers.set(position, item);
+            } else {
+                if (!answers.get(position).isChecked()) {
+                    for (int i = 0; i < answers.size(); i++) {
+                        answers.get(i).setChecked(i == position);
                     }
-                    answerTextBuilder.append(answerState.getData());
                 }
             }
-            if(answerTextBuilder != null) {
-                answerText.setText(answerTextBuilder.toString());
-            }
-
-            cont.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            isPressed = true;
-            lastSelectedPosition = getAdapterPosition();
-
-            for (int a = 0; a < answersState.size(); a++) {
-                answersState.get(a).setChecked(a == lastSelectedPosition);
-            }
-
             notifyDataSetChanged();
-            onItemClickListener.onAnswerClick(lastSelectedPosition, true, null);
+            onItemClickListener.onAnswerClick(answers);
         }
+
     }
 
     public interface OnAnswerClickListener {
-        void onAnswerClick(int position, boolean enabled, String answer);
+        void onAnswerClick(List<SelectItem> answers);
     }
 
-    public List<AnswerState> getAnswers() {
-        return answersState;
+    public List<SelectItem> getAnswers() {
+        return answers;
     }
 
-    public void setAnswers(List<AnswerState> answers) {
-        Log.d(TAG, "=============================");
-        if (answers != null) {
-            for (int i = 0; i < answers.size(); i++) {
-                Log.d(TAG, i + ": " + answers.get(i).getRelative_id() + " : " + answers.get(i).getData() + " : " + answers.get(i).isChecked());
-            }
-            this.answersState = answers;
-            for (int i = 0; i < answers.size(); i++) {
-                if (answersList.get(i).getElementOptionsR().isUnchecker() && answers.get(i).isChecked()) {
-                    for (int k = 0; k < answersList.size(); k++) {
-                        if (k != i) {
-                            Log.d(TAG, "set false 5: " + k);
-                            answersList.get(k).setEnabled(false);
-                        }
-                    }
-                }
-            }
-        } else {
-            Log.d(TAG, "setAnswers: NULL");
-        }
-    }
 }

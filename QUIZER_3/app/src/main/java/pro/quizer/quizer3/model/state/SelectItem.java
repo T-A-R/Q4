@@ -4,48 +4,29 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class AnswerState implements Serializable {
+public class SelectItem implements Serializable {
 
-    @SerializedName("relative_id")
-    private Integer relative_id;
+    @SerializedName("title")
+    private String title;
 
     @SerializedName("checked")
     private boolean checked;
 
-    @SerializedName("open")
-    private boolean open;
-
-    @SerializedName("data")
-    private String data;
-
     @SerializedName("enabled")
     private boolean enabled;
 
-    public AnswerState() {
-        this.enabled = true;
-    }
-
-    public AnswerState(Integer relative_id, boolean checked, String data) {
-        this.relative_id = relative_id;
+    public SelectItem(String title, boolean checked, boolean enabled) {
+        this.title = title;
         this.checked = checked;
-        this.data = data;
-        this.enabled = true;
-    }
-
-    public AnswerState(Integer relative_id, boolean checked, boolean open, String data, boolean enabled) {
-        this.relative_id = relative_id;
-        this.checked = checked;
-        this.open = open;
-        this.data = data;
         this.enabled = enabled;
     }
 
-    public Integer getRelative_id() {
-        return relative_id;
+    public String getTitle() {
+        return title;
     }
 
-    public void setRelative_id(Integer relative_id) {
-        this.relative_id = relative_id;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public boolean isChecked() {
@@ -54,22 +35,6 @@ public class AnswerState implements Serializable {
 
     public void setChecked(boolean checked) {
         this.checked = checked;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
-    }
-
-    public boolean isOpen() {
-        return open;
-    }
-
-    public void setOpen(boolean open) {
-        this.open = open;
     }
 
     public boolean isEnabled() {

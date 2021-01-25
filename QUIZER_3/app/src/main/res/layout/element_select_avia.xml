@@ -10,7 +10,10 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_8sdp">
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="10dp">
 
         <TextView
             android:id="@+id/select_answer_title"
@@ -21,7 +24,7 @@
             android:layout_toStartOf="@+id/answer_select_text"
             android:text=""
             android:textColor="@color/black"
-            android:textSize="12sp"
+            android:textSize="16sp"
             android:visibility="visible" />
 
         <TextView
@@ -33,9 +36,9 @@
             android:layout_toStartOf="@+id/answer_select_text"
             android:layout_below="@+id/select_answer_title"
             android:text=""
-            android:textColor="@color/black"
-            android:textSize="10sp"
-            android:visibility="gone" />
+            android:textColor="@color/dark_shadow"
+            android:textSize="14sp"
+            android:visibility="visible" />
 
         <TextView
             android:id="@+id/answer_select_text"
@@ -47,7 +50,7 @@
             android:text="@string/answer_selector"
             android:textAlignment="textEnd"
             android:textColor="@color/black"
-            android:textSize="12sp"
+            android:textSize="16sp"
             android:visibility="visible" />
 
     </RelativeLayout>

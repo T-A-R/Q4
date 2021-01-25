@@ -5,12 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="8dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_8sdp">
+        android:layout_margin="8dp">
 
         <TextView
             android:id="@+id/select_answer_title"
@@ -21,13 +21,13 @@
             android:layout_toStartOf="@+id/select_checker"
             android:text=""
             android:textColor="@color/black"
-            android:textSize="@dimen/_14ssp"
+            android:textSize="16sp"
             android:visibility="visible" />
 
         <ImageView
             android:id="@+id/select_checker"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_20sdp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:layout_marginStart="4dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"

@@ -5,6 +5,7 @@
     android:id="@+id/cont_element_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:fitsSystemWindows="true"
     android:keepScreenOn="true"
     android:saveEnabled="false">
@@ -13,7 +14,16 @@
     <pro.quizer.quizer3.view.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/avia_empty_toolbar"
+        android:visibility="gone"/>
+
+    <RelativeLayout
+        android:id="@+id/avia_empty_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="@color/brand_color_avia"
+        android:visibility="visible"/>
 
     <LinearLayout
         android:id="@+id/element_cont"
@@ -22,7 +32,6 @@
         android:layout_above="@+id/button_panel"
         android:layout_below="@+id/toolbar"
         android:layout_gravity="top"
-        android:layout_marginTop="@dimen/_4sdp"
         android:layout_marginBottom="@dimen/_4sdp"
         android:orientation="vertical">
 
@@ -32,22 +41,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginTop="@dimen/_4sdp"
             android:layout_marginEnd="@dimen/_8sdp"
             android:layout_marginBottom="@dimen/_6sdp"
-            android:background="@drawable/button_background_transparent"
+            android:background="@color/brand_color_avia"
             android:visibility="gone">
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
                 android:layout_toStartOf="@+id/hide_btn">
 
                 <LinearLayout
                     android:id="@+id/title_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:orientation="vertical">
 
                     <!--TITLE 1-->
@@ -255,10 +263,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
-                android:layout_marginBottom="@dimen/_4sdp"
-                android:background="@drawable/button_simple_green">
+                android:background="@color/brand_color_avia">
 
                 <androidx.core.widget.NestedScrollView
                     android:id="@+id/question_box"
@@ -275,11 +280,10 @@
                             android:id="@+id/question"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_8sdp"
-                            android:layout_marginEnd="@dimen/_8sdp"
+                            android:layout_margin="@dimen/_16sdp"
                             android:text="Question"
                             android:textColor="@color/white"
-                            android:textSize="@dimen/_12ssp"
+                            android:textSize="14sp"
                             android:visibility="visible" />
 
                         <TextView
@@ -363,7 +367,8 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="@dimen/_2sdp"
                     android:layout_marginEnd="@dimen/_6sdp"
-                    android:src="@drawable/minus_white" />
+                    android:src="@drawable/minus_white"
+                    android:visibility="gone"/>
 
             </RelativeLayout>
 
@@ -452,7 +457,7 @@
             android:scrollbars="horizontal"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <!--PAGE-->
         <androidx.recyclerview.widget.RecyclerView

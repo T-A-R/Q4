@@ -49,6 +49,7 @@ import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.CardAdapter;
 import pro.quizer.quizer3.adapter.ListAnswersAdapter;
+import pro.quizer.quizer3.adapter.PageAdapter;
 import pro.quizer.quizer3.adapter.RankQuestionAdapter;
 import pro.quizer.quizer3.adapter.ScaleQuestionAdapter;
 import pro.quizer.quizer3.adapter.TableQuestionAdapter;
@@ -76,7 +77,13 @@ import pro.quizer.quizer3.view.Toolbar;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class ElementAviaFragment extends ScreenFragment implements View.OnClickListener, ListAnswersAdapter.OnAnswerClickListener, RankQuestionAdapter.OnAnswerClickListener, ScaleQuestionAdapter.OnAnswerClickListener, TableQuestionAdapter.OnTableAnswerClickListener {
+public class ElementAviaFragment extends ScreenFragment implements
+        View.OnClickListener,
+        PageAdapter.OnAnswerClickListener,
+        ListAnswersAdapter.OnAnswerClickListener,
+        RankQuestionAdapter.OnAnswerClickListener,
+        ScaleQuestionAdapter.OnAnswerClickListener,
+        TableQuestionAdapter.OnTableAnswerClickListener {
 
     private Button btnNext;
     private Button btnPrev;
@@ -104,6 +111,7 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
     private WebView infoText;
     private RecyclerView rvAnswers;
     private RecyclerView rvScale;
+    private RecyclerView rvPage;
     private SearchableSpinner spinnerAnswers;
     private AdaptiveTableLayout tableLayout;
     private ImageView title1Image1;
@@ -144,6 +152,7 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
     private ArrayAdapter adapterSpinner;
     private TableQuestionAdapter adapterTable;
     private MultiSelectSpinner multiSelectionSpinner;
+    private PageAdapter pageAdapter;
     private List<PrevElementsR> prevList = null;
     private Map<Integer, TitleModel> titlesMap;
     private CompositeDisposable disposables;
@@ -182,6 +191,7 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
         tableCont = findViewById(R.id.table_cont);
         rvAnswers = findViewById(R.id.answers_recyclerview);
         rvScale = findViewById(R.id.scale_recyclerview);
+        rvPage = findViewById(R.id.page_recyclerview);
         tableLayout = findViewById(R.id.table_question_layout);
         tvUnhide = findViewById(R.id.unhide_title);
         tvTitle1 = findViewById(R.id.title_1);
@@ -207,22 +217,16 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
         btnPrev = findViewById(R.id.back_btn);
         btnExit = findViewById(R.id.exit_btn);
 
-        if (isAvia()) {
-            btnNext.setTypeface(Fonts.getAviaText());
-            btnPrev.setTypeface(Fonts.getAviaText());
-            btnExit.setTypeface(Fonts.getAviaButton());
-            tvTitle1.setTypeface(Fonts.getAviaText());
-            tvTitle2.setTypeface(Fonts.getAviaText());
-            tvTitleDesc1.setTypeface(Fonts.getAviaText());
-            tvTitleDesc2.setTypeface(Fonts.getAviaText());
-            tvQuestion.setTypeface(Fonts.getAviaText());
-            tvHiddenQuestion.setTypeface(Fonts.getAviaText());
-            tvQuestionDesc.setTypeface(Fonts.getAviaText());
-        } else {
-            btnNext.setTransformationMethod(null);
-            btnPrev.setTransformationMethod(null);
-            btnExit.setTransformationMethod(null);
-        }
+        btnNext.setTypeface(Fonts.getAviaText());
+        btnPrev.setTypeface(Fonts.getAviaText());
+        btnExit.setTypeface(Fonts.getAviaButton());
+        tvTitle1.setTypeface(Fonts.getAviaText());
+        tvTitle2.setTypeface(Fonts.getAviaText());
+        tvTitleDesc1.setTypeface(Fonts.getAviaText());
+        tvTitleDesc2.setTypeface(Fonts.getAviaText());
+        tvQuestion.setTypeface(Fonts.getAviaText());
+        tvHiddenQuestion.setTypeface(Fonts.getAviaText());
+        tvQuestionDesc.setTypeface(Fonts.getAviaText());
 
         btnNext.setOnClickListener(this);
         btnPrev.setOnClickListener(this);
@@ -358,7 +362,7 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
     @Override
     public void onClick(View view) {
         if (view == btnNext) {
-            if(answerType.equals(ElementSubtype.END)) {
+            if (answerType.equals(ElementSubtype.END)) {
                 nextElementId = currentElement.getElementOptionsR().getJump();
                 Log.d("T-L.ElementFragment", "onClick NEXT: " + nextElementId);
             }
@@ -481,7 +485,9 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
                     found = true;
                 }
                 if (found) {
-                    if (!getCurrentElements().get(i).getType().equals(ElementType.BOX) || getCurrentElements().get(i).getSubtype().equals(ElementSubtype.TABLE)) {
+                    if (!getCurrentElements().get(i).getType().equals(ElementType.BOX)
+                            || getCurrentElements().get(i).getSubtype().equals(ElementSubtype.TABLE)
+                            || getCurrentElements().get(i).getSubtype().equals(ElementSubtype.PAGE)) {
                         startElementId = getCurrentElements().get(i).getRelative_id();
                         currentElement = getCurrentElements().get(i);
                         break;
@@ -521,7 +527,11 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
             case ElementSubtype.RANK:
                 answerType = ElementSubtype.RANK;
                 break;
+            case ElementSubtype.PAGE:
+                answerType = ElementSubtype.PAGE;
+                break;
         }
+
     }
 
     private void initViews() {
@@ -742,6 +752,9 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
             case ElementSubtype.SCALE:
                 rvScale.setVisibility(View.VISIBLE);
                 break;
+            case ElementSubtype.PAGE:
+                rvPage.setVisibility(View.VISIBLE);
+                break;
         }
 
 
@@ -750,6 +763,11 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
         }
 
         switch (answerType) {
+            case ElementSubtype.PAGE:
+                pageAdapter = new PageAdapter(getMainActivity(), currentElement.getElements(), this);
+                rvPage.setLayoutManager(new LinearLayoutManager(getContext()));
+                rvPage.setAdapter(pageAdapter);
+                break;
             case ElementSubtype.LIST:
                 MainActivity activity = getMainActivity();
                 if (isQuota) {
@@ -1753,7 +1771,7 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
                             btnPrev.setEnabled(true);
                             btnExit.setEnabled(true);
                             btnNext.setEnabled(true);
-                            
+
                             btnPrev.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_avia));
                             btnExit.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_avia));
                             btnNext.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(activity), R.drawable.button_background_avia));
@@ -1834,7 +1852,7 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
             try {
                 if (saveElement()) {
                     try {
-                        if(answerType.equals(ElementSubtype.END)) {
+                        if (answerType.equals(ElementSubtype.END)) {
                             nextElementId = currentElement.getElementOptionsR().getJump();
                         }
                         if (nextElementId == null) {

@@ -98,4 +98,8 @@ public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.PageSelect
         return answers;
     }
 
+    public void setAnswers(List<SelectItem> answers) {
+        this.answers = answers;
+        notifyDataSetChanged();
+    }
 }

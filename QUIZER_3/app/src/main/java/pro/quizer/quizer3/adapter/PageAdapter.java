@@ -4,11 +4,14 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,13 +23,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.model.state.SelectItem;
 import pro.quizer.quizer3.utils.Fonts;
+import pro.quizer.quizer3.utils.StringUtils;
 
 public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectViewHolder> {
 
@@ -73,6 +83,8 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
         TextView answerText;
         TextView answerSelectText;
         View cont;
+
+        private Disposable disposableSearchIndex = null;
 
         OnAnswerClickListener onItemClickListener;
 
@@ -123,19 +135,49 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
             TextView questionTitle = layoutView.findViewById(R.id.select_title);
             questionTitle.setText(item.getElementOptionsR().getTitle());
             EditText selectInput = layoutView.findViewById(R.id.select_input);
+
             List<ElementItemR> elementItems = item.getElements();
             List<SelectItem> selectItems = new ArrayList<>();
             for (int i = 0; i < elementItems.size(); i++) {
                 selectItems.add(new SelectItem(elementItems.get(i).getElementOptionsR().getTitle(), answerStates.get(i).isChecked(), answerStates.get(i).isEnabled()));
             }
             SelectAdapter selectAdapter = new SelectAdapter(selectItems, item.getElementOptionsR().isPolyanswer(), (answers) -> {
-                for(int i = 0; i < answerStates.size(); i++) {
-                    answerStates.get(i).setChecked(answers.get(i).isChecked());
+                for (int i = 0; i < answerStates.size(); i++) {
+                    boolean found = false;
+                    for (SelectItem selectItem : answers) {
+                        if (elementItems.get(i).getElementOptionsR().getTitle().equals(selectItem.getTitle())) {
+                            answerStates.get(i).setChecked(selectItem.isChecked());
+                            found = true;
+                        }
+                    }
+
+                    if (!found && !item.getElementOptionsR().isPolyanswer())
+                        answerStates.get(i).setChecked(false);
+
                 }
                 pageAnswersStates.put(item.getRelative_id(), answerStates);
             });
             recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
             recyclerView.setAdapter(selectAdapter);
+
+            selectInput.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if (StringUtils.isNotNullOrEmpty(s.toString())) {
+                        filterItem(s.toString(), selectAdapter, selectItems);
+                    } else {
+                        selectAdapter.setAnswers(selectItems);
+                    }
+                }
+            });
 
             dialogBuilder.setView(layoutView, 10, 40, 10, 10);
             AlertDialog selectDialog = dialogBuilder.create();
@@ -152,6 +194,17 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
 
             if (mActivity != null && !mActivity.isFinishing()) selectDialog.show();
         }
+
+        public void filterItem(String text, SelectAdapter selectAdapter, List<SelectItem> selectItems) {
+            List<SelectItem> newSelectItems = new ArrayList<>();
+            for (SelectItem item : selectItems) {
+                if (item.getTitle().toLowerCase().contains(text.toLowerCase())) {
+                    newSelectItems.add(item);
+                }
+            }
+            selectAdapter.setAnswers(newSelectItems);
+        }
+
     }
 
     public interface OnAnswerClickListener {
@@ -164,5 +217,8 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
 
     public void setAnswers(Map<Integer, List<AnswerState>> pageAnswersStates) {
         this.pageAnswersStates = pageAnswersStates;
+        notifyDataSetChanged();
     }
+
+
 }

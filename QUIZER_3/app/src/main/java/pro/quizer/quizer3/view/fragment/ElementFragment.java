@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebView;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -28,9 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cleveroad.adaptivetablelayout.AdaptiveTableLayout;
-import com.multispinner.MultiSelectSpinner;
 import com.squareup.picasso.Picasso;
-import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -39,7 +36,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -75,7 +71,6 @@ import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
-import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class ElementFragment extends ScreenFragment implements View.OnClickListener, ListAnswersAdapter.OnAnswerClickListener, RankQuestionAdapter.OnAnswerClickListener, ScaleQuestionAdapter.OnAnswerClickListener, TableQuestionAdapter.OnTableAnswerClickListener {
@@ -106,7 +101,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private WebView infoText;
     private RecyclerView rvAnswers;
     private RecyclerView rvScale;
-    private SearchableSpinner spinnerAnswers;
+    private TextView spinnerAnswers;
     private AdaptiveTableLayout tableLayout;
     private ImageView title1Image1;
     private ImageView title1Image2;
@@ -145,7 +140,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private ScaleQuestionAdapter adapterScale;
     private ArrayAdapter adapterSpinner;
     private TableQuestionAdapter adapterTable;
-    private MultiSelectSpinner multiSelectionSpinner;
+    private TextView multiSelectionSpinner;
     private List<PrevElementsR> prevList = null;
     private Map<Integer, TitleModel> titlesMap;
     private CompositeDisposable disposables;
@@ -809,126 +804,126 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 itemTouchHelper.attachToRecyclerView(rvAnswers);
                 break;
 
-            case ElementSubtype.SELECT:
-                if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isRotation()) {
-                    List<ElementItemR> shuffleList = new ArrayList<>();
-                    for (ElementItemR elementItemR : answersList) {
-                        if (elementItemR.getElementOptionsR() != null && !elementItemR.getElementOptionsR().isFixed_order()) {
-                            shuffleList.add(elementItemR);
-                        }
-                    }
-                    Collections.shuffle(shuffleList, new Random());
-                    int k = 0;
-
-                    for (int i = 0; i < answersList.size(); i++) {
-                        if (answersList.get(i).getElementOptionsR() != null && !answersList.get(i).getElementOptionsR().isFixed_order()) {
-                            answersList.set(i, shuffleList.get(k));
-                            k++;
-                        }
-                    }
-                }
-
-                itemsList.clear();
-
-                Integer unchecker = null;
-                for (int i = 0; i < answersList.size(); i++) {
-                    itemsList.add(Objects.requireNonNull(titlesMap.get(answersList.get(i).getRelative_id())).getTitle());
-                    if (answersList.get(i).getElementOptionsR().isUnchecker()) unchecker = i;
-                }
-
-                if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isPolyanswer()) {
-                    isMultiSpinner = true;
-                    multiSelectionSpinner = findViewById(R.id.answers_multi_spinner);
-                    multiSelectionSpinner.setVisibility(View.VISIBLE);
-                    multiSelectionSpinner.setItems(itemsList);
-                    if (unchecker != null)
-                        multiSelectionSpinner.hasNoneOption(true, unchecker);
-                    multiSelectionSpinner.setSelection(new int[]{});
-
-                    multiSelectionSpinner.setListener(new MultiSelectSpinner.OnMultipleItemsSelectedListener() {
-                        @Override
-                        public void selectedIndices(List<Integer> indices) {
-                            if (isRestored) {
-                                if (!indices.equals(spinnerMultipleSelection)) {
-                                    try {
-                                        isRestored = false;
-                                        int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
-                                        getDao().deleteOldElementsPassedR(id);
-                                        showToast(getString(R.string.data_changed));
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                            spinnerMultipleSelection = indices;
-                        }
-
-                        @Override
-                        public void selectedStrings(List<String> strings) {
-
-                        }
-                    });
-//            ===============================================================================================
-                } else {
-                    isMultiSpinner = false;
-                    List<Boolean> enabled = new ArrayList<>();
-
-                    if (isQuota) {
-                        List<Integer> passedQuotaBlock = getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder());
-                        ElementItemR[][] quotaTree = getMainActivity().getTree(null);
-                        Integer order = currentElement.getElementOptionsR().getOrder();
-                        for (ElementItemR item : answersList) {
-                            enabled.add(canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), order));
-                        }
-                    } else {
-                        for (ElementItemR ignored : answersList) {
-                            enabled.add(true);
-                        }
-                    }
-
-                    spinnerAnswers = new SearchableSpinner(getMainActivity(), null, enabled);
-                    spinnerAnswers = findViewById(R.id.answers_spinner);
-                    spinnerAnswers.setVisibility(View.VISIBLE);
-
-                    itemsList.add(getString(R.string.select_spinner));
-
-                    adapterSpinner = new ArrayAdapter<String>(getMainActivity(), android.R.layout.simple_spinner_item, itemsList) {
-                        public int getCount() {
-                            return (itemsList.size() - 1);
-                        }
-                    };
-                    adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinnerAnswers.setVisibility(View.VISIBLE);
-                    spinnerAnswers.setEnabledList(enabled);
-                    spinnerAnswers.setAdapter(adapterSpinner);
-                    spinnerAnswers.setSelection(itemsList.size() - 1);
-                    spinnerAnswers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> parent, View view, int position, long selectionId) {
-                            if (position != answersList.size()) {
-                                if (isRestored) {
-                                    if (position != spinnerSelection) {
-                                        try {
-                                            isRestored = false;
-                                            int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
-                                            getDao().deleteOldElementsPassedR(id);
-                                            showToast(getString(R.string.data_changed));
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }
-                                spinnerSelection = position;
-                            }
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parent) {
-                            showToast(getString(R.string.enter_answer_empty));
-                        }
-                    });
-                }
-                break;
+//            case ElementSubtype.SELECT:
+//                if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isRotation()) {
+//                    List<ElementItemR> shuffleList = new ArrayList<>();
+//                    for (ElementItemR elementItemR : answersList) {
+//                        if (elementItemR.getElementOptionsR() != null && !elementItemR.getElementOptionsR().isFixed_order()) {
+//                            shuffleList.add(elementItemR);
+//                        }
+//                    }
+//                    Collections.shuffle(shuffleList, new Random());
+//                    int k = 0;
+//
+//                    for (int i = 0; i < answersList.size(); i++) {
+//                        if (answersList.get(i).getElementOptionsR() != null && !answersList.get(i).getElementOptionsR().isFixed_order()) {
+//                            answersList.set(i, shuffleList.get(k));
+//                            k++;
+//                        }
+//                    }
+//                }
+//
+//                itemsList.clear();
+//
+//                Integer unchecker = null;
+//                for (int i = 0; i < answersList.size(); i++) {
+//                    itemsList.add(Objects.requireNonNull(titlesMap.get(answersList.get(i).getRelative_id())).getTitle());
+//                    if (answersList.get(i).getElementOptionsR().isUnchecker()) unchecker = i;
+//                }
+//
+//                if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isPolyanswer()) {
+//                    isMultiSpinner = true;
+//                    multiSelectionSpinner = findViewById(R.id.answers_multi_spinner);
+//                    multiSelectionSpinner.setVisibility(View.VISIBLE);
+//                    multiSelectionSpinner.setItems(itemsList);
+//                    if (unchecker != null)
+//                        multiSelectionSpinner.hasNoneOption(true, unchecker);
+//                    multiSelectionSpinner.setSelection(new int[]{});
+//
+//                    multiSelectionSpinner.setListener(new MultiSelectSpinner.OnMultipleItemsSelectedListener() {
+//                        @Override
+//                        public void selectedIndices(List<Integer> indices) {
+//                            if (isRestored) {
+//                                if (!indices.equals(spinnerMultipleSelection)) {
+//                                    try {
+//                                        isRestored = false;
+//                                        int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
+//                                        getDao().deleteOldElementsPassedR(id);
+//                                        showToast(getString(R.string.data_changed));
+//                                    } catch (Exception e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//                            }
+//                            spinnerMultipleSelection = indices;
+//                        }
+//
+//                        @Override
+//                        public void selectedStrings(List<String> strings) {
+//
+//                        }
+//                    });
+////            ===============================================================================================
+//                } else {
+//                    isMultiSpinner = false;
+//                    List<Boolean> enabled = new ArrayList<>();
+//
+//                    if (isQuota) {
+//                        List<Integer> passedQuotaBlock = getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder());
+//                        ElementItemR[][] quotaTree = getMainActivity().getTree(null);
+//                        Integer order = currentElement.getElementOptionsR().getOrder();
+//                        for (ElementItemR item : answersList) {
+//                            enabled.add(canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), order));
+//                        }
+//                    } else {
+//                        for (ElementItemR ignored : answersList) {
+//                            enabled.add(true);
+//                        }
+//                    }
+//
+//                    spinnerAnswers = new SearchableSpinner(getMainActivity(), null, enabled);
+//                    spinnerAnswers = findViewById(R.id.answers_spinner);
+//                    spinnerAnswers.setVisibility(View.VISIBLE);
+//
+//                    itemsList.add(getString(R.string.select_spinner));
+//
+//                    adapterSpinner = new ArrayAdapter<String>(getMainActivity(), android.R.layout.simple_spinner_item, itemsList) {
+//                        public int getCount() {
+//                            return (itemsList.size() - 1);
+//                        }
+//                    };
+//                    adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//                    spinnerAnswers.setVisibility(View.VISIBLE);
+//                    spinnerAnswers.setEnabledList(enabled);
+//                    spinnerAnswers.setAdapter(adapterSpinner);
+//                    spinnerAnswers.setSelection(itemsList.size() - 1);
+//                    spinnerAnswers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                        @Override
+//                        public void onItemSelected(AdapterView<?> parent, View view, int position, long selectionId) {
+//                            if (position != answersList.size()) {
+//                                if (isRestored) {
+//                                    if (position != spinnerSelection) {
+//                                        try {
+//                                            isRestored = false;
+//                                            int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
+//                                            getDao().deleteOldElementsPassedR(id);
+//                                            showToast(getString(R.string.data_changed));
+//                                        } catch (Exception e) {
+//                                            e.printStackTrace();
+//                                        }
+//                                    }
+//                                }
+//                                spinnerSelection = position;
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onNothingSelected(AdapterView<?> parent) {
+//                            showToast(getString(R.string.enter_answer_empty));
+//                        }
+//                    });
+//                }
+//                break;
             case ElementSubtype.TABLE:
                 adapterTable = new TableQuestionAdapter(currentElement, answersList, titlesMap, getActivity(), mRefreshRecyclerViewRunnable, this);
                 tableLayout.setAdapter(adapterTable);
@@ -1494,36 +1489,36 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
                 break;
             }
-            case ElementSubtype.SELECT:
-
-                spinnerSelection = -1;
-                spinnerMultipleSelection = new ArrayList<>();
-
-                for (int i = 0; i < answersList.size(); i++) {
-                    ElementPassedR answerStateRestored = null;
-                    try {
-                        answerStateRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answersList.get(i).getRelative_id());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    if (answerStateRestored != null) {
-                        if (isMultiSpinner) {
-                            spinnerMultipleSelection.add(i);
-                        } else {
-                            spinnerSelection = i;
-                            spinnerAnswers.setSelection(spinnerSelection);
-                        }
-                    }
-
-                }
-                if (isMultiSpinner) {
-                    int[] array = new int[spinnerMultipleSelection.size()];
-                    for (int i = 0; i < spinnerMultipleSelection.size(); i++) {
-                        array[i] = spinnerMultipleSelection.get(i);
-                    }
-                    multiSelectionSpinner.setSelection(array);
-                }
-                break;
+//            case ElementSubtype.SELECT:
+//
+//                spinnerSelection = -1;
+//                spinnerMultipleSelection = new ArrayList<>();
+//
+//                for (int i = 0; i < answersList.size(); i++) {
+//                    ElementPassedR answerStateRestored = null;
+//                    try {
+//                        answerStateRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), answersList.get(i).getRelative_id());
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                    if (answerStateRestored != null) {
+//                        if (isMultiSpinner) {
+//                            spinnerMultipleSelection.add(i);
+//                        } else {
+//                            spinnerSelection = i;
+//                            spinnerAnswers.setSelection(spinnerSelection);
+//                        }
+//                    }
+//
+//                }
+//                if (isMultiSpinner) {
+//                    int[] array = new int[spinnerMultipleSelection.size()];
+//                    for (int i = 0; i < spinnerMultipleSelection.size(); i++) {
+//                        array[i] = spinnerMultipleSelection.get(i);
+//                    }
+//                    multiSelectionSpinner.setSelection(array);
+//                }
+//                break;
             case ElementSubtype.TABLE:
                 AnswerState[][] answersTableState = adapterTable.getmAnswersState();
 

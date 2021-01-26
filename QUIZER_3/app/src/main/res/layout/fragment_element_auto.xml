@@ -383,7 +383,7 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                <TextView
                     android:id="@+id/answers_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -422,15 +422,14 @@
 
 <!--                </RelativeLayout>-->
 
-                <com.multispinner.MultiSelectSpinner
+                <TextView
                     android:id="@+id/answers_multi_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:padding="5dp"
                     android:textSize="@dimen/_14ssp"
-                    android:visibility="gone"
-                    app:hintText="Выберите варианты ответа" />
+                    android:visibility="gone"/>
 
             </LinearLayout>
 

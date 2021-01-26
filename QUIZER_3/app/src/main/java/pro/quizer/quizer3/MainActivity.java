@@ -38,7 +38,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.view.KeyEvent;
 
-import com.scottyab.rootbeer.RootBeer;
+//import com.scottyab.rootbeer.RootBeer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -1228,8 +1228,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public void checkRoot() {
-        RootBeer rootBeer = new RootBeer(this);
-        getMainDao().setSettingsRoot(rootBeer.isRooted());
+//        RootBeer rootBeer = new RootBeer(this);
+//        getMainDao().setSettingsRoot(rootBeer.isRooted());
     }
 
     public void setSettings(String settings, String data) {

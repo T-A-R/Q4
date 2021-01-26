@@ -20,6 +20,9 @@ public final class StringUtils {
         return pString != null && pString.length() > 0;
     }
 
+    public static boolean isNotNullOrEmpty(String string) {
+        return !(string == null || string.length() == 0);
+    }
 
     public static String generateToken() {
         final String currentTimeMillis = String.valueOf(DateUtils.getCurrentTimeMillis());

@@ -174,13 +174,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             btnExit.setTransformationMethod(null);
 
             btnExit.setVisibility(View.VISIBLE);
-            btnDelete.setVisibility(View.GONE);
+//            btnDelete.setVisibility(View.GONE);
             btnInfo.setVisibility(View.GONE);
             btnQuotas.setVisibility(View.GONE);
             toolbar.setVisibility(View.GONE);
 
             cont.startAnimation(Anim.getAppear(getContext()));
             btnContinue.startAnimation(Anim.getAppearSlide(getContext(), 500));
+            btnDelete.startAnimation(Anim.getAppearSlide(getContext(), 500));
             btnStart.startAnimation(Anim.getAppearSlide(getContext(), 500));
             btnExit.startAnimation(Anim.getAppearSlide(getContext(), 500));
 

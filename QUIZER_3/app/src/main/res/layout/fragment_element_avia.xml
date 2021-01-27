@@ -404,16 +404,10 @@
                 android:id="@+id/answers_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_6sdp"
-                android:layout_marginEnd="@dimen/_6sdp"
-                android:layout_marginBottom="@dimen/_8sdp"
-                android:fadeScrollbars="false"
-                android:scrollbarAlwaysDrawVerticalTrack="false"
-                android:scrollbarSize="@dimen/_16sdp"
-                android:scrollbarStyle="outsideInset"
-                android:scrollbarThumbVertical="@drawable/button_background_green"
-                android:scrollbarTrackVertical="@color/lightGray2"
-                android:scrollbars="vertical"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
                 android:visibility="gone" />
 
         </LinearLayout>

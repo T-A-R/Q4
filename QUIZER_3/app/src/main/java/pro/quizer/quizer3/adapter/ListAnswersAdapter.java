@@ -46,6 +46,7 @@ import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 
+import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.model.OptionsOpenType.CHECKBOX;
 import static pro.quizer.quizer3.model.OptionsOpenType.NUMBER;
@@ -230,13 +231,15 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                     answerTitle.setTextColor(mActivity.getResources().getColor(R.color.gray));
                     answerDesc.setTextColor(mActivity.getResources().getColor(R.color.gray));
                 }
-                if (!mActivity.isDarkkMode()) {
-                    cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_gray_shadow));
-                } else {
-                    cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_dark_gray_shadow));
-                }
+                if (!AVIA)
+                    if (!mActivity.isDarkkMode()) {
+                        cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_gray_shadow));
+                    } else {
+                        cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bg_dark_gray_shadow));
+                    }
             } else {
-                cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.shadow_2));
+                if (!AVIA)
+                    cont.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.shadow_2));
                 answerTitle.setTextColor(mActivity.getResources().getColor(R.color.black));
                 answerDesc.setTextColor(mActivity.getResources().getColor(R.color.black));
             }
@@ -270,7 +273,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             } else {
                 if (isChecked(position)) {
                     button.setImageResource(MainActivity.AVIA ? R.drawable.checkbox_checked_red : R.drawable.checkbox_checked);
-                    if(answersState.get(position).getData() != null && !answersState.get(position).getData().equals("")) editButton.setVisibility(View.GONE);
+                    if (answersState.get(position).getData() != null && !answersState.get(position).getData().equals("")) editButton.setVisibility(View.GONE);
                 } else {
                     button.setImageResource(MainActivity.AVIA ? R.drawable.checkbox_unchecked_red : R.drawable.checkbox_unchecked);
                 }
@@ -539,8 +542,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
     private void showInputDialog(final TextView pEditText, int position) {
         final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mActivity);
-        final View mView = layoutInflaterAndroid.inflate(mActivity.isAutoZoom() ? R.layout.dialog_input_answer_auto : R.layout.dialog_input_answer, null);
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
+        final View mView = layoutInflaterAndroid.inflate(AVIA ? R.layout.dialog_input_answer_avia : mActivity.isAutoZoom() ? R.layout.dialog_input_answer_auto : R.layout.dialog_input_answer, null);
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar);
         dialog.setView(mView);
 
         final EditText mEditText = mView.findViewById(R.id.input_answer);
@@ -592,7 +595,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     //For Tests
     private void showEnabled() {
         Log.d("T-L.ListAnswersAdapter", "=========================================================");
-        for(int i = 0; i < answersList.size(); i++) {
+        for (int i = 0; i < answersList.size(); i++) {
             Log.d("T-L.ListAnswersAdapter", "showEnabled: (" + i + ") " + answersList.get(i).isEnabled());
         }
         Log.d("T-L.ListAnswersAdapter", "=========================================================");

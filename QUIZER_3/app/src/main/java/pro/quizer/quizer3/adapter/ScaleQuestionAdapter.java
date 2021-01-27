@@ -28,6 +28,7 @@ import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
 
+import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdapter.ScaleObjectViewHolder> {
@@ -82,6 +83,7 @@ public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdap
         TextView scaleText;
         TextView divider;
         ImageView scaleImage;
+        ImageView checker;
         View cont;
 
         OnAnswerClickListener onUserClickListener;
@@ -93,6 +95,7 @@ public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdap
             scaleText = itemView.findViewById(R.id.scale_text);
             divider = itemView.findViewById(R.id.divider);
             scaleImage = itemView.findViewById(R.id.scale_image);
+            checker = itemView.findViewById(R.id.radio_button);
             scaleText.setTypeface(Fonts.getFuturaPtBook());
 
             this.onUserClickListener = onUserClickListener;
@@ -135,18 +138,30 @@ public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdap
             }
 
             if (lastSelectedPosition == -1) {
-                text.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_background_gray));
+                if(AVIA) {
+                    checker.setImageResource(R.drawable.radio_button_unchecked_red);
+                } else {
+                    text.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_background_gray));
+                }
                 if (data1 != null) {
                     showPic(cont, scaleImage, data1);
                 }
             } else if (answersState.get(position).isChecked()) {
-                text.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_background_green));
+                if(AVIA) {
+                    checker.setImageResource(R.drawable.radio_button_checked_red);
+                } else {
+                    text.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_background_green));
+                }
                 if (data2 != null) {
                     showPic(cont, scaleImage, data2);
                 }
             } else {
                 if (typeBehavior.equals("state")) {
-                    text.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_background_gray));
+                    if(AVIA) {
+                        checker.setImageResource(R.drawable.radio_button_unchecked_red);
+                    } else {
+                        text.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_background_gray));
+                    }
                     if (data3 != null) {
                         showPic(cont, scaleImage, data3);
                     } else if (data1 != null) {
@@ -154,11 +169,19 @@ public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdap
                     }
                 } else if (typeBehavior.equals("progress")) {
                     if (position < lastSelectedPosition) {
-                        text.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_background_green));
+                        if(AVIA) {
+                            checker.setImageResource(R.drawable.radio_button_checked_red);
+                        } else {
+                            text.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_background_green));
+                        }
                         if (data2 != null)
                             showPic(cont, scaleImage, data2);
                     } else {
-                        text.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_background_gray));
+                        if(AVIA) {
+                            checker.setImageResource(R.drawable.radio_button_unchecked_red);
+                        } else {
+                            text.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.button_background_gray));
+                        }
                         if (data3 != null) {
                             showPic(cont, scaleImage, data3);
                         } else if (data1 != null) {

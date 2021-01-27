@@ -999,7 +999,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                     countQuestions++;
                 }
                 elementDatabaseModel.setDuration(element.getDuration());
-                durationTimeQuestionnaire += element.getDuration();
+                if (element.getDuration() != null)
+                    durationTimeQuestionnaire += element.getDuration();
                 elementDatabaseModel.setType(ElementDatabaseType.SCREEN);
                 countScreens++;
             }

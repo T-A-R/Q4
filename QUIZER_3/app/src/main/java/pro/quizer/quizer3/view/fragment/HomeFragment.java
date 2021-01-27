@@ -411,6 +411,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     notSentCounter = syncViewModel.getmNotSentQuestionnaireModels().size();
                     sentCounter = syncViewModel.getTokensCounter();
                     completedCounter = sentCounter + notSentCounter;
+                    if(AVIA) {
+                        UiUtils.setTextOrHide(tvCountAll, (String.format(getString(R.string.total_completed), "" + completedCounter)));
+                        UiUtils.setTextOrHide(tvCountSent, (String.format(getString(R.string.total_sent), "" + sentCounter)));
+                    }
+
                 }
             });
     }
@@ -1245,7 +1250,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         if (!mIsDeleteQuizDialogShow) {
             mIsDeleteQuizDialogShow = true;
             if (activity != null && !activity.isFinishing()) {
-                new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
+                new AlertDialog.Builder(activity, isAvia() ? R.style.AlertDialogAviaTheme : R.style.AlertDialogTheme)
                         .setCancelable(false)
                         .setTitle(isNeedUpdate ? R.string.dialog_config_title : R.string.dialog_start_title)
                         .setMessage(isNeedUpdate ? R.string.dialog_config_body : R.string.dialog_start_body)
@@ -1317,7 +1322,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                     currentQuestionnaire = null;
                                 }
                         }
-                        btnStart.setText(R.string.button_start);
+                        btnStart.setText(isAvia() ? R.string.button_start_avia : R.string.button_start);
                         activateButtons();
                         hideScreensaver();
                         break;
@@ -1337,7 +1342,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         if (isTimeToDownloadConfig) {
             btnStart.setText("Обновить конфиг");
         } else {
-            btnStart.setText(R.string.button_start);
+            btnStart.setText(isAvia() ? R.string.button_start_avia : R.string.button_start);
         }
     }
 

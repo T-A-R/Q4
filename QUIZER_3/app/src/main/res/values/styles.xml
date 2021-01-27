@@ -64,6 +64,19 @@
         <item name="android:textColor">@color/brand_color</item>
     </style>
 
+    <style name="AlertDialogAviaTheme" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+
+    <style name="NegativeButtonAviaStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/brand_color_avia</item>
+    </style>
+
+    <style name="PositiveButtonAviaStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/brand_color_avia</item>
+    </style>
+
     <style name="DialogSlideAnimation">
         <item name="android:windowEnterAnimation">@anim/slide_up</item>
         <item name="android:windowExitAnimation">@anim/slide_down</item>

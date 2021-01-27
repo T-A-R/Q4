@@ -228,9 +228,9 @@
     <string name="exit_message">Для выхода нажмите \"Назад\" еще раз</string>
     <string name="button_press">Нажатие на кнопку</string>
     <string name="button_version">Кнопка версия на экране авторизации</string>
-    <string name="button_continue">Продолжить</string>
+    <string name="button_continue">ПРОДОЛЖИТЬ</string>
     <string name="button_start">Начать</string>
-    <string name="button_start_avia">Старт</string>
+    <string name="button_start_avia">СТАРТ</string>
     <string name="button_quotas">Квоты</string>
     <string name="button_info">Инфо</string>
     <string name="collected_quotas">Квот закрыто: %1$s</string>
@@ -320,7 +320,7 @@
     <string name="button_ftp_upload_data">Отправка через FTP</string>
     <string name="button_send_quiz">Отправить анкеты</string>
     <string name="button_logs">Журнал событий</string>
-    <string name="button_exit">Выход</string>
+    <string name="button_exit">ВЫХОД</string>
     <string name="button_send_audio">Отправить аудио</string>
     <string name="button_send_photo">Отправить фото</string>
     <string name="button_send_log">Отправить журнал на сервер</string>
@@ -447,6 +447,8 @@
     <string name="button_finish">Завершить</string>
     <string name="select_input_hint">Поиск</string>
     <string name="answer_selector">Ответить</string>
+    <string name="total_completed">Всего собрано: %1$s</string>
+    <string name="total_sent">Отправлено: %1$s</string>
 
 
 </resources>

@@ -17,6 +17,8 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.model.User;
 import pro.quizer.quizer3.view.Anim;
 
+import static pro.quizer.quizer3.MainActivity.AVIA;
+
 public class ScreensaverFragment extends SmartFragment implements View.OnClickListener {
 
     private View cont;
@@ -31,7 +33,7 @@ public class ScreensaverFragment extends SmartFragment implements View.OnClickLi
     private int turn;
 
     public ScreensaverFragment() {
-        super(R.layout.fragment_screensaver);
+        super(AVIA ? R.layout.fragment_screensaver_avia : R.layout.fragment_screensaver);
     }
 
     @Override

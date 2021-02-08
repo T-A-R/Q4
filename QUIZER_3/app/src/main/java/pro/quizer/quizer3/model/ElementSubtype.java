@@ -11,6 +11,7 @@ import java.lang.annotation.RetentionPolicy;
         ElementSubtype.END,
         ElementSubtype.LIST,
         ElementSubtype.IMAGE,
+        ElementSubtype.IMAGES_LIST,
         ElementSubtype.RANK,
         ElementSubtype.VIDEO,
         ElementSubtype.CONTAINER,
@@ -20,12 +21,14 @@ import java.lang.annotation.RetentionPolicy;
 public @interface ElementSubtype {
 
     String SELECT = "select";
+    String PAGEVIEW = "pageview";
     String CONTAINER = "container";
     String FUNNEL = "funnel";
     String PAGE = "page";
     String TABLE = "table";
     String INFO = "info";
     String LIST = "list";
+    String IMAGES_LIST = "images_list";
     String SCALE = "scale";
     String RANK = "rank";
     String RANGE = "range";

@@ -17,7 +17,7 @@
             android:id="@+id/bg_full"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/white">
+            android:background="@color/brand_color_avia">
 
         </RelativeLayout>
 
@@ -39,7 +39,7 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/quizer" />
+                    android:src="@drawable/ic_rossya" />
 
             </LinearLayout>
 
@@ -51,7 +51,7 @@
                 android:layout_marginTop="@dimen/_30sdp"
                 android:gravity="center"
                 android:text="@string/screensaver"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/white"
                 android:textSize="32sp" />
 
             <ImageView
@@ -61,7 +61,7 @@
                 android:layout_below="@+id/title"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                app:srcCompat="@drawable/img_anim_wait" />
+                app:srcCompat="@drawable/img_anim_wait_white" />
 
             <ImageView
                 android:id="@+id/img2"
@@ -70,7 +70,7 @@
                 android:layout_below="@+id/title"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                app:srcCompat="@drawable/img_anim_wait" />
+                app:srcCompat="@drawable/img_anim_wait_white" />
 
             <ImageView
                 android:id="@+id/img3"
@@ -79,7 +79,7 @@
                 android:layout_below="@+id/title"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                app:srcCompat="@drawable/img_anim_wait" />
+                app:srcCompat="@drawable/img_anim_wait_white" />
 
             <ImageView
                 android:id="@+id/img4"
@@ -88,7 +88,7 @@
                 android:layout_below="@+id/title"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                app:srcCompat="@drawable/img_anim_wait" />
+                app:srcCompat="@drawable/img_anim_wait_white" />
         </RelativeLayout>
     </RelativeLayout>
 

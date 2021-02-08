@@ -6,11 +6,13 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -18,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,20 +36,23 @@ import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.ElementItemR;
+import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.model.state.SelectItem;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
 
-public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectViewHolder> {
+public class PageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final OnAnswerClickListener onAnswerClickListener;
     private final List<ElementItemR> questions;
     private Map<Integer, List<AnswerState>> pageAnswersStates;
+    //    private final String mType;
     private final MainActivity mActivity;
 
     public PageAdapter(final Context context, List<ElementItemR> questions, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
+//        this.mType = type;
         this.questions = questions;
         this.onAnswerClickListener = onAnswerClickListener;
         this.pageAnswersStates = new HashMap<>();
@@ -62,19 +68,74 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
 
     @NonNull
     @Override
-    public PageSelectViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.element_select_avia, viewGroup, false);
-        return new PageSelectViewHolder(view, onAnswerClickListener);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int type) {
+        Log.d("T-L.PageAdapter", "onCreateViewHolder TYPE: " + type);
+        switch (type) {
+            case 1:
+                View view1 = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.element_select_avia, viewGroup, false);
+                return new PageSelectViewHolder(view1, onAnswerClickListener);
+            case 2:
+                View view2 = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.element_imagepage_avia, viewGroup, false);
+                return new PagerViewHolder(view2, onAnswerClickListener);
+            default:
+                return null;
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PageSelectViewHolder holder, int position) {
-        holder.bind(questions.get(position), position);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        switch (holder.getItemViewType()) {
+            case 1:
+                PageSelectViewHolder pageSelectViewHolder = (PageSelectViewHolder) holder;
+                pageSelectViewHolder.bind(questions.get(position), position);
+                break;
+            case 2:
+                PagerViewHolder pagerViewHolder = (PagerViewHolder) holder;
+                pagerViewHolder.bind(questions.get(position), position);
+                break;
+        }
+
     }
 
     @Override
     public int getItemCount() {
         return questions.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        switch (questions.get(position).getSubtype()) {
+            case ElementSubtype.SELECT:
+                return 1;
+            case ElementSubtype.LIST:
+            case ElementSubtype.PAGEVIEW:
+                return 2;
+            default:
+                return 0;
+        }
+
+    }
+
+    public interface OnAnswerClickListener {
+        void onAnswerClick(int relativeId, boolean enabled, String answer);
+    }
+
+    public Map<Integer, List<AnswerState>> getAnswers() {
+        return pageAnswersStates;
+    }
+
+    public void setAnswers(Map<Integer, List<AnswerState>> pageAnswersStates) {
+        this.pageAnswersStates = pageAnswersStates;
+        Log.d("T-L.PageAdapter", "ADAPTER setAnswers: " + pageAnswersStates.size() + " elements");
+        notifyDataSetChanged();
+    }
+
+    public Map<Integer, AnswerState> convertStatesListToMap(List<AnswerState> list) {
+        Map<Integer, AnswerState> map = new HashMap<>();
+        for (AnswerState state : list) {
+            map.put(state.getRelative_id(), state);
+        }
+        return map;
     }
 
     public class PageSelectViewHolder extends RecyclerView.ViewHolder {
@@ -83,8 +144,6 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
         TextView answerText;
         TextView answerSelectText;
         View cont;
-
-        private Disposable disposableSearchIndex = null;
 
         OnAnswerClickListener onItemClickListener;
 
@@ -142,6 +201,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
                 selectItems.add(new SelectItem(elementItems.get(i).getElementOptionsR().getTitle(), answerStates.get(i).isChecked(), answerStates.get(i).isEnabled()));
             }
             SelectAdapter selectAdapter = new SelectAdapter(selectItems, item.getElementOptionsR().isPolyanswer(), (answers) -> {
+                Log.d("T-L.PageAdapter", ">>>>>>>>>> ON SELECT: ");
                 for (int i = 0; i < answerStates.size(); i++) {
                     boolean found = false;
                     for (SelectItem selectItem : answers) {
@@ -207,17 +267,59 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageSelectView
 
     }
 
-    public interface OnAnswerClickListener {
-        void onAnswerClick(int relativeId, boolean enabled, String answer);
-    }
+    public class PagerViewHolder extends RecyclerView.ViewHolder {
 
-    public Map<Integer, List<AnswerState>> getAnswers() {
-        return pageAnswersStates;
-    }
+        ViewPager viewPager;
+        ViewPagerAdapter adapter;
+        ImageButton btnPrev;
+        ImageButton btnNext;
+        Map<Integer, AnswerState> pagerAnswerStates;
 
-    public void setAnswers(Map<Integer, List<AnswerState>> pageAnswersStates) {
-        this.pageAnswersStates = pageAnswersStates;
-        notifyDataSetChanged();
+        OnAnswerClickListener onItemClickListener;
+
+        public PagerViewHolder(@NonNull View itemView, OnAnswerClickListener onItemClickListener) {
+            super(itemView);
+
+            viewPager = itemView.findViewById(R.id.viewpager);
+            btnPrev = itemView.findViewById(R.id.btn_prev);
+            btnNext = itemView.findViewById(R.id.btn_next);
+
+            this.onItemClickListener = onItemClickListener;
+        }
+
+        public void bind(final ElementItemR item, int position) {
+
+            pagerAnswerStates = convertStatesListToMap(pageAnswersStates.get(item.getRelative_id()));
+            List<ElementItemR> answersList = item.getElements();
+
+            adapter = new ViewPagerAdapter(mActivity, answersList, pagerAnswerStates, item.getElementOptionsR().isPolyanswer(), (relativeId, enabled, answer) -> {
+                setStates();
+                onAnswerClickListener.onAnswerClick(relativeId, false, null);
+            });
+            viewPager.setAdapter(adapter);
+            viewPager.setCurrentItem(0);
+
+            if (adapter.getCount() == 1) {
+                btnPrev.setVisibility(View.INVISIBLE);
+                btnNext.setVisibility(View.INVISIBLE);
+            } else {
+                btnPrev.setOnClickListener(v -> viewPager.setCurrentItem(getPrevPosition()));
+                btnNext.setOnClickListener(v -> viewPager.setCurrentItem(getNextPosition()));
+            }
+        }
+
+        public void setStates() {
+            pagerAnswerStates = adapter.getStatePages();
+        }
+
+        public int getNextPosition() {
+            return viewPager.getCurrentItem() == adapter.getCount() - 1 ? 0 : viewPager.getCurrentItem() + 1;
+        }
+
+        public int getPrevPosition() {
+            return viewPager.getCurrentItem() == 0 ? adapter.getCount() - 1 : viewPager.getCurrentItem() - 1;
+        }
+
     }
 
 

@@ -2,6 +2,7 @@ package pro.quizer.quizer3.view.fragment;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -223,6 +224,7 @@ public class ElementAviaFragment extends ScreenFragment implements
         tvQuestion.setTypeface(Fonts.getAviaText());
         tvHiddenQuestion.setTypeface(Fonts.getAviaText());
         tvQuestionDesc.setTypeface(Fonts.getAviaText());
+        tvQuestionDesc.setTypeface(tvQuestionDesc.getTypeface(), Typeface.ITALIC);
 
         btnNext.setOnClickListener(this);
         btnPrev.setOnClickListener(this);
@@ -272,6 +274,7 @@ public class ElementAviaFragment extends ScreenFragment implements
         loadResumedData();
         st("load resumed data");
         initQuestion();
+        Log.d("T-L.ElementAviaFragment", "initQuestion: " + currentElement.getRelative_id() + " / " + answerType);
         st("init question");
         if (currentElement != null) {
             if (checkConditions(currentElement)) {
@@ -280,6 +283,7 @@ public class ElementAviaFragment extends ScreenFragment implements
                 st("start recording");
                 setQuestionType();
                 st("set type");
+                Log.d("T-L.ElementAviaFragment", "initQuestion 2: " + currentElement.getRelative_id() + " / " + answerType);
                 initViews();
                 if (currentElement.getElementOptionsR().isWith_card()) {
                     toolbar.showCardView(v -> showCardDialog());
@@ -309,7 +313,7 @@ public class ElementAviaFragment extends ScreenFragment implements
                         .subscribe(
                                 (Map<Integer, TitleModel> convertedTitles) -> {
                                     titlesMap = convertedTitles;
-
+                                    Log.d("T-L.ElementAviaFragment", "initQuestion 3: " + currentElement.getRelative_id() + " / " + answerType);
                                     initRecyclerView();
                                     if (isRestored || wasReloaded()) {
                                         loadSavedData();
@@ -501,9 +505,26 @@ public class ElementAviaFragment extends ScreenFragment implements
                 getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
             isQuota = true;
         }
+        Log.d("T-L.ElementAviaFragment", ">>>>>>>>>>>>>>>>>> setQuestionType: " + currentElement.getSubtype());
         switch (currentElement.getSubtype()) {
             case ElementSubtype.LIST:
                 answerType = ElementSubtype.LIST;
+                List<ElementItemR> answers = currentElement.getElements();
+                if (answers != null && answers.size() > 0) {
+                    final List<ElementContentsR> contents = getDao().getElementContentsR(answers.get(0).getRelative_id());
+                    if (contents != null && !contents.isEmpty()) {
+                        String data = contents.get(0).getData();
+                        final String filePhotoPath = getFilePath(data);
+
+                        if (!StringUtils.isEmpty(filePhotoPath)) {
+                            answerType = ElementSubtype.PAGEVIEW;
+                            currentElement.setSubtype(ElementSubtype.PAGEVIEW);
+                        }
+                    }
+                }
+                break;
+            case ElementSubtype.PAGEVIEW:
+                answerType = ElementSubtype.PAGEVIEW;
                 break;
             case ElementSubtype.SELECT:
                 answerType = ElementSubtype.SELECT;
@@ -726,9 +747,6 @@ public class ElementAviaFragment extends ScreenFragment implements
             case ElementSubtype.RANK:
                 rvAnswers.setVisibility(View.VISIBLE);
                 break;
-            case ElementSubtype.SELECT:
-                spinnerCont.setVisibility(View.VISIBLE);
-                break;
             case ElementSubtype.TABLE:
                 tableCont.setVisibility(View.VISIBLE);
                 break;
@@ -749,6 +767,8 @@ public class ElementAviaFragment extends ScreenFragment implements
                 rvScale.setVisibility(View.VISIBLE);
                 break;
             case ElementSubtype.PAGE:
+            case ElementSubtype.SELECT:
+            case ElementSubtype.PAGEVIEW:
                 rvPage.setVisibility(View.VISIBLE);
                 break;
         }
@@ -761,6 +781,14 @@ public class ElementAviaFragment extends ScreenFragment implements
         switch (answerType) {
             case ElementSubtype.PAGE:
                 pageAdapter = new PageAdapter(getMainActivity(), currentElement.getElements(), this);
+                rvPage.setLayoutManager(new LinearLayoutManager(getContext()));
+                rvPage.setAdapter(pageAdapter);
+                break;
+            case ElementSubtype.PAGEVIEW:
+            case ElementSubtype.SELECT:
+                List<ElementItemR> elementsList = new ArrayList<>();
+                elementsList.add(currentElement);
+                pageAdapter = new PageAdapter(getMainActivity(), elementsList, this);
                 rvPage.setLayoutManager(new LinearLayoutManager(getContext()));
                 rvPage.setAdapter(pageAdapter);
                 break;
@@ -1099,102 +1127,102 @@ public class ElementAviaFragment extends ScreenFragment implements
                 }
                 break;
             }
-            case ElementSubtype.SELECT:
-                if (isMultiSpinner) {
-                    if (checkMultipleSpinner()) {
-                        ElementPassedR elementPassedR = new ElementPassedR();
-                        nextElementId = currentElement.getElementOptionsR().getJump();
-                        if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
-                            nextElementId = currentElement.getElementOptionsR().getJump();
-                            if (nextElementId == null || nextElementId.equals(-2)) {
-                                nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
-                            }
-                        }
-                        if (nextElementId == null) {
-                            nextElementId = answersList.get(spinnerMultipleSelection.get(0)).getElementOptionsR().getJump();
-                        }
-
-                        elementPassedR.setRelative_id(currentElement.getRelative_id());
-                        elementPassedR.setProject_id(currentElement.getProjectId());
-                        elementPassedR.setToken(getQuestionnaire().getToken());
-                        elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
-
-                        try {
-                            if (!isRestored) {
-                                getDao().insertElementPassedR(elementPassedR);
-                                getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
-                            }
-                            saved = true;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            saved = false;
-                            return saved;
-                        }
-                        for (int i = 0; i < spinnerMultipleSelection.size(); i++) {
-
-                            ElementPassedR answerPassedR = new ElementPassedR();
-                            answerPassedR.setRelative_id(answersList.get(spinnerMultipleSelection.get(i)).getRelative_id());
-                            answerPassedR.setProject_id(currentElement.getProjectId());
-                            answerPassedR.setToken(getQuestionnaire().getToken());
-
-                            try {
-                                if (!isRestored) {
-                                    getDao().insertElementPassedR(answerPassedR);
-                                }
-                                saved = true;
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                saved = false;
-                                return saved;
-                            }
-                        }
-                    }
-
-                } else {
-                    if (spinnerSelection != -1) {
-                        ElementPassedR elementPassedR = new ElementPassedR();
-                        nextElementId = answersList.get(spinnerSelection).getElementOptionsR().getJump();
-                        if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
-                            nextElementId = currentElement.getElementOptionsR().getJump();
-                            if (nextElementId.equals(-2)) {
-                                nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
-                            }
-                        }
-
-                        elementPassedR.setRelative_id(currentElement.getRelative_id());
-                        elementPassedR.setProject_id(currentElement.getProjectId());
-                        elementPassedR.setToken(getQuestionnaire().getToken());
-                        elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
-
-                        try {
-                            if (!isRestored) {
-                                getDao().insertElementPassedR(elementPassedR);
-                                getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
-                            }
-                            saved = true;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            return false;
-                        }
-
-                        ElementPassedR answerPassedR = new ElementPassedR();
-                        answerPassedR.setRelative_id(answersList.get(spinnerSelection).getRelative_id());
-                        answerPassedR.setProject_id(currentElement.getProjectId());
-                        answerPassedR.setToken(getQuestionnaire().getToken());
-                        answerPassedR.setFrom_quotas_block(isQuota);
-
-                        try {
-                            if (!isRestored) {
-                                getDao().insertElementPassedR(answerPassedR);
-                            }
-                            saved = true;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            return false;
-                        }
-                    }
-                }
-                break;
+//            case ElementSubtype.SELECT:
+//                if (isMultiSpinner) {
+//                    if (checkMultipleSpinner()) {
+//                        ElementPassedR elementPassedR = new ElementPassedR();
+//                        nextElementId = currentElement.getElementOptionsR().getJump();
+//                        if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+//                            nextElementId = currentElement.getElementOptionsR().getJump();
+//                            if (nextElementId == null || nextElementId.equals(-2)) {
+//                                nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+//                            }
+//                        }
+//                        if (nextElementId == null) {
+//                            nextElementId = answersList.get(spinnerMultipleSelection.get(0)).getElementOptionsR().getJump();
+//                        }
+//
+//                        elementPassedR.setRelative_id(currentElement.getRelative_id());
+//                        elementPassedR.setProject_id(currentElement.getProjectId());
+//                        elementPassedR.setToken(getQuestionnaire().getToken());
+//                        elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
+//
+//                        try {
+//                            if (!isRestored) {
+//                                getDao().insertElementPassedR(elementPassedR);
+//                                getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
+//                            }
+//                            saved = true;
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                            saved = false;
+//                            return saved;
+//                        }
+//                        for (int i = 0; i < spinnerMultipleSelection.size(); i++) {
+//
+//                            ElementPassedR answerPassedR = new ElementPassedR();
+//                            answerPassedR.setRelative_id(answersList.get(spinnerMultipleSelection.get(i)).getRelative_id());
+//                            answerPassedR.setProject_id(currentElement.getProjectId());
+//                            answerPassedR.setToken(getQuestionnaire().getToken());
+//
+//                            try {
+//                                if (!isRestored) {
+//                                    getDao().insertElementPassedR(answerPassedR);
+//                                }
+//                                saved = true;
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                                saved = false;
+//                                return saved;
+//                            }
+//                        }
+//                    }
+//
+//                } else {
+//                    if (spinnerSelection != -1) {
+//                        ElementPassedR elementPassedR = new ElementPassedR();
+//                        nextElementId = answersList.get(spinnerSelection).getElementOptionsR().getJump();
+//                        if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+//                            nextElementId = currentElement.getElementOptionsR().getJump();
+//                            if (nextElementId.equals(-2)) {
+//                                nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+//                            }
+//                        }
+//
+//                        elementPassedR.setRelative_id(currentElement.getRelative_id());
+//                        elementPassedR.setProject_id(currentElement.getProjectId());
+//                        elementPassedR.setToken(getQuestionnaire().getToken());
+//                        elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
+//
+//                        try {
+//                            if (!isRestored) {
+//                                getDao().insertElementPassedR(elementPassedR);
+//                                getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
+//                            }
+//                            saved = true;
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                            return false;
+//                        }
+//
+//                        ElementPassedR answerPassedR = new ElementPassedR();
+//                        answerPassedR.setRelative_id(answersList.get(spinnerSelection).getRelative_id());
+//                        answerPassedR.setProject_id(currentElement.getProjectId());
+//                        answerPassedR.setToken(getQuestionnaire().getToken());
+//                        answerPassedR.setFrom_quotas_block(isQuota);
+//
+//                        try {
+//                            if (!isRestored) {
+//                                getDao().insertElementPassedR(answerPassedR);
+//                            }
+//                            saved = true;
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                            return false;
+//                        }
+//                    }
+//                }
+//                break;
             case ElementSubtype.TABLE: {
                 AnswerState[][] answerStates = adapterTable.getmAnswersState();
 //                if (answerStates != null && answerStates[0] != null) {
@@ -1303,6 +1331,8 @@ public class ElementAviaFragment extends ScreenFragment implements
                 }
                 break;
             case ElementSubtype.PAGE:
+            case ElementSubtype.PAGEVIEW:
+            case ElementSubtype.SELECT:
                 boolean isCompleted = true;
                 Map<Integer, List<AnswerState>> pageAnswersStates = pageAdapter.getAnswers();
                 for (Map.Entry<Integer, List<AnswerState>> answerStates : pageAnswersStates.entrySet()) {
@@ -1322,7 +1352,6 @@ public class ElementAviaFragment extends ScreenFragment implements
                 }
                 if (isCompleted) {
                     nextElementId = currentElement.getElementOptionsR().getJump();
-
                     ElementPassedR pagePassed = new ElementPassedR();
                     pagePassed.setRelative_id(currentElement.getRelative_id());
                     pagePassed.setProject_id(currentElement.getProjectId());
@@ -1358,6 +1387,13 @@ public class ElementAviaFragment extends ScreenFragment implements
 
                         for (int k = 0; k < answerStates.getValue().size(); k++) {
                             if (answerStates.getValue().get(k).isChecked()) {
+                                if (nextElementId == null) {
+                                    try {
+                                        nextElementId = getDao().getElementById(answerStates.getValue().get(k).getRelative_id()).getElementOptionsR().getJump();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
                                 ElementPassedR answerPassedR = new ElementPassedR();
                                 answerPassedR.setRelative_id(answerStates.getValue().get(k).getRelative_id());
                                 answerPassedR.setValue(answerStates.getValue().get(k).getData());
@@ -1660,24 +1696,26 @@ public class ElementAviaFragment extends ScreenFragment implements
                 adapterScale.setLastSelectedPosition(lastSelectedPosition);
                 adapterScale.notifyDataSetChanged();
                 break;
-                case ElementSubtype.PAGE:
-                    Map<Integer, List<AnswerState>> pageAnswersStates = pageAdapter.getAnswers();
-                    for (Map.Entry<Integer, List<AnswerState>> answerStates : pageAnswersStates.entrySet()) {
-                        for (AnswerState state : answerStates.getValue()) {
-                            ElementPassedR answerStateRestored = null;
-                            try {
-                                answerStateRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), state.getRelative_id());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            if (answerStateRestored != null) {
-                                state.setChecked(true);
-                            }
+            case ElementSubtype.PAGE:
+            case ElementSubtype.PAGEVIEW:
+            case ElementSubtype.SELECT:
+                Map<Integer, List<AnswerState>> pageAnswersStates = pageAdapter.getAnswers();
+                for (Map.Entry<Integer, List<AnswerState>> answerStates : pageAnswersStates.entrySet()) {
+                    for (AnswerState state : answerStates.getValue()) {
+                        ElementPassedR answerStateRestored = null;
+                        try {
+                            answerStateRestored = getDao().getElementPassedR(getQuestionnaire().getToken(), state.getRelative_id());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (answerStateRestored != null) {
+                            state.setChecked(true);
                         }
                     }
-                    pageAdapter.setAnswers(pageAnswersStates);
-                    break;
-            }
+                }
+                pageAdapter.setAnswers(pageAnswersStates);
+                break;
+        }
 
     }
 

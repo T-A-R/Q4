@@ -1,32 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/dialog_round"
     android:fitsSystemWindows="true"
     android:keepScreenOn="true"
     android:id="@+id/input_cont">
 
-    <pro.quizer.quizer3.view.element.edittext.ResizableEditText
-        android:id="@+id/input_answer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/_34sdp"
-        android:layout_marginEnd="@dimen/_34sdp"/>
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/view_ok"
-        android:layout_width="@dimen/_30sdp"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/_4sdp"
-        android:layout_centerVertical="true"
-        android:layout_gravity="end"
-        android:src="@drawable/next"
-        android:background="@drawable/button_background_green"
-        android:tint="@color/white"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"/>
+    <com.zolad.zoominimageview.ZoomInImageView
+        android:id="@+id/zoom_image"
+        android:layout_width="500dp"
+        android:layout_height="500dp"
+        android:layout_margin="8dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:visibility="visible" />
 
 </RelativeLayout>

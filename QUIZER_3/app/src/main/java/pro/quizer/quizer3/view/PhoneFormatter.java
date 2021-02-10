@@ -15,12 +15,12 @@ public class PhoneFormatter {
         return selection;
     }
 
-    public void add(String s,int position) {
-        onTextChanged(s,position,0,1);
+    public void add(String s, int position) {
+        onTextChanged(s, position, 0, 1);
     }
 
-    public void delete(String s,int position) {
-        onTextChanged(s,position,1,0);
+    public void delete(String s, int position) {
+        onTextChanged(s, position, 1, 0);
     }
 
     public void onTextChanged(String s, int cursorPosition, int before, int count) {
@@ -92,13 +92,13 @@ public class PhoneFormatter {
                 phone = "+7(";
                 selection = 2;
             }
-        } else if(!"+7(".equals(phone)) {
+        } else if (!"+7(".equals(phone)) {
             phone = "+7(";
             selection = 3;
         }
     }
 
-    String formatted(String value) {
+    public String formatted(String value) {
         StringBuffer sb = new StringBuffer("+7(");
         if (value.length() <= 3) {
             sb.append(value);
@@ -122,9 +122,10 @@ public class PhoneFormatter {
         if ("+7(".equals(sb.toString())) {
             sb = new StringBuffer();
         }
-        return sb.toString();}
+        return sb.toString();
+    }
 
-    String cleaned(String s) {
+    public String cleaned(String s) {
         String value = s.toString()
                 .replace("+7(", "")
                 .replace("+7", "")
@@ -136,10 +137,10 @@ public class PhoneFormatter {
     }
 
     public String getPhone() {
-        return phone;
+        return phone.equals("") ? "+7(" : phone;
     }
 
-    public void setCached(String cached){
+    public void setCached(String cached) {
         this.cached = cached;
     }
 }

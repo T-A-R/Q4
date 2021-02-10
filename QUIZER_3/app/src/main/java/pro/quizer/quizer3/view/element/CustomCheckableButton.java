@@ -13,6 +13,8 @@ import java.io.Serializable;
 
 import pro.quizer.quizer3.R;
 
+import static pro.quizer.quizer3.MainActivity.AVIA;
+
 public abstract class CustomCheckableButton extends RelativeLayout implements Serializable {
 
     AppCompatImageView mCheckBoxImage;
@@ -111,7 +113,7 @@ public abstract class CustomCheckableButton extends RelativeLayout implements Se
     public void setEnabled(final boolean pIsEnabled) {
         mIsEnabled = pIsEnabled;
 
-        mCheckBoxImage.setColorFilter(ContextCompat.getColor(mContext, mIsEnabled ? (mIsChecked ? R.color.checkbox_selected_color : R.color.checkbox_enabled_color) : R.color.checkbox_disabled_color), android.graphics.PorterDuff.Mode.SRC_IN);
+        mCheckBoxImage.setColorFilter(ContextCompat.getColor(mContext, mIsEnabled ? (mIsChecked ? AVIA ? R.color.brand_color_avia : R.color.checkbox_selected_color : R.color.checkbox_enabled_color) : R.color.checkbox_disabled_color), android.graphics.PorterDuff.Mode.SRC_IN);
     }
 
     public boolean isChecked() {

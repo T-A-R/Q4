@@ -67,10 +67,10 @@ public class UiUtils {
 
         if (pIsEnabled) {
             pView.setEnabled(true);
-            pView.setBackground(ContextCompat.getDrawable(context, R.drawable.button_background_green));
+            pView.setBackground(ContextCompat.getDrawable(context, R.drawable.button_background_avia));
         } else {
             pView.setEnabled(false);
-            pView.setBackground(ContextCompat.getDrawable(context, R.drawable.button_background_gray));
+            pView.setBackground(ContextCompat.getDrawable(context, R.drawable.button_background_gray_avia));
         }
     }
 
@@ -79,10 +79,10 @@ public class UiUtils {
 
         if (pIsEnabled) {
             pView.setEnabled(true);
-            pView.setBackground(ContextCompat.getDrawable(context, R.drawable.button_background_red));
+            pView.setBackground(ContextCompat.getDrawable(context, R.drawable.button_background_avia));
         } else {
             pView.setEnabled(false);
-            pView.setBackground(ContextCompat.getDrawable(context, R.drawable.button_background_gray));
+            pView.setBackground(ContextCompat.getDrawable(context, R.drawable.button_background_gray_avia));
         }
     }
 
@@ -91,10 +91,10 @@ public class UiUtils {
 
         if (pIsNormal) {
             pView.setEnabled(true);
-            pView.setBackground(ContextCompat.getDrawable(context, R.drawable.button_background_green_light));
+            pView.setBackground(ContextCompat.getDrawable(context, R.drawable.button_background_avia));
         } else {
             pView.setEnabled(false);
-            pView.setBackground(ContextCompat.getDrawable(context, R.drawable.button_background_gray));
+            pView.setBackground(ContextCompat.getDrawable(context, R.drawable.button_background_gray_avia));
         }
     }
 

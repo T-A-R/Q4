@@ -195,6 +195,9 @@ public class PageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             questionTitle.setText(item.getElementOptionsR().getTitle());
             EditText selectInput = layoutView.findViewById(R.id.select_input);
 
+            questionTitle.setTypeface(Fonts.getFuturaPtBook());
+            selectInput.setTypeface(Fonts.getFuturaPtBook());
+
             List<ElementItemR> elementItems = item.getElements();
             List<SelectItem> selectItems = new ArrayList<>();
             for (int i = 0; i < elementItems.size(); i++) {

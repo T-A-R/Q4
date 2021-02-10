@@ -21,7 +21,7 @@
             android:layout_toStartOf="@+id/select_checker"
             android:text=""
             android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:visibility="visible" />
 
         <ImageView

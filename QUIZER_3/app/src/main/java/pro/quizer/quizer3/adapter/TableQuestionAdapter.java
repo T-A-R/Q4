@@ -6,11 +6,13 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.res.Resources;
+
 import androidx.annotation.NonNull;
 
 import android.graphics.Typeface;
 import android.text.InputType;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +48,7 @@ import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.element.CustomCheckableButton;
 
+import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderImpl> implements OnItemClickListener {
@@ -88,7 +91,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         mContext = (MainActivity) context;
         isSpeedMode = mContext.isTableSpeedMode();
         mQuestions = questions;
-        if(!isSpeedMode) {
+        if (!isSpeedMode) {
             mLine = new boolean[mQuestions.size()];
             Arrays.fill(mLine, false);
         }
@@ -134,18 +137,23 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mLeftSide = mQuestions;
         }
 
-
-        mRowHeight = res.getDimensionPixelSize(R.dimen.row_height);
-
-        mHeaderHeight = res.getDimensionPixelSize(mIsSmallColumns ? R.dimen.column_small_header_height : R.dimen.column_header_height);
-
-        final int widthIndex = mTopSide.size() + 1 >= CELL_COUNT ? CELL_COUNT : HALF;
-        mHeaderWidth = UiUtils.getDisplayWidth(context) / widthIndex;
-        mColumnWidth = UiUtils.getDisplayWidth(context) / widthIndex;
+        if (AVIA) {
+            mRowHeight = res.getDimensionPixelSize(R.dimen.avia_row_height);
+            mHeaderHeight = res.getDimensionPixelSize(R.dimen.avia_column_header_height);
+            final int widthIndex = mTopSide.size() + 1 >= CELL_COUNT ? CELL_COUNT : HALF;
+            mHeaderWidth = UiUtils.getDisplayWidth(context) / widthIndex;
+            mColumnWidth = UiUtils.getDisplayWidth(context) / widthIndex;
+        } else {
+            mRowHeight = res.getDimensionPixelSize(R.dimen.row_height);
+            mHeaderHeight = res.getDimensionPixelSize(mIsSmallColumns ? R.dimen.column_small_header_height : R.dimen.column_header_height);
+            final int widthIndex = mTopSide.size() + 1 >= CELL_COUNT ? CELL_COUNT : HALF;
+            mHeaderWidth = UiUtils.getDisplayWidth(context) / widthIndex;
+            mColumnWidth = UiUtils.getDisplayWidth(context) / widthIndex;
+        }
 
         int counter = 1;
         titles = new ArrayList<>();
-        for(ElementItemR element : mQuestions) {
+        for (ElementItemR element : mQuestions) {
             if (element.getElementOptionsR().isShow_in_card()) {
                 String text = counter + ". " + Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle();
                 titles.add(text);
@@ -214,7 +222,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             }
             if (!mIsFlipColsAndRows) {
                 setChecked(vh, mAnswersState[row - 1][column - 1].isChecked());
-                if(!isSpeedMode) {
+                if (!isSpeedMode) {
                     if (mLine[row - 1]) {
                         vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
                     } else {
@@ -223,7 +231,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 }
             } else {
                 setChecked(vh, mAnswersState[column - 1][row - 1].isChecked());
-                if(!isSpeedMode) {
+                if (!isSpeedMode) {
                     if (mLine[column - 1]) {
                         vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
                     } else {
@@ -245,7 +253,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final TableHeaderColumnViewHolder vh = (TableHeaderColumnViewHolder) viewHolder;
 
         vh.mHeaderColumnTextView.setText(mIsFlipColsAndRows ? titles.get(column - 1) : Objects.requireNonNull(titlesMap.get(mTopSide.get(column - 1).getRelative_id())).getTitle());
-        if(!isSpeedMode) {
+        if (!isSpeedMode) {
             if (mIsFlipColsAndRows) {
                 if (mLine[column - 1]) {
                     vh.mColumnCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
@@ -264,7 +272,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         vh.mHeaderRowTextView.setText(!mIsFlipColsAndRows ? titles.get(row - 1) : Objects.requireNonNull(titlesMap.get(mLeftSide.get(row - 1).getRelative_id())).getTitle());
         vh.mHeaderRowDescriptionTextView.setTypeface(vh.mHeaderRowDescriptionTextView.getTypeface(), Typeface.ITALIC);
         UiUtils.setTextOrHide(vh.mHeaderRowDescriptionTextView, optionsModel.getDescription());
-        if(!isSpeedMode) {
+        if (!isSpeedMode) {
             if (!mIsFlipColsAndRows) {
                 if (mLine[row - 1]) {
                     vh.mRowCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
@@ -278,6 +286,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     @Override
     public void onBindLeftTopHeaderViewHolder(@NonNull final ViewHolderImpl viewHolder) {
         final TableHeaderLeftTopViewHolder vh = (TableHeaderLeftTopViewHolder) viewHolder;
+        vh.mHeaderLeftTopTextView.setTypeface(Fonts.getFuturaPtBook());
+        vh.mHeaderLeftTopTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
         UiUtils.setTextOrHide(vh.mHeaderLeftTopTextView, mContext.getString(R.string.table_label));
     }
 
@@ -448,7 +458,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                             if (!isPolyanswer && mAnswersState[row - 1][column - 1].isChecked()) {
                                 unselectOther(row, column, clickedQuestion, clickedElement);
                             }
-                            if(!isSpeedMode) {
+                            if (!isSpeedMode) {
                                 try {
                                     notifyRowChanged(row);
                                 } catch (Exception e) {
@@ -463,7 +473,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                             if (!isPolyanswer && mAnswersState[column - 1][row - 1].isChecked()) {
                                 unselectOther(row, column, clickedQuestion, clickedElement);
                             }
-                            if(!isSpeedMode) {
+                            if (!isSpeedMode) {
                                 try {
                                     notifyColumnChanged(column);
                                 } catch (Exception e) {
@@ -479,7 +489,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                     .setNegativeButton(R.string.cancel,
                             (dialogBox, id) -> {
                                 if (!mIsFlipColsAndRows) {
-                                    if(isPolyanswer) {
+                                    if (isPolyanswer) {
                                         mAnswersState[row - 1][column - 1].setChecked(false);
                                         setLine();
                                         mAnswersState[row - 1][column - 1].setData(Constants.Strings.EMPTY);
@@ -492,7 +502,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                                         notifyItemChanged(row, 0);
                                     }
                                 } else {
-                                    if(isPolyanswer) {
+                                    if (isPolyanswer) {
                                         mAnswersState[column - 1][row - 1].setChecked(false);
                                         setLine();
                                         mAnswersState[column - 1][row - 1].setData(Constants.Strings.EMPTY);
@@ -555,7 +565,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                     setLine();
                 }
             }
-            if(!isSpeedMode) {
+            if (!isSpeedMode) {
                 try {
                     notifyRowChanged(row - 1);
                 } catch (Exception e) {
@@ -570,7 +580,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                     setLine();
                 }
             }
-            if(!isSpeedMode) {
+            if (!isSpeedMode) {
                 try {
                     notifyColumnChanged(column - 1);
                 } catch (Exception e) {
@@ -583,7 +593,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     public void setLine() {
-        if(!isSpeedMode) {
+        if (!isSpeedMode) {
             for (int i = 0; i < mAnswersState.length; i++) {
                 boolean checked = false;
                 for (int k = 0; k < mAnswersState[0].length; k++) {
@@ -620,6 +630,10 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         final TextView title = mView.findViewById(R.id.title);
         final TextView description = mView.findViewById(R.id.description);
+        title.setTypeface(Fonts.getFuturaPtBook());
+        title.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+        description.setTypeface(Fonts.getFuturaPtBook());
+        description.setTextSize(TypedValue.COMPLEX_UNIT_SP,14);
         description.setTypeface(description.getTypeface(), Typeface.ITALIC);
 
         title.setText(Objects.requireNonNull(titlesMap.get(pOptionsModel.getRelative_id())).getTitle());
@@ -654,6 +668,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mDisableFrame = itemView.findViewById(R.id.disable_frame);
 
             mOpenAnswerEditText.setFocusableInTouchMode(false);
+
+            mOpenAnswerEditText.setTypeface(Fonts.getFuturaPtBook());
+            mOpenAnswerEditText.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
         }
     }
 
@@ -666,6 +683,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             super(itemView);
             mHeaderColumnTextView = itemView.findViewById(R.id.table_header_column_text_view);
             mColumnCont = itemView.findViewById(R.id.column_cont);
+            mHeaderColumnTextView.setTypeface(Fonts.getFuturaPtBook());
+            mHeaderColumnTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+
         }
     }
 
@@ -680,6 +700,10 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mHeaderRowTextView = itemView.findViewById(R.id.table_header_row_text_view);
             mHeaderRowDescriptionTextView = itemView.findViewById(R.id.table_header_row_description_text_view);
             mRowCont = itemView.findViewById(R.id.row_cont);
+            mHeaderRowTextView.setTypeface(Fonts.getFuturaPtBook());
+            mHeaderRowTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+            mHeaderRowDescriptionTextView.setTypeface(Fonts.getFuturaPtBook());
+            mHeaderRowDescriptionTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,14);
             mHeaderRowDescriptionTextView.setTypeface(mHeaderRowDescriptionTextView.getTypeface(), Typeface.ITALIC);
         }
     }
@@ -692,6 +716,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             super(itemView);
 
             mHeaderLeftTopTextView = itemView.findViewById(R.id.table_header_left_top_text_view);
+            mHeaderLeftTopTextView.setTypeface(Fonts.getFuturaPtBook());
+            mHeaderLeftTopTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
         }
     }
 

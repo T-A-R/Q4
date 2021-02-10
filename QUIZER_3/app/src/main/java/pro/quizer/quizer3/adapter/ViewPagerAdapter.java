@@ -34,6 +34,7 @@ import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.utils.FileUtils;
+import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.view.element.TouchImageView;
 
@@ -108,6 +109,14 @@ public class ViewPagerAdapter extends PagerAdapter {
         ZoomInImageView image6 = itemView.findViewById(R.id.pager_image_6);
         ZoomInImageView image7 = itemView.findViewById(R.id.pager_image_7);
         ZoomInImageView image8 = itemView.findViewById(R.id.pager_image_8);
+        ImageView zoom1 = itemView.findViewById(R.id.image_zoom_1);
+        ImageView zoom2 = itemView.findViewById(R.id.image_zoom_2);
+        ImageView zoom3 = itemView.findViewById(R.id.image_zoom_3);
+        ImageView zoom4 = itemView.findViewById(R.id.image_zoom_4);
+        ImageView zoom5 = itemView.findViewById(R.id.image_zoom_5);
+        ImageView zoom6 = itemView.findViewById(R.id.image_zoom_6);
+        ImageView zoom7 = itemView.findViewById(R.id.image_zoom_7);
+        ImageView zoom8 = itemView.findViewById(R.id.image_zoom_8);
         ImageView checker1 = itemView.findViewById(R.id.pager_checker_1);
         ImageView checker2 = itemView.findViewById(R.id.pager_checker_2);
         ImageView checker3 = itemView.findViewById(R.id.pager_checker_3);
@@ -125,6 +134,15 @@ public class ViewPagerAdapter extends PagerAdapter {
         TextView title7 = itemView.findViewById(R.id.pager_answer_title_7);
         TextView title8 = itemView.findViewById(R.id.pager_answer_title_8);
 
+        title1.setTypeface(Fonts.getFuturaPtBook());
+        title2.setTypeface(Fonts.getFuturaPtBook());
+        title3.setTypeface(Fonts.getFuturaPtBook());
+        title4.setTypeface(Fonts.getFuturaPtBook());
+        title5.setTypeface(Fonts.getFuturaPtBook());
+        title6.setTypeface(Fonts.getFuturaPtBook());
+        title7.setTypeface(Fonts.getFuturaPtBook());
+        title8.setTypeface(Fonts.getFuturaPtBook());
+
         List<ElementItemR> items = elementPages.get(position);
         for (int i = 0; i < items.size(); i++) {
             final int relativeId = items.get(i).getRelative_id();
@@ -133,98 +151,85 @@ public class ViewPagerAdapter extends PagerAdapter {
                 case 0:
                     cont1.setVisibility(View.VISIBLE);
                     title1.setText(items.get(0).getElementOptionsR().getTitle());
-                    title1.setOnClickListener(v -> {
-                        checkItem(position, itemPos);
-                        onAnswerClickListener.onAnswerClick(relativeId, null, null);
-                    });
+                    title1.setOnClickListener(v -> onItemClick(position, itemPos, relativeId));
+                    image1.setOnClickListener(v -> onItemClick(position, itemPos, relativeId));
                     setChecker(checker1, statePages.get(relativeId).isChecked());
                     showPic(image1, items.get(0));
-                    image1.setOnClickListener(v -> showZoomDialog(items.get(0)));
-
+                    zoom1.setOnClickListener(v -> showZoomDialog(items.get(0)));
                     break;
                 case 1:
                     cont2.setVisibility(View.VISIBLE);
                     title2.setText(items.get(1).getElementOptionsR().getTitle());
-                    title2.setOnClickListener(v -> {
-                        checkItem(position, itemPos);
-                        onAnswerClickListener.onAnswerClick(relativeId, null, null);
-                    });
+                    title2.setOnClickListener(v -> onItemClick(position, itemPos, relativeId));
+                    image2.setOnClickListener(v -> onItemClick(position, itemPos, relativeId));
                     setChecker(checker2, statePages.get(relativeId).isChecked());
                     showPic(image2, items.get(1));
-                    image2.setOnClickListener(v -> showZoomDialog(items.get(1)));
+                    zoom2.setOnClickListener(v -> showZoomDialog(items.get(1)));
                     break;
                 case 2:
                     cont3.setVisibility(View.VISIBLE);
                     title3.setText(items.get(2).getElementOptionsR().getTitle());
-                    title3.setOnClickListener(v -> {
-                        checkItem(position, itemPos);
-                        onAnswerClickListener.onAnswerClick(relativeId, null, null);
-                    });
+                    title3.setOnClickListener(v -> onItemClick(position, itemPos, relativeId));
+                    image3.setOnClickListener(v -> onItemClick(position, itemPos, relativeId));
                     setChecker(checker3, statePages.get(relativeId).isChecked());
                     showPic(image3, items.get(2));
-                    image3.setOnClickListener(v -> showZoomDialog(items.get(2)));
+                    zoom3.setOnClickListener(v -> showZoomDialog(items.get(2)));
                     break;
                 case 3:
                     cont4.setVisibility(View.VISIBLE);
                     title4.setText(items.get(3).getElementOptionsR().getTitle());
-                    title4.setOnClickListener(v -> {
-                        checkItem(position, itemPos);
-                        onAnswerClickListener.onAnswerClick(relativeId, null, null);
-                    });
+                    title4.setOnClickListener(v -> onItemClick(position, itemPos, relativeId));
+                    image4.setOnClickListener(v -> onItemClick(position, itemPos, relativeId));
                     setChecker(checker4, statePages.get(relativeId).isChecked());
                     showPic(image4, items.get(3));
-                    image4.setOnClickListener(v -> showZoomDialog(items.get(3)));
+                    zoom4.setOnClickListener(v -> showZoomDialog(items.get(3)));
                     break;
                 case 4:
                     cont5.setVisibility(View.VISIBLE);
                     title5.setText(items.get(4).getElementOptionsR().getTitle());
-                    title5.setOnClickListener(v -> {
-                        checkItem(position, itemPos);
-                        onAnswerClickListener.onAnswerClick(relativeId, null, null);
-                    });
+                    title5.setOnClickListener(v -> onItemClick(position, itemPos, relativeId));
+                    image5.setOnClickListener(v -> onItemClick(position, itemPos, relativeId));
                     setChecker(checker5, statePages.get(relativeId).isChecked());
                     showPic(image5, items.get(4));
-                    image5.setOnClickListener(v -> showZoomDialog(items.get(4)));
+                    zoom5.setOnClickListener(v -> showZoomDialog(items.get(4)));
                     break;
                 case 5:
                     cont6.setVisibility(View.VISIBLE);
                     title6.setText(items.get(5).getElementOptionsR().getTitle());
-                    title6.setOnClickListener(v -> {
-                        checkItem(position, itemPos);
-                        onAnswerClickListener.onAnswerClick(relativeId, null, null);
-                    });
+                    title6.setOnClickListener(v -> onItemClick(position, itemPos, relativeId));
+                    image6.setOnClickListener(v -> onItemClick(position, itemPos, relativeId));
                     setChecker(checker6, statePages.get(relativeId).isChecked());
                     showPic(image6, items.get(5));
-                    image6.setOnClickListener(v -> showZoomDialog(items.get(5)));
+                    zoom6.setOnClickListener(v -> showZoomDialog(items.get(5)));
                     break;
                 case 6:
                     cont7.setVisibility(View.VISIBLE);
                     title7.setText(items.get(6).getElementOptionsR().getTitle());
-                    title7.setOnClickListener(v -> {
-                        checkItem(position, itemPos);
-                        onAnswerClickListener.onAnswerClick(relativeId, null, null);
-                    });
+                    title7.setOnClickListener(v -> onItemClick(position, itemPos, relativeId));
+                    image7.setOnClickListener(v -> onItemClick(position, itemPos, relativeId));
                     setChecker(checker7, statePages.get(relativeId).isChecked());
                     showPic(image7, items.get(6));
-                    image7.setOnClickListener(v -> showZoomDialog(items.get(6)));
+                    zoom7.setOnClickListener(v -> showZoomDialog(items.get(6)));
                     break;
                 case 7:
                     cont8.setVisibility(View.VISIBLE);
                     title8.setText(items.get(7).getElementOptionsR().getTitle());
-                    title8.setOnClickListener(v -> {
-                        checkItem(position, itemPos);
-                        onAnswerClickListener.onAnswerClick(relativeId, null, null);
-                    });
+                    title8.setOnClickListener(v -> onItemClick(position, itemPos, relativeId));
+                    image8.setOnClickListener(v -> onItemClick(position, itemPos, relativeId));
                     setChecker(checker8, statePages.get(relativeId).isChecked());
                     showPic(image8, items.get(7));
-                    image8.setOnClickListener(v -> showZoomDialog(items.get(7)));
+                    zoom8.setOnClickListener(v -> showZoomDialog(items.get(7)));
                     break;
             }
         }
 
         container.addView(itemView);
-
         return itemView;
+    }
+
+    private void onItemClick(int position, int itemPos, int relativeId) {
+        checkItem(position, itemPos);
+        onAnswerClickListener.onAnswerClick(relativeId, null, null);
     }
 
     @Override
@@ -245,25 +250,6 @@ public class ViewPagerAdapter extends PagerAdapter {
             Picasso.with(mContext)
                     .load(new File(filePhotoPath))
                     .into(view);
-        }
-    }
-
-    private void showZoomPic(TouchImageView view, ElementItemR element) {
-        final List<ElementContentsR> contents = mContext.getMainDao().getElementContentsR(element.getRelative_id());
-        if (contents != null && !contents.isEmpty()) {
-            String data = contents.get(0).getData();
-            final String filePhotoPath = getFilePath(data);
-
-            if (StringUtils.isEmpty(filePhotoPath)) {
-                return;
-            }
-            File image = new File(filePhotoPath);
-            Bitmap myBitmap = BitmapFactory.decodeFile(image.getAbsolutePath());
-//            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-//            Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
-//            bitmap = Bitmap.createScaledBitmap(bitmap,parent.getWidth(),parent.getHeight(),true);
-            view.setVisibility(View.VISIBLE);
-            view.setImageBitmap(myBitmap);
         }
     }
 
@@ -289,11 +275,8 @@ public class ViewPagerAdapter extends PagerAdapter {
                     .into(inImageView);
         }
 
-//        dialog.setCancelable(false);
         final AlertDialog alertDialog = dialog.create();
-
         inImageView.setOnClickListener(v -> alertDialog.dismiss());
-
         if (!mContext.isFinishing()) {
             alertDialog.show();
         }
@@ -334,12 +317,6 @@ public class ViewPagerAdapter extends PagerAdapter {
                     answerState.getValue().setChecked(false);
                 }
             }
-
-//            for (int i = 0; i < mItems.size(); i++) {
-//                if (i != position) {
-//                    mItems.get(i).setChecked(false);
-//                }
-//            }
         }
         if (isMulti) {
             for (Map.Entry<Integer, AnswerState> answerState : statePages.entrySet()) {
@@ -347,12 +324,6 @@ public class ViewPagerAdapter extends PagerAdapter {
                     answerState.getValue().setChecked(false);
                 }
             }
-
-//            for (int i = 0; i < mItems.size(); i++) {
-//                if (i != position && mItems.get(i).isUnChecker()) {
-//                    mItems.get(i).setChecked(false);
-//                }
-//            }
         }
         notifyDataSetChanged();
     }

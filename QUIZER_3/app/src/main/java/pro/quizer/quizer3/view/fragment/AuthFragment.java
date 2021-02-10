@@ -550,11 +550,12 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     private void deactivateButtons() {
         setViewBackground(btnSend, false, false);
         btnSend.setEnabled(false);
-        btnSend.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_gray_avia : R.drawable.button_background_gray));
+        if (!AVIA)
+            btnSend.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), isAvia() ? R.drawable.button_background_gray_avia : R.drawable.button_background_gray));
     }
 
     private void startHomeFragment(HomeFragment fragment) {
-        if(!AVIA) {
+        if (!AVIA) {
             if (getMainActivity() != null && getMainActivity().getSettings().getUser_name() == null) {
                 showInputNameDialog(fragment);
             } else if (getMainActivity() != null && getMainActivity().getSettings().getUser_name() != null
@@ -627,7 +628,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         sendBtn.setOnClickListener(v -> {
             String nameString = name.getText().toString();
             String shortName = nameString.replaceAll(" ", "");
-            if(shortName.length() == 0) nameString = " ";
+            if (shortName.length() == 0) nameString = " ";
 
             if (StringUtils.isEmpty(nameString)) {
                 nameString = " ";

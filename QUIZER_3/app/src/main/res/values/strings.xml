@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Quizer 3</string>
+    <string name="app_name">ROSSIYA</string>
     <string name="menu">Меню</string>
     <string name="profile">Профиль</string>
     <string name="to_enter">Войти</string>
@@ -98,7 +98,7 @@
     <string name="no_camera_access">Нет доступа на камеру</string>
     <string name="no_front_camera">Нет передней камеры</string>
 
-    <string name="toast_cant_exit">Подключение к интернету отсутствует, выход из аккаунта невозможен  Для выхода используйте кнопку Назад</string>
+    <string name="toast_cant_exit">Подключение к интернету отсутствует, выход из аккаунта невозможен.</string>
 
     <string name="dialog_remove_user_title">Удаление пользователя</string>
     <string name="dialog_remove_user_body">Вы уверены, что хотите удалить данного пользователя?</string>

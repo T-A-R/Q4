@@ -50,7 +50,7 @@ public class ServiceFragment extends ScreenFragment {
     private MainActivity activity;
 
     public ServiceFragment() {
-        super(R.layout.fragment_service);
+        super(R.layout.fragment_service_avia);
     }
 
     @Override
@@ -80,14 +80,14 @@ public class ServiceFragment extends ScreenFragment {
         mDeviceId = findViewById(R.id.device_id);
 
         if(isAvia()) {
-             mSendDataButton.setTypeface(Fonts.getAviaText());
-             mSendAudioButton.setTypeface(Fonts.getAviaText());
-             mSendPhotoButton.setTypeface(Fonts.getAviaText());
-             mClearFiles.setTypeface(Fonts.getAviaText());
-             mClearDbButton.setTypeface(Fonts.getAviaText());
-             mUploadDataButton.setTypeface(Fonts.getAviaText());
-             mUploadFTPDataButton.setTypeface(Fonts.getAviaText());
-             mLogsButton.setTypeface(Fonts.getAviaText());
+             mSendDataButton.setTypeface(Fonts.getAviaButton());
+             mSendAudioButton.setTypeface(Fonts.getAviaButton());
+             mSendPhotoButton.setTypeface(Fonts.getAviaButton());
+             mClearFiles.setTypeface(Fonts.getAviaButton());
+             mClearDbButton.setTypeface(Fonts.getAviaButton());
+             mUploadDataButton.setTypeface(Fonts.getAviaButton());
+             mUploadFTPDataButton.setTypeface(Fonts.getAviaButton());
+             mLogsButton.setTypeface(Fonts.getAviaButton());
         }
 
         Toolbar mToolbar = findViewById(R.id.toolbar);
@@ -96,14 +96,14 @@ public class ServiceFragment extends ScreenFragment {
 
         RelativeLayout cont = findViewById(R.id.service_cont);
         cont.startAnimation(Anim.getAppear(getContext()));
-        mLogsButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
-        mSendDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
-        mSendAudioButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
-        mSendPhotoButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
-        mClearFiles.startAnimation(Anim.getAppearSlide(getContext(), 500));
-        mClearDbButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
-        mUploadDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
-        mUploadFTPDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
+//        mLogsButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
+//        mSendDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
+//        mSendAudioButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
+//        mSendPhotoButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
+//        mClearFiles.startAnimation(Anim.getAppearSlide(getContext(), 500));
+//        mClearDbButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
+//        mUploadDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
+//        mUploadFTPDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
     }
 
     private void initStrings() {

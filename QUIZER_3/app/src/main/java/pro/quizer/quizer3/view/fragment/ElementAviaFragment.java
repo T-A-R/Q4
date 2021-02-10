@@ -214,8 +214,8 @@ public class ElementAviaFragment extends ScreenFragment implements
         btnPrev = findViewById(R.id.back_btn);
         btnExit = findViewById(R.id.exit_btn);
 
-        btnNext.setTypeface(Fonts.getAviaText());
-        btnPrev.setTypeface(Fonts.getAviaText());
+        btnNext.setTypeface(Fonts.getAviaButton());
+        btnPrev.setTypeface(Fonts.getAviaButton());
         btnExit.setTypeface(Fonts.getAviaButton());
         tvTitle1.setTypeface(Fonts.getAviaText());
         tvTitle2.setTypeface(Fonts.getAviaText());
@@ -589,11 +589,11 @@ public class ElementAviaFragment extends ScreenFragment implements
                         && parentElement.getElementOptionsR().getTitle() != null
                         && parentElement.getElementOptionsR().getTitle().length() > 0
                         && (parentElement.getShown_at_id().equals(-102) || parentElement.getShown_at_id().equals(currentElement.getRelative_id()))) {
-                    titleCont.setVisibility(View.VISIBLE);
+//                    titleCont.setVisibility(View.VISIBLE);
                     titles = 1;
                     getDao().setWasElementShown(true, parentElement.getRelative_id(), parentElement.getUserId(), parentElement.getProjectId());
                     getDao().setShownId(currentElement.getRelative_id(), parentElement.getRelative_id(), parentElement.getUserId(), parentElement.getProjectId());
-                    titleCont2.setVisibility(View.VISIBLE);
+//                    titleCont2.setVisibility(View.VISIBLE);
 
                     Disposable subscribeTitle2 = getMainActivity().getConvertedTitle(parentElement.getElementOptionsR().getTitle()).subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -634,7 +634,7 @@ public class ElementAviaFragment extends ScreenFragment implements
                                 titles = 2;
                                 getDao().setWasElementShown(true, parentElement2.getRelative_id(), parentElement2.getUserId(), parentElement2.getProjectId());
                                 getDao().setShownId(currentElement.getRelative_id(), parentElement2.getRelative_id(), parentElement2.getUserId(), parentElement2.getProjectId());
-                                titleCont1.setVisibility(View.VISIBLE);
+//                                titleCont1.setVisibility(View.VISIBLE);
 
                                 Disposable subscribeTitle1 = getMainActivity().getConvertedTitle(parentElement2.getElementOptionsR().getTitle()).subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())

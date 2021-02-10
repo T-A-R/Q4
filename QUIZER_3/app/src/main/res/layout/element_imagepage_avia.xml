@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="horizontal"
-    android:padding="16dp">
+    android:paddingTop="16dp">
 
     <ImageButton
         android:id="@+id/btn_prev"

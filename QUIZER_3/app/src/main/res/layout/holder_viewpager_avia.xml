@@ -20,14 +20,30 @@
             android:orientation="vertical"
             android:visibility="invisible">
 
-            <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/pager_image_1"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginBottom="8dp"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:visibility="visible" />
+            <RelativeLayout
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginBottom="8dp">
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/pager_image_1"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/image_zoom_1"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:alpha=".7"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_search_category_default"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -55,7 +71,7 @@
                     android:layout_toEndOf="@+id/pager_checker_1"
                     android:text="TEXT"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:visibility="visible" />
 
             </RelativeLayout>
@@ -72,14 +88,30 @@
             android:orientation="vertical"
             android:visibility="invisible">
 
-            <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/pager_image_2"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginBottom="8dp"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:visibility="visible" />
+            <RelativeLayout
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginBottom="8dp">
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/pager_image_2"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/image_zoom_2"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:alpha=".7"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_search_category_default"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -100,14 +132,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="4dp"
                     android:layout_marginBottom="8dp"
                     android:layout_toEndOf="@+id/pager_checker_2"
-                    android:layout_centerVertical="true"
                     android:text="TEXT"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:visibility="visible" />
 
             </RelativeLayout>
@@ -124,14 +156,30 @@
             android:orientation="vertical"
             android:visibility="invisible">
 
-            <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/pager_image_3"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginBottom="8dp"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:visibility="visible" />
+            <RelativeLayout
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginBottom="8dp">
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/pager_image_3"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/image_zoom_3"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:alpha=".7"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_search_category_default"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -152,14 +200,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="4dp"
                     android:layout_marginBottom="8dp"
                     android:layout_toEndOf="@+id/pager_checker_3"
-                    android:layout_centerVertical="true"
                     android:text="TEXT"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:visibility="visible" />
 
             </RelativeLayout>
@@ -176,14 +224,30 @@
             android:orientation="vertical"
             android:visibility="invisible">
 
-            <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/pager_image_4"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginBottom="8dp"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:visibility="visible" />
+            <RelativeLayout
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginBottom="8dp">
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/pager_image_4"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/image_zoom_4"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:alpha=".7"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_search_category_default"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -204,14 +268,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="4dp"
                     android:layout_marginBottom="8dp"
                     android:layout_toEndOf="@+id/pager_checker_4"
-                    android:layout_centerVertical="true"
                     android:text="TEXT"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:visibility="visible" />
 
             </RelativeLayout>
@@ -235,14 +299,30 @@
             android:orientation="vertical"
             android:visibility="invisible">
 
-            <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/pager_image_5"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginBottom="8dp"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:visibility="visible" />
+            <RelativeLayout
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginBottom="8dp">
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/pager_image_5"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/image_zoom_5"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:alpha=".7"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_search_category_default"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -263,14 +343,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="4dp"
                     android:layout_marginBottom="8dp"
                     android:layout_toEndOf="@+id/pager_checker_5"
-                    android:layout_centerVertical="true"
                     android:text="TEXT"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:visibility="visible" />
 
             </RelativeLayout>
@@ -287,14 +367,30 @@
             android:orientation="vertical"
             android:visibility="invisible">
 
-            <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/pager_image_6"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginBottom="8dp"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:visibility="visible" />
+            <RelativeLayout
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginBottom="8dp">
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/pager_image_6"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/image_zoom_6"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:alpha=".7"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_search_category_default"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -315,14 +411,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="4dp"
                     android:layout_marginBottom="8dp"
                     android:layout_toEndOf="@+id/pager_checker_6"
-                    android:layout_centerVertical="true"
                     android:text="TEXT"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:visibility="visible" />
 
             </RelativeLayout>
@@ -339,14 +435,30 @@
             android:orientation="vertical"
             android:visibility="invisible">
 
-            <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/pager_image_7"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginBottom="8dp"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:visibility="visible" />
+            <RelativeLayout
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginBottom="8dp">
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/pager_image_7"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/image_zoom_7"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:alpha=".7"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_search_category_default"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -367,14 +479,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="4dp"
                     android:layout_marginBottom="8dp"
                     android:layout_toEndOf="@+id/pager_checker_7"
-                    android:layout_centerVertical="true"
                     android:text="TEXT"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:visibility="visible" />
 
             </RelativeLayout>
@@ -391,14 +503,30 @@
             android:orientation="vertical"
             android:visibility="invisible">
 
-            <com.zolad.zoominimageview.ZoomInImageView
-                android:id="@+id/pager_image_8"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginBottom="8dp"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:visibility="visible" />
+            <RelativeLayout
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginBottom="8dp">
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/pager_image_8"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/image_zoom_8"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:alpha=".7"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_search_category_default"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -419,14 +547,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="4dp"
                     android:layout_marginBottom="8dp"
                     android:layout_toEndOf="@+id/pager_checker_8"
-                    android:layout_centerVertical="true"
                     android:text="TEXT"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:visibility="visible" />
 
             </RelativeLayout>

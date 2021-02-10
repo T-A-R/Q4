@@ -9,7 +9,8 @@
     <pro.quizer.quizer3.view.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -35,7 +36,7 @@
 
             <Button
                 android:id="@+id/logs_btn"
-                style="@style/ButtonStyle"
+                style="@style/ButtonAvia"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center_horizontal"
@@ -87,7 +88,7 @@
 
             <Button
                 android:id="@+id/send_data"
-                style="@style/ButtonStyle"
+                style="@style/ButtonAvia"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center_horizontal"
@@ -98,7 +99,7 @@
 
             <Button
                 android:id="@+id/send_audio"
-                style="@style/ButtonStyle"
+                style="@style/ButtonAvia"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center_horizontal"
@@ -109,7 +110,7 @@
 
             <Button
                 android:id="@+id/send_photo"
-                style="@style/ButtonStyle"
+                style="@style/ButtonAvia"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center_horizontal"
@@ -120,7 +121,7 @@
 
             <Button
                 android:id="@+id/upload_data"
-                style="@style/ButtonStyle"
+                style="@style/ButtonAvia"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center_horizontal"
@@ -131,7 +132,7 @@
 
             <Button
                 android:id="@+id/upload_ftp_data"
-                style="@style/ButtonStyle"
+                style="@style/ButtonAvia"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center_horizontal"
@@ -143,7 +144,7 @@
 
             <Button
                 android:id="@+id/clear_files"
-                style="@style/ButtonRed"
+                style="@style/ButtonAvia"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center_horizontal"
@@ -154,7 +155,7 @@
 
             <Button
                 android:id="@+id/clear_db"
-                style="@style/ButtonRed"
+                style="@style/ButtonAvia"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center_horizontal"

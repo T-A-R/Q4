@@ -1839,12 +1839,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     try {
                         if(answerType.equals(ElementSubtype.END)) {
                             nextElementId = currentElement.getElementOptionsR().getJump();
-                            Log.d("T-L.ElementFragment", "=== END NEXT ELEMENT: " + nextElementId);
-                            showToast("=== END NEXT ELEMENT: " + nextElementId);
+//                            Log.d("T-L.ElementFragment", "=== END NEXT ELEMENT: " + nextElementId);
+//                            showToast("=== END NEXT ELEMENT: " + nextElementId);
                         } else {
-                            showToast("=== NEXT ELEMENT: " + nextElementId);
+//                            showToast("=== NEXT ELEMENT: " + nextElementId);
                         }
-                        Log.d("T-L.ElementFragment", "=== NEXT ELEMENT: " + nextElementId);
+//                        Log.d("T-L.ElementFragment", "=== NEXT ELEMENT: " + nextElementId);
                         if (nextElementId == null) {
                             showRestartDialog();
                         } else if (nextElementId == 0) {

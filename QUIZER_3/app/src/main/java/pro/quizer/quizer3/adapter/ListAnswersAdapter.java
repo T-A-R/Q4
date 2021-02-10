@@ -6,9 +6,12 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -45,6 +48,7 @@ import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
+import pro.quizer.quizer3.view.PhoneFormatter;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.model.OptionsOpenType.CHECKBOX;
@@ -166,6 +170,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         RelativeLayout openAnswerCont;
         LinearLayout contentCont;
         LinearLayout cont;
+        PhoneFormatter phoneFormatter = new PhoneFormatter();
+        String mPhone = "";
 
         public ListObjectViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -403,13 +409,121 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                     case "time":
                         setTime(cardInput, position);
                         break;
+                    case "phone_ru":
+                        showPhoneDialog(cardInput, position);
+                        break;
                 }
+//                showPhoneDialog(cardInput, position);
             } else {
                 checkItem(position);
                 onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
             }
 
         }
+
+        @SuppressLint("ClickableViewAccessibility")
+        private void showPhoneDialog(final TextView pEditText, int position) {
+            final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mActivity);
+            final View mView = layoutInflaterAndroid.inflate(mActivity.isAutoZoom() ? R.layout.dialog_input_phone_auto : R.layout.dialog_input_phone, null);
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
+            dialog.setView(mView);
+
+            final EditText inputPhone = mView.findViewById(R.id.phone);
+            final View mNextBtn = mView.findViewById(R.id.view_ok);
+
+            if (answersList.get(position).getElementOptionsR().getOpen_type().equals(NUMBER)) {
+                inputPhone.setInputType(InputType.TYPE_CLASS_NUMBER);
+            }
+
+            inputPhone.setOnFocusChangeListener((view, hasFocus) -> {
+                if (hasFocus) {
+                    inputPhone.setText("+7(");
+                } else {
+                    mActivity.hideKeyboardFrom(view);
+                }
+            });
+
+            inputPhone.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    phoneFormatter.beforeTextChanged(start, count);
+                }
+
+                @Override
+                public void onTextChanged(CharSequence cs, int cursorPosition, int before, int count) {
+                    if (!cs.toString().equals(phoneFormatter.getPhone())) {
+                        phoneFormatter.onTextChanged(cs.toString(), cursorPosition, before, count);
+//                        Log.d("T-L.ListAnswersAdapter", "????????????? onTextChanged: " + phoneFormatter.getPhone() + " / " + phoneFormatter.getSelection());
+                        inputPhone.setText(phoneFormatter.getPhone());
+                        inputPhone.setSelection(phoneFormatter.getSelection());
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+
+            inputPhone.setOnTouchListener((v, event) -> {
+                if (inputPhone.getText().length() > 2) {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        inputPhone.post(new Runnable() {
+                            public void run() {
+                                Editable sb = inputPhone.getText();
+                                int currentPos = inputPhone.getSelectionStart();
+
+                                inputPhone.setSelection(inputPhone.getText().length());
+                            }
+                        });
+                    }
+                    return false;
+                }
+                return false;
+            });
+
+            String hint = answersList.get(position).getElementOptionsR().getPlaceholder();
+            String answer = answersState.get(position).getData();
+            if (answer != null && answer.length() > 0) {
+                inputPhone.setText(answersState.get(position).getData());
+            } else {
+                if (hint != null && hint.length() > 0) {
+                    inputPhone.setHint(hint);
+                }
+            }
+
+            inputPhone.setFocusable(true);
+            inputPhone.requestFocus();
+            inputPhone.setSelection(phoneFormatter.getSelection());
+            mActivity.showKeyboard();
+
+            dialog.setCancelable(false);
+            final AlertDialog alertDialog = dialog.create();
+
+            inputPhone.setSelection(inputPhone.getText().length());
+
+            mNextBtn.setOnClickListener(v -> {
+                mPhone = "7" + phoneFormatter.cleaned(inputPhone.getText().toString());
+                if ((phoneFormatter.getPhone().length() == 16) || answersList.get(position).getElementOptionsR().isUnnecessary_fill_open()) {
+                    answersState.get(position).setData(phoneFormatter.getPhone());
+                    pEditText.setText(inputPhone.getText().toString());
+                    onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
+                    checkItem(position);
+                    if (!mActivity.isFinishing()) {
+                        mActivity.hideKeyboardFrom(inputPhone);
+                        alertDialog.dismiss();
+                    }
+                } else
+                    mActivity.showToastfromActivity(mActivity.getString(R.string.empty_phone_warning));
+            });
+
+            if (!mActivity.isFinishing()) {
+                alertDialog.show();
+            }
+        }
+
+
+
     }
 
     private void checkItem(int position) {
@@ -588,6 +702,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             alertDialog.show();
         }
     }
+
+
 
     //For Tests
     private void showEnabled() {

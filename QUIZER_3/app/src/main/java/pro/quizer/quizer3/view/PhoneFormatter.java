@@ -1,4 +1,4 @@
-package pro.quizer.quizer3.view.fragment;
+package pro.quizer.quizer3.view;
 
 public class PhoneFormatter {
     String cached = "";

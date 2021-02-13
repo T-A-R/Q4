@@ -16,7 +16,8 @@
         android:gravity="center"
         android:text="@string/enter_phone"
         android:textColor="@android:color/black"
-        android:textSize="@dimen/_20ssp" />
+        android:textSize="@dimen/_20ssp"
+        android:visibility="gone"/>
 
     <pro.quizer.quizer3.view.element.edittext.ResizableEditText
         android:id="@+id/phone"
@@ -24,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/phone_info"
         android:layout_marginStart="@dimen/_6sdp"
-        android:layout_marginTop="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_8sdp"
         android:layout_marginEnd="@dimen/_34sdp"
         android:ems="10"
         android:inputType="number"

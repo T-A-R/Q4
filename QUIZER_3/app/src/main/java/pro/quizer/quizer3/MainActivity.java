@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -19,25 +20,31 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Process;
 import android.os.RemoteException;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.view.KeyEvent;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.scottyab.rootbeer.RootBeer;
 
 import java.io.File;
@@ -145,10 +152,13 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private Long audioTime;
     private Boolean mHomeRestart;
 
+    private RelativeLayout mainCont;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mainCont = findViewById(R.id.main_cont);
         if (AVIA)
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         else
@@ -242,7 +252,17 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    public void showToastLongFromActivity(String text) {
+        try {
+            runOnUiThread(() -> {
+                Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG).show();
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public QuizerDao getMainDao() {
@@ -1220,7 +1240,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         SettingsR settings = getMainDao().getSettings();
         if (settings == null) {
             settings = new SettingsR();
-            if(AVIA) settings.setAuto_zoom(false);
+            if (AVIA) settings.setAuto_zoom(false);
             getMainDao().insertSettings(settings);
             checkRoot();
         }

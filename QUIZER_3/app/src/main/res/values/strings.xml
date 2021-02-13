@@ -270,6 +270,7 @@
     <string name="empty_rank_warning">Не заполнен открытый ответ.</string>
     <string name="empty_input_warning">Заполните текстовое поле.</string>
     <string name="empty_phone_warning">Номер телефона указан не полностью.</string>
+    <string name="not_full_phone_warning">Номер введён не полностью. Чтобы продолжить анкету вы можете или удалить его, или ввести до конца.</string>
     <string name="empty_answers_warning">Вы не выбрали ни одного ответа.</string>
     <string name="view_x_from_y">\u0020(%1$s из %2$s)</string>
     <string name="view_x_from_y_two">\u0020%1$s из %2$s</string>

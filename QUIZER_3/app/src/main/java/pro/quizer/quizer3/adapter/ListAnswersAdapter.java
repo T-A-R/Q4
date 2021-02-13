@@ -276,7 +276,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             } else {
                 if (isChecked(position)) {
                     button.setImageResource(MainActivity.AVIA ? R.drawable.checkbox_checked_red : R.drawable.checkbox_checked);
-                    if(answersState.get(position).getData() != null && !answersState.get(position).getData().equals("")) editButton.setVisibility(View.GONE);
+                    if (answersState.get(position).getData() != null && !answersState.get(position).getData().equals("")) editButton.setVisibility(View.GONE);
                 } else {
                     button.setImageResource(MainActivity.AVIA ? R.drawable.checkbox_unchecked_red : R.drawable.checkbox_unchecked);
                 }
@@ -425,11 +425,15 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         private void showPhoneDialog(final TextView pEditText, int position) {
             final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mActivity);
             final View mView = layoutInflaterAndroid.inflate(mActivity.isAutoZoom() ? R.layout.dialog_input_phone_auto : R.layout.dialog_input_phone, null);
-            final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar);
             dialog.setView(mView);
 
             final EditText inputPhone = mView.findViewById(R.id.phone);
+            final EditText labelPhone = mView.findViewById(R.id.phone_info);
             final View mNextBtn = mView.findViewById(R.id.view_ok);
+
+//            if (answersList.get(position).getElementOptionsR().getPlaceholder() != null && !answersList.get(position).getElementOptionsR().getPlaceholder().equals(""))
+//                labelPhone.setText(answersList.get(position).getElementOptionsR().getPlaceholder());
 
             if (answersList.get(position).getElementOptionsR().getOpen_type().equals(NUMBER)) {
                 inputPhone.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -504,7 +508,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
             mNextBtn.setOnClickListener(v -> {
                 mPhone = "7" + phoneFormatter.cleaned(inputPhone.getText().toString());
-                if ((phoneFormatter.getPhone().length() == 16) || answersList.get(position).getElementOptionsR().isUnnecessary_fill_open()) {
+                if ((phoneFormatter.getPhone().length() == 16) || (answersList.get(position).getElementOptionsR().isUnnecessary_fill_open() && phoneFormatter.getPhone().length() == 3)) {
                     answersState.get(position).setData(phoneFormatter.getPhone());
                     pEditText.setText(inputPhone.getText().toString());
                     onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
@@ -513,15 +517,17 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                         mActivity.hideKeyboardFrom(inputPhone);
                         alertDialog.dismiss();
                     }
-                } else
-                    mActivity.showToastfromActivity(mActivity.getString(R.string.empty_phone_warning));
+                } else if (answersList.get(position).getElementOptionsR().isUnnecessary_fill_open()) {
+                    mActivity.showToastLongFromActivity(mActivity.getString(R.string.not_full_phone_warning));
+                } else {
+                    mActivity.showToastLongFromActivity(mActivity.getString(R.string.empty_phone_warning));
+                }
             });
 
             if (!mActivity.isFinishing()) {
                 alertDialog.show();
             }
         }
-
 
 
     }
@@ -704,11 +710,10 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     }
 
 
-
     //For Tests
     private void showEnabled() {
         Log.d("T-L.ListAnswersAdapter", "=========================================================");
-        for(int i = 0; i < answersList.size(); i++) {
+        for (int i = 0; i < answersList.size(); i++) {
             Log.d("T-L.ListAnswersAdapter", "showEnabled: (" + i + ") " + answersList.get(i).isEnabled());
         }
         Log.d("T-L.ListAnswersAdapter", "=========================================================");

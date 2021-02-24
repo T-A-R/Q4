@@ -509,8 +509,12 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             mNextBtn.setOnClickListener(v -> {
                 mPhone = "7" + phoneFormatter.cleaned(inputPhone.getText().toString());
                 if ((phoneFormatter.getPhone().length() == 16) || (answersList.get(position).getElementOptionsR().isUnnecessary_fill_open() && phoneFormatter.getPhone().length() == 3)) {
-                    answersState.get(position).setData(phoneFormatter.getPhone());
-                    pEditText.setText(inputPhone.getText().toString());
+                    if(answersList.get(position).getElementOptionsR().isUnnecessary_fill_open() && phoneFormatter.getPhone().length() == 3) {
+                        answersState.get(position).setData("");
+                    } else {
+                        answersState.get(position).setData(phoneFormatter.getPhone());
+                        pEditText.setText(inputPhone.getText().toString());
+                    }
                     onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
                     checkItem(position);
                     if (!mActivity.isFinishing()) {

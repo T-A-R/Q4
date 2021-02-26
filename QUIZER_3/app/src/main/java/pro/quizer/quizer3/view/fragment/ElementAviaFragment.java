@@ -95,7 +95,7 @@ public class ElementAviaFragment extends ScreenFragment implements
     private LinearLayout questionCont;
     private LinearLayout questionImagesCont;
     private LinearLayout spinnerCont;
-    private LinearLayout infoCont;
+    private RelativeLayout infoCont;
     private FrameLayout tableCont;
     private TextView tvHiddenTitle;
     private TextView tvTitle1;

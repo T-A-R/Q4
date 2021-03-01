@@ -1344,7 +1344,7 @@ public class ElementAviaFragment extends ScreenFragment implements
                         }
                     }
                     if (!localDone) {
-                        showToast("Пожалуйста ответьте на все вопросы.");
+                        showToast("Пожалуйста, ответьте на все вопросы.");
                         saved = false;
                         isCompleted = false;
                         break;

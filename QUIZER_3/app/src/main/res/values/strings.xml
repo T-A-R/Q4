@@ -411,7 +411,7 @@
     <string name="sync_have_unfinished_no">Наличие незавершённой анкеты в очереди на продолжение: нет</string>
     <string name="project_not_active">Проект неактивен</string>
     <string name="project_not_active_error">Проект неактивен, анкеты не могут быть отправлены на сервер</string>
-    <string name="not_enough_space">Недостаточно свободного места на устройстве. Пожалуйста освободите больше места.</string>
+    <string name="not_enough_space">Недостаточно свободного места на устройстве. Пожалуйста, освободите больше места.</string>
     <string name="please_wait_quiz">Подождите, идет подготовка анкеты</string>
     <string name="please_wait_quiz_element">Подождите,  идет загрузка элемента анкеты</string>
     <string name="quiz_saved">Анкета сохранена</string>
@@ -441,9 +441,9 @@
     <string name="enter_your_name">Введите ваше имя</string>
     <string name="enter_your_birthdate">Введите дату рождения</string>
     <string name="are_you">Это Вы?</string>
-    <string name="please_enter_name_and_birthdate">Пожалуста заполните имя и дату рождения</string>
+    <string name="please_enter_name_and_birthdate">Пожалуста, заполните имя и дату рождения</string>
     <string name="offline_name_warning">После изменения имени ещё не было связи с сервером. Чтобы увидеть полную информацию по данному имени подключитесь к Интернету!</string>
-    <string name="please_enter_name">Пожалуйста введите имя.</string>
+    <string name="please_enter_name">Пожалуйста, введите имя.</string>
     <string name="button_finish">Завершить</string>
     <string name="select_input_hint">Поиск</string>
     <string name="answer_selector">Ответить</string>

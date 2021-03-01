@@ -759,7 +759,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 }
             } else {
                 completed = false;
-                mContext.showToastfromActivity("Пожалуйста ответьте на все вопросы");
+                mContext.showToastfromActivity("Пожалуйста, ответьте на все вопросы");
                 return completed;
             }
         }

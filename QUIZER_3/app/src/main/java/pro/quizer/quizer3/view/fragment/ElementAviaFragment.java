@@ -1780,8 +1780,8 @@ public class ElementAviaFragment extends ScreenFragment implements
 
     @Override
     public boolean onBackPressed() {
-        if (canBack)
-            onClick(btnPrev);
+//        if (canBack)
+//            onClick(btnPrev);
         return true;
     }
 

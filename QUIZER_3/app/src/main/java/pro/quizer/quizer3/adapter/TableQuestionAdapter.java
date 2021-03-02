@@ -287,8 +287,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     public void onBindLeftTopHeaderViewHolder(@NonNull final ViewHolderImpl viewHolder) {
         final TableHeaderLeftTopViewHolder vh = (TableHeaderLeftTopViewHolder) viewHolder;
         vh.mHeaderLeftTopTextView.setTypeface(Fonts.getFuturaPtBook());
-        vh.mHeaderLeftTopTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
-        UiUtils.setTextOrHide(vh.mHeaderLeftTopTextView, mContext.getString(R.string.table_label));
+        vh.mHeaderLeftTopTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+        if (!AVIA)
+            UiUtils.setTextOrHide(vh.mHeaderLeftTopTextView, mContext.getString(R.string.table_label));
     }
 
     @Override
@@ -631,9 +632,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final TextView title = mView.findViewById(R.id.title);
         final TextView description = mView.findViewById(R.id.description);
         title.setTypeface(Fonts.getFuturaPtBook());
-        title.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
         description.setTypeface(Fonts.getFuturaPtBook());
-        description.setTextSize(TypedValue.COMPLEX_UNIT_SP,14);
+        description.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         description.setTypeface(description.getTypeface(), Typeface.ITALIC);
 
         title.setText(Objects.requireNonNull(titlesMap.get(pOptionsModel.getRelative_id())).getTitle());
@@ -670,7 +671,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mOpenAnswerEditText.setFocusableInTouchMode(false);
 
             mOpenAnswerEditText.setTypeface(Fonts.getFuturaPtBook());
-            mOpenAnswerEditText.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+            mOpenAnswerEditText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
         }
     }
 
@@ -684,7 +685,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mHeaderColumnTextView = itemView.findViewById(R.id.table_header_column_text_view);
             mColumnCont = itemView.findViewById(R.id.column_cont);
             mHeaderColumnTextView.setTypeface(Fonts.getFuturaPtBook());
-            mHeaderColumnTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+            mHeaderColumnTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
 
         }
     }
@@ -701,9 +702,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mHeaderRowDescriptionTextView = itemView.findViewById(R.id.table_header_row_description_text_view);
             mRowCont = itemView.findViewById(R.id.row_cont);
             mHeaderRowTextView.setTypeface(Fonts.getFuturaPtBook());
-            mHeaderRowTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+            mHeaderRowTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
             mHeaderRowDescriptionTextView.setTypeface(Fonts.getFuturaPtBook());
-            mHeaderRowDescriptionTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,14);
+            mHeaderRowDescriptionTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
             mHeaderRowDescriptionTextView.setTypeface(mHeaderRowDescriptionTextView.getTypeface(), Typeface.ITALIC);
         }
     }
@@ -717,7 +718,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
             mHeaderLeftTopTextView = itemView.findViewById(R.id.table_header_left_top_text_view);
             mHeaderLeftTopTextView.setTypeface(Fonts.getFuturaPtBook());
-            mHeaderLeftTopTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+            mHeaderLeftTopTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
         }
     }
 

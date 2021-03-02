@@ -4,9 +4,9 @@
         <shape
             android:shape="rectangle">
             <corners
-                android:radius="@dimen/button_corner_radius_avia" />
+                android:radius="@dimen/button_corner_radius" />
             <solid
-                android:color="@color/brand_color_avia" />
+                android:color="@color/lightGray" />
         </shape>
     </item>
 </selector>

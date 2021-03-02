@@ -18,11 +18,13 @@ import pro.quizer.quizer3.utils.Fonts;
 public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.PageSelectViewHolder> {
 
     private final OnAnswerClickListener onAnswerClickListener;
+    private List<SelectItem> answersFullList;
     private List<SelectItem> answers;
     private boolean isMulti;
 
     public SelectAdapter(List<SelectItem> answers, boolean isMulti, OnAnswerClickListener onAnswerClickListener) {
         this.answers = answers;
+        this.answersFullList = answers;
         this.isMulti = isMulti;
         this.onAnswerClickListener = onAnswerClickListener;
     }
@@ -79,8 +81,17 @@ public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.PageSelect
                 answers.set(position, item);
             } else {
                 if (!answers.get(position).isChecked()) {
-                    for (int i = 0; i < answers.size(); i++) {
-                        answers.get(i).setChecked(i == position);
+                    for (SelectItem item : answers) {
+                        item.setChecked(false);
+                    }
+                    for (int i = 0; i < answersFullList.size(); i++) {
+//                        answers.get(i).setChecked(i == position);
+                        if (answersFullList.get(i).getTitle().equals(answers.get(position).getTitle())) {
+                            answersFullList.get(i).setChecked(true);
+                            answers.get(position).setChecked(true);
+                        } else {
+                            answersFullList.get(i).setChecked(false);
+                        }
                     }
                 }
             }
@@ -95,7 +106,7 @@ public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.PageSelect
     }
 
     public List<SelectItem> getAnswers() {
-        return answers;
+        return answersFullList;
     }
 
     public void setAnswers(List<SelectItem> answers) {

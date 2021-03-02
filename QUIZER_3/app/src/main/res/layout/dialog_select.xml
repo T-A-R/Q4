@@ -51,6 +51,13 @@
             android:layout_marginEnd="28dp"
             android:layout_above="@+id/select_ok_button"
             android:layout_below="@+id/select_input"
+            android:fadeScrollbars="false"
+            android:scrollbarAlwaysDrawVerticalTrack="false"
+            android:scrollbarSize="@dimen/_8sdp"
+            android:scrollbarStyle="outsideInset"
+            android:scrollbarThumbVertical="@drawable/scrollbar_avia"
+            android:scrollbarTrackVertical="@drawable/scroll_avia_transparent"
+            android:scrollbars="vertical"
             tools:ignore="UnknownIdInLayout" />
 
         <Button

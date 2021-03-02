@@ -497,7 +497,8 @@
             android:layout_weight="1"
             android:maxLines="1"
             android:text="Назад"
-            android:textSize="@dimen/_10ssp" />
+            android:textSize="@dimen/_10ssp"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/exit_btn"

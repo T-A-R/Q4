@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -189,7 +190,7 @@ public class PageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public void showSelectDialog(final ElementItemR item, final List<AnswerState> answerStates) {
             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mActivity);
             View layoutView = mActivity.getLayoutInflater().inflate(R.layout.dialog_select, null);
-            View mOkBtn = layoutView.findViewById(R.id.select_ok_button);
+            Button mOkBtn = layoutView.findViewById(R.id.select_ok_button);
             RecyclerView recyclerView = layoutView.findViewById(R.id.select_recyclerview);
             TextView questionTitle = layoutView.findViewById(R.id.select_title);
             questionTitle.setText(item.getElementOptionsR().getTitle());
@@ -197,6 +198,7 @@ public class PageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             questionTitle.setTypeface(Fonts.getFuturaPtBook());
             selectInput.setTypeface(Fonts.getFuturaPtBook());
+            mOkBtn.setTypeface(Fonts.getFuturaPtBook());
 
             List<ElementItemR> elementItems = item.getElements();
             List<SelectItem> selectItems = new ArrayList<>();

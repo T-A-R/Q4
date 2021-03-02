@@ -490,6 +490,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private boolean checkGps() {
+        if(AVIA) return true;
         GPSModel mGPSModel = null;
         isForceGps = activity.getConfig().isForceGps();
         mIsUsedFakeGps = false;

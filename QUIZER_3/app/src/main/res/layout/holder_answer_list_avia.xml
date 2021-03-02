@@ -85,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:text="Answer"
                     android:textColor="@android:color/black"
-                    android:textSize="18sp" />
+                    android:textSize="22sp" />
 
                 <TextView
                     android:id="@+id/answer_desc"
@@ -94,7 +94,7 @@
                     android:layout_marginTop="@dimen/_2sdp"
                     android:text="Answer"
                     android:textColor="@color/dark_shadow"
-                    android:textSize="14sp"
+                    android:textSize="20sp"
                     android:textStyle="italic"
                     android:visibility="gone" />
 
@@ -130,7 +130,7 @@
             android:layout_marginLeft="@dimen/_8sdp"
             android:layout_marginRight="@dimen/_8sdp"
             android:maxLines="1"
-            android:textSize="16sp" />
+            android:textSize="20sp" />
 
         <ImageView
             android:id="@+id/edit_button"

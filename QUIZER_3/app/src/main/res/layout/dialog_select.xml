@@ -29,7 +29,7 @@
             android:layout_alignParentTop="true"
             android:text="Вопрос"
             android:textColor="@color/black"
-            android:textSize="18sp" />
+            android:textSize="22sp" />
 
         <EditText
             android:id="@+id/select_input"
@@ -41,7 +41,7 @@
             android:hint="@string/select_input_hint"
             android:importantForAutofill="no"
             android:inputType="text"
-            android:textSize="18sp" />
+            android:textSize="22sp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/select_recyclerview"
@@ -53,18 +53,20 @@
             android:layout_below="@+id/select_input"
             tools:ignore="UnknownIdInLayout" />
 
-        <TextView
+        <Button
             android:id="@+id/select_ok_button"
+            style="@style/ButtonAvia"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_gravity="end"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="28dp"
             android:layout_marginBottom="20dp"
-            android:text="@string/view_OK"
-            android:textColor="@color/brand_color_avia" />
+            android:maxLines="1"
+            android:text="ОК"
+            android:textSize="@dimen/_10ssp" />
 
     </RelativeLayout>
 

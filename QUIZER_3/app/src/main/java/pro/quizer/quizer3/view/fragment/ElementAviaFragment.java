@@ -253,11 +253,11 @@ public class ElementAviaFragment extends ScreenFragment implements
 
         if (prevList == null || prevList.size() == 0) {
             prevList = new ArrayList<>();
-            btnPrev.setVisibility(View.INVISIBLE);
+            btnPrev.setVisibility(isAvia()? View.GONE : View.INVISIBLE);
         }
 
         if (prevList.size() == 0 || prevList.size() == 1) {
-            btnPrev.setVisibility(View.INVISIBLE);
+            btnPrev.setVisibility(isAvia()? View.GONE : View.INVISIBLE);
             cont.startAnimation(Anim.getAppear(getContext()));
             btnNext.startAnimation(Anim.getAppearSlide(getContext(), 500));
         } else {

@@ -244,7 +244,7 @@ public class ElementAviaFragment extends ScreenFragment implements
 
         st("init views 1");
 
-        showScreensaver(R.string.please_wait_quiz_element, true);
+//        showScreensaver(R.string.please_wait_quiz_element, true);
         try {
             prevList = getDao().getPrevElementsR();
         } catch (Exception e) {
@@ -1849,7 +1849,7 @@ public class ElementAviaFragment extends ScreenFragment implements
                     .setMessage(getMainActivity().getConfig().isSaveAborted() ? R.string.exit_questionnaire_with_saving_warning : R.string.exit_questionnaire_warning)
                     .setPositiveButton(R.string.view_yes, (dialog, which) -> {
                         if (getMainActivity().getConfig().isSaveAborted()) {
-                            showScreensaver(true);
+//                            showScreensaver(true);
                             if (saveQuestionnaire(true)) {
                                 showToast(getString(R.string.save_questionnaire));
 

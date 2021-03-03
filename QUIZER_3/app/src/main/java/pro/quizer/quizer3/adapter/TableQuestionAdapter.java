@@ -139,7 +139,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         if (AVIA) {
             mRowHeight = res.getDimensionPixelSize(R.dimen.avia_row_height);
-            mHeaderHeight = res.getDimensionPixelSize(R.dimen.avia_column_header_height);
+            mHeaderHeight = res.getDimensionPixelSize(R.dimen.column_avia_small_header_height);
             final int widthIndex = mTopSide.size() + 1 >= CELL_COUNT ? CELL_COUNT : HALF;
             mHeaderWidth = UiUtils.getDisplayWidth(context) / widthIndex;
             mColumnWidth = UiUtils.getDisplayWidth(context) / widthIndex;
@@ -183,13 +183,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     @NonNull
     @Override
     public ViewHolderImpl onCreateColumnHeaderViewHolder(@NonNull final ViewGroup parent) {
-        return new TableHeaderColumnViewHolder(mLayoutInflater.inflate(R.layout.adapter_table_item_header_column_auto, parent, false));
+        return new TableHeaderColumnViewHolder(mLayoutInflater.inflate(AVIA ? R.layout.adapter_table_item_header_column_avia : R.layout.adapter_table_item_header_column_auto, parent, false));
     }
 
     @NonNull
     @Override
     public ViewHolderImpl onCreateRowHeaderViewHolder(@NonNull final ViewGroup parent) {
-        return new TableHeaderRowViewHolder(mLayoutInflater.inflate(mContext.isAutoZoom() ? R.layout.adapter_table_item_header_row_auto : R.layout.adapter_table_item_header_row, parent, false));
+        return new TableHeaderRowViewHolder(mLayoutInflater.inflate(AVIA ? R.layout.adapter_table_item_header_row_avia : mContext.isAutoZoom() ? R.layout.adapter_table_item_header_row_auto : R.layout.adapter_table_item_header_row, parent, false));
     }
 
     @NonNull
@@ -671,7 +671,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mOpenAnswerEditText.setFocusableInTouchMode(false);
 
             mOpenAnswerEditText.setTypeface(Fonts.getFuturaPtBook());
-            mOpenAnswerEditText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+            mOpenAnswerEditText.setTextSize(TypedValue.COMPLEX_UNIT_SP, AVIA ? 26 : 18);
         }
     }
 
@@ -685,7 +685,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mHeaderColumnTextView = itemView.findViewById(R.id.table_header_column_text_view);
             mColumnCont = itemView.findViewById(R.id.column_cont);
             mHeaderColumnTextView.setTypeface(Fonts.getFuturaPtBook());
-            mHeaderColumnTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+            mHeaderColumnTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, AVIA ? 26 : 18);
 
         }
     }
@@ -702,7 +702,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mHeaderRowDescriptionTextView = itemView.findViewById(R.id.table_header_row_description_text_view);
             mRowCont = itemView.findViewById(R.id.row_cont);
             mHeaderRowTextView.setTypeface(Fonts.getFuturaPtBook());
-            mHeaderRowTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+            mHeaderRowTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, AVIA ? 26 : 18);
             mHeaderRowDescriptionTextView.setTypeface(Fonts.getFuturaPtBook());
             mHeaderRowDescriptionTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
             mHeaderRowDescriptionTextView.setTypeface(mHeaderRowDescriptionTextView.getTypeface(), Typeface.ITALIC);
@@ -718,7 +718,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
             mHeaderLeftTopTextView = itemView.findViewById(R.id.table_header_left_top_text_view);
             mHeaderLeftTopTextView.setTypeface(Fonts.getFuturaPtBook());
-            mHeaderLeftTopTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+            mHeaderLeftTopTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, AVIA ? 26 : 18);
         }
     }
 

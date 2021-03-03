@@ -14,7 +14,8 @@
         android:layout_height="16dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:src="@drawable/ic_fullscreen" />
+        android:src="@drawable/ic_fullscreen"
+        android:visibility="invisible"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -26,7 +27,7 @@
     <TextView
         android:id="@+id/table_header_row_text_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_toStartOf="@+id/fullscreen"
@@ -37,7 +38,7 @@
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
         android:textColor="@android:color/black"
-        android:textSize="@dimen/_10ssp"
+        android:textSize="@dimen/_18ssp"
         android:longClickable="false"
         android:text="text" />
 
@@ -58,5 +59,6 @@
         android:textSize="@dimen/_10ssp"
         android:textStyle="italic"
         android:longClickable="false"
-        android:text="text" />
+        android:text="text"
+        android:visibility="gone"/>
 </RelativeLayout>

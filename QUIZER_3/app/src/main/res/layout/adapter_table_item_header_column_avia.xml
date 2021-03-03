@@ -11,7 +11,8 @@
         android:layout_height="16dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:src="@drawable/ic_fullscreen" />
+        android:src="@drawable/ic_fullscreen"
+        android:visibility="invisible"/>
 
     <TextView
         android:layout_width="1dp"
@@ -25,18 +26,18 @@
         android:layout_width="2dp"
         android:layout_height="match_parent" />
 
-    <pro.quizer.quizer3.view.element.textview.VerticalTextView
+    <TextView
         android:id="@+id/table_header_column_text_view"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/_16sdp"
         android:layout_marginBottom="@dimen/_4sdp"
-
         android:gravity="bottom"
         android:maxLines="2"
-        android:text="Барсуков Ибрагим Исаевич"
+        android:text="3"
+        android:layout_centerInParent="true"
         android:textColor="@android:color/black"
-        android:textSize="@dimen/_11ssp"
+        android:textSize="@dimen/_18ssp"
         android:visibility="visible" />
 
 

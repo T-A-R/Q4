@@ -94,7 +94,7 @@
                     android:layout_height="wrap_content"
                     android:text="Answer"
                     android:textColor="@android:color/black"
-                    android:textSize="22sp" />
+                    android:textSize="26sp" />
 
                 <TextView
                     android:id="@+id/answer_desc"

@@ -32,7 +32,7 @@
             android:layout_toEndOf="@+id/select_checker"
             android:text=""
             android:textColor="@color/black"
-            android:textSize="22sp"
+            android:textSize="26sp"
             android:visibility="visible" />
 
 

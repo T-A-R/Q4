@@ -632,7 +632,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final TextView title = mView.findViewById(R.id.title);
         final TextView description = mView.findViewById(R.id.description);
         title.setTypeface(Fonts.getFuturaPtBook());
-        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, AVIA ? 26 : 18);
         description.setTypeface(Fonts.getFuturaPtBook());
         description.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         description.setTypeface(description.getTypeface(), Typeface.ITALIC);

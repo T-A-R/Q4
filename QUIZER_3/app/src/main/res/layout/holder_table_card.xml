@@ -23,7 +23,7 @@
             android:layout_toLeftOf="@+id/checker"
             android:text=""
             android:textColor="@color/black"
-            android:textSize="@dimen/_14ssp"
+            android:textSize="26sp"
             android:visibility="visible" />
 
         <ImageView

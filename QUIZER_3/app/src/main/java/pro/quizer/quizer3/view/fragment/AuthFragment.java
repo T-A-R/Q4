@@ -147,7 +147,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             }
         }
         long memory = FileUtils.getAvailableInternalMemorySizeLong();
-        if (memory < 100000000) {
+        if (memory < 100000000 && !AVIA) {
             showToast(getString(R.string.not_enough_space));
         }
 
@@ -289,7 +289,11 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             saveUser(pLogin, pPassword, pAuthResponseModel, pConfigResponseModel.getConfig());
             saveCurrentUserId(pAuthResponseModel.getUserId());
         } catch (final Exception e) {
-            showToast(getString(R.string.server_response_error) + "\n" + e);
+            if (!AVIA)
+                showToast(getString(R.string.server_response_error) + "\n" + e);
+            getMainActivity().addLog(Constants.LogObject.AUDIO, "save user", Constants.LogResult.ERROR,
+                    "Cant save user", e.toString());
+
             return;
         }
 

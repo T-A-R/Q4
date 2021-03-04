@@ -187,9 +187,10 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
             answerTitle.setTypeface(Fonts.getFuturaPtBook());
             answerPosition.setTypeface(Fonts.getFuturaPtBook());
-//            answerDesc.setTypeface(Fonts.getFuturaPtBook());
             answerEditText.setTypeface(Fonts.getFuturaPtBook());
             answerEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+            if(answersList.size() == 1) button.setVisibility(View.GONE);
 
         }
 

@@ -75,6 +75,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private boolean isSpeedMode;
     private List<String> titles;
     private Map<Integer, TitleModel> titlesMap;
+    private boolean isHeaderTextVertical = false;
 
     public TableQuestionAdapter(final ElementItemR pCurrentElement, List<ElementItemR> questions, Map<Integer, TitleModel> pTitlesMap, final Context context, final Runnable pRefreshRunnable, OnTableAnswerClickListener pOnTableAnswerClickListener) {
 
@@ -90,6 +91,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         mIsSmallColumns = optionsModel.isSmall_column();
         mContext = (MainActivity) context;
         isSpeedMode = mContext.isTableSpeedMode();
+        isHeaderTextVertical = mContext.getSettings().isVertical_table_header();
         mQuestions = questions;
         if (!isSpeedMode) {
             mLine = new boolean[mQuestions.size()];
@@ -139,7 +141,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         if (AVIA) {
             mRowHeight = res.getDimensionPixelSize(R.dimen.avia_row_height);
-            mHeaderHeight = res.getDimensionPixelSize(R.dimen.column_avia_small_header_height);
+            mHeaderHeight = res.getDimensionPixelSize(isHeaderTextVertical ? R.dimen.avia_column_header_height : R.dimen.column_avia_small_header_height);
             final int widthIndex = mTopSide.size() + 1 >= CELL_COUNT ? CELL_COUNT : HALF;
             mHeaderWidth = UiUtils.getDisplayWidth(context) / widthIndex;
             mColumnWidth = UiUtils.getDisplayWidth(context) / widthIndex;
@@ -183,7 +185,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     @NonNull
     @Override
     public ViewHolderImpl onCreateColumnHeaderViewHolder(@NonNull final ViewGroup parent) {
-        return new TableHeaderColumnViewHolder(mLayoutInflater.inflate(AVIA ? R.layout.adapter_table_item_header_column_avia : R.layout.adapter_table_item_header_column_auto, parent, false));
+        return new TableHeaderColumnViewHolder(mLayoutInflater.inflate(!AVIA ? R.layout.adapter_table_item_header_column_auto : isHeaderTextVertical ? R.layout.adapter_table_item_header_vertical_avia : R.layout.adapter_table_item_header_column_avia, parent, false));
     }
 
     @NonNull

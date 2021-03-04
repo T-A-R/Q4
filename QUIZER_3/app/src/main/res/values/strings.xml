@@ -287,6 +287,7 @@
     <string name="view_switch_auto_zoom">Автоматическое маштабирование шрифтов</string>
     <string name="view_switch_dark_mode">Затемнение закрытых квот</string>
     <string name="view_switch_speed">Режим производительности таблиц</string>
+    <string name="view_switch_table_header">Поворот текста в колонке таблицы</string>
     <string name="view_switch_memory">Проверка свободного места</string>
     <string name="view_hint_search">Поиск</string>
     <string name="quota_not_renew_after_send">Квота не обновлена после последней отправки анкеты.</string>

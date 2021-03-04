@@ -318,7 +318,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         new SendQuestionnairesByUserModelExecutable(getMainActivity(), mUserModel, new ICallback() {
             @Override
             public void onStarting() {
-                showScreensaver(true);
+//                showScreensaver(true);
             }
 
             @Override
@@ -1302,7 +1302,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             setEventsListener(id -> {
                 switch (id) {
                     case 1:
-                        showScreensaver("Идет обновление конфига", true);
+//                        showScreensaver("Идет обновление конфига", true);
                         isCanBackPress = false;
                         deactivateStartButtons();
                         break;
@@ -1358,7 +1358,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         protected void onPreExecute() {
             super.onPreExecute();
             Log.d(TAG, "StartNewQuiz: ZERO");
-            showScreensaver(R.string.wait_starting_new_quiz, true);
+//            showScreensaver(R.string.wait_starting_new_quiz, true);
             deactivateButtons();
             isCanBackPress = false;
         }

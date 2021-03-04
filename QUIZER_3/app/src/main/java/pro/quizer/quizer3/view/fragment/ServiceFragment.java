@@ -1,8 +1,11 @@
 package pro.quizer.quizer3.view.fragment;
 
 import androidx.appcompat.app.AlertDialog;
+
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.io.File;
@@ -27,6 +30,8 @@ import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
+import static pro.quizer.quizer3.MainActivity.AVIA;
+
 public class ServiceFragment extends ScreenFragment {
 
     private Button mSendDataButton;
@@ -50,7 +55,7 @@ public class ServiceFragment extends ScreenFragment {
     private MainActivity activity;
 
     public ServiceFragment() {
-        super(R.layout.fragment_service_avia);
+        super(AVIA ? R.layout.fragment_service_avia : R.layout.fragment_service);
     }
 
     @Override
@@ -79,15 +84,19 @@ public class ServiceFragment extends ScreenFragment {
         mUnsendePhoto = findViewById(R.id.unsended_photo_files_count);
         mDeviceId = findViewById(R.id.device_id);
 
-        if(isAvia()) {
-             mSendDataButton.setTypeface(Fonts.getAviaButton());
-             mSendAudioButton.setTypeface(Fonts.getAviaButton());
-             mSendPhotoButton.setTypeface(Fonts.getAviaButton());
-             mClearFiles.setTypeface(Fonts.getAviaButton());
-             mClearDbButton.setTypeface(Fonts.getAviaButton());
-             mUploadDataButton.setTypeface(Fonts.getAviaButton());
-             mUploadFTPDataButton.setTypeface(Fonts.getAviaButton());
-             mLogsButton.setTypeface(Fonts.getAviaButton());
+        if (isAvia()) {
+            mSendDataButton.setTypeface(Fonts.getAviaButton());
+            mSendAudioButton.setTypeface(Fonts.getAviaButton());
+            mSendPhotoButton.setTypeface(Fonts.getAviaButton());
+            mClearFiles.setTypeface(Fonts.getAviaButton());
+            mClearDbButton.setTypeface(Fonts.getAviaButton());
+            mUploadDataButton.setTypeface(Fonts.getAviaButton());
+            mUploadFTPDataButton.setTypeface(Fonts.getAviaButton());
+            mLogsButton.setTypeface(Fonts.getAviaButton());
+
+            Switch tableSwitch = findViewById(R.id.table_switch);
+            tableSwitch.setChecked(activity.getSettings().isVertical_table_header());
+            tableSwitch.setOnCheckedChangeListener((compoundButton, b) -> activity.setTableHeaderMode(b));
         }
 
         Toolbar mToolbar = findViewById(R.id.toolbar);
@@ -96,14 +105,6 @@ public class ServiceFragment extends ScreenFragment {
 
         RelativeLayout cont = findViewById(R.id.service_cont);
         cont.startAnimation(Anim.getAppear(getContext()));
-//        mLogsButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
-//        mSendDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
-//        mSendAudioButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
-//        mSendPhotoButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
-//        mClearFiles.startAnimation(Anim.getAppearSlide(getContext(), 500));
-//        mClearDbButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
-//        mUploadDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
-//        mUploadFTPDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
     }
 
     private void initStrings() {
@@ -143,7 +144,6 @@ public class ServiceFragment extends ScreenFragment {
         });
 
         mSendDataButton.setOnClickListener(view -> {
-//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.QUESTIONNAIRE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_send_quiz), null);
             new SendAllQuestionnairesExecutable((MainActivity) getActivity(), new ICallback() {
                 @Override
                 public void onStarting() {
@@ -165,7 +165,6 @@ public class ServiceFragment extends ScreenFragment {
         mSendPhotoButton.setOnClickListener(view -> {
             if (hasUnfinishedOrSend(notSentQuestionnairesCount, hasUnfinishedQuiz)) return;
 
-//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_send_photo), null);
             new AllPhotosSendingExecutable((MainActivity) getActivity(), new ICallback() {
                 @Override
                 public void onStarting() {
@@ -187,7 +186,6 @@ public class ServiceFragment extends ScreenFragment {
         mSendAudioButton.setOnClickListener(view -> {
             if (hasUnfinishedOrSend(notSentQuestionnairesCount, hasUnfinishedQuiz)) return;
 
-//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_send_audio), null);
             new AllAudiosSendingExecutable((MainActivity) getActivity(), new ICallback() {
                 @Override
                 public void onStarting() {
@@ -207,7 +205,6 @@ public class ServiceFragment extends ScreenFragment {
         });
 
         mClearDbButton.setOnClickListener(view -> {
-//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_clear_db), null);
             if (getActivity() != null && !getActivity().isFinishing()) {
                 try {
                     showClearDbAlertDialog();
@@ -219,7 +216,6 @@ public class ServiceFragment extends ScreenFragment {
         });
 
         mClearFiles.setOnClickListener(view -> {
-//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_clear_db), null);
             if (getActivity() != null && !getActivity().isFinishing()) {
                 new CleanUpFilesExecutable(activity, new ICallback() {
                     @Override
@@ -244,7 +240,6 @@ public class ServiceFragment extends ScreenFragment {
         });
 
         mUploadDataButton.setOnClickListener(view -> {
-//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_upload_data), null);
             new UploadingExecutable((MainActivity) getActivity(), new ICallback() {
                 @Override
                 public void onStarting() {
@@ -265,7 +260,6 @@ public class ServiceFragment extends ScreenFragment {
         });
 
         mUploadFTPDataButton.setOnClickListener(view -> {
-//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.ftp_upload), null);
             new UploadingFTPExecutable((MainActivity) getActivity(), new ICallback() {
                 @Override
                 public void onStarting() {
@@ -298,7 +292,7 @@ public class ServiceFragment extends ScreenFragment {
                     .setTitle(R.string.clear_db_title)
                     .setMessage(R.string.dialog_clear_db_warning)
                     .setPositiveButton(R.string.view_yes, (dialog, which) -> {
-                        showScreensaver(getString(R.string.notification_clear_db),true);
+                        showScreensaver(getString(R.string.notification_clear_db), true);
                         new DeleteUsersExecutable(activity, new ICallback() {
                             @Override
                             public void onStarting() {

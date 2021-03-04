@@ -81,10 +81,22 @@
                 android:id="@+id/unsended_photo_files_count"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="8dp"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/_12ssp"
                 tools:text="@string/view_unsent_count_photo" />
+
+            <include layout="@layout/view_divider" />
+
+            <Switch
+                android:id="@+id/table_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="@dimen/_6sdp"
+                android:checked="false"
+                android:text="@string/view_switch_table_header"
+                android:textSize="@dimen/_12ssp" />
 
             <Button
                 android:id="@+id/send_data"

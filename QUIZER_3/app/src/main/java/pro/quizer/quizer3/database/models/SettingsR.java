@@ -50,6 +50,9 @@ public class SettingsR {
     @ColumnInfo(name = "user_date")
     private Long user_date;
 
+    @ColumnInfo(name = "vertical_table_header")
+    private boolean vertical_table_header;
+
     public SettingsR() {
         this.started = false;
         this.auto_zoom = true;
@@ -58,6 +61,7 @@ public class SettingsR {
         this.dark_mode = true;
         this.project_is_active = true;
         this.root = false;
+        this.vertical_table_header = true;
     }
 
     public int getId() {
@@ -170,5 +174,13 @@ public class SettingsR {
 
     public void setUser_date(Long user_date) {
         this.user_date = user_date;
+    }
+
+    public boolean isVertical_table_header() {
+        return vertical_table_header;
+    }
+
+    public void setVertical_table_header(boolean vertical_table_header) {
+        this.vertical_table_header = vertical_table_header;
     }
 }

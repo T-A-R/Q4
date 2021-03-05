@@ -37,7 +37,7 @@
 
         <activity
             android:name="pro.quizer.quizer3.MainActivity"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="relaunch.activity.ACTIVITY_SELF_START_INTENT" />

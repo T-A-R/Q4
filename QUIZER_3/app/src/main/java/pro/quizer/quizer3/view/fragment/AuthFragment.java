@@ -186,7 +186,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     private void checkVersion() {
         final int sdk = android.os.Build.VERSION.SDK_INT;
 
-        if (sdk < Build.VERSION_CODES.LOLLIPOP && !Build.VERSION.RELEASE.equals("4.4.4")) {
+        if (sdk < Build.VERSION_CODES.LOLLIPOP && !Build.VERSION.RELEASE.equals("4.4.4") && !isAvia()) {
             tvVersionWarning.setVisibility(View.VISIBLE);
             tvVersionWarning.setText(String.format(getString(R.string.auth_version_warning), Build.VERSION.RELEASE));
         } else {
@@ -291,7 +291,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         } catch (final Exception e) {
             if (!AVIA)
                 showToast(getString(R.string.server_response_error) + "\n" + e);
-            getMainActivity().addLog(Constants.LogObject.AUDIO, "save user", Constants.LogResult.ERROR,
+            getMainActivity().addLog(Constants.LogObject.CONFIG, "save user", Constants.LogResult.ERROR,
                     "Cant save user", e.toString());
 
             return;
@@ -307,7 +307,11 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             try {
                 getDao().clearSmsDatabase();
             } catch (Exception e) {
-                showToast(getString(R.string.db_clear_error));
+                if (!AVIA) {
+                    showToast(getString(R.string.db_clear_error));
+                }
+                getMainActivity().addLog(Constants.LogObject.SMS, "clear SMS", Constants.LogResult.ERROR,
+                        "clear SMS", e.toString());
             }
             List<StagesModel> stages = getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getStages();
             if (stages != null)
@@ -318,7 +322,10 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                             try {
                                 getDao().insertSmsItem(new SmsItemR(questionsMatchesModels.get(k).getSmsNum(), null));
                             } catch (Exception e) {
-                                showToast(getString(R.string.db_save_error));
+                                if (!AVIA)
+                                    showToast(getString(R.string.db_save_error));
+                                getMainActivity().addLog(Constants.LogObject.SMS, "save SMS", Constants.LogResult.ERROR,
+                                        "cant save SMS", e.toString());
                             }
                         }
                 }
@@ -342,7 +349,10 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             @Override
             public void onError(Exception pException) {
                 hideScreensaver();
-                showToast(getString(R.string.load_quotas_error) + "\n" + pException.toString());
+                if (!AVIA)
+                    showToast(getString(R.string.load_quotas_error) + "\n" + pException.toString());
+                getMainActivity().addLog(Constants.LogObject.QUOTA, "load Quota", Constants.LogResult.ERROR,
+                        "load Quota error", pException.toString());
                 activateButtons();
             }
         }).execute();
@@ -381,7 +391,10 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         QuizerAPI.getConfig(getServer(), json, responseBody -> {
 
             if (responseBody == null) {
-                showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_601));
+                if (!AVIA)
+                    showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_601));
+                getMainActivity().addLog(Constants.LogObject.CONFIG, "load Config", Constants.LogResult.ERROR,
+                        getString(R.string.server_not_response) + " " + getString(R.string.error_601), null);
                 return;
             }
 
@@ -390,7 +403,10 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 responseJson = responseBody.string();
                 Log.d(TAG, "downloadConfig: " + responseJson);
             } catch (IOException e) {
-                showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_602));
+                if (!AVIA)
+                    showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_602));
+                getMainActivity().addLog(Constants.LogObject.CONFIG, "load Config", Constants.LogResult.ERROR,
+                        getString(R.string.server_response_error) + " " + getString(R.string.error_602), null);
             }
             final GsonBuilder gsonBuilder = new GsonBuilder();
             ConfigResponseModel configResponseModel = null;
@@ -398,7 +414,10 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             try {
                 configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
             } catch (final Exception pE) {
-                showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_603));
+                if (!AVIA)
+                    showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_603));
+                getMainActivity().addLog(Constants.LogObject.CONFIG, "load Config", Constants.LogResult.ERROR,
+                        getString(R.string.server_response_error) + " " + getString(R.string.error_603), null);
             }
 
             if (configResponseModel != null) {
@@ -413,10 +432,16 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                     isRebuildDB = true;
                     downloadFiles(configResponseModel, pModel, pLogin, pPassword);
                 } else {
-                    showToast(configResponseModel.getError());
+                    if (!AVIA)
+                        showToast(configResponseModel.getError());
+                    getMainActivity().addLog(Constants.LogObject.CONFIG, "load Config", Constants.LogResult.ERROR,
+                            configResponseModel.getError(), null);
                 }
             } else {
-                showToast(getString(R.string.server_response_error) + " " + configResponseModel.getError());
+                if (!AVIA)
+                    showToast(getString(R.string.server_response_error) + " " + configResponseModel.getError());
+                getMainActivity().addLog(Constants.LogObject.CONFIG, "load Config", Constants.LogResult.ERROR,
+                        getString(R.string.server_response_error) + " " + configResponseModel.getError(), null);
             }
         });
     }
@@ -442,13 +467,17 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                             if (progress == totalFiles) {
                                 saveUserAndLogin(pConfigResponseModel, pAuthResponseModel, pLogin, pPassword);
                             }
+                            if(!AVIA)
                             showToast(String.format(getString(R.string.downloaded_count_files), String.valueOf(progress)));
                         }
 
                         @Override
                         public void onError(final Exception e, final int progress) {
                             super.onError(e, progress);
-                            showToast(getString(R.string.download_files_error));
+                            if (!AVIA)
+                                showToast(getString(R.string.download_files_error));
+                            getMainActivity().addLog(Constants.LogObject.FILE, "load media", Constants.LogResult.ERROR,
+                                    getString(R.string.download_files_error), e.toString());
                         }
                     }).loadMultiple(fileUris);
         }
@@ -459,12 +488,16 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
         try {
             if (responseBody == null) {
-                showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_401));
+                if (!AVIA)
+                    showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_401));
+                getMainActivity().addLog(Constants.LogObject.AUTH, "авторизация", Constants.LogResult.ERROR,
+                        getString(R.string.server_not_response) + " " + getString(R.string.error_401), null);
 
                 final UserModelR savedUserModel = getLocalUserModel(login, passwordMD5);
 
                 if (savedUserModel != null) {
-                    showToast(getString(R.string.saved_data_login));
+                    if (!AVIA)
+                        showToast(getString(R.string.saved_data_login));
                     onLoggedInWithoutUpdateLocalData(savedUserModel.getUser_id());
                 } else {
                     showToast(getString(R.string.wrong_login_or_pass));
@@ -479,7 +512,10 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 responseJson = responseBody.string();
             } catch (IOException e) {
                 e.printStackTrace();
-                showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_402));
+                if (!AVIA)
+                    showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_402));
+                getMainActivity().addLog(Constants.LogObject.AUTH, "авторизация", Constants.LogResult.ERROR,
+                        getString(R.string.server_not_response) + " " + getString(R.string.error_402), e.toString());
 
                 responseJson = null;
                 activateButtons();
@@ -496,7 +532,8 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 final UserModelR savedUserModel = getLocalUserModel(login, passwordMD5);
 
                 if (savedUserModel != null) {
-                    showToast(getString(R.string.saved_data_login));
+                    if (!AVIA)
+                        showToast(getString(R.string.saved_data_login));
                     onLoggedInWithoutUpdateLocalData(savedUserModel.getUser_id());
                 } else {
                     showToast(getString(R.string.wrong_login_or_pass));
@@ -517,7 +554,10 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             if (authResponseModel.getServerTime() != null) {
                 SPUtils.saveAuthTimeDifference(getContext(), authResponseModel.getServerTime());
             } else {
-                showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_404));
+                if (!AVIA)
+                    showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_404));
+                getMainActivity().addLog(Constants.LogObject.AUTH, "авторизация", Constants.LogResult.ERROR,
+                        getString(R.string.server_not_response) + " " + getString(R.string.error_404), null);
                 activateButtons();
             }
 
@@ -529,7 +569,10 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                     onLoggedIn(login, passwordMD5, authResponseModel);
                 }
             } else {
-                showToast(authResponseModel.getError());
+                if (!AVIA)
+                    showToast(authResponseModel.getError());
+                getMainActivity().addLog(Constants.LogObject.AUTH, "авторизация", Constants.LogResult.ERROR,
+                        authResponseModel.getError(), null);
                 activateButtons();
             }
         } catch (Exception e) {

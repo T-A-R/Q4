@@ -36,10 +36,12 @@ import io.reactivex.schedulers.Schedulers;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.model.state.SelectItem;
+import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
 
@@ -252,6 +254,7 @@ public class PageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             selectDialog.setCancelable(false);
 
             mOkBtn.setOnClickListener(v -> {
+                mActivity.getMainDao().insertCrashLog(new CrashLogs(DateUtils.getCurrentTimeMillis(), selectAdapter.getLog(), true));
                 selectDialog.dismiss();
                 notifyDataSetChanged();
                 onItemClickListener.onAnswerClick(item.getRelative_id(), true, null);

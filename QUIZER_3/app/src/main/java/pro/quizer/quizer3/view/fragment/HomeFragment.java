@@ -174,7 +174,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             btnExit.setTransformationMethod(null);
 
             btnExit.setVisibility(View.VISIBLE);
-//            btnDelete.setVisibility(View.GONE);
             btnInfo.setVisibility(View.GONE);
             btnQuotas.setVisibility(View.GONE);
             toolbar.setVisibility(View.GONE);
@@ -214,7 +213,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             initViews();
             sendCrashLogs();
 
-            if (mIsStartAfterAuth) {
+            if (mIsStartAfterAuth && !AVIA) {
                 quotaUpdate();
             }
 
@@ -305,7 +304,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 replaceFragment(fragment);
             } catch (Exception e) {
                 e.printStackTrace();
-                showToast("Ошибка продолжения прерванной анкеты");
+                if (!AVIA)
+                    showToast("Ошибка продолжения прерванной анкеты");
+                getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "начало анкеты", Constants.LogResult.ERROR,
+                        "Ошибка продолжения прерванной анкеты", null);
             }
         } else if (view == btnDelete) {
             showDeleteDialog();
@@ -323,7 +325,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             @Override
             public void onSuccess() {
-                if (!isQuotaUpdated && !mIsStartAfterAuth) {
+                if (!isQuotaUpdated && !mIsStartAfterAuth && !AVIA) {
                     makeQuotaTree();
                     isQuotaUpdated = true;
                 }
@@ -335,7 +337,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             @Override
             public void onError(Exception pException) {
-                makeQuotaTree();
+                if (!AVIA)
+                    makeQuotaTree();
                 hideScreensaver();
             }
         }, false).execute();
@@ -411,7 +414,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     notSentCounter = syncViewModel.getmNotSentQuestionnaireModels().size();
                     sentCounter = syncViewModel.getTokensCounter();
                     completedCounter = sentCounter + notSentCounter;
-                    if(AVIA) {
+                    if (AVIA) {
                         UiUtils.setTextOrHide(tvCountAll, (String.format(getString(R.string.total_completed), "" + completedCounter)));
                         UiUtils.setTextOrHide(tvCountSent, (String.format(getString(R.string.total_sent), "" + sentCounter)));
                     }
@@ -479,7 +482,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private boolean checkMemory() {
-        if (activity.isMemoryCheckMode()) {
+        if (activity.isMemoryCheckMode() && !AVIA) {
             long memory = FileUtils.getAvailableInternalMemorySizeLong();
             if (memory < 100000000) { // ~100 Мб в байтах!
                 showToast(getString(R.string.not_enough_space));
@@ -490,7 +493,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private boolean checkGps() {
-        if(AVIA) return true;
+        if (AVIA) return true;
         GPSModel mGPSModel = null;
         isForceGps = activity.getConfig().isForceGps();
         mIsUsedFakeGps = false;
@@ -871,7 +874,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
                 @Override
                 public void onSuccess() {
-                    mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.quotas_renew));
+                    if (!AVIA)
+                        mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.quotas_renew));
                     if (!isQuotaUpdated) {
                         if (!mIsStartAfterAuth) {
                             isQuotaUpdated = true;
@@ -882,7 +886,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
                 @Override
                 public void onError(Exception pException) {
-                    mBaseActivity.showToastfromActivity(pException.getMessage());
+                    if (!AVIA)
+                        mBaseActivity.showToastfromActivity(pException.getMessage());
                     if (!isQuotaUpdated) {
                         if (!mIsStartAfterAuth) {
                             isQuotaUpdated = true;

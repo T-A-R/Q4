@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.text.InputType;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -190,7 +192,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             answerEditText.setTypeface(Fonts.getFuturaPtBook());
             answerEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
-            if(answersList.size() == 1) button.setVisibility(View.GONE);
+            if (answersList.size() == 1) button.setVisibility(View.GONE);
 
         }
 
@@ -395,7 +397,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         }
 
         public void onClick(TextView cardInput, int position) {
-            if ((isOpen(position) && !isChecked(position)) || (isOpen(position) && isAutoChecked(position))) {
+//            if ((isOpen(position) && !isChecked(position)) || (isOpen(position) && isAutoChecked(position))) {
+            if (isOpen(position)) {
                 switch (answersList.get(position).getElementOptionsR().getOpen_type()) {
                     case "text":
                     case "number":
@@ -534,7 +537,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         mEditText.setText(dateFormat.format(mCalendar.getTime()));
         answersState.get(position).setData(dateFormat.format(mCalendar.getTime()));
         onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
-        checkItem(position);
+        if (!isChecked(position))
+            checkItem(position);
     }
 
     public void setRestored(boolean restored) {
@@ -549,6 +553,9 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
         final EditText mEditText = mView.findViewById(R.id.input_answer);
         final View mNextBtn = mView.findViewById(R.id.view_ok);
+
+        final InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mActivity.getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
         if (answersList.get(position).getElementOptionsR().getOpen_type().equals(NUMBER)) {
             mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -570,7 +577,6 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         mEditText.requestFocus();
         mActivity.showKeyboard();
 
-        dialog.setCancelable(false);
         final AlertDialog alertDialog = dialog.create();
 
         mNextBtn.setOnClickListener(v -> {
@@ -579,7 +585,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 answersState.get(position).setData(text);
                 pEditText.setText(text);
                 onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
-                checkItem(position);
+                if (!isChecked(position))
+                    checkItem(position);
                 if (!mActivity.isFinishing()) {
                     mActivity.hideKeyboardFrom(mEditText);
                     alertDialog.dismiss();

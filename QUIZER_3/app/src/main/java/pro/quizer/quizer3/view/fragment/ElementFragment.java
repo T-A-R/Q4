@@ -364,7 +364,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } else if (view == btnPrev) {
             deactivateButtons();
             TransFragment fragment = new TransFragment();
-//            showToast("1: " + prevList.size());
             if (prevElementId != 0) {
                 prevElementId = prevList.get(prevList.size() - 1).getPrevId();
                 prevList.remove(prevList.size() - 1);
@@ -377,7 +376,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
                 fragment.setStartElement(prevElementId, true);
                 stopRecording();
-//                showToast("2: " + prevList.size());
                 replaceFragmentBack(fragment);
             } else {
                 showExitPoolAlertDialog();

@@ -207,23 +207,7 @@ public class PageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             for (int i = 0; i < elementItems.size(); i++) {
                 selectItems.add(new SelectItem(elementItems.get(i).getElementOptionsR().getTitle(), answerStates.get(i).isChecked(), answerStates.get(i).isEnabled()));
             }
-            SelectAdapter selectAdapter = new SelectAdapter(selectItems, item.getElementOptionsR().isPolyanswer(), (answers) -> {
-                Log.d("T-L.PageAdapter", ">>>>>>>>>> ON SELECT: ");
-                for (int i = 0; i < answerStates.size(); i++) {
-                    boolean found = false;
-                    for (SelectItem selectItem : answers) {
-                        if (elementItems.get(i).getElementOptionsR().getTitle().equals(selectItem.getTitle())) {
-                            answerStates.get(i).setChecked(selectItem.isChecked());
-                            found = true;
-                        }
-                    }
-
-                    if (!found && !item.getElementOptionsR().isPolyanswer())
-                        answerStates.get(i).setChecked(false);
-
-                }
-                pageAnswersStates.put(item.getRelative_id(), answerStates);
-            });
+            SelectAdapter selectAdapter = new SelectAdapter(selectItems, item.getElementOptionsR().isPolyanswer(), null);
             recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
             recyclerView.setAdapter(selectAdapter);
 
@@ -254,8 +238,26 @@ public class PageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             selectDialog.setCancelable(false);
 
             mOkBtn.setOnClickListener(v -> {
-                mActivity.getMainDao().insertCrashLog(new CrashLogs(DateUtils.getCurrentTimeMillis(), selectAdapter.getLog(), true));
                 selectDialog.dismiss();
+
+                Log.d("T-L.PageAdapter", ">>>>>>>>>> ON SELECT: ");
+                for (int i = 0; i < answerStates.size(); i++) {
+                    boolean found = false;
+                    for (SelectItem selectItem : selectAdapter.getAnswers()) {
+                        if (elementItems.get(i).getElementOptionsR().getTitle().equals(selectItem.getTitle())) {
+                            answerStates.get(i).setChecked(selectItem.isChecked());
+                            found = true;
+                        }
+                    }
+
+                    if (!found && !item.getElementOptionsR().isPolyanswer())
+                        answerStates.get(i).setChecked(false);
+
+                }
+                pageAnswersStates.put(item.getRelative_id(), answerStates);
+
+//                mActivity.getMainDao().insertCrashLog(new CrashLogs(DateUtils.getCurrentTimeMillis(), selectAdapter.getLog(), true));
+//                selectDialog.dismiss();
                 notifyDataSetChanged();
                 onItemClickListener.onAnswerClick(item.getRelative_id(), true, null);
             });

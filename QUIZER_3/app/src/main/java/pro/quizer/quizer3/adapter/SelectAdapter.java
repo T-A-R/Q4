@@ -75,24 +75,24 @@ public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.PageSelect
             answerText.setEnabled(item.isEnabled());
             checker.setImageResource(isMulti ? item.isChecked() ? R.drawable.checkbox_checked_red : R.drawable.checkbox_unchecked_dark_gray
                     : item.isChecked() ? R.drawable.radio_button_checked_red : R.drawable.radio_button_dark_gray);
-            log = log + DateUtils.getFullCurrentTime() + ": 0." + position + " | ";
+//            log = log + DateUtils.getFullCurrentTime() + ": 0." + position + " | ";
             cont.setOnClickListener(v -> checkItem(position));
         }
 
         public void checkItem(int position) {
-            log = log + DateUtils.getFullCurrentTime() + ": Press checkbox | ";
-            Log.d("T-L.SelectAdapter", "checkItem: " + log);
+//            log = log + DateUtils.getFullCurrentTime() + ": Press checkbox | ";
+//            Log.d("T-L.SelectAdapter", "checkItem: " + log);
             if (isMulti) {
                 SelectItem item = answers.get(position);
                 item.setChecked(!item.isChecked());
                 answers.set(position, item);
             } else {
                 if (!answers.get(position).isChecked()) {
-                    log = log + DateUtils.getFullCurrentTime() + ": 1 | ";
+//                    log = log + DateUtils.getFullCurrentTime() + ": 1 | ";
                     for (SelectItem item : answers) {
                         item.setChecked(false);
                     }
-                    log = log + DateUtils.getFullCurrentTime() + ": 2 | ";
+//                    log = log + DateUtils.getFullCurrentTime() + ": 2 | ";
                     for (int i = 0; i < answersFullList.size(); i++) {
 //                        answers.get(i).setChecked(i == position);
                         if (answersFullList.get(i).getTitle().equals(answers.get(position).getTitle())) {
@@ -101,14 +101,14 @@ public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.PageSelect
                         } else {
                             answersFullList.get(i).setChecked(false);
                         }
-                        log = log + DateUtils.getFullCurrentTime() + ": 3." + i + " | ";
+//                        log = log + DateUtils.getFullCurrentTime() + ": 3." + i + " | ";
                     }
                 }
             }
             notifyDataSetChanged();
-            log = log + DateUtils.getFullCurrentTime() + ": 4 | ";
-            onItemClickListener.onAnswerClick(answers);
-            log = log + DateUtils.getFullCurrentTime() + ": 5 | ";
+//            log = log + DateUtils.getFullCurrentTime() + ": 4 | ";
+//            onItemClickListener.onAnswerClick(answers); //TODO REFACTOR
+//            log = log + DateUtils.getFullCurrentTime() + ": 5 | ";
         }
 
     }

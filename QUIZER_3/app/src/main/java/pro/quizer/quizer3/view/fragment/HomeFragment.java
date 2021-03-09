@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.Settings;
@@ -70,6 +71,7 @@ import pro.quizer.quizer3.utils.Internet;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.EXIT;
 import static pro.quizer.quizer3.MainActivity.TAG;
@@ -241,6 +243,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             checkProjectActive();
         }
         activity.stopRecording();
+
+//        activity.checkSettingsAndStartLocationUpdates();
+//        if (activity.getLocation() != null) {
+//            showToast("" + activity.getLocation().getLatitude() + " : " + activity.getLocation().getLongitude());
+//        } else {
+//            showToast("Не удалось");
+//        }
     }
 
     @Override
@@ -487,14 +496,20 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         GPSModel mGPSModel = null;
         isForceGps = activity.getConfig().isForceGps();
         mIsUsedFakeGps = false;
+        Location location = activity.getLocation();
         if (activity.getConfig().isGps()) {
             try {
                 mGPSModel = GpsUtils.getCurrentGps(getActivity(), isForceGps);
+                if (location != null) {
+                    String GPS_FORMAT = "%1$s:%2$s";
+                    mGpsString = String.format(GPS_FORMAT, location.getLatitude(), location.getLongitude());
+                    mGpsTime = location.getTime() > 0 ? location.getTime() / 1000 : 0;
+                }
                 if (mGPSModel != null) {
-                    mGpsString = mGPSModel.getGPS();
+//                    mGpsString = mGPSModel.getGPS();
                     mGpsNetworkString = mGPSModel.getGPSNetwork();
                     mIsUsedFakeGps = mGPSModel.isFakeGPS();
-                    mGpsTime = mGPSModel.getTime();
+//                    mGpsTime = mGPSModel.getTime();
                     mGpsTimeNetwork = mGPSModel.getTimeNetwork();
                 }
             } catch (final Exception e) {
@@ -503,20 +518,20 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
 
             if (activity.getConfig().isForceGps()) {
-                if (mGPSModel == null) {
+                if (mGPSModel == null || location == null) {
                     showSettingsAlert();
                     return false;
-                } else if (mGPSModel.isNoGps()) {
+                } else if (mGPSModel.isNoGps() || location.getLatitude() == 0 || location.getLongitude() == 0) {
                     showNoGpsAlert();
                     return false;
                 } else {
                     return true;
                 }
             } else {
-                if (mGPSModel == null) {
+                if (mGPSModel == null || location == null) {
                     showSettingsAlert();
                     return false;
-                } else if (mGPSModel.isNoGps()) {
+                } else if (mGPSModel.isNoGps() || location.getLatitude() == 0 || location.getLongitude() == 0) {
                     if (canContWithZeroGps) {
                         return true;
                     } else {
@@ -1471,6 +1486,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
             isCanBackPress = true;
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+//        activity.stopLocationUpdates();
     }
 }
 

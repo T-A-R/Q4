@@ -6,9 +6,11 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -25,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.provider.Settings;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
@@ -44,6 +47,18 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.view.KeyEvent;
 
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.scottyab.rootbeer.RootBeer;
 
@@ -154,6 +169,21 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     private RelativeLayout mainCont;
 
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private LocationRequest locationRequest;
+    private Location mLocation;
+    LocationCallback locationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(@NonNull LocationResult locationResult) {
+            if (locationResult == null) return;
+            for (Location location : locationResult.getLocations()) {
+                mLocation = location;
+//                Log.d("T-L.MainActivity", "Координаты: " + location.getLatitude() + " : " + location.getLongitude()
+//                        + " Время: " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL, location.getTime()));
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -193,6 +223,11 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         mSpeedMode = getSpeedMode() == 1;
         mAutoZoom = getZoomMode() == 1;
 
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        locationRequest = LocationRequest.create();
+        locationRequest.setInterval(12000);
+        locationRequest.setFastestInterval(6000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     @Override
@@ -225,6 +260,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     protected void onResume() {
         super.onResume();
         mHomeRestart = getIntent().getBooleanExtra("HOME", false);
+        startLocationUpdated();
     }
 
     public boolean dispatchTouchEvent(MotionEvent event) {
@@ -1459,5 +1495,66 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         mIsFirstStart = savedInstanceState.getBoolean("mIsFirstStart");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopLocationUpdates();
+    }
+
+    public void checkSettingsAndStartLocationUpdates() {
+        LocationSettingsRequest request = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest).build();
+        SettingsClient client = LocationServices.getSettingsClient(this);
+
+        Task<LocationSettingsResponse> locationSettingsResponseTask = client.checkLocationSettings(request);
+        locationSettingsResponseTask.addOnSuccessListener(locationSettingsResponse -> {
+            startLocationUpdated();
+        });
+
+        locationSettingsResponseTask.addOnFailureListener(e -> {
+            showSettingsAlert();
+//            if (e instanceof ResolvableApiException) {
+//                ResolvableApiException apiException = (ResolvableApiException) e;
+//                try {
+//                    apiException.startResolutionForResult(MainActivity.this, 1001);
+//                } catch (IntentSender.SendIntentException sendIntentException) {
+//                    sendIntentException.printStackTrace();
+//                }
+//            }
+        });
+    }
+
+    @SuppressLint("MissingPermission")
+    public void startLocationUpdated() {
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+    }
+
+    public void stopLocationUpdates() {
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+    }
+
+    public Location getLocation() {
+        if(mLocation != null) {
+            if(mLocation.getLatitude() == 37.4219834 || mLocation.getLongitude() == -122.0840312) {
+                mLocation.setLatitude(0);
+                mLocation.setLongitude(0);
+            }
+        }
+        return mLocation;
+    }
+
+    public void showSettingsAlert() {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+            alertDialog.setCancelable(false);
+            alertDialog.setTitle(R.string.dialog_please_turn_on_gps);
+            alertDialog.setMessage(R.string.dialog_you_need_to_turn_on_gps);
+            alertDialog.setPositiveButton(R.string.dialog_turn_on, (dialog, which) -> {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            });
+            alertDialog.show();
+
     }
 }

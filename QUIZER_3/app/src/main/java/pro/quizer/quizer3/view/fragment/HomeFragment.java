@@ -500,7 +500,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         if (activity.getConfig().isGps()) {
             try {
                 mGPSModel = GpsUtils.getCurrentGps(getActivity(), isForceGps);
-                if (location != null) {
+                if (location != null && location.getLatitude() != 0 && location.getLongitude() != 0) {
                     String GPS_FORMAT = "%1$s:%2$s";
                     mGpsString = String.format(GPS_FORMAT, location.getLatitude(), location.getLongitude());
                     mGpsTime = location.getTime() > 0 ? location.getTime() / 1000 : 0;
@@ -531,14 +531,15 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 if (mGPSModel == null || location == null) {
                     showSettingsAlert();
                     return false;
-                } else if (mGPSModel.isNoGps() || location.getLatitude() == 0 || location.getLongitude() == 0) {
-                    if (canContWithZeroGps) {
-                        return true;
-                    } else {
-                        showNoGpsAlert();
-                        return false;
-                    }
                 }
+//                else if (mGPSModel.isNoGps() || location.getLatitude() == 0 || location.getLongitude() == 0) {
+//                    if (canContWithZeroGps) {
+//                        return true;
+//                    } else {
+//                        showNoGpsAlert();
+//                        return false;
+//                    }
+//                }
                 return true;
             }
         } else {

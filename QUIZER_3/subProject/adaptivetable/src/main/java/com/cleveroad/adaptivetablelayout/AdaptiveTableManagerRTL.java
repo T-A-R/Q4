@@ -37,4 +37,5 @@ class AdaptiveTableManagerRTL extends AdaptiveTableManager {
             return getColumnWidths().length - 1;
         }
     }
+
 }

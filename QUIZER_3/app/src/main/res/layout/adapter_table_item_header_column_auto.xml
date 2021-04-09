@@ -5,6 +5,12 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="1dp"
+        android:background="@drawable/table_background_top_left">
+
     <ImageView
         android:id="@+id/fullscreen"
         android:layout_width="16dp"
@@ -13,12 +19,12 @@
         android:layout_alignParentRight="true"
         android:src="@drawable/ic_fullscreen" />
 
-    <TextView
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:background="@color/gray" />
+<!--    <TextView-->
+<!--        android:layout_width="1dp"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_alignParentRight="true"-->
+<!--        android:background="@color/gray" />-->
 
     <View
         android:id="@+id/vLine"
@@ -39,5 +45,5 @@
         android:textSize="@dimen/_11ssp"
         android:visibility="visible" />
 
-
+    </RelativeLayout>
 </RelativeLayout>

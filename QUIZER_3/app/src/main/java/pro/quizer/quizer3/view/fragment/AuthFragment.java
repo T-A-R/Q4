@@ -104,7 +104,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         tvVersionView = findViewById(R.id.version_view);
 
         MainFragment.disableSideMenu();
-        getMainActivity().checkSettingsAndStartLocationUpdates();
 
         if (getMainActivity().isHomeRestart()) {
             replaceFragment(new HomeFragment());
@@ -155,6 +154,36 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         }
 
         setEventsListener(this);
+    }
+
+    @Override
+    public void runEvent(int id) {
+        switch (id) {
+            case 1:
+                UiUtils.setButtonEnabled(btnSend, false);
+                isCanBackPress = false;
+                break;
+            case 2:
+                final HomeFragment fragment = new HomeFragment();
+                fragment.setStartAfterAuth();
+                startHomeFragment(fragment);
+                break;
+            case 10: // AviaMode
+                hideScreensaver();
+                activateButtons();
+                getMainActivity().showAirplaneAlert();
+                break;
+            case 11: // NoGpsMode
+                hideScreensaver();
+                activateButtons();
+                getMainActivity().showSettingsAlert();
+                break;
+            case 12:
+                final HomeFragment fragment1 = new HomeFragment();
+                fragment1.setStartAfterAuth();
+                replaceFragment(fragment1);
+                break;
+        }
     }
 
     @Override
@@ -269,21 +298,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         }
     }
 
-    @Override
-    public void runEvent(int id) {
-        switch (id) {
-            case 1:
-                UiUtils.setButtonEnabled(btnSend, false);
-                isCanBackPress = false;
-                break;
-            case 2:
-                HomeFragment fragment = new HomeFragment();
-                fragment.setStartAfterAuth();
-                startHomeFragment(fragment);
-                break;
-        }
-    }
-
     private void saveUserAndLogin(final ConfigResponseModel pConfigResponseModel,
                                   final AuthResponseModel pAuthResponseModel,
                                   final String pLogin,
@@ -388,6 +402,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             try {
                 responseJson = responseBody.string();
                 Log.d(TAG, "downloadConfig: " + responseJson);
+                getMainActivity().copyToClipboard(responseJson);
             } catch (IOException e) {
                 showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_602));
             }
@@ -539,10 +554,11 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onResume() {
         super.onResume();
-        MainActivity mBaseActivity = (MainActivity) getActivity();
+        MainActivity mBaseActivity = getMainActivity();
         if (!mBaseActivity.checkPermission()) {
             mBaseActivity.requestPermission();
         }
+//        mBaseActivity.startLocationUpdated();
     }
 
     private void activateButtons() {
@@ -557,7 +573,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void startHomeFragment(HomeFragment fragment) {
-        if(!AVIA) {
+        if (!AVIA) {
             if (getMainActivity() != null && getMainActivity().getSettings().getUser_name() == null) {
                 showInputNameDialog(fragment);
             } else if (getMainActivity() != null && getMainActivity().getSettings().getUser_name() != null
@@ -595,7 +611,8 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
         yesBtn.setOnClickListener(v -> {
             infoDialog.dismiss();
-            replaceFragment(fragment);
+            Log.d("T-L.AuthFragment", "???????????????: 1");
+            checkGpsAnsStartHomeFragment();
         });
 
         dialogBuilder.setView(layoutView);
@@ -630,14 +647,15 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         sendBtn.setOnClickListener(v -> {
             String nameString = name.getText().toString();
             String shortName = nameString.replaceAll(" ", "");
-            if(shortName.length() == 0) nameString = " ";
+            if (shortName.length() == 0) nameString = " ";
 
             if (StringUtils.isEmpty(nameString)) {
                 nameString = " ";
             }
             getDao().setUserName(nameString);
             infoDialog.dismiss();
-            replaceFragment(fragment);
+            Log.d("T-L.AuthFragment", "???????????????: 2");
+            checkGpsAnsStartHomeFragment();
         });
 
         dialogBuilder.setView(layoutView);
@@ -703,7 +721,8 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
         noBtn.setOnClickListener(v -> {
             infoDialog.dismiss();
-            replaceFragment(fragment);
+            Log.d("T-L.AuthFragment", "???????????????: 3");
+            checkGpsAnsStartHomeFragment();
         });
 
         dialogBuilder.setView(layoutView);
@@ -713,6 +732,13 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         if (getMainActivity() != null && !getMainActivity().isFinishing())
             infoDialog.show();
 
+    }
+
+    private void checkGpsAnsStartHomeFragment() {
+        Log.d("T-L.AuthFragment", "checkGpsAnsStartHomeFragment: " + getMainActivity().getConfig().isGps());
+        if (getMainActivity().getConfig().isGps())
+            getMainActivity().checkSettingsAndStartLocationUpdates(false, this);
+        else runEvent(12);
     }
 }
 

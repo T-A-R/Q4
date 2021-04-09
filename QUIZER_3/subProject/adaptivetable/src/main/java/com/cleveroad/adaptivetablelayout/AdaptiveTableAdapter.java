@@ -1,15 +1,16 @@
 package com.cleveroad.adaptivetablelayout;
 
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.view.ViewGroup;
 
 /**
  * Base AdaptiveTableAdapter Interface for AdaptiveTableLayout's adapter.
  *
  * @param <VH> Implementation of ViewHolder {@link ViewHolder}
  */
-public interface AdaptiveTableAdapter<VH extends ViewHolder> extends AdaptiveTableDataSetObserver {
+interface AdaptiveTableAdapter<VH extends ViewHolder> extends AdaptiveTableDataSetObserver {
     /**
      * @return Item click listener
      */

@@ -6,8 +6,8 @@ android {
         applicationId "pro.quizer.quizer3"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 3140301
-        versionName "3.14.3.1"
+        versionCode 3150302
+        versionName "3.15.3.2"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         project.ext.set("archivesBaseName", "Quizer_ " + defaultConfig.versionName)
 //        project.ext.set("archivesBaseName", "Rossiya_ " + defaultConfig.versionName)
@@ -31,6 +31,7 @@ dependencies {
     implementation project(':subProject:multispinner')
     implementation project(':subProject:hiddencamera')
     implementation project(':subProject:searchablespinnerlibrary')
+    implementation project(':subProject:adaptivetable')
     implementation files('libs/activeandroid-3.1.0.jar')
 
     // ============================ TESTS ==================================
@@ -82,7 +83,7 @@ dependencies {
     implementation 'commons-codec:commons-codec:20041127.091804'
     implementation 'com.github.kk121:File-Loader:1.2'
     implementation 'net.sourceforge.streamsupport:android-retrofuture:1.7.0'
-    implementation 'com.cleveroad:adaptivetablelayout:1.1.1'
+//    implementation 'com.cleveroad:adaptivetablelayout:1.2.1'
     implementation 'com.github.vipulasri:timelineview:1.1.2'
     implementation 'commons-net:commons-net:3.6'
     implementation 'com.zolad:zoominimageview:1.0.0'

@@ -1,10 +1,12 @@
 package com.cleveroad.adaptivetablelayout;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
-import androidx.core.view.GestureDetectorCompat;
+
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+
+import androidx.annotation.Nullable;
+import androidx.core.view.GestureDetectorCompat;
 
 
 class ScrollHelper implements GestureDetector.OnGestureListener {

@@ -1,5 +1,7 @@
 package com.cleveroad.adaptivetablelayout;
 
+
+
 import androidx.annotation.IntDef;
 
 import java.lang.annotation.Retention;

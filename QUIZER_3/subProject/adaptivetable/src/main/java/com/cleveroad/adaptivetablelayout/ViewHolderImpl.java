@@ -1,7 +1,9 @@
 package com.cleveroad.adaptivetablelayout;
 
-import androidx.annotation.NonNull;
+
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 /**
  * {@inheritDoc}

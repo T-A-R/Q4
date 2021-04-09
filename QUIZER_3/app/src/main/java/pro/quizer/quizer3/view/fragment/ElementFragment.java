@@ -12,7 +12,9 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -233,6 +235,15 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         cont.setOnClickListener(this);
         tvQuestion.setOnClickListener(this);
         btnHideTitle.setOnClickListener(this);
+        tvQuestionDesc.setOnClickListener(this);
+        tvHiddenQuestion.setOnClickListener(this);
+        tableLayout.setOnClickListener(this);
+        tvTitle1.setOnClickListener(this);
+        tvTitleDesc1.setOnClickListener(this);
+        tvTitle2.setOnClickListener(this);
+        tvTitleDesc2.setOnClickListener(this);
+        tvHiddenTitle.setOnClickListener(this);
+        titleBox.setOnClickListener(this);
 
         deactivateButtons();
         if (!isAvia()) {
@@ -360,7 +371,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if (view == btnNext) {
-            if(answerType.equals(ElementSubtype.END)) {
+            if (answerType.equals(ElementSubtype.END)) {
                 nextElementId = currentElement.getElementOptionsR().getJump();
                 Log.d("T-L.ElementFragment", "onClick NEXT: " + nextElementId);
             }
@@ -415,7 +426,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     showExitPoolAlertDialog();
                 }
             }
-        } else if (view == btnHideTitle) {
+        } else if (view == titleBox || view == btnHideTitle || view == tvHiddenTitle || view == tvTitle1 || view == tvTitleDesc1 || view == tvTitle2 || view == tvTitleDesc2) {
             if (titleBox.getVisibility() == View.VISIBLE) {
                 titleBox.setVisibility(View.GONE);
                 tvHiddenTitle.setText(tvTitle1.getText().length() > 0 ? tvTitle1.getText() : tvTitle2.getText());
@@ -426,12 +437,20 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 tvHiddenTitle.setVisibility(View.GONE);
                 btnHideTitle.setImageResource(R.drawable.minus_green);
             }
-        } else if (view == closeQuestion || view == tvQuestion) {
+        } else if (view == closeQuestion || view == tvQuestionDesc || view == tvQuestion || view == tvHiddenQuestion) {
             if (questionBox.getVisibility() == View.VISIBLE) {
                 questionBox.setVisibility(View.GONE);
                 tvHiddenQuestion.setText(tvQuestion.getText());
                 tvHiddenQuestion.setVisibility(View.VISIBLE);
                 closeQuestion.setImageResource(R.drawable.plus_white);
+                tableRedrawEverything();
+//                try {
+//                    tableLayout.
+//
+//                    adapterTable.notifyDataSetChanged();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
             } else {
                 questionBox.setVisibility(View.VISIBLE);
                 tvHiddenQuestion.setVisibility(View.GONE);
@@ -727,6 +746,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 break;
             case ElementSubtype.TABLE:
                 tableCont.setVisibility(View.VISIBLE);
+//                tableLayout.setVisibility(View.VISIBLE);
                 break;
             case ElementSubtype.HTML:
                 questionCont.setVisibility(View.GONE);
@@ -930,10 +950,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
                 break;
             case ElementSubtype.TABLE:
-                adapterTable = new TableQuestionAdapter(currentElement, answersList, titlesMap, getActivity(), mRefreshRecyclerViewRunnable, this);
-                tableLayout.setAdapter(adapterTable);
-                tableLayout.setLongClickable(false);
-                tableLayout.setDrawingCacheEnabled(true);
+                initTable();
                 break;
             case ElementSubtype.SCALE:
                 adapterScale = new ScaleQuestionAdapter(getActivity(), currentElement, answersList,
@@ -945,6 +962,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 rvScale.setAdapter(adapterScale);
                 break;
         }
+    }
+
+    private void initTable() {
+        adapterTable = new TableQuestionAdapter(currentElement, answersList, titlesMap, getActivity(), mRefreshRecyclerViewRunnable, this);
+        tableLayout.setAdapter(adapterTable);
+        tableLayout.setLongClickable(false);
+        tableLayout.setDrawingCacheEnabled(true);
     }
 
     private void updateCurrentQuestionnaire() {
@@ -1837,7 +1861,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             try {
                 if (saveElement()) {
                     try {
-                        if(answerType.equals(ElementSubtype.END)) {
+                        if (answerType.equals(ElementSubtype.END)) {
                             nextElementId = currentElement.getElementOptionsR().getJump();
 //                            Log.d("T-L.ElementFragment", "=== END NEXT ELEMENT: " + nextElementId);
 //                            showToast("=== END NEXT ELEMENT: " + nextElementId);
@@ -2306,6 +2330,19 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     })
                     .show();
         }
+    }
+
+    private void tableRedrawEverything() {
+        if (answerType.equals(ElementSubtype.TABLE))
+            try {
+                tableLayout.scrollTo(1, 1);
+                tableLayout.requestApplyInsets();
+                tableLayout.invalidate();
+                tableLayout.refreshDrawableState();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
     }
 }
 

@@ -1,7 +1,9 @@
 package com.cleveroad.adaptivetablelayout;
 
-import android.support.annotation.NonNull;
+
 import android.util.SparseIntArray;
+
+import androidx.annotation.NonNull;
 
 public interface ModificationsHolder {
 

@@ -518,7 +518,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         GPSModel mGPSModel = null;
         mIsUsedFakeGps = false;
         Location location = activity.getLocation();
-        Log.d("T-L.HomeFragment", ">>>>>>>>>>>>>> checkGps: " + activity.getConfig().isGps());
         if (activity.getConfig().isGps()) {
             try {
                 mGPSModel = GpsUtils.getCurrentGps(getActivity(), isForceGps);
@@ -539,7 +538,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 Log.d(TAG, "startGps: " + e.getMessage());
             }
 
-            if (mGPSModel == null || location == null || mGPSModel.isNoGps() || location.getLatitude() == 0 || location.getLongitude() == 0) {
+            if (location == null || location.getLatitude() == 0 || location.getLongitude() == 0) {
                 showNullGpsAlert();
                 return false;
             } else {
@@ -1457,7 +1456,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         MainActivity activity = getMainActivity();
         if (activity != null && !activity.isFinishing()) {
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
-            alertDialog.setCancelable(false);
+            alertDialog.setCancelable(true);
             alertDialog.setMessage(R.string.dialog_no_gps);
             alertDialog.setNeutralButton((R.string.cancel), (dialog, which) -> {
                 canContWithZeroGps = false;
@@ -1485,6 +1484,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         final AlertDialog dialog;
         if (isForceGps) {
             dialog = new AlertDialog.Builder(activity)
+                    .setCancelable(true)
                     .setMessage(R.string.dialog_connecting_to_satellite)
                     .setNeutralButton(R.string.cancel, (dialog1, which) -> {
                         canContWithZeroGps = false;
@@ -1492,18 +1492,19 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         dialog1.dismiss();
                     })
                     .setNegativeButton(R.string.view_retry, (dialog12, which) -> {
-                        if (activity.getLocation() != null) {
-                            dialog12.dismiss();
-                            onClick(btnStart);
-                        } else {
+                        if (activity.getLocation() == null || activity.getLocation().getLongitude() == 0 || activity.getLocation().getLatitude() == 0) {
                             dialog12.dismiss();
                             showNoGpsAlert();
+                        } else {
+                            dialog12.dismiss();
+                            onClick(btnStart);
                         }
                     })
                     .create();
             dialog.setOnShowListener(dialog13 -> getTimer(dialog13).start());
         } else {
             dialog = new AlertDialog.Builder(activity)
+                    .setCancelable(true)
                     .setMessage(R.string.dialog_connecting_to_satellite)
                     .setPositiveButton(R.string.dialog_start_without_gps, (dialog1, which) -> {
                         dialog1.dismiss();
@@ -1516,12 +1517,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         dialog1.dismiss();
                     })
                     .setNegativeButton(R.string.view_retry, (dialog12, which) -> {
-                        if (activity.getLocation() != null) {
-                            dialog12.dismiss();
-                            onClick(btnStart);
-                        } else {
+                        if (activity.getLocation() == null || activity.getLocation().getLongitude() == 0 || activity.getLocation().getLatitude() == 0) {
                             dialog12.dismiss();
                             showNoGpsAlert();
+                        } else {
+                            dialog12.dismiss();
+                            onClick(btnStart);
                         }
                     })
                     .create();

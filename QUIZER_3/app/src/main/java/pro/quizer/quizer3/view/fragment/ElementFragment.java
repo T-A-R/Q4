@@ -1697,7 +1697,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             e.printStackTrace();
         }
 
-        getMainActivity().restartHome();
+//        getMainActivity().restartHome();
+        replaceFragment(new HomeFragment());
     }
 
     private void stopAllRecording() {
@@ -2287,7 +2288,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     .setMessage(message)
                     .setPositiveButton(R.string.view_OK, (dialog, which) -> {
                         dialog.dismiss();
-                        getMainActivity().restartHome();
+//                        getMainActivity().restartHome();
+                        replaceFragment(new HomeFragment());
                     })
                     .show();
         }
@@ -2326,7 +2328,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             activateButtons();
                         }
                         dialog.dismiss();
-                        getMainActivity().restartHome();
+//                        getMainActivity().restartHome();
+                        replaceFragment(new HomeFragment());
                     })
                     .show();
         }

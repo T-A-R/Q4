@@ -1558,7 +1558,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 mLocation.setLongitude(0);
             }
         }
-        mLocation = null;
         return mLocation;
     }
 

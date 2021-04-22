@@ -5,8 +5,6 @@
     android:id="@+id/cont_element_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:keepScreenOn="true"
     android:saveEnabled="false">
 
     <!--TOOLBAR-->
@@ -47,7 +45,6 @@
                     android:id="@+id/title_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:orientation="vertical">
 
                     <!--TITLE 1-->
@@ -435,10 +432,10 @@
             <com.cleveroad.adaptivetablelayout.AdaptiveTableLayout
                 android:id="@+id/table_question_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_margin="@dimen/_4sdp"
                 app:cellMargin="1dp"
-                app:dragAndDropEnabled="false"
+
                 tools:ignore="UnknownIdInLayout" />
 
         </FrameLayout>

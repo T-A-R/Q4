@@ -457,7 +457,6 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 public void onTextChanged(CharSequence cs, int cursorPosition, int before, int count) {
                     if (!cs.toString().equals(phoneFormatter.getPhone())) {
                         phoneFormatter.onTextChanged(cs.toString(), cursorPosition, before, count);
-//                        Log.d("T-L.ListAnswersAdapter", "????????????? onTextChanged: " + phoneFormatter.getPhone() + " / " + phoneFormatter.getSelection());
                         inputPhone.setText(phoneFormatter.getPhone());
                         inputPhone.setSelection(phoneFormatter.getSelection());
                     }

@@ -1,11 +1,14 @@
 package pro.quizer.quizer3.view.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.provider.Settings;
 
 import androidx.core.content.ContextCompat;
@@ -28,8 +31,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import pro.quizer.quizer3.API.QuizerAPI;
 import pro.quizer.quizer3.API.models.request.StatisticsRequestModel;
@@ -70,6 +75,7 @@ import pro.quizer.quizer3.utils.Internet;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.EXIT;
 import static pro.quizer.quizer3.MainActivity.TAG;
@@ -202,7 +208,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             toolbar.showOptionsView(v -> MainFragment.showDrawer(), null);
 
             tvUserName.setText(getUserName());
-
+            isForceGps = activity.getConfig().isForceGps();
             try {
                 hideScreensaver();
             } catch (Exception e) {
@@ -241,6 +247,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             checkProjectActive();
         }
         activity.stopRecording();
+
+//        showNullGpsAlert();
     }
 
     @Override
@@ -255,32 +263,31 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 checkConfigUpdateDate();
                 isCanBackPress = true;
                 break;
+            case 10: // AviaMode
+                hideScreensaver();
+                activateButtons();
+                isCanBackPress = true;
+                getMainActivity().showAirplaneAlert();
+                break;
+            case 11: // NoGpsMode
+                hideScreensaver();
+                activateButtons();
+                isCanBackPress = true;
+                getMainActivity().showSettingsAlert();
+                break;
+            case 12:
+                startQuestionnaire();
+                break;
         }
     }
 
     @Override
     public void onClick(View view) {
         if (view == btnStart) {
-            if (!isTimeToDownloadConfig) {
-                checkConfigUpdateDate();
-                if (isTimeToDownloadConfig) {
-                    showToast(getString(R.string.please_update_config));
-                    return;
-                }
-            }
-
-            isStartBtnPressed = true;
-            if (isTimeToDownloadConfig) {
-                activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. Reload config", null);
-                reloadConfig();
-            } else if (currentQuestionnaire == null && !isNeedUpdate) {
-                activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. Without delete old", null);
-                if (checkTime() && checkGps() && checkMemory()) {
-                    new StartNewQuiz().execute();
-                }
+            if(activity.getConfig().isGps()) {
+                activity.checkSettingsAndStartLocationUpdates(isForceGps, this);
             } else {
-                activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. With delete old", null);
-                showStartDialog();
+                runEvent(12);
             }
         } else if (view == btnInfo) {
             getInfo(true);
@@ -310,6 +317,30 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             showDeleteDialog();
         } else if (view == btnExit) {
             showExitAlertDialog();
+        }
+    }
+
+    private void startQuestionnaire() {
+        if (!isTimeToDownloadConfig) {
+            checkConfigUpdateDate();
+            if (isTimeToDownloadConfig) {
+                showToast(getString(R.string.please_update_config));
+                return;
+            }
+        }
+
+        isStartBtnPressed = true;
+        if (isTimeToDownloadConfig) {
+            activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. Reload config", null);
+            reloadConfig();
+        } else if (currentQuestionnaire == null && !isNeedUpdate) {
+            activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. Without delete old", null);
+            if (checkTime() && (canContWithZeroGps || checkGps()) && checkMemory()) {
+                new StartNewQuiz().execute();
+            }
+        } else {
+            activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. With delete old", null);
+            showStartDialog();
         }
     }
 
@@ -485,16 +516,21 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     private boolean checkGps() {
         GPSModel mGPSModel = null;
-        isForceGps = activity.getConfig().isForceGps();
         mIsUsedFakeGps = false;
+        Location location = activity.getLocation();
         if (activity.getConfig().isGps()) {
             try {
                 mGPSModel = GpsUtils.getCurrentGps(getActivity(), isForceGps);
+                if (location != null && location.getLatitude() != 0 && location.getLongitude() != 0) {
+                    String GPS_FORMAT = "%1$s:%2$s";
+                    mGpsString = String.format(GPS_FORMAT, location.getLatitude(), location.getLongitude());
+                    mGpsTime = location.getTime() > 0 ? location.getTime() / 1000 : 0;
+                }
                 if (mGPSModel != null) {
-                    mGpsString = mGPSModel.getGPS();
+//                    mGpsString = mGPSModel.getGPS();
                     mGpsNetworkString = mGPSModel.getGPSNetwork();
                     mIsUsedFakeGps = mGPSModel.isFakeGPS();
-                    mGpsTime = mGPSModel.getTime();
+//                    mGpsTime = mGPSModel.getTime();
                     mGpsTimeNetwork = mGPSModel.getTimeNetwork();
                 }
             } catch (final Exception e) {
@@ -502,78 +538,15 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 Log.d(TAG, "startGps: " + e.getMessage());
             }
 
-            if (activity.getConfig().isForceGps()) {
-                if (mGPSModel == null) {
-                    showSettingsAlert();
-                    return false;
-                } else if (mGPSModel.isNoGps()) {
-                    showNoGpsAlert();
-                    return false;
-                } else {
-                    return true;
-                }
+            if (location == null || location.getLatitude() == 0 || location.getLongitude() == 0) {
+                showNullGpsAlert();
+                return false;
             } else {
-                if (mGPSModel == null) {
-                    showSettingsAlert();
-                    return false;
-                } else if (mGPSModel.isNoGps()) {
-                    if (canContWithZeroGps) {
-                        return true;
-                    } else {
-                        showNoGpsAlert();
-                        return false;
-                    }
-                }
                 return true;
             }
+
         } else {
             return true;
-        }
-    }
-
-    public void showSettingsAlert() {
-        if (activity != null && !activity.isFinishing()) {
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity, R.style.AlertDialogTheme);
-            alertDialog.setCancelable(false);
-            alertDialog.setTitle(R.string.dialog_please_turn_on_gps);
-            alertDialog.setMessage(R.string.dialog_you_need_to_turn_on_gps);
-            alertDialog.setPositiveButton(R.string.dialog_turn_on, (dialog, which) -> {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                activity.startActivity(intent);
-            });
-            alertDialog.show();
-        }
-    }
-
-    public void showNoGpsAlert() {
-        MainActivity activity = getMainActivity();
-        if (activity != null && !activity.isFinishing()) {
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity, R.style.AlertDialogTheme);
-            alertDialog.setCancelable(false);
-            alertDialog.setTitle(R.string.dialog_no_gps);
-            if (isForceGps) {
-                alertDialog.setMessage(R.string.dialog_no_gps_empty_text);
-                alertDialog.setPositiveButton(R.string.view_retry, (dialog, which) -> {
-                    canContWithZeroGps = false;
-                    dialog.dismiss();
-                });
-            } else {
-                alertDialog.setMessage(R.string.dialog_no_gps_text_warning);
-                alertDialog.setPositiveButton(R.string.dialog_next, (dialog, which) -> {
-                    canContWithZeroGps = true;
-                    dialog.dismiss();
-                    onClick(btnStart);
-                });
-
-                alertDialog.setNegativeButton(R.string.view_retry, (dialog, which) -> {
-                    canContWithZeroGps = false;
-                    dialog.dismiss();
-                    activateButtons();
-                });
-            }
-
-            canContWithZeroGps = false;
-            alertDialog.show();
         }
     }
 
@@ -1254,7 +1227,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                             if (isNeedUpdate) {
                                 updateLocalConfig();
                             } else {
-                                if (checkTime() && checkGps() && checkMemory()) {
+                                if (checkTime() && (canContWithZeroGps || checkGps()) && checkMemory()) {
                                     new StartNewQuiz().execute();
                                 }
                             }
@@ -1267,7 +1240,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             if (isNeedUpdate) {
                 updateLocalConfig();
             } else {
-                if (checkTime() && checkGps() && checkMemory()) {
+                if (checkTime() && (canContWithZeroGps || checkGps()) && checkMemory()) {
                     new StartNewQuiz().execute();
                 }
             }
@@ -1471,6 +1444,121 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
             isCanBackPress = true;
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+//        activity.stopLocationUpdates();
+    }
+
+    public void showNoGpsAlert() {
+        MainActivity activity = getMainActivity();
+        if (activity != null && !activity.isFinishing()) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
+            alertDialog.setCancelable(true);
+            alertDialog.setMessage(R.string.dialog_no_gps);
+            alertDialog.setNeutralButton((R.string.cancel), (dialog, which) -> {
+                canContWithZeroGps = false;
+                activateButtons();
+                dialog.dismiss();
+            });
+            alertDialog.setNegativeButton(R.string.view_retry, (dialog, which) -> {
+                dialog.dismiss();
+                showNullGpsAlert();
+            });
+            if (!isForceGps) {
+                alertDialog.setPositiveButton(R.string.dialog_start_without_gps, (dialog, which) -> {
+                    canContWithZeroGps = true;
+                    dialog.dismiss();
+                    onClick(btnStart);
+                });
+            }
+
+            canContWithZeroGps = false;
+            alertDialog.show();
+        }
+    }
+
+    public void showNullGpsAlert() {
+        final AlertDialog dialog;
+        if (isForceGps) {
+            dialog = new AlertDialog.Builder(activity)
+                    .setCancelable(true)
+                    .setMessage(R.string.dialog_connecting_to_satellite)
+                    .setNeutralButton(R.string.cancel, (dialog1, which) -> {
+                        canContWithZeroGps = false;
+                        activateButtons();
+                        dialog1.dismiss();
+                    })
+                    .setNegativeButton(R.string.view_retry, (dialog12, which) -> {
+                        if (activity.getLocation() == null || activity.getLocation().getLongitude() == 0 || activity.getLocation().getLatitude() == 0) {
+                            dialog12.dismiss();
+                            showNoGpsAlert();
+                        } else {
+                            dialog12.dismiss();
+                            onClick(btnStart);
+                        }
+                    })
+                    .create();
+            dialog.setOnShowListener(dialog13 -> getTimer(dialog13).start());
+        } else {
+            dialog = new AlertDialog.Builder(activity)
+                    .setCancelable(true)
+                    .setMessage(R.string.dialog_connecting_to_satellite)
+                    .setPositiveButton(R.string.dialog_start_without_gps, (dialog1, which) -> {
+                        dialog1.dismiss();
+                        canContWithZeroGps = true;
+                        onClick(btnStart);
+                    })
+                    .setNeutralButton(R.string.cancel, (dialog1, which) -> {
+                        canContWithZeroGps = false;
+                        activateButtons();
+                        dialog1.dismiss();
+                    })
+                    .setNegativeButton(R.string.view_retry, (dialog12, which) -> {
+                        if (activity.getLocation() == null || activity.getLocation().getLongitude() == 0 || activity.getLocation().getLatitude() == 0) {
+                            dialog12.dismiss();
+                            showNoGpsAlert();
+                        } else {
+                            dialog12.dismiss();
+                            onClick(btnStart);
+                        }
+                    })
+                    .create();
+            dialog.setOnShowListener(dialog13 -> getTimer(dialog13).start());
+        }
+        dialog.show();
+    }
+
+    private CountDownTimer getTimer(final DialogInterface dialog) {
+        final int AUTO_DISMISS_MILLIS = 15000;
+        final Button defaultButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+        final CharSequence negativeButtonText = defaultButton.getText();
+        return new CountDownTimer(AUTO_DISMISS_MILLIS, 100) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                defaultButton.setEnabled(false);
+                defaultButton.setText(String.format(
+                        Locale.getDefault(), "%s (%d)",
+                        negativeButtonText,
+                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) + 1 //add one so it never displays zero
+                ));
+            }
+
+            @Override
+            public void onFinish() {
+                if (((AlertDialog) dialog).isShowing()) {
+                    if (activity.getLocation() != null) {
+                        dialog.dismiss();
+                        onClick(btnStart);
+                    } else {
+                        dialog.dismiss();
+                        showNoGpsAlert();
+                    }
+                }
+            }
+        };
     }
 }
 

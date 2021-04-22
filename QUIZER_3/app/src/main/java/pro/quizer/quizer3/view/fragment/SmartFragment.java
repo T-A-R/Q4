@@ -720,6 +720,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                     String configResponseJson = null;
                     try {
                         configResponseJson = configResponseBody.string();
+//                        getMainActivity().copyToClipboard(configResponseJson);
                     } catch (IOException e) {
                         showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_602));
 //                        addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, getString(R.string.log_error_602_desc), null);

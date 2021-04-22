@@ -743,4 +743,6 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     public interface OnTableAnswerClickListener {
         void onAnswerClick(int row, int column);
     }
+
+
 }

@@ -3,8 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:longClickable="false"
     tools:layout_height="50dp"
     tools:layout_width="130dp"
+    android:background="@drawable/table_background_top_left"
     android:id="@+id/row_cont">
 
     <ImageView

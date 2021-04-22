@@ -431,7 +431,6 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_4sdp"
                 app:cellMargin="1dp"
-                app:dragAndDropEnabled="false"
                 tools:ignore="UnknownIdInLayout" />
 
         </FrameLayout>

@@ -44,7 +44,7 @@
     <string name="side_menu_date">Оплачено до</string>
     <string name="side_menu_no_tariff">Тариф не оплачен</string>
 
-    <string name="register_title">Добро пожаловать\nв Checkpot</string>
+    <string name="register_title">Добро пожаловать</string>
     <string name="register_btn_register">Регистрация</string>
     <string name="register_btn_skip">Перейти к розыгрышам</string>
 
@@ -109,6 +109,7 @@
     <string name="dialog_sending_waves_via_sms_confirmation">Вы уверены, что хотите отправить волны для пользователя через СМС?</string>
     <string name="dialog_please_turn_on_auto_time">Пожалуйста, включите автоматическое время сети.</string>
     <string name="dialog_you_need_to_turn_on_gps">Для прохождения анкеты необходимо включить GPS.</string>
+    <string name="dialog_you_need_to_turn_off_airplane">Для прохождения анкеты необходимо выключить \"Авиарежим\".</string>
     <string name="dialog_please_give_permissions">Пожалуйста, предоставьте разрешения приложению.</string>
     <string name="dialog_you_need_to_turn_on_permissions">Для работы приложения необходимо перейти в настройки и предоставить нужные разрешия.</string>
     <string name="dialog_you_need_to_turn_on_auto_time">Для прохождения анкеты необходимо включить автоматическое время сети.</string>
@@ -117,8 +118,10 @@
     <string name="dialog_perm_off">Отмена</string>
     <string name="dialog_apply">Принять</string>
     <string name="dialog_turn_on">Включить</string>
+    <string name="dialog_turn_off">Выключить</string>
     <string name="dialog_please_turn_on_gps">Пожалуйста, включите GPS для продолжения работы.</string>
-    <string name="dialog_no_gps">Устройство не может определить Ваше местоположение.</string>
+    <string name="dialog_please_turn_off_airplane">Пожалуйста, выключите \"Авиарежим\"</string>
+    <string name="dialog_no_gps">Подключиться к спутнику GPS не удалось.</string>
     <string name="dialog_no_gps_text">Свяжитесь со службой поддержки QUIZER.</string>
     <string name="dialog_no_gps_empty_text"> </string>
     <string name="dialog_no_gps_text_warning">Координаты определить невозможно, пожалуйста, предупредите Вашего организатора</string>
@@ -372,6 +375,7 @@
     <string name="dialog_clear_db_warning">Внимание! Все данные из базы будут удалены, включая неотосланные анкеты, аудио и фото. Вам необходимо будет заново ввести ключ при наличии подключения к Интернет! Вы действительно хотите удалить данные?</string>
     <string name="view_yes">Да</string>
     <string name="view_retry">Повторить попытку</string>
+    <string name="retry">Повторить</string>
     <string name="view_no">Нет</string>
     <string name="view_cancel">Отмена</string>
     <string name="log_empty">Журнал событий пуст</string>
@@ -448,6 +452,9 @@
     <string name="please_enter_name">Пожалуйста введите имя.</string>
     <string name="button_finish">Завершить</string>
     <string name="enter_phone">Введите номер телефона</string>
+    <string name="dialog_connecting_to_satellite">Устройство подключается к спутнику GPS, пожалуйста, подождите.</string>
+    <string name="dialog_start_without_gps">Начать без GPS</string>
+    <string name="dialog_try_again">Попробовать ещё раз</string>
 
 
 </resources>

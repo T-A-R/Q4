@@ -87,6 +87,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private Button btnExit;
     private ImageView btnHideTitle;
     private RelativeLayout titleCont;
+    private RelativeLayout questionTitleBox;
     private LinearLayout titleBox;
     private LinearLayout titleCont1;
     private LinearLayout titleCont2;
@@ -181,6 +182,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         questionCont = findViewById(R.id.question_cont);
         questionBox = findViewById(R.id.question_box);
         questionImagesCont = findViewById(R.id.question_images_cont);
+        questionTitleBox = findViewById(R.id.question_title_box);
         spinnerCont = findViewById(R.id.spinner_cont);
         infoCont = findViewById(R.id.info_cont);
         tableCont = findViewById(R.id.table_cont);
@@ -965,6 +967,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void initTable() {
+        if (currentElement.getElementOptionsR().getTitle() == null || currentElement.getElementOptionsR().getTitle().length() == 0)
+            questionTitleBox.setVisibility(View.GONE);
         adapterTable = new TableQuestionAdapter(currentElement, answersList, titlesMap, getActivity(), mRefreshRecyclerViewRunnable, this);
         tableLayout.setAdapter(adapterTable);
         tableLayout.setLongClickable(false);
@@ -1697,8 +1701,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             e.printStackTrace();
         }
 
-//        getMainActivity().restartHome();
-        replaceFragment(new HomeFragment());
+        getMainActivity().restartHome();
+//        replaceFragment(new HomeFragment());
     }
 
     private void stopAllRecording() {
@@ -2288,8 +2292,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     .setMessage(message)
                     .setPositiveButton(R.string.view_OK, (dialog, which) -> {
                         dialog.dismiss();
-//                        getMainActivity().restartHome();
-                        replaceFragment(new HomeFragment());
+                        getMainActivity().restartHome();
+//                        replaceFragment(new HomeFragment());
                     })
                     .show();
         }
@@ -2328,8 +2332,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             activateButtons();
                         }
                         dialog.dismiss();
-//                        getMainActivity().restartHome();
-                        replaceFragment(new HomeFragment());
+                        getMainActivity().restartHome();
+//                        replaceFragment(new HomeFragment());
                     })
                     .show();
         }

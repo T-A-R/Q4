@@ -346,7 +346,7 @@
     <string name="view_exit_poll_number_title">Выбор номера (для Экзит-Пулл)</string>
     <string name="view_user_count_on_device">Количество пользователей на данном устройстве: %1$s</string>
     <string name="view_no_users">Нет сохранённых логинов</string>
-    <string name="service_title">Сервисное обслуживание</string>
+    <string name="service_title">Сервисное меню</string>
     <string name="notification_sending_empty_users_list">Пользователи не существуют для текущей отправки.</string>
     <string name="notification_no_numbers_available">Список номеров для отправки анкет через СМС пуст.</string>
     <string name="notification_sending_sms">Отправка СМС…</string>

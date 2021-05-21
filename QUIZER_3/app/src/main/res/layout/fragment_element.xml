@@ -5,6 +5,7 @@
     android:id="@+id/cont_element_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorWhite"
     android:saveEnabled="false">
 
     <!--TOOLBAR-->
@@ -253,6 +254,7 @@
             android:visibility="visible">
 
             <RelativeLayout
+                android:id="@+id/question_title_box"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_8sdp"
@@ -279,7 +281,6 @@
                             android:layout_marginStart="@dimen/_8sdp"
                             android:layout_marginEnd="@dimen/_8sdp"
                             android:layout_marginBottom="@dimen/_8sdp"
-                            android:text="Question"
                             android:textColor="@color/white"
                             android:textSize="@dimen/_14ssp"
                             android:visibility="visible" />
@@ -291,7 +292,6 @@
                             android:layout_marginStart="@dimen/_8sdp"
                             android:layout_marginEnd="@dimen/_8sdp"
                             android:layout_marginBottom="@dimen/_8sdp"
-                            android:text="Description"
                             android:textColor="@color/white"
                             android:textSize="@dimen/_10ssp"
                             android:textStyle="italic"
@@ -354,7 +354,6 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="Question"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_14ssp"
                     android:visibility="gone" />

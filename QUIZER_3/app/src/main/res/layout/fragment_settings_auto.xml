@@ -4,6 +4,7 @@
     android:id="@+id/cont_settings_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorWhite"
     android:orientation="vertical">
 
     <pro.quizer.quizer3.view.Toolbar

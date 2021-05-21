@@ -3,6 +3,7 @@ package pro.quizer.quizer3.view.fragment;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -262,16 +263,22 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
     }
 
     public static void enableSideMenu(boolean full, boolean exit) {
-        sideMenuDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        if (full) {
-            mHomeBtnCont.setVisibility(View.VISIBLE);
-            mSyncBtnCont.setVisibility(View.VISIBLE);
-        } else {
-            mHomeBtnCont.setVisibility(View.GONE);
-            mSyncBtnCont.setVisibility(View.GONE);
-        }
-        if(exit) {
-            mQuotaBtnCont.setVisibility(View.GONE);
+        try {
+            if (sideMenuDrawer != null) {
+                sideMenuDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            }
+            if (full) {
+                mHomeBtnCont.setVisibility(View.VISIBLE);
+                mSyncBtnCont.setVisibility(View.VISIBLE);
+            } else {
+                mHomeBtnCont.setVisibility(View.GONE);
+                mSyncBtnCont.setVisibility(View.GONE);
+            }
+            if (exit) {
+                mQuotaBtnCont.setVisibility(View.GONE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

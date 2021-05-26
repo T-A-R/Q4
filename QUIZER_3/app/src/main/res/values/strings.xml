@@ -108,7 +108,8 @@
     <string name="dialog_sending_waves_via_sms">Отправка отчётов с помощью СМС.</string>
     <string name="dialog_sending_waves_via_sms_confirmation">Вы уверены, что хотите отправить волны для пользователя через СМС?</string>
     <string name="dialog_please_turn_on_auto_time">Пожалуйста, включите автоматическое время сети.</string>
-    <string name="dialog_you_need_to_turn_on_gps">Для прохождения анкеты необходимо включить GPS.</string>
+    <string name="dialog_you_need_to_turn_on_gps">Для прохождения анкеты необходимо включить GPS, а также режим высокой точности Google (в зависимости от устройства: Google Location Accuracy, Определение местоположения, Геолокация Google или подобное название)</string>
+    <string name="dialog_you_need_to_turn_on_google_location">Для прохождения анкеты необходимо включить режим высокой точности Google (в зависимости от устройства: Google Location Accuracy, Определение местоположения, Геолокация Google или подобное название)</string>
     <string name="dialog_you_need_to_turn_off_airplane">Для прохождения анкеты необходимо выключить \"Авиарежим\".</string>
     <string name="dialog_please_give_permissions">Пожалуйста, предоставьте разрешения приложению.</string>
     <string name="dialog_you_need_to_turn_on_permissions">Для работы приложения необходимо перейти в настройки и предоставить нужные разрешия.</string>

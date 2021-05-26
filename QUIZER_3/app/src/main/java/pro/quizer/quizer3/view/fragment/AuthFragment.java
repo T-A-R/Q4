@@ -178,6 +178,11 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 activateButtons();
                 getMainActivity().showSettingsAlert();
                 break;
+            case 14: // NoHighAccuracyGpsMode
+                hideScreensaver();
+                activateButtons();
+                getMainActivity().showGoogleHighAccuracyAlert();
+                break;
             case 12:
                 final HomeFragment fragment1 = new HomeFragment();
                 fragment1.setStartAfterAuth();

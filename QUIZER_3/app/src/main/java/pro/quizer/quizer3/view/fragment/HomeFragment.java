@@ -278,6 +278,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             case 12:
                 startQuestionnaire();
                 break;
+            case 14: // NoHighAccuracyMode
+                hideScreensaver();
+                activateButtons();
+                isCanBackPress = true;
+                getMainActivity().showGoogleHighAccuracyAlert();
+                break;
         }
     }
 

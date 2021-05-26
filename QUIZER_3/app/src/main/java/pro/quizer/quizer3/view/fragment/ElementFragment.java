@@ -1412,20 +1412,15 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     @Override
     public void onAnswerClick(int position, boolean enabled, String answer) {
-        if (isRestored) {
-            try {
-                isRestored = false;
-                int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
-                getDao().deleteOldElementsPassedR(id);
-                showToast(getString(R.string.data_changed));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        clearSaved();
     }
 
     @Override
     public void onAnswerClick(int row, int column) {
+        clearSaved();
+    }
+
+    private void clearSaved() {
         if (isRestored) {
             try {
                 isRestored = false;
@@ -2043,6 +2038,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     getMainActivity().isAutoZoom() ? R.layout.holder_card_auto : R.layout.holder_card, items, currentElement.getElementOptionsR().isPolyanswer());
             listView.setAdapter(adapter);
             mCloseBtn.setOnClickListener(v -> {
+                clearSaved();
                 loadFromCard(adapter.getItems());
                 infoDialog.dismiss();
             });

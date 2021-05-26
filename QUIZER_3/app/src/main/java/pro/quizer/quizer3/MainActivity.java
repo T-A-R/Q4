@@ -50,6 +50,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.view.KeyEvent;
 
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -1532,14 +1533,36 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
         locationSettingsResponseTask.addOnFailureListener(e -> {
             e.printStackTrace();
+            int statusCode = ((ApiException) e).getStatusCode();
+
+            Log.d("T-L.MainActivity", "checkSettingsAndStartLocationUpdates CODE: " + getLocationMode());
             if (isAirplaneMode()) {
-                Log.d("T-L.MainActivity", "checkSettingsAndStartLocationUpdates: 3");
                 listener.runEvent(10);
             } else {
-                Log.d("T-L.MainActivity", "checkSettingsAndStartLocationUpdates: 4");
-                listener.runEvent(11);
+                switch (getLocationMode()) {
+                    case -1:
+                        showToastfromActivity("Ошибка определения режима геолокации");
+                        break;
+                    case 0:
+                        listener.runEvent(11);
+                        break;
+                    case 1:
+                    case 2:
+                        listener.runEvent(14);
+                    break;
+                }
+
             }
         });
+    }
+
+    public int getLocationMode() {
+        try {
+            return Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -1566,6 +1589,19 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         alertDialog.setCancelable(false);
         alertDialog.setTitle(R.string.dialog_please_turn_on_gps);
         alertDialog.setMessage(R.string.dialog_you_need_to_turn_on_gps);
+        alertDialog.setPositiveButton(R.string.dialog_turn_on, (dialog, which) -> {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+        });
+        alertDialog.show();
+
+    }
+
+    public void showGoogleHighAccuracyAlert() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+        alertDialog.setCancelable(false);
+//        alertDialog.setTitle(R.string.dialog_please_turn_on_gps);
+        alertDialog.setMessage(R.string.dialog_you_need_to_turn_on_google_location);
         alertDialog.setPositiveButton(R.string.dialog_turn_on, (dialog, which) -> {
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivity(intent);

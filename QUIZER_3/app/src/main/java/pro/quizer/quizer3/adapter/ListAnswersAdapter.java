@@ -102,7 +102,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     }
 
     public boolean isUnChecker(int position) {
-        return answersList.get(position).getElementOptionsR().isUnchecker();
+        return isMulti && answersList.get(position).getElementOptionsR().isUnchecker();
     }
 
     public boolean isOpen(int position) {

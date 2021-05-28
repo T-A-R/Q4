@@ -152,6 +152,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private List<PrevElementsR> prevList = null;
     private Map<Integer, TitleModel> titlesMap;
     private CompositeDisposable disposables;
+    private boolean isInHiddenQuotaDialog = false;
 
     public ElementFragment() {
         super(R.layout.fragment_element);
@@ -1889,7 +1890,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             }
                         } else {
                             checkAndLoadNext();
-                            updatePrevElement();
+                            if(!isInHiddenQuotaDialog) {
+                                updatePrevElement();
+                            }
                         }
                     } catch (Exception e) {
                         activateButtons();
@@ -1915,19 +1918,23 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void checkAndLoadNext() {
-        if (nextElementId != null && !nextElementId.equals(0) && !nextElementId.equals(-1)) {
-            if (checkConditions(getElement(nextElementId))) {
-                checkHidden();
-                TransFragment fragment = new TransFragment();
-                fragment.setStartElement(nextElementId);
-                stopRecording();
-                replaceFragment(fragment);
+        if(!isInHiddenQuotaDialog) {
+            if (nextElementId != null && !nextElementId.equals(0) && !nextElementId.equals(-1)) {
+                if (checkConditions(getElement(nextElementId))) {
+                    checkHidden();
+                    if(!isInHiddenQuotaDialog) {
+                        TransFragment fragment = new TransFragment();
+                        fragment.setStartElement(nextElementId);
+                        stopRecording();
+                        replaceFragment(fragment);
+                    }
+                } else {
+                    checkAndLoadNext();
+                }
             } else {
-                checkAndLoadNext();
+                hideScreensaver();
+                activateButtons();
             }
-        } else {
-            hideScreensaver();
-            activateButtons();
         }
     }
 
@@ -2214,10 +2221,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
 
                 if (hiddenInQuotaBox) {
+                    Log.d("T-L.ElementFragment", "checkHidden: IN QUOTA BOX");
                     if (answersHidden.size() == 1 && enabledCounter == 0) {
+                        Log.d("T-L.ElementFragment", "checkHidden: 1");
                         String message = "Квота по варианту ответа \"" + answersHidden.get(0).getElementOptionsR().getTitle() + "\" закончилась";
                         showHiddenExitAlertDialog(message);
                     } else if (answersHidden.size() != enabledCounter) {
+                        Log.d("T-L.ElementFragment", "checkHidden: 2");
                         String message = "";
                         for (ElementItemR answer : answersHidden) {
                             if (answer.isEnabled())
@@ -2225,14 +2235,21 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             else
                                 message = message + "\"" + answer.getElementOptionsR().getTitle() + "\" квота закончилась - не будет выбран\n";
                         }
+                        isInHiddenQuotaDialog = true;
                         showHiddenAlertDialog(message, nextElement, answerStatesHidden, answersHidden);
+                        return;
+                    } else {
+                        Log.d("T-L.ElementFragment", "checkHidden: 3");
+                        saveHidden(nextElement, answerStatesHidden);
                     }
                 } else {
                     saveHidden(nextElement, answerStatesHidden);
                 }
             }
-            nextElementId = nextElement.getElementOptionsR().getJump();
-            checkAndLoadNext();
+            if(!isInHiddenQuotaDialog) {
+                nextElementId = nextElement.getElementOptionsR().getJump();
+                checkAndLoadNext();
+            }
         }
     }
 
@@ -2296,43 +2313,52 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void showHiddenAlertDialog(String message, ElementItemR nextElement, List<AnswerState> answerStatesHidden, List<ElementItemR> answersHidden) {
-        if (getMainActivity() != null && !getMainActivity().isFinishing()) {
-            new AlertDialog.Builder(Objects.requireNonNull(getContext()), R.style.AlertDialogTheme)
-                    .setCancelable(false)
-                    .setTitle(R.string.hidden_quotas_header)
-                    .setMessage(message)
-                    .setPositiveButton(R.string.view_continue, (dialog, which) -> {
-                        List<AnswerState> answersStatesEnabled = new ArrayList<>();
-                        for (int index = 0; index < answersHidden.size(); index++) {
-                            if (answersHidden.get(index).isEnabled()) {
-                                answersStatesEnabled.add(answerStatesHidden.get(index));
-                            }
-                        }
-                        saveHidden(nextElement, answersStatesEnabled);
-                        nextElementId = nextElement.getElementOptionsR().getJump();
-                        dialog.dismiss();
-                        checkAndLoadNext();
-                    })
-                    .setNegativeButton(R.string.view_cancel, (dialog, which) -> dialog.dismiss())
-                    .setNeutralButton(R.string.view_finish_quiz, (dialog, which) -> {
-                        stopAllRecording();
-                        try {
-                            getDao().clearCurrentQuestionnaireR();
-                            getDao().clearElementPassedR();
-                            getDao().clearPrevElementsR();
-                            getDao().deleteElementDatabaseModelByToken(getMainActivity().getCurrentQuestionnaireForce().getToken());
-                            getDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");
-                            getMainActivity().setCurrentQuestionnaireNull();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            activateButtons();
-                        }
-                        dialog.dismiss();
-                        getMainActivity().restartHome();
+        MainActivity activity = getMainActivity();
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                if (!activity.isFinishing()) {
+                    new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
+                            .setCancelable(false)
+                            .setTitle(R.string.hidden_quotas_header)
+                            .setMessage(message)
+                            .setPositiveButton(R.string.view_continue, (dialog, which) -> {
+                                List<AnswerState> answersStatesEnabled = new ArrayList<>();
+                                for (int index = 0; index < answersHidden.size(); index++) {
+                                    if (answersHidden.get(index).isEnabled()) {
+                                        answersStatesEnabled.add(answerStatesHidden.get(index));
+                                    }
+                                }
+                                saveHidden(nextElement, answersStatesEnabled);
+                                nextElementId = nextElement.getElementOptionsR().getJump();
+                                isInHiddenQuotaDialog = false;
+                                dialog.dismiss();
+                                checkAndLoadNext();
+                            })
+                            .setNegativeButton(R.string.view_cancel, (dialog, which) -> {
+                                isInHiddenQuotaDialog = false;
+                                dialog.dismiss();
+                            })
+                            .setNeutralButton(R.string.view_finish_quiz, (dialog, which) -> {
+                                stopAllRecording();
+                                try {
+                                    getDao().clearCurrentQuestionnaireR();
+                                    getDao().clearElementPassedR();
+                                    getDao().clearPrevElementsR();
+                                    getDao().deleteElementDatabaseModelByToken(getMainActivity().getCurrentQuestionnaireForce().getToken());
+                                    getDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");
+                                    getMainActivity().setCurrentQuestionnaireNull();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    activateButtons();
+                                }
+                                dialog.dismiss();
+                                getMainActivity().restartHome();
 //                        replaceFragment(new HomeFragment());
-                    })
-                    .show();
-        }
+                            })
+                            .show();
+                }
+            }
+        });
     }
 
     private void tableRedrawEverything() {

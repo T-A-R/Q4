@@ -67,7 +67,6 @@ public class MultiSelectSpinner extends Spinner implements DialogInterface.OnMul
 
     public MultiSelectSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Log.d("TARLOGS", "ADAPTER 2");
 //        simple_adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item) {
         simple_adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item) {
             @Override

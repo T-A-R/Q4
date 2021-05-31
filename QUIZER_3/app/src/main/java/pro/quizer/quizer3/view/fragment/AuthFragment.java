@@ -508,7 +508,9 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             try {
                 authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
             } catch (final Exception pE) {
+                showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_403));
                 activateButtons();
+                return;
             }
 
             if (authResponseModel == null) {

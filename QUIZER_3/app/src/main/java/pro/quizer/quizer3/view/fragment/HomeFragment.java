@@ -276,13 +276,19 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 getMainActivity().showSettingsAlert();
                 break;
             case 12:
+                getMainActivity().isGoogleLocation = true;
                 startQuestionnaire();
                 break;
             case 14: // NoHighAccuracyMode
-                hideScreensaver();
-                activateButtons();
-                isCanBackPress = true;
-                getMainActivity().showGoogleHighAccuracyAlert();
+                if (getMainActivity().getConfig().isForceGps()) {
+                    hideScreensaver();
+                    activateButtons();
+                    isCanBackPress = true;
+                    getMainActivity().showGoogleHighAccuracyAlert();
+                } else {
+                    getMainActivity().isGoogleLocation = false;
+                    startQuestionnaire();
+                }
                 break;
         }
     }
@@ -290,7 +296,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onClick(View view) {
         if (view == btnStart) {
-            if(activity.getConfig().isGps()) {
+            if (activity.getConfig().isGps()) {
                 activity.checkSettingsAndStartLocationUpdates(isForceGps, this);
             } else {
                 runEvent(12);
@@ -525,32 +531,59 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         mIsUsedFakeGps = false;
         Location location = activity.getLocation();
         if (activity.getConfig().isGps()) {
-            try {
-                mGPSModel = GpsUtils.getCurrentGps(getActivity(), isForceGps);
-                if (location != null && location.getLatitude() != 0 && location.getLongitude() != 0) {
-                    String GPS_FORMAT = "%1$s:%2$s";
-                    mGpsString = String.format(GPS_FORMAT, location.getLatitude(), location.getLongitude());
-                    mGpsTime = location.getTime() > 0 ? location.getTime() / 1000 : 0;
-                }
-                if (mGPSModel != null) {
+            if (activity.isGoogleLocation) {
+                try {
+                    mGPSModel = GpsUtils.getCurrentGps(getActivity(), isForceGps);
+                    if (location != null && location.getLatitude() != 0 && location.getLongitude() != 0) {
+                        String GPS_FORMAT = "%1$s:%2$s";
+                        mGpsString = String.format(GPS_FORMAT, location.getLatitude(), location.getLongitude());
+                        mGpsTime = location.getTime() > 0 ? location.getTime() / 1000 : 0;
+                    }
+                    if (mGPSModel != null) {
 //                    mGpsString = mGPSModel.getGPS();
-                    mGpsNetworkString = mGPSModel.getGPSNetwork();
-                    mIsUsedFakeGps = mGPSModel.isFakeGPS();
+                        mGpsNetworkString = mGPSModel.getGPSNetwork();
+                        mIsUsedFakeGps = mGPSModel.isFakeGPS();
 //                    mGpsTime = mGPSModel.getTime();
-                    mGpsTimeNetwork = mGPSModel.getTimeNetwork();
+                        mGpsTimeNetwork = mGPSModel.getTimeNetwork();
+                    }
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    Log.d(TAG, "startGps: " + e.getMessage());
                 }
-            } catch (final Exception e) {
-                e.printStackTrace();
-                Log.d(TAG, "startGps: " + e.getMessage());
-            }
 
-            if (location == null || location.getLatitude() == 0 || location.getLongitude() == 0) {
-                showNullGpsAlert();
-                return false;
+                if (location == null || location.getLatitude() == 0 || location.getLongitude() == 0) {
+                    showNullGpsAlert();
+                    return false;
+                } else {
+                    return true;
+                }
             } else {
-                return true;
-            }
+                try {
+                    mGPSModel = GpsUtils.getCurrentGps(getActivity(), isForceGps);
+                    if (location != null && location.getLatitude() != 0 && location.getLongitude() != 0) {
+                        String GPS_FORMAT = "%1$s:%2$s";
+                        mGpsString = String.format(GPS_FORMAT, location.getLatitude(), location.getLongitude());
+                        mGpsTime = location.getTime() > 0 ? location.getTime() / 1000 : 0;
+                    }
+                    if (mGPSModel != null) {
+//                    mGpsString = mGPSModel.getGPS();
+                        mGpsNetworkString = mGPSModel.getGPSNetwork();
+                        mIsUsedFakeGps = mGPSModel.isFakeGPS();
+//                    mGpsTime = mGPSModel.getTime();
+                        mGpsTimeNetwork = mGPSModel.getTimeNetwork();
+                    }
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    Log.d(TAG, "startGps: " + e.getMessage());
+                }
 
+                if (location == null || location.getLatitude() == 0 || location.getLongitude() == 0) {
+                    showNullGpsAlert();
+                    return false;
+                } else {
+                    return true;
+                }
+            }
         } else {
             return true;
         }

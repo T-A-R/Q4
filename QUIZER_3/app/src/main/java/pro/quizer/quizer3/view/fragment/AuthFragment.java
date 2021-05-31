@@ -179,9 +179,16 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 getMainActivity().showSettingsAlert();
                 break;
             case 14: // NoHighAccuracyGpsMode
-                hideScreensaver();
-                activateButtons();
-                getMainActivity().showGoogleHighAccuracyAlert();
+                if(getMainActivity().getConfig().isForceGps()) {
+                    hideScreensaver();
+                    activateButtons();
+                    getMainActivity().showGoogleHighAccuracyAlert();
+                } else {
+                    getMainActivity().isGoogleLocation = false;
+                    final HomeFragment fragment1 = new HomeFragment();
+                    fragment1.setStartAfterAuth();
+                    replaceFragment(fragment1);
+                }
                 break;
             case 12:
                 final HomeFragment fragment1 = new HomeFragment();
@@ -618,7 +625,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
         yesBtn.setOnClickListener(v -> {
             infoDialog.dismiss();
-            Log.d("T-L.AuthFragment", "???????????????: 1");
             checkGpsAnsStartHomeFragment();
         });
 

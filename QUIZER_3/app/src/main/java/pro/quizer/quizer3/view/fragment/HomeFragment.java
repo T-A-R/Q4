@@ -558,30 +558,35 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     return true;
                 }
             } else {
-                try {
-                    mGPSModel = GpsUtils.getCurrentGps(getActivity(), isForceGps);
-                    if (location != null && location.getLatitude() != 0 && location.getLongitude() != 0) {
-                        String GPS_FORMAT = "%1$s:%2$s";
-                        mGpsString = String.format(GPS_FORMAT, location.getLatitude(), location.getLongitude());
-                        mGpsTime = location.getTime() > 0 ? location.getTime() / 1000 : 0;
-                    }
-                    if (mGPSModel != null) {
-//                    mGpsString = mGPSModel.getGPS();
-                        mGpsNetworkString = mGPSModel.getGPSNetwork();
-                        mIsUsedFakeGps = mGPSModel.isFakeGPS();
-//                    mGpsTime = mGPSModel.getTime();
-                        mGpsTimeNetwork = mGPSModel.getTimeNetwork();
-                    }
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                    Log.d(TAG, "startGps: " + e.getMessage());
-                }
-
-                if (location == null || location.getLatitude() == 0 || location.getLongitude() == 0) {
-                    showNullGpsAlert();
+                if (activity.getConfig().isForceGps()) {
+                    showNoGpsAlert();
                     return false;
                 } else {
+                    try {
+                        mGPSModel = GpsUtils.getCurrentGps(getActivity(), isForceGps);
+                        if (mGPSModel != null) {
+                            mGpsString = mGPSModel.getGPS();
+                            mGpsNetworkString = mGPSModel.getGPSNetwork();
+                            mIsUsedFakeGps = mGPSModel.isFakeGPS();
+                            mGpsTime = mGPSModel.getTime();
+                            mGpsTimeNetwork = mGPSModel.getTimeNetwork();
+                        }
+                    } catch (final Exception e) {
+                        e.printStackTrace();
+                        Log.d(TAG, "startGps: " + e.getMessage());
+                    }
+
+                    if (mGPSModel == null || mGPSModel.isNoGps()) {
+                        if (canContWithZeroGps) {
+                            return true;
+                        } else {
+                            showNoGpsAlert();
+                            return false;
+                        }
+                    }
+
                     return true;
+
                 }
             }
         } else {

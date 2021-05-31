@@ -127,10 +127,22 @@
             android:id="@+id/edit_answer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/pen_button"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/_8sdp"
             android:layout_marginRight="@dimen/_8sdp"
             android:maxLines="1"
             android:textSize="@dimen/_12ssp" />
+
+        <ImageView
+            android:id="@+id/pen_button"
+            android:layout_width="@dimen/_14sdp"
+            android:layout_height="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:src="@drawable/edit_green"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/edit_button"

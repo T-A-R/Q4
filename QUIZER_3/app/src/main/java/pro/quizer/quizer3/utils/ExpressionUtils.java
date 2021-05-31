@@ -271,7 +271,7 @@ public class ExpressionUtils {
         }
 
         boolean check = checkHiddenOperator(partsList);
-        Log.d("T-L.ExpressionUtils", "????? RESULT:: " + check);
+        Log.d("T-L.ExpressionUtils", "????? RESULT OF: (" + expression + "): " + check);
         return check;
     }
 

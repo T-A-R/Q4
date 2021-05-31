@@ -69,6 +69,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     private int counter = 1;
     private final List<String> titles;
     private final Map<Integer, TitleModel> titlesMap;
+    boolean mFromPenButton = false;
 
     public ListAnswersAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> passedQuotaBlock, ElementItemR[][] quotaTree, Map<Integer, TitleModel> titlesMap, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
@@ -163,6 +164,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         public TextView answerEditText;
         ImageView button;
         ImageView editButton;
+        ImageView penButton;
         ImageView image1;
         ImageView image2;
         ImageView image3;
@@ -182,6 +184,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             answerEditText = itemView.findViewById(R.id.edit_answer);
             button = itemView.findViewById(R.id.radio_button);
             editButton = itemView.findViewById(R.id.edit_button);
+            penButton = itemView.findViewById(R.id.pen_button);
             image1 = itemView.findViewById(R.id.answer_image_1);
             image2 = itemView.findViewById(R.id.answer_image_2);
             image3 = itemView.findViewById(R.id.answer_image_3);
@@ -221,9 +224,10 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             }
 
             if (item.isEnabled()) {
-                cont.setOnClickListener(v -> onClick(answerEditText, position));
-                editButton.setOnClickListener(v -> onClick(answerEditText, position));
-                answerEditText.setOnClickListener(v -> onClick(answerEditText, position));
+                cont.setOnClickListener(v -> onClick(answerEditText, position, false));
+                editButton.setOnClickListener(v -> onClick(answerEditText, position, false));
+                answerEditText.setOnClickListener(v -> onClick(answerEditText, position, false));
+                penButton.setOnClickListener(v -> onClick(answerEditText, position, true));
             }
 
             setChecked(position);
@@ -259,18 +263,22 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                     button.setImageResource(MainActivity.AVIA ? R.drawable.radio_button_checked_red : R.drawable.radio_button_checked);
                     if (isOpen(position)) {
                         answerEditText.setVisibility(View.VISIBLE);
+                        penButton.setVisibility(View.VISIBLE);
                     } else {
                         answerEditText.setVisibility(View.GONE);
                         editButton.setVisibility(View.GONE);
+                        penButton.setVisibility(View.GONE);
                     }
                 } else {
                     button.setImageResource(MainActivity.AVIA ? R.drawable.radio_button_unchecked_red : R.drawable.radio_button_unchecked);
                     if (isOpen(position)) {
                         answerEditText.setVisibility(View.GONE);
+                        penButton.setVisibility(View.GONE);
                         editButton.setVisibility(View.VISIBLE);
                     } else {
                         answerEditText.setVisibility(View.GONE);
                         editButton.setVisibility(View.GONE);
+                        penButton.setVisibility(View.GONE);
                     }
                 }
             } else {
@@ -286,10 +294,13 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 if (answersState.get(position).getData() != null && !answersState.get(position).getData().equals("")) {
                     editButton.setVisibility(View.GONE);
                     answerEditText.setVisibility(View.VISIBLE);
+//                    if (!isMulti)
+                        penButton.setVisibility(View.VISIBLE);
                     answerEditText.setText(answersState.get(position).getData());
                 }
             } else {
                 answerEditText.setVisibility(View.GONE);
+                penButton.setVisibility(View.GONE);
                 editButton.setVisibility(View.VISIBLE);
             }
         }
@@ -389,15 +400,16 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             } else {
                 cont.setEnabled(true);
                 editButton.setEnabled(true);
-                cont.setOnClickListener(v -> onClick(answerEditText, position));
-                editButton.setOnClickListener(v -> onClick(answerEditText, position));
+                cont.setOnClickListener(v -> onClick(answerEditText, position, false));
+                editButton.setOnClickListener(v -> onClick(answerEditText, position, false));
             }
 
 //            showEnabled();
         }
 
-        public void onClick(TextView cardInput, int position) {
-            if ((isOpen(position) && !isChecked(position)) || (isOpen(position) && isAutoChecked(position))) {
+        public void onClick(TextView cardInput, int position, boolean isPenButton) {
+            if ((isOpen(position) && !isChecked(position)) || (isOpen(position) && isAutoChecked(position)) || isOpen(position) && isPenButton) {
+                mFromPenButton = isPenButton;
                 switch (answersList.get(position).getElementOptionsR().getOpen_type()) {
                     case "text":
                     case "number":
@@ -508,7 +520,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             mNextBtn.setOnClickListener(v -> {
                 mPhone = "7" + phoneFormatter.cleaned(inputPhone.getText().toString());
                 if ((phoneFormatter.getPhone().length() == 16) || (answersList.get(position).getElementOptionsR().isUnnecessary_fill_open() && phoneFormatter.getPhone().length() == 3)) {
-                    if(answersList.get(position).getElementOptionsR().isUnnecessary_fill_open() && phoneFormatter.getPhone().length() == 3) {
+                    if (answersList.get(position).getElementOptionsR().isUnnecessary_fill_open() && phoneFormatter.getPhone().length() == 3) {
                         answersState.get(position).setData("");
                     } else {
                         answersState.get(position).setData(phoneFormatter.getPhone());
@@ -538,6 +550,10 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     private void checkItem(int position) {
 
         if (isChecked(position) && !isMulti) {
+            return;
+        }
+        if(isMulti && mFromPenButton) {
+            mFromPenButton = false;
             return;
         }
         if (isAutoChecked(position)) {

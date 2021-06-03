@@ -259,7 +259,12 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
     }
 
     public static void disableSideMenu() {
-        sideMenuDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        try {
+            if (sideMenuDrawer != null)
+                sideMenuDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void enableSideMenu(boolean full, boolean exit) {

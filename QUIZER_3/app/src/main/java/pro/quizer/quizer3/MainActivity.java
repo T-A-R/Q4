@@ -171,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private int audioNumber = 1;
     private Long audioTime;
     private Boolean mHomeRestart;
+    public boolean isGoogleLocation = false;
 
     private RelativeLayout mainCont;
 
@@ -229,11 +230,17 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             mSpeedMode = getSpeedMode() == 1;
             mAutoZoom = getZoomMode() == 1;
 
-            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-            locationRequest = LocationRequest.create();
-            locationRequest.setInterval(12000);
-            locationRequest.setFastestInterval(6000);
-            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            try {
+                fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+                locationRequest = LocationRequest.create();
+                locationRequest.setInterval(12000);
+                locationRequest.setFastestInterval(6000);
+                locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                isGoogleLocation = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                isGoogleLocation = false;
+            }
         }
     }
 
@@ -1607,7 +1614,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             startActivity(intent);
         });
         alertDialog.show();
-
     }
 
     public void showAirplaneAlert() {

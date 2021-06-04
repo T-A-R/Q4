@@ -11,39 +11,41 @@
         android:layout_marginBottom="1dp"
         android:background="@drawable/table_background_top_left">
 
-    <ImageView
-        android:id="@+id/fullscreen"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:src="@drawable/ic_fullscreen" />
+        <ImageView
+            android:id="@+id/fullscreen"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_fullscreen" />
 
-<!--    <TextView-->
-<!--        android:layout_width="1dp"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_alignParentEnd="true"-->
-<!--        android:layout_alignParentRight="true"-->
-<!--        android:background="@color/gray" />-->
+        <View
+            android:id="@+id/vLine"
+            android:layout_width="2dp"
+            android:layout_height="match_parent" />
 
-    <View
-        android:id="@+id/vLine"
-        android:layout_width="2dp"
-        android:layout_height="match_parent" />
+        <pro.quizer.quizer3.view.element.textview.VerticalTextView
+            android:id="@+id/table_header_column_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:layout_above="@+id/row_image"
+            android:gravity="bottom"
+            android:maxLines="2"
+            android:text="Барсуков Ибрагим Исаевич"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_11ssp"
+            android:visibility="visible" />
 
-    <pro.quizer.quizer3.view.element.textview.VerticalTextView
-        android:id="@+id/table_header_column_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/_16sdp"
-        android:layout_marginBottom="@dimen/_4sdp"
-
-        android:gravity="bottom"
-        android:maxLines="2"
-        android:text="Барсуков Ибрагим Исаевич"
-        android:textColor="@android:color/black"
-        android:textSize="@dimen/_11ssp"
-        android:visibility="visible" />
+        <com.zolad.zoominimageview.ZoomInImageView
+            android:id="@+id/row_image"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="@dimen/_2sdp"
+            android:adjustViewBounds="true"
+            android:visibility="gone" />
 
     </RelativeLayout>
 </RelativeLayout>

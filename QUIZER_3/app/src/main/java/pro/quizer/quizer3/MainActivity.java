@@ -413,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                     List<ElementContentsR> elementContentsRList = new ArrayList<>();
                     if (contentsList != null && !contentsList.isEmpty()) {
                         for (Contents contents : contentsList) {
-                            elementContentsRList.add(new ElementContentsR(element.getRelativeID(), contents.getType(), contents.getData(), contents.getOrder()));
+                            elementContentsRList.add(new ElementContentsR(element.getRelativeID(), contents.getType(), contents.getData(), contents.getData_small(), contents.getData_thumb(), contents.getOrder()));
                         }
                     }
                     if (elementContentsRList.size() > 0) {
@@ -1556,7 +1556,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                     case 1:
                     case 2:
                         listener.runEvent(14);
-                    break;
+                        break;
                 }
 
             }

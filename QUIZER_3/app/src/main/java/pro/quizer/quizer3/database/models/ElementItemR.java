@@ -181,6 +181,10 @@ public class ElementItemR {
         return getDao().getElementOptionsR(relative_id);
     }
 
+    public List<ElementContentsR> getElementContentsR() {
+        return getDao().getElementContentsR(relative_id);
+    }
+
     public void setElementOptionsR(ElementOptionsR elementOptionsR) {
         getDao().insertElementOptionsR(elementOptionsR);
     }

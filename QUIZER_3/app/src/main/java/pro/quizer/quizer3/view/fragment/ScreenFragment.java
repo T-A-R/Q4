@@ -1,6 +1,7 @@
 package pro.quizer.quizer3.view.fragment;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -231,7 +232,11 @@ public abstract class ScreenFragment extends SmartFragment {
         setRetainInstance(true);
         FragmentActivity activity = getActivity();
         if (activity != null)
-            KeyboardVisibilityEvent.setEventListener(activity, this::onKeyboardVisible);
+            try {
+                KeyboardVisibilityEvent.setEventListener(activity, this::onKeyboardVisible);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
     }
 
     protected void onKeyboardVisible(boolean isOpen) {
@@ -252,8 +257,12 @@ public abstract class ScreenFragment extends SmartFragment {
     }
 
     public void showScreensaver(int titleId, boolean full) {
-        String title = getResources().getString(titleId);
-        showScreensaver(title, full);
+        try {
+            String title = getResources().getString(titleId);
+            main.showScreensaver(title, full);
+        } catch (Resources.NotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -277,12 +286,20 @@ public abstract class ScreenFragment extends SmartFragment {
     public void showScreensaver(String title, boolean full) {
         hideKeyboard();
         if (main != null)
-            main.showScreensaver(title, full);
+            try {
+                main.showScreensaver(title, full);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
     }
 
     public void hideScreensaver() {
         if (main != null)
-            main.hideScreensaver();
+            try {
+                main.hideScreensaver();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
     }
 
     public User getUser() {
@@ -369,36 +386,44 @@ public abstract class ScreenFragment extends SmartFragment {
 
     public void setViewBackground(View view, boolean visible, boolean border) {
         if(isAvia()) {
-            if (visible) {
-                view.setEnabled(true);
-                if (getMainActivity().getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                    view.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), border ? R.drawable.button_background_red : R.drawable.button_background_red_without_border));
+            try {
+                if (visible) {
+                    view.setEnabled(true);
+                    if (getMainActivity().getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                        view.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), border ? R.drawable.button_background_red : R.drawable.button_background_red_without_border));
+                    } else {
+                        view.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), border ? R.drawable.button_background_red : R.drawable.button_background_red_without_border));
+                    }
                 } else {
-                    view.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), border ? R.drawable.button_background_red : R.drawable.button_background_red_without_border));
+                    view.setEnabled(false);
+                    if (getMainActivity().getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                        view.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray_avia));
+                    } else {
+                        view.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray_avia));
+                    }
                 }
-            } else {
-                view.setEnabled(false);
-                if (getMainActivity().getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                    view.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray_avia));
-                } else {
-                    view.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray_avia));
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         } else {
-            if (visible) {
-                view.setEnabled(true);
-                if (getMainActivity().getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                    view.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+            try {
+                if (visible) {
+                    view.setEnabled(true);
+                    if (getMainActivity().getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                        view.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                    } else {
+                        view.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                    }
                 } else {
-                    view.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_green));
+                    view.setEnabled(false);
+                    if (getMainActivity().getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                        view.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+                    } else {
+                        view.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
+                    }
                 }
-            } else {
-                view.setEnabled(false);
-                if (getMainActivity().getAndroidVersion() < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                    view.setBackgroundDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-                } else {
-                    view.setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.button_background_gray));
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

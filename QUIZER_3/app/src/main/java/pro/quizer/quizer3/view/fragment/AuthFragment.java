@@ -158,6 +158,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     @Override
     public void runEvent(int id) {
+//        showToast("Step: 10." + id);
         switch (id) {
             case 1:
                 UiUtils.setButtonEnabled(btnSend, false);
@@ -194,6 +195,12 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 final HomeFragment fragment1 = new HomeFragment();
                 fragment1.setStartAfterAuth();
                 replaceFragment(fragment1);
+                break;
+            case 15: // Settings OK but location fail to start
+                getMainActivity().isGoogleLocation = false;
+                final HomeFragment fragment3 = new HomeFragment();
+                fragment3.setStartAfterAuth();
+                replaceFragment(fragment3);
                 break;
         }
     }
@@ -667,7 +674,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             }
             getDao().setUserName(nameString);
             infoDialog.dismiss();
-            Log.d("T-L.AuthFragment", "???????????????: 2");
             checkGpsAnsStartHomeFragment();
         });
 

@@ -186,8 +186,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             if (locationResult == null) return;
             for (Location location : locationResult.getLocations()) {
                 mLocation = location;
-//                Log.d("T-L.MainActivity", "Координаты: " + location.getLatitude() + " : " + location.getLongitude()
-//                        + " Время: " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL, location.getTime()));
             }
         }
     };
@@ -195,55 +193,58 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
-            setContentView(R.layout.activity_main);
-            mainCont = findViewById(R.id.main_cont);
-            if (AVIA)
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            else
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-            Fonts.init(this);
+//        if (savedInstanceState == null) {
+        setContentView(R.layout.activity_main);
+        mainCont = findViewById(R.id.main_cont);
+        if (AVIA)
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-            if (!checkPermission()) {
-                requestPermission();
-            }
-            Preferences preferences = new Preferences(getApplicationContext());
-            getUser().setPreferences(preferences);
-            mMediaBrowser = new MediaBrowserCompat(this, new ComponentName(this, AudioService.class), mConnCallbacks, null); // optional bundle
+        Fonts.init(this);
+        if (!checkPermission()) {
+            requestPermission();
+        }
 
-            if (!mMediaBrowser.isConnected()) {
-                mMediaBrowser.connect();
-            }
+        Preferences preferences = new Preferences(getApplicationContext());
+        getUser().setPreferences(preferences);
+        mMediaBrowser = new MediaBrowserCompat(this, new ComponentName(this, AudioService.class), mConnCallbacks, null); // optional bundle
 
-            setVolumeControlStream(AudioManager.STREAM_MUSIC);
-            if (mIsFirstStart || savedInstanceState == null) {
-                mIsFirstStart = false;
-                mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.main);
-                assert mainFragment != null;
-                View view = mainFragment.getView();
-                if (mainFragment == null || view == null)
-                    Log.d(TAG, "MainActivity.onCreate() WTF? view == null");
-                else {
-                    view.post(() -> view.getViewTreeObserver().addOnGlobalLayoutListener(MainActivity.this));
-                }
-            }
-
-            mSpeedMode = getSpeedMode() == 1;
-            mAutoZoom = getZoomMode() == 1;
-
-            try {
-                fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-                locationRequest = LocationRequest.create();
-                locationRequest.setInterval(12000);
-                locationRequest.setFastestInterval(6000);
-                locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                isGoogleLocation = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-                isGoogleLocation = false;
+        if (!mMediaBrowser.isConnected()) {
+            mMediaBrowser.connect();
+        }
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        if (mIsFirstStart || savedInstanceState == null) {
+            mIsFirstStart = false;
+            mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.main);
+            assert mainFragment != null;
+            View view = mainFragment.getView();
+            if (mainFragment == null || view == null) {
+                Log.d(TAG, "MainActivity.onCreate() WTF? view == null");
+            } else {
+                view.post(() -> view.getViewTreeObserver().addOnGlobalLayoutListener(MainActivity.this));
             }
         }
+
+
+        mSpeedMode = getSpeedMode() == 1;
+        mAutoZoom = getZoomMode() == 1;
+
+        try {
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+            locationRequest = LocationRequest.create();
+            locationRequest.setInterval(12000);
+            locationRequest.setFastestInterval(6000);
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            isGoogleLocation = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            isGoogleLocation = false;
+        }
+//        } else {
+//            showToastfromActivity("2");
+//        }
     }
 
     @Override
@@ -1516,7 +1517,11 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     @Override
     protected void onStop() {
         super.onStop();
-        stopLocationUpdates();
+        try {
+            stopLocationUpdates();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     boolean isAirplaneMode() {
@@ -1579,6 +1584,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                         listener.runEvent(14);
                         break;
                     case 3:
+                    default:
                         listener.runEvent(15);
                         break;
                 }
@@ -1590,7 +1596,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(!isGotAnswerFromGPS) {
+                if (!isGotAnswerFromGPS) {
 //                    showToastfromActivity("RUN!");
                     listener.runEvent(15);
                 }

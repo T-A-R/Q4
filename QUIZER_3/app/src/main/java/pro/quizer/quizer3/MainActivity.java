@@ -691,8 +691,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public void startRecording(int relativeId, String token) {
-        Log.d(TAG, "******************* ATTEMPT startRecording: **********************");
-        Log.d(TAG, "startRecording token: " + token);
         if (mIsMediaConnected) {
             final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
             if (mediaCntrlr == null) {
@@ -1005,17 +1003,13 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public ElementItemR[][] getTree(final ICallback pCallback) {
-        Log.d(TAG, "getTree: START");
         if (tree == null)
             tree = new QuotasTreeMaker(getQuotasElements(), this, pCallback).execute();
-        Log.d(TAG, "getTree: DONE");
         return tree;
     }
 
     public ElementItemR[][] getTreeForce(final ICallback pCallback) {
-        Log.d(TAG, "getTree: START");
         tree = new QuotasTreeMaker(getQuotasElements(), this, pCallback).execute();
-        Log.d(TAG, "getTree: DONE");
         return tree;
     }
 

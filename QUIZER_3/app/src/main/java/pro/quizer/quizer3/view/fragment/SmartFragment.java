@@ -35,7 +35,9 @@ import com.krishna.fileloader.listener.MultiFileDownloadListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import pro.quizer.quizer3.API.QuizerAPI;
 import pro.quizer.quizer3.API.models.request.AuthRequestModel;
@@ -609,6 +611,44 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             }
         }
         return passedQuotasBlockNew;
+    }
+
+    public Map<Integer, List<Integer>> getPassedQuotasMap(int max) {
+        Map<Integer, List<Integer>> mapBlock = new HashMap<>();
+        Map<Integer, List<Integer>> limitedMapBlock = new HashMap<>();
+        List<ElementPassedR> passedElements = getDao().getAllElementsPassedR(getMainActivity().getCurrentQuestionnaire().getToken());
+        if (passedElements == null || passedElements.size() == 0) {
+            return null;
+        }
+
+        int key = -1;
+        int currentOrder = -1;
+        for (int k = 0; k < passedElements.size(); k++) {
+            if (passedElements.get(k).isFrom_quotas_block()) {
+                int id = passedElements.get(k).getRelative_id();
+                int parentId = getElement(id).getRelative_parent_id();
+                int parentOrder = getElement(parentId).getElementOptionsR().getOrder();
+//                Log.d("T-L.SmartFragment", "id: " + id + " order: " + parentOrder);
+                if (parentOrder != currentOrder) {
+                    currentOrder = parentOrder;
+                    key++;
+                }
+                List<Integer> step = mapBlock.get(key);
+                if (step == null) step = new ArrayList<>();
+                step.add(id);
+//                Log.d("T-L.SmartFragment", "??? key: " + key + " size: " + step.size());
+                mapBlock.put(key, step);
+
+            }
+        }
+
+        if (mapBlock.size() > 0) {
+            for (int i = 0; i < max - 1; i++) {
+                limitedMapBlock.put(i, mapBlock.get(i));
+            }
+        }
+
+        return limitedMapBlock;
     }
 
     public List<File> getAllPhotos() {

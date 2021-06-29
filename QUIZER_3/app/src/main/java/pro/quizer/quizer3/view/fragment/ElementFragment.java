@@ -52,6 +52,8 @@ import pro.quizer.quizer3.adapter.CardAdapter;
 import pro.quizer.quizer3.adapter.ListAnswersAdapter;
 import pro.quizer.quizer3.adapter.RankQuestionAdapter;
 import pro.quizer.quizer3.adapter.ScaleQuestionAdapter;
+import pro.quizer.quizer3.adapter.TableCardAdapter;
+import pro.quizer.quizer3.adapter.TableCardAdapter2;
 import pro.quizer.quizer3.adapter.TableQuestionAdapter;
 import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
@@ -1988,16 +1990,24 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
         int counter = 1;
         if (currentElement.getSubtype().equals(ElementSubtype.TABLE)) {
-            List<String> values = new ArrayList<>();
+            List<CardItem> items = new ArrayList<>();
             for (ElementItemR element : answersList) {
                 if (element.getElementOptionsR() != null && element.getElementOptionsR().isShow_in_card()) {
-                    values.add(counter + ". " + titlesMap.get(element.getRelative_id()).getTitle());
+                    CardItem item = new CardItem();
+                    item.setTitle(counter + ". " + titlesMap.get(element.getRelative_id()).getTitle());
+                    if (element.getElementContentsR() != null && element.getElementContentsR().size() > 0) {
+                        item.setPic(element.getElementContentsR().get(0).getData());
+                        item.setThumb(element.getElementContentsR().get(0).getData_thumb());
+                    }
+                    items.add(item);
                     counter++;
                 }
             }
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getMainActivity(),
-                    getMainActivity().isAutoZoom() ? R.layout.holder_table_card_auto : R.layout.holder_table_card, android.R.id.text1, values);
+            TableCardAdapter adapter = new TableCardAdapter(getMainActivity(), getMainActivity().isAutoZoom() ? R.layout.holder_table_card_auto : R.layout.holder_table_card, items);
+
+//            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getMainActivity(),
+//                    getMainActivity().isAutoZoom() ? R.layout.holder_table_card_auto : R.layout.holder_table_card, android.R.id.text1, values);
             listView.setAdapter(adapter);
             mCloseBtn.setOnClickListener(v -> {
                 infoDialog.dismiss();

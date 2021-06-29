@@ -1,46 +1,42 @@
 package pro.quizer.quizer3.adapter;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
-import androidx.cardview.widget.CardView;
-import android.text.InputType;
+import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
+import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.model.CardItem;
-import pro.quizer.quizer3.utils.UiUtils;
+import pro.quizer.quizer3.utils.FileUtils;
+import pro.quizer.quizer3.utils.StringUtils;
 
-import static pro.quizer.quizer3.model.OptionsOpenType.NUMBER;
-
-public class CardAdapter extends ArrayAdapter<CardItem> {
+public class TableCardAdapter extends ArrayAdapter<CardItem> {
     private int resourceLayout;
     private Context mContext;
     private List<CardItem> mItems;
-    private boolean isMulti;
 
-    public CardAdapter(Context context, int resource, List<CardItem> items, boolean isMulti) {
+    public TableCardAdapter(Context context, int resource, List<CardItem> items) {
         super(context, resource, items);
         this.resourceLayout = resource;
         this.mContext = context;
         this.mItems = items;
-        this.isMulti = isMulti;
     }
 
     @Nullable
@@ -64,90 +60,40 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            holder = vi.inflate(isAutoZoom ? R.layout.holder_card_auto : R.layout.holder_card, null);
+            holder = vi.inflate(isAutoZoom ? R.layout.holder_table_card_auto : R.layout.holder_table_card, null);
         }
 
         if (getItem(position) != null) {
-            String text = Objects.requireNonNull(getItem(position)).getTitle();
 
-            if (text != null) {
-                boolean checked = Objects.requireNonNull(getItem(position)).isChecked();
-                String openType = Objects.requireNonNull(getItem(position)).getOpen();
-                String data = Objects.requireNonNull(getItem(position)).getData();
-                String hint = Objects.requireNonNull(getItem(position)).getHint();
-                boolean open = !openType.equals("checkbox");
+            String data = Objects.requireNonNull(getItem(position)).getTitle();
+            String thumb = Objects.requireNonNull(getItem(position)).getThumb();
 
-                CardView cont = holder.findViewById(R.id.cont_card);
-                TextView textView = holder.findViewById(R.id.text1);
-                TextView cardInput = holder.findViewById(R.id.card_input);
-                ImageView checker = holder.findViewById(R.id.checker);
+            CardView cont = holder.findViewById(R.id.cont_card);
+            TextView title = holder.findViewById(R.id.card_title);
+            ImageView titleImage = holder.findViewById(R.id.title_image);
 
-                if (data != null && data.length() > 0) {
-                    cardInput.setTextColor(mContext.getResources().getColor(R.color.brand_color_dark));
-                    cardInput.setText(data);
-                } else if (hint != null && hint.length() > 0) {
-                    cardInput.setTextColor(mContext.getResources().getColor(R.color.gray));
-                    cardInput.setText(hint);
-                } else {
-                    cardInput.setTextColor(mContext.getResources().getColor(R.color.gray));
-                    cardInput.setText(R.string.enter_answer);
-                }
-                cardInput.setVisibility(open ? View.VISIBLE : View.GONE);
-
-                if (isMulti) {
-                    checker.setImageResource(checked ? R.drawable.checkbox_checked : R.drawable.checkbox_unchecked);
-                } else {
-                    checker.setImageResource(checked ? R.drawable.radio_button_checked : R.drawable.radio_button_unchecked);
-                }
-                checker.setVisibility(View.VISIBLE);
-
-                UiUtils.setTextOrHide(textView, text);
-
-                cont.setOnClickListener(v -> {
-                    if ((open && !getItem(position).isChecked()) || (open && getItem(position).isAutoCkecker())) {
-                        switch (getItem(position).getOpen()) {
-                            case "text":
-                            case "number":
-                                showInputDialog(cardInput, position);
-                                break;
-                            case "date":
-                                setDate(cardInput, position);
-                                break;
-                            case "time":
-                                setTime(cardInput, position);
-                                break;
-                        }
-                    } else {
-                        checkItem(position);
-                    }
-                });
+            title.setText(data);
+            if (thumb != null && thumb.length() > 0) {
+                titleImage.setVisibility(View.VISIBLE);
+                showPic(titleImage, thumb);
+            } else {
+                titleImage.setVisibility(View.GONE);
             }
+
+            cont.setOnClickListener(v -> {
+                String pic = Objects.requireNonNull(getItem(position)).getPic();
+                if (pic != null) {
+                    try {
+                        showAdditionalInfoDialog(pic);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
         }
 
         return holder;
-    }
-
-    private void checkItem(int position) {
-        if (mItems.get(position).isChecked() && !isMulti) {
-            return;
-        }
-        if (mItems.get(position).isAutoCkecker()) return;
-        mItems.get(position).setChecked(!mItems.get(position).isChecked());
-        if (!isMulti || mItems.get(position).isUnChecker()) {
-            for (int i = 0; i < mItems.size(); i++) {
-                if (i != position) {
-                    mItems.get(i).setChecked(false);
-                }
-            }
-        }
-        if (isMulti) {
-            for (int i = 0; i < mItems.size(); i++) {
-                if (i != position && mItems.get(i).isUnChecker()) {
-                    mItems.get(i).setChecked(false);
-                }
-            }
-        }
-        notifyDataSetChanged();
     }
 
     public List<CardItem> getItems() {
@@ -159,100 +105,65 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
         notifyDataSetChanged();
     }
 
-    private void showInputDialog(final TextView pEditText, int position) {
-        MainActivity mActivity = (MainActivity) mContext;
-        final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mActivity);
-        final View mView = layoutInflaterAndroid.inflate(mActivity.isAutoZoom() ? R.layout.dialog_input_answer_auto : R.layout.dialog_input_answer, null);
-        final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
+    private void showPic(ImageView view, String data) {
+        if (data == null) {
+            Picasso.with(mContext)
+                    .load(R.drawable.image)
+                    .into(view);
+            return;
+        }
+
+        final String filePhotooPath = getFilePath(data);
+
+        if (StringUtils.isEmpty(filePhotooPath)) {
+            return;
+        }
+
+        view.setVisibility(View.VISIBLE);
+
+        Picasso.with(mContext)
+                .load(new File(filePhotooPath))
+                .into(view);
+    }
+
+    private String getFilePath(final String data) {
+        final String path = FileUtils.getFilesStoragePath(mContext);
+
+        if (StringUtils.isEmpty(data)) {
+            return Constants.Strings.EMPTY;
+        }
+
+        final String fileName = FileUtils.getFileName(data);
+
+        return path + FileUtils.FOLDER_DIVIDER + fileName;
+    }
+
+    private void showAdditionalInfoDialog(String data) {
+        final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mContext);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.dialog_table_question_additional_info, null);
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
         dialog.setView(mView);
 
-        final EditText mEditText = mView.findViewById(R.id.input_answer);
-        final View mNextBtn = mView.findViewById(R.id.view_ok);
+        final TextView title = mView.findViewById(R.id.title);
+        final ImageView image = mView.findViewById(R.id.image);
+        final TextView description = mView.findViewById(R.id.description);
+        description.setTypeface(description.getTypeface(), Typeface.ITALIC);
 
-        if (mItems.get(position).getOpen().equals(NUMBER)) {
-            mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        title.setVisibility(View.GONE);
+        description.setVisibility(View.GONE);
+
+        if (data != null) {
+            showPic(image, data);
         }
 
-        String hint = mItems.get(position).getHint();
-        String answer = mItems.get(position).getData();
-        if (answer != null && answer.length() > 0) {
-            mEditText.setText(mItems.get(position).getData());
-        } else {
-            if (hint != null && hint.length() > 0) {
-                mEditText.setHint(hint);
-            } else {
-                mEditText.setHint("Введите ответ");
-            }
-        }
+        dialog.setCancelable(true);
+//                .setPositiveButton(R.string.view_OK, (dialogBox, id) -> dialogBox.cancel());
 
-        mEditText.setFocusable(true);
-        mEditText.requestFocus();
-        mActivity.showKeyboard();
-
-        dialog.setCancelable(false);
         final AlertDialog alertDialog = dialog.create();
 
-        mNextBtn.setOnClickListener(v -> {
-            mItems.get(position).setData(mEditText.getText().toString());
-            pEditText.setText(mEditText.getText().toString());
-            checkItem(position);
-
-            if (mActivity != null && !mActivity.isFinishing()) {
-                mActivity.hideKeyboardFrom(mEditText);
-                alertDialog.dismiss();
-            }
-        });
-
-        if (mActivity != null && !mActivity.isFinishing()) {
+        if (mContext != null) {
             alertDialog.show();
         }
     }
 
-    private Calendar mCalendar = Calendar.getInstance();
-
-    public void setDate(final TextView pEditText, int position) {
-        MainActivity mActivity = (MainActivity) mContext;
-        if (!mActivity.isFinishing()) {
-            new DatePickerDialog(mActivity, (view, year, monthOfYear, dayOfMonth) -> {
-                mCalendar.set(Calendar.YEAR, year);
-                mCalendar.set(Calendar.MONTH, monthOfYear);
-                mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                setInitialDateTime(pEditText, true, position);
-            },
-                    mCalendar.get(Calendar.YEAR),
-                    mCalendar.get(Calendar.MONTH),
-                    mCalendar.get(Calendar.DAY_OF_MONTH))
-                    .show();
-        }
-    }
-
-    public void setTime(final TextView pEditText, int position) {
-        MainActivity mActivity = (MainActivity) mContext;
-        if (!mActivity.isFinishing()) {
-            new TimePickerDialog(mActivity, (view, hourOfDay, minute) -> {
-                mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                mCalendar.set(Calendar.MINUTE, minute);
-                setInitialDateTime(pEditText, false, position);
-            },
-                    mCalendar.get(Calendar.HOUR_OF_DAY),
-                    mCalendar.get(Calendar.MINUTE), true)
-                    .show();
-        }
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    private void setInitialDateTime(final TextView mTextView, final boolean pIsDate, int position) {
-        SimpleDateFormat dateFormat;
-
-        if (pIsDate) {
-            dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        } else {
-            dateFormat = new SimpleDateFormat("HH:mm");
-        }
-
-        dateFormat.setTimeZone(mCalendar.getTimeZone());
-        mTextView.setText(dateFormat.format(mCalendar.getTime()));
-        mItems.get(position).setData(dateFormat.format(mCalendar.getTime()));
-        checkItem(position);
-    }
 }

@@ -5,12 +5,17 @@ public class CardItem {
     String title;
     String desc;
     String data;
+    String pic;
+    String thumb;
     boolean isUnChecker;
     boolean checked;
     boolean unnecessaryFillOpen;
     boolean isAutoCkecker;
     String open;
     String hint;
+
+    public CardItem() {
+    }
 
     public CardItem(int id, String title, String desc, boolean isUnChecker, boolean checked, String open, String hint , boolean unnecessaryFillOpen, boolean isAutoCkecker) {
         this.id = id;
@@ -102,5 +107,21 @@ public class CardItem {
 
     public void setAutoCkecker(boolean autoCkecker) {
         isAutoCkecker = autoCkecker;
+    }
+
+    public String getPic() {
+        return pic;
+    }
+
+    public void setPic(String pic) {
+        this.pic = pic;
+    }
+
+    public String getThumb() {
+        return thumb;
+    }
+
+    public void setThumb(String thumb) {
+        this.thumb = thumb;
     }
 }

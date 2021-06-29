@@ -1,6 +1,5 @@
 package pro.quizer.quizer3.executable.files;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.os.Environment;
 import android.util.Log;

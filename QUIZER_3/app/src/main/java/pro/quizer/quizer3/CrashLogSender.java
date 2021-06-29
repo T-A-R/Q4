@@ -4,15 +4,23 @@ import android.content.Context;
 import android.os.Environment;
 import android.os.Process;
 
+import com.google.gson.Gson;
+
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import pro.quizer.quizer3.API.models.request.QuestionnaireRequestModel;
 import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.UserModelR;
+import pro.quizer.quizer3.executable.QuestionnaireRequestModelExecutable;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
+import pro.quizer.quizer3.utils.FileUtils;
+
+import static pro.quizer.quizer3.executable.files.UploadingExecutable.UPLOADING_PATH;
 
 public class CrashLogSender implements Thread.UncaughtExceptionHandler {
 
@@ -74,7 +82,7 @@ public class CrashLogSender implements Thread.UncaughtExceptionHandler {
             e.printStackTrace();
         }
         CoreApplication.getQuizerDatabase().getQuizerDao().insertCrashLog(new CrashLogs(DateUtils.getCurrentTimeMillis(), log, flag));
-
+        saveCrashFile(log);
         if (oldHandler != null) // если есть ранее установленный...
             oldHandler.uncaughtException(thread, throwable); // ...вызовем его
 
@@ -92,5 +100,14 @@ public class CrashLogSender implements Thread.UncaughtExceptionHandler {
             builder.append("\t").append(element.toString()).append("\n");
         }
         processThrowable(exception.getCause(), builder);
+    }
+
+    private void saveCrashFile(String crash) {
+        try {
+            FileUtils.createTxtFile(UPLOADING_PATH, String.format("crash_%1$s_%2$s" + FileUtils.JSON, "log", DateUtils.getCurrentFormattedDate(DateUtils.PATTERN_FILE)), crash);
+        } catch (final IOException pE) {
+
+        }
+
     }
 }

@@ -46,12 +46,10 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
 
     @Override
     protected void onReady() {
-
         screensaver = (ScreensaverFragment) getChildFragmentManager().findFragmentById(R.id.frag_saver);
         notificationFragment = (NotificationFragment) getChildFragmentManager().findFragmentById(R.id.frag_notification);
 
         screensManager = new ScreensManager((AppCompatActivity) getActivity(), this);
-
         sideMenuDrawer = (DrawerLayout) findViewById(R.id.drawer_cont);
         sideMenuDrawer.addDrawerListener(new DrawerLayout.DrawerListener() {
 
@@ -97,8 +95,8 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
         mChangeUserBtn.setOnClickListener(this);
 
         screensManager.setListener(this);
-        setSideMenu();
 
+        setSideMenu();
     }
 
     @Override
@@ -108,7 +106,6 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
     }
 
     public void startScreens() {
-
         if (!isActivated()) {
             Log.d(TAG, "MainFragment() Activation");
             disableSideMenu();
@@ -250,17 +247,25 @@ public class MainFragment extends SmartFragment implements View.OnClickListener,
 
     private void setSideMenu() {
 
-        bg.clearAnimation();
-        panel.clearAnimation();
-        bg.setVisibility(View.VISIBLE);
-        panel.setVisibility(View.VISIBLE);
-        bg.startAnimation(Anim.getAnimation(getContext(), R.anim.appear));
-        panel.startAnimation(Anim.getAnimation(getContext(), R.anim.side_show));
+        try {
+            bg.clearAnimation();
+            panel.clearAnimation();
+            bg.setVisibility(View.VISIBLE);
+            panel.setVisibility(View.VISIBLE);
+            bg.startAnimation(Anim.getAnimation(getContext(), R.anim.appear));
+            panel.startAnimation(Anim.getAnimation(getContext(), R.anim.side_show));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void disableSideMenu() {
-        if (sideMenuDrawer != null)
-            sideMenuDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        try {
+            if (sideMenuDrawer != null)
+                sideMenuDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void enableSideMenu(boolean full, boolean exit) {

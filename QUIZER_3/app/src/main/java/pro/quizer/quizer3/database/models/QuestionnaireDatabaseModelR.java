@@ -99,6 +99,9 @@ public class QuestionnaireDatabaseModelR {
     @ColumnInfo(name = "is_online")
     private boolean is_online;
 
+    @ColumnInfo(name = "is_google_gps")
+    private boolean is_google_gps;
+
     @ColumnInfo(name = "config_id")
     private String config_id;
 
@@ -148,6 +151,7 @@ public class QuestionnaireDatabaseModelR {
         this.used_fake_gps = used_fake_gps;
         this.count_interrupted = 0;
         this.is_online = true;
+        this.is_google_gps = true;
     }
 
     public Long getGps_time_fk() {
@@ -428,5 +432,13 @@ public class QuestionnaireDatabaseModelR {
 
     public void setUser_date(Long user_date) {
         this.user_date = user_date;
+    }
+
+    public boolean isIs_google_gps() {
+        return is_google_gps;
+    }
+
+    public void setIs_google_gps(boolean is_google_gps) {
+        this.is_google_gps = is_google_gps;
     }
 }

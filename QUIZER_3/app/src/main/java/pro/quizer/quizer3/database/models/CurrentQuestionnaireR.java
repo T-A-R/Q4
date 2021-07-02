@@ -38,6 +38,9 @@ public class CurrentQuestionnaireR {
     @ColumnInfo(name = "used_fake_gps")
     private boolean used_fake_gps;
 
+    @ColumnInfo(name = "is_google_gps")
+    private boolean is_google_gps;
+
     @ColumnInfo(name = "fake_gps_time")
     private Long fake_gps_time;
 

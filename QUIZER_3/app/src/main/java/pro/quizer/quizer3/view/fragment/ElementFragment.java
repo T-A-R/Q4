@@ -53,7 +53,6 @@ import pro.quizer.quizer3.adapter.ListAnswersAdapter;
 import pro.quizer.quizer3.adapter.RankQuestionAdapter;
 import pro.quizer.quizer3.adapter.ScaleQuestionAdapter;
 import pro.quizer.quizer3.adapter.TableCardAdapter;
-import pro.quizer.quizer3.adapter.TableCardAdapter2;
 import pro.quizer.quizer3.adapter.TableQuestionAdapter;
 import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;

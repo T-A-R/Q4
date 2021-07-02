@@ -76,7 +76,8 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
                     questionnaireDatabaseModel.getLast_login_time(),
                     questionnaireDatabaseModel.isIs_online(),
                     questionnaireDatabaseModel.getUser_name(),
-                    questionnaireDatabaseModel.getUser_date()
+                    questionnaireDatabaseModel.getUser_date(),
+                    questionnaireDatabaseModel.isIs_google_gps()
             );
 
             final List<ElementDatabaseModelR> elements = activity.getMainDao().getElementByToken(questionnaireDatabaseModel.getToken());

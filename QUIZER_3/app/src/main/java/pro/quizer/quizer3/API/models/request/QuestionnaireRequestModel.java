@@ -30,6 +30,7 @@ public class QuestionnaireRequestModel implements Serializable {
     private final Long last_login_time;
     private final String token;
     private final boolean used_fake_gps;
+    private final boolean is_google_gps;
     private final String has_photo;
     private final Long fake_gps_time;
     private final List<ElementRequestModel> elements;
@@ -67,7 +68,8 @@ public class QuestionnaireRequestModel implements Serializable {
                                      Long last_login_time,
                                      boolean is_online,
                                      String user_name,
-                                     Long user_date) {
+                                     Long user_date,
+                                     boolean is_google_gps) {
         this.gps_time = gps_time;
         this.gps_time_network = gps_time_network;
         this.billing_questions = billing_questions;
@@ -99,6 +101,7 @@ public class QuestionnaireRequestModel implements Serializable {
         this.is_online = is_online;
         this.user_name = user_name;
         this.user_date = user_date;
+        this.is_google_gps = is_google_gps;
     }
 
     public void addElement(final ElementRequestModel pElement) {

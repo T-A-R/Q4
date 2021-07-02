@@ -88,7 +88,8 @@ public class ExpressionUtils {
                                 decodedExpression.append(title);
                             } else if (expression.charAt(k + nextSymbol + 1) == 'v') { // VALUE
                                 ElementPassedR element = activity.getMainDao().getElementPassedR(activity.getToken(), relativeId);
-                                String value = element != null ? element.getValue() : expression.substring(i);
+//                                String value = element != null ? element.getValue() : expression.substring(i);
+                                String value = element != null ? element.getValue() : "";
                                 decodedExpression.append(value);
                             } else if (expression.charAt(k + nextSymbol + 1) == 'c') { // CHECKED
                                 Boolean isChecked = activity.getMainDao().getElementPassedR(activity.getToken(), relativeId) != null;
@@ -244,6 +245,7 @@ public class ExpressionUtils {
                                 value = Integer.parseInt(element.getValue());
                             } catch (NumberFormatException e) {
                                 e.printStackTrace();
+                                value = 0;
                             }
                         }
                         else {

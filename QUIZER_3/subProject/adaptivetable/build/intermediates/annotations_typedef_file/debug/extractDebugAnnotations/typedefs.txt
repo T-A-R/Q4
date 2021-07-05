@@ -1,0 +1,3 @@
+D com/cleveroad/adaptivetablelayout/LayoutDirection
+D com/cleveroad/adaptivetablelayout/ScrollType
+D com/cleveroad/adaptivetablelayout/ViewHolderType

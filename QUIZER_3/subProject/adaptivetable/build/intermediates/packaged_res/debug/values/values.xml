@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="shadow_end">#00000000</color>
+    <color name="shadow_start">#40000000</color>
+    <dimen name="shadow_size">8dip</dimen>
+    <item name="tag_view_holder" type="id"/>
+    <string name="app_name">AdaptiveTableLayout</string>
+    <declare-styleable name="AdaptiveTableLayout">
+        <attr format="boolean" name="fixedHeaders"/>
+        <attr format="dimension" name="cellMargin"/>
+        <attr format="boolean" name="solidRowHeaders"/>
+        <attr format="boolean" name="rowDragAndDropEnabled"/>
+        <attr format="boolean" name="columnDragAndDropEnabled"/>
+    </declare-styleable>
+</resources>

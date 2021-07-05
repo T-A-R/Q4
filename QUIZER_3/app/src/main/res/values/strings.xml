@@ -445,7 +445,8 @@
     <string name="data_by_login">Данные по логину %1$s</string>
     <string name="data_by_device">Данные по устройству под логином %1$s</string>
     <string name="data_by_user">Данные интервьюера %1$s под логином %2$s</string>
-    <string name="enter_your_name">Введите ваше имя</string>
+    <string name="enter_your_name">КОД Бригадира, Ваше ФИО, Телефон</string>
+    <string name="enter_name_dialog_hint">Впишите</string>
     <string name="enter_your_birthdate">Введите дату рождения</string>
     <string name="are_you">Это Вы?</string>
     <string name="please_enter_name_and_birthdate">Пожалуста заполните имя и дату рождения</string>

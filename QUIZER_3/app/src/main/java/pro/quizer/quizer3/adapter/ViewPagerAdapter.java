@@ -2,15 +2,9 @@ package pro.quizer.quizer3.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -36,18 +30,14 @@ import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
-import pro.quizer.quizer3.view.element.TouchImageView;
-
-import static pro.quizer.quizer3.MainActivity.AVIA;
-import static pro.quizer.quizer3.model.OptionsOpenType.NUMBER;
 
 public class ViewPagerAdapter extends PagerAdapter {
-    private MainActivity mContext;
+    private final MainActivity mContext;
     final private List<ElementItemR> elementsList;
     private Map<Integer, List<ElementItemR>> elementPages;
     private Map<Integer, AnswerState> statePages;
     private final OnViewElementClickListener onAnswerClickListener;
-    private boolean isMulti;
+    private final boolean isMulti;
 
     public ViewPagerAdapter(MainActivity context, List<ElementItemR> elementsList, Map<Integer, AnswerState> statePages, boolean isMulti, OnViewElementClickListener onAnswerClickListener) {
         this.mContext = context;
@@ -90,7 +80,7 @@ public class ViewPagerAdapter extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         LayoutInflater inflater = (LayoutInflater) mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View itemView = inflater.inflate(R.layout.holder_viewpager_avia, container,
+        View itemView = inflater.inflate(R.layout.holder_viewpager_auto, container,
                 false);
 
         LinearLayout cont1 = itemView.findViewById(R.id.cont_element_1);

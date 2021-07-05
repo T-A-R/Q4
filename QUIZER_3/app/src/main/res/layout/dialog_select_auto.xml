@@ -55,8 +55,8 @@
             android:scrollbarAlwaysDrawVerticalTrack="false"
             android:scrollbarSize="@dimen/_8sdp"
             android:scrollbarStyle="outsideInset"
-            android:scrollbarThumbVertical="@drawable/scrollbar_avia"
-            android:scrollbarTrackVertical="@drawable/scroll_avia_transparent"
+            android:scrollbarThumbVertical="@drawable/button_background_green"
+            android:scrollbarTrackVertical="@color/lightGray2"
             android:scrollbars="vertical"
             tools:ignore="UnknownIdInLayout" />
 

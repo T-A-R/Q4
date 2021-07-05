@@ -456,6 +456,7 @@
     <string name="dialog_connecting_to_satellite">Устройство подключается к спутнику GPS, пожалуйста, подождите.</string>
     <string name="dialog_start_without_gps">Начать без GPS</string>
     <string name="dialog_try_again">Попробовать ещё раз</string>
-
+    <string name="select_input_hint">Поиск</string>
+    <string name="answer_selector">Ответить</string>
 
 </resources>

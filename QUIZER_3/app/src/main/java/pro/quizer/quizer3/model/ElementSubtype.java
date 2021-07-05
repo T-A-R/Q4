@@ -39,4 +39,5 @@ public @interface ElementSubtype {
     String QUOTA = "quota";
     String ABORTED = "aborted";
     String HIDDEN = "hidden";
+    String PAGEVIEW = "pageview";
 }

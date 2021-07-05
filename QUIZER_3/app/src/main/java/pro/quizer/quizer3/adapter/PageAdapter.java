@@ -1,167 +1,334 @@
 package pro.quizer.quizer3.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
-import pro.quizer.quizer3.database.models.ElementContentsR;
+import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.ElementItemR;
+import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.state.AnswerState;
-import pro.quizer.quizer3.utils.FileUtils;
+import pro.quizer.quizer3.model.state.SelectItem;
+import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
 
-import static pro.quizer.quizer3.MainActivity.TAG;
-
-public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageObjectViewHolder> {
+public class PageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final OnAnswerClickListener onAnswerClickListener;
-    private final ElementItemR question;
-    private final List<ElementItemR> answersList;
-    private List<AnswerState> answersState;
-    private int lastSelectedPosition = -1;
-    public boolean isPressed = false;
+    private final List<ElementItemR> questions;
+    private Map<Integer, List<AnswerState>> pageAnswersStates;
+    //    private final String mType;
     private final MainActivity mActivity;
-    private String typeBehavior;
-    public boolean show_scale;
-    public boolean show_images;
 
-    public PageAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, OnAnswerClickListener onAnswerClickListener) {
+    public PageAdapter(final Context context, List<ElementItemR> questions, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
-        this.question = question;
-        this.answersList = answersList;
+//        this.mType = type;
+        this.questions = questions;
         this.onAnswerClickListener = onAnswerClickListener;
-        if (question.getElementOptionsR().getType_behavior() != null) {
-            this.typeBehavior = question.getElementOptionsR().getType_behavior();
-        }
-        this.show_scale = question.getElementOptionsR().isShow_scale();
-        this.show_images = question.getElementOptionsR().isShow_images();
-        this.answersState = new ArrayList<>();
-        for (int i = 0; i < answersList.size(); i++) {
-            this.answersState.add(new AnswerState(answersList.get(i).getRelative_id(), false, ""));
+        this.pageAnswersStates = new HashMap<>();
+        for (int i = 0; i < questions.size(); i++) {
+            List<AnswerState> answersStates = new ArrayList<>();
+            List<ElementItemR> answers = questions.get(i).getElements();
+            for (int k = 0; k < questions.get(i).getElements().size(); k++) {
+                answersStates.add(new AnswerState(answers.get(k).getRelative_id(), false, ""));
+            }
+            pageAnswersStates.put(questions.get(i).getRelative_id(), answersStates);
         }
     }
 
     @NonNull
     @Override
-    public PageObjectViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(MainActivity.AVIA ? R.layout.holder_answer_scale_avia : mActivity.isAutoZoom() ? R.layout.holder_answer_scale_auto : R.layout.holder_answer_scale, viewGroup, false);
-        return new PageObjectViewHolder(view, onAnswerClickListener);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int type) {
+        Log.d("T-L.PageAdapter", "onCreateViewHolder TYPE: " + type);
+        switch (type) {
+            case 1:
+                View view1 = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.element_select_auto, viewGroup, false);
+                return new PageSelectViewHolder(view1, onAnswerClickListener);
+            case 2:
+                View view2 = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.element_imagepage_auto, viewGroup, false);
+                return new PagerViewHolder(view2, onAnswerClickListener);
+            default:
+                return null;
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PageObjectViewHolder holder, int position) {
-        holder.bind(answersList.get(position), position, typeBehavior);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        switch (holder.getItemViewType()) {
+            case 1:
+                PageSelectViewHolder pageSelectViewHolder = (PageSelectViewHolder) holder;
+                pageSelectViewHolder.bind(questions.get(position), position);
+                break;
+            case 2:
+                PagerViewHolder pagerViewHolder = (PagerViewHolder) holder;
+                pagerViewHolder.bind(questions.get(position), position);
+                break;
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        return answersList.size();
+        return questions.size();
     }
 
-    public class PageObjectViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        TextView scaleText;
-        TextView divider;
-        ImageView scaleImage;
-        View cont;
-
-        OnAnswerClickListener onUserClickListener;
-
-        public PageObjectViewHolder(@NonNull View itemView, OnAnswerClickListener onUserClickListener) {
-            super(itemView);
-
-            cont = itemView.findViewById(R.id.scale_cont);
-            scaleText = itemView.findViewById(R.id.scale_text);
-            divider = itemView.findViewById(R.id.divider);
-            scaleImage = itemView.findViewById(R.id.scale_image);
-            scaleText.setTypeface(Fonts.getFuturaPtBook());
-
-            this.onUserClickListener = onUserClickListener;
+    @Override
+    public int getItemViewType(int position) {
+        switch (questions.get(position).getSubtype()) {
+            case ElementSubtype.SELECT:
+                return 1;
+            case ElementSubtype.LIST:
+            case ElementSubtype.PAGEVIEW:
+                return 2;
+            default:
+                return 0;
         }
 
-        public void bind(final ElementItemR item, int position, String type) {
-            cont.setOnClickListener(this);
-            if (show_scale) {
-                scaleText.setText(item.getElementOptionsR().getTitle());
-            } else {
-                scaleText.setVisibility(View.GONE);
-                divider.setVisibility(View.GONE);
-            }
-
-            if (show_images) {
-                scaleImage.setVisibility(View.VISIBLE);
-            } else {
-                scaleImage.setVisibility(View.GONE);
-                divider.setVisibility(View.GONE);
-            }
-        }
-
-
-        @Override
-        public void onClick(View v) {
-            isPressed = true;
-            lastSelectedPosition = getAdapterPosition();
-
-            for (int a = 0; a < answersState.size(); a++) {
-                answersState.get(a).setChecked(a == lastSelectedPosition);
-            }
-
-            notifyDataSetChanged();
-            onUserClickListener.onAnswerClick(lastSelectedPosition, true, null);
-        }
     }
 
     public interface OnAnswerClickListener {
-        void onAnswerClick(int position, boolean enabled, String answer);
+        void onAnswerClick(int relativeId, boolean enabled, String answer);
     }
 
-    public List<AnswerState> getAnswers() {
-        return answersState;
+    public Map<Integer, List<AnswerState>> getAnswers() {
+        return pageAnswersStates;
     }
 
-    public void setLastSelectedPosition(int lastSelectedPosition) {
-        this.lastSelectedPosition = lastSelectedPosition;
-        Log.d(TAG, "setLastSelectedPosition: " + lastSelectedPosition);
+    public void setAnswers(Map<Integer, List<AnswerState>> pageAnswersStates) {
+        this.pageAnswersStates = pageAnswersStates;
+        notifyDataSetChanged();
     }
 
-    public void setAnswers(List<AnswerState> answers) {
-        Log.d(TAG, "=============================");
-        if (answers != null) {
-            for (int i = 0; i < answers.size(); i++) {
-                Log.d(TAG, i + ": " + answers.get(i).getRelative_id() + " : " + answers.get(i).getData() + " : " + answers.get(i).isChecked());
-            }
-            this.answersState = answers;
-            for (int i = 0; i < answers.size(); i++) {
-                if (answersList.get(i).getElementOptionsR().isUnchecker() && answers.get(i).isChecked()) {
-                    for (int k = 0; k < answersList.size(); k++) {
-                        if (k != i) {
-                            Log.d(TAG, "set false 5: " + k);
-                            answersList.get(k).setEnabled(false);
-                        }
+    public Map<Integer, AnswerState> convertStatesListToMap(List<AnswerState> list) {
+        Map<Integer, AnswerState> map = new HashMap<>();
+        for (AnswerState state : list) {
+            map.put(state.getRelative_id(), state);
+        }
+        return map;
+    }
+
+    public class PageSelectViewHolder extends RecyclerView.ViewHolder {
+
+        TextView questionText;
+        TextView answerText;
+        TextView answerSelectText;
+        View cont;
+
+        OnAnswerClickListener onItemClickListener;
+
+        public PageSelectViewHolder(@NonNull View itemView, OnAnswerClickListener onItemClickListener) {
+            super(itemView);
+
+            cont = itemView.findViewById(R.id.cont_select_holder);
+            questionText = itemView.findViewById(R.id.select_answer_title);
+            answerText = itemView.findViewById(R.id.selected_answers);
+            answerSelectText = itemView.findViewById(R.id.answer_select_text);
+            questionText.setTypeface(Fonts.getFuturaPtBook());
+            answerText.setTypeface(Fonts.getFuturaPtBook());
+            answerSelectText.setTypeface(Fonts.getFuturaPtBook());
+
+            this.onItemClickListener = onItemClickListener;
+        }
+
+        public void bind(final ElementItemR item, int position) {
+            questionText.setText(item.getElementOptionsR().getTitle());
+            StringBuilder answerTextBuilder = null;
+            List<AnswerState> answerStates = pageAnswersStates.get(item.getRelative_id());
+            List<ElementItemR> answersList = item.getElements();
+
+            for (int i = 0; i < answerStates.size(); i++) {
+                if (answerStates.get(i).isChecked()) {
+                    if (answerTextBuilder == null) {
+                        answerTextBuilder = new StringBuilder();
+                        answerText.setVisibility(View.VISIBLE);
+                    } else {
+                        answerTextBuilder.append("; ");
                     }
+                    answerTextBuilder.append(answersList.get(i).getElementOptionsR().getTitle());
                 }
             }
-        } else {
-            Log.d(TAG, "setAnswers: NULL");
+            if (answerTextBuilder != null) {
+                answerText.setText(answerTextBuilder.toString());
+            }
+
+            cont.setOnClickListener(v -> showSelectDialog(item, answerStates));
         }
+
+        @SuppressLint("RestrictedApi")
+        public void showSelectDialog(final ElementItemR item, final List<AnswerState> answerStates) {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mActivity);
+            View layoutView = mActivity.getLayoutInflater().inflate(R.layout.dialog_select_auto, null);
+            Button mOkBtn = layoutView.findViewById(R.id.select_ok_button);
+            RecyclerView recyclerView = layoutView.findViewById(R.id.select_recyclerview);
+            TextView questionTitle = layoutView.findViewById(R.id.select_title);
+            questionTitle.setText(item.getElementOptionsR().getTitle());
+            EditText selectInput = layoutView.findViewById(R.id.select_input);
+
+            questionTitle.setTypeface(Fonts.getFuturaPtBook());
+            selectInput.setTypeface(Fonts.getFuturaPtBook());
+            mOkBtn.setTypeface(Fonts.getFuturaPtBook());
+
+            List<ElementItemR> elementItems = item.getElements();
+            List<SelectItem> selectItems = new ArrayList<>();
+            for (int i = 0; i < elementItems.size(); i++) {
+                selectItems.add(new SelectItem(elementItems.get(i).getElementOptionsR().getTitle(), answerStates.get(i).isChecked(), answerStates.get(i).isEnabled()));
+            }
+            SelectAdapter selectAdapter = new SelectAdapter(selectItems, item.getElementOptionsR().isPolyanswer(), null);
+            recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
+            recyclerView.setAdapter(selectAdapter);
+
+            selectInput.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if (StringUtils.isNotNullOrEmpty(s.toString())) {
+                        filterItem(s.toString(), selectAdapter, selectItems);
+                    } else {
+                        selectAdapter.setAnswers(selectItems);
+                    }
+                }
+            });
+
+            dialogBuilder.setView(layoutView, 10, 40, 10, 10);
+            AlertDialog selectDialog = dialogBuilder.create();
+            selectDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            selectDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+            selectDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            selectDialog.setCancelable(false);
+
+            mOkBtn.setOnClickListener(v -> {
+                selectDialog.dismiss();
+
+                Log.d("T-L.PageAdapter", ">>>>>>>>>> ON SELECT: ");
+                for (int i = 0; i < answerStates.size(); i++) {
+                    boolean found = false;
+                    for (SelectItem selectItem : selectAdapter.getAnswers()) {
+                        if (elementItems.get(i).getElementOptionsR().getTitle().equals(selectItem.getTitle())) {
+                            answerStates.get(i).setChecked(selectItem.isChecked());
+                            found = true;
+                        }
+                    }
+
+                    if (!found && !item.getElementOptionsR().isPolyanswer())
+                        answerStates.get(i).setChecked(false);
+
+                }
+                pageAnswersStates.put(item.getRelative_id(), answerStates);
+
+//                mActivity.getMainDao().insertCrashLog(new CrashLogs(DateUtils.getCurrentTimeMillis(), selectAdapter.getLog(), true));
+//                selectDialog.dismiss();
+                notifyDataSetChanged();
+                onItemClickListener.onAnswerClick(item.getRelative_id(), true, null);
+            });
+
+            if (mActivity != null && !mActivity.isFinishing()) selectDialog.show();
+        }
+
+        public void filterItem(String text, SelectAdapter selectAdapter, List<SelectItem> selectItems) {
+            List<SelectItem> newSelectItems = new ArrayList<>();
+            for (SelectItem item : selectItems) {
+                if (item.getTitle().toLowerCase().contains(text.toLowerCase())) {
+                    newSelectItems.add(item);
+                }
+            }
+            selectAdapter.setAnswers(newSelectItems);
+        }
+
     }
+
+    public class PagerViewHolder extends RecyclerView.ViewHolder {
+
+        ViewPager viewPager;
+        ViewPagerAdapter adapter;
+        ImageButton btnPrev;
+        ImageButton btnNext;
+        Map<Integer, AnswerState> pagerAnswerStates;
+
+        OnAnswerClickListener onItemClickListener;
+
+        public PagerViewHolder(@NonNull View itemView, OnAnswerClickListener onItemClickListener) {
+            super(itemView);
+
+            viewPager = itemView.findViewById(R.id.viewpager);
+            btnPrev = itemView.findViewById(R.id.btn_prev);
+            btnNext = itemView.findViewById(R.id.btn_next);
+
+            this.onItemClickListener = onItemClickListener;
+        }
+
+        public void bind(final ElementItemR item, int position) {
+
+            pagerAnswerStates = convertStatesListToMap(pageAnswersStates.get(item.getRelative_id()));
+            List<ElementItemR> answersList = item.getElements();
+
+            adapter = new ViewPagerAdapter(mActivity, answersList, pagerAnswerStates, item.getElementOptionsR().isPolyanswer(), (relativeId, enabled, answer) -> {
+                setStates();
+                onAnswerClickListener.onAnswerClick(relativeId, false, null);
+            });
+            viewPager.setAdapter(adapter);
+            viewPager.setCurrentItem(0);
+
+            if (adapter.getCount() == 1) {
+                btnPrev.setVisibility(View.INVISIBLE);
+                btnNext.setVisibility(View.INVISIBLE);
+            } else {
+                btnPrev.setOnClickListener(v -> viewPager.setCurrentItem(getPrevPosition()));
+                btnNext.setOnClickListener(v -> viewPager.setCurrentItem(getNextPosition()));
+            }
+        }
+
+        public void setStates() {
+            pagerAnswerStates = adapter.getStatePages();
+        }
+
+        public int getNextPosition() {
+            return viewPager.getCurrentItem() == adapter.getCount() - 1 ? 0 : viewPager.getCurrentItem() + 1;
+        }
+
+        public int getPrevPosition() {
+            return viewPager.getCurrentItem() == 0 ? adapter.getCount() - 1 : viewPager.getCurrentItem() - 1;
+        }
+
+    }
+
+
 }

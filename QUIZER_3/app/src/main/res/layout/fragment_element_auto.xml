@@ -46,7 +46,6 @@
                     android:id="@+id/title_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:orientation="vertical">
 
                     <!--TITLE 1-->
@@ -369,68 +368,6 @@
 
             </RelativeLayout>
 
-            <!--SPINNER-->
-            <LinearLayout
-                android:id="@+id/spinner_cont"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_4sdp"
-                android:layout_marginEnd="@dimen/_4sdp"
-                android:background="@drawable/shadow_2"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                    android:id="@+id/answers_spinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:padding="5dp"
-                    android:textSize="@dimen/_14ssp"
-                    android:visibility="gone" />
-
-<!--                <RelativeLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginRight="3dp"-->
-<!--                    android:layout_weight=".28"-->
-<!--                    android:background="@drawable/spinner_background"-->
-<!--                    android:orientation="horizontal">-->
-
-<!--                    <com.multispinner.MultiSelectSpinner-->
-<!--                        android:id="@+id/answers_multi_spinner"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_centerVertical="true"-->
-<!--                        android:layout_gravity="center"-->
-<!--                        android:background="@android:color/transparent"-->
-<!--                        android:gravity="center"-->
-<!--                        android:layout_marginStart="5dp"-->
-<!--                        android:textSize="@dimen/_14ssp"-->
-<!--                        android:spinnerMode="dropdown" />-->
-
-<!--                    <ImageView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_alignParentEnd="true"-->
-<!--                        android:layout_centerVertical="true"-->
-<!--                        android:layout_gravity="center"-->
-<!--                        android:src="@mipmap/spinner_arrow" />-->
-
-<!--                </RelativeLayout>-->
-
-                <com.multispinner.MultiSelectSpinner
-                    android:id="@+id/answers_multi_spinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:padding="5dp"
-                    android:textSize="@dimen/_14ssp"
-                    android:visibility="gone"
-                    app:hintText="Выберите варианты ответа" />
-
-            </LinearLayout>
-
             <!--LIST-->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/answers_recyclerview"
@@ -484,6 +421,15 @@
             android:scrollbarTrackVertical="@color/lightGray2"
             android:scrollbars="vertical"
             android:visibility="gone" />
+
+        <!--PAGE-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/page_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

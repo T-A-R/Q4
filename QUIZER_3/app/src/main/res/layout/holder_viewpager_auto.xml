@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/cont_element_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+            <RelativeLayout
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginBottom="8dp">
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/pager_image_1"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/image_zoom_1"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:alpha=".7"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_search_category_default"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/pager_checker_1"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/radio_button_dark_gray"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/pager_answer_title_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_toEndOf="@+id/pager_checker_1"
+                    android:text="TEXT"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cont_element_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+            <RelativeLayout
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginBottom="8dp">
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/pager_image_2"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/image_zoom_2"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:alpha=".7"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_search_category_default"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/pager_checker_2"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/radio_button_dark_gray"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/pager_answer_title_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_toEndOf="@+id/pager_checker_2"
+                    android:text="TEXT"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cont_element_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+            <RelativeLayout
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginBottom="8dp">
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/pager_image_3"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/image_zoom_3"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:alpha=".7"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_search_category_default"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/pager_checker_3"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/radio_button_dark_gray"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/pager_answer_title_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_toEndOf="@+id/pager_checker_3"
+                    android:text="TEXT"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cont_element_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+            <RelativeLayout
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginBottom="8dp">
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/pager_image_4"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/image_zoom_4"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:alpha=".7"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_search_category_default"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/pager_checker_4"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/radio_button_dark_gray"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/pager_answer_title_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_toEndOf="@+id/pager_checker_4"
+                    android:text="TEXT"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/cont_element_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+            <RelativeLayout
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginBottom="8dp">
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/pager_image_5"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/image_zoom_5"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:alpha=".7"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_search_category_default"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/pager_checker_5"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/radio_button_dark_gray"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/pager_answer_title_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_toEndOf="@+id/pager_checker_5"
+                    android:text="TEXT"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cont_element_6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+            <RelativeLayout
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginBottom="8dp">
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/pager_image_6"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/image_zoom_6"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:alpha=".7"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_search_category_default"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/pager_checker_6"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/radio_button_dark_gray"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/pager_answer_title_6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_toEndOf="@+id/pager_checker_6"
+                    android:text="TEXT"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cont_element_7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+            <RelativeLayout
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginBottom="8dp">
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/pager_image_7"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/image_zoom_7"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:alpha=".7"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_search_category_default"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/pager_checker_7"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/radio_button_dark_gray"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/pager_answer_title_7"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_toEndOf="@+id/pager_checker_7"
+                    android:text="TEXT"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cont_element_8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+            <RelativeLayout
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginBottom="8dp">
+
+                <com.zolad.zoominimageview.ZoomInImageView
+                    android:id="@+id/pager_image_8"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/image_zoom_8"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:alpha=".7"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_search_category_default"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/pager_checker_8"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/radio_button_dark_gray"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/pager_answer_title_8"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_toEndOf="@+id/pager_checker_8"
+                    android:text="TEXT"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

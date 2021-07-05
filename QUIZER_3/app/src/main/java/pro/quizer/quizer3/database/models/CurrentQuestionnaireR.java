@@ -83,33 +83,6 @@ public class CurrentQuestionnaireR {
         this.audio_number = 1;
     }
 
-    public CurrentQuestionnaireR(String token, Integer project_id, Integer user_project_id, Long start_date,
-                                 String gps, String gps_network, Long gps_time, Long gps_time_network,
-                                 boolean used_fake_gps, Long fake_gps_time, Long auth_time_difference,
-                                 Long send_time_difference, Long quota_time_difference, Long question_start_time,
-                                 String config_id, Integer current_element_id) {
-        this.token = token;
-        this.project_id = project_id;
-        this.user_project_id = user_project_id;
-        this.start_date = start_date;
-        this.gps = gps;
-        this.gps_network = gps_network;
-        this.gps_time = gps_time;
-        this.gps_time_network = gps_time_network;
-        this.used_fake_gps = used_fake_gps;
-        this.fake_gps_time = fake_gps_time;
-        this.auth_time_difference = auth_time_difference;
-        this.send_time_difference = send_time_difference;
-        this.quota_time_difference = quota_time_difference;
-        this.question_start_time = question_start_time;
-        this.config_id = config_id;
-        this.current_element_id = current_element_id;
-        this.count_interrupted = 0;
-        this.paused = false;
-        this.in_aborted_box = false;
-        this.audio_number = 1;
-    }
-
     public int getId() {
         return id;
     }
@@ -284,5 +257,13 @@ public class CurrentQuestionnaireR {
 
     public void setConfig_id(String config_id) {
         this.config_id = config_id;
+    }
+
+    public boolean isIs_google_gps() {
+        return is_google_gps;
+    }
+
+    public void setIs_google_gps(boolean is_google_gps) {
+        this.is_google_gps = is_google_gps;
     }
 }

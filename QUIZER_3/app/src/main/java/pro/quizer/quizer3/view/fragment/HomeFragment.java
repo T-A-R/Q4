@@ -290,6 +290,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     startQuestionnaire();
                 }
                 break;
+            case 15: // Settings OK but location fail to start
+                getMainActivity().isGoogleLocation = false;
+                startQuestionnaire();
         }
     }
 

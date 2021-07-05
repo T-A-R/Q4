@@ -105,6 +105,7 @@ import pro.quizer.quizer3.utils.ExpressionUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.SPUtils;
+import pro.quizer.quizer3.view.fragment.HomeFragment;
 import pro.quizer.quizer3.view.fragment.MainFragment;
 
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
@@ -172,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private Long audioTime;
     private Boolean mHomeRestart;
     public boolean isGoogleLocation = false;
+    public boolean isGotAnswerFromGPS = false;
 
     private RelativeLayout mainCont;
 
@@ -308,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         try {
             runOnUiThread(() -> {
                 Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG).show();
-                Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG).show();
+//                Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG).show();
             });
         } catch (Exception e) {
             e.printStackTrace();
@@ -413,7 +415,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                     List<ElementContentsR> elementContentsRList = new ArrayList<>();
                     if (contentsList != null && !contentsList.isEmpty()) {
                         for (Contents contents : contentsList) {
-                            elementContentsRList.add(new ElementContentsR(element.getRelativeID(), contents.getType(), contents.getData(), contents.getOrder()));
+                            elementContentsRList.add(new ElementContentsR(element.getRelativeID(), contents.getType(), contents.getData(), contents.getData_small(), contents.getData_thumb(), contents.getOrder()));
                         }
                     }
                     if (elementContentsRList.size() > 0) {
@@ -1524,31 +1526,50 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void checkSettingsAndStartLocationUpdates(boolean isForceGps, SmartFragment.Events listener) {
 
+//        showToastfromActivity("Step: 1");
+
         LocationSettingsRequest request = new LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest).build();
         SettingsClient client = LocationServices.getSettingsClient(this);
 
+//        showToastfromActivity("Step: 2");
+
         Task<LocationSettingsResponse> locationSettingsResponseTask = client.checkLocationSettings(request);
-        Log.d("T-L.MainActivity", "checkSettingsAndStartLocationUpdates: 1");
+
+//        showToastfromActivity("Step: 3");
 
         locationSettingsResponseTask.addOnSuccessListener(locationSettingsResponse -> {
-            Log.d("T-L.MainActivity", "checkSettingsAndStartLocationUpdates: 2");
+            isGotAnswerFromGPS = true;
+//            showToastfromActivity("Step: 4");
             startLocationUpdated();
+//            showToastfromActivity("Step: 5");
             listener.runEvent(12);
         });
 
+//        showToastfromActivity("Step: 6");
 
         locationSettingsResponseTask.addOnFailureListener(e -> {
+            isGotAnswerFromGPS = true;
+//            showToastfromActivity("Step: 7");
             e.printStackTrace();
             int statusCode = ((ApiException) e).getStatusCode();
 
             Log.d("T-L.MainActivity", "checkSettingsAndStartLocationUpdates CODE: " + getLocationMode());
             if (isAirplaneMode()) {
+//                showToastfromActivity("Step: 8");
                 listener.runEvent(10);
             } else {
+//                showToastfromActivity("Step: 9");
+//                try {
+//                    showToastfromActivity("GPS code: " + getLocationMode() + "/" + statusCode + " " + e.getMessage());
+//                } catch (Exception exception) {
+//                    exception.printStackTrace();
+////                    showToastfromActivity("GPS get code error: " + exception.getMessage());
+//                }
                 switch (getLocationMode()) {
                     case -1:
                         showToastfromActivity("Ошибка определения режима геолокации");
+                        listener.runEvent(15);
                         break;
                     case 0:
                         listener.runEvent(11);
@@ -1556,11 +1577,25 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                     case 1:
                     case 2:
                         listener.runEvent(14);
-                    break;
+                        break;
+                    case 3:
+                        listener.runEvent(15);
+                        break;
                 }
 
             }
         });
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(!isGotAnswerFromGPS) {
+//                    showToastfromActivity("RUN!");
+                    listener.runEvent(15);
+                }
+            }
+        }, 5000);
     }
 
     public int getLocationMode() {
@@ -1574,7 +1609,11 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     @SuppressLint("MissingPermission")
     public void startLocationUpdated() {
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+        try {
+            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void stopLocationUpdates() {

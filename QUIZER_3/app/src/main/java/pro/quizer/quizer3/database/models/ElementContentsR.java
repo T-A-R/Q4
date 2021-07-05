@@ -21,16 +21,24 @@ public class ElementContentsR {
     @ColumnInfo(name = "data")
     private String data;
 
+    @ColumnInfo(name = "data_small")
+    private String data_small;
+
+    @ColumnInfo(name = "data_thumb")
+    private String data_thumb;
+
     @ColumnInfo(name = "order")
     private Integer order;
 
     public ElementContentsR() {
     }
 
-    public ElementContentsR(Integer relative_id, String type, String data, Integer order) {
+    public ElementContentsR(Integer relative_id, String type, String data, String data_small, String data_thumb, Integer order) {
         this.relative_id = relative_id;
         this.type = type;
         this.data = data;
+        this.data_small = data_small;
+        this.data_thumb = data_thumb;
         this.order = order;
     }
 
@@ -72,5 +80,21 @@ public class ElementContentsR {
 
     public void setRelative_id(Integer relative_id) {
         this.relative_id = relative_id;
+    }
+
+    public String getData_small() {
+        return data_small;
+    }
+
+    public void setData_small(String data_small) {
+        this.data_small = data_small;
+    }
+
+    public String getData_thumb() {
+        return data_thumb;
+    }
+
+    public void setData_thumb(String data_thumb) {
+        this.data_thumb = data_thumb;
     }
 }

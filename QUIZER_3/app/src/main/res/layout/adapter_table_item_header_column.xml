@@ -18,14 +18,12 @@
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:src="@drawable/ic_fullscreen" />
 
         <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:background="@color/gray" />
 
         <View
@@ -38,10 +36,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
             android:layout_gravity="center"
             android:layout_toStartOf="@+id/fullscreen"
-            android:layout_toLeftOf="@+id/fullscreen"
             android:ellipsize="end"
             android:gravity="center_horizontal"
             android:maxLines="2"
@@ -58,10 +54,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/table_header_column_text_view"
             android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
+            android:layout_above="@+id/row_image"
             android:layout_gravity="center"
             android:layout_toStartOf="@+id/fullscreen"
-            android:layout_toLeftOf="@+id/fullscreen"
             android:ellipsize="end"
             android:gravity="center_horizontal"
             android:maxLines="2"
@@ -70,6 +65,17 @@
             android:textSize="14sp"
             android:textStyle="italic"
             tools:text="text" />
+
+        <com.zolad.zoominimageview.ZoomInImageView
+            android:id="@+id/row_image"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="@dimen/_2sdp"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:layout_marginEnd="@dimen/_2sdp"
+            android:adjustViewBounds="true"
+            android:visibility="gone" />
 
     </RelativeLayout>
 </RelativeLayout>

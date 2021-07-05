@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.res.Resources;
+
 import androidx.annotation.NonNull;
 
 import android.graphics.Typeface;
@@ -16,13 +17,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cleveroad.adaptivetablelayout.LinkedAdaptiveTableAdapter;
 import com.cleveroad.adaptivetablelayout.OnItemClickListener;
 import com.cleveroad.adaptivetablelayout.ViewHolderImpl;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +38,7 @@ import java.util.Objects;
 import java.util.Random;
 
 import pro.quizer.quizer3.MainActivity;
+import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementOptionsR;
 import pro.quizer.quizer3.Constants;
@@ -41,6 +46,7 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.model.OptionsOpenType;
 import pro.quizer.quizer3.model.view.TitleModel;
+import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
@@ -57,8 +63,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private final int mRowHeight;
     private final int mHeaderHeight;
     private final int mHeaderWidth;
+    private boolean mHasLeftImages = false;
+    private boolean mHasTopImages = false;
     private List<ElementItemR> mLeftSide;
     private List<ElementItemR> mTopSide;
+    private List<ElementContentsR> mLeftSideImages;
+    private List<ElementContentsR> mTopSideImages;
     private List<ElementItemR> mAnswers;
     private AnswerState[][] mAnswersState;
     private boolean[] mLine;
@@ -88,7 +98,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         mContext = (MainActivity) context;
         isSpeedMode = mContext.isTableSpeedMode();
         mQuestions = questions;
-        if(!isSpeedMode) {
+        if (!isSpeedMode) {
             mLine = new boolean[mQuestions.size()];
             Arrays.fill(mLine, false);
         }
@@ -134,6 +144,33 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mLeftSide = mQuestions;
         }
 
+        mTopSideImages = new ArrayList<>();
+        mLeftSideImages = new ArrayList<>();
+        int imagesCounter = 0;
+
+        for (ElementItemR element : mTopSide) {
+            List<ElementContentsR> elementContentsRS = mContext.getMainDao().getElementContentsR(element.getRelative_id());
+            if (elementContentsRS != null && elementContentsRS.size() > 0) {
+                mTopSideImages.add(elementContentsRS.get(0));
+                imagesCounter++;
+            } else
+                mTopSideImages.add(null);
+        }
+
+        mHasTopImages = imagesCounter != 0;
+
+        imagesCounter = 0;
+
+        for (ElementItemR element : mLeftSide) {
+            List<ElementContentsR> elementContentsRS = mContext.getMainDao().getElementContentsR(element.getRelative_id());
+            if (elementContentsRS != null && elementContentsRS.size() > 0) {
+                mLeftSideImages.add(elementContentsRS.get(0));
+                imagesCounter++;
+            } else
+                mLeftSideImages.add(null);
+        }
+
+        mHasLeftImages = imagesCounter != 0;
 
         mRowHeight = res.getDimensionPixelSize(R.dimen.row_height);
 
@@ -145,7 +182,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         int counter = 1;
         titles = new ArrayList<>();
-        for(ElementItemR element : mQuestions) {
+        for (ElementItemR element : mQuestions) {
             if (element.getElementOptionsR().isShow_in_card()) {
                 String text = counter + ". " + Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle();
                 titles.add(text);
@@ -214,7 +251,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             }
             if (!mIsFlipColsAndRows) {
                 setChecked(vh, mAnswersState[row - 1][column - 1].isChecked());
-                if(!isSpeedMode) {
+                if (!isSpeedMode) {
                     if (mLine[row - 1]) {
                         vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
                     } else {
@@ -223,7 +260,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 }
             } else {
                 setChecked(vh, mAnswersState[column - 1][row - 1].isChecked());
-                if(!isSpeedMode) {
+                if (!isSpeedMode) {
                     if (mLine[column - 1]) {
                         vh.mCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
                     } else {
@@ -244,8 +281,15 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     public void onBindHeaderColumnViewHolder(@NonNull final ViewHolderImpl viewHolder, final int column) {
         final TableHeaderColumnViewHolder vh = (TableHeaderColumnViewHolder) viewHolder;
 
+        if (mHasTopImages) {
+            vh.mColumnImage.setVisibility(View.VISIBLE);
+            if (mTopSideImages.get(column - 1) != null) {
+                showPic(vh.mColumnImage, mTopSideImages.get(column - 1).getData_thumb());
+            }
+        }
+
         vh.mHeaderColumnTextView.setText(mIsFlipColsAndRows ? titles.get(column - 1) : Objects.requireNonNull(titlesMap.get(mTopSide.get(column - 1).getRelative_id())).getTitle());
-        if(!isSpeedMode) {
+        if (!isSpeedMode) {
             if (mIsFlipColsAndRows) {
                 if (mLine[column - 1]) {
                     vh.mColumnCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
@@ -261,10 +305,16 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final TableHeaderRowViewHolder vh = (TableHeaderRowViewHolder) viewHolder;
         final ElementOptionsR optionsModel = mLeftSide.get(row - 1).getElementOptionsR();
 
+        if (mHasLeftImages) {
+            vh.mRowImage.setVisibility(View.VISIBLE);
+            if (mLeftSideImages.get(row - 1) != null) {
+                showPic(vh.mRowImage, mLeftSideImages.get(row - 1).getData_thumb());
+            }
+        }
         vh.mHeaderRowTextView.setText(!mIsFlipColsAndRows ? titles.get(row - 1) : Objects.requireNonNull(titlesMap.get(mLeftSide.get(row - 1).getRelative_id())).getTitle());
         vh.mHeaderRowDescriptionTextView.setTypeface(vh.mHeaderRowDescriptionTextView.getTypeface(), Typeface.ITALIC);
         UiUtils.setTextOrHide(vh.mHeaderRowDescriptionTextView, optionsModel.getDescription());
-        if(!isSpeedMode) {
+        if (!isSpeedMode) {
             if (!mIsFlipColsAndRows) {
                 if (mLine[row - 1]) {
                     vh.mRowCont.setBackgroundColor(mContext.getResources().getColor(R.color.lightGray2));
@@ -283,7 +333,10 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     @Override
     public int getHeaderRowWidth() {
-        return mHeaderWidth;
+        if (mHasLeftImages) {
+            return mHeaderWidth + mRowHeight;
+        } else
+            return mHeaderWidth;
     }
 
     @Override
@@ -294,7 +347,10 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     @Override
     public int getHeaderColumnHeight() {
-        return mHeaderHeight;
+        if (mHasTopImages) {
+            return mHeaderHeight + mRowHeight;
+        } else
+            return mHeaderHeight;
     }
 
     @Override
@@ -448,7 +504,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                             if (!isPolyanswer && mAnswersState[row - 1][column - 1].isChecked()) {
                                 unselectOther(row, column, clickedQuestion, clickedElement);
                             }
-                            if(!isSpeedMode) {
+                            if (!isSpeedMode) {
                                 try {
                                     notifyRowChanged(row);
                                 } catch (Exception e) {
@@ -463,7 +519,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                             if (!isPolyanswer && mAnswersState[column - 1][row - 1].isChecked()) {
                                 unselectOther(row, column, clickedQuestion, clickedElement);
                             }
-                            if(!isSpeedMode) {
+                            if (!isSpeedMode) {
                                 try {
                                     notifyColumnChanged(column);
                                 } catch (Exception e) {
@@ -479,7 +535,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                     .setNegativeButton(R.string.cancel,
                             (dialogBox, id) -> {
                                 if (!mIsFlipColsAndRows) {
-                                    if(isPolyanswer) {
+                                    if (isPolyanswer) {
                                         mAnswersState[row - 1][column - 1].setChecked(false);
                                         setLine();
                                         mAnswersState[row - 1][column - 1].setData(Constants.Strings.EMPTY);
@@ -492,7 +548,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                                         notifyItemChanged(row, 0);
                                     }
                                 } else {
-                                    if(isPolyanswer) {
+                                    if (isPolyanswer) {
                                         mAnswersState[column - 1][row - 1].setChecked(false);
                                         setLine();
                                         mAnswersState[column - 1][row - 1].setData(Constants.Strings.EMPTY);
@@ -555,7 +611,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                     setLine();
                 }
             }
-            if(!isSpeedMode) {
+            if (!isSpeedMode) {
                 try {
                     notifyRowChanged(row - 1);
                 } catch (Exception e) {
@@ -570,7 +626,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                     setLine();
                 }
             }
-            if(!isSpeedMode) {
+            if (!isSpeedMode) {
                 try {
                     notifyColumnChanged(column - 1);
                 } catch (Exception e) {
@@ -583,7 +639,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     }
 
     public void setLine() {
-        if(!isSpeedMode) {
+        if (!isSpeedMode) {
             for (int i = 0; i < mAnswersState.length; i++) {
                 boolean checked = false;
                 for (int k = 0; k < mAnswersState[0].length; k++) {
@@ -599,12 +655,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     @Override
     public void onRowHeaderClick(final int row) {
-        showAdditionalInfoDialog(mLeftSide.get(row - 1).getElementOptionsR());
+        showAdditionalInfoDialog(mLeftSide.get(row - 1).getElementOptionsR(), mLeftSideImages.get(row - 1) != null ? mLeftSideImages.get(row - 1).getData() : null);
     }
 
     @Override
     public void onColumnHeaderClick(final int column) {
-        showAdditionalInfoDialog(mTopSide.get(column - 1).getElementOptionsR());
+        showAdditionalInfoDialog(mTopSide.get(column - 1).getElementOptionsR(), mTopSideImages.get(column - 1) != null ? mTopSideImages.get(column - 1).getData() : null);
     }
 
     @Override
@@ -612,18 +668,23 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     }
 
-    private void showAdditionalInfoDialog(final ElementOptionsR pOptionsModel) {
+    private void showAdditionalInfoDialog(final ElementOptionsR pOptionsModel, String data) {
         final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mContext);
         final View mView = layoutInflaterAndroid.inflate(R.layout.dialog_table_question_additional_info, null);
         final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
         dialog.setView(mView);
 
         final TextView title = mView.findViewById(R.id.title);
+        final ImageView image = mView.findViewById(R.id.image);
         final TextView description = mView.findViewById(R.id.description);
         description.setTypeface(description.getTypeface(), Typeface.ITALIC);
 
         title.setText(Objects.requireNonNull(titlesMap.get(pOptionsModel.getRelative_id())).getTitle());
         UiUtils.setTextOrHide(description, pOptionsModel.getDescription());
+
+        if (data != null) {
+            showPic(image, data);
+        }
 
         dialog.setCancelable(false)
                 .setPositiveButton(R.string.view_OK, (dialogBox, id) -> dialogBox.cancel());
@@ -659,11 +720,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     private static class TableHeaderColumnViewHolder extends ViewHolderImpl {
 
+        ImageView mColumnImage;
         TextView mHeaderColumnTextView;
         RelativeLayout mColumnCont;
 
         private TableHeaderColumnViewHolder(@NonNull final View itemView) {
             super(itemView);
+            mColumnImage = itemView.findViewById(R.id.row_image);
             mHeaderColumnTextView = itemView.findViewById(R.id.table_header_column_text_view);
             mColumnCont = itemView.findViewById(R.id.column_cont);
         }
@@ -672,12 +735,14 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private static class TableHeaderRowViewHolder extends ViewHolderImpl {
 
         TextView mHeaderRowTextView;
+        ImageView mRowImage;
         TextView mHeaderRowDescriptionTextView;
         RelativeLayout mRowCont;
 
         TableHeaderRowViewHolder(@NonNull final View itemView) {
             super(itemView);
             mHeaderRowTextView = itemView.findViewById(R.id.table_header_row_text_view);
+            mRowImage = itemView.findViewById(R.id.row_image);
             mHeaderRowDescriptionTextView = itemView.findViewById(R.id.table_header_row_description_text_view);
             mRowCont = itemView.findViewById(R.id.row_cont);
             mHeaderRowDescriptionTextView.setTypeface(mHeaderRowDescriptionTextView.getTypeface(), Typeface.ITALIC);
@@ -744,5 +809,36 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         void onAnswerClick(int row, int column);
     }
 
+    private void showPic(ImageView view, String data) {
+        if (data == null) {
+            Picasso.with(mContext)
+                    .load(R.drawable.image)
+                    .into(view);
+            return;
+        }
 
+        final String filePhotooPath = getFilePath(data);
+
+        if (StringUtils.isEmpty(filePhotooPath)) {
+            return;
+        }
+
+        view.setVisibility(View.VISIBLE);
+
+        Picasso.with(mContext)
+                .load(new File(filePhotooPath))
+                .into(view);
+    }
+
+    private String getFilePath(final String data) {
+        final String path = FileUtils.getFilesStoragePath(mContext);
+
+        if (StringUtils.isEmpty(data)) {
+            return Constants.Strings.EMPTY;
+        }
+
+        final String fileName = FileUtils.getFileName(data);
+
+        return path + FileUtils.FOLDER_DIVIDER + fileName;
+    }
 }

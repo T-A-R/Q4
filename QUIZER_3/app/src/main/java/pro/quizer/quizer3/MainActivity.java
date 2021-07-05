@@ -1672,4 +1672,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         ClipData clip = ClipData.newPlainText("json", text);
         clipboard.setPrimaryClip(clip);
     }
+
+    public boolean isGoogleLocation() {
+        return isGoogleLocation;
+    }
 }

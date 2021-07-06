@@ -517,6 +517,9 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 responseJson = null;
                 activateButtons();
             }
+            Log.d("T-L.AuthFragment", "onAuthUser: " + responseJson);
+
+
 
             AuthResponseModel authResponseModel = null;
             try {
@@ -537,6 +540,12 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                     showToast(getString(R.string.wrong_login_or_pass));
                 }
 
+                activateButtons();
+                return;
+            }
+
+            if(authResponseModel.getResult() == 0 && authResponseModel.getError() != null) {
+                showToast(authResponseModel.getError());
                 activateButtons();
                 return;
             }

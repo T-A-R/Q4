@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-        <TextView
+        <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
             android:id="@+id/reg_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
             android:textColor="@android:color/black"
             android:textSize="@dimen/_20ssp" />
 
-        <EditText
+        <pro.quizer.quizer3.view.element.edittext.ResizableEditText
             android:id="@+id/code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -8,10 +8,6 @@ import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.ActionMode;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -41,6 +37,7 @@ import pro.quizer.quizer3.utils.GpsUtils;
 import pro.quizer.quizer3.utils.SmsUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
+import pro.quizer.quizer3.view.PhoneFormatter;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 

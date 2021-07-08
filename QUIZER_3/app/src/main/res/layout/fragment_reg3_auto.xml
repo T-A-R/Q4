@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cont_reg3_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
 
     <ImageView
         android:id="@+id/quizer_logo"
@@ -92,14 +92,13 @@
                     android:layout_gravity="center_vertical"
                     android:padding="6dp"
                     android:src="@drawable/ic_close"
-                    android:tint="@color/brand_color_avia" />
+                    app:tint="@color/brand_color_avia" />
 
             </LinearLayout>
 
         </LinearLayout>
 
     </ScrollView>
-
 
     <Button
         android:id="@+id/btn_next"

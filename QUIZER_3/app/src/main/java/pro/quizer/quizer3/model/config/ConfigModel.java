@@ -4,6 +4,8 @@ package pro.quizer.quizer3.model.config;
 import android.util.Log;
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
+import java.util.List;
+
 import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class ConfigModel implements Serializable {
@@ -76,6 +78,21 @@ public class ConfigModel implements Serializable {
 
     @SerializedName("save_aborted")
     private boolean save_aborted;
+
+    @SerializedName("has_registration")
+    private boolean has_registration;
+
+    @SerializedName("registration_info")
+    private String registration_info;
+
+    @SerializedName("registration_periods")
+    private List<RegistrationPeriod> registration_periods;
+
+    @SerializedName("allowed_uiks")
+    private List<String> allowed_uiks;
+
+    @SerializedName("exit_host")
+    private String exit_host;
 
     @SerializedName("config_forced_update_date")
     private Long config_forced_update_date;
@@ -208,5 +225,46 @@ public class ConfigModel implements Serializable {
 
     public void setUserProjectId(Integer user_project_id) {
         this.user_project_id = user_project_id;
+    }
+
+    public boolean has_registration() {
+//        return has_registration;
+        return true; //TODO FOR TESTS!
+    }
+
+    public void setHasRegistration(boolean has_registration) {
+        this.has_registration = has_registration;
+    }
+
+    public String getRegistrationInfo() {
+        return registration_info;
+    }
+
+    public void setRegistrationInfo(String registration_info) {
+        this.registration_info = registration_info;
+    }
+
+    public List<RegistrationPeriod> getRegistrationPeriods() {
+        return registration_periods;
+    }
+
+    public void setRegistrationPeriods(List<RegistrationPeriod> registration_periods) {
+        this.registration_periods = registration_periods;
+    }
+
+    public List<String> getAllowedUiks() {
+        return allowed_uiks;
+    }
+
+    public void setAllowedUiks(List<String> allowed_uiks) {
+        this.allowed_uiks = allowed_uiks;
+    }
+
+    public String getExitHost() {
+        return exit_host;
+    }
+
+    public void setExitHost(String exit_host) {
+        this.exit_host = exit_host;
     }
 }

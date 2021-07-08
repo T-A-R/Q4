@@ -452,10 +452,30 @@
     <string name="offline_name_warning">После изменения имени ещё не было связи с сервером. Чтобы увидеть полную информацию по данному имени подключитесь к Интернету!</string>
     <string name="please_enter_name">Пожалуйста введите имя.</string>
     <string name="button_finish">Завершить</string>
-    <string name="enter_phone">Введите номер телефона</string>
+    <string name="enter_phone_dialog">Введите номер телефона</string>
     <string name="dialog_connecting_to_satellite">Устройство подключается к спутнику GPS, пожалуйста, подождите.</string>
     <string name="dialog_start_without_gps">Начать без GPS</string>
     <string name="dialog_try_again">Попробовать ещё раз</string>
 
-
+    <string name="enter_sms_code">Введите полученный в СМС код:</string>
+    <string name="enter_code_hint">Введите код</string>
+    <string name="remake">Переделать</string>
+    <string name="captured">Снимок сделан.</string>
+    <string name="save_photo_error">Ошибка сохранения фото</string>
+    <string name="no_internet">Отсутствует доступ в интернет</string>
+    <string name="continue_reg_by_sms">Продолжить регистрацию по СМС или вернуться и попробовать снова?</string>
+    <string name="back">Вернуться</string>
+    <string name="enter_uik">Введите номер УИК\'а:</string>
+    <string name="enter_phone">Введите номер телефона:</string>
+    <string name="uik_hint">УИК</string>
+    <string name="phone_hint">Телефон</string>
+    <string name="button_next">Далее</string>
+    <string name="enter_uik_message">Введите UIK</string>
+    <string name="wrong_uik">Неверный номер UIK</string>
+    <string name="no_reg_photo">Фото не найдено. Попробуйте снова.</string>
+    <string name="send_reg_button">Отправить регистрационные данные</string>
+    <string name="reg_error">Ошибка регистрации</string>
+    <string name="reg_error_message">Пожалуйста пройдите регистрацию заново.</string>
+    <string name="button_photo">Фото</string>
+    <string name="button_make_photo">Сделать фото</string>
 </resources>

@@ -8,9 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -27,26 +24,14 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.ArrayList;
 
-import okhttp3.ResponseBody;
-import pro.quizer.quizer3.API.QuizerAPI;
-import pro.quizer.quizer3.API.models.request.RegistrationRequestModel;
-import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.camera.ShowCamera;
-import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.UserModelR;
-import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.FileUtils;
-import pro.quizer.quizer3.utils.GPSModel;
-import pro.quizer.quizer3.utils.GpsUtils;
-import pro.quizer.quizer3.utils.SmsUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
-
-import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class Reg2Fragment extends ScreenFragment implements View.OnClickListener {
     private Button btnPhoto;

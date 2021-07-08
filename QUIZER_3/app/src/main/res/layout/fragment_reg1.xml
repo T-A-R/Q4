@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cont_reg1_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ImageView
+        android:id="@+id/quizer_logo"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_90sdp"
+        android:layout_marginLeft="@dimen/_40sdp"
+        android:layout_marginTop="@dimen/_30sdp"
+        android:layout_marginRight="@dimen/_40sdp"
+        android:src="@drawable/quizer" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_300sdp"
+        android:layout_below="@+id/quizer_logo"
+        android:layout_above="@+id/btn_next"
+        android:layout_marginLeft="@dimen/_30sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_30sdp">
+
+        <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+            android:id="@+id/reg_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_20ssp" />
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btn_next"
+        style="@style/ButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_36sdp"
+        android:maxLines="1"
+        android:text="@string/button_make_photo"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/_30sdp"
+        android:textSize="@dimen/_14ssp" />
+
+</RelativeLayout>

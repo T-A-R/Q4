@@ -84,21 +84,21 @@ public final class CameraConfig {
     }
 
     @CameraFacing.SupportedCameraFacing
-    int getFacing() {
+    public int getFacing() {
         return mFacing;
     }
 
     @CameraImageFormat.SupportedImageFormat
-    int getImageFormat() {
+    public int getImageFormat() {
         return mImageFormat;
     }
 
-    File getImageFile() {
+    public File getImageFile() {
         return mImageFile;
     }
 
     @CameraRotation.SupportedRotation
-    int getImageRotation() {
+    public int getImageRotation() {
         return mImageRotation;
     }
 
@@ -241,6 +241,11 @@ public final class CameraConfig {
             return CameraConfig.this;
         }
 
+        public CameraConfig buildForReg(String regPath) {
+            if (mImageFile == null) mImageFile = getRegStorageFile(regPath);
+            return CameraConfig.this;
+        }
+
         /**
          * Get the new file to store the image if there isn't any custom file location available.
          * This will create new file into the cache directory of the application.
@@ -250,6 +255,15 @@ public final class CameraConfig {
             return new File(HiddenCameraUtils.getCacheDir(mContext).getAbsolutePath()
                     + File.separator
                     + "IMG_" + System.currentTimeMillis()   //IMG_214515184113123.png
+                    + (mImageFormat == CameraImageFormat.FORMAT_JPEG ? ".jpeg" : ".png"));
+        }
+
+        @NonNull
+        private File getRegStorageFile(String regPath) {
+
+            return new File(regPath
+//                    + File.separator
+//                    + "REG_" + System.currentTimeMillis()   //IMG_214515184113123.png
                     + (mImageFormat == CameraImageFormat.FORMAT_JPEG ? ".jpeg" : ".png"));
         }
     }

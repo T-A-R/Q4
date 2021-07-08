@@ -18,6 +18,7 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import pro.quizer.quizer3.API.models.request.RegistrationRequestModel;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.CoreApplication;
 import pro.quizer.quizer3.API.models.request.FileRequestModel;
@@ -338,4 +339,36 @@ public class QuizerAPI {
             return null;
     }
 
+    static public void sendReg(String url, List<File> files, RegistrationRequestModel regForm, int id, String pMediaType, final SendRegCallback listener) {
+
+        String fileName = "files[%1$s]";
+
+        RequestBody description = RequestBody.create(MultipartBody.FORM, new Gson().toJson(regForm));
+        List<MultipartBody.Part> parts = new ArrayList<>();
+
+        for (int i = 0; i < files.size(); i++) {
+            parts.add(prepareFilePart(String.format(fileName, i), files.get(i), pMediaType));
+        }
+
+        CoreApplication.getQuizerApi().sendFiles(url, description, parts).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d(TAG, "QuizerAPI.sendFiles.onResponse() Message: " + response.message());
+                if(response.headers().get("X-QProject") != null) {
+                    listener.onSendRegCallback(response.body(), id);
+                } else
+                    listener.onSendRegCallback(null, id);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d(TAG, "QuizerAPI.sendFiles.onFailure() " + t);
+                listener.onSendRegCallback(null, id);
+            }
+        });
+    }
+
+    public interface SendRegCallback {
+        void onSendRegCallback(ResponseBody data, Integer id);
+    }
 }

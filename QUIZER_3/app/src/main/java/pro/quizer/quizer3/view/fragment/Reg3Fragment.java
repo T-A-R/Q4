@@ -3,7 +3,6 @@ package pro.quizer.quizer3.view.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -68,7 +69,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
         Bundle bundle = getArguments();
         if (bundle != null) {
             mTimeToken = bundle.getLong("time");
-            showToast(DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, mTimeToken));
+            showToast(DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, mTimeToken * 1000));
         } else showTimeErrorDialog();
 
         RelativeLayout cont = (RelativeLayout) findViewById(R.id.cont_reg3_fragment);
@@ -214,10 +215,10 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
 
             @Override
             public void onTextChanged(CharSequence cs, int cursorPosition, int before, int count) {
-                if (!cs.toString().equals(phoneFormatter.phone)) {
+                if (!cs.toString().equals(phoneFormatter.getPhone())) {
                     phoneFormatter.onTextChanged(cs.toString(), cursorPosition, before, count);
-                    inputPhone.setText(phoneFormatter.phone);
-                    inputPhone.setSelection(phoneFormatter.selection);
+                    inputPhone.setText(phoneFormatter.getPhone());
+                    inputPhone.setSelection(phoneFormatter.getSelection());
                 }
             }
 

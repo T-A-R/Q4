@@ -183,7 +183,6 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
         rvAnswers = findViewById(R.id.answers_recyclerview);
         rvScale = findViewById(R.id.scale_recyclerview);
         tableLayout = findViewById(R.id.table_question_layout);
-        tvUnhide = findViewById(R.id.unhide_title);
         tvTitle1 = findViewById(R.id.title_1);
         tvTitle2 = findViewById(R.id.title_2);
         tvTitleDesc1 = findViewById(R.id.title_desc_1);

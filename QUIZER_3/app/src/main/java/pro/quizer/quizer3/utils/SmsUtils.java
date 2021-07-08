@@ -143,4 +143,81 @@ public final class SmsUtils {
             return pSms;
         }
     }
+
+    public static void sendRegSms(final MainActivity pBaseActivity, final ICallback pCallback, final String message) {
+        final String SENT = "SMS_SENT";
+        final String DELIVERED = "SMS_DELIVERED";
+
+        final PendingIntent sentPI = PendingIntent.getBroadcast(pBaseActivity, 0, new Intent(SENT), 0);
+        final PendingIntent deliveredPI = PendingIntent.getBroadcast(pBaseActivity, 0, new Intent(DELIVERED), 0);
+
+        final StringBuilder sms = new StringBuilder();
+
+
+        final String phoneNumber = getPhoneNumber(pBaseActivity);
+
+        if (StringUtils.isEmpty(phoneNumber)) {
+//            pBaseActivity.showToastfromActivity(pBaseActivity.getString(R.string.notification_no_numbers_available));
+            pCallback.onError(new Exception(pBaseActivity.getString(R.string.notification_no_numbers_available)));
+            return;
+        }
+
+        final String smsWithPreffix = formatSmsPrefix(sms.toString(), pBaseActivity);
+
+        pBaseActivity.showToastfromActivity(pBaseActivity.getString(R.string.notification_sending_sms));
+
+        //---when the SMS has been sent---
+        pBaseActivity.registerReceiver(new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(final Context arg0, final Intent arg1) {
+                switch (getResultCode()) {
+                    case Activity.RESULT_OK:
+
+                        //TODO SET REGISTRATION AS SENT
+
+                        if (pCallback != null) {
+                            pCallback.onSuccess();
+                        }
+
+                        pBaseActivity.showToastfromActivity(arg0.getString(R.string.notification_successfully_sent_sms));
+
+                        break;
+                    case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+                    case SmsManager.RESULT_ERROR_NO_SERVICE:
+                    case SmsManager.RESULT_ERROR_NULL_PDU:
+                    case SmsManager.RESULT_ERROR_RADIO_OFF:
+                        if (pCallback != null) {
+                            pCallback.onError(new Exception(arg0.getString(R.string.notification_unsuccessfully_sent_sms)));
+                        }
+
+                        pBaseActivity.showToastfromActivity(arg0.getString(R.string.notification_unsuccessfully_sent_sms));
+
+                        break;
+                }
+            }
+        }, new IntentFilter(SENT));
+
+        //---when the SMS has been delivered---
+        pBaseActivity.registerReceiver(new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(final Context arg0, final Intent arg1) {
+                switch (getResultCode()) {
+                    case Activity.RESULT_OK:
+                        pBaseActivity.showToastfromActivity(arg0.getString(R.string.notification_successfully_delivered_sms));
+
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        pBaseActivity.showToastfromActivity(arg0.getString(R.string.notification_unsuccessfully_delivered_sms));
+
+                        break;
+                }
+            }
+        }, new IntentFilter(DELIVERED));
+
+        final SmsManager smsManager = SmsManager.getDefault();
+        smsManager.sendTextMessage(phoneNumber, null, smsWithPreffix, sentPI, deliveredPI);
+
+    }
 }

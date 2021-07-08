@@ -17,11 +17,15 @@ public class ActivationModelR {
     @ColumnInfo(name = "login_admin")
     private String login_admin;
 
+    @ColumnInfo(name = "key")
+    private String key;
+
     public ActivationModelR() {}
 
-    public ActivationModelR(String server, String login_admin) {
+    public ActivationModelR(String server, String login_admin, String key) {
         this.server = server;
         this.login_admin = login_admin;
+        this.key = key;
     }
 
     public int getId() {
@@ -46,5 +50,13 @@ public class ActivationModelR {
 
     public void setLogin_admin(String login_admin) {
         this.login_admin = login_admin;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }

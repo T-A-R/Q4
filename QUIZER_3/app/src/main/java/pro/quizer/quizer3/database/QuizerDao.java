@@ -20,6 +20,7 @@ import pro.quizer.quizer3.database.models.OptionsR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
+import pro.quizer.quizer3.database.models.RegistrationR;
 import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.SmsItemR;
 import pro.quizer.quizer3.database.models.StatisticR;
@@ -35,6 +36,9 @@ public interface QuizerDao {
 
     @Query("SELECT * FROM ActivationModelR")
     List<ActivationModelR> getActivationModelR();
+
+    @Query("SELECT `key` FROM ActivationModelR LIMIT 1")
+    String getKey();
 
     @Query("DELETE FROM ActivationModelR")
     void clearActivationModelR();
@@ -423,4 +427,16 @@ public interface QuizerDao {
 
     @Query("DELETE FROM StatisticR WHERE user_id = :user_id")
     void clearStatisticR(Integer user_id);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertRegistrationR(RegistrationR registrationR);
+
+    @Query("SELECT * FROM RegistrationR WHERE user_id =:userId")
+    List<RegistrationR> getRegistrationR(Integer userId);
+
+    @Query("DELETE FROM RegistrationR WHERE user_id =:userId")
+    void clearRegistrationRByUser(Integer userId);
+
+    @Query("DELETE FROM RegistrationR WHERE id =:id")
+    void clearRegistrationRById(Integer id);
 }

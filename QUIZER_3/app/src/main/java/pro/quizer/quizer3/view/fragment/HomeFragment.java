@@ -117,6 +117,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private boolean isQuotaUpdated = false;
     private boolean isNeedUpdate = false;
     private boolean isTimeToDownloadConfig = false;
+    private boolean isRegistrationRequired = false;
     private StatisticR finalStatistics;
     private AlertDialog infoDialog;
     private int completedCounter = 0;
@@ -247,7 +248,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             checkProjectActive();
         }
         activity.stopRecording();
-
+        checkRegistration();
 //        showNullGpsAlert();
     }
 
@@ -299,10 +300,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onClick(View view) {
         if (view == btnStart) {
-            if (activity.getConfig().isGps()) {
-                activity.checkSettingsAndStartLocationUpdates(isForceGps, this);
+            if (isRegistrationRequired) {
+                replaceFragment(new Reg1Fragment());
             } else {
-                runEvent(12);
+                if (activity.getConfig().isGps()) {
+                    activity.checkSettingsAndStartLocationUpdates(isForceGps, this);
+                } else {
+                    runEvent(12);
+                }
             }
         } else if (view == btnInfo) {
             getInfo(true);
@@ -1607,6 +1612,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 }
             }
         };
+    }
+
+    private void checkRegistration() {
+        if (getCurrentUser().getConfigR().has_registration() && !activity.getSettings().isRegistered()) {
+            btnStart.setText("Регистрация");
+            isRegistrationRequired = true;
+        }
     }
 }
 

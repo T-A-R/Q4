@@ -226,13 +226,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             sendQuestionnaires();
 
-            if (activity != null) {
-                if (EXIT) {
-                    btnQuotas.setVisibility(View.GONE);
-                } else {
-                    btnQuotas.setVisibility(View.VISIBLE);
-                }
-            }
+//            if (activity != null) {
+//                if (EXIT) {
+//                    btnQuotas.setVisibility(View.GONE);
+//                } else {
+//                    btnQuotas.setVisibility(View.VISIBLE);
+//                }
+//            }
 
             try {
                 if (activity != null)
@@ -248,7 +248,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             checkProjectActive();
         }
         activity.stopRecording();
-        checkRegistration();
+
+        if(EXIT) checkRegistration();
 //        showNullGpsAlert();
     }
 

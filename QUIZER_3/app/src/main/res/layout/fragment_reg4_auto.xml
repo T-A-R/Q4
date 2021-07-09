@@ -17,8 +17,8 @@
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_300sdp"
-        android:layout_below="@+id/quizer_logo"
         android:layout_above="@+id/btn_next"
+        android:layout_below="@+id/quizer_logo"
         android:layout_marginLeft="@dimen/_30sdp"
         android:layout_marginTop="@dimen/_30sdp"
         android:layout_marginRight="@dimen/_30sdp">
@@ -28,24 +28,43 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/reg_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/enter_sms_code"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/_20ssp" />
+            <TextView
+                android:id="@+id/reg_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/enter_sms_code"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_20ssp" />
 
-        <EditText
-            android:id="@+id/code"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:hint="@string/enter_code_hint"
-            android:inputType="text"
-            android:maxLines="1"
-            android:textSize="@dimen/_16ssp" />
+            <EditText
+                android:id="@+id/code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:hint="@string/enter_code_hint"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textSize="@dimen/_16ssp" />
+
+            <Button
+                android:id="@+id/btn_resend_sms"
+                style="@style/ButtonGray"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:maxLines="1"
+                android:text="@string/button_resend_sms"
+                android:textSize="@dimen/_14ssp" />
+
+            <TextView
+                android:id="@+id/sms_timer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:imeOptions="actionDone"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="@dimen/_12ssp" />
 
         </LinearLayout>
 
@@ -56,10 +75,10 @@
         style="@style/ButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_36sdp"
-        android:maxLines="1"
-        android:text="завершить регистрацию"
         android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/_30sdp"
+        android:maxLines="1"
+        android:text="@string/button_finish_registration"
         android:textSize="@dimen/_14ssp" />
 
 </RelativeLayout>

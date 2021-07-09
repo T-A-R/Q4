@@ -257,7 +257,9 @@
     <string name="make_elements_error">Ошибка создания модели анкеты</string>
     <string name="exit_questionnaire_warning">Вы уверены, что хотите принудительно прервать анкету? \nЕё содержимое будет потеряно.</string>
     <string name="exit_questionnaire_with_saving_warning">Вы действительно хотите выйти и прервать текущую анкету?</string>
+    <string name="exit_reg_warning">Вы действительно хотите прервать регистрацию?</string>
     <string name="exit_quiz_header">Завершить анкету</string>
+    <string name="exit_reg_header">Прервать регистрацию</string>
     <string name="hidden_quotas_header">Превышение пределов квот в скрытом вопросе</string>
     <string name="set_last_element_error">Ошибка обновления таблицы переходов</string>
     <string name="select_spinner">Выбрать…</string>
@@ -478,4 +480,8 @@
     <string name="reg_error_message">Пожалуйста пройдите регистрацию заново.</string>
     <string name="button_photo">Фото</string>
     <string name="button_make_photo">Сделать фото</string>
+    <string name="resend_sms_timer">Доступно через %1$s секунд</string>
+    <string name="button_resend_sms">запросить код повторно</string>
+    <string name="button_finish_registration">завершить регистрацию</string>
+    <string name="adfdsf">rererre $s</string>
 </resources>

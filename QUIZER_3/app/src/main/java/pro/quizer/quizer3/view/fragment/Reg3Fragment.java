@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +36,7 @@ import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.GPSModel;
 import pro.quizer.quizer3.utils.GpsUtils;
+import pro.quizer.quizer3.utils.Internet;
 import pro.quizer.quizer3.utils.SmsUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
@@ -69,7 +71,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
         Bundle bundle = getArguments();
         if (bundle != null) {
             mTimeToken = bundle.getLong("time");
-            showToast(DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, mTimeToken * 1000));
+//            showToast(DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, mTimeToken * 1000));
         } else showTimeErrorDialog();
 
         RelativeLayout cont = (RelativeLayout) findViewById(R.id.cont_reg3_fragment);
@@ -137,6 +139,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                 mPhone = "7" + phoneFormatter.cleaned(inputPhone.getText().toString());
                 mPhoneNumber = mPhone;
             } else mPhone = mPhoneNumber;
+
             if (mPhone.length() == 11) {
                 if (isUikValid) {
                     getGps();
@@ -145,33 +148,54 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                     } else if (gps.isFakeGPS()) {
                         showFakeGpsDialog();
                     } else {
-                        showToast(mUik + " / " + mPhone);
+//                        showToast(mUik + " / " + mPhone);
                         UiUtils.setButtonEnabled(btnNext, false);
                         if (addRegistrationToDB(mUik, mPhone)) {
-                            if (getCurrentUser().getConfigR().getExitHost() != null) {
-                                String url = getCurrentUser().getConfigR().getExitHost() + Constants.Default.REG_URL;
-                                List<File> photos = getMainActivity().getRegPhotosByUserId(registration.getUser_id());
+                            Log.d("T-L.Reg3Fragment", "====== SAVE TO DB OK ");
+//                            if (getCurrentUser().getConfigR().getExitHost() != null) {
+                            String url; url = getCurrentUser().getConfigR().getExitHost() != null ? getCurrentUser().getConfigR().getExitHost() + Constants.Default.REG_URL : null;
+
+                            List<File> photos = getMainActivity().getRegPhotosByUserId(registration.getUser_id());
 
                                 if (photos == null || photos.isEmpty()) {
                                     showToast(getString(R.string.no_reg_photo));
                                     return;
                                 }
 
-                                QuizerAPI.sendReg(url, photos, new RegistrationRequestModel(
-                                        getDao().getKey(),
-                                        registration.getUser_id(),
-                                        registration.getUik_number(),
-                                        registration.getPhone(),
-                                        registration.getGps(),
-                                        registration.getGps_network(),
-                                        registration.getGps_time(),
-                                        registration.getGps_time_network(),
-                                        registration.getReg_time()
-                                ), registration.getId(), "jpeg", this);
-                            } else
-                                UiUtils.setButtonEnabled(btnNext, true);
-                        } else
+                                try {
+                                    if (Internet.isConnected() && url != null) {
+                                        QuizerAPI.sendReg(url, photos, new RegistrationRequestModel(
+                                                getDao().getKey(),
+                                                registration.getUser_id(),
+                                                registration.getUik_number(),
+                                                registration.getPhone(),
+                                                registration.getGps(),
+                                                registration.getGps_network(),
+                                                registration.getGps_time(),
+                                                registration.getGps_time_network(),
+                                                registration.getReg_time()
+                                        ), registration.getId(), "jpeg", this);
+                                    } else {
+                                        showToast("Нет доступа в интернет");
+                                        showNoInternetDialog();
+                                    }
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                    showToast("Нет доступа в интернет");
+                                    showNoInternetDialog();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                    showToast("Нет доступа в интернет");
+                                    showNoInternetDialog();
+                                }
+//                            }
+//                            else {
+//                                UiUtils.setButtonEnabled(btnNext, true);
+//                            }
+                        } else {
+                            Log.d("T-L.Reg3Fragment", "====== SAVE TO DB FAIL ");
                             UiUtils.setButtonEnabled(btnNext, true);
+                        }
                     }
                 } else {
                     Toast.makeText(getMainActivity(), "Неверный Uik", Toast.LENGTH_SHORT).show();
@@ -416,6 +440,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onSendRegCallback(ResponseBody response, Integer id) {
         if (response == null) {
+            showToast("Нет ответа от сервера");
             showNoInternetDialog();
             return;
         }

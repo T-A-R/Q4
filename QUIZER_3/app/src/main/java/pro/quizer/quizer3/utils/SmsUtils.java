@@ -118,7 +118,8 @@ public final class SmsUtils {
 
     public static String getPhoneNumber(final MainActivity pBaseActivity) {
 //        final PhoneModel phoneModel = pBaseActivity.getCurrentUser().getConfig().getProjectInfo().getReserveChannel().getSelectedPhone();
-        final PhoneModel phoneModel = pBaseActivity.getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getSelectedPhone();
+        final PhoneModel phoneModel = pBaseActivity.getCurrentUser().getConfigR().getProjectInfo().getReserveChannel() != null ?
+                pBaseActivity.getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getSelectedPhone() : null;
 
         return phoneModel != null ? phoneModel.getNumber() : Constants.Strings.EMPTY;
     }

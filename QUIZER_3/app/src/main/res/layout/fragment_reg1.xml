@@ -23,7 +23,7 @@
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginRight="@dimen/_30sdp">
 
-        <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
             android:id="@+id/reg_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

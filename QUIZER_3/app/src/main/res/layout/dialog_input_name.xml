@@ -24,11 +24,10 @@
         android:id="@+id/input_birthdate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="date"
+        android:inputType="text"
         android:layout_marginTop="@dimen/_4sdp"
         android:layout_marginStart="@dimen/_8sdp"
         android:layout_marginEnd="@dimen/_8sdp"
-        android:focusableInTouchMode="false"
         android:hint="@string/enter_your_birthdate"
         android:textColor="@color/gray"
         android:textSize="@dimen/_16ssp" />

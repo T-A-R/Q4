@@ -629,7 +629,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
         try {
             UiUtils.setTextOrHide(name, getMainActivity().getSettings().getUser_name());
-            UiUtils.setTextOrHide(date, DateUtils.getDate(getMainActivity().getSettings().getUser_date()));
+            UiUtils.setTextOrHide(date, getMainActivity().getSettings().getUser_date());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -663,15 +663,15 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         EditText date = layoutView.findViewById(R.id.input_birthdate);
         Button sendBtn = layoutView.findViewById(R.id.btn_send_name);
 
-        date.setOnClickListener(v -> {
-            String nameString = name.getText().toString();
-            nameString = nameString.replaceAll(" ", "");
-            if (StringUtils.isEmpty(nameString) || nameString.length() == 0) {
-                showToast(getString(R.string.please_enter_name));
-            } else {
-                setDate((EditText) v);
-            }
-        });
+//        date.setOnClickListener(v -> {
+//            String nameString = name.getText().toString();
+//            nameString = nameString.replaceAll(" ", "");
+//            if (StringUtils.isEmpty(nameString) || nameString.length() == 0) {
+//                showToast(getString(R.string.please_enter_name));
+//            } else {
+//                setDate((EditText) v);
+//            }
+//        });
 
         sendBtn.setOnClickListener(v -> {
             String nameString = name.getText().toString();
@@ -682,6 +682,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 nameString = " ";
             }
             getDao().setUserName(nameString);
+            getDao().setUserBirthDate(date.getText().toString());
             infoDialog.dismiss();
             checkGpsAnsStartHomeFragment();
         });
@@ -721,7 +722,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
         dateFormat.setTimeZone(mCalendar.getTimeZone());
         mEditText.setText(dateFormat.format(mCalendar.getTime()));
-        getDao().setUserBirthDate(mCalendar.getTimeInMillis() / 1000);
+//        getDao().setUserBirthDate(mCalendar.getTimeInMillis() / 1000);
     }
 
     private void showEmptyNameDialog(HomeFragment fragment) {

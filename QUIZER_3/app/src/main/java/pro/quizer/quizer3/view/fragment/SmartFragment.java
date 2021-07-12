@@ -1297,7 +1297,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         String userName = settings.getUser_name() + " ";
         try {
             if (settings.getUser_date() != null)
-                userName += DateUtils.getFormattedDate(DateUtils.PATTERN_DATE, settings.getUser_date() * 1000);
+                userName += settings.getUser_date();
         } catch (Exception e) {
             e.printStackTrace();
         }

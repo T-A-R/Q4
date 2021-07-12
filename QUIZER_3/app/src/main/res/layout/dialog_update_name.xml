@@ -27,9 +27,8 @@
         android:layout_marginStart="@dimen/_8sdp"
         android:layout_marginTop="@dimen/_4sdp"
         android:layout_marginEnd="@dimen/_8sdp"
-        android:focusableInTouchMode="false"
         android:hint="@string/enter_your_birthdate"
-        android:inputType="date"
+        android:inputType="text"
         android:textColor="@color/gray"
         android:textSize="@dimen/_16ssp" />
 

@@ -139,7 +139,7 @@ public interface QuizerDao {
     List<QuestionnaireDatabaseModelR> getQuestionnaireForQuotas(int userId, int projectId, String status, String surveyStatus);
 
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status AND user_id = :userId AND user_project_id = :projectId AND survey_status = :surveyStatus AND user_name = :name AND (user_date = :user_date or (user_date is null and :user_date is null))")
-    List<QuestionnaireDatabaseModelR> getQuestionnaireForQuotasByUser(int userId, int projectId, String status, String surveyStatus, String name, Long user_date);
+    List<QuestionnaireDatabaseModelR> getQuestionnaireForQuotasByUser(int userId, int projectId, String status, String surveyStatus, String name, String user_date);
 
     //TODO RENAME TO setQuestionnaireStatusByToken
     @Query("UPDATE QuestionnaireDatabaseModelR SET status = :status WHERE token = :token")
@@ -158,7 +158,7 @@ public interface QuizerDao {
     List<QuestionnaireDatabaseModelR> getQuestionnaireSurveyStatus(int userId, String survey, String status);
 
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND survey_status = :survey AND status = :status AND user_name = :name AND (user_date = :user_date or (user_date is null and :user_date is null))")
-    List<QuestionnaireDatabaseModelR> getQuestionnaireByStatusAndName(int userId, String name, Long user_date, String survey, String status);
+    List<QuestionnaireDatabaseModelR> getQuestionnaireByStatusAndName(int userId, String name, String user_date, String survey, String status);
 
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status AND send_sms = :send_sms AND survey_status = :survey")
     List<QuestionnaireDatabaseModelR> getQuestionnaireForStage(int userId, String status, String survey, boolean send_sms);
@@ -362,7 +362,7 @@ public interface QuizerDao {
     void setLastSentQuizTime(Long data);
 
     @Query("UPDATE SettingsR SET user_date = :data")
-    void setUserBirthDate(Long data);
+    void setUserBirthDate(String data);
 
     @Query("UPDATE SettingsR SET user_name = :data")
     void setUserName(String data);

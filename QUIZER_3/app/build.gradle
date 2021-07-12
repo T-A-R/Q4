@@ -6,8 +6,8 @@ android {
         applicationId "pro.quizer.quizer3"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 3190100
-        versionName "3.19.1.0"
+        versionCode 3190200
+        versionName "3.19.2.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         project.ext.set("archivesBaseName", "Quizer_ " + defaultConfig.versionName)
 //        project.ext.set("archivesBaseName", "Rossiya_ " + defaultConfig.versionName)

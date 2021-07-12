@@ -446,7 +446,7 @@
     <string name="data_by_device">Данные по устройству под логином %1$s</string>
     <string name="data_by_user">Данные интервьюера %1$s под логином %2$s</string>
     <string name="enter_your_name">Введите ваше имя</string>
-    <string name="enter_your_birthdate">Введите дату рождения</string>
+    <string name="enter_your_birthdate">Введите ваш возраст</string>
     <string name="are_you">Это Вы?</string>
     <string name="please_enter_name_and_birthdate">Пожалуста заполните имя и дату рождения</string>
     <string name="offline_name_warning">После изменения имени ещё не было связи с сервером. Чтобы увидеть полную информацию по данному имени подключитесь к Интернету!</string>

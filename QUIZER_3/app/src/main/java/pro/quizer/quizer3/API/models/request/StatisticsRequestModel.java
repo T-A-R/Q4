@@ -16,9 +16,9 @@ public class StatisticsRequestModel implements Serializable {
     private final String app_version;
     private final String device_info;
     private final String user_name;
-    private final Long user_date;
+    private final String user_date;
 
-    public StatisticsRequestModel(final String pLoginAdmin, final String pPassword, final String pLogin, final String user_name, final Long user_date) {
+    public StatisticsRequestModel(final String pLoginAdmin, final String pPassword, final String pLogin, final String user_name, final String user_date) {
         name_form = Constants.NameForm.STATISTICS;
         login_admin = pLoginAdmin;
         passw = pPassword;

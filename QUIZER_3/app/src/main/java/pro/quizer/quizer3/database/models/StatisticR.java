@@ -15,7 +15,7 @@ public class StatisticR {
     @ColumnInfo(name = "user_name")
     private String user_name;
     @ColumnInfo(name = "user_date")
-    private Long user_date;
+    private String user_date;
 
     @ColumnInfo(name = "quoted")
     private Integer quoted;
@@ -58,11 +58,11 @@ public class StatisticR {
         this.user_name = user_name;
     }
 
-    public Long getUser_date() {
+    public String getUser_date() {
         return user_date;
     }
 
-    public void setUser_date(Long user_date) {
+    public void setUser_date(String user_date) {
         this.user_date = user_date;
     }
 

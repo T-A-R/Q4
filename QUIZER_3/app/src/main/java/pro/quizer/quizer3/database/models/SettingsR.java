@@ -48,7 +48,7 @@ public class SettingsR {
     private String user_name;
 
     @ColumnInfo(name = "user_date")
-    private Long user_date;
+    private String user_date;
 
     @ColumnInfo(name = "registered")
     private boolean registered;
@@ -168,11 +168,11 @@ public class SettingsR {
         this.user_name = user_name;
     }
 
-    public Long getUser_date() {
+    public String getUser_date() {
         return user_date;
     }
 
-    public void setUser_date(Long user_date) {
+    public void setUser_date(String user_date) {
         this.user_date = user_date;
     }
 

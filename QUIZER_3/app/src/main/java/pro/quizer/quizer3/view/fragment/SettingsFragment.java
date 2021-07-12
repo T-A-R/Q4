@@ -409,15 +409,15 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         Button sendBtn = layoutView.findViewById(R.id.btn_send_name);
         Button cancelBtn = layoutView.findViewById(R.id.btn_cancel);
 
-        date.setOnClickListener(v -> {
-            String nameString = name.getText().toString();
-            nameString = nameString.replaceAll(" ", "");
-            if (StringUtils.isEmpty(nameString) || nameString.length() == 0) {
-                showToast(getString(R.string.please_enter_name));
-            } else {
-                setDate((EditText) v);
-            }
-        });
+//        date.setOnClickListener(v -> {
+//            String nameString = name.getText().toString();
+//            nameString = nameString.replaceAll(" ", "");
+//            if (StringUtils.isEmpty(nameString) || nameString.length() == 0) {
+//                showToast(getString(R.string.please_enter_name));
+//            } else {
+//                setDate((EditText) v);
+//            }
+//        });
 
         sendBtn.setOnClickListener(v -> {
             String nameString = name.getText().toString();
@@ -428,7 +428,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
                 nameString = " ";
             }
             getDao().setUserName(nameString);
-            getDao().setUserBirthDate(dateLong);
+            getDao().setUserBirthDate(date.getText().toString());
             infoDialog.dismiss();
         });
 

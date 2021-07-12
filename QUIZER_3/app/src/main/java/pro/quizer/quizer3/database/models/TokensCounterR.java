@@ -21,7 +21,7 @@ public class TokensCounterR {
     private String name;
 
     @ColumnInfo(name = "date")
-    private Long date;
+    private String date;
 
     @ColumnInfo(name = "user_project_id")
     private int user_project_id;
@@ -53,11 +53,11 @@ public class TokensCounterR {
         this.name = name;
     }
 
-    public Long getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Long date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

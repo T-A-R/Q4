@@ -38,7 +38,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import pro.quizer.quizer3.API.QuizerAPI;
 import pro.quizer.quizer3.API.models.request.AuthRequestModel;
 import pro.quizer.quizer3.API.models.request.ConfigRequestModel;
@@ -75,6 +78,7 @@ import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.FontUtils;
 import pro.quizer.quizer3.utils.SPUtils;
+import pro.quizer.quizer3.utils.UiUtils;
 
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
@@ -104,6 +108,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     private List<ElementItemR> elementItemRList = null;
     private long durationTimeQuestionnaire = 0;
     public Events eventsListener = null;
+    public boolean canGoBack = true;
 
     public SmartFragment(int layoutSrc) {
         this.layoutSrc = layoutSrc;
@@ -166,6 +171,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setRetainInstance(true);
+        startBackCounter();
         onReady();
     }
 
@@ -1256,10 +1262,20 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         String userName = settings.getUser_name() + " ";
         try {
             if (settings.getUser_date() != null)
-                userName += DateUtils.getFormattedDate(DateUtils.PATTERN_DATE, settings.getUser_date() * 1000);
+                userName += settings.getUser_date();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return userName;
+    }
+
+    private void startBackCounter() {
+        canGoBack = false;
+        Observable.interval(1, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(x -> { })
+                .takeUntil(aLong -> aLong == 2)
+                .doOnComplete(() -> canGoBack = true)
+                .subscribe();
     }
 }

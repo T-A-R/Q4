@@ -477,7 +477,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     @Override
     public boolean onBackPressed() {
-        if (isCanBackPress) {
+        if (isCanBackPress && canGoBack) {
             showExitAlertDialog();
         }
         return true;

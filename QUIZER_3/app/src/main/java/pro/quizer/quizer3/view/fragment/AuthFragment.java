@@ -220,7 +220,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     @Override
     public boolean onBackPressed() {
-        if (isCanBackPress) {
+        if (isCanBackPress && canGoBack) {
             if (isExit) {
                 MainActivity activity = getMainActivity();
                 if (activity != null) {

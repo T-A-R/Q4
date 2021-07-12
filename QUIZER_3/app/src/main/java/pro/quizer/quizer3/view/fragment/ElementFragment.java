@@ -1636,7 +1636,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     @Override
     public boolean onBackPressed() {
-        if (canBack)
+        if (canBack && canGoBack)
             onClick(btnPrev);
         return true;
     }

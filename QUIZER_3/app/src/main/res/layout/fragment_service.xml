@@ -143,6 +143,17 @@
                 android:visibility="gone"/>
 
             <Button
+                android:id="@+id/clear_data_quizer"
+                style="@style/ButtonRed"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/button_delete_data_quizer" />
+
+            <Button
                 android:id="@+id/clear_files"
                 style="@style/ButtonRed"
                 android:layout_width="match_parent"

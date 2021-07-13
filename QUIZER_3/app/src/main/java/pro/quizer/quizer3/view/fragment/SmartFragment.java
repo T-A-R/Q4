@@ -1278,4 +1278,12 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 .doOnComplete(() -> canGoBack = true)
                 .subscribe();
     }
+
+    public Character getDecrypted (char encrypted) {
+        return getDao().getSymbolsForDecrypt(encrypted);
+    }
+
+    public Character getEncrypted (char decrypted) {
+        return getDao().getSymbolsForEncrypt(decrypted);
+    }
 }

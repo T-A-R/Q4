@@ -55,6 +55,8 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
             btnSend.setTypeface(Fonts.getAviaButton());
 //            btnSend.setText("ОТПРАВИТЬ");
 //            btnSend.setTransformationMethod(null);
+        } else {
+            getMainActivity().makeEncryptionTable();
         }
 
         btnSend.setOnClickListener(this);

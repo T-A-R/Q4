@@ -16,6 +16,7 @@ import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementOptionsR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
+import pro.quizer.quizer3.database.models.EncryptionTableR;
 import pro.quizer.quizer3.database.models.OptionsR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
@@ -439,4 +440,13 @@ public interface QuizerDao {
 
     @Query("DELETE FROM RegistrationR WHERE id =:id")
     void clearRegistrationRById(Integer id);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertEncryptionTableR(EncryptionTableR encryptionTableR);
+
+    @Query("SELECT decrypted FROM EncryptionTableR WHERE encrypted = :encrypted LIMIT 1")
+    Character getSymbolsForDecrypt(Character encrypted);
+
+    @Query("SELECT encrypted FROM EncryptionTableR WHERE decrypted = :decrypted ORDER BY RANDOM() LIMIT 1")
+    Character getSymbolsForEncrypt(Character decrypted);
 }

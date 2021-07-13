@@ -153,41 +153,42 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                         if (addRegistrationToDB(mUik, mPhone)) {
                             Log.d("T-L.Reg3Fragment", "====== SAVE TO DB OK ");
 //                            if (getCurrentUser().getConfigR().getExitHost() != null) {
-                            String url; url = getCurrentUser().getConfigR().getExitHost() != null ? getCurrentUser().getConfigR().getExitHost() + Constants.Default.REG_URL : null;
+                            String url;
+                            url = getCurrentUser().getConfigR().getExitHost() != null ? getCurrentUser().getConfigR().getExitHost() + Constants.Default.REG_URL : null;
 
                             List<File> photos = getMainActivity().getRegPhotosByUserId(registration.getUser_id());
 
-                                if (photos == null || photos.isEmpty()) {
-                                    showToast(getString(R.string.no_reg_photo));
-                                    return;
-                                }
+                            if (photos == null || photos.isEmpty()) {
+                                showToast(getString(R.string.no_reg_photo));
+                                return;
+                            }
 
-                                try {
-                                    if (Internet.isConnected() && url != null) {
-                                        QuizerAPI.sendReg(url, photos, new RegistrationRequestModel(
-                                                getDao().getKey(),
-                                                registration.getUser_id(),
-                                                registration.getUik_number(),
-                                                registration.getPhone(),
-                                                registration.getGps(),
-                                                registration.getGps_network(),
-                                                registration.getGps_time(),
-                                                registration.getGps_time_network(),
-                                                registration.getReg_time()
-                                        ), registration.getId(), "jpeg", this);
-                                    } else {
-                                        showToast("Нет доступа в интернет");
-                                        showNoInternetDialog();
-                                    }
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                    showToast("Нет доступа в интернет");
-                                    showNoInternetDialog();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
+                            try {
+                                if (Internet.isConnected() && url != null) {
+                                    QuizerAPI.sendReg(url, photos, new RegistrationRequestModel(
+                                            getDao().getKey(),
+                                            registration.getUser_id(),
+                                            registration.getUik_number(),
+                                            registration.getPhone(),
+                                            registration.getGps(),
+                                            registration.getGps_network(),
+                                            registration.getGps_time(),
+                                            registration.getGps_time_network(),
+                                            registration.getReg_time()
+                                    ), registration.getId(), "jpeg", this);
+                                } else {
                                     showToast("Нет доступа в интернет");
                                     showNoInternetDialog();
                                 }
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                                showToast("Нет доступа в интернет");
+                                showNoInternetDialog();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                showToast("Нет доступа в интернет");
+                                showNoInternetDialog();
+                            }
 //                            }
 //                            else {
 //                                UiUtils.setButtonEnabled(btnNext, true);
@@ -429,12 +430,17 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                 + " " + registration.getReg_time()
                 + " " + registration.getPhone();
 
-        SmsUtils.sendRegSms(getMainActivity(), this, decodedMessage + encode(message));
+        new Thread(() -> SmsUtils.sendRegSms(getMainActivity(), this, decodedMessage + encode(message))).start();
+//        CompletableFuture.supplyAsync(() -> SmsUtils.sendRegSms(getMainActivity(), this, decodedMessage + encode(message)));
+//        SmsUtils.sendRegSms(getMainActivity(), this, decodedMessage + encode(message));
     }
 
     private String encode(String message) {
-        //TODO Зашифровать message.
-        return message;
+        StringBuilder encoded = new StringBuilder();
+        for (Character ch : message.toCharArray()) {
+            encoded.append(getEncrypted(ch));
+        }
+        return encoded.toString();
     }
 
     @Override

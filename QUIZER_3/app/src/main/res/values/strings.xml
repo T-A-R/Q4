@@ -485,4 +485,5 @@
     <string name="button_resend_sms">запросить код повторно</string>
     <string name="button_finish_registration">завершить регистрацию</string>
     <string name="adfdsf">rererre $s</string>
+    <string name="error_create_encryption_table">Ошибка создания таблицы шифрования</string>
 </resources>

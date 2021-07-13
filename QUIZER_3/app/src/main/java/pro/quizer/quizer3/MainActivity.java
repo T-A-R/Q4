@@ -86,6 +86,7 @@ import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementOptionsR;
 import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.UserModelR;
+import pro.quizer.quizer3.executable.FillEncryptionTableExecutable;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.QuotasTreeMaker;
 import pro.quizer.quizer3.model.ElementSubtype;
@@ -1684,5 +1685,26 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public boolean isGoogleLocation() {
         return isGoogleLocation;
+    }
+
+    public void makeEncryptionTable() {
+        final FillEncryptionTableExecutable task = new FillEncryptionTableExecutable(getMainDao(), new ICallback() {
+            @Override
+            public void onStarting() {
+
+            }
+
+            @Override
+            public void onSuccess() {
+            }
+
+            @Override
+            public void onError(Exception pException) {
+                if (!isFinishing()) {
+                    showToastfromActivity(getString(R.string.error_create_encryption_table));
+                }
+            }
+        });
+        task.execute();
     }
 }

@@ -1,6 +1,7 @@
 package pro.quizer.quizer3.view.fragment;
 
 import androidx.appcompat.app.AlertDialog;
+
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import pro.quizer.quizer3.executable.SendAllQuestionnairesExecutable;
 import pro.quizer.quizer3.executable.ServiceInfoExecutable;
 import pro.quizer.quizer3.executable.files.AllAudiosSendingExecutable;
 import pro.quizer.quizer3.executable.files.AllPhotosSendingExecutable;
+import pro.quizer.quizer3.executable.files.CleanUpDataQuizerExecutable;
 import pro.quizer.quizer3.executable.files.CleanUpFilesExecutable;
 import pro.quizer.quizer3.executable.files.UploadingExecutable;
 import pro.quizer.quizer3.executable.files.UploadingFTPExecutable;
@@ -32,6 +34,7 @@ public class ServiceFragment extends ScreenFragment {
     private Button mSendDataButton;
     private Button mSendAudioButton;
     private Button mSendPhotoButton;
+    private Button mClearDataQuizer;
     private Button mClearFiles;
     private Button mClearDbButton;
     private Button mUploadDataButton;
@@ -68,6 +71,7 @@ public class ServiceFragment extends ScreenFragment {
         mSendAudioButton = findViewById(R.id.send_audio);
         mSendPhotoButton = findViewById(R.id.send_photo);
         mClearDbButton = findViewById(R.id.clear_db);
+        mClearDataQuizer = findViewById(R.id.clear_data_quizer);
         mClearFiles = findViewById(R.id.clear_files);
         mUploadDataButton = findViewById(R.id.upload_data);
         mUploadFTPDataButton = findViewById(R.id.upload_ftp_data);
@@ -79,15 +83,16 @@ public class ServiceFragment extends ScreenFragment {
         mUnsendePhoto = findViewById(R.id.unsended_photo_files_count);
         mDeviceId = findViewById(R.id.device_id);
 
-        if(isAvia()) {
-             mSendDataButton.setTypeface(Fonts.getAviaText());
-             mSendAudioButton.setTypeface(Fonts.getAviaText());
-             mSendPhotoButton.setTypeface(Fonts.getAviaText());
-             mClearFiles.setTypeface(Fonts.getAviaText());
-             mClearDbButton.setTypeface(Fonts.getAviaText());
-             mUploadDataButton.setTypeface(Fonts.getAviaText());
-             mUploadFTPDataButton.setTypeface(Fonts.getAviaText());
-             mLogsButton.setTypeface(Fonts.getAviaText());
+        if (isAvia()) {
+            mSendDataButton.setTypeface(Fonts.getAviaText());
+            mSendAudioButton.setTypeface(Fonts.getAviaText());
+            mSendPhotoButton.setTypeface(Fonts.getAviaText());
+            mClearDataQuizer.setTypeface(Fonts.getAviaText());
+            mClearFiles.setTypeface(Fonts.getAviaText());
+            mClearDbButton.setTypeface(Fonts.getAviaText());
+            mUploadDataButton.setTypeface(Fonts.getAviaText());
+            mUploadFTPDataButton.setTypeface(Fonts.getAviaText());
+            mLogsButton.setTypeface(Fonts.getAviaText());
         }
 
         Toolbar mToolbar = findViewById(R.id.toolbar);
@@ -100,6 +105,7 @@ public class ServiceFragment extends ScreenFragment {
         mSendDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mSendAudioButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mSendPhotoButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
+        mClearDataQuizer.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mClearFiles.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mClearDbButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mUploadDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
@@ -219,7 +225,6 @@ public class ServiceFragment extends ScreenFragment {
         });
 
         mClearFiles.setOnClickListener(view -> {
-//                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.FILE, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_clear_db), null);
             if (getActivity() != null && !getActivity().isFinishing()) {
                 new CleanUpFilesExecutable(activity, new ICallback() {
                     @Override
@@ -237,6 +242,28 @@ public class ServiceFragment extends ScreenFragment {
                     public void onError(Exception pException) {
                         showToast("Ошибка удаления файлов");
                         updateData(new ServiceInfoExecutable(activity).execute());
+                    }
+                }).execute();
+            }
+
+        });
+
+        mClearDataQuizer.setOnClickListener(view -> {
+            if (getActivity() != null && !getActivity().isFinishing()) {
+                new CleanUpDataQuizerExecutable(new ICallback() {
+                    @Override
+                    public void onStarting() {
+
+                    }
+
+                    @Override
+                    public void onSuccess() {
+                        showToast("Файлы удалены");
+                    }
+
+                    @Override
+                    public void onError(Exception pException) {
+                        showToast("Ошибка удаления файлов");
                     }
                 }).execute();
             }
@@ -298,7 +325,7 @@ public class ServiceFragment extends ScreenFragment {
                     .setTitle(R.string.clear_db_title)
                     .setMessage(R.string.dialog_clear_db_warning)
                     .setPositiveButton(R.string.view_yes, (dialog, which) -> {
-                        showScreensaver(getString(R.string.notification_clear_db),true);
+                        showScreensaver(getString(R.string.notification_clear_db), true);
                         new DeleteUsersExecutable(activity, new ICallback() {
                             @Override
                             public void onStarting() {

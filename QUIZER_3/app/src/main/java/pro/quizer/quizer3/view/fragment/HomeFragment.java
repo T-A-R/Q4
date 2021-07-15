@@ -402,8 +402,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         initSyncInfoViews();
 
-        tvConfigName.setText(projectInfo.getName());
-        tvConfigAgreement.setText(projectInfo.getAgreement());
+        UiUtils.setTextOrHide(tvConfigName, projectInfo.getName());
+        UiUtils.setTextOrHide(tvConfigAgreement, projectInfo.getAgreement());
 
         try {
             currentQuestionnaire = getDao().getCurrentQuestionnaireR();

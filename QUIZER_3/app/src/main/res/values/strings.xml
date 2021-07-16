@@ -321,7 +321,7 @@
     <string name="view_unsent_count_photo">Количество неотправленных фото файлов: %1$s</string>
     <string name="button_delete_users">Удалить пользователей</string>
     <string name="button_delete_files">Удалить аудио и фото</string>
-    <string name="button_delete_data_quizer">Очистить папку с данными</string>
+    <string name="button_delete_data_quizer">Очистить диск</string>
     <string name="button_clear_db">Очистить базу данных</string>
     <string name="clear_db_title">Очистка базы данных</string>
     <string name="button_delete_user">Удалить пользователя</string>

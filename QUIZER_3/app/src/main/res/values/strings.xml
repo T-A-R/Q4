@@ -103,6 +103,8 @@
     <string name="dialog_remove_user_title">Удаление пользователя</string>
     <string name="dialog_remove_user_body">Вы уверены, что хотите удалить данного пользователя?</string>
     <string name="dialog_error_remove_user_title">Ошибка удаления текущего пользователя</string>
+    <string name="dialog_rereg_title">Повторная регистрация</string>
+    <string name="dialog_rereg_body">Вы уверены, что хотите пройти повторную регистрацию?</string>
     <string name="dialog_error_remove_user_body">Перед удалением пользователя необходимо отправить все данные. Для для отправки всех данных перейдите в СИНХРОНИЗАЦИЮ.</string>
     <string name="dialog_go_to">Перейти</string>
     <string name="dialog_sending_waves_via_sms">Отправка отчётов с помощью СМС.</string>
@@ -311,6 +313,7 @@
     <string name="drawer_about">О НАС</string>
     <string name="drawer_exit">ВЫЙТИ</string>
     <string name="button_sms">СМС</string>
+    <string name="button_send_reg">отправить регистрационные данные</string>
     <string name="notification_please_send_quiz">Перед отправкой аудио/фото отправьте все неотосланные анкеты.</string>
     <string name="notification_please_clear_quiz">Перед отправкой аудио/фото очистите очередь на продолжение анкет.</string>
     <string name="notification_please_send_and_clear_quiz">Перед отправкой аудио/фото очистите очередь на продолжение анкет и отправьте все неотосланные анкеты.</string>
@@ -337,6 +340,7 @@
     <string name="button_update_config">Обновить конфиг</string>
     <string name="button_set_config">Применить конфиг</string>
     <string name="button_get_config">Получить конфиг</string>
+    <string name="button_renew_reg">Перерегистрироваться</string>
     <string name="button_update_username">Изменить интервьюера</string>
     <string name="view_config_title">Конфигурация</string>
     <string name="view_id">ID: %1$s</string>

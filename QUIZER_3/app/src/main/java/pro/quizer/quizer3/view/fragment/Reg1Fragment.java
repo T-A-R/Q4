@@ -6,6 +6,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 
 public class Reg1Fragment extends ScreenFragment implements View.OnClickListener {
@@ -21,10 +22,8 @@ public class Reg1Fragment extends ScreenFragment implements View.OnClickListener
         TextView info = (TextView) findViewById(R.id.reg_info);
         btnNext = (Button) findViewById(R.id.btn_next);
         try {
-            info.setText(getCurrentUser().getConfigR().getRegistrationInfo());
-
-            //TODO FOR TESTS
-            info.setText("Сделайте фото стоя на голове и жонглируя телефонами");
+            UiUtils.setTextOrHide(info, getCurrentUser().getConfigR().getRegistrationInfo());
+//            info.setText(getCurrentUser().getConfigR().getRegistrationInfo());
         } catch (Exception e) {
             e.printStackTrace();
         }

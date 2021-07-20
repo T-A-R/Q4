@@ -43,6 +43,7 @@ import pro.quizer.quizer3.model.view.TitleModel;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
+import pro.quizer.quizer3.utils.UiUtils;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.model.OptionsOpenType.CHECKBOX;
@@ -137,7 +138,8 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
 
         holder.answerPosition.setVisibility(View.VISIBLE);
         holder.answerPosition.setText(String.valueOf(position + 1));
-        holder.answerEditText.setText(answersState.get(position).getData());
+//        holder.answerEditText.setText(answersState.get(position).getData());
+        UiUtils.setTextOrHide(holder.answerEditText, answersState.get(position).getData());
         holder.answerEditText.setFocusableInTouchMode(false);
         holder.answerEditText.clearFocus();
     }
@@ -191,10 +193,12 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         }
 
         public void bind(final ElementItemR item, int position) {
-            answerTitle.setText(Objects.requireNonNull(titlesMap.get(item.getRelative_id())).getTitle());
+//            answerTitle.setText(Objects.requireNonNull(titlesMap.get(item.getRelative_id())).getTitle());
+            UiUtils.setTextOrHide(answerTitle, Objects.requireNonNull(titlesMap.get(item.getRelative_id())).getTitle());
             if (item.getElementOptionsR().getDescription() != null && item.getElementOptionsR().getDescription().length() > 0) {
                 answerDesc.setVisibility(View.VISIBLE);
-                answerDesc.setText(Objects.requireNonNull(titlesMap.get(item.getRelative_id())).getDescription());
+//                answerDesc.setText(Objects.requireNonNull(titlesMap.get(item.getRelative_id())).getDescription());
+                UiUtils.setTextOrHide(answerDesc, Objects.requireNonNull(titlesMap.get(item.getRelative_id())).getDescription());
             } else {
                 answerDesc.setVisibility(View.GONE);
             }
@@ -313,7 +317,8 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
             if (answersState.get(position).getData() != null && answersState.get(position).getData().length() > 0 || lastSelectedPosition == position) {
                 editButton.setVisibility(View.GONE);
                 answerEditText.setVisibility(View.VISIBLE);
-                answerEditText.setText(answersState.get(position).getData());
+//                answerEditText.setText(answersState.get(position).getData());
+                UiUtils.setTextOrHide(answerEditText, answersState.get(position).getData());
                 if (lastSelectedPosition == position) {
                     switch (item.getElementOptionsR().getOpen_type()) {
                         case TEXT:

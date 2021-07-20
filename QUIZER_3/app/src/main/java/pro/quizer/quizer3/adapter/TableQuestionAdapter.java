@@ -288,7 +288,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             }
         }
 
-        vh.mHeaderColumnTextView.setText(mIsFlipColsAndRows ? titles.get(column - 1) : Objects.requireNonNull(titlesMap.get(mTopSide.get(column - 1).getRelative_id())).getTitle());
+//        vh.mHeaderColumnTextView.setText(mIsFlipColsAndRows ? titles.get(column - 1) : Objects.requireNonNull(titlesMap.get(mTopSide.get(column - 1).getRelative_id())).getTitle());
+        UiUtils.setTextOrHide(vh.mHeaderColumnTextView, mIsFlipColsAndRows ? titles.get(column - 1) : Objects.requireNonNull(titlesMap.get(mTopSide.get(column - 1).getRelative_id())).getTitle());
         if (!isSpeedMode) {
             if (mIsFlipColsAndRows) {
                 if (mLine[column - 1]) {
@@ -311,7 +312,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 showPic(vh.mRowImage, mLeftSideImages.get(row - 1).getData_thumb());
             }
         }
-        vh.mHeaderRowTextView.setText(!mIsFlipColsAndRows ? titles.get(row - 1) : Objects.requireNonNull(titlesMap.get(mLeftSide.get(row - 1).getRelative_id())).getTitle());
+//        vh.mHeaderRowTextView.setText(!mIsFlipColsAndRows ? titles.get(row - 1) : Objects.requireNonNull(titlesMap.get(mLeftSide.get(row - 1).getRelative_id())).getTitle());
+        UiUtils.setTextOrHide(vh.mHeaderRowTextView, !mIsFlipColsAndRows ? titles.get(row - 1) : Objects.requireNonNull(titlesMap.get(mLeftSide.get(row - 1).getRelative_id())).getTitle());
         vh.mHeaderRowDescriptionTextView.setTypeface(vh.mHeaderRowDescriptionTextView.getTypeface(), Typeface.ITALIC);
         UiUtils.setTextOrHide(vh.mHeaderRowDescriptionTextView, optionsModel.getDescription());
         if (!isSpeedMode) {
@@ -679,7 +681,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final TextView description = mView.findViewById(R.id.description);
         description.setTypeface(description.getTypeface(), Typeface.ITALIC);
 
-        title.setText(Objects.requireNonNull(titlesMap.get(pOptionsModel.getRelative_id())).getTitle());
+//        title.setText(Objects.requireNonNull(titlesMap.get(pOptionsModel.getRelative_id())).getTitle());
+        UiUtils.setTextOrHide(title, Objects.requireNonNull(titlesMap.get(pOptionsModel.getRelative_id())).getTitle());
         UiUtils.setTextOrHide(description, pOptionsModel.getDescription());
 
         if (data != null) {

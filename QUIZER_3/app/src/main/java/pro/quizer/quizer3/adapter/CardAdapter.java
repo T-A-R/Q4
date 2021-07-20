@@ -84,7 +84,8 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
 
                 if (data != null && data.length() > 0) {
                     cardInput.setTextColor(mContext.getResources().getColor(R.color.brand_color_dark));
-                    cardInput.setText(data);
+//                    cardInput.setText(data);
+                    UiUtils.setTextOrHide(cardInput, data);
                 } else if (hint != null && hint.length() > 0) {
                     cardInput.setTextColor(mContext.getResources().getColor(R.color.gray));
                     cardInput.setText(hint);

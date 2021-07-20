@@ -1171,8 +1171,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 testCount.setVisibility(View.GONE);
             }
 
-
-            UiUtils.setTextOrHide(userTitle, (String.format(getString(R.string.data_by_user), activity.getSettings().getUser_name(), getCurrentUser().getLogin())));
+            String userDate = activity.getSettings().getUser_date() != null && activity.getSettings().getUser_date().length() > 0 ?
+                    " " + activity.getSettings().getUser_date() : "";
+            String userText = activity.getSettings().getUser_name() + userDate;
+            UiUtils.setTextOrHide(userTitle, (String.format(getString(R.string.data_by_user), userText, getCurrentUser().getLogin())));
             UiUtils.setTextOrHide(userQuotasCount, (String.format(getString(R.string.collected_quotas), String.valueOf(finalStatistics.getUser_quoted()))));
             if (finalStatistics.getUser_unfinished() == null || finalStatistics.getUser_unfinished() == -1) {
                 UiUtils.setTextOrHide(userAbortedCount, (String.format(getString(R.string.collected_aborted), "нет данных")));

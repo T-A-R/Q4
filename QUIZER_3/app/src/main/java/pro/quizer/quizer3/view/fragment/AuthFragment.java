@@ -11,6 +11,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -663,6 +665,8 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         EditText date = layoutView.findViewById(R.id.input_birthdate);
         Button sendBtn = layoutView.findViewById(R.id.btn_send_name);
 
+        date.setEnabled(false);
+
 //        date.setOnClickListener(v -> {
 //            String nameString = name.getText().toString();
 //            nameString = nameString.replaceAll(" ", "");
@@ -673,9 +677,34 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 //            }
 //        });
 
+        name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String nameString = s.toString();
+                nameString = nameString.replaceAll(" ", "");
+                if (StringUtils.isEmpty(nameString) || nameString.length() == 0) {
+                    date.setText("");
+                    date.setEnabled(false);
+                } else {
+                    date.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         sendBtn.setOnClickListener(v -> {
             String nameString = name.getText().toString();
             String shortName = nameString.replaceAll(" ", "");
+            boolean isNameEmpty = true;
             if (shortName.length() == 0) nameString = " ";
 
             if (StringUtils.isEmpty(nameString)) {
@@ -750,7 +779,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
         noBtn.setOnClickListener(v -> {
             infoDialog.dismiss();
-            Log.d("T-L.AuthFragment", "???????????????: 3");
             checkGpsAnsStartHomeFragment();
         });
 

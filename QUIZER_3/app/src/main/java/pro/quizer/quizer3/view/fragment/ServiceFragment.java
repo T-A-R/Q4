@@ -250,24 +250,8 @@ public class ServiceFragment extends ScreenFragment {
 
         mClearDataQuizer.setOnClickListener(view -> {
             if (getActivity() != null && !getActivity().isFinishing()) {
-                new CleanUpDataQuizerExecutable(new ICallback() {
-                    @Override
-                    public void onStarting() {
-
-                    }
-
-                    @Override
-                    public void onSuccess() {
-                        showToast("Файлы удалены");
-                    }
-
-                    @Override
-                    public void onError(Exception pException) {
-                        showToast("Ошибка удаления файлов");
-                    }
-                }).execute();
+                showClearFilesAlertDialog();
             }
-
         });
 
         mUploadDataButton.setOnClickListener(view -> {
@@ -340,6 +324,38 @@ public class ServiceFragment extends ScreenFragment {
                             @Override
                             public void onError(Exception pException) {
                                 updateData(new ServiceInfoExecutable(activity).execute());
+                            }
+                        }).execute();
+                    })
+                    .setNegativeButton(R.string.view_no, null).show();
+        }
+    }
+
+    public void showClearFilesAlertDialog() {
+        MainActivity activity = getMainActivity();
+        if (activity != null && !activity.isFinishing()) {
+            new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
+                    .setCancelable(true)
+                    .setTitle(R.string.clear_disk_title)
+                    .setMessage(R.string.dialog_clear_disk_warning)
+                    .setPositiveButton(R.string.view_yes, (dialog, which) -> {
+                        showScreensaver(getString(R.string.clear_disk_title), true);
+                        new CleanUpDataQuizerExecutable(new ICallback() {
+                            @Override
+                            public void onStarting() {
+
+                            }
+
+                            @Override
+                            public void onSuccess() {
+                                showToast("Файлы удалены");
+                                hideScreensaver();
+                            }
+
+                            @Override
+                            public void onError(Exception pException) {
+                                showToast("Ошибка удаления файлов");
+                                hideScreensaver();
                             }
                         }).execute();
                     })

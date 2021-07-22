@@ -327,6 +327,7 @@
     <string name="button_delete_data_quizer">Очистить диск</string>
     <string name="button_clear_db">Очистить базу данных</string>
     <string name="clear_db_title">Очистка базы данных</string>
+    <string name="clear_disk_title">Очистка диска</string>
     <string name="button_delete_user">Удалить пользователя</string>
     <string name="button_upload_data">Выгрузить данные</string>
     <string name="button_ftp_upload_data">Отправка через FTP</string>
@@ -381,6 +382,7 @@
     <string name="save_ctashlog_error">Ошибка создания файла</string>
     <string name="ftp_upload">Отправка через FTP</string>
     <string name="dialog_clear_db_warning">Внимание! Все данные из базы будут удалены, включая неотосланные анкеты, аудио и фото. Вам необходимо будет заново ввести ключ при наличии подключения к Интернет! Вы действительно хотите удалить данные?</string>
+    <string name="dialog_clear_disk_warning">Внимание! Все данные, выгруженные вручную, будут безвозвратно удалены. Вы действительно хотите очистить диск?</string>
     <string name="view_yes">Да</string>
     <string name="view_retry">Повторить попытку</string>
     <string name="retry">Повторить</string>

@@ -414,7 +414,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } else if (view == titleBox || view == btnHideTitle || view == tvHiddenTitle || view == tvTitle1 || view == tvTitleDesc1 || view == tvTitle2 || view == tvTitleDesc2) {
             if (titleBox.getVisibility() == View.VISIBLE) {
                 titleBox.setVisibility(View.GONE);
-                tvHiddenTitle.setText(tvTitle1.getText().length() > 0 ? tvTitle1.getText() : tvTitle2.getText());
+//                tvHiddenTitle.setText(tvTitle1.getText().length() > 0 ? tvTitle1.getText() : tvTitle2.getText());
+                UiUtils.setTextOrHide(tvHiddenTitle, tvTitle1.getText().length() > 0 ? tvTitle1.getText().toString() : tvTitle2.getText().toString());
                 tvHiddenTitle.setVisibility(View.VISIBLE);
                 btnHideTitle.setImageResource(R.drawable.plus_green);
             } else {
@@ -425,7 +426,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } else if (view == closeQuestion || view == tvQuestionDesc || view == tvQuestion || view == tvHiddenQuestion) {
             if (questionBox.getVisibility() == View.VISIBLE) {
                 questionBox.setVisibility(View.GONE);
-                tvHiddenQuestion.setText(tvQuestion.getText());
+//                tvHiddenQuestion.setText(tvQuestion.getText());
+                UiUtils.setTextOrHide(tvHiddenQuestion, tvQuestion.getText().toString());
                 tvHiddenQuestion.setVisibility(View.VISIBLE);
                 closeQuestion.setImageResource(R.drawable.plus_white);
                 tableRedrawEverything();
@@ -1818,7 +1820,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         dQuota2.setTextColor(getResources().getColor(R.color.black));
         dQuota1.setText(getString(R.string.label_login, getMainActivity().getCurrentUser().getLogin()));
         dQuota2.setText(getString(R.string.label_inter, getUserName()));
-        dQuota3.setText(getString(R.string.label_project, getMainActivity().getConfig().getProjectInfo().getName()));
+//        dQuota3.setText(getString(R.string.label_project, getMainActivity().getConfig().getProjectInfo().getName()));
+        UiUtils.setTextOrHide(dQuota3, getString(R.string.label_project, getMainActivity().getConfig().getProjectInfo().getName()));
 
         dialogBuilder.setView(layoutView);
         infoDialog = dialogBuilder.create();

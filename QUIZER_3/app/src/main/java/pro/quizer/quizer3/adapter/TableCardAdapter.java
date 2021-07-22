@@ -26,6 +26,7 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.model.CardItem;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.StringUtils;
+import pro.quizer.quizer3.utils.UiUtils;
 
 public class TableCardAdapter extends ArrayAdapter<CardItem> {
     private int resourceLayout;
@@ -72,7 +73,8 @@ public class TableCardAdapter extends ArrayAdapter<CardItem> {
             TextView title = holder.findViewById(R.id.card_title);
             ImageView titleImage = holder.findViewById(R.id.title_image);
 
-            title.setText(data);
+//            title.setText(data);
+            UiUtils.setTextOrHide(title, data);
             if (thumb != null && thumb.length() > 0) {
                 titleImage.setVisibility(View.VISIBLE);
                 showPic(titleImage, thumb);

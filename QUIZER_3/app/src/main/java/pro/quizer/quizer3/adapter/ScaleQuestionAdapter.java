@@ -27,6 +27,7 @@ import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
+import pro.quizer.quizer3.utils.UiUtils;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 
@@ -101,7 +102,8 @@ public class ScaleQuestionAdapter extends RecyclerView.Adapter<ScaleQuestionAdap
         public void bind(final ElementItemR item, int position, String type) {
             cont.setOnClickListener(this);
             if (show_scale) {
-                scaleText.setText(item.getElementOptionsR().getTitle());
+//                scaleText.setText(item.getElementOptionsR().getTitle());
+                UiUtils.setTextOrHide(scaleText, item.getElementOptionsR().getTitle());
             } else {
                 scaleText.setVisibility(View.GONE);
                 divider.setVisibility(View.GONE);

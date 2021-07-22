@@ -251,7 +251,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 answerDesc.setTextColor(mActivity.getResources().getColor(R.color.black));
             }
 
-            answerEditText.setText(answersState.get(position).getData());
+//            answerEditText.setText(answersState.get(position).getData());
+            UiUtils.setTextOrHide(answerEditText, answersState.get(position).getData());
 
             setEnabled(position);
         }
@@ -294,9 +295,9 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 if (answersState.get(position).getData() != null && !answersState.get(position).getData().equals("")) {
                     editButton.setVisibility(View.GONE);
                     answerEditText.setVisibility(View.VISIBLE);
-//                    if (!isMulti)
                         penButton.setVisibility(View.VISIBLE);
-                    answerEditText.setText(answersState.get(position).getData());
+//                    answerEditText.setText(answersState.get(position).getData());
+                    UiUtils.setTextOrHide(answerEditText, answersState.get(position).getData());
                 }
             } else {
                 answerEditText.setVisibility(View.GONE);

@@ -222,14 +222,18 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (camera != null) {
-            camera.stopPreview();
-            camera.release();
-            camera = null;
-        }
-        if (showCamera != null) {
-            showCamera.destroyDrawingCache();
-            showCamera.setCamera(null);
+        try {
+            if (camera != null) {
+                camera.stopPreview();
+                camera.release();
+                camera = null;
+            }
+            if (showCamera != null) {
+                showCamera.destroyDrawingCache();
+                showCamera.setCamera(null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

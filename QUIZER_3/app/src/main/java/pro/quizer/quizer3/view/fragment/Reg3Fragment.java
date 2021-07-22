@@ -71,7 +71,6 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
         Bundle bundle = getArguments();
         if (bundle != null) {
             mTimeToken = bundle.getLong("time");
-//            showToast(DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, mTimeToken * 1000));
         } else showTimeErrorDialog();
 
         RelativeLayout cont = (RelativeLayout) findViewById(R.id.cont_reg3_fragment);
@@ -84,6 +83,9 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
         clearPhone = (ImageView) findViewById(R.id.btn_clear_phone);
 
         uikList = getCurrentUser().getConfigR().getAllowedUiks();
+//        for(String uik : uikList) {
+//            Log.d("T-L.Reg3Fragment", "uik: " + uik);
+//        }
         //TODO FOR TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if (uikList == null) {
             uikList = new ArrayList<>();
@@ -135,7 +137,6 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
             String mUik = uik.getText().toString();
             String mPhone;
             if (mPhoneNumber == null || mPhoneNumber.equals("") || mPhoneNumber.equals("7")) {
-//                Log.d("T-L.Reg3Fragment", "============ onClick: " + inputPhone + " / " + inputPhone.getText().toString());
                 mPhone = "7" + phoneFormatter.cleaned(inputPhone.getText().toString());
                 mPhoneNumber = mPhone;
             } else mPhone = mPhoneNumber;
@@ -148,14 +149,11 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                     } else if (gps.isFakeGPS()) {
                         showFakeGpsDialog();
                     } else {
-//                        showToast(mUik + " / " + mPhone);
                         UiUtils.setButtonEnabled(btnNext, false);
                         if (addRegistrationToDB(mUik, mPhone)) {
-                            Log.d("T-L.Reg3Fragment", "====== SAVE TO DB OK ");
-//                            if (getCurrentUser().getConfigR().getExitHost() != null) {
                             String url;
                             url = getCurrentUser().getConfigR().getExitHost() != null ? getCurrentUser().getConfigR().getExitHost() + Constants.Default.REG_URL : null;
-
+                            Log.d("T-L.Reg3Fragment", "REG EXIT URL: " + url);
                             List<File> photos = getMainActivity().getRegPhotosByUserId(registration.getUser_id());
 
                             if (photos == null || photos.isEmpty()) {
@@ -189,10 +187,6 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                                 showToast("Нет доступа в интернет");
                                 showNoInternetDialog();
                             }
-//                            }
-//                            else {
-//                                UiUtils.setButtonEnabled(btnNext, true);
-//                            }
                         } else {
                             Log.d("T-L.Reg3Fragment", "====== SAVE TO DB FAIL ");
                             UiUtils.setButtonEnabled(btnNext, true);
@@ -296,9 +290,6 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
             mPhoneNumber = mPhoneNumber.substring(1);
 
         return mPhoneNumber != null && mPhoneNumber.length() == 11;
-        //TODO FOR TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//        mPhoneNumber = null;
-//        return false;
     }
 
     private boolean checkUik(String text) {

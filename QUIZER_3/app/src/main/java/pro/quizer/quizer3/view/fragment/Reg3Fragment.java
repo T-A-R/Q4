@@ -89,7 +89,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
         //TODO FOR TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if (uikList == null) {
             uikList = new ArrayList<>();
-            uikList.add("123");
+            uikList.add("216");
             uikList.add("321");
         }
 
@@ -155,14 +155,17 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                             url = getCurrentUser().getConfigR().getExitHost() != null ? getCurrentUser().getConfigR().getExitHost() + Constants.Default.REG_URL : null;
                             Log.d("T-L.Reg3Fragment", "REG EXIT URL: " + url);
                             List<File> photos = getMainActivity().getRegPhotosByUserId(registration.getUser_id());
-
+                            Log.d("T-L.Reg3Fragment", "====: 1");
                             if (photos == null || photos.isEmpty()) {
+                                Log.d("T-L.Reg3Fragment", "====: 2");
                                 showToast(getString(R.string.no_reg_photo));
                                 return;
                             }
+                            Log.d("T-L.Reg3Fragment", "====: 3");
 
                             try {
-                                if (Internet.isConnected() && url != null) {
+                                if (Internet.hasConnection(getMainActivity()) && url != null) {
+                                    Log.d("T-L.Reg3Fragment", "Отправка регистрации...");
                                     QuizerAPI.sendReg(url, photos, new RegistrationRequestModel(
                                             getDao().getKey(),
                                             registration.getUser_id(),
@@ -172,21 +175,20 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                                             registration.getGps_network(),
                                             registration.getGps_time(),
                                             registration.getGps_time_network(),
-                                            registration.getReg_time()
+                                            registration.getReg_time(),
+                                            false
                                     ), registration.getId(), "jpeg", this);
                                 } else {
                                     showToast("Нет доступа в интернет");
                                     showNoInternetDialog();
                                 }
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                                showToast("Нет доступа в интернет");
-                                showNoInternetDialog();
-                            } catch (IOException e) {
+                                Log.d("T-L.Reg3Fragment", "====: 4");
+                            } catch (Exception e) {
                                 e.printStackTrace();
                                 showToast("Нет доступа в интернет");
                                 showNoInternetDialog();
                             }
+
                         } else {
                             Log.d("T-L.Reg3Fragment", "====== SAVE TO DB FAIL ");
                             UiUtils.setButtonEnabled(btnNext, true);
@@ -422,8 +424,6 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                 + " " + registration.getPhone();
 
         new Thread(() -> SmsUtils.sendRegSms(getMainActivity(), this, decodedMessage + encode(message))).start();
-//        CompletableFuture.supplyAsync(() -> SmsUtils.sendRegSms(getMainActivity(), this, decodedMessage + encode(message)));
-//        SmsUtils.sendRegSms(getMainActivity(), this, decodedMessage + encode(message));
     }
 
     private String encode(String message) {
@@ -456,13 +456,15 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
 
     @Override
     public void onSuccess() {
+        Log.d("T-L.Reg3Fragment", "SEND REG SMS onSuccess: ");
         replaceFragment(new Reg4Fragment());
     }
 
     @Override
     public void onError(Exception pException) {
+        Log.d("T-L.Reg3Fragment", "SEND REG SMS onError: " + pException.getMessage());
+        showToast("Ошибка отправки СМС. \nСвяжитесь с тех. поддержкой");
         UiUtils.setButtonEnabled(btnNext, true);
-        replaceFragment(new Reg4Fragment()); //TODO FOR TEST
     }
 }
 

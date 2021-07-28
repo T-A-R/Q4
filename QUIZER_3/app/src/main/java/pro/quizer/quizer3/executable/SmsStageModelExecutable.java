@@ -1,5 +1,7 @@
 package pro.quizer.quizer3.executable;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -44,7 +46,10 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
         for (final QuestionsMatchesModel questionMatch : mStagesModel.getQuestionsMatches()) {
             final String smsNum = questionMatch.getSmsNum();
             final int questionId = questionMatch.getQuestionId();
+            Log.d("T-L.SmsStageModelExecut", "=== questionId: " + questionId);
             final ElementModelNew element = mMap.get(questionId);
+            Log.d("T-L.SmsStageModelExecut", "=== mMap.size(): " + mMap.size());
+            Log.d("T-L.SmsStageModelExecut", "=== element: " + element);
             final int countSubElements = element.getNotNullableSubElementsCount();
 
             final SmsAnswer smsAnswer = new SmsAnswer(smsNum, countSubElements);

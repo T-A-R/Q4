@@ -152,7 +152,7 @@ public final class SmsUtils {
         final PendingIntent sentPI = PendingIntent.getBroadcast(pBaseActivity, 0, new Intent(SENT), 0);
         final PendingIntent deliveredPI = PendingIntent.getBroadcast(pBaseActivity, 0, new Intent(DELIVERED), 0);
 
-        final StringBuilder sms = new StringBuilder();
+//        final StringBuilder sms = new StringBuilder();
 
 
         final String phoneNumber = getPhoneNumber(pBaseActivity);
@@ -163,7 +163,7 @@ public final class SmsUtils {
             return;
         }
 
-        final String smsWithPreffix = formatSmsPrefix(sms.toString(), pBaseActivity);
+//        final String smsWithPreffix = formatSmsPrefix(sms.toString(), pBaseActivity);
 
         pBaseActivity.showToastfromActivity(pBaseActivity.getString(R.string.notification_sending_sms));
 
@@ -218,7 +218,8 @@ public final class SmsUtils {
         }, new IntentFilter(DELIVERED));
 
         final SmsManager smsManager = SmsManager.getDefault();
-        smsManager.sendTextMessage(phoneNumber, null, smsWithPreffix, sentPI, deliveredPI);
+//        smsManager.sendTextMessage(phoneNumber, null, smsWithPreffix, sentPI, deliveredPI);
+        smsManager.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
 
     }
 }

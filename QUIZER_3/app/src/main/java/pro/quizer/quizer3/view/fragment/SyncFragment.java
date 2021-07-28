@@ -19,8 +19,6 @@ import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
-import static pro.quizer.quizer3.MainActivity.EXIT;
-
 public class SyncFragment extends ScreenFragment implements View.OnClickListener, ICallback {
 
     private Button mSendDataButton;
@@ -167,7 +165,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
 
             @Override
             public void run() {
-                if (hasReserveChannel && EXIT) {
+                if (hasReserveChannel && activity.isExit()) {
                     showSmsButton();
                 } else {
                     hideSmsButton();

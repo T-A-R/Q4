@@ -42,9 +42,7 @@ import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
-import pro.quizer.quizer3.view.fragment.ScreenFragment;
 
-import static pro.quizer.quizer3.MainActivity.EXIT;
 import static pro.quizer.quizer3.utils.Fonts.FONT_SIZE_MODELS;
 
 public class SettingsFragment extends ScreenFragment implements View.OnClickListener, ICallback {
@@ -160,7 +158,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
 
 //        Log.d("T-L.SettingsFragment", "=== REG: " + getDao().getRegistrationR(getCurrentUserId()).size());
 
-        if (EXIT && getDao().getRegistrationR(getCurrentUserId()).size() != 0) mReReg.setVisibility(View.VISIBLE);
+        if (mBaseActivity.isExit() && getDao().getRegistrationR(getCurrentUserId()).size() != 0) mReReg.setVisibility(View.VISIBLE);
         else mReReg.setVisibility(View.GONE);
 
         answerMargin = mBaseActivity.getAnswerMargin();

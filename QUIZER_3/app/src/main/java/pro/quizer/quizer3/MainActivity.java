@@ -369,7 +369,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private void generateTempMap(final List<ElementModelNew> elements) {
         for (final ElementModelNew element : elements) {
             mTempMap.put(element.getRelativeID(), element);
-
+            Log.d("T-L.MainActivity", "??? generateTempMap: " + element.getRelativeID());
             final List<ElementModelNew> nestedList = element.getElements();
             if (nestedList != null && !nestedList.isEmpty()) {
                 generateTempMap(nestedList);
@@ -1171,7 +1171,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public void activateExitReminder() {
-        if (EXIT && getReserveChannel() != null) {
+        if (isExit() && getReserveChannel() != null) {
 
             if (mTimer != null) {
                 mTimer.cancel();
@@ -1220,7 +1220,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public boolean isExit() {
-        return getConfig().getProjectInfo().getReserveChannel() != null;
+        return getConfig().has_registration();
     }
 
     public void startSMS(Long startTime) {
@@ -1229,7 +1229,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         Intent i = new Intent(this, StartSmsSender.class);
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, i, 0);
 
-        if (EXIT) {
+        if (isExit() && getReserveChannel() != null) {
             am.set(AlarmManager.RTC_WAKEUP, startTime, pendingIntent);
         }
     }

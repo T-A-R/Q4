@@ -241,8 +241,14 @@ public class QuizerAPI {
 
     @NonNull
     static public MultipartBody.Part prepareFilePart(String partName, File file, String pMediaType) {
+        Log.d("T-L.QuizerAPI", "prepareFilePart: " + partName + " = " + file.getName());
         RequestBody requestFile = RequestBody.create(MediaType.parse(pMediaType), file);
         return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
+    }
+
+    @NonNull
+    static public MultipartBody.Part prepareRegPart(String partName, String data) {
+        return MultipartBody.Part.createFormData(partName, data);
     }
 
     public interface SendFilesCallback {
@@ -342,7 +348,8 @@ public class QuizerAPI {
     static public void sendReg(String url, List<File> files, RegistrationRequestModel regForm, int id, String pMediaType, final SendRegCallback listener) {
 
         String fileName = "files[%1$s]";
-
+        Gson gson = new Gson();
+        String json = gson.toJson(regForm);
         RequestBody description = RequestBody.create(MultipartBody.FORM, new Gson().toJson(regForm));
         List<MultipartBody.Part> parts = new ArrayList<>();
 
@@ -350,10 +357,23 @@ public class QuizerAPI {
             parts.add(prepareFilePart(String.format(fileName, i), files.get(i), pMediaType));
         }
 
+        parts.add(prepareRegPart("admin_key", regForm.getAdmin_key()));
+        parts.add(prepareRegPart("user_id", String.valueOf(regForm.getUser_id())));
+        parts.add(prepareRegPart("uik_number", regForm.getUik_number()));
+        parts.add(prepareRegPart("phone", regForm.getPhone()));
+        parts.add(prepareRegPart("gps", regForm.getGps()));
+        parts.add(prepareRegPart("gps_network", regForm.getGps_network()));
+        parts.add(prepareRegPart("gps_time", regForm.getGps_time().toString()));
+        parts.add(prepareRegPart("gps_time_network", regForm.getGps_time_network().toString()));
+        parts.add(prepareRegPart("reg_time", regForm.getReg_time().toString()));
+        parts.add(prepareRegPart("fake_gps", regForm.isFake_gps() ? "1" : "0"));
+
+        Log.d("T-L.QuizerAPI", "sendReg: " + json);
+
         CoreApplication.getQuizerApi().sendFiles(url, description, parts).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                Log.d(TAG, "QuizerAPI.sendFiles.onResponse() Message: " + response.message());
+                Log.d(TAG, "QuizerAPI.sendFiles.onResponse() Code: " + response.code()  + " Message: " + response.message());
                 if(response.headers().get("X-QProject") != null) {
                     listener.onSendRegCallback(response.body(), id);
                 } else

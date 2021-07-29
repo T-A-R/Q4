@@ -170,7 +170,8 @@
                 android:layout_marginTop="@dimen/_12sdp"
                 android:maxLines="1"
                 android:textSize="@dimen/_12ssp"
-                android:text="@string/button_send_reg" />
+                android:text="@string/button_send_reg"
+                android:visibility="gone"/>
 
             <Button
                 android:id="@+id/sync_sms"

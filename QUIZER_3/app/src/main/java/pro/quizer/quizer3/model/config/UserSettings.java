@@ -3,34 +3,32 @@ package pro.quizer.quizer3.model.config;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.List;
 
-public class PhoneModel implements Serializable {
+public class UserSettings implements Serializable {
 
     @SerializedName("number")
-    private String number;
+    private Integer user_id;
 
-    @SerializedName("preffix")
-    private String preffix;
+    @SerializedName("allowed_uiks")
+    private List<String> allowed_uiks;
 
-    private boolean isSelected;
-
-    public PhoneModel() {
+    public UserSettings() {
     }
 
-    public boolean isSelected() {
-        return isSelected;
+    public Integer getUser_id() {
+        return user_id;
     }
 
-    public void setSelected(boolean selected) {
-        isSelected = selected;
+    public void setUser_id(Integer user_id) {
+        this.user_id = user_id;
     }
 
-    public String getNumber() {
-        return number;
+    public List<String> getAllowed_uiks() {
+        return allowed_uiks;
     }
 
-    public String getPreffix() {
-        return preffix;
+    public void setAllowed_uiks(List<String> allowed_uiks) {
+        this.allowed_uiks = allowed_uiks;
     }
-
 }

@@ -5,6 +5,8 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import pro.quizer.quizer3.Constants;
+
 @Entity(indices = {@Index("user_id")})
 public class RegistrationR {
 
@@ -36,7 +38,11 @@ public class RegistrationR {
     @ColumnInfo(name = "reg_time")
     private Long reg_time;
 
+    @ColumnInfo(name = "status")
+    private String status;
+
     public RegistrationR() {
+        this.status = Constants.Registration.NOT_SENT;
     }
 
     public RegistrationR(int user_id, String uik_number, String phone, String gps, String gps_network, Long gps_time, Long gps_time_network, Long reg_time) {
@@ -48,6 +54,7 @@ public class RegistrationR {
         this.gps_time = gps_time;
         this.gps_time_network = gps_time_network;
         this.reg_time = reg_time;
+        this.status = Constants.Registration.NOT_SENT;
     }
 
     public int getId() {
@@ -120,5 +127,21 @@ public class RegistrationR {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public boolean isAccepted() {
+        return status.equals(Constants.Registration.SENT) || status.equals(Constants.Registration.SMS);
+    }
+
+    public boolean notSent() {
+        return status.equals(Constants.Registration.NOT_SENT) || status.equals(Constants.Registration.SMS);
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

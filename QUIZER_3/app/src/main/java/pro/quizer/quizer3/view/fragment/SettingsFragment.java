@@ -158,7 +158,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
 
 //        Log.d("T-L.SettingsFragment", "=== REG: " + getDao().getRegistrationR(getCurrentUserId()).size());
 
-        if (mBaseActivity.isExit() && getDao().getRegistrationR(getCurrentUserId()).size() != 0) mReReg.setVisibility(View.VISIBLE);
+        if (mBaseActivity.isExit() && getDao().getRegistrationR(getCurrentUserId()) != null) mReReg.setVisibility(View.VISIBLE);
         else mReReg.setVisibility(View.GONE);
 
         answerMargin = mBaseActivity.getAnswerMargin();

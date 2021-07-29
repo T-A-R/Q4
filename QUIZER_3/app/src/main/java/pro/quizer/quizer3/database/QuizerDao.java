@@ -432,14 +432,17 @@ public interface QuizerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertRegistrationR(RegistrationR registrationR);
 
-    @Query("SELECT * FROM RegistrationR WHERE user_id =:userId")
-    List<RegistrationR> getRegistrationR(Integer userId);
+    @Query("SELECT * FROM RegistrationR WHERE user_id =:userId ORDER BY id DESC LIMIT 1")
+    RegistrationR getRegistrationR(Integer userId);
 
     @Query("DELETE FROM RegistrationR WHERE user_id =:userId")
     void clearRegistrationRByUser(Integer userId);
 
     @Query("DELETE FROM RegistrationR WHERE id =:id")
     void clearRegistrationRById(Integer id);
+
+    @Query("UPDATE RegistrationR SET status = :status WHERE id =:id")
+    void setRegStatus(Integer id, String status);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertEncryptionTableR(EncryptionTableR encryptionTableR);

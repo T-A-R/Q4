@@ -1,13 +1,23 @@
 package pro.quizer.quizer3.view.fragment;
 
 import androidx.appcompat.app.AlertDialog;
+
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.io.File;
+import java.util.List;
+
+import okhttp3.ResponseBody;
+import pro.quizer.quizer3.API.QuizerAPI;
+import pro.quizer.quizer3.API.models.request.RegistrationRequestModel;
+import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.database.models.RegistrationR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.SendQuestionnairesByUserModelExecutable;
@@ -15,17 +25,20 @@ import pro.quizer.quizer3.executable.SyncInfoExecutable;
 import pro.quizer.quizer3.executable.files.AudiosSendingByUserModelExecutable;
 import pro.quizer.quizer3.executable.files.PhotosSendingByUserModelExecutable;
 import pro.quizer.quizer3.model.view.SyncViewModel;
+import pro.quizer.quizer3.utils.Internet;
+import pro.quizer.quizer3.utils.SmsUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
-public class SyncFragment extends ScreenFragment implements View.OnClickListener, ICallback {
+public class SyncFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.SendRegCallback, ICallback {
 
     private Button mSendDataButton;
     private Button mSendAudioButton;
     private Button mSendPhotoButton;
     private Button mSyncSms;
     private Button mDelete;
+    private Button mSendReg;
     private TextView mProjectStatusView;
     private TextView mUnfinishedView;
     private TextView mQUnsendedView;
@@ -48,7 +61,6 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
         initViews();
         MainFragment.enableSideMenu(true, getMainActivity().isExit());
         initStrings();
-//        new CleanUpFilesExecutable(getContext(), null).execute();
         updateData(new SyncInfoExecutable(getContext()).execute());
     }
 
@@ -68,9 +80,13 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
         mAUnsendedView = findViewById(R.id.unsended_audio);
         mPUnsendedView = findViewById(R.id.unsended_photo);
         mDelete = findViewById(R.id.btn_delete);
+        mSendReg = findViewById(R.id.send_reg);
 
         mSyncSms.setOnClickListener(this);
         mDelete.setOnClickListener(this);
+        mSendReg.setOnClickListener(this);
+
+        checkReg();
 
         cont.startAnimation(Anim.getAppear(getContext()));
         mDelete.startAnimation(Anim.getAppearSlide(getContext(), 500));
@@ -95,6 +111,8 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
             replaceFragment(new SmsFragment());
         } else if (view == mDelete) {
             showDeleteDialog();
+        } else if (view == mSendReg) {
+            sendReg(getDao().getRegistrationR(getCurrentUserId()));
         }
     }
 
@@ -171,8 +189,8 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
                     hideSmsButton();
                 }
 
-                if(activity.getSettings().isProject_is_active()) {
-                   mProjectStatusView.setVisibility(View.GONE);
+                if (activity.getSettings().isProject_is_active()) {
+                    mProjectStatusView.setVisibility(View.GONE);
                     UiUtils.setButtonEnabled(mSendDataButton, mQUnsendedCount > 0);
                     UiUtils.setButtonEnabled(mSendPhotoButton, mPUnsendedCount > 0);
                     UiUtils.setButtonEnabled(mSendAudioButton, mAUnsendedCount > 0);
@@ -228,6 +246,79 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
             showToast(pException.toString());
             updateData(new SyncInfoExecutable(getContext()).execute());
             hideScreensaver();
+        }
+    }
+
+    private void checkReg() {
+        new Thread(() -> {
+            if (getMainActivity().isExit() && getMainActivity().getConfig().has_registration()) {
+                RegistrationR reg = getDao().getRegistrationR(getCurrentUserId());
+                if (reg != null && reg.notSent()) {
+                    mSendReg.setVisibility(View.VISIBLE);
+                }
+            }
+        }).start();
+    }
+
+    private void sendReg(RegistrationR registration) {
+        String url;
+        url = getCurrentUser().getConfigR().getExitHost() != null ? getCurrentUser().getConfigR().getExitHost() + Constants.Default.REG_URL : null;
+        Log.d("T-L.Reg3Fragment", "REG EXIT URL: " + url);
+        List<File> photos = getMainActivity().getRegPhotosByUserId(registration.getUser_id());
+        Log.d("T-L.Reg3Fragment", "====: 1");
+        if (photos == null || photos.isEmpty()) {
+            Log.d("T-L.Reg3Fragment", "====: 2");
+            showToast(getString(R.string.no_reg_photo));
+            return;
+        }
+        Log.d("T-L.Reg3Fragment", "====: 3");
+
+        try {
+            if (Internet.hasConnection(getMainActivity()) && url != null) {
+                UiUtils.setButtonEnabled(mSendReg, false);
+                Log.d("T-L.Reg3Fragment", "Отправка регистрации...");
+                QuizerAPI.sendReg(url, photos, new RegistrationRequestModel(
+                        getDao().getKey(),
+                        registration.getUser_id(),
+                        registration.getUik_number(),
+                        registration.getPhone(),
+                        registration.getGps(),
+                        registration.getGps_network(),
+                        registration.getGps_time(),
+                        registration.getGps_time_network(),
+                        registration.getReg_time(),
+                        false
+                ), registration.getId(), "jpeg", this);
+            } else {
+                UiUtils.setButtonEnabled(mSendReg, true);
+                showToast("Нет доступа в интернет");
+            }
+            Log.d("T-L.Reg3Fragment", "====: 4");
+        } catch (Exception e) {
+            UiUtils.setButtonEnabled(mSendReg, true);
+            e.printStackTrace();
+            showToast("Нет доступа в интернет");
+        }
+    }
+
+    @Override
+    public void onSendRegCallback(ResponseBody response, Integer id) {
+        if (response == null) {
+            showToast("Нет ответа от сервера");
+            UiUtils.setButtonEnabled(mSendReg, true);
+            return;
+        }
+
+        try {
+            if (id != null) {
+                showToast("Регистрация успешна");
+                getDao().setRegStatus(id, Constants.Registration.SENT);
+                UiUtils.setButtonEnabled(mSendReg, false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showToast("Ошибка регистрации");
+            UiUtils.setButtonEnabled(mSendReg, true);
         }
     }
 }

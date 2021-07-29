@@ -33,6 +33,7 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.RegistrationR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
+import pro.quizer.quizer3.model.config.UserSettings;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.GPSModel;
 import pro.quizer.quizer3.utils.GpsUtils;
@@ -82,16 +83,20 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
         detectedPhoneCont = (LinearLayout) findViewById(R.id.detected_phone_cont);
         clearPhone = (ImageView) findViewById(R.id.btn_clear_phone);
 
-        uikList = getCurrentUser().getConfigR().getAllowedUiks();
-//        for(String uik : uikList) {
-//            Log.d("T-L.Reg3Fragment", "uik: " + uik);
-//        }
-        //TODO FOR TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        if (uikList == null) {
+        UserSettings userSettings = getCurrentUser().getConfigR().getUserSettings();
+        if (userSettings != null && userSettings.getAllowed_uiks() != null) {
+            uikList = userSettings.getAllowed_uiks();
+        } else {
+            showToast("Нет разрешенных UIK.\nРегистрация невозможна.");
             uikList = new ArrayList<>();
-            uikList.add("216");
-            uikList.add("321");
         }
+
+//        //TODO FOR TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//        if (uikList == null) {
+//            uikList = new ArrayList<>();
+//            uikList.add("216");
+//            uikList.add("321");
+//        }
 
         MainFragment.disableSideMenu();
         if (!checkPhoneNumber()) {
@@ -151,44 +156,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                     } else {
                         UiUtils.setButtonEnabled(btnNext, false);
                         if (addRegistrationToDB(mUik, mPhone)) {
-                            String url;
-                            url = getCurrentUser().getConfigR().getExitHost() != null ? getCurrentUser().getConfigR().getExitHost() + Constants.Default.REG_URL : null;
-                            Log.d("T-L.Reg3Fragment", "REG EXIT URL: " + url);
-                            List<File> photos = getMainActivity().getRegPhotosByUserId(registration.getUser_id());
-                            Log.d("T-L.Reg3Fragment", "====: 1");
-                            if (photos == null || photos.isEmpty()) {
-                                Log.d("T-L.Reg3Fragment", "====: 2");
-                                showToast(getString(R.string.no_reg_photo));
-                                return;
-                            }
-                            Log.d("T-L.Reg3Fragment", "====: 3");
-
-                            try {
-                                if (Internet.hasConnection(getMainActivity()) && url != null) {
-                                    Log.d("T-L.Reg3Fragment", "Отправка регистрации...");
-                                    QuizerAPI.sendReg(url, photos, new RegistrationRequestModel(
-                                            getDao().getKey(),
-                                            registration.getUser_id(),
-                                            registration.getUik_number(),
-                                            registration.getPhone(),
-                                            registration.getGps(),
-                                            registration.getGps_network(),
-                                            registration.getGps_time(),
-                                            registration.getGps_time_network(),
-                                            registration.getReg_time(),
-                                            false
-                                    ), registration.getId(), "jpeg", this);
-                                } else {
-                                    showToast("Нет доступа в интернет");
-                                    showNoInternetDialog();
-                                }
-                                Log.d("T-L.Reg3Fragment", "====: 4");
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                showToast("Нет доступа в интернет");
-                                showNoInternetDialog();
-                            }
-
+                            sendRegByInternet();
                         } else {
                             Log.d("T-L.Reg3Fragment", "====== SAVE TO DB FAIL ");
                             UiUtils.setButtonEnabled(btnNext, true);
@@ -443,10 +411,14 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
         }
 
         try {
-            if (id != null)
-                getDao().clearRegistrationRById(id);
+            if (id != null) {
+                showToast("Регистрация успешна");
+                getDao().setRegStatus(id, Constants.Registration.SENT);
+                replaceFragment(new HomeFragment());
+            }
         } catch (Exception e) {
             e.printStackTrace();
+            UiUtils.setButtonEnabled(btnNext, true);
         }
     }
 
@@ -465,6 +437,46 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
         Log.d("T-L.Reg3Fragment", "SEND REG SMS onError: " + pException.getMessage());
         showToast("Ошибка отправки СМС. \nСвяжитесь с тех. поддержкой");
         UiUtils.setButtonEnabled(btnNext, true);
+    }
+
+    private void sendRegByInternet() {
+        String url;
+        url = getCurrentUser().getConfigR().getExitHost() != null ? getCurrentUser().getConfigR().getExitHost() + Constants.Default.REG_URL : null;
+        Log.d("T-L.Reg3Fragment", "REG EXIT URL: " + url);
+        List<File> photos = getMainActivity().getRegPhotosByUserId(registration.getUser_id());
+        Log.d("T-L.Reg3Fragment", "====: 1");
+        if (photos == null || photos.isEmpty()) {
+            Log.d("T-L.Reg3Fragment", "====: 2");
+            showToast(getString(R.string.no_reg_photo));
+            return;
+        }
+        Log.d("T-L.Reg3Fragment", "====: 3");
+
+        try {
+            if (Internet.hasConnection(getMainActivity()) && url != null) {
+                Log.d("T-L.Reg3Fragment", "Отправка регистрации...");
+                QuizerAPI.sendReg(url, photos, new RegistrationRequestModel(
+                        getDao().getKey(),
+                        registration.getUser_id(),
+                        registration.getUik_number(),
+                        registration.getPhone(),
+                        registration.getGps(),
+                        registration.getGps_network(),
+                        registration.getGps_time(),
+                        registration.getGps_time_network(),
+                        registration.getReg_time(),
+                        false
+                ), registration.getId(), "jpeg", this);
+            } else {
+                showToast("Нет доступа в интернет");
+                showNoInternetDialog();
+            }
+            Log.d("T-L.Reg3Fragment", "====: 4");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showToast("Нет доступа в интернет");
+            showNoInternetDialog();
+        }
     }
 }
 

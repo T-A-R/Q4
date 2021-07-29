@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +37,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.ResponseBody;
 import pro.quizer.quizer3.API.QuizerAPI;
+import pro.quizer.quizer3.API.models.request.RegistrationRequestModel;
 import pro.quizer.quizer3.API.models.request.StatisticsRequestModel;
 import pro.quizer.quizer3.API.models.response.StatisticsResponseModel;
 import pro.quizer.quizer3.Constants;
@@ -49,6 +52,7 @@ import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
+import pro.quizer.quizer3.database.models.RegistrationR;
 import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.StatisticR;
 import pro.quizer.quizer3.database.models.UserModelR;
@@ -61,6 +65,7 @@ import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.ProjectInfoModel;
+import pro.quizer.quizer3.model.config.RegistrationPeriod;
 import pro.quizer.quizer3.model.quota.QuotaModel;
 import pro.quizer.quizer3.model.view.QuotasViewModel;
 import pro.quizer.quizer3.model.view.SyncViewModel;
@@ -79,7 +84,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class HomeFragment extends ScreenFragment implements View.OnClickListener, SmartFragment.Events {
+public class HomeFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.SendRegCallback, SmartFragment.Events {
 
     private LinearLayout contContinue;
     private Button btnContinue;
@@ -248,7 +253,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         }
         activity.stopRecording();
 
-        if(activity.isExit()) checkRegistration();
+        if (activity.isExit()) checkRegistration();
 //        showNullGpsAlert();
     }
 
@@ -1617,9 +1622,97 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void checkRegistration() {
-        if (getCurrentUser().getConfigR().has_registration() && !activity.getSettings().isRegistered()) {
-            btnStart.setText("Регистрация");
-            isRegistrationRequired = true;
+        if (getCurrentUser().getConfigR().has_registration()) {
+            RegistrationR reg = getDao().getRegistrationR(getCurrentUserId());
+            if (reg == null || !reg.isAccepted()) {
+                btnStart.setText("Регистрация");
+                UiUtils.setButtonEnabled(btnStart, false);
+                isRegistrationRequired = true;
+
+            }
+
+            List<RegistrationPeriod> periods = activity.getConfig().getRegistrationPeriods();
+            long currentTime = DateUtils.getCurrentTimeMillis();
+            if (periods != null && periods.size() > 0) {
+                for (RegistrationPeriod period : periods) {
+                    if (reg != null && reg.isAccepted()) {
+                        Long regTime = reg.getReg_time();
+                        if (regTime < period.getStart() && regTime > period.getEnd()) {
+                            getDao().clearRegistrationRByUser(getCurrentUserId());
+                            btnStart.setText("Регистрация");
+                            UiUtils.setButtonEnabled(btnStart, false);
+                            isRegistrationRequired = true;
+                            return;
+                        }
+                    }
+
+                    if (currentTime > period.getStart()) {
+                        if (currentTime < period.getEnd()) {
+                            UiUtils.setButtonEnabled(btnStart, true);
+                            break;
+                        }
+                    }
+                }
+            }
+            checkRegForSend();
+        }
+    }
+
+    private void checkRegForSend() {
+        new Thread(() -> {
+            if (getMainActivity().isExit() && getMainActivity().getConfig().has_registration()) {
+                RegistrationR reg = getDao().getRegistrationR(getCurrentUserId());
+                if (reg != null && reg.notSent()) {
+                    sendReg(reg);
+                }
+            }
+        }).start();
+    }
+
+    private void sendReg(RegistrationR registration) {
+        String url;
+        url = getCurrentUser().getConfigR().getExitHost() != null ? getCurrentUser().getConfigR().getExitHost() + Constants.Default.REG_URL : null;
+        List<File> photos = getMainActivity().getRegPhotosByUserId(registration.getUser_id());
+        if (photos == null || photos.isEmpty()) {
+            showToast(getString(R.string.no_reg_photo));
+            return;
+        }
+
+        try {
+            if (Internet.hasConnection(getMainActivity()) && url != null) {
+                Log.d("T-L.Reg3Fragment", "Отправка регистрации...");
+                QuizerAPI.sendReg(url, photos, new RegistrationRequestModel(
+                        getDao().getKey(),
+                        registration.getUser_id(),
+                        registration.getUik_number(),
+                        registration.getPhone(),
+                        registration.getGps(),
+                        registration.getGps_network(),
+                        registration.getGps_time(),
+                        registration.getGps_time_network(),
+                        registration.getReg_time(),
+                        false
+                ), registration.getId(), "jpeg", this);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onSendRegCallback(ResponseBody response, Integer id) {
+        if (response == null) {
+            return;
+        }
+
+        try {
+            if (id != null) {
+                getDao().setRegStatus(id, Constants.Registration.SENT);
+                UiUtils.setTextOrHide(btnStart, getString(R.string.button_start));
+                UiUtils.setButtonEnabled(btnStart, true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

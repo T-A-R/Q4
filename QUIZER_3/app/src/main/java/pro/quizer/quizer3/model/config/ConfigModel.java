@@ -2,6 +2,9 @@ package pro.quizer.quizer3.model.config;
 
 
 import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
@@ -88,8 +91,8 @@ public class ConfigModel implements Serializable {
     @SerializedName("registration_periods")
     private List<RegistrationPeriod> registration_periods;
 
-    @SerializedName("allowed_uiks")
-    private List<String> allowed_uiks;
+    @SerializedName("user_settings")
+    private UserSettings user_settings;
 
     @SerializedName("exit_host")
     private String exit_host;
@@ -252,12 +255,12 @@ public class ConfigModel implements Serializable {
         this.registration_periods = registration_periods;
     }
 
-    public List<String> getAllowedUiks() {
-        return allowed_uiks;
+    public UserSettings getUserSettings() {
+        return user_settings;
     }
 
-    public void setAllowedUiks(List<String> allowed_uiks) {
-        this.allowed_uiks = allowed_uiks;
+    public void setUserSettings(UserSettings user_settings) {
+        this.user_settings = user_settings;
     }
 
     public String getExitHost() {

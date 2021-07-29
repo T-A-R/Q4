@@ -140,4 +140,10 @@ public final class Constants {
         String QUOTA_TIME = "quota_time";
         String LAST_LOGIN_TIME = "last_login_time";
     }
+
+    public interface Registration {
+        String SENT = "sent";
+        String NOT_SENT = "not_sent";
+        String SMS = "sms";
+    }
 }

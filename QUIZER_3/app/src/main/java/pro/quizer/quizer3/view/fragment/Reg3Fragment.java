@@ -61,6 +61,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
     private boolean isUikValid = false;
     private List<String> uikList;
     private Long mTimeToken;
+    private String mCode;
 
     public Reg3Fragment() {
         super(R.layout.fragment_reg3_auto);
@@ -156,7 +157,8 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                     } else {
                         UiUtils.setButtonEnabled(btnNext, false);
                         if (addRegistrationToDB(mUik, mPhone)) {
-                            sendRegByInternet();
+//                            sendRegByInternet();
+                            sendRegSms();
                         } else {
                             Log.d("T-L.Reg3Fragment", "====== SAVE TO DB FAIL ");
                             UiUtils.setButtonEnabled(btnNext, true);

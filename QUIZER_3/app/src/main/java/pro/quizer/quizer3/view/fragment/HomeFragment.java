@@ -82,6 +82,7 @@ import pro.quizer.quizer3.view.Toolbar;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static pro.quizer.quizer3.MainActivity.AVIA;
+import static pro.quizer.quizer3.MainActivity.DEBUG_MODE;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class HomeFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.SendRegCallback, SmartFragment.Events {
@@ -1659,6 +1660,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 }
             }
             checkRegForSend();
+            if(DEBUG_MODE) {
+                UiUtils.setButtonEnabled(btnStart, true);
+            }
         }
     }
 

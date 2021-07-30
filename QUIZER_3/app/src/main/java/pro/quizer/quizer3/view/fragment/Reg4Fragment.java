@@ -2,6 +2,7 @@ package pro.quizer.quizer3.view.fragment;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,16 +11,22 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
+import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
+import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.model.config.ConfigModel;
+import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
+
+import static pro.quizer.quizer3.MainActivity.DEBUG_MODE;
 
 public class Reg4Fragment extends ScreenFragment implements View.OnClickListener {
 
@@ -32,6 +39,7 @@ public class Reg4Fragment extends ScreenFragment implements View.OnClickListener
 
     private boolean canResend = false;
     private boolean inExitDialog = false;
+    private String mCode;
 
     public Reg4Fragment() {
         super(R.layout.fragment_reg4);
@@ -39,6 +47,7 @@ public class Reg4Fragment extends ScreenFragment implements View.OnClickListener
 
     @Override
     protected void onReady() {
+
         RelativeLayout cont = findViewById(R.id.cont_reg4_fragment);
         btnFinish = findViewById(R.id.btn_next);
         btnResend = findViewById(R.id.btn_resend_sms);
@@ -76,6 +85,13 @@ public class Reg4Fragment extends ScreenFragment implements View.OnClickListener
         });
 
         startResendTimer();
+        getCode();
+    }
+
+    private void getCode() {
+        ConfigModel config = getMainActivity().getConfig();
+        mCode = config.getProjectInfo().getProjectId() + " " + config.getUserProjectId() + " " + DateUtils.getCurrentDateOfMonth();
+        if(DEBUG_MODE) showToast(mCode);
     }
 
     @Override
@@ -136,7 +152,13 @@ public class Reg4Fragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void finishReg() {
-
+        if (mCode.equals(DEBUG_MODE ? codeEditText.getText().toString() : decode(codeEditText.getText().toString()))) {
+            getDao().setRegStatus(getCurrentUserId(), Constants.Registration.SMS);
+            showToast("Регистрация успешна");
+            replaceFragment(new HomeFragment());
+        } else {
+            codeEditText.setError("Неверный код");
+        }
     }
 
     private void resendSms() {
@@ -144,6 +166,14 @@ public class Reg4Fragment extends ScreenFragment implements View.OnClickListener
         UiUtils.setTextOrHide(counterText, (String.format(getString(R.string.resend_sms_timer), String.valueOf(TIMER_VALUE + 1))));
         counterText.setVisibility(View.VISIBLE);
         startResendTimer();
+    }
+
+    private String decode(String message) {
+        StringBuilder decoded = new StringBuilder();
+        for (Character ch : message.toCharArray()) {
+            decoded.append(getDecrypted(ch));
+        }
+        return decoded.toString();
     }
 }
 

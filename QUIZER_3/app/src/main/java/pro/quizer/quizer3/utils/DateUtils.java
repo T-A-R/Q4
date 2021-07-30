@@ -1,5 +1,7 @@
 package pro.quizer.quizer3.utils;
 
+import android.text.format.DateFormat;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -22,7 +24,7 @@ public final class DateUtils {
     }
 
     public static Date getDate() {
-        return new Date(getCurrentTimeMillis());
+        return new Date(getFullCurrentTime());
     }
 
     public static String getDate(long unixtime) {
@@ -35,8 +37,11 @@ public final class DateUtils {
         return dateFormat.format(pTimeInMillis);
     }
 
-
     public static String getCurrentFormattedDate(final String pPattern) {
         return getFormattedDate(pPattern, getCurrentTimeMillis() * 1000);
+    }
+
+    public static String getCurrentDateOfMonth() {
+        return (String) DateFormat.format("dd",   getDate());
     }
 }

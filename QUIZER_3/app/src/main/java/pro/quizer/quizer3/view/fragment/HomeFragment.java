@@ -1383,8 +1383,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         protected void onPreExecute() {
             super.onPreExecute();
             Log.d(TAG, "StartNewQuiz: ZERO");
-            showScreensaver(R.string.wait_starting_new_quiz, true);
-            deactivateButtons();
+            try {
+                showScreensaver("Подождите,  идет запуск анкеты", true);
+                deactivateButtons();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             isCanBackPress = false;
         }
 

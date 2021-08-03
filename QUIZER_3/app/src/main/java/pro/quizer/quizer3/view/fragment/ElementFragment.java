@@ -71,6 +71,7 @@ import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.ExpressionUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
+import pro.quizer.quizer3.utils.SmsUtils;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
@@ -1399,15 +1400,20 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void clearSaved(boolean force) {
+
         if (isRestored || force) {
-            try {
-                isRestored = false;
-                int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
-                getDao().deleteOldElementsPassedR(id);
-                if (!force) showToast(getString(R.string.data_changed));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            new Thread(() -> {
+                try {
+                    isRestored = false;
+                    int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
+                    getDao().deleteOldElementsPassedR(id);
+                    if (!force)
+                        getMainActivity().runOnUiThread(() -> showToast(getString(R.string.data_changed)));
+//                    if (!force) showToast(getString(R.string.data_changed));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
         }
     }
 

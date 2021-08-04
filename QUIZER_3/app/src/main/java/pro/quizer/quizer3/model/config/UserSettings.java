@@ -13,6 +13,12 @@ public class UserSettings implements Serializable {
     @SerializedName("allowed_uiks")
     private List<String> allowed_uiks;
 
+    @SerializedName("work_start")
+    private Long work_start;
+
+    @SerializedName("work_end")
+    private Long work_end;
+
     public UserSettings() {
     }
 
@@ -30,5 +36,21 @@ public class UserSettings implements Serializable {
 
     public void setAllowed_uiks(List<String> allowed_uiks) {
         this.allowed_uiks = allowed_uiks;
+    }
+
+    public Long getWork_start() {
+        return work_start;
+    }
+
+    public void setWork_start(Long work_start) {
+        this.work_start = work_start;
+    }
+
+    public Long getWork_end() {
+        return work_end;
+    }
+
+    public void setWork_end(Long work_end) {
+        this.work_end = work_end;
     }
 }

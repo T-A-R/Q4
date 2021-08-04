@@ -1,5 +1,6 @@
 package pro.quizer.quizer3.database;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -112,6 +113,9 @@ public interface QuizerDao {
 
     @Query("SELECT * FROM UserModelR WHERE user_id = :userId LIMIT 1")
     UserModelR getUserByUserId(int userId);
+
+    @Query("SELECT COUNT(id) FROM UserModelR")
+    LiveData<Integer> getUserCount();
 
     @Query("SELECT * FROM UserModelR WHERE questionnaire_opened = :status")
     List<UserModelR> getUserWithAbortedQUestionnaire(boolean status);

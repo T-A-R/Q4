@@ -295,7 +295,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 if (answersState.get(position).getData() != null && !answersState.get(position).getData().equals("")) {
                     editButton.setVisibility(View.GONE);
                     answerEditText.setVisibility(View.VISIBLE);
-                        penButton.setVisibility(View.VISIBLE);
+                    penButton.setVisibility(View.VISIBLE);
 //                    answerEditText.setText(answersState.get(position).getData());
                     UiUtils.setTextOrHide(answerEditText, answersState.get(position).getData());
                 }
@@ -549,49 +549,50 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     }
 
     private void checkItem(int position) {
-
-        if (isChecked(position) && !isMulti) {
-            return;
-        }
-        if(isMulti && mFromPenButton) {
-            mFromPenButton = false;
-            return;
-        }
-        if (isAutoChecked(position)) {
-            notifyDataSetChanged();
-            return;
-        }
-        answersState.get(position).setChecked(!isChecked(position));
-        if (!isMulti || isUnChecker(position)) {
-            for (int i = 0; i < answersState.size(); i++) {
-                if (i != position) {
-                    answersState.get(i).setChecked(false);
-                }
+        new Thread(() -> {
+            if (isChecked(position) && !isMulti) {
+                return;
             }
-        }
-        if (isMulti) {
-            for (int i = 0; i < answersState.size(); i++) {
-                if (i != position && isUnChecker(position)) {
-                    answersState.get(i).setChecked(false);
-                }
+            if (isMulti && mFromPenButton) {
+                mFromPenButton = false;
+                return;
             }
-        }
-
-        if (isUnChecker(position)) {
-            if (answersState.get(position).isChecked()) {
+            if (isAutoChecked(position)) {
+                mActivity.runOnUiThread(this::notifyDataSetChanged);
+//                notifyDataSetChanged();
+                return;
+            }
+            answersState.get(position).setChecked(!isChecked(position));
+            if (!isMulti || isUnChecker(position)) {
                 for (int i = 0; i < answersState.size(); i++) {
-                    if (i != position && !isAutoChecked(i)) {
-                        answersList.get(i).setEnabled(false);
+                    if (i != position) {
+                        answersState.get(i).setChecked(false);
                     }
                 }
-            } else {
+            }
+            if (isMulti) {
                 for (int i = 0; i < answersState.size(); i++) {
-                    answersList.get(i).setEnabled(true);
+                    if (i != position && isUnChecker(position)) {
+                        answersState.get(i).setChecked(false);
+                    }
                 }
             }
-        }
 
-        notifyDataSetChanged();
+            if (isUnChecker(position)) {
+                if (answersState.get(position).isChecked()) {
+                    for (int i = 0; i < answersState.size(); i++) {
+                        if (i != position && !isAutoChecked(i)) {
+                            answersList.get(i).setEnabled(false);
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < answersState.size(); i++) {
+                        answersList.get(i).setEnabled(true);
+                    }
+                }
+            }
+            mActivity.runOnUiThread(this::notifyDataSetChanged);
+        }).start();
     }
 
     public interface OnAnswerClickListener {

@@ -646,7 +646,9 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public CurrentQuestionnaireR getQuestionnaire() {
-        return currentQuestionnaire != null ? currentQuestionnaire : getMainActivity().getCurrentQuestionnaire();
+		currentQuestionnaire = getMainActivity().getCurrentQuestionnaire();
+        return currentQuestionnaire;
+
     }
 
     public void setCurrentQuestionnaire(CurrentQuestionnaireR currentQuestionnaire) {

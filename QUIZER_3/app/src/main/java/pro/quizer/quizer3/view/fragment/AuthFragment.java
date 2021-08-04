@@ -9,6 +9,7 @@ import android.os.Build;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
 
 import android.provider.Settings;
 import android.text.Editable;
@@ -129,9 +130,27 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         getMainActivity().clearCurrentUser();
         checkVersion();
 
-        final int usersCountValue = getDao().getAllUsers().size();
-        tvUsers.setText(String.format(getString(R.string.auth_users_on_device), (usersCountValue + "/" + MAX_USERS)));
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                int usersCountValue = 0;
+                try {
+                    usersCountValue = getDao().getAllUsers().size();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                tvUsers.setText(String.format(getString(R.string.auth_users_on_device), (usersCountValue + "/" + MAX_USERS)));
+            }
+        };
+        thread.start();
+//        int usersCountValue = 0;
+//        usersCountValue = getDao().getAllUsers().size();
+//        tvUsers.setText(String.format(getString(R.string.auth_users_on_device), (usersCountValue + "/" + MAX_USERS)));
         UiUtils.setTextOrHide(tvVersionView, String.format(getString(R.string.auth_version_button), BuildConfig.VERSION_NAME));
+//        LiveData<Integer> usersCounter = getDao().getUserCount();
+
+
 
         mSavedUserModels = getSavedUserModels();
         mSavedUsers = getSavedUserLogins();
@@ -182,7 +201,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 getMainActivity().showSettingsAlert();
                 break;
             case 14: // NoHighAccuracyGpsMode
-                if(getMainActivity().getConfig().isForceGps()) {
+                if (getMainActivity().getConfig().isForceGps()) {
                     hideScreensaver();
                     activateButtons();
                     getMainActivity().showGoogleHighAccuracyAlert();
@@ -531,7 +550,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             Log.d("T-L.AuthFragment", "onAuthUser: " + responseJson);
 
 
-
             AuthResponseModel authResponseModel = null;
             try {
                 authResponseModel = new GsonBuilder().create().fromJson(responseJson, AuthResponseModel.class);
@@ -555,7 +573,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 return;
             }
 
-            if(authResponseModel.getResult() == 0 && authResponseModel.getError() != null) {
+            if (authResponseModel.getResult() == 0 && authResponseModel.getError() != null) {
                 showToast(authResponseModel.getError());
                 activateButtons();
                 return;

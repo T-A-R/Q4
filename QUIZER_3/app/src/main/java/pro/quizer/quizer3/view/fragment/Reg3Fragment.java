@@ -92,12 +92,9 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
             uikList = new ArrayList<>();
         }
 
-//        //TODO FOR TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//        if (uikList == null) {
-//            uikList = new ArrayList<>();
-//            uikList.add("216");
-//            uikList.add("321");
-//        }
+//        testUiks();
+
+//        sendRegSms();
 
         MainFragment.disableSideMenu();
         if (!checkPhoneNumber()) {
@@ -137,6 +134,15 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
         });
     }
 
+    private void testUiks() {
+        //TODO FOR TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//        if (uikList == null) {
+        uikList = new ArrayList<>();
+        uikList.add("216");
+        uikList.add("321");
+//        }
+    }
+
     @Override
     public void onClick(View view) {
         if (view == btnNext) {
@@ -157,8 +163,8 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                     } else {
                         UiUtils.setButtonEnabled(btnNext, false);
                         if (addRegistrationToDB(mUik, mPhone)) {
-//                            sendRegByInternet();
-                            sendRegSms();
+                            sendRegByInternet();
+//                            sendRegSms();
                         } else {
                             Log.d("T-L.Reg3Fragment", "====== SAVE TO DB FAIL ");
                             UiUtils.setButtonEnabled(btnNext, true);
@@ -392,8 +398,9 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                 + " " + registration.getGps_network()
                 + " " + registration.getReg_time()
                 + " " + registration.getPhone();
-
-        new Thread(() -> SmsUtils.sendRegSms(getMainActivity(), this, decodedMessage + encode(message))).start();
+        String sms = decodedMessage + encode(message);
+        Log.d("T-L.Reg3Fragment", "sendRegSms: " + sms);
+        new Thread(() -> SmsUtils.sendRegSms(getMainActivity(), this, sms)).start();
     }
 
     private String encode(String message) {
@@ -420,7 +427,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
             }
         } catch (Exception e) {
             e.printStackTrace();
-            UiUtils.setButtonEnabled(btnNext, true);
+            getMainActivity().runOnUiThread(() -> UiUtils.setButtonEnabled(btnNext, true));
         }
     }
 
@@ -437,8 +444,10 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onError(Exception pException) {
         Log.d("T-L.Reg3Fragment", "SEND REG SMS onError: " + pException.getMessage());
-        showToast("Ошибка отправки СМС. \nСвяжитесь с тех. поддержкой");
-        UiUtils.setButtonEnabled(btnNext, true);
+        getMainActivity().runOnUiThread(() -> {
+            showToast("Ошибка отправки СМС. \nСвяжитесь с тех. поддержкой");
+            UiUtils.setButtonEnabled(btnNext, true);
+        });
     }
 
     private void sendRegByInternet() {

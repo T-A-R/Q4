@@ -306,6 +306,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onClick(View view) {
         if (view == btnStart) {
+//            isRegistrationRequired = true;
             if (isRegistrationRequired) {
                 replaceFragment(new Reg1Fragment());
             } else {

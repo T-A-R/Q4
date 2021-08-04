@@ -1629,6 +1629,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     private void checkRegistration() {
         if (getCurrentUser().getConfigR().has_registration()) {
+            long currentTime = DateUtils.getCurrentTimeMillis();
             RegistrationR reg = getDao().getRegistrationR(getCurrentUserId());
             if (reg == null || !reg.isAccepted()) {
                 btnStart.setText("Регистрация");
@@ -1638,7 +1639,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
 
             List<RegistrationPeriod> periods = activity.getConfig().getRegistrationPeriods();
-            long currentTime = DateUtils.getCurrentTimeMillis();
             if (periods != null && periods.size() > 0) {
                 for (RegistrationPeriod period : periods) {
                     if (reg != null && reg.isAccepted()) {
@@ -1663,6 +1663,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             checkRegForSend();
             if(DEBUG_MODE) {
                 UiUtils.setButtonEnabled(btnStart, true);
+            }
+            if (reg != null && reg.isAccepted()) {
+                Long workStartTime = activity.getConfig().getUserSettings().getWork_start();
+                Long workEndTime = activity.getConfig().getUserSettings().getWork_end();
+                if(currentTime <w)
             }
         }
     }

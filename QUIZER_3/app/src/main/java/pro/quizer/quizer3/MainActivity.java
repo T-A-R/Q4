@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     static public boolean EXIT = true;
     static public boolean SMS = false;
     public static final String IS_AFTER_AUTH = "IS_AFTER_AUTH";
-    static public boolean DEBUG_MODE = true; //TODO FOR TESTS ONLY!
+    static public boolean DEBUG_MODE = false; //TODO FOR TESTS ONLY!
     static public boolean RECORDING = false;
     public boolean mIsPermDialogShow = false;
     private int mAudioRecordLimitTime;

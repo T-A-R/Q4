@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class RegistrationPeriod implements Serializable {
+public class PeriodModel implements Serializable {
 
     @SerializedName("start")
     private Long start;
@@ -12,10 +12,10 @@ public class RegistrationPeriod implements Serializable {
     @SerializedName("end")
     private Long end;
 
-    public RegistrationPeriod() {
+    public PeriodModel() {
     }
 
-    public RegistrationPeriod(Long start, Long end) {
+    public PeriodModel(Long start, Long end) {
         this.start = start;
         this.end = end;
     }

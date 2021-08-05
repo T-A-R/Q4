@@ -65,7 +65,7 @@ import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.ProjectInfoModel;
-import pro.quizer.quizer3.model.config.RegistrationPeriod;
+import pro.quizer.quizer3.model.config.PeriodModel;
 import pro.quizer.quizer3.model.quota.QuotaModel;
 import pro.quizer.quizer3.model.view.QuotasViewModel;
 import pro.quizer.quizer3.model.view.SyncViewModel;
@@ -80,7 +80,6 @@ import pro.quizer.quizer3.utils.Internet;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
-import static android.content.Context.LOCATION_SERVICE;
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.DEBUG_MODE;
 import static pro.quizer.quizer3.MainActivity.TAG;
@@ -256,6 +255,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         if (activity.isExit()) checkRegistration();
 //        showNullGpsAlert();
+//        UiUtils.setButtonEnabled(btnStart, true);
     }
 
     @Override
@@ -306,6 +306,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onClick(View view) {
         if (view == btnStart) {
+//            replaceFragment(new Reg1Fragment());
 //            isRegistrationRequired = true;
             if (isRegistrationRequired) {
                 replaceFragment(new Reg1Fragment());
@@ -1638,9 +1639,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             }
 
-            List<RegistrationPeriod> periods = activity.getConfig().getRegistrationPeriods();
+            List<PeriodModel> periods = activity.getConfig().getRegistrationPeriods();
             if (periods != null && periods.size() > 0) {
-                for (RegistrationPeriod period : periods) {
+                for (PeriodModel period : periods) {
                     if (reg != null && reg.isAccepted()) {
                         Long regTime = reg.getReg_time();
                         if (regTime < period.getStart() && regTime > period.getEnd()) {
@@ -1661,13 +1662,21 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 }
             }
             checkRegForSend();
-            if(DEBUG_MODE) {
+            if (DEBUG_MODE) {
                 UiUtils.setButtonEnabled(btnStart, true);
             }
             if (reg != null && reg.isAccepted()) {
-                Long workStartTime = activity.getConfig().getUserSettings().getWork_start();
-                Long workEndTime = activity.getConfig().getUserSettings().getWork_end();
-                if(currentTime <w)
+                Gson gson = new Gson();
+                String json = gson.toJson(activity.getConfig());
+//                activity.copyToClipboard(json);
+                List<PeriodModel> workPeriods = activity.getConfig().getWork_periods();
+                boolean inTime = false;
+                if (workPeriods != null)
+                    for (PeriodModel period : workPeriods) {
+                        inTime = currentTime > period.getStart() && currentTime < period.getEnd();
+                        if (inTime) break;
+                    }
+                UiUtils.setButtonEnabled(btnStart, inTime);
             }
         }
     }
@@ -1723,6 +1732,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             if (id != null) {
                 getDao().setRegStatus(id, Constants.Registration.SENT);
                 UiUtils.setTextOrHide(btnStart, getString(R.string.button_start));
+                isRegistrationRequired = false;
                 UiUtils.setButtonEnabled(btnStart, true);
             }
         } catch (Exception e) {

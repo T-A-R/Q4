@@ -1,15 +1,9 @@
 package pro.quizer.quizer3.model.config;
 
 
-import android.util.Log;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
-
-import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class ConfigModel implements Serializable {
 
@@ -89,7 +83,10 @@ public class ConfigModel implements Serializable {
     private String registration_info;
 
     @SerializedName("registration_periods")
-    private List<RegistrationPeriod> registration_periods;
+    private List<PeriodModel> registration_periods;
+
+    @SerializedName("work_periods")
+    private List<PeriodModel> work_periods;
 
     @SerializedName("user_settings")
     private UserSettings user_settings;
@@ -247,11 +244,11 @@ public class ConfigModel implements Serializable {
         this.registration_info = registration_info;
     }
 
-    public List<RegistrationPeriod> getRegistrationPeriods() {
+    public List<PeriodModel> getRegistrationPeriods() {
         return registration_periods;
     }
 
-    public void setRegistrationPeriods(List<RegistrationPeriod> registration_periods) {
+    public void setRegistrationPeriods(List<PeriodModel> registration_periods) {
         this.registration_periods = registration_periods;
     }
 
@@ -269,5 +266,13 @@ public class ConfigModel implements Serializable {
 
     public void setExitHost(String exit_host) {
         this.exit_host = exit_host;
+    }
+
+    public List<PeriodModel> getWork_periods() {
+        return work_periods;
+    }
+
+    public void setWork_periods(List<PeriodModel> work_periods) {
+        this.work_periods = work_periods;
     }
 }

@@ -2,6 +2,7 @@ package pro.quizer.quizer3.view.fragment;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
@@ -148,14 +149,14 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
 
             Bitmap rotatedBitmap;
 
-            if (mCameraConfig.getImageRotation() != CameraRotation.ROTATION_0) {
-                rotatedBitmap = HiddenCameraUtils.rotateBitmap(bitmap, mCameraConfig.getImageRotation());
+//            if (mCameraConfig.getImageRotation() != CameraRotation.ROTATION_0) {
+                rotatedBitmap = flip(HiddenCameraUtils.rotateBitmap(bitmap, mCameraConfig.getImageRotation()));
 
                 //noinspection UnusedAssignment
                 bitmap = null;
-            } else {
-                rotatedBitmap = bitmap;
-            }
+//            } else {
+//                rotatedBitmap = bitmap;
+//            }
 
             //Save image to the file.
             if (HiddenCameraUtils.saveImageFromFile(rotatedBitmap,
@@ -184,6 +185,9 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
     private void capturePhoto() {
         if (!hasPhoto) {
             if (camera != null) {
+                camera.startFaceDetection();
+//                Camera.Parameters parameters = camera.getParameters();
+//                parameters.ro
                 camera.takePicture(null, null, mPictureCallback);
             }
         } else {
@@ -235,6 +239,16 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static Bitmap flip(Bitmap src) {
+        // create new matrix for transformation
+        Matrix matrix = new Matrix();
+
+        matrix.preScale(-1.0f, 1.0f);
+
+        // return transformed image
+        return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
     }
 }
 

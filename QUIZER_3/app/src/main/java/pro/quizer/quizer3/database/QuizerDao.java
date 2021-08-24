@@ -105,7 +105,10 @@ public interface QuizerDao {
     @Query("UPDATE UserModelR SET quotas = :quotas WHERE user_project_id = :userProjectId")
     void updateQuotas(String quotas, int userProjectId);
 
-    @Query("SELECT * FROM UserModelR")
+//    @Query("SELECT * FROM UserModelR")
+//    List<UserModelR> getAllUsers();
+
+    @Query("SELECT id, login, password, user_id, user_project_id, questionnaire_opened FROM UserModelR")
     List<UserModelR> getAllUsers();
 
     @Query("SELECT * FROM UserModelR WHERE login = :login AND password = :password")

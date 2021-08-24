@@ -28,7 +28,7 @@ public class UserModelR {
     private int user_id;
 
     @ColumnInfo(name = "role_id")
-    private int role_id;
+    private Integer role_id;
 
     @ColumnInfo(name = "user_project_id")
     private int user_project_id;
@@ -51,7 +51,7 @@ public class UserModelR {
     public UserModelR() {
     }
 
-    public UserModelR(String password, String login, String config_id, int user_id, int role_id, int user_project_id, String config, String quotas) {
+    public UserModelR(String password, String login, String config_id, int user_id, Integer role_id, int user_project_id, String config, String quotas) {
 
         this.password = password;
         this.login = login;
@@ -111,11 +111,11 @@ public class UserModelR {
         this.user_id = user_id;
     }
 
-    public int getRole_id() {
+    public Integer getRole_id() {
         return role_id;
     }
 
-    public void setRole_id(int role_id) {
+    public void setRole_id(Integer role_id) {
         this.role_id = role_id;
     }
 
@@ -147,7 +147,7 @@ public class UserModelR {
         return questionnaire_opened;
     }
 
-    public void setQuestionnaire_opened(boolean questionnaire_opened) {
+    public void setQuestionnaire_opened(Boolean questionnaire_opened) {
         this.questionnaire_opened = questionnaire_opened;
     }
 

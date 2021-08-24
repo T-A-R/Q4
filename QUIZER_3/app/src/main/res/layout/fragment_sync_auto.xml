@@ -162,6 +162,18 @@
                 android:text="@string/button_send_photo" />
 
             <Button
+                android:id="@+id/send_reg"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/button_send_reg"
+                android:visibility="gone"/>
+
+            <Button
                 android:id="@+id/sync_sms"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"

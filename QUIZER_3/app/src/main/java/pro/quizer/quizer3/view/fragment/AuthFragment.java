@@ -442,16 +442,19 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             try {
                 responseJson = responseBody.string();
                 Log.d(TAG, "downloadConfig: " + responseJson);
-//                getMainActivity().copyToClipboard(responseJson);
+
             } catch (IOException e) {
                 showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_602));
             }
+
+//            getMainActivity().copyToClipboard(responseJson);
             final GsonBuilder gsonBuilder = new GsonBuilder();
             ConfigResponseModel configResponseModel = null;
 
             try {
                 configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
             } catch (final Exception pE) {
+                pE.printStackTrace();
                 showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_603));
             }
 
@@ -470,7 +473,13 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                     showToast(configResponseModel.getError());
                 }
             } else {
-                showToast(getString(R.string.server_response_error) + " " + configResponseModel.getError());
+                try {
+                    showToast(getString(R.string.server_response_error) + " " + configResponseModel.getError());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showToast(getString(R.string.server_response_error));
+
+                }
             }
         });
     }

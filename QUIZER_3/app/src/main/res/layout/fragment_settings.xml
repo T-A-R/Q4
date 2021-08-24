@@ -205,6 +205,18 @@
             </LinearLayout>
 
             <Button
+                android:id="@+id/renew_registration"
+                style="@style/ButtonGreen"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:maxLines="1"
+                android:text="@string/button_renew_reg"
+                android:textSize="@dimen/_12ssp"
+                android:visibility="gone"/>
+
+            <Button
                 android:id="@+id/update_config"
                 style="@style/ButtonGreen"
                 android:layout_width="match_parent"

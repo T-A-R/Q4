@@ -102,7 +102,7 @@ public final class HiddenCameraUtils {
      * @return rotated bitmap
      */
     @WorkerThread
-    static Bitmap rotateBitmap(@NonNull Bitmap bitmap, @CameraRotation.SupportedRotation int rotation) {
+    static public Bitmap rotateBitmap(@NonNull Bitmap bitmap, @CameraRotation.SupportedRotation int rotation) {
         Matrix matrix = new Matrix();
         matrix.postRotate(rotation);
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
@@ -114,7 +114,7 @@ public final class HiddenCameraUtils {
      * @param bitmap     bitmap to store.
      * @param fileToSave file where bitmap should stored
      */
-    static boolean saveImageFromFile(@NonNull Bitmap bitmap,
+    static public boolean saveImageFromFile(@NonNull Bitmap bitmap,
                                      @NonNull File fileToSave,
                                      @CameraImageFormat.SupportedImageFormat int imageFormat) {
         FileOutputStream out = null;

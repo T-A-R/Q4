@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -41,7 +42,6 @@ import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
-import pro.quizer.quizer3.view.fragment.ScreenFragment;
 
 import static pro.quizer.quizer3.utils.Fonts.FONT_SIZE_MODELS;
 
@@ -55,6 +55,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
     private TextView mSpinnerTitle;
     private View mUpdateUserName;
     private View mDeleteUser;
+    private View mReReg;
     private String mConfigDateString;
     private String mAnswerMarginString;
     private String mConfigIdString;
@@ -108,6 +109,8 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
             reloadConfig();
         } else if (view == mUpdateUserName) {
             showInputNameDialog();
+        } else if (view == mReReg) {
+            showReRegDialog();
         }
     }
 
@@ -132,6 +135,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         mSpinnerTitle = findViewById(R.id.spinner_title);
         mUpdateUserName = findViewById(R.id.update_username);
         mDeleteUser = findViewById(R.id.delete_user);
+        mReReg = findViewById(R.id.renew_registration);
         mUpdateConfig = findViewById(R.id.update_config);
         mAutoZoomSwitch = findViewById(R.id.auto_zoom_switch);
         mSpeedSwitch = findViewById(R.id.speed_switch);
@@ -141,14 +145,21 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         mUpdateUserName.setOnClickListener(this);
         mDeleteUser.setOnClickListener(this);
         mUpdateConfig.setOnClickListener(this);
+        mReReg.setOnClickListener(this);
 
         cont.startAnimation(Anim.getAppear(getContext()));
         mUpdateUserName.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mDeleteUser.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mUpdateConfig.startAnimation(Anim.getAppearSlide(getContext(), 500));
+        mReReg.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
         mToolbar.setTitle(getString(R.string.settings_screen));
         mToolbar.showCloseView(v -> replaceFragment(new HomeFragment()));
+
+//        Log.d("T-L.SettingsFragment", "=== REG: " + getDao().getRegistrationR(getCurrentUserId()).size());
+
+        if (mBaseActivity.isExit() && getDao().getRegistrationR(getCurrentUserId()) != null) mReReg.setVisibility(View.VISIBLE);
+        else mReReg.setVisibility(View.GONE);
 
         answerMargin = mBaseActivity.getAnswerMargin();
         mMarginSeekBar.setProgress(answerMargin);
@@ -422,7 +433,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         sendBtn.setOnClickListener(v -> {
             String nameString = name.getText().toString();
             String shortName = nameString.replaceAll(" ", "");
-            if(shortName.length() == 0) nameString = " ";
+            if (shortName.length() == 0) nameString = " ";
 
             if (StringUtils.isEmpty(nameString)) {
                 nameString = " ";
@@ -471,7 +482,22 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
 
         dateFormat.setTimeZone(mCalendar.getTimeZone());
         mEditText.setText(dateFormat.format(mCalendar.getTime()));
-//        getDao().setUserBirthDate(mCalendar.getTimeInMillis() / 1000);
         dateLong = (mCalendar.getTimeInMillis() / 1000);
+    }
+
+    public void showReRegDialog() {
+        if (mBaseActivity != null && !mBaseActivity.isFinishing()) {
+            new AlertDialog.Builder(mBaseActivity, R.style.AlertDialogTheme)
+                    .setCancelable(true)
+                    .setTitle(R.string.dialog_rereg_title)
+                    .setMessage(R.string.dialog_rereg_body)
+                    .setPositiveButton(R.string.view_yes, (dialog, which) -> renewRegistration())
+                    .setNegativeButton(R.string.view_no, null).show();
+        }
+    }
+
+    private void renewRegistration() {
+        getDao().clearRegistrationRByUser(getCurrentUserId());
+        replaceFragment(new Reg1Fragment());
     }
 }

@@ -37,6 +37,7 @@ public class FileUtils {
     private static final String FOLDER_PHOTOS = "photos";
     private static final String FOLDER_AUDIO = "audios";
     private static final String MEDIA_FILES = "media_files";
+    private static final String FOLDER_REG = "registration";
     private static final String CACHE = "cache";
 
     public static String getFileName(final String url) {
@@ -406,5 +407,20 @@ public class FileUtils {
 
         if (suffix != null) resultBuffer.append(suffix);
         return resultBuffer.toString();
+    }
+
+    public static String getRegStoragePath(final Context pContext) {
+        final String dataStoragePath = getDataStoragePath(pContext);
+        final String path;
+
+        if (StringUtils.isEmpty(dataStoragePath)) {
+            path = Constants.Strings.EMPTY;
+        } else {
+            path = dataStoragePath + FileUtils.FOLDER_REG;
+        }
+
+        createFolderIfNotExist(path);
+
+        return path;
     }
 }

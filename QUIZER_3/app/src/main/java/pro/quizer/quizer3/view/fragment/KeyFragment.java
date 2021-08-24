@@ -32,6 +32,7 @@ import static pro.quizer.quizer3.MainActivity.TAG;
 public class KeyFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.SendKeyCallback {
     private Button btnSend;
     private EditText etKey;
+    private String finalKey;
 
     private boolean isKeyBtnPressed = false;
     private boolean isExit = false;
@@ -54,6 +55,8 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
             btnSend.setTypeface(Fonts.getAviaButton());
 //            btnSend.setText("ОТПРАВИТЬ");
 //            btnSend.setTransformationMethod(null);
+        } else {
+            getMainActivity().makeEncryptionTable();
         }
 
         btnSend.setOnClickListener(this);
@@ -92,6 +95,7 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
 
     private void sendKeyWithRetrofit(String key) {
         if (isKeyBtnPressed) {
+            finalKey = key;
             ActivationRequestModel activationRequestModel = new ActivationRequestModel(key);
             Gson gson = new Gson();
             String json = gson.toJson(activationRequestModel);
@@ -105,8 +109,7 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
 
     public void saveActivationBundle(final ActivationResponseModel pActivationModel) {
 
-        final ActivationModelR activationModelR = new ActivationModelR(pActivationModel.getServer(),
-                pActivationModel.getLoginAdmin());
+        final ActivationModelR activationModelR = new ActivationModelR(pActivationModel.getServer(), pActivationModel.getLoginAdmin(), finalKey);
         try {
             getDao().clearActivationModelR();
         } catch (Exception e) {

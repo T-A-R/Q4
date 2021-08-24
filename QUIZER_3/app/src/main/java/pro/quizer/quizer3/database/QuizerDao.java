@@ -17,10 +17,12 @@ import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementOptionsR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
+import pro.quizer.quizer3.database.models.EncryptionTableR;
 import pro.quizer.quizer3.database.models.OptionsR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
+import pro.quizer.quizer3.database.models.RegistrationR;
 import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.SmsItemR;
 import pro.quizer.quizer3.database.models.StatisticR;
@@ -36,6 +38,9 @@ public interface QuizerDao {
 
     @Query("SELECT * FROM ActivationModelR")
     List<ActivationModelR> getActivationModelR();
+
+    @Query("SELECT `key` FROM ActivationModelR LIMIT 1")
+    String getKey();
 
     @Query("DELETE FROM ActivationModelR")
     void clearActivationModelR();
@@ -427,4 +432,28 @@ public interface QuizerDao {
 
     @Query("DELETE FROM StatisticR WHERE user_id = :user_id")
     void clearStatisticR(Integer user_id);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertRegistrationR(RegistrationR registrationR);
+
+    @Query("SELECT * FROM RegistrationR WHERE user_id =:userId ORDER BY id DESC LIMIT 1")
+    RegistrationR getRegistrationR(Integer userId);
+
+    @Query("DELETE FROM RegistrationR WHERE user_id =:userId")
+    void clearRegistrationRByUser(Integer userId);
+
+    @Query("DELETE FROM RegistrationR WHERE id =:id")
+    void clearRegistrationRById(Integer id);
+
+    @Query("UPDATE RegistrationR SET status = :status WHERE id =:id")
+    void setRegStatus(Integer id, String status);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertEncryptionTableR(EncryptionTableR encryptionTableR);
+
+    @Query("SELECT decrypted FROM EncryptionTableR WHERE encrypted = :encrypted LIMIT 1")
+    Character getSymbolsForDecrypt(Character encrypted);
+
+    @Query("SELECT encrypted FROM EncryptionTableR WHERE decrypted = :decrypted ORDER BY RANDOM() LIMIT 1")
+    Character getSymbolsForEncrypt(Character decrypted);
 }

@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/_34sdp"
         android:gravity="center"
-        android:text="@string/enter_phone"
+        android:text="@string/enter_phone_dialog"
         android:textColor="@android:color/black"
         android:textSize="@dimen/_20ssp"
         android:visibility="gone"/>

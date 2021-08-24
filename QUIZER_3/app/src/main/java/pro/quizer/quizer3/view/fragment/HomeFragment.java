@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +37,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.ResponseBody;
 import pro.quizer.quizer3.API.QuizerAPI;
+import pro.quizer.quizer3.API.models.request.RegistrationRequestModel;
 import pro.quizer.quizer3.API.models.request.StatisticsRequestModel;
 import pro.quizer.quizer3.API.models.response.StatisticsResponseModel;
 import pro.quizer.quizer3.Constants;
@@ -49,6 +52,7 @@ import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
+import pro.quizer.quizer3.database.models.RegistrationR;
 import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.StatisticR;
 import pro.quizer.quizer3.database.models.UserModelR;
@@ -61,6 +65,7 @@ import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.ProjectInfoModel;
+import pro.quizer.quizer3.model.config.PeriodModel;
 import pro.quizer.quizer3.model.quota.QuotaModel;
 import pro.quizer.quizer3.model.view.QuotasViewModel;
 import pro.quizer.quizer3.model.view.SyncViewModel;
@@ -76,10 +81,10 @@ import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
 import static pro.quizer.quizer3.MainActivity.AVIA;
-import static pro.quizer.quizer3.MainActivity.EXIT;
+import static pro.quizer.quizer3.MainActivity.DEBUG_MODE;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class HomeFragment extends ScreenFragment implements View.OnClickListener, SmartFragment.Events {
+public class HomeFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.SendRegCallback, SmartFragment.Events {
 
     private LinearLayout contContinue;
     private Button btnContinue;
@@ -116,6 +121,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private boolean isQuotaUpdated = false;
     private boolean isNeedUpdate = false;
     private boolean isTimeToDownloadConfig = false;
+    private boolean isRegistrationRequired = false;
     private StatisticR finalStatistics;
     private AlertDialog infoDialog;
     private int completedCounter = 0;
@@ -224,13 +230,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             sendQuestionnaires();
 
-            if (activity != null) {
-                if (EXIT) {
-                    btnQuotas.setVisibility(View.GONE);
-                } else {
-                    btnQuotas.setVisibility(View.VISIBLE);
-                }
-            }
+//            if (activity != null) {
+//                if (EXIT) {
+//                    btnQuotas.setVisibility(View.GONE);
+//                } else {
+//                    btnQuotas.setVisibility(View.VISIBLE);
+//                }
+//            }
 
             try {
                 if (activity != null)
@@ -246,6 +252,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             checkProjectActive();
         }
         activity.stopRecording();
+
+        if (activity.isExit()) checkRegistration();
+
     }
 
     @Override
@@ -296,10 +305,16 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onClick(View view) {
         if (view == btnStart) {
-            if (activity.getConfig().isGps()) {
-                activity.checkSettingsAndStartLocationUpdates(isForceGps, this);
+//            replaceFragment(new Reg1Fragment());
+//            isRegistrationRequired = true;
+            if (isRegistrationRequired) {
+                replaceFragment(new Reg1Fragment());
             } else {
-                runEvent(12);
+                if (activity.getConfig().isGps()) {
+                    activity.checkSettingsAndStartLocationUpdates(isForceGps, this);
+                } else {
+                    runEvent(12);
+                }
             }
         } else if (view == btnInfo) {
             getInfo(true);
@@ -1610,6 +1625,118 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 }
             }
         };
+    }
+
+    private void checkRegistration() {
+        if (getCurrentUser().getConfigR().has_registration()) {
+            long currentTime = DateUtils.getCurrentTimeMillis();
+            RegistrationR reg = getDao().getRegistrationR(getCurrentUserId());
+            if (reg == null || !reg.isAccepted()) {
+                btnStart.setText("Регистрация");
+                UiUtils.setButtonEnabled(btnStart, false);
+                isRegistrationRequired = true;
+
+            }
+
+            List<PeriodModel> periods = activity.getConfig().getRegistrationPeriods();
+            if (periods != null && periods.size() > 0) {
+                for (PeriodModel period : periods) {
+                    if (reg != null && reg.isAccepted()) {
+                        Long regTime = reg.getReg_time();
+                        if (regTime < period.getStart() && regTime > period.getEnd()) {
+                            getDao().clearRegistrationRByUser(getCurrentUserId());
+                            btnStart.setText("Регистрация");
+                            UiUtils.setButtonEnabled(btnStart, false);
+                            isRegistrationRequired = true;
+                            return;
+                        }
+                    }
+
+                    if (currentTime > period.getStart()) {
+                        if (currentTime < period.getEnd()) {
+                            UiUtils.setButtonEnabled(btnStart, true);
+                            break;
+                        }
+                    }
+                }
+            }
+            checkRegForSend();
+            if (DEBUG_MODE) {
+                UiUtils.setButtonEnabled(btnStart, true);
+            }
+            if (reg != null && reg.isAccepted()) {
+                Gson gson = new Gson();
+                String json = gson.toJson(activity.getConfig());
+//                activity.copyToClipboard(json);
+                List<PeriodModel> workPeriods = activity.getConfig().getWork_periods();
+                boolean inTime = false;
+                if (workPeriods != null)
+                    for (PeriodModel period : workPeriods) {
+                        inTime = currentTime > period.getStart() && currentTime < period.getEnd();
+                        if (inTime) break;
+                    }
+                UiUtils.setButtonEnabled(btnStart, inTime);
+            }
+        }
+    }
+
+    private void checkRegForSend() {
+        new Thread(() -> {
+            if (getMainActivity().isExit() && getMainActivity().getConfig().has_registration()) {
+                RegistrationR reg = getDao().getRegistrationR(getCurrentUserId());
+                if (reg != null && reg.notSent()) {
+                    sendReg(reg);
+                }
+            }
+        }).start();
+    }
+
+    private void sendReg(RegistrationR registration) {
+        String url;
+        url = getCurrentUser().getConfigR().getExitHost() != null ? getCurrentUser().getConfigR().getExitHost() + Constants.Default.REG_URL : null;
+        List<File> photos = getMainActivity().getRegPhotosByUserId(registration.getUser_id());
+        if (photos == null || photos.isEmpty()) {
+            showToast(getString(R.string.no_reg_photo));
+            return;
+        }
+
+        try {
+            if (Internet.hasConnection(getMainActivity()) && url != null) {
+                Log.d("T-L.Reg3Fragment", "Отправка регистрации...");
+                QuizerAPI.sendReg(url, photos, new RegistrationRequestModel(
+                        getDao().getKey(),
+                        registration.getUser_id(),
+                        registration.getUik_number(),
+                        registration.getPhone(),
+                        registration.getGps(),
+                        registration.getGps_network(),
+                        registration.getGps_time(),
+                        registration.getGps_time_network(),
+                        registration.getReg_time(),
+                        false
+                ), registration.getId(), "jpeg", this);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onSendRegCallback(ResponseBody response, Integer id) {
+        if (response == null) {
+            return;
+        }
+
+        try {
+            if (id != null) {
+                getDao().setRegStatus(id, Constants.Registration.SENT);
+                UiUtils.setTextOrHide(btnStart, getString(R.string.button_start));
+                isRegistrationRequired = false;
+                UiUtils.setButtonEnabled(btnStart, true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 

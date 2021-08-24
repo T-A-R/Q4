@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import java.io.IOException;
+
 public abstract class Internet {
 
     public static boolean hasConnection(final Context context) {
@@ -21,5 +23,10 @@ public abstract class Internet {
             return true;
 
         return false;
+    }
+
+    public static boolean isConnected() throws InterruptedException, IOException {
+        String command = "ping -c 1 google.com";
+        return Runtime.getRuntime().exec(command).waitFor() == 0;
     }
 }

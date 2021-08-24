@@ -50,6 +50,9 @@ public class SettingsR {
     @ColumnInfo(name = "user_date")
     private String user_date;
 
+    @ColumnInfo(name = "registered")
+    private boolean registered;
+
     public SettingsR() {
         this.started = false;
         this.auto_zoom = true;
@@ -58,6 +61,7 @@ public class SettingsR {
         this.dark_mode = true;
         this.project_is_active = true;
         this.root = false;
+        this.registered = false;
     }
 
     public int getId() {
@@ -170,5 +174,13 @@ public class SettingsR {
 
     public void setUser_date(String user_date) {
         this.user_date = user_date;
+    }
+
+    public boolean isRegistered() {
+        return registered;
+    }
+
+    public void setRegistered(boolean registered) {
+        this.registered = registered;
     }
 }

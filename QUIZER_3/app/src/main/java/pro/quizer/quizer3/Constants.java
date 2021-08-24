@@ -15,6 +15,8 @@ public final class Constants {
 
         String API_URL = "http://188.225.11.47/";
 
+        String REG_URL = "/api/v1/registration";
+
         String API_key = "a1d64454-4597-4c28-a047-dee22d3c8cfd";
 
         boolean DEBUG = true;
@@ -137,5 +139,11 @@ public final class Constants {
         String SENT_TIME = "sent_time";
         String QUOTA_TIME = "quota_time";
         String LAST_LOGIN_TIME = "last_login_time";
+    }
+
+    public interface Registration {
+        String SENT = "sent";
+        String NOT_SENT = "not_sent";
+        String SMS = "sms";
     }
 }

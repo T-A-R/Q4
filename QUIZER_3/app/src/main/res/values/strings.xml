@@ -103,6 +103,8 @@
     <string name="dialog_remove_user_title">Удаление пользователя</string>
     <string name="dialog_remove_user_body">Вы уверены, что хотите удалить данного пользователя?</string>
     <string name="dialog_error_remove_user_title">Ошибка удаления текущего пользователя</string>
+    <string name="dialog_rereg_title">Повторная регистрация</string>
+    <string name="dialog_rereg_body">Вы уверены, что хотите пройти повторную регистрацию?</string>
     <string name="dialog_error_remove_user_body">Перед удалением пользователя необходимо отправить все данные. Для для отправки всех данных перейдите в СИНХРОНИЗАЦИЮ.</string>
     <string name="dialog_go_to">Перейти</string>
     <string name="dialog_sending_waves_via_sms">Отправка отчётов с помощью СМС.</string>
@@ -257,7 +259,9 @@
     <string name="make_elements_error">Ошибка создания модели анкеты</string>
     <string name="exit_questionnaire_warning">Вы уверены, что хотите принудительно прервать анкету? \nЕё содержимое будет потеряно.</string>
     <string name="exit_questionnaire_with_saving_warning">Вы действительно хотите выйти и прервать текущую анкету?</string>
+    <string name="exit_reg_warning">Вы действительно хотите прервать регистрацию?</string>
     <string name="exit_quiz_header">Завершить анкету</string>
+    <string name="exit_reg_header">Прервать регистрацию</string>
     <string name="hidden_quotas_header">Превышение пределов квот в скрытом вопросе</string>
     <string name="set_last_element_error">Ошибка обновления таблицы переходов</string>
     <string name="select_spinner">Выбрать…</string>
@@ -309,6 +313,7 @@
     <string name="drawer_about">О НАС</string>
     <string name="drawer_exit">ВЫЙТИ</string>
     <string name="button_sms">СМС</string>
+    <string name="button_send_reg">отправить регистрационные данные</string>
     <string name="notification_please_send_quiz">Перед отправкой аудио/фото отправьте все неотосланные анкеты.</string>
     <string name="notification_please_clear_quiz">Перед отправкой аудио/фото очистите очередь на продолжение анкет.</string>
     <string name="notification_please_send_and_clear_quiz">Перед отправкой аудио/фото очистите очередь на продолжение анкет и отправьте все неотосланные анкеты.</string>
@@ -336,6 +341,7 @@
     <string name="button_update_config">Обновить конфиг</string>
     <string name="button_set_config">Применить конфиг</string>
     <string name="button_get_config">Получить конфиг</string>
+    <string name="button_renew_reg">Перерегистрироваться</string>
     <string name="button_update_username">Изменить интервьюера</string>
     <string name="view_config_title">Конфигурация</string>
     <string name="view_id">ID: %1$s</string>
@@ -455,10 +461,35 @@
     <string name="offline_name_warning">После изменения имени ещё не было связи с сервером. Чтобы увидеть полную информацию по данному имени подключитесь к Интернету!</string>
     <string name="please_enter_name">Пожалуйста введите имя.</string>
     <string name="button_finish">Завершить</string>
-    <string name="enter_phone">Введите номер телефона</string>
+    <string name="enter_phone_dialog">Введите номер телефона</string>
     <string name="dialog_connecting_to_satellite">Устройство подключается к спутнику GPS, пожалуйста, подождите.</string>
     <string name="dialog_start_without_gps">Начать без GPS</string>
     <string name="dialog_try_again">Попробовать ещё раз</string>
 
-
+    <string name="enter_sms_code">Введите полученный в СМС код:</string>
+    <string name="enter_code_hint">Введите код</string>
+    <string name="remake">Переделать</string>
+    <string name="captured">Снимок сделан.</string>
+    <string name="save_photo_error">Ошибка сохранения фото</string>
+    <string name="no_internet">Отсутствует доступ в интернет</string>
+    <string name="continue_reg_by_sms">Продолжить регистрацию по СМС или вернуться и попробовать снова?</string>
+    <string name="back">Вернуться</string>
+    <string name="enter_uik">Введите номер УИК\'а:</string>
+    <string name="enter_phone">Введите номер телефона:</string>
+    <string name="uik_hint">УИК</string>
+    <string name="phone_hint">Телефон</string>
+    <string name="button_next">Далее</string>
+    <string name="enter_uik_message">Введите UIK</string>
+    <string name="wrong_uik">Неверный номер UIK</string>
+    <string name="no_reg_photo">Фото не найдено. Попробуйте снова.</string>
+    <string name="send_reg_button">Отправить регистрационные данные</string>
+    <string name="reg_error">Ошибка регистрации</string>
+    <string name="reg_error_message">Пожалуйста пройдите регистрацию заново.</string>
+    <string name="button_photo">Фото</string>
+    <string name="button_make_photo">Сделать фото</string>
+    <string name="resend_sms_timer">Доступно через %1$s секунд</string>
+    <string name="button_resend_sms">запросить код повторно</string>
+    <string name="button_finish_registration">завершить регистрацию</string>
+    <string name="adfdsf">rererre $s</string>
+    <string name="error_create_encryption_table">Ошибка создания таблицы шифрования</string>
 </resources>

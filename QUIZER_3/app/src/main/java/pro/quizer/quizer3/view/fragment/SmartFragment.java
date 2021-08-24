@@ -117,7 +117,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         boolean isAutoZoom = getMainActivity().isAutoZoom();
-//        if (isAutoZoom)
         switch (layoutSrc) {
             case R.layout.fragment_settings:
                 layoutSrc = isAutoZoom ? R.layout.fragment_settings_auto : layoutSrc;
@@ -148,6 +147,18 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 break;
             case R.layout.fragment_element:
                 layoutSrc = isAutoZoom ? R.layout.fragment_element_auto : layoutSrc;
+                break;
+            case R.layout.fragment_reg1:
+                layoutSrc = isAutoZoom ? R.layout.fragment_reg1_auto : layoutSrc;
+                break;
+            case R.layout.fragment_reg2:
+                layoutSrc = isAutoZoom ? R.layout.fragment_reg2_auto : layoutSrc;
+                break;
+            case R.layout.fragment_reg3:
+                layoutSrc = isAutoZoom ? R.layout.fragment_reg3_auto : layoutSrc;
+                break;
+            case R.layout.fragment_reg4:
+                layoutSrc = isAutoZoom ? R.layout.fragment_reg4_auto : layoutSrc;
                 break;
 
             default:
@@ -451,12 +462,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         }
 
         try {
-//            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.SENT, getString(R.string.save_user_to_db), "login: " + userModelR.getLogin());
             getDao().insertUser(userModelR);
             getDao().insertOption(new OptionsR(Constants.OptionName.QUIZ_STARTED, "false"));
         } catch (Exception e) {
             showToast(getString(R.string.db_save_error));
-//            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.ERROR, getString(R.string.save_user_to_db_error), e.getMessage());
         }
 
 
@@ -470,11 +479,9 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                                            final int pUserProjectId) {
 
         try {
-//            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.SENT, getString(R.string.save_user_to_db), "login: " + pLogin);
             getDao().updateUserModelR(pLogin, pPassword, pConfigId, pRoleId, pUserProjectId, pUserId);
         } catch (Exception e) {
             showToast(getString(R.string.db_save_error));
-//            addLog(pLogin, Constants.LogType.DATABASE, Constants.LogObject.USER, getString(R.string.save_user), Constants.LogResult.ERROR, getString(R.string.save_user_to_db_error), e.getMessage());
         }
     }
 
@@ -500,10 +507,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public void rebuildElementsDatabase() {
 
         try {
-//            Log.d(TAG, "Clearing Elements Database............. ");
-//            getDao().clearElementItemR();
-//            getDao().clearElementContentsR();
-//            getDao().clearElementOptionsR();
             Log.d(TAG, "Rebuilding Elements Database............. ");
             getMainActivity().setTree(null);
             getMainActivity().getMap(true);
@@ -567,35 +570,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         return elementItemR;
     }
 
-//    public List<ElementItemR> getQuotasElements() {
-//
-//        List<ElementItemR> quotaList = new ArrayList<>();
-//
-//        if (elementItemRList == null) {
-//            try {
-//                elementItemRList = getDao().getCurrentElements(getCurrentUserId(), getCurrentUser().getConfigR().getProjectInfo().getProjectId());
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        if (elementItemRList != null) {
-//
-//            for (ElementItemR element : elementItemRList) {
-//                if (element.getRelative_parent_id() != null && element.getRelative_parent_id() != 0) {
-//                    if (getElement(element.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
-//                        quotaList.add(element);
-//                        for (ElementItemR answer : element.getElements()) {
-//                            quotaList.add(answer);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        return quotaList;
-//    }
-
     public List<Integer> getPassedQuotasBlock(int max) {
         List<Integer> passedQuotasBlock = new ArrayList<>();
         List<ElementPassedR> passedElements = getDao().getAllElementsPassedR(getMainActivity().getCurrentQuestionnaire().getToken());
@@ -634,7 +608,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 int id = passedElements.get(k).getRelative_id();
                 int parentId = getElement(id).getRelative_parent_id();
                 int parentOrder = getElement(parentId).getElementOptionsR().getOrder();
-//                Log.d("T-L.SmartFragment", "id: " + id + " order: " + parentOrder);
                 if (parentOrder != currentOrder) {
                     currentOrder = parentOrder;
                     key++;
@@ -642,7 +615,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 List<Integer> step = mapBlock.get(key);
                 if (step == null) step = new ArrayList<>();
                 step.add(id);
-//                Log.d("T-L.SmartFragment", "??? key: " + key + " size: " + step.size());
                 mapBlock.put(key, step);
 
             }
@@ -674,9 +646,9 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public CurrentQuestionnaireR getQuestionnaire() {
-//        Log.d("T-L.SmartFragment", "??????? getQuestionnaire: " + currentQuestionnaire.getGps());
-        currentQuestionnaire = getMainActivity().getCurrentQuestionnaire();
+		currentQuestionnaire = getMainActivity().getCurrentQuestionnaire();
         return currentQuestionnaire;
+
     }
 
     public void setCurrentQuestionnaire(CurrentQuestionnaireR currentQuestionnaire) {
@@ -775,13 +747,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                             }
                         }
                         if (configResponseModel.getResult() != 0) {
-                            try {
-//                                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.SUCCESS, getString(R.string.get_config_success), configResponseJson);
-//                                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.loading_files), Constants.LogResult.SENT, getString(R.string.try_to_load_files), configResponseJson);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            Log.d("T-L.SmartFragment", "?????? reloadConfig: " + configResponseModel.getConfig().toString());
                             updateConfig(getCurrentUser(), configResponseModel.getConfig());
 
                             ConfigModel configModel = getMainActivity().getConfigForce();
@@ -807,13 +772,11 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                                             public void onError(final Exception e, final int progress) {
                                                 super.onError(e, progress);
                                                 showToast(getString(R.string.download_files_error));
-//                                                addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.FILE, getString(R.string.loading_files), Constants.LogResult.ERROR, getString(R.string.download_files_error), e.toString());
                                             }
                                         }).loadMultiple(fileUris);
                             }
                         } else {
                             showToast(configResponseModel.getError());
-//                            addLog(mLogin, Constants.LogType.SERVER, Constants.LogObject.CONFIG, getString(R.string.get_config), Constants.LogResult.ERROR, configResponseModel.getError(), configResponseJson);
                         }
                     }
                 });
@@ -827,8 +790,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public boolean updateConfig(final UserModelR pUserModel, final ConfigModel pConfigModel) {
 
         try {
-//            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.save_config), Constants.LogResult.SENT, getString(R.string.save_config_to_db), null);
-
             String oldConfig = null;
             UserModelR oldUser = null;
 
@@ -876,7 +837,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         } catch (Exception e) {
             e.printStackTrace();
             showToast(getString(R.string.db_save_error));
-//            addLog(pUserModel.getLogin(), Constants.LogType.DATABASE, Constants.LogObject.CONFIG, getString(R.string.save_config), Constants.LogResult.ERROR, getString(R.string.save_config_to_db_error), e.getMessage());
             return false;
         }
     }
@@ -1319,5 +1279,13 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 .takeUntil(aLong -> aLong == 2)
                 .doOnComplete(() -> canGoBack = true)
                 .subscribe();
+    }
+
+    public Character getDecrypted (char encrypted) {
+        return getDao().getSymbolsForDecrypt(encrypted);
+    }
+
+    public Character getEncrypted (char decrypted) {
+        return getDao().getSymbolsForEncrypt(decrypted);
     }
 }

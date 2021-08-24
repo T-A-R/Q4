@@ -86,6 +86,7 @@ import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementOptionsR;
 import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.UserModelR;
+import pro.quizer.quizer3.executable.FillEncryptionTableExecutable;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.QuotasTreeMaker;
 import pro.quizer.quizer3.model.ElementSubtype;
@@ -126,10 +127,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     static public String TAG = "TARLOGS";
     static public boolean AVIA = false;
-    static public boolean EXIT = false;
+    static public boolean EXIT = true;
     static public boolean SMS = false;
     public static final String IS_AFTER_AUTH = "IS_AFTER_AUTH";
-    static public boolean DEBUG_MODE = true;
+    static public boolean DEBUG_MODE = false; //TODO FOR TESTS ONLY!
     static public boolean RECORDING = false;
     public boolean mIsPermDialogShow = false;
     private int mAudioRecordLimitTime;
@@ -368,7 +369,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private void generateTempMap(final List<ElementModelNew> elements) {
         for (final ElementModelNew element : elements) {
             mTempMap.put(element.getRelativeID(), element);
-
+            Log.d("T-L.MainActivity", "??? generateTempMap: " + element.getRelativeID());
             final List<ElementModelNew> nestedList = element.getElements();
             if (nestedList != null && !nestedList.isEmpty()) {
                 generateTempMap(nestedList);
@@ -553,6 +554,15 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public List<File> getPhotosByUserId(final int pUserId) {
         return FileUtils.getFilesRecursion(JPEG, FileUtils.getPhotosStoragePath(this) + FileUtils.FOLDER_DIVIDER + pUserId);
     }
+
+    public List<File> getRegPhotosByUserId(final int pUserId) {
+        return FileUtils.getFilesRecursion(JPEG, FileUtils.getRegStoragePath(this) + FileUtils.FOLDER_DIVIDER + pUserId);
+    }
+
+    public List<File> getAllPhotos() {
+        return FileUtils.getFilesRecursion(JPEG, FileUtils.getPhotosStoragePath(this));
+    }
+
 
     public List<File> getAudioByUserId(final int pUserId) {
         return FileUtils.getFilesRecursion(AMR, FileUtils.getAudioStoragePath(this) + FileUtils.FOLDER_DIVIDER + pUserId);
@@ -1161,7 +1171,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public void activateExitReminder() {
-        if (EXIT && getReserveChannel() != null) {
+        if (isExit() && getReserveChannel() != null) {
 
             if (mTimer != null) {
                 mTimer.cancel();
@@ -1210,7 +1220,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public boolean isExit() {
-        return getConfig().getProjectInfo().getReserveChannel() != null;
+        return getConfig().has_registration();
     }
 
     public void startSMS(Long startTime) {
@@ -1219,7 +1229,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         Intent i = new Intent(this, StartSmsSender.class);
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, i, 0);
 
-        if (EXIT) {
+        if (isExit() && getReserveChannel() != null) {
             am.set(AlarmManager.RTC_WAKEUP, startTime, pendingIntent);
         }
     }
@@ -1675,5 +1685,26 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public boolean isGoogleLocation() {
         return isGoogleLocation;
+    }
+
+    public void makeEncryptionTable() {
+        final FillEncryptionTableExecutable task = new FillEncryptionTableExecutable(getMainDao(), new ICallback() {
+            @Override
+            public void onStarting() {
+
+            }
+
+            @Override
+            public void onSuccess() {
+            }
+
+            @Override
+            public void onError(Exception pException) {
+                if (!isFinishing()) {
+                    showToastfromActivity(getString(R.string.error_create_encryption_table));
+                }
+            }
+        });
+        task.execute();
     }
 }

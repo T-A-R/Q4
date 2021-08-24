@@ -6,8 +6,10 @@ import java.util.Map;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import pro.quizer.quizer3.API.models.request.RegistrationRequestModel;
 import pro.quizer.quizer3.Constants;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.Multipart;
@@ -46,6 +48,13 @@ public interface RetrofitQuizerAPI {
     Call<ResponseBody> sendFiles(
             @Url String apiname,
             @Part(Constants.ServerFields.JSON_DATA) RequestBody description,
+            @Part List<MultipartBody.Part> files);
+
+    @Multipart
+    @POST()
+    Call<ResponseBody> sendFiles(
+            @Url String apiname,
+            @Body RegistrationRequestModel description,
             @Part List<MultipartBody.Part> files);
 
     @FormUrlEncoded

@@ -1,10 +1,9 @@
 package pro.quizer.quizer3.model.config;
 
 
-import android.util.Log;
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
-import static pro.quizer.quizer3.MainActivity.TAG;
+import java.util.List;
 
 public class ConfigModel implements Serializable {
 
@@ -76,6 +75,24 @@ public class ConfigModel implements Serializable {
 
     @SerializedName("save_aborted")
     private boolean save_aborted;
+
+    @SerializedName("has_registration")
+    private boolean has_registration;
+
+    @SerializedName("registration_info")
+    private String registration_info;
+
+    @SerializedName("registration_periods")
+    private List<PeriodModel> registration_periods;
+
+    @SerializedName("work_periods")
+    private List<PeriodModel> work_periods;
+
+    @SerializedName("user_settings")
+    private UserSettings user_settings;
+
+    @SerializedName("exit_host")
+    private String exit_host;
 
     @SerializedName("config_forced_update_date")
     private Long config_forced_update_date;
@@ -208,5 +225,54 @@ public class ConfigModel implements Serializable {
 
     public void setUserProjectId(Integer user_project_id) {
         this.user_project_id = user_project_id;
+    }
+
+    public boolean has_registration() {
+//        return has_registration;
+        return true; //TODO FOR TESTS!
+    }
+
+    public void setHasRegistration(boolean has_registration) {
+        this.has_registration = has_registration;
+    }
+
+    public String getRegistrationInfo() {
+        return registration_info;
+    }
+
+    public void setRegistrationInfo(String registration_info) {
+        this.registration_info = registration_info;
+    }
+
+    public List<PeriodModel> getRegistrationPeriods() {
+        return registration_periods;
+    }
+
+    public void setRegistrationPeriods(List<PeriodModel> registration_periods) {
+        this.registration_periods = registration_periods;
+    }
+
+    public UserSettings getUserSettings() {
+        return user_settings;
+    }
+
+    public void setUserSettings(UserSettings user_settings) {
+        this.user_settings = user_settings;
+    }
+
+    public String getExitHost() {
+        return exit_host;
+    }
+
+    public void setExitHost(String exit_host) {
+        this.exit_host = exit_host;
+    }
+
+    public List<PeriodModel> getWork_periods() {
+        return work_periods;
+    }
+
+    public void setWork_periods(List<PeriodModel> work_periods) {
+        this.work_periods = work_periods;
     }
 }

@@ -75,7 +75,6 @@ import pro.quizer.quizer3.utils.Internet;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
-import static android.content.Context.LOCATION_SERVICE;
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.EXIT;
 import static pro.quizer.quizer3.MainActivity.TAG;
@@ -247,8 +246,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             checkProjectActive();
         }
         activity.stopRecording();
-
-//        showNullGpsAlert();
     }
 
     @Override

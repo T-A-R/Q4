@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
@@ -82,6 +83,7 @@ public abstract class ScreenFragment extends SmartFragment {
     public void showScreensaver(int titleId, boolean full) {
         try {
             String title = getResources().getString(titleId);
+            Log.d("T-L.ScreenFragment", "showScreensaver: " + title);
             main.showScreensaver(title, full);
         } catch (Resources.NotFoundException e) {
             e.printStackTrace();
@@ -107,9 +109,10 @@ public abstract class ScreenFragment extends SmartFragment {
     }
 
     public void showScreensaver(String title, boolean full) {
-        hideKeyboard();
+//        hideKeyboard();
         if (main != null)
             try {
+                Log.d("T-L.ScreenFragment", "showScreensaver: " + title);
                 main.showScreensaver(title, full);
             } catch (Exception e) {
                 e.printStackTrace();

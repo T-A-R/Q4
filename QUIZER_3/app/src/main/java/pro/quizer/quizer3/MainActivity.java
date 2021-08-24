@@ -8,12 +8,9 @@ import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -51,7 +48,6 @@ import android.widget.Toast;
 import android.view.KeyEvent;
 
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -60,10 +56,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 import com.scottyab.rootbeer.RootBeer;
 
 import java.io.File;
@@ -106,7 +99,6 @@ import pro.quizer.quizer3.utils.ExpressionUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.SPUtils;
-import pro.quizer.quizer3.view.fragment.HomeFragment;
 import pro.quizer.quizer3.view.fragment.MainFragment;
 
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
@@ -127,9 +119,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     static public String TAG = "TARLOGS";
     static public boolean AVIA = false;
-    static public boolean EXIT = true;
-    static public boolean SMS = false;
-    public static final String IS_AFTER_AUTH = "IS_AFTER_AUTH";
     static public boolean DEBUG_MODE = false; //TODO FOR TESTS ONLY!
     static public boolean RECORDING = false;
     public boolean mIsPermDialogShow = false;
@@ -701,6 +690,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public void startRecording(int relativeId, String token) {
+        Log.d("T-L.MainActivity", "startRecording: " + token);
         if (mIsMediaConnected) {
             final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
             if (mediaCntrlr == null) {
@@ -718,7 +708,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
             if (pbState == PlaybackStateCompat.STATE_ERROR) {
                 callStopReady();
-                callRecord();
+                callRecord(token);
                 showToastfromActivity(getString(R.string.start_audio_error_check_microphone));
                 mIsAudioStarted = false;
                 addLog(Constants.LogObject.AUDIO, "startRecording", Constants.LogResult.ERROR, "Cant start audio", "pbState == PlaybackStateCompat.STATE_ERROR");
@@ -750,7 +740,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                             case PlaybackStateCompat.STATE_NONE:
                             case PlaybackStateCompat.STATE_PAUSED:
                             case PlaybackStateCompat.STATE_STOPPED:
-                                callRecord();
+                                callRecord(token);
                                 break;
                             default:
                                 break;
@@ -761,11 +751,11 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                             case PlaybackStateCompat.STATE_PLAYING:
                             case PlaybackStateCompat.STATE_PAUSED:
                                 callStopReady();
-                                callRecord();
+                                callRecord(token);
                                 break;
                             case PlaybackStateCompat.STATE_NONE:
                             case PlaybackStateCompat.STATE_STOPPED:
-                                callRecord();
+                                callRecord(token);
                                 break;
                             default:
                                 break;
@@ -842,12 +832,12 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         RECORDING = false;
     }
 
-    private void callRecord() {
+    private void callRecord(String token) {
         mUserId = mCurrentUser.getUser_id();
         mLoginAdmin = getConfig().getLoginAdmin();
         mProjectId = getConfig().getProjectInfo().getProjectId();
         mLogin = mCurrentUser.getLogin();
-        AudioService.mFileName = FileUtils.generateAudioFileName(this, mUserId, mLoginAdmin, mProjectId, mLogin, mToken, mAudioRelativeId, audioNumber, audioTime);
+        AudioService.mFileName = FileUtils.generateAudioFileName(this, mUserId, mLoginAdmin, mProjectId, mLogin, token, mAudioRelativeId, audioNumber, audioTime);
 
         final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
         if (mediaCntrlr != null) {

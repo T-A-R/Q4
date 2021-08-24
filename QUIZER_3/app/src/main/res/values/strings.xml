@@ -492,4 +492,6 @@
     <string name="button_finish_registration">завершить регистрацию</string>
     <string name="adfdsf">rererre $s</string>
     <string name="error_create_encryption_table">Ошибка создания таблицы шифрования</string>
+    <string name="error_start_quiz">Ошибка подготовки анкеты. Перезапустите приложение и попробуйте еще раз</string>
+    <string name="screensaver_start_quiz">Подождите,  идет запуск анкеты</string>
 </resources>

@@ -13,6 +13,9 @@ public class ReserveChannelModel implements Serializable {
     @SerializedName("stages")
     private List<StagesModel> stages;
 
+    @SerializedName("notification_offset")
+    private Long notification_offset;
+
     public ReserveChannelModel() {
     }
 
@@ -40,4 +43,7 @@ public class ReserveChannelModel implements Serializable {
         return stages;
     }
 
+    public Long getNotificationOffset() {
+        return notification_offset;
+    }
 }

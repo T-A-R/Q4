@@ -228,8 +228,8 @@ public class ConfigModel implements Serializable {
     }
 
     public boolean has_registration() {
-//        return has_registration;
-        return true; //TODO FOR TESTS!
+        return has_registration;
+//        return true; //TODO FOR TESTS!
     }
 
     public void setHasRegistration(boolean has_registration) {

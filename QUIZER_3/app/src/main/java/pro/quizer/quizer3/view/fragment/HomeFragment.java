@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -283,7 +284,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 break;
             case 12:
                 getMainActivity().isGoogleLocation = true;
-                startQuestionnaire();
+                start();
                 break;
             case 14: // NoHighAccuracyMode
                 if (getMainActivity().getConfig().isForceGps()) {
@@ -293,20 +294,18 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     getMainActivity().showGoogleHighAccuracyAlert();
                 } else {
                     getMainActivity().isGoogleLocation = false;
-                    startQuestionnaire();
+                    start();
                 }
                 break;
             case 15: // Settings OK but location fail to start
                 getMainActivity().isGoogleLocation = false;
-                startQuestionnaire();
+                start();
         }
     }
 
     @Override
     public void onClick(View view) {
         if (view == btnStart) {
-//            replaceFragment(new Reg1Fragment());
-//            isRegistrationRequired = true;
             if (isRegistrationRequired) {
                 replaceFragment(new Reg1Fragment());
             } else {
@@ -347,35 +346,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         }
     }
 
-    private void startQuestionnaire() {
-        if (!isTimeToDownloadConfig) {
-            checkConfigUpdateDate();
-            if (isTimeToDownloadConfig) {
-                showToast(getString(R.string.please_update_config));
-                return;
-            }
-        }
-
-        isStartBtnPressed = true;
-        if (isTimeToDownloadConfig) {
-            activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. Reload config", null);
-            reloadConfig();
-        } else if (currentQuestionnaire == null && !isNeedUpdate) {
-            activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. Without delete old", null);
-            if (checkTime() && (canContWithZeroGps || checkGps()) && checkMemory()) {
-                new StartNewQuiz().execute();
-            }
-        } else {
-            activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. With delete old", null);
-            showStartDialog();
-        }
-    }
-
     private void sendQuestionnaires() {
         new SendQuestionnairesByUserModelExecutable(getMainActivity(), mUserModel, new ICallback() {
             @Override
             public void onStarting() {
-                showScreensaver(true);
+                showScreensaver("Отправка анкет",true);
             }
 
             @Override
@@ -418,7 +393,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         UiUtils.setTextOrHide(tvConfigAgreement, projectInfo.getAgreement());
 
         try {
-            currentQuestionnaire = getDao().getCurrentQuestionnaireR();
+            String configId = config.getConfigId();
+            currentQuestionnaire = getDao().getCurrentQuestionnaireByConfigId(configId);
             activity.getElementItemRList();
             activity.getCurrentQuestionnaire();
         } catch (Exception e) {
@@ -865,23 +841,31 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         Log.d(TAG, "=== activateButtons ===");
         isStartBtnPressed = false;
 
-        setViewBackground(btnContinue, true, false);
-        setViewBackground(btnStart, true, false);
-        setViewBackground(btnQuotas, true, false);
-        setViewBackground(btnInfo, true, false);
-
+        if (activity != null && !activity.isFinishing())
+            activity.runOnUiThread(() -> {
+                setViewBackground(btnContinue, true, false);
+                setViewBackground(btnStart, true, false);
+                setViewBackground(btnQuotas, true, false);
+                setViewBackground(btnInfo, true, false);
+            });
     }
 
     private void deactivateButtons() {
-        setViewBackground(btnContinue, false, true);
-        setViewBackground(btnStart, false, true);
-        setViewBackground(btnQuotas, false, true);
-        setViewBackground(btnInfo, false, true);
+        if (activity != null && !activity.isFinishing())
+            activity.runOnUiThread(() -> {
+                setViewBackground(btnContinue, false, true);
+                setViewBackground(btnStart, false, true);
+                setViewBackground(btnQuotas, false, true);
+                setViewBackground(btnInfo, false, true);
+            });
     }
 
     private void deactivateStartButtons() {
-        setViewBackground(btnContinue, false, true);
-        setViewBackground(btnStart, false, true);
+        if (activity != null && !activity.isFinishing())
+            activity.runOnUiThread(() -> {
+                setViewBackground(btnContinue, false, true);
+                setViewBackground(btnStart, false, true);
+            });
     }
 
     private void quotaUpdate() {
@@ -1278,22 +1262,24 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         if (!mIsDeleteQuizDialogShow) {
             mIsDeleteQuizDialogShow = true;
             if (activity != null && !activity.isFinishing()) {
-                new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
-                        .setCancelable(false)
-                        .setTitle(isNeedUpdate ? R.string.dialog_config_title : R.string.dialog_start_title)
-                        .setMessage(isNeedUpdate ? R.string.dialog_config_body : R.string.dialog_start_body)
-                        .setPositiveButton(R.string.view_yes, (dialog, which) -> {
-                            isStartBtnPressed = true;
-                            deactivateButtons();
-                            if (isNeedUpdate) {
-                                updateLocalConfig();
-                            } else {
-                                if (checkTime() && (canContWithZeroGps || checkGps()) && checkMemory()) {
-                                    new StartNewQuiz().execute();
-                                }
-                            }
-                        })
-                        .setNegativeButton(R.string.view_no, null).show();
+                activity.runOnUiThread(() ->
+                        new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
+                                .setCancelable(false)
+                                .setTitle(isNeedUpdate ? R.string.dialog_config_title : R.string.dialog_start_title)
+                                .setMessage(isNeedUpdate ? R.string.dialog_config_body : R.string.dialog_start_body)
+                                .setPositiveButton(R.string.view_yes, (dialog, which) -> {
+                                    isStartBtnPressed = true;
+                                    deactivateButtons();
+                                    if (isNeedUpdate) {
+                                        updateLocalConfig();
+                                    } else {
+                                        if (checkTime() && (canContWithZeroGps || checkGps()) && checkMemory()) {
+                                            startQuestionnaire();
+                                        }
+                                    }
+                                })
+                                .setNegativeButton(R.string.view_no, null).show()
+                );
             }
         } else {
             isStartBtnPressed = true;
@@ -1302,7 +1288,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 updateLocalConfig();
             } else {
                 if (checkTime() && (canContWithZeroGps || checkGps()) && checkMemory()) {
-                    new StartNewQuiz().execute();
+                    startQuestionnaire();
                 }
             }
         }
@@ -1367,149 +1353,22 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             isTimeToDownloadConfig = DateUtils.getCurrentTimeMillis() >= updateDate;
         }
 
-        if (isTimeToDownloadConfig) {
-            btnStart.setText("Обновить конфиг");
-        } else {
-            btnStart.setText(R.string.button_start);
-        }
-    }
-
-    private void updateCurrentQuestionnaire() {
-        currentQuestionnaire = activity.getCurrentQuestionnaireForce();
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    class StartNewQuiz extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            Log.d(TAG, "StartNewQuiz: ZERO");
+        final MainActivity activity = getMainActivity();
+        if (activity != null) {
             try {
-                showScreensaver("Подождите,  идет запуск анкеты", true);
-                deactivateButtons();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            isCanBackPress = false;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            boolean canStart = true;
-            int user_id = activity.getCurrentUserId();
-            UserModelR user = getDao().getUserByUserId(user_id);
-            ConfigModel config = user.getConfigR();
-            String configId = config.getConfigId();
-            if (configId == null) configId = user.getConfig_id();
-            Integer user_project_id = config.getUserProjectId();
-            if (user_project_id == null) user_project_id = user.getUser_project_id();
-            CurrentQuestionnaireR currentQuestionnaireR = getDao().getCurrentQuestionnaireByConfigId(configId);
-
-            if (currentQuestionnaireR != null) {
-
-                if (currentQuestionnaireR.getUser_project_id().equals(user_project_id)) {
-                    if (config.isSaveAborted()) {
-                        saveQuestionnaireToDatabase(currentQuestionnaireR, true);
+                activity.runOnUiThread(() -> {
+                    if (isTimeToDownloadConfig) {
+                        btnStart.setText(R.string.button_update_config);
                     } else {
-                        getDao().clearCurrentQuestionnaireR();
-                        getDao().clearPrevElementsR();
-                        getDao().clearElementPassedR();
-                        activity.setCurrentQuestionnaireNull();
-                        currentQuestionnaire = null;
+                        btnStart.setText(R.string.button_start);
                     }
-                }
-            }
-
-            try {
-                Log.d(TAG, "startQuestionnaire: insertCurrentQuestionnaireR() started.");
-                CurrentQuestionnaireR questionnaire = new CurrentQuestionnaireR();
-                questionnaire.setToken(StringUtils.generateToken());
-                questionnaire.setConfig_id(configId);
-                questionnaire.setProject_id(config.getProjectInfo().getProjectId());
-                questionnaire.setUser_project_id(user_project_id);
-                questionnaire.setStart_date(DateUtils.getCurrentTimeMillis());
-                questionnaire.setGps(mGpsString);
-                questionnaire.setGps_network(mGpsNetworkString);
-                questionnaire.setGps_time(mGpsTime);
-                questionnaire.setGps_time_network(mGpsTimeNetwork);
-                questionnaire.setUsed_fake_gps(mIsUsedFakeGps);
-                questionnaire.setIs_google_gps(activity.isGoogleLocation());
-                if (mIsUsedFakeGps)
-                    questionnaire.setFake_gps_time(DateUtils.getCurrentTimeMillis());
-                questionnaire.setQuestion_start_time(DateUtils.getCurrentTimeMillis());
-                getDao().insertPrevElementsR(new PrevElementsR(0, 0));
-                getDao().insertCurrentQuestionnaireR(questionnaire);
-                getDao().clearWasElementShown(false);
-
-                updateCurrentQuestionnaire();
-                getQuestionnaireFromDB();
-
-                if (mIsUsedFakeGps) {
-                    canStart = false;
-                    Log.d(TAG, "startQuestionnaire: FAKE GPS ALERT");
-
-                    saveQuestionnaireToDatabase(currentQuestionnaire, true);
-                    if (activity != null) {
-                        new SendQuestionnairesByUserModelExecutable(activity, user, null, false).execute();
-
-                        activity.runOnUiThread(new Runnable() {
-                            public void run() {
-                                showFakeGPSAlertDialog();
-                            }
-                        });
-                    }
-                }
-            } catch (Exception e) {
-                Log.d("T-L.HomeFragment", "Create quiz ERROR: ");
-                e.printStackTrace();
-                try {
-                    getDao().insertCrashLog(new CrashLogs(DateUtils.getCurrentTimeMillis(), "Not Crash! - " + e.toString(), true));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-                showErrorDialog(getString(R.string.header_quiz_insert_error), getString(R.string.message_contact_support));
-                canStart = false;
-            }
-
-            if (canStart) {
-                startRecording();
-                //TODO Ротацию вопросов!
-
-//                        for (ElementItemR elementItemR : getCurrentElements()) {
-//                            if (elementItemR.getSubtype() != null && elementItemR.getElementOptionsR() != null)
-//                                if (elementItemR.getSubtype().equals(ElementSubtype.CONTAINER) && elementItemR.getElementOptionsR().isRotation()) {
-//                                    getMainActivity().getMap(true);
-//                                    break;
-//                                }
-//                        }
-//                        if (activity.hasRotationContainer()) {
-//                            activity.getMap(true);
-//                        }
-
-                getDao().updateQuestionnaireStart(true, getCurrentUserId());
-                getDao().setOption(Constants.OptionName.QUIZ_STARTED, "true");
-            }
-
-            if (canStart) {
-                activity.addLog(Constants.LogObject.QUESTIONNAIRE, "START", Constants.LogResult.SUCCESS, currentQuestionnaire.getToken(), null);
-                hideScreensaver();
-                replaceFragment(isAvia() ? new ElementAviaFragment() : new ElementFragment());
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            try {
-                hideScreensaver();
-                activateButtons();
+                });
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            isCanBackPress = true;
         }
+
+
     }
 
     @Override
@@ -1667,7 +1526,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             if (reg != null && reg.isAccepted()) {
                 Gson gson = new Gson();
                 String json = gson.toJson(activity.getConfig());
-//                activity.copyToClipboard(json);
                 List<PeriodModel> workPeriods = activity.getConfig().getWork_periods();
                 boolean inTime = false;
                 if (workPeriods != null)
@@ -1736,6 +1594,111 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void start() {
+        new Thread(() -> {
+            if (!isTimeToDownloadConfig) {
+                checkConfigUpdateDate();
+                if (isTimeToDownloadConfig) {
+                    showToast(getString(R.string.please_update_config));
+                    return;
+                }
+            }
+
+            isStartBtnPressed = true;
+            if (isTimeToDownloadConfig) {
+                activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. Reload config", null);
+                reloadConfig();
+            } else if (currentQuestionnaire == null && !isNeedUpdate) {
+                activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. Without delete old", null);
+                if (checkTime() && (canContWithZeroGps || checkGps()) && checkMemory()) {
+                    startQuestionnaire();
+                }
+            } else {
+                activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. With delete old", null);
+                showStartDialog();
+            }
+        }).start();
+    }
+
+    private void startQuestionnaire() {
+        try {
+            showScreensaver(R.string.screensaver_start_quiz, true);
+            deactivateButtons();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        isCanBackPress = false;
+
+        boolean canStart = true;
+        int user_id = activity.getCurrentUserId();
+        UserModelR user = getDao().getUserByUserId(user_id);
+        ConfigModel config = user.getConfigR();
+        String configId = config.getConfigId();
+        if (configId == null) configId = user.getConfig_id();
+        Integer user_project_id = config.getUserProjectId();
+        if (user_project_id == null) user_project_id = user.getUser_project_id();
+
+        if (currentQuestionnaire != null) {
+            if (currentQuestionnaire.getUser_project_id().equals(user_project_id)) {
+                if (config.isSaveAborted()) {
+                    saveQuestionnaireToDatabase(currentQuestionnaire, true);
+                } else {
+                    getDao().clearCurrentQuestionnaireR();
+                    getDao().clearPrevElementsR();
+                    getDao().clearElementPassedR();
+                    activity.setCurrentQuestionnaireNull();
+                    currentQuestionnaire = null;
+                }
+            }
+        }
+
+        currentQuestionnaire = new CurrentQuestionnaireR();
+        currentQuestionnaire.setToken(StringUtils.generateToken());
+        currentQuestionnaire.setConfig_id(configId);
+        currentQuestionnaire.setProject_id(config.getProjectInfo().getProjectId());
+        currentQuestionnaire.setUser_project_id(user_project_id);
+        currentQuestionnaire.setStart_date(DateUtils.getCurrentTimeMillis());
+        currentQuestionnaire.setGps(mGpsString);
+        currentQuestionnaire.setGps_network(mGpsNetworkString);
+        currentQuestionnaire.setGps_time(mGpsTime);
+        currentQuestionnaire.setGps_time_network(mGpsTimeNetwork);
+        currentQuestionnaire.setUsed_fake_gps(mIsUsedFakeGps);
+        currentQuestionnaire.setIs_google_gps(activity.isGoogleLocation());
+        if (mIsUsedFakeGps)
+            currentQuestionnaire.setFake_gps_time(DateUtils.getCurrentTimeMillis());
+        currentQuestionnaire.setQuestion_start_time(DateUtils.getCurrentTimeMillis());
+        getDao().insertPrevElementsR(new PrevElementsR(0, 0));
+        getDao().insertCurrentQuestionnaireR(currentQuestionnaire);
+        getDao().clearWasElementShown(false);
+
+        if (mIsUsedFakeGps) {
+            canStart = false;
+            Log.d(TAG, "startQuestionnaire: FAKE GPS ALERT");
+
+            saveQuestionnaireToDatabase(currentQuestionnaire, true);
+            if (activity != null) {
+                new SendQuestionnairesByUserModelExecutable(activity, user, null, false).execute();
+                activity.runOnUiThread(this::showFakeGPSAlertDialog);
+            }
+        }
+
+        if (canStart) {
+            startRecording();
+            getDao().updateQuestionnaireStart(true, getCurrentUserId());
+            getDao().setOption(Constants.OptionName.QUIZ_STARTED, "true");
+
+            activity.addLog(Constants.LogObject.QUESTIONNAIRE, "START", Constants.LogResult.SUCCESS, currentQuestionnaire.getToken(), null);
+//            activity.runOnUiThread(this::hideScreensaver);
+            replaceFragment(isAvia() ? new ElementAviaFragment() : new ElementFragment());
+        } else {
+            if (activity != null) {
+                activity.runOnUiThread(this::hideScreensaver);
+                showToast(getString(R.string.error_start_quiz));
+                activateButtons();
+            }
         }
     }
 }

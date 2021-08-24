@@ -254,8 +254,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         activity.stopRecording();
 
         if (activity.isExit()) checkRegistration();
-//        showNullGpsAlert();
-//        UiUtils.setButtonEnabled(btnStart, true);
+
     }
 
     @Override

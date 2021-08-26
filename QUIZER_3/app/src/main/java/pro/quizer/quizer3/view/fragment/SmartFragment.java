@@ -1281,6 +1281,14 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 .subscribe();
     }
 
+    public String encode(String message) {
+        StringBuilder encoded = new StringBuilder();
+        for (Character ch : message.toCharArray()) {
+            encoded.append(getEncrypted(ch));
+        }
+        return encoded.toString();
+    }
+
     public Character getDecrypted (char encrypted) {
         return getDao().getSymbolsForDecrypt(encrypted);
     }

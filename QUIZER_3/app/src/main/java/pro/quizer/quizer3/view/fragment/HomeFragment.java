@@ -123,6 +123,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private boolean isNeedUpdate = false;
     private boolean isTimeToDownloadConfig = false;
     private boolean isRegistrationRequired = false;
+    private boolean isCodeRequired = false;
     private StatisticR finalStatistics;
     private AlertDialog infoDialog;
     private int completedCounter = 0;
@@ -308,6 +309,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         if (view == btnStart) {
             if (isRegistrationRequired) {
                 replaceFragment(new Reg1Fragment());
+            } else if(isCodeRequired) {
+                replaceFragment(new Reg4Fragment());
             } else {
                 if (activity.getConfig().isGps()) {
                     activity.checkSettingsAndStartLocationUpdates(isForceGps, this);
@@ -1494,13 +1497,16 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 btnStart.setText("Регистрация");
                 UiUtils.setButtonEnabled(btnStart, false);
                 isRegistrationRequired = true;
-
+            }
+            if(reg != null && reg.isCode()) {
+                btnStart.setText("Ввести код");
+                isCodeRequired = true;
             }
 
             List<PeriodModel> periods = activity.getConfig().getRegistrationPeriods();
             if (periods != null && periods.size() > 0) {
                 for (PeriodModel period : periods) {
-                    if (reg != null && reg.isAccepted()) {
+                    if (reg != null && (reg.isAccepted() || reg.isCode())) {
                         Long regTime = reg.getReg_time();
                         if (regTime < period.getStart() && regTime > period.getEnd()) {
                             getDao().clearRegistrationRByUser(getCurrentUserId());

@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import pro.quizer.quizer3.Constants;
 
+import static pro.quizer.quizer3.view.fragment.SmartFragment.getDao;
+
 public class SmsAnswer implements Serializable {
 
     private final String mSmsIndex;
@@ -34,13 +36,13 @@ public class SmsAnswer implements Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder result = new StringBuilder("#" + mSmsIndex);
+        final StringBuilder result = new StringBuilder(mSmsIndex);
 
         for (final int answer : mAnswers) {
             result.append(" ").append(answer);
         }
 
-        return result.toString();
+        return "d" + encode(result.toString());
     }
 
     public String getmSmsStatus() {
@@ -49,5 +51,17 @@ public class SmsAnswer implements Serializable {
 
     public void setmSmsStatus(String mSmsStatus) {
         this.mSmsStatus = mSmsStatus;
+    }
+
+    private String encode(String message) {
+        StringBuilder encoded = new StringBuilder();
+        for (Character ch : message.toCharArray()) {
+            encoded.append(getEncrypted(ch));
+        }
+        return encoded.toString();
+    }
+
+    private Character getEncrypted (char decrypted) {
+        return getDao().getSymbolsForEncrypt(decrypted);
     }
 }

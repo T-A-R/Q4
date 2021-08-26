@@ -348,24 +348,30 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void showNoInternetDialog() {
-        MainActivity activity = getMainActivity();
-        activity.runOnUiThread(() -> {
-            if (!activity.isFinishing()) {
-                new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
-                        .setCancelable(false)
-                        .setTitle(R.string.no_internet)
-                        .setMessage(R.string.continue_reg_by_sms)
-                        .setPositiveButton(R.string.button_continue, (dialog, which) -> {
-                            dialog.dismiss();
-                            sendRegSms();
-                        })
-                        .setNegativeButton(R.string.back, (dialog, which) -> {
-                            dialog.dismiss();
-                            UiUtils.setButtonEnabled(btnNext, true);
-                        })
-                        .show();
-            }
-        });
+        if (getMainActivity().getCurrentUser().getConfigR().getProjectInfo().getReserveChannel() != null
+                && getMainActivity().getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getSelectedPhone() != null) {
+            MainActivity activity = getMainActivity();
+            activity.runOnUiThread(() -> {
+                if (!activity.isFinishing()) {
+                    new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
+                            .setCancelable(false)
+                            .setTitle(R.string.no_internet)
+                            .setMessage(R.string.continue_reg_by_sms)
+                            .setPositiveButton(R.string.button_continue, (dialog, which) -> {
+                                dialog.dismiss();
+                                sendRegSms();
+                            })
+                            .setNegativeButton(R.string.back, (dialog, which) -> {
+                                dialog.dismiss();
+                                UiUtils.setButtonEnabled(btnNext, true);
+                            })
+                            .show();
+                }
+            });
+        } else {
+            showToast(getString(R.string.cant_reg_coz_no_internet));
+            UiUtils.setButtonEnabled(btnNext, true);
+        }
     }
 
     private void showTimeErrorDialog() {
@@ -386,48 +392,36 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void sendRegSms() {
+        if (getMainActivity().getCurrentUser().getConfigR().getProjectInfo().getReserveChannel() != null
+                && getMainActivity().getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getSelectedPhone() != null
+                && registration.getPhone() != null && registration.getPhone().length() > 6) {
 
-        // r {admin_key}:[{user_id} {uik_number} {gps} {gps_network} {reg_time} {phone}] - в квадратных скобках шифрованное
+            // r {admin_key}:[{user_id} {uik_number} {gps} {gps_network} {reg_time} {phone}] - в квадратных скобках шифрованное
 
-        int number1 = registration.getUser_id(); // user_id
-        String number2 = registration.getUik_number(); // uik
-        String decodedMessage = "r " + getDao().getKey() + ":";
-        String message = number1
-                + " " + number2
-                + " " + registration.getGps()
-                + " " + registration.getGps_network()
-                + " " + registration.getReg_time()
-                + " " + registration.getPhone();
-        String sms = decodedMessage + encode(message);
-        Log.d("T-L.Reg3Fragment", "sendRegSms: " + sms);
-        new Thread(() -> SmsUtils.sendRegSms(getMainActivity(), this, sms)).start();
-    }
-
-    private String encode(String message) {
-        StringBuilder encoded = new StringBuilder();
-        for (Character ch : message.toCharArray()) {
-            encoded.append(getEncrypted(ch));
-        }
-        return encoded.toString();
-    }
-
-    @Override
-    public void onSendRegCallback(ResponseBody response, Integer id) {
-        if (response == null) {
-            showToast("Нет ответа от сервера");
-            showNoInternetDialog();
-            return;
-        }
-
-        try {
-            if (id != null) {
-                showToast("Регистрация успешна");
-                getDao().setRegStatus(id, Constants.Registration.SENT);
+            int number1 = registration.getUser_id(); // user_id
+            String number2 = registration.getUik_number(); // uik
+            String decodedMessage = "r " + getDao().getKey() + ":";
+            String message = number1
+                    + " " + number2
+                    + " " + registration.getGps()
+                    + " " + registration.getGps_network()
+                    + " " + registration.getReg_time()
+                    + " " + registration.getPhone();
+            String sms = decodedMessage + encode(message);
+            Log.d("T-L.Reg3Fragment", "sendRegSms: " + sms);
+            new Thread(() -> SmsUtils.sendRegSms(getMainActivity(), this, sms)).start();
+        } else {
+            if (getMainActivity() != null)
+                getMainActivity().runOnUiThread(() -> UiUtils.setButtonEnabled(btnNext, true));
+            if (registration.getPhone() == null || registration.getPhone().length() < 7) {
+                try {
+                    showToast("Введите номер телефона");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
                 replaceFragment(new HomeFragment());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            getMainActivity().runOnUiThread(() -> UiUtils.setButtonEnabled(btnNext, true));
         }
     }
 
@@ -438,6 +432,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onSuccess() {
         Log.d("T-L.Reg3Fragment", "SEND REG SMS onSuccess: ");
+        getDao().setRegStatus(getCurrentUserId(), Constants.Registration.CODE);
         replaceFragment(new Reg4Fragment());
     }
 
@@ -487,6 +482,29 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
             e.printStackTrace();
             showToast("Нет доступа в интернет");
             showNoInternetDialog();
+        }
+    }
+
+    @Override
+    public void onSendRegCallback(ResponseBody response, Integer id) {
+        if (response == null) {
+            showToast("Нет ответа от сервера");
+            showNoInternetDialog();
+            return;
+        }
+
+        try {
+            if (id != null) {
+//                showToast("Регистрация успешна");
+                getDao().setRegStatus(id, Constants.Registration.SENT);
+//                replaceFragment(new HomeFragment());
+                sendRegSms();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendRegSms();
+
+//            getMainActivity().runOnUiThread(() -> UiUtils.setButtonEnabled(btnNext, true));
         }
     }
 }

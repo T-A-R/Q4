@@ -94,7 +94,11 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
                 case 2:
                     hideScreensaver();
                     isCanBackPress = true;
-                    showToast(getString(R.string.config_updated));
+                    try {
+                        showToast(getString(R.string.config_updated));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     break;
             }
         });
@@ -154,9 +158,7 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         mReReg.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
         mToolbar.setTitle(getString(R.string.settings_screen));
-        mToolbar.showCloseView(v -> replaceFragment(new HomeFragment()));
-
-//        Log.d("T-L.SettingsFragment", "=== REG: " + getDao().getRegistrationR(getCurrentUserId()).size());
+        mToolbar.showCloseView(v -> onBackPressed());
 
         if (mBaseActivity.isExit() && getDao().getRegistrationR(getCurrentUserId()) != null) mReReg.setVisibility(View.VISIBLE);
         else mReReg.setVisibility(View.GONE);

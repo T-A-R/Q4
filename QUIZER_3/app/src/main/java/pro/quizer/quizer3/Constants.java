@@ -145,5 +145,6 @@ public final class Constants {
         String SENT = "sent";
         String NOT_SENT = "not_sent";
         String SMS = "sms";
+        String CODE = "code";
     }
 }

@@ -494,4 +494,5 @@
     <string name="error_create_encryption_table">Ошибка создания таблицы шифрования</string>
     <string name="error_start_quiz">Ошибка подготовки анкеты. Перезапустите приложение и попробуйте еще раз</string>
     <string name="screensaver_start_quiz">Подождите,  идет запуск анкеты</string>
+    <string name="cant_reg_coz_no_internet">Отсутствует Интернет-соединение, регистрация невозможна</string>
 </resources>

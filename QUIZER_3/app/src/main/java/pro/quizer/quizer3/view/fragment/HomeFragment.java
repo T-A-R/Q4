@@ -232,14 +232,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             sendQuestionnaires();
 
-//            if (activity != null) {
-//                if (EXIT) {
-//                    btnQuotas.setVisibility(View.GONE);
-//                } else {
-//                    btnQuotas.setVisibility(View.VISIBLE);
-//                }
-//            }
-
             try {
                 if (activity != null)
                     activity.activateExitReminder();

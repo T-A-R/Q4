@@ -1163,38 +1163,43 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public void activateExitReminder() {
         if (isExit() && getReserveChannel() != null) {
 
-            if (mTimer != null) {
-                mTimer.cancel();
-            }
+            Integer mNotificationOffset = getReserveChannel().getNotificationOffset();
 
-            List<StagesModel> stages = getReserveChannel().getStages();
-            List<Integer> datesList = new ArrayList<>();
-            Long startDate = null;
-            Date startDateForDialog = null;
+            if (mNotificationOffset != null) {
+
+                if (mTimer != null) {
+                    mTimer.cancel();
+                }
+
+                List<StagesModel> stages = getReserveChannel().getStages();
+                List<Integer> datesList = new ArrayList<>();
+                Long startDate = null;
+                Date startDateForDialog = null;
 
 
-            if (stages != null) {
-                if (stages.size() > 0) {
+                if (stages != null) {
+                    if (stages.size() > 0) {
 
-                    for (int i = 0; i < stages.size(); i++) {
-                        datesList.add(stages.get(i).getTimeTo());
-                    }
-                    Collections.sort(datesList);
-
-                    for (int i = 0; i < datesList.size(); i++) {
-                        if (datesList.get(i) > System.currentTimeMillis() / 1000) {
-                            startDate = Long.valueOf(datesList.get(i)) * 1000;
-                            startDateForDialog = new Date(Long.valueOf(datesList.get(i)) * 1000);
-                            break;
+                        for (int i = 0; i < stages.size(); i++) {
+                            datesList.add(stages.get(i).getTimeTo() - mNotificationOffset);
                         }
-                    }
+                        Collections.sort(datesList);
 
-                    if (startDate != null) {
-                        mTimer = new Timer();
-                        mAlertSmsTask = new AlertSmsTask();
-                        mTimer.schedule(mAlertSmsTask, startDateForDialog);
+                        for (int i = 0; i < datesList.size(); i++) {
+                            if (datesList.get(i) > System.currentTimeMillis() / 1000) {
+                                startDate = Long.valueOf(datesList.get(i)) * 1000;
+                                startDateForDialog = new Date(Long.valueOf(datesList.get(i)) * 1000);
+                                break;
+                            }
+                        }
 
-                        startSMS(startDate);
+                        if (startDate != null) {
+                            mTimer = new Timer();
+                            mAlertSmsTask = new AlertSmsTask();
+                            mTimer.schedule(mAlertSmsTask, startDateForDialog);
+
+                            startSMS(startDate);
+                        }
                     }
                 }
             }

@@ -5,8 +5,12 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+
 import androidx.cardview.widget.CardView;
+
+import android.graphics.Typeface;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,17 +21,23 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
+import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.model.CardItem;
+import pro.quizer.quizer3.utils.FileUtils;
+import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 
 import static pro.quizer.quizer3.model.OptionsOpenType.NUMBER;
+
+import com.squareup.picasso.Picasso;
 
 public class CardAdapter extends ArrayAdapter<CardItem> {
     private int resourceLayout;
@@ -75,12 +85,33 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
                 String openType = Objects.requireNonNull(getItem(position)).getOpen();
                 String data = Objects.requireNonNull(getItem(position)).getData();
                 String hint = Objects.requireNonNull(getItem(position)).getHint();
+                String thumb = Objects.requireNonNull(getItem(position)).getThumb();
                 boolean open = !openType.equals("checkbox");
 
                 CardView cont = holder.findViewById(R.id.cont_card);
                 TextView textView = holder.findViewById(R.id.text1);
                 TextView cardInput = holder.findViewById(R.id.card_input);
                 ImageView checker = holder.findViewById(R.id.checker);
+                ImageView titleImage = holder.findViewById(R.id.title_image);
+
+                Log.d("T-L.CardAdapter", "IMAGE: " + thumb);
+
+                if (thumb != null && thumb.length() > 0) {
+                    titleImage.setVisibility(View.VISIBLE);
+                    showPic(titleImage, thumb);
+                    titleImage.setOnClickListener(v -> {
+                        String pic = Objects.requireNonNull(getItem(position)).getPic();
+                        if (pic != null) {
+                            try {
+                                showAdditionalInfoDialog(pic);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                } else {
+                    titleImage.setVisibility(View.GONE);
+                }
 
                 if (data != null && data.length() > 0) {
                     cardInput.setTextColor(mContext.getResources().getColor(R.color.brand_color_dark));
@@ -126,6 +157,67 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
         }
 
         return holder;
+    }
+
+    private void showPic(ImageView view, String data) {
+        if (data == null) {
+            Picasso.with(mContext)
+                    .load(R.drawable.image)
+                    .into(view);
+            return;
+        }
+
+        final String filePhotooPath = getFilePath(data);
+
+        if (StringUtils.isEmpty(filePhotooPath)) {
+            return;
+        }
+
+        view.setVisibility(View.VISIBLE);
+
+        Picasso.with(mContext)
+                .load(new File(filePhotooPath))
+                .into(view);
+    }
+
+    private String getFilePath(final String data) {
+        final String path = FileUtils.getFilesStoragePath(mContext);
+
+        if (StringUtils.isEmpty(data)) {
+            return Constants.Strings.EMPTY;
+        }
+
+        final String fileName = FileUtils.getFileName(data);
+
+        return path + FileUtils.FOLDER_DIVIDER + fileName;
+    }
+
+    private void showAdditionalInfoDialog(String data) {
+        final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mContext);
+        final View mView = layoutInflaterAndroid.inflate(R.layout.dialog_table_question_additional_info, null);
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
+        dialog.setView(mView);
+
+        final TextView title = mView.findViewById(R.id.title);
+        final ImageView image = mView.findViewById(R.id.image);
+        final TextView description = mView.findViewById(R.id.description);
+        description.setTypeface(description.getTypeface(), Typeface.ITALIC);
+
+        title.setVisibility(View.GONE);
+        description.setVisibility(View.GONE);
+
+        if (data != null) {
+            showPic(image, data);
+        }
+
+        dialog.setCancelable(true);
+//                .setPositiveButton(R.string.view_OK, (dialogBox, id) -> dialogBox.cancel());
+
+        final AlertDialog alertDialog = dialog.create();
+
+        if (mContext != null) {
+            alertDialog.show();
+        }
     }
 
     private void checkItem(int position) {

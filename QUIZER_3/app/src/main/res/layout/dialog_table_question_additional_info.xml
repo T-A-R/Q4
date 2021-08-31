@@ -29,9 +29,11 @@
 
         <ImageView
             android:id="@+id/image"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
             android:layout_marginTop="@dimen/_8sdp"
             android:layout_marginStart="@dimen/_2sdp"
             android:layout_marginEnd="@dimen/_2sdp"/>

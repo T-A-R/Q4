@@ -538,14 +538,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 }
 
                 if (location == null || location.getLatitude() == 0 || location.getLongitude() == 0) {
-                    showNullGpsAlert();
+                    activity.runOnUiThread(this::showNullGpsAlert);
                     return false;
                 } else {
                     return true;
                 }
             } else {
                 if (activity.getConfig().isForceGps()) {
-                    showNoGpsAlert();
+                    activity.runOnUiThread(this::showNoGpsAlert);
                     return false;
                 } else {
                     try {
@@ -566,7 +566,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         if (canContWithZeroGps) {
                             return true;
                         } else {
-                            showNoGpsAlert();
+                            activity.runOnUiThread(this::showNoGpsAlert);
                             return false;
                         }
                     }
@@ -1385,7 +1385,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             });
             alertDialog.setNegativeButton(R.string.view_retry, (dialog, which) -> {
                 dialog.dismiss();
-                showNullGpsAlert();
+                activity.runOnUiThread(this::showNullGpsAlert);
             });
             if (!isForceGps) {
                 alertDialog.setPositiveButton(R.string.dialog_start_without_gps, (dialog, which) -> {
@@ -1414,7 +1414,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     .setNegativeButton(R.string.view_retry, (dialog12, which) -> {
                         if (activity.getLocation() == null || activity.getLocation().getLongitude() == 0 || activity.getLocation().getLatitude() == 0) {
                             dialog12.dismiss();
-                            showNoGpsAlert();
+                            activity.runOnUiThread(this::showNoGpsAlert);
                         } else {
                             dialog12.dismiss();
                             onClick(btnStart);
@@ -1439,7 +1439,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     .setNegativeButton(R.string.view_retry, (dialog12, which) -> {
                         if (activity.getLocation() == null || activity.getLocation().getLongitude() == 0 || activity.getLocation().getLatitude() == 0) {
                             dialog12.dismiss();
-                            showNoGpsAlert();
+                            activity.runOnUiThread(this::showNoGpsAlert);
                         } else {
                             dialog12.dismiss();
                             onClick(btnStart);
@@ -1474,7 +1474,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         onClick(btnStart);
                     } else {
                         dialog.dismiss();
-                        showNoGpsAlert();
+                        activity.runOnUiThread(() -> showNoGpsAlert());
+
                     }
                 }
             }
@@ -1616,7 +1617,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 }
             } else {
                 activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. With delete old", null);
-                showStartDialog();
+                activity.runOnUiThread(this::showStartDialog);
             }
         }).start();
     }

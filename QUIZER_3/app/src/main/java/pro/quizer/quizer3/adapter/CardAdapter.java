@@ -94,8 +94,6 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
                 ImageView checker = holder.findViewById(R.id.checker);
                 ImageView titleImage = holder.findViewById(R.id.title_image);
 
-                Log.d("T-L.CardAdapter", "IMAGE: " + thumb);
-
                 if (thumb != null && thumb.length() > 0) {
                     titleImage.setVisibility(View.VISIBLE);
                     showPic(titleImage, thumb);

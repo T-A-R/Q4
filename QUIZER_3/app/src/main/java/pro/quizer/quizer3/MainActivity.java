@@ -1354,7 +1354,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public ConfigModel getConfig() {
         if (mConfig == null) {
-            mConfig = getCurrentUser().getConfigR();
+//            mConfig = getCurrentUser().getConfigR();
+            mConfig = getConfigForce();
         }
         return mConfig;
     }

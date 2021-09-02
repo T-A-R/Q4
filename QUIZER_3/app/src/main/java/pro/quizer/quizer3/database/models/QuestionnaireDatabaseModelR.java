@@ -117,6 +117,9 @@ public class QuestionnaireDatabaseModelR {
     @ColumnInfo(name = "user_date")
     private String user_date;
 
+    @ColumnInfo(name = "registered_uik")
+    private String registered_uik;
+
     public QuestionnaireDatabaseModelR() {
         this.is_online = true;
     }
@@ -152,6 +155,7 @@ public class QuestionnaireDatabaseModelR {
         this.count_interrupted = 0;
         this.is_online = true;
         this.is_google_gps = true;
+        this.registered_uik = null;
     }
 
     public Long getGps_time_fk() {
@@ -440,5 +444,13 @@ public class QuestionnaireDatabaseModelR {
 
     public void setIs_google_gps(boolean is_google_gps) {
         this.is_google_gps = is_google_gps;
+    }
+
+    public String getRegistered_uik() {
+        return registered_uik;
+    }
+
+    public void setRegistered_uik(String registered_uik) {
+        this.registered_uik = registered_uik;
     }
 }

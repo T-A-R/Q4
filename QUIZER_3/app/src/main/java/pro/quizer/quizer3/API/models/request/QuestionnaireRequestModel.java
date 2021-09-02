@@ -1,5 +1,7 @@
 package pro.quizer.quizer3.API.models.request;
 
+import androidx.room.ColumnInfo;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,7 @@ public class QuestionnaireRequestModel implements Serializable {
     private final String config_id;
     private final String user_name;
     private final String user_date;
+    private final String registered_uik;
 
     public QuestionnaireRequestModel(int billing_questions,
                                      int questionnaire_id,
@@ -69,7 +72,8 @@ public class QuestionnaireRequestModel implements Serializable {
                                      boolean is_online,
                                      String user_name,
                                      String user_date,
-                                     boolean is_google_gps) {
+                                     boolean is_google_gps,
+                                     String registered_uik) {
         this.gps_time = gps_time;
         this.gps_time_network = gps_time_network;
         this.billing_questions = billing_questions;
@@ -102,6 +106,7 @@ public class QuestionnaireRequestModel implements Serializable {
         this.user_name = user_name;
         this.user_date = user_date;
         this.is_google_gps = is_google_gps;
+        this.registered_uik = registered_uik;
     }
 
     public void addElement(final ElementRequestModel pElement) {

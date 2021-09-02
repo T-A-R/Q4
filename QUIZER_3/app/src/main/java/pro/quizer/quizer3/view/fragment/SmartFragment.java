@@ -78,7 +78,6 @@ import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.FontUtils;
 import pro.quizer.quizer3.utils.SPUtils;
-import pro.quizer.quizer3.utils.UiUtils;
 
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
@@ -896,6 +895,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         questionnaireDatabaseModel.setUser_name(settings.getUser_name());
         questionnaireDatabaseModel.setUser_date(settings.getUser_date());
         questionnaireDatabaseModel.setIs_google_gps(currentQuiz.isIs_google_gps());
+        questionnaireDatabaseModel.setRegistered_uik(currentQuiz.getRegistered_uik());
 
         if (aborted || getQuestionnaire().isIn_aborted_box() || getQuestionnaireFromDB().isIn_aborted_box()) {
             questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.ABORTED);

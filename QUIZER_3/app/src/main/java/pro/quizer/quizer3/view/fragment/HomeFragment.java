@@ -22,7 +22,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -46,7 +45,6 @@ import pro.quizer.quizer3.API.models.response.StatisticsResponseModel;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
-import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
@@ -1633,6 +1631,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         boolean canStart = true;
         int user_id = activity.getCurrentUserId();
+        RegistrationR reg = getDao().getRegistrationR(user_id);
         UserModelR user = getDao().getUserByUserId(user_id);
         ConfigModel config = user.getConfigR();
         String configId = config.getConfigId();
@@ -1660,6 +1659,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         currentQuestionnaire.setProject_id(config.getProjectInfo().getProjectId());
         currentQuestionnaire.setUser_project_id(user_project_id);
         currentQuestionnaire.setStart_date(DateUtils.getCurrentTimeMillis());
+        String uik = reg != null ? reg.getUik_number() : null;
+        currentQuestionnaire.setRegistered_uik(uik);
         currentQuestionnaire.setGps(mGpsString);
         currentQuestionnaire.setGps_network(mGpsNetworkString);
         currentQuestionnaire.setGps_time(mGpsTime);

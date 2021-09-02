@@ -77,6 +77,9 @@ public class CurrentQuestionnaireR {
     @ColumnInfo(name = "audio_number")
     private int audio_number;
 
+    @ColumnInfo(name = "registered_uik")
+    private String registered_uik;
+
     public CurrentQuestionnaireR() {
         this.count_interrupted = 0;
         this.paused = false;
@@ -265,5 +268,13 @@ public class CurrentQuestionnaireR {
 
     public void setIs_google_gps(boolean is_google_gps) {
         this.is_google_gps = is_google_gps;
+    }
+
+    public String getRegistered_uik() {
+        return registered_uik;
+    }
+
+    public void setRegistered_uik(String registered_uik) {
+        this.registered_uik = registered_uik;
     }
 }

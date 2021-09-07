@@ -896,6 +896,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         questionnaireDatabaseModel.setUser_date(settings.getUser_date());
         questionnaireDatabaseModel.setIs_google_gps(currentQuiz.isIs_google_gps());
         questionnaireDatabaseModel.setRegistered_uik(currentQuiz.getRegistered_uik());
+        questionnaireDatabaseModel.setHas_sim(currentQuiz.getHas_sim());
+        questionnaireDatabaseModel.setPermissions(currentQuiz.getPermissions());
+        questionnaireDatabaseModel.setAirplane_mode(currentQuiz.isAirplane_mode());
+        questionnaireDatabaseModel.setGps_on(currentQuiz.isGps_on());
 
         if (aborted || getQuestionnaire().isIn_aborted_box() || getQuestionnaireFromDB().isIn_aborted_box()) {
             questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.ABORTED);

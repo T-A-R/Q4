@@ -120,6 +120,18 @@ public class QuestionnaireDatabaseModelR {
     @ColumnInfo(name = "registered_uik")
     private String registered_uik;
 
+    @ColumnInfo(name = "airplane_mode")
+    private boolean airplane_mode;
+
+    @ColumnInfo(name = "has_sim")
+    private Boolean has_sim;
+
+    @ColumnInfo(name = "gps_on")
+    private boolean gps_on;
+
+    @ColumnInfo(name = "permissions")
+    private String permissions;
+
     public QuestionnaireDatabaseModelR() {
         this.is_online = true;
     }
@@ -452,5 +464,37 @@ public class QuestionnaireDatabaseModelR {
 
     public void setRegistered_uik(String registered_uik) {
         this.registered_uik = registered_uik;
+    }
+
+    public boolean isAirplane_mode() {
+        return airplane_mode;
+    }
+
+    public void setAirplane_mode(boolean airplane_mode) {
+        this.airplane_mode = airplane_mode;
+    }
+
+    public Boolean getHas_sim() {
+        return has_sim;
+    }
+
+    public void setHas_sim(Boolean has_sim) {
+        this.has_sim = has_sim;
+    }
+
+    public boolean isGps_on() {
+        return gps_on;
+    }
+
+    public void setGps_on(boolean gps_on) {
+        this.gps_on = gps_on;
+    }
+
+    public String getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(String permissions) {
+        this.permissions = permissions;
     }
 }

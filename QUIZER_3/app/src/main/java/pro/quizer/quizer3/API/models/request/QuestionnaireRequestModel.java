@@ -41,6 +41,10 @@ public class QuestionnaireRequestModel implements Serializable {
     private final String user_name;
     private final String user_date;
     private final String registered_uik;
+    private final boolean airplane_mode;
+    private final Boolean has_sim;
+    private final boolean gps_on;
+    private final String permissions;
 
     public QuestionnaireRequestModel(int billing_questions,
                                      int questionnaire_id,
@@ -73,7 +77,11 @@ public class QuestionnaireRequestModel implements Serializable {
                                      String user_name,
                                      String user_date,
                                      boolean is_google_gps,
-                                     String registered_uik) {
+                                     String registered_uik,
+                                     boolean airplane_mode,
+                                     Boolean has_sim,
+                                     boolean gps_on,
+                                     String permissions) {
         this.gps_time = gps_time;
         this.gps_time_network = gps_time_network;
         this.billing_questions = billing_questions;
@@ -107,6 +115,10 @@ public class QuestionnaireRequestModel implements Serializable {
         this.user_date = user_date;
         this.is_google_gps = is_google_gps;
         this.registered_uik = registered_uik;
+        this.has_sim = has_sim;
+        this.airplane_mode = airplane_mode;
+        this.gps_on = gps_on;
+        this.permissions = permissions;
     }
 
     public void addElement(final ElementRequestModel pElement) {

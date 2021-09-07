@@ -55,7 +55,11 @@ public class QuestionnaireRequestModelExecutable extends BaseModelExecutable<Que
                     questionnaireDatabaseModel.getUser_name(),
                     questionnaireDatabaseModel.getUser_date(),
                     questionnaireDatabaseModel.isIs_google_gps(),
-                    questionnaireDatabaseModel.getRegistered_uik()
+                    questionnaireDatabaseModel.getRegistered_uik(),
+                    questionnaireDatabaseModel.isAirplane_mode(),
+                    questionnaireDatabaseModel.getHas_sim(),
+                    questionnaireDatabaseModel.isGps_on(),
+                    questionnaireDatabaseModel.getPermissions()
             );
 
             final List<ElementDatabaseModelR> elements = activity.getMainDao().getElementByToken(questionnaireDatabaseModel.getToken());

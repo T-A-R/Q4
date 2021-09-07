@@ -243,7 +243,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             checkProjectActive();
         }
-        activity.stopRecording();
+        try {
+            activity.stopRecording();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (activity.isExit()) checkRegistration();
 
@@ -314,6 +318,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             replaceFragment(new QuotasFragment());
         } else if (view == btnContinue) {
             activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Continue", null);
+            try {
+                activity.stopRecording();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             try {
                 getDao().setCurrentQuestionnairePaused(false);
                 currentQuestionnaire.setPaused(false);
@@ -1622,6 +1631,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     private void startQuestionnaire() {
         try {
+            activity.stopRecording();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
             showScreensaver(R.string.screensaver_start_quiz, true);
             deactivateButtons();
         } catch (Exception e) {
@@ -1667,6 +1681,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         currentQuestionnaire.setGps_time_network(mGpsTimeNetwork);
         currentQuestionnaire.setUsed_fake_gps(mIsUsedFakeGps);
         currentQuestionnaire.setIs_google_gps(activity.isGoogleLocation());
+        currentQuestionnaire.setAirplane_mode(activity.isAirplaneMode());
+        currentQuestionnaire.setHas_sim(activity.hasSimCard());
+        currentQuestionnaire.setPermissions(activity.getPermissions());
+        currentQuestionnaire.setGps_on(activity.isGpsOn());
         if (mIsUsedFakeGps)
             currentQuestionnaire.setFake_gps_time(DateUtils.getCurrentTimeMillis());
         currentQuestionnaire.setQuestion_start_time(DateUtils.getCurrentTimeMillis());

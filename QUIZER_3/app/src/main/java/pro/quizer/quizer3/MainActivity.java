@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -37,6 +38,7 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -106,6 +108,7 @@ import pro.quizer.quizer3.view.fragment.SmartFragment;
 import pro.quizer.quizer3.view.fragment.SmsFragment;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.CALL_PHONE;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.READ_PHONE_STATE;
@@ -1524,53 +1527,95 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         }
     }
 
-    boolean isAirplaneMode() {
+    public boolean isAirplaneMode() {
         return Settings.System.getInt(getContentResolver(),
                 Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
     }
 
-    public void checkSettingsAndStartLocationUpdates(boolean isForceGps, SmartFragment.Events listener) {
+    public Boolean hasSimCard() {
+        TelephonyManager telMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            try {
+                int simStateMain = telMgr.getSimState(0);
+                int simStateSecond = telMgr.getSimState(1);
+                return simStateMain == TelephonyManager.SIM_STATE_READY || simStateSecond == TelephonyManager.SIM_STATE_READY;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return telMgr.getSimState() == TelephonyManager.SIM_STATE_READY;
+            }
+        } else  {
+            int simState = telMgr.getSimState();
+            return simState == TelephonyManager.SIM_STATE_READY;
+        }
+    }
 
-//        showToastfromActivity("Step: 1");
+    public String getPermissions() {
+        final int call = ContextCompat.checkSelfPermission(getApplicationContext(), CALL_PHONE);
+        final int location = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
+        final int camera = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
+        final int audio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
+        final int sms = ContextCompat.checkSelfPermission(getApplicationContext(), SEND_SMS);
+        final int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+        final int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+        final int phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_STATE);
+
+        StringBuilder permissions = new StringBuilder();
+        permissions.append("ACCESS_FINE_LOCATION: ");
+        permissions.append(location == PackageManager.PERMISSION_GRANTED);
+        permissions.append("; ");
+
+        permissions.append("CAMERA: ");
+        permissions.append(camera == PackageManager.PERMISSION_GRANTED);
+        permissions.append("; ");
+
+        permissions.append("RECORD_AUDIO: ");
+        permissions.append(audio == PackageManager.PERMISSION_GRANTED);
+        permissions.append("; ");
+
+        permissions.append("SEND_SMS: ");
+        permissions.append(sms == PackageManager.PERMISSION_GRANTED);
+        permissions.append("; ");
+
+        permissions.append("WRITE_EXTERNAL_STORAGE: ");
+        permissions.append(writeStorage == PackageManager.PERMISSION_GRANTED);
+        permissions.append("; ");
+
+        permissions.append("READ_EXTERNAL_STORAGE: ");
+        permissions.append(readStorage == PackageManager.PERMISSION_GRANTED);
+        permissions.append("; ");
+
+        permissions.append("READ_PHONE_STATE: ");
+        permissions.append(phoneState == PackageManager.PERMISSION_GRANTED);
+        permissions.append("; ");
+
+        return permissions.toString();
+    }
+
+    public boolean isGpsOn() {
+        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+        return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    public void checkSettingsAndStartLocationUpdates(boolean isForceGps, SmartFragment.Events listener) {
 
         LocationSettingsRequest request = new LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest).build();
         SettingsClient client = LocationServices.getSettingsClient(this);
-
-//        showToastfromActivity("Step: 2");
-
         Task<LocationSettingsResponse> locationSettingsResponseTask = client.checkLocationSettings(request);
-
-//        showToastfromActivity("Step: 3");
-
         locationSettingsResponseTask.addOnSuccessListener(locationSettingsResponse -> {
             isGotAnswerFromGPS = true;
-//            showToastfromActivity("Step: 4");
             startLocationUpdated();
-//            showToastfromActivity("Step: 5");
             listener.runEvent(12);
         });
-
-//        showToastfromActivity("Step: 6");
-
         locationSettingsResponseTask.addOnFailureListener(e -> {
             isGotAnswerFromGPS = true;
-//            showToastfromActivity("Step: 7");
             e.printStackTrace();
             int statusCode = ((ApiException) e).getStatusCode();
 
             Log.d("T-L.MainActivity", "checkSettingsAndStartLocationUpdates CODE: " + getLocationMode());
             if (isAirplaneMode()) {
-//                showToastfromActivity("Step: 8");
                 listener.runEvent(10);
             } else {
-//                showToastfromActivity("Step: 9");
-//                try {
-//                    showToastfromActivity("GPS code: " + getLocationMode() + "/" + statusCode + " " + e.getMessage());
-//                } catch (Exception exception) {
-//                    exception.printStackTrace();
-////                    showToastfromActivity("GPS get code error: " + exception.getMessage());
-//                }
                 switch (getLocationMode()) {
                     case -1:
                         showToastfromActivity("Ошибка определения режима геолокации");
@@ -1597,7 +1642,6 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             @Override
             public void run() {
                 if (!isGotAnswerFromGPS) {
-//                    showToastfromActivity("RUN!");
                     listener.runEvent(15);
                 }
             }

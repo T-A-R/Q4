@@ -1604,6 +1604,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void start() {
+        boolean mCheckGps = checkGps();
         new Thread(() -> {
             if (!isTimeToDownloadConfig) {
                 checkConfigUpdateDate();
@@ -1619,7 +1620,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 reloadConfig();
             } else if (currentQuestionnaire == null && !isNeedUpdate) {
                 activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. Without delete old", null);
-                if (checkTime() && (canContWithZeroGps || checkGps()) && checkMemory()) {
+                if (checkTime() && (canContWithZeroGps || mCheckGps) && checkMemory()) {
                     startQuestionnaire();
                 }
             } else {

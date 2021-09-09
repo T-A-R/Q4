@@ -347,6 +347,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             saveCurrentUserId(pAuthResponseModel.getUserId());
         } catch (final Exception e) {
             showToast(getString(R.string.server_response_error) + "\n" + e);
+            e.printStackTrace();
             return;
         }
 
@@ -475,6 +476,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             } else {
                 try {
                     showToast(getString(R.string.server_response_error) + " " + configResponseModel.getError());
+                    Log.d("T-L.AuthFragment", "downloadConfig ERROR: " + configResponseModel.getError());
                 } catch (Exception e) {
                     e.printStackTrace();
                     showToast(getString(R.string.server_response_error));

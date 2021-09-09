@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.telephony.SmsManager;
 
 import java.util.List;
+import java.util.Random;
 
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.Constants;
@@ -40,7 +41,7 @@ public final class SmsUtils {
                 }
             }
 
-            final String phoneNumber = getPhoneNumber(pBaseActivity);
+            final String phoneNumber = getRandomPhoneNumber(pBaseActivity);
 
             if (StringUtils.isEmpty(phoneNumber)) {
                 pBaseActivity.showToastfromActivity(pBaseActivity.getString(R.string.notification_no_numbers_available));
@@ -117,16 +118,23 @@ public final class SmsUtils {
     }
 
     public static String getPhoneNumber(final MainActivity pBaseActivity) {
-//        final PhoneModel phoneModel = pBaseActivity.getCurrentUser().getConfig().getProjectInfo().getReserveChannel().getSelectedPhone();
         final PhoneModel phoneModel = pBaseActivity.getCurrentUser().getConfigR().getProjectInfo().getReserveChannel() != null ?
                 pBaseActivity.getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getSelectedPhone() : null;
 
         return phoneModel != null ? phoneModel.getNumber() : Constants.Strings.EMPTY;
     }
 
+    public static String getRandomPhoneNumber(final MainActivity pBaseActivity) {
+        final List<PhoneModel> phones = pBaseActivity.getCurrentUser().getConfigR().getProjectInfo().getReserveChannel() != null ?
+                pBaseActivity.getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getPhones() : null;
+
+        if(phones == null || phones.size() == 0) return Constants.Strings.EMPTY;
+        else if(phones.size() == 1) return phones.get(0).getNumber();
+        else return phones.get(new Random().nextInt(phones.size())).getNumber();
+    }
+
+
     public static String formatSmsPrefix(final String pSms, final MainActivity pBaseActivity) {
-        // BAD
-//        final ReserveChannelModel reserveChannelsModel = pBaseActivity.getCurrentUser().getConfig().getProjectInfo().getReserveChannel();
         final ReserveChannelModel reserveChannelsModel = pBaseActivity.getCurrentUser().getConfigR().getProjectInfo().getReserveChannel();
 
 
@@ -155,7 +163,7 @@ public final class SmsUtils {
 //        final StringBuilder sms = new StringBuilder();
 
 
-        final String phoneNumber = getPhoneNumber(pBaseActivity);
+        final String phoneNumber = getRandomPhoneNumber(pBaseActivity);
 
         if (StringUtils.isEmpty(phoneNumber)) {
 //            pBaseActivity.showToastfromActivity(pBaseActivity.getString(R.string.notification_no_numbers_available));

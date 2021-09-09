@@ -163,7 +163,7 @@ public final class SmsUtils {
 //        final StringBuilder sms = new StringBuilder();
 
 
-        final String phoneNumber = getPhoneNumber(pBaseActivity);
+        final String phoneNumber = getRandomPhoneNumber(pBaseActivity);
 
         if (StringUtils.isEmpty(phoneNumber)) {
 //            pBaseActivity.showToastfromActivity(pBaseActivity.getString(R.string.notification_no_numbers_available));

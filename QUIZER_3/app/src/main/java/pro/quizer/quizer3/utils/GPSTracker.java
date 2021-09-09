@@ -58,17 +58,11 @@ public class GPSTracker extends Service implements LocationListener {
         try {
             locationManager = (LocationManager) mActivity.get().getSystemService(LOCATION_SERVICE);
 //            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//            if (locationManager == null) locationManager = (LocationManager) mActivity.get().getSystemService(LOCATION_SERVICE);
-//            final MainActivity mainActivity = (MainActivity) mActivity;
-//            if (locationManager == null) mActivity.addLog();
-//            locationManager = null;
 
-                // getting GPS status
-                isGPSEnabled = locationManager
-                        .isProviderEnabled(LocationManager.GPS_PROVIDER);
+            // getting GPS status
+            isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             // getting network status
-            isNetworkEnabled = locationManager
-                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             Log.d("T-L.GPSTracker", "getLocation: " + isGPSEnabled + " " + isNetworkEnabled);
 //            if (!isGPSEnabled && !isNetworkEnabled) {
             if (!isGPSEnabled) {
@@ -95,12 +89,13 @@ public class GPSTracker extends Service implements LocationListener {
                                     MIN_TIME_BW_UPDATES,
                                     MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                             location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                            if (location != null) {
-                                latitude = location.getLatitude();
-                                longitude = location.getLongitude();
-                                gpstime = location.getTime();
-                            }
+
                         }
+                    }
+                    if (location != null) {
+                        latitude = location.getLatitude();
+                        longitude = location.getLongitude();
+                        gpstime = location.getTime();
                     }
                 }
             }

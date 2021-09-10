@@ -62,6 +62,7 @@ import pro.quizer.quizer3.executable.SyncInfoExecutable;
 import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
+import pro.quizer.quizer3.model.config.ActiveRegistrationData;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.ProjectInfoModel;
 import pro.quizer.quizer3.model.config.PeriodModel;
@@ -1491,48 +1492,61 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     private void checkRegistration() {
         if (getCurrentUser().getConfigR().has_registration()) {
+            boolean isPeriodFound = false;
             long currentTime = DateUtils.getCurrentTimeMillis();
+            ConfigModel configModel = activity.getConfig();
             RegistrationR reg = getDao().getRegistrationR(getCurrentUserId());
-            if (reg == null || !reg.isAccepted()) {
-                btnStart.setText("Регистрация");
-                UiUtils.setButtonEnabled(btnStart, false);
-                isRegistrationRequired = true;
-            }
-            if(reg != null && reg.isCode()) {
-                btnStart.setText("Ввести код");
-                isCodeRequired = true;
-            }
+            ActiveRegistrationData handReg = configModel.getUserSettings() != null ? configModel.getUserSettings().getActive_registration_data() : null;
 
-            List<PeriodModel> periods = activity.getConfig().getRegistrationPeriods();
+            if(reg == null) Log.d("T-L.HomeFragment", "checkRegistration: NO HAVE SAVES REG");
+            else if(!reg.isAccepted()) Log.d("T-L.HomeFragment", "checkRegistration: REG NOT ACCEPTED");
+
+            btnStart.setText("Регистрация");
+            UiUtils.setButtonEnabled(btnStart, false);
+            isRegistrationRequired = true;
+
+            List<PeriodModel> periods = configModel.getRegistrationPeriods();
             if (periods != null && periods.size() > 0) {
                 for (PeriodModel period : periods) {
-                    if (reg != null && (reg.isAccepted() || reg.isCode())) {
-                        Long regTime = reg.getReg_time();
-                        if (regTime < period.getStart() && regTime > period.getEnd()) {
+                    if(currentTime > period.getStart() && currentTime < period.getEnd()) {
+                        isPeriodFound = true;
+                        if(handReg != null && handReg.getReg_time() > period.getStart() && handReg.getReg_time() < period.getEnd()) {
                             getDao().clearRegistrationRByUser(getCurrentUserId());
-                            btnStart.setText("Регистрация");
-                            UiUtils.setButtonEnabled(btnStart, false);
-                            isRegistrationRequired = true;
-                            return;
+                            RegistrationR registrationR = new RegistrationR();
+                            registrationR.setUik_number(configModel.getUserSettings().getActive_registration_data().getUik_number());
+                            registrationR.setReg_time(handReg.getReg_time());
+                            registrationR.setUser_id(getCurrentUserId());
+                            registrationR.setStatus(Constants.Registration.SENT);
+                            getDao().insertRegistrationR(registrationR);
+                            btnStart.setText("Начать");
+                            isRegistrationRequired = false;
+                            Log.d("T-L.HomeFragment", "checkRegistration: HAND REG FOUND");
+                            break;
+                        } else if (reg != null) {
+                            if(reg.getReg_time() > period.getStart() && reg.getReg_time() < period.getEnd()) {
+                                if(reg.isCode()) {
+                                    btnStart.setText("Ввести код");
+                                    UiUtils.setButtonEnabled(btnStart, true);
+                                    isCodeRequired = true;
+                                    Log.d("T-L.HomeFragment", "checkRegistration: WAITING CODE");
+                                } else if(reg.isAccepted()) {
+                                    btnStart.setText("Начать");
+                                    isRegistrationRequired = false;
+                                    Log.d("T-L.HomeFragment", "checkRegistration: REG ACCEPTED");
+                                }
+                            } else {
+                                getDao().clearRegistrationRByUser(getCurrentUserId());
+                            }
                         }
                     }
 
-                    if (currentTime > period.getStart()) {
-                        if (currentTime < period.getEnd()) {
-                            UiUtils.setButtonEnabled(btnStart, true);
-                            break;
-                        }
-                    }
+                    if(isPeriodFound) break;
                 }
             }
             checkRegForSend();
-            if (DEBUG_MODE) {
-                UiUtils.setButtonEnabled(btnStart, true);
-            }
-            if (reg != null && reg.isAccepted()) {
-                Gson gson = new Gson();
-                String json = gson.toJson(activity.getConfig());
-                List<PeriodModel> workPeriods = activity.getConfig().getWork_periods();
+
+            if (!isRegistrationRequired) {
+                List<PeriodModel> workPeriods = configModel.getWork_periods();
                 boolean inTime = false;
                 if (workPeriods != null)
                     for (PeriodModel period : workPeriods) {
@@ -1540,7 +1554,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         if (inTime) break;
                     }
                 UiUtils.setButtonEnabled(btnStart, inTime);
+            } else {
+                Log.d("T-L.HomeFragment", "checkRegistration: NEED REG");
             }
+            if (DEBUG_MODE) {
+                UiUtils.setButtonEnabled(btnStart, true);
+            }
+        } else {
+            Log.d("T-L.HomeFragment", "checkRegistration: NO NEED TO REG ");
         }
     }
 

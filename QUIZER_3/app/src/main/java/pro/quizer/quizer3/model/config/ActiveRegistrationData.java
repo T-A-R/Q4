@@ -5,52 +5,30 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
-public class UserSettings implements Serializable {
+public class ActiveRegistrationData implements Serializable {
 
-    @SerializedName("number")
-    private Integer user_id;
+    @SerializedName("reg_time")
+    private Long reg_time;
 
-    @SerializedName("allowed_uiks")
-    private List<String> allowed_uiks;
+    @SerializedName("uik_number")
+    private String uik_number;
 
-    @SerializedName("work_start")
-    private Long work_start;
-
-    @SerializedName("work_end")
-    private Long work_end;
-
-    public UserSettings() {
+    public ActiveRegistrationData() {
     }
 
-    public Integer getUser_id() {
-        return user_id;
+    public Long getReg_time() {
+        return reg_time;
     }
 
-    public void setUser_id(Integer user_id) {
-        this.user_id = user_id;
+    public void setReg_time(Long reg_time) {
+        this.reg_time = reg_time;
     }
 
-    public List<String> getAllowed_uiks() {
-        return allowed_uiks;
+    public String getUik_number() {
+        return uik_number;
     }
 
-    public void setAllowed_uiks(List<String> allowed_uiks) {
-        this.allowed_uiks = allowed_uiks;
-    }
-
-    public Long getWork_start() {
-        return work_start;
-    }
-
-    public void setWork_start(Long work_start) {
-        this.work_start = work_start;
-    }
-
-    public Long getWork_end() {
-        return work_end;
-    }
-
-    public void setWork_end(Long work_end) {
-        this.work_end = work_end;
+    public void setUik_number(String uik_number) {
+        this.uik_number = uik_number;
     }
 }

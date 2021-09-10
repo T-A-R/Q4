@@ -62,6 +62,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
     private List<String> uikList;
     private Long mTimeToken;
     private String mCode;
+    private boolean hasReserveChannel = false;
 
     public Reg3Fragment() {
         super(R.layout.fragment_reg3_auto);
@@ -91,16 +92,18 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
             showToast("Нет разрешенных UIK.\nРегистрация невозможна.");
             uikList = new ArrayList<>();
         }
-
-//        testUiks();
-
-//        sendRegSms();
-
         MainFragment.disableSideMenu();
-        if (!checkPhoneNumber()) {
-            showEditPhoneView();
+
+        if(getMainActivity().hasReserveChannel()) {
+            if (!checkPhoneNumber()) {
+                showEditPhoneView();
+            } else {
+                showDetectedPhoneView();
+            }
         } else {
-            showDetectedPhoneView();
+            detectedPhoneCont.setVisibility(View.GONE);
+            inputPhone.setVisibility(View.GONE);
+            phoneLabel.setVisibility(View.GONE);
         }
 
         btnNext.setOnClickListener(this);
@@ -413,7 +416,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
         } else {
             if (getMainActivity() != null)
                 getMainActivity().runOnUiThread(() -> UiUtils.setButtonEnabled(btnNext, true));
-            if (registration.getPhone() == null || registration.getPhone().length() < 7) {
+            if (getMainActivity().hasReserveChannel() && (registration.getPhone() == null || registration.getPhone().length() < 7)) {
                 try {
                     showToast("Введите номер телефона");
                 } catch (Exception e) {

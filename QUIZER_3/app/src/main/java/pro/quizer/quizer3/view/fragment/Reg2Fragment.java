@@ -185,9 +185,11 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
     private void capturePhoto() {
         if (!hasPhoto) {
             if (camera != null) {
-                camera.startFaceDetection();
-//                Camera.Parameters parameters = camera.getParameters();
-//                parameters.ro
+                try {
+                    camera.startFaceDetection();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 camera.takePicture(null, null, mPictureCallback);
             }
         } else {

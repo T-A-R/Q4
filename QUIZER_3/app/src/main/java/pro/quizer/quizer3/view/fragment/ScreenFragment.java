@@ -3,6 +3,7 @@ package pro.quizer.quizer3.view.fragment;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -84,7 +85,8 @@ public abstract class ScreenFragment extends SmartFragment {
         try {
             String title = getResources().getString(titleId);
             Log.d("T-L.ScreenFragment", "showScreensaver: " + title);
-            main.showScreensaver(title, full);
+            if (main != null)
+                main.showScreensaver(title, full);
         } catch (Resources.NotFoundException e) {
             e.printStackTrace();
         }
@@ -211,7 +213,7 @@ public abstract class ScreenFragment extends SmartFragment {
     }
 
     public void setViewBackground(View view, boolean visible, boolean border) {
-        if(isAvia()) {
+        if (isAvia()) {
             try {
                 if (visible) {
                     view.setEnabled(true);

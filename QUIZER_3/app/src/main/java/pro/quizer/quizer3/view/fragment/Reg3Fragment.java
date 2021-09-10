@@ -218,7 +218,11 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                 if (!cs.toString().equals(phoneFormatter.getPhone())) {
                     phoneFormatter.onTextChanged(cs.toString(), cursorPosition, before, count);
                     inputPhone.setText(phoneFormatter.getPhone());
-                    inputPhone.setSelection(phoneFormatter.getSelection());
+                    try {
+                        inputPhone.setSelection(phoneFormatter.getSelection());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 

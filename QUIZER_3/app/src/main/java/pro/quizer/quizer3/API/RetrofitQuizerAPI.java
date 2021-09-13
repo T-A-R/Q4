@@ -12,6 +12,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -44,6 +45,7 @@ public interface RetrofitQuizerAPI {
     Call<ResponseBody> getStatistics(@Url String apiname, @FieldMap Map<String, String> fields);
 
     @Multipart
+    @Headers("Accept: application/json")
     @POST()
     Call<ResponseBody> sendFiles(
             @Url String apiname,

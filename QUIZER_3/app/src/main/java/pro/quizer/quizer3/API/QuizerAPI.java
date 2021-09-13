@@ -1,6 +1,7 @@
 package pro.quizer.quizer3.API;
 
 import androidx.annotation.NonNull;
+
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -257,7 +258,6 @@ public class QuizerAPI {
 
     /**
      * Отправка crash-логов.
-     *
      */
 
     static public void sendCrash(String url, String json, final SendCrashCallback listener) {
@@ -290,7 +290,6 @@ public class QuizerAPI {
 
     /**
      * Отправка логов.
-     *
      */
 
     static public void sendLogs(String url, String json, final SendLogsCallback listener) {
@@ -373,12 +372,23 @@ public class QuizerAPI {
         CoreApplication.getQuizerApi().sendFiles(url, description, parts).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                Log.d(TAG, "QuizerAPI.sendFiles.onResponse() Code: " + response.code()  + " Message: " + response.message());
+                Log.d(TAG, "QuizerAPI.sendFiles.onResponse() Code: " + response.code() + " Message: " + response.message());
 //                if(response.headers().get("X-QProject") != null) {
-                if(response.code() == 202) {
+                if (response.code() == 202) {
                     listener.onSendRegCallback(response.body(), id);
-                } else
+                } else {
+                    try {
+                        if (response.body() != null) {
+                            Log.d("T-L.QuizerAPI", "onResponse SERVER ERROR: " + response.body().string());
+                        }
+                        if (response.errorBody() != null)
+                            Log.d("T-L.QuizerAPI", "onResponse SERVER ERROR: " + response.errorBody().string());
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     listener.onSendRegCallback(null, id);
+                }
             }
 
             @Override

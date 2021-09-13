@@ -1500,7 +1500,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             ActiveRegistrationData handReg = configModel.getUserSettings() != null ? configModel.getUserSettings().getActive_registration_data() : null;
 
             if(reg == null) Log.d("T-L.HomeFragment", "checkRegistration: NO HAVE SAVES REG");
-            else if(!reg.isAccepted()) Log.d("T-L.HomeFragment", "checkRegistration: REG NOT ACCEPTED");
+            else {
+                if(!reg.isAccepted()) Log.d("T-L.HomeFragment", "checkRegistration: REG NOT ACCEPTED / STATUS: " + reg.getStatus());
+                Log.d("T-L.HomeFragment", "checkRegistration: ALL REGS: " + getDao().getAllRegistrationR().size());
+            }
 
             btnStart.setText("Регистрация");
             UiUtils.setButtonEnabled(btnStart, false);
@@ -1511,6 +1514,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 for (PeriodModel period : periods) {
                     if(currentTime > period.getStart() && currentTime < period.getEnd()) {
                         isPeriodFound = true;
+                        Log.d("T-L.HomeFragment", "checkRegistration: PERIOD FOUND");
                         if(handReg != null && handReg.getReg_time() > period.getStart() && handReg.getReg_time() < period.getEnd()) {
                             getDao().clearRegistrationRByUser(getCurrentUserId());
                             RegistrationR registrationR = new RegistrationR();
@@ -1537,12 +1541,20 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                 }
                             } else {
                                 getDao().clearRegistrationRByUser(getCurrentUserId());
+                                UiUtils.setButtonEnabled(btnStart, true);
                             }
+                        } else {
+                            UiUtils.setButtonEnabled(btnStart, true);
                         }
                     }
 
                     if(isPeriodFound) break;
                 }
+            }
+
+            if(isRegistrationRequired && !activity.hasReserveChannel() && reg != null) {
+                getDao().clearRegistrationRByUser(getCurrentUserId());
+                UiUtils.setButtonEnabled(btnStart, true);
             }
             checkRegForSend();
 

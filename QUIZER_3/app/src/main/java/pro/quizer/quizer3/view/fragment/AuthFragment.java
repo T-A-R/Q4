@@ -452,6 +452,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             final GsonBuilder gsonBuilder = new GsonBuilder();
             ConfigResponseModel configResponseModel = null;
 
+
             try {
                 configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
             } catch (final Exception pE) {

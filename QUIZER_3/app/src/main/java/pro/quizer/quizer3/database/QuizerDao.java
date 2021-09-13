@@ -439,6 +439,9 @@ public interface QuizerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertRegistrationR(RegistrationR registrationR);
 
+    @Query("SELECT * FROM RegistrationR")
+    List<RegistrationR> getAllRegistrationR();
+
     @Query("SELECT * FROM RegistrationR WHERE user_id =:userId ORDER BY id DESC LIMIT 1")
     RegistrationR getRegistrationR(Integer userId);
 

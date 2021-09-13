@@ -62,6 +62,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
     private List<String> uikList;
     private Long mTimeToken;
     private String mCode;
+    private String mRegId;
     private boolean hasReserveChannel = false;
 
     public Reg3Fragment() {
@@ -150,13 +151,15 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
     public void onClick(View view) {
         if (view == btnNext) {
             String mUik = uik.getText().toString();
-            String mPhone;
-            if (mPhoneNumber == null || mPhoneNumber.equals("") || mPhoneNumber.equals("7")) {
-                mPhone = "7" + phoneFormatter.cleaned(inputPhone.getText().toString());
-                mPhoneNumber = mPhone;
-            } else mPhone = mPhoneNumber;
+            String mPhone = "";
+            if(getMainActivity().hasReserveChannel()) {
+                if (mPhoneNumber == null || mPhoneNumber.equals("") || mPhoneNumber.equals("7")) {
+                    mPhone = "7" + phoneFormatter.cleaned(inputPhone.getText().toString());
+                    mPhoneNumber = mPhone;
+                } else mPhone = mPhoneNumber;
+            }
 
-            if (mPhone.length() == 11) {
+            if (!getMainActivity().hasReserveChannel() || mPhone.length() == 11) {
                 if (isUikValid) {
                     getGps();
                     if (gps == null) {
@@ -403,6 +406,8 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                 && getMainActivity().getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getSelectedPhone() != null
                 && registration.getPhone() != null && registration.getPhone().length() > 6) {
 
+            Log.d("T-L.Reg3Fragment", "sendRegSms: ==================================== 0");
+
             // r {admin_key}:[{user_id} {uik_number} {gps} {gps_network} {reg_time} {phone}] - в квадратных скобках шифрованное
 
             int number1 = registration.getUser_id(); // user_id
@@ -421,12 +426,15 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
             if (getMainActivity() != null)
                 getMainActivity().runOnUiThread(() -> UiUtils.setButtonEnabled(btnNext, true));
             if (getMainActivity().hasReserveChannel() && (registration.getPhone() == null || registration.getPhone().length() < 7)) {
+                Log.d("T-L.Reg3Fragment", "sendRegSms: ==================================== 1");
                 try {
                     showToast("Введите номер телефона");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else {
+                Log.d("T-L.Reg3Fragment", "sendRegSms: ==================================== 2");
+                Log.d("T-L.Reg3Fragment", "sendRegSms ID: " + mRegId);
                 replaceFragment(new HomeFragment());
             }
         }
@@ -467,7 +475,8 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
 
         try {
             if (Internet.hasConnection(getMainActivity()) && url != null) {
-                Log.d("T-L.Reg3Fragment", "Отправка регистрации...");
+                registration = getDao().getRegistrationR(getCurrentUserId());
+                Log.d("T-L.Reg3Fragment", "Отправка регистрации... ID=" + registration.getId());
                 QuizerAPI.sendReg(url, photos, new RegistrationRequestModel(
                         getDao().getKey(),
                         registration.getUser_id(),
@@ -504,6 +513,12 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
             if (id != null) {
 //                showToast("Регистрация успешна");
                 getDao().setRegStatus(id, Constants.Registration.SENT);
+                mRegId = String.valueOf(id);
+                try {
+                    Log.d("T-L.Reg3Fragment", "onSendRegCallback ID: " + + getDao().getAllRegistrationR().get(0).getId() + " / " + getDao().getAllRegistrationR().get(0).getStatus());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 //                replaceFragment(new HomeFragment());
                 sendRegSms();
             }

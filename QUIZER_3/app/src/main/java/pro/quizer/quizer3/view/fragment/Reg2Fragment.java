@@ -26,6 +26,7 @@ import com.squareup.picasso.Picasso;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
+import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.camera.ShowCamera;
 import pro.quizer.quizer3.database.models.UserModelR;
@@ -42,7 +43,7 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
     private boolean wasInit = false;
     private Long mTimeToken = null;
 
-    Camera camera;
+    static Camera camera = null;
     ShowCamera showCamera;
     FrameLayout cameraCont;
 
@@ -68,9 +69,26 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
         btnPhoto.startAnimation(Anim.getAppearSlide(getContext(), 500));
         btnNext.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
-        camera = Camera.open(1);
-        showCamera = new ShowCamera(getMainActivity(), camera);
-        cameraCont.addView(showCamera);
+        if (camera != null) {
+            camera.release();
+        }
+        try {
+            camera = Camera.open(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+//            camera.unlock();
+            try {
+                camera = Camera.open();
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        }
+        if (camera != null) {
+            showCamera = new ShowCamera(getMainActivity(), camera);
+            cameraCont.addView(showCamera);
+        } else {
+            UiUtils.setButtonEnabled(btnNext, true);
+        }
         deleteRecursive(new File(FileUtils.getRegStoragePath(getMainActivity()) + FileUtils.FOLDER_DIVIDER + getCurrentUserId()));
     }
 
@@ -82,8 +100,12 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
             UiUtils.setButtonEnabled(btnNext, false);
             UiUtils.setButtonEnabled(btnPhoto, false);
             if (camera != null) {
-                camera.stopPreview();
-                camera.release();
+                try {
+                    camera.stopPreview(); //TODO TRY CATCH
+                    camera.release();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             ScreenFragment reg3 = new Reg3Fragment();
             Bundle bundle = new Bundle();
@@ -150,10 +172,10 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
             Bitmap rotatedBitmap;
 
 //            if (mCameraConfig.getImageRotation() != CameraRotation.ROTATION_0) {
-                rotatedBitmap = flip(HiddenCameraUtils.rotateBitmap(bitmap, mCameraConfig.getImageRotation()));
+            rotatedBitmap = flip(HiddenCameraUtils.rotateBitmap(bitmap, mCameraConfig.getImageRotation()));
 
-                //noinspection UnusedAssignment
-                bitmap = null;
+            //noinspection UnusedAssignment
+            bitmap = null;
 //            } else {
 //                rotatedBitmap = bitmap;
 //            }
@@ -162,7 +184,7 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
             if (HiddenCameraUtils.saveImageFromFile(rotatedBitmap,
                     mCameraConfig.getImageFile(),
                     mCameraConfig.getImageFormat())) {
-                showToast(getString(R.string.captured));
+                showToast("Снимок сделан.");
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
@@ -171,13 +193,20 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
                         UiUtils.setButtonEnabled(btnNext, true);
                         cameraCont.setVisibility(View.GONE);
                         photoView.setVisibility(View.VISIBLE);
-                        Picasso.with(getMainActivity())
-                                .load(getImageUri(rotatedBitmap))
-                                .into(photoView);
+                        Uri uri = null;
+                        if (rotatedBitmap != null) uri = getImageUri(rotatedBitmap);
+                        else
+                            getMainActivity().addLog(Constants.LogObject.UI, Constants.LogType.FILE, Constants.LogResult.ERROR, "Take photo error", "rotatedBitmap = null");
+                        if (uri != null)
+                            Picasso.with(getMainActivity())
+                                    .load(getImageUri(rotatedBitmap))
+                                    .into(photoView);
+                        else
+                            getMainActivity().addLog(Constants.LogObject.UI, Constants.LogType.FILE, Constants.LogResult.ERROR, "Take photo error", "URI = null");
                     }
                 });
             } else {
-                new Handler(Looper.getMainLooper()).post(() -> showToast(getString(R.string.save_photo_error)));
+                new Handler(Looper.getMainLooper()).post(() -> showToast(getMainActivity().getString(R.string.save_photo_error)));
             }
         }).start();
     };
@@ -185,12 +214,28 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
     private void capturePhoto() {
         if (!hasPhoto) {
             if (camera != null) {
+                boolean isSafeToTakePic = false;
                 try {
-                    camera.startFaceDetection();
+                    camera.startPreview();
+                    isSafeToTakePic = true;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                camera.takePicture(null, null, mPictureCallback);
+                if (isSafeToTakePic) {
+                    try {
+                        camera.startFaceDetection();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        camera.takePicture(null, null, mPictureCallback);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        UiUtils.setButtonEnabled(btnNext, true);
+                    }
+                } else {
+                    UiUtils.setButtonEnabled(btnNext, true);
+                }
             }
         } else {
             photoView.setVisibility(View.GONE);
@@ -214,7 +259,15 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(getMainActivity().getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
+        Uri uri = null;
+        if (path != null)
+            try {
+                uri = Uri.parse(path);
+            } catch (Exception e) {
+                e.printStackTrace();
+                getMainActivity().addLog(Constants.LogObject.UI, Constants.LogType.FILE, Constants.LogResult.ERROR, "Take photo error", e.getMessage());
+            }
+        return uri;
     }
 
     private void deleteRecursive(File fileOrDirectory) {

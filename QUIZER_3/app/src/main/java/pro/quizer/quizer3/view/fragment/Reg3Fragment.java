@@ -286,7 +286,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
             if (uikList == null || uikList.size() == 0) return false;
             if (uikList.contains(text)) return true;
             else {
-                showToast(getString(R.string.wrong_uik));
+                showToast(getMainActivity().getString(R.string.wrong_uik));
                 return false;
             }
         } else {
@@ -379,7 +379,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                 }
             });
         } else {
-            showToast(getString(R.string.cant_reg_coz_no_internet));
+            showToast(getMainActivity().getString(R.string.cant_reg_coz_no_internet));
             UiUtils.setButtonEnabled(btnNext, true);
         }
     }
@@ -468,7 +468,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
         Log.d("T-L.Reg3Fragment", "====: 1");
         if (photos == null || photos.isEmpty()) {
             Log.d("T-L.Reg3Fragment", "====: 2");
-            showToast(getString(R.string.no_reg_photo));
+            showToast(getMainActivity().getString(R.string.no_reg_photo));
             return;
         }
         Log.d("T-L.Reg3Fragment", "====: 3");

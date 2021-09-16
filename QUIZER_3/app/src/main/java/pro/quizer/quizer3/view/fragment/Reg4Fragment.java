@@ -90,7 +90,8 @@ public class Reg4Fragment extends ScreenFragment implements View.OnClickListener
 
     private void getCode() {
         ConfigModel config = getMainActivity().getConfig();
-        mCode = config.getProjectInfo().getProjectId() + " " + config.getUserProjectId() + " " + DateUtils.getCurrentDateOfMonth();
+        // user_project_id изменено на user_id по просьбе Zverev Alexandr 16/09/2021
+        mCode = config.getProjectInfo().getProjectId() + " " + getCurrentUserId() + " " + DateUtils.getCurrentDateOfMonth();
         if(DEBUG_MODE) showToast(mCode);
     }
 

@@ -89,6 +89,7 @@ public final class Constants {
         String FILE = "file";
         String DIALOG = "dialog";
         String AUDIO = "dialog";
+        String SETTINGS = "settings";
     }
 
     public interface LogObject {
@@ -102,6 +103,7 @@ public final class Constants {
         String SMS = "sms";
         String LOG = "log";
         String WARNINGS = "warnings";
+        String UI = "ui";
         String AUDIO = "audio";
     }
 

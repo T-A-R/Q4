@@ -105,7 +105,7 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
         mDetailsBtn = findViewById(R.id.details_quotas);
         mQuotasRecyclerView = findViewById(R.id.quotas_recycler_view);
 
-        mToolbar.setTitle(getString(R.string.quotas_screen));
+        mToolbar.setTitle(mMainActivity.getString(R.string.quotas_screen));
         mToolbar.showCloseView(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -146,10 +146,10 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
 
                 if (isDetailedView) {
                     isDetailedView = false;
-                    mDetailsBtn.setText(getString(R.string.view_button_show_details));
+                    mDetailsBtn.setText(mMainActivity.getString(R.string.view_button_show_details));
                 } else {
                     isDetailedView = true;
-                    mDetailsBtn.setText(getString(R.string.view_button_hide_details));
+                    mDetailsBtn.setText(mMainActivity.getString(R.string.view_button_hide_details));
                 }
                 if (mAdapter != null)
                     mAdapter.onClickDetails(isDetailedView);
@@ -190,9 +190,9 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
 
                 if (quotas == null || quotas.isEmpty()) {
                     if (StringUtils.isNotEmpty(pQuotasViewModel.getQuery())) {
-                        showEmptyView(getString(R.string.view_no_quotas_by_query));
+                        showEmptyView(mMainActivity.getString(R.string.view_no_quotas_by_query));
                     } else {
-                        showEmptyView(getString(R.string.view_empty_qoutas));
+                        showEmptyView(mMainActivity.getString(R.string.view_empty_qoutas));
                     }
 
                     return;
@@ -213,7 +213,7 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
     @Override
     public void onStarting() {
         if (isAdded()) {
-            showToast(getString(R.string.notification_updating));
+            showToast(mMainActivity.getString(R.string.notification_updating));
         }
 
 //        showProgressBar();
@@ -256,7 +256,7 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
 
         if (getDao().getQuotaR(userProjectId) != null) {
             if (gotQuotaTime != null) {
-                String text = getString(R.string.quota_renew_time) + " " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, gotQuotaTime);
+                String text = mMainActivity.getString(R.string.quota_renew_time) + " " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, gotQuotaTime);
                 quotaText3 = text;
             }
 
@@ -265,7 +265,7 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
                 hasRenew = true;
                 Log.d(TAG, "checkQuotasLogs 1: " + gotQuotaTime + " " + sentQuizTime);
                 if (gotQuotaTime >= sentQuizTime) {
-                    quotaText1 = getString(R.string.quota_renewed_after_send);
+                    quotaText1 = mMainActivity.getString(R.string.quota_renewed_after_send);
                     quotaType1 = 1;
                 } else {
                     quotaType1 = 2;
@@ -281,7 +281,7 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
                 hasRenew = true;
                 Log.d(TAG, "checkQuotasLogs 2: " + gotQuotaTime + " " + saveQuizTime);
                 if (gotQuotaTime >= saveQuizTime) {
-                    quotaText2 = getString(R.string.quota_renewed_after_finish);
+                    quotaText2 = mMainActivity.getString(R.string.quota_renewed_after_finish);
                     quotaType2 = 1;
                 }else {
                     quotaType2 = 2;
@@ -293,7 +293,7 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
             }
 
         } else {
-            quotaText1 = getString(R.string.no_quota_limits);
+            quotaText1 = mMainActivity.getString(R.string.no_quota_limits);
             quotaType1 = 1;
             quotaType2 = 0;
         }

@@ -140,7 +140,8 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                tvUsers.setText(String.format(getString(R.string.auth_users_on_device), (usersCountValue + "/" + MAX_USERS)));
+                final String counter = (usersCountValue + "/" + MAX_USERS);
+                getMainActivity().runOnUiThread(() -> tvUsers.setText(String.format(getString(R.string.auth_users_on_device), counter)));
             }
         };
         thread.start();
@@ -301,7 +302,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             return;
         }
 
-        if (login.length() < 3) {
+        if (login.length() < 1) {
             showToast(getString(R.string.notification_short_login));
             activateButtons();
             return;

@@ -480,7 +480,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         if (!isTimeAutomatic() && activity.getConfig().isForceTime()) {
             try {
-                showTimeDialog();
+                activity.runOnUiThread(this::showTimeDialog);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1265,6 +1265,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         if (!mIsDeleteQuizDialogShow) {
             mIsDeleteQuizDialogShow = true;
             if (activity != null && !activity.isFinishing()) {
+                activity.addLog(Constants.LogObject.UI, Constants.LogType.DIALOG, Constants.LogResult.SUCCESS, "Show Start dialog.", null);
                 activity.runOnUiThread(() ->
                         new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
                                 .setCancelable(false)
@@ -1274,10 +1275,22 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                     isStartBtnPressed = true;
                                     deactivateButtons();
                                     if (isNeedUpdate) {
+                                        activity.addLog(Constants.LogObject.UI, Constants.LogType.DIALOG, Constants.LogResult.ATTEMPT, "Update config from Start dialog.", null);
                                         updateLocalConfig();
                                     } else {
-                                        if (checkTime() && (canContWithZeroGps || checkGps()) && checkMemory()) {
+                                        boolean mCheckTime = checkTime();
+                                        boolean mCheckMemory = checkMemory();
+                                        if (mCheckTime && (canContWithZeroGps || checkGps()) && mCheckMemory) {
                                             startQuestionnaire();
+                                        } else if(!mCheckTime) {
+                                            activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check time false.", null);
+                                            showToast("Неверное время");
+                                        } else if (!mCheckMemory) {
+                                            activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check memory false.", null);
+                                            showToast("Недостаточно памяти");
+                                        } else {
+                                            activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check GPS false.", null);
+                                            showToast("Невозможно начать без координат GPS");
                                         }
                                     }
                                 })
@@ -1285,12 +1298,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 );
             }
         } else {
+            activity.addLog(Constants.LogObject.UI, Constants.LogType.DIALOG, Constants.LogResult.ERROR, "Start dialog cant start coz duplicate.", null);
             isStartBtnPressed = true;
             deactivateButtons();
             if (isNeedUpdate) {
                 updateLocalConfig();
             } else {
                 if (checkTime() && (canContWithZeroGps || checkGps()) && checkMemory()) {
+                    activity.addLog(Constants.LogObject.UI, Constants.LogType.DIALOG, Constants.LogResult.ERROR, "Start quiz from dialog without dialog.", null);
                     startQuestionnaire();
                 }
             }
@@ -1654,8 +1669,19 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 reloadConfig();
             } else if (currentQuestionnaire == null && !isNeedUpdate) {
                 activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. Without delete old", null);
-                if (checkTime() && mCheckGps && checkMemory()) {
+                boolean mCheckTime = checkTime();
+                boolean mCheckMemory = checkMemory();
+                if (mCheckTime && mCheckGps && mCheckMemory) {
                     startQuestionnaire();
+                } else if(!mCheckTime) {
+                    activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check time false.", null);
+                    showToast("Неверное время");
+                } else if (!mCheckMemory) {
+                    activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check memory false.", null);
+                    showToast("Недостаточно памяти");
+                } else {
+                    activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check GPS false.", null);
+                    showToast("Невозможно начать без координат GPS");
                 }
             } else {
                 activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. With delete old", null);
@@ -1665,6 +1691,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void startQuestionnaire() {
+        activity.addLog(Constants.LogObject.QUESTIONNAIRE, Constants.LogType.DIALOG, Constants.LogResult.ERROR, "Start dialog cant start coz duplicate.", null);
         try {
             activity.stopRecording();
         } catch (Exception e) {

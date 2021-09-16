@@ -26,7 +26,7 @@ public class PhoneModel implements Serializable {
     }
 
     public String getNumber() {
-        return number;
+        return "+" + number;
     }
 
     public String getPreffix() {

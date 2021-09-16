@@ -20,7 +20,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +33,6 @@ import pro.quizer.quizer3.database.models.RegistrationR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.model.config.UserSettings;
-import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.GPSModel;
 import pro.quizer.quizer3.utils.GpsUtils;
 import pro.quizer.quizer3.utils.Internet;
@@ -95,7 +93,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
         }
         MainFragment.disableSideMenu();
 
-        if(getMainActivity().hasReserveChannel()) {
+        if (getMainActivity().hasReserveChannel()) {
             if (!checkPhoneNumber()) {
                 showEditPhoneView();
             } else {
@@ -152,7 +150,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
         if (view == btnNext) {
             String mUik = uik.getText().toString();
             String mPhone = "";
-            if(getMainActivity().hasReserveChannel()) {
+            if (getMainActivity().hasReserveChannel()) {
                 if (mPhoneNumber == null || mPhoneNumber.equals("") || mPhoneNumber.equals("7")) {
                     mPhone = "7" + phoneFormatter.cleaned(inputPhone.getText().toString());
                     mPhoneNumber = mPhone;
@@ -512,10 +510,11 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
         try {
             if (id != null) {
 //                showToast("Регистрация успешна");
-                getDao().setRegStatus(id, Constants.Registration.SENT);
+                if (getMainActivity().hasReserveChannel()) getDao().setRegStatus(id, Constants.Registration.SENT_NO_SMS);
+                else getDao().setRegStatus(id, Constants.Registration.SENT);
                 mRegId = String.valueOf(id);
                 try {
-                    Log.d("T-L.Reg3Fragment", "onSendRegCallback ID: " + + getDao().getAllRegistrationR().get(0).getId() + " / " + getDao().getAllRegistrationR().get(0).getStatus());
+                    Log.d("T-L.Reg3Fragment", "onSendRegCallback ID: " + +getDao().getAllRegistrationR().get(0).getId() + " / " + getDao().getAllRegistrationR().get(0).getStatus());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

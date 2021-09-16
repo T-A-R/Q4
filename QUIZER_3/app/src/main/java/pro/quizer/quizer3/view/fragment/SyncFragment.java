@@ -183,7 +183,8 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
 
             @Override
             public void run() {
-                if (hasReserveChannel && activity.isExit()) {
+                RegistrationR reg = getDao().getRegistrationR(getCurrentUserId());
+                if (hasReserveChannel && activity.isExit() && reg != null && !reg.smsClosed()) {
                     showSmsButton();
                 } else {
                     hideSmsButton();

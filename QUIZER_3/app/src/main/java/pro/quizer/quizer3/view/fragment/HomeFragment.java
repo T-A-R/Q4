@@ -1518,6 +1518,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             else {
                 if(!reg.isAccepted()) Log.d("T-L.HomeFragment", "checkRegistration: REG NOT ACCEPTED / STATUS: " + reg.getStatus());
                 Log.d("T-L.HomeFragment", "checkRegistration: ALL REGS: " + getDao().getAllRegistrationR().size());
+                Log.d("T-L.HomeFragment", "checkRegistration STATUS: " + reg.getStatus());
             }
 
             btnStart.setText("Регистрация");

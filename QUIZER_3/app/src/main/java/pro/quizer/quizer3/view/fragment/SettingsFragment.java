@@ -160,8 +160,9 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         mToolbar.setTitle(getString(R.string.settings_screen));
         mToolbar.showCloseView(v -> onBackPressed());
 
-        if (mBaseActivity.isExit() && getDao().getRegistrationR(getCurrentUserId()) != null) mReReg.setVisibility(View.VISIBLE);
-        else mReReg.setVisibility(View.GONE);
+//        if (mBaseActivity.isExit() && getDao().getRegistrationR(getCurrentUserId()) != null) mReReg.setVisibility(View.VISIBLE);
+//        else mReReg.setVisibility(View.GONE);
+        mReReg.setVisibility(View.GONE);
 
         answerMargin = mBaseActivity.getAnswerMargin();
         mMarginSeekBar.setProgress(answerMargin);

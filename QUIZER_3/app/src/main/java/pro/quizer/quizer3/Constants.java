@@ -145,6 +145,7 @@ public final class Constants {
 
     public interface Registration {
         String SENT = "sent";
+        String SENT_NO_SMS = "sent_no_sms";
         String NOT_SENT = "not_sent";
         String SMS = "sms";
         String CODE = "code";

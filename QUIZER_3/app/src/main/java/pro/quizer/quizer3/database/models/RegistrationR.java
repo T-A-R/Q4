@@ -137,6 +137,10 @@ public class RegistrationR {
         return status.equals(Constants.Registration.CODE);
     }
 
+    public boolean smsClosed() {
+        return status.equals(Constants.Registration.SENT_NO_SMS);
+    }
+
     public boolean notSent() {
         return status.equals(Constants.Registration.NOT_SENT) || status.equals(Constants.Registration.SMS);
     }

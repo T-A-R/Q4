@@ -3,6 +3,7 @@ package pro.quizer.quizer3.view.fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -92,6 +93,7 @@ public class Reg4Fragment extends ScreenFragment implements View.OnClickListener
         ConfigModel config = getMainActivity().getConfig();
         // user_project_id изменено на user_id по просьбе Zverev Alexandr 16/09/2021
         mCode = config.getProjectInfo().getProjectId() + " " + getCurrentUserId() + " " + DateUtils.getCurrentDateOfMonth();
+        Log.d("T-L.Reg4Fragment", "getCode: " + mCode);
         if(DEBUG_MODE) showToast(mCode);
     }
 

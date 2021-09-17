@@ -25,6 +25,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.Calendar;
 
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.R;
@@ -199,7 +200,7 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
                             getMainActivity().addLog(Constants.LogObject.UI, Constants.LogType.FILE, Constants.LogResult.ERROR, "Take photo error", "rotatedBitmap = null");
                         if (uri != null)
                             Picasso.with(getMainActivity())
-                                    .load(getImageUri(rotatedBitmap))
+                                    .load(uri)
                                     .into(photoView);
                         else
                             getMainActivity().addLog(Constants.LogObject.UI, Constants.LogType.FILE, Constants.LogResult.ERROR, "Take photo error", "URI = null");
@@ -258,7 +259,17 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
     public Uri getImageUri(Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(getMainActivity().getContentResolver(), inImage, "Title", null);
+        String path = null;
+        try {
+            path = MediaStore.Images.Media.insertImage(getMainActivity().getContentResolver(), inImage, "Title", null);
+        } catch (Exception e) {
+            try {
+                path = MediaStore.Images.Media.insertImage(getMainActivity().getContentResolver(), inImage, "IMG_" + Calendar.getInstance().getTime(), null);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+            e.printStackTrace();
+        }
         Uri uri = null;
         if (path != null)
             try {

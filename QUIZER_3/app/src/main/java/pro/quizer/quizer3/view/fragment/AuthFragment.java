@@ -141,7 +141,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                     e.printStackTrace();
                 }
                 final String counter = (usersCountValue + "/" + MAX_USERS);
-                getMainActivity().runOnUiThread(() -> tvUsers.setText(String.format(getString(R.string.auth_users_on_device), counter)));
+                getMainActivity().runOnUiThread(() -> tvUsers.setText(String.format(getMainActivity().getString(R.string.auth_users_on_device), counter)));
             }
         };
         thread.start();

@@ -1716,7 +1716,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         Integer user_project_id = config.getUserProjectId();
         if (user_project_id == null) user_project_id = user.getUser_project_id();
 
-        if (currentQuestionnaire != null) {
+        if (currentQuestionnaire != null && currentQuestionnaire.getUser_project_id() != null) {
             if (currentQuestionnaire.getUser_project_id().equals(user_project_id)) {
                 if (config.isSaveAborted()) {
                     saveQuestionnaireToDatabase(currentQuestionnaire, true);

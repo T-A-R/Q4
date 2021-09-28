@@ -1541,7 +1541,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                             getDao().insertRegistrationR(registrationR);
                             btnStart.setText("Начать");
                             isRegistrationRequired = false;
-                            Log.d("T-L.HomeFragment", "checkRegistration: HAND REG FOUND");
+                            Log.d("T-L.HomeFragment", "checkRegistration: HAND REG FOUND" + handReg.getReg_time());
                             break;
                         } else if (reg != null) {
                             if(reg.getReg_time() > period.getStart() && reg.getReg_time() < period.getEnd()) {
@@ -1550,7 +1550,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                     UiUtils.setButtonEnabled(btnStart, true);
                                     isCodeRequired = true;
                                     Log.d("T-L.HomeFragment", "checkRegistration: WAITING CODE");
-                                } else if(reg.isAccepted()) {
+                                } else if(reg.isAccepted() || reg.smsClosed()) {
                                     btnStart.setText("Начать");
                                     isRegistrationRequired = false;
                                     Log.d("T-L.HomeFragment", "checkRegistration: REG ACCEPTED");

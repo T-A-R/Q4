@@ -130,7 +130,7 @@ public class RegistrationR {
     }
 
     public boolean isAccepted() {
-        return status.equals(Constants.Registration.SENT) || status.equals(Constants.Registration.SMS);
+        return status.equals(Constants.Registration.SENT) || status.equals(Constants.Registration.SMS) || status.equals(Constants.Registration.SENT_NO_SMS);
     }
 
     public boolean isCode() {

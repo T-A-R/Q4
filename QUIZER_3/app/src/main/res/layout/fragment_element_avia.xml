@@ -5,15 +5,24 @@
     android:id="@+id/cont_element_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:keepScreenOn="true"
+    android:background="@color/white"
+
     android:saveEnabled="false">
 
     <!--TOOLBAR-->
     <pro.quizer.quizer3.view.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/avia_empty_toolbar"
+        android:visibility="gone"/>
+
+    <RelativeLayout
+        android:id="@+id/avia_empty_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="@color/brand_color_avia"
+        android:visibility="visible"/>
 
     <LinearLayout
         android:id="@+id/element_cont"
@@ -22,8 +31,7 @@
         android:layout_above="@+id/button_panel"
         android:layout_below="@+id/toolbar"
         android:layout_gravity="top"
-        android:layout_marginTop="@dimen/_4sdp"
-        android:layout_marginBottom="@dimen/_4sdp"
+
         android:orientation="vertical">
 
         <!--TITLE-->
@@ -32,22 +40,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginTop="@dimen/_4sdp"
             android:layout_marginEnd="@dimen/_8sdp"
             android:layout_marginBottom="@dimen/_6sdp"
-            android:background="@drawable/button_background_transparent"
+            android:background="@color/brand_color_avia"
             android:visibility="gone">
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
                 android:layout_toStartOf="@+id/hide_btn">
 
                 <LinearLayout
                     android:id="@+id/title_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:orientation="vertical">
 
                     <!--TITLE 1-->
@@ -229,7 +236,7 @@
         </RelativeLayout>
 
         <!--INFO-->
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/info_cont"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -239,10 +246,21 @@
             <WebView
                 android:id="@+id/info_text"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/_4sdp" />
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/logo"
+                android:layout_margin="@dimen/_10sdp" />
 
-        </LinearLayout>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/logo"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/_90sdp"
+                android:layout_marginStart="@dimen/_40sdp"
+                android:layout_marginEnd="@dimen/_40sdp"
+                android:src="@drawable/ic_rossya_red" />
+
+        </RelativeLayout>
 
         <!--QUESTION-->
         <LinearLayout
@@ -255,10 +273,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
-                android:layout_marginBottom="@dimen/_4sdp"
-                android:background="@drawable/button_simple_green">
+                android:background="@color/brand_color_avia">
 
                 <androidx.core.widget.NestedScrollView
                     android:id="@+id/question_box"
@@ -269,29 +284,32 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginBottom="@dimen/_8sdp"
                         android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/question"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_8sdp"
-                            android:layout_marginEnd="@dimen/_8sdp"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_marginEnd="@dimen/_16sdp"
+                            android:layout_marginBottom="@dimen/_2sdp"
                             android:text="Question"
                             android:textColor="@color/white"
-                            android:textSize="@dimen/_12ssp"
+                            android:textSize="22sp"
                             android:visibility="visible" />
 
                         <TextView
                             android:id="@+id/question_desc"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_8sdp"
-                            android:layout_marginEnd="@dimen/_8sdp"
-                            android:layout_marginBottom="@dimen/_8sdp"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_marginEnd="@dimen/_16sdp"
                             android:text="Description"
                             android:textColor="@color/white"
-                            android:textSize="@dimen/_10ssp"
+                            android:textStyle="italic"
+                            android:textSize="16sp"
                             android:visibility="gone" />
 
                         <!--IMAGES-->
@@ -363,7 +381,8 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="@dimen/_2sdp"
                     android:layout_marginEnd="@dimen/_6sdp"
-                    android:src="@drawable/minus_white" />
+                    android:src="@drawable/minus_white"
+                    android:visibility="gone"/>
 
             </RelativeLayout>
 
@@ -378,21 +397,19 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                <TextView
                     android:id="@+id/answers_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
                     android:visibility="gone" />
 
-                <com.multispinner.MultiSelectSpinner
+                <TextView
                     android:id="@+id/answers_multi_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
-
-                    android:visibility="gone"
-                    app:hintText="Выберите варианты ответа" />
+                    android:visibility="gone"/>
 
             </LinearLayout>
 
@@ -401,15 +418,16 @@
                 android:id="@+id/answers_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_6sdp"
-                android:layout_marginEnd="@dimen/_6sdp"
-                android:layout_marginBottom="@dimen/_8sdp"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
                 android:fadeScrollbars="false"
                 android:scrollbarAlwaysDrawVerticalTrack="false"
-                android:scrollbarSize="@dimen/_16sdp"
+                android:scrollbarSize="@dimen/_8sdp"
                 android:scrollbarStyle="outsideInset"
-                android:scrollbarThumbVertical="@drawable/button_background_green"
-                android:scrollbarTrackVertical="@color/lightGray2"
+                android:scrollbarThumbVertical="@drawable/scrollbar_avia"
+                android:scrollbarTrackVertical="@drawable/scroll_avia_transparent"
                 android:scrollbars="vertical"
                 android:visibility="gone" />
 
@@ -431,6 +449,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_4sdp"
                 app:cellMargin="1dp"
+                app:dragAndDropEnabled="false"
                 tools:ignore="UnknownIdInLayout" />
 
         </FrameLayout>
@@ -451,7 +470,7 @@
             android:scrollbars="horizontal"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <!--PAGE-->
         <androidx.recyclerview.widget.RecyclerView
@@ -476,7 +495,7 @@
             android:id="@+id/back_btn"
             style="@style/ButtonAvia"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_24sdp"
+            android:layout_height="56dp"
             android:layout_marginStart="@dimen/_20sdp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="@dimen/_20sdp"
@@ -484,13 +503,14 @@
             android:layout_weight="1"
             android:maxLines="1"
             android:text="Назад"
-            android:textSize="@dimen/_12ssp" />
+            android:textSize="@dimen/_10ssp"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/exit_btn"
             style="@style/ButtonAvia"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_24sdp"
+            android:layout_height="56dp"
             android:layout_marginStart="@dimen/_20sdp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="@dimen/_20sdp"
@@ -498,13 +518,13 @@
             android:layout_weight="1"
             android:maxLines="1"
             android:text="Выход"
-            android:textSize="@dimen/_12ssp" />
+            android:textSize="@dimen/_10ssp" />
 
         <Button
             android:id="@+id/next_btn"
             style="@style/ButtonAvia"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_24sdp"
+            android:layout_height="56dp"
             android:layout_alignParentBottom="true"
             android:layout_marginStart="@dimen/_20sdp"
             android:layout_marginTop="8dp"
@@ -512,8 +532,8 @@
             android:layout_marginBottom="8dp"
             android:layout_weight="1"
             android:maxLines="1"
-            android:text="Вперед"
-            android:textSize="@dimen/_12ssp" />
+            android:text="Далее"
+            android:textSize="@dimen/_10ssp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -490,7 +490,8 @@
     <string name="resend_sms_timer">Доступно через %1$s секунд</string>
     <string name="button_resend_sms">запросить код повторно</string>
     <string name="button_finish_registration">завершить регистрацию</string>
-    <string name="adfdsf">rererre $s</string>
+    <string name="select_input_hint">Поиск</string>
+    <string name="answer_selector">Ответить</string>
     <string name="error_create_encryption_table">Ошибка создания таблицы шифрования</string>
     <string name="error_start_quiz">Ошибка подготовки анкеты. Перезапустите приложение и попробуйте еще раз</string>
     <string name="screensaver_start_quiz">Подождите,  идет запуск анкеты</string>

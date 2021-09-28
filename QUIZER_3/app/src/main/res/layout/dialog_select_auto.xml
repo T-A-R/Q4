@@ -11,11 +11,11 @@
 
     <RelativeLayout
         android:id="@+id/card_view"
-        android:layout_width="600dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:layout_marginTop="48dp"
-        android:layout_marginBottom="48dp"
+        android:layout_marginTop="@dimen/_40sdp"
+        android:layout_marginBottom="@dimen/_40sdp"
         android:background="@drawable/bg_shadow"
         android:orientation="vertical">
 
@@ -23,57 +23,57 @@
             android:id="@+id/select_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            android:layout_marginStart="28dp"
-            android:layout_marginEnd="28dp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
             android:layout_alignParentTop="true"
             android:text="Вопрос"
             android:textColor="@color/black"
-            android:textSize="26sp" />
+            android:textSize="@dimen/_20ssp" />
 
         <EditText
             android:id="@+id/select_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="28dp"
-            android:layout_marginEnd="28dp"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
             android:layout_below="@+id/select_title"
             android:hint="@string/select_input_hint"
             android:importantForAutofill="no"
             android:inputType="text"
-            android:textSize="26sp" />
+            android:textSize="@dimen/_20ssp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/select_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="28dp"
-            android:layout_marginEnd="28dp"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
             android:layout_above="@+id/select_ok_button"
             android:layout_below="@+id/select_input"
             android:fadeScrollbars="false"
             android:scrollbarAlwaysDrawVerticalTrack="false"
             android:scrollbarSize="@dimen/_8sdp"
             android:scrollbarStyle="outsideInset"
-            android:scrollbarThumbVertical="@drawable/scrollbar_avia"
-            android:scrollbarTrackVertical="@drawable/scroll_avia_transparent"
+            android:scrollbarThumbVertical="@drawable/button_background_green"
+            android:scrollbarTrackVertical="@color/lightGray2"
             android:scrollbars="vertical"
             tools:ignore="UnknownIdInLayout" />
 
         <Button
             android:id="@+id/select_ok_button"
-            style="@style/ButtonAvia"
+            style="@style/ButtonStyle"
             android:layout_width="wrap_content"
-            android:layout_height="56dp"
+            android:layout_height="@dimen/_36sdp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_gravity="end"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="28dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:layout_marginBottom="@dimen/_16sdp"
             android:maxLines="1"
-            android:text="ОК"
-            android:textSize="@dimen/_10ssp" />
+            android:textSize="@dimen/_12ssp"
+            android:text="Ок" />
 
     </RelativeLayout>
 

@@ -2,15 +2,9 @@ package pro.quizer.quizer3.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -36,10 +30,6 @@ import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
-import pro.quizer.quizer3.view.element.TouchImageView;
-
-import static pro.quizer.quizer3.MainActivity.AVIA;
-import static pro.quizer.quizer3.model.OptionsOpenType.NUMBER;
 
 public class ViewPagerAdapter extends PagerAdapter {
     private MainActivity mContext;

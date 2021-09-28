@@ -157,32 +157,22 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                 } else mPhone = mPhoneNumber;
             }
 
-//            if (!getMainActivity().hasReserveChannel() || mPhone.length() == 11) {
-                if (isUikValid) {
-                    getGps();
-//                    if (gps == null) {
-////                        showNoGpsDialog();
-//
-//                    } else
-                        if (gps != null && gps.isFakeGPS()) {
-                        showFakeGpsDialog();
-                    } else {
-                        UiUtils.setButtonEnabled(btnNext, false);
-                        if (addRegistrationToDB(mUik, mPhone)) {
-                            sendRegByInternet();
-//                            sendRegSms();
-                        } else {
-                            Log.d("T-L.Reg3Fragment", "====== SAVE TO DB FAIL ");
-                            UiUtils.setButtonEnabled(btnNext, true);
-                        }
-                    }
+            if (isUikValid) {
+                getGps();
+                if (gps != null && gps.isFakeGPS()) {
+                    showFakeGpsDialog();
                 } else {
-                    Toast.makeText(getMainActivity(), "Неверный Uik", Toast.LENGTH_SHORT).show();
+                    UiUtils.setButtonEnabled(btnNext, false);
+                    if (addRegistrationToDB(mUik, mPhone)) {
+                        sendRegByInternet();
+                    } else {
+                        Log.d("T-L.Reg3Fragment", "====== SAVE TO DB FAIL ");
+                        UiUtils.setButtonEnabled(btnNext, true);
+                    }
                 }
-//            } else {
-//                Toast.makeText(getMainActivity(), "Неверный номер телефона: " + mPhone, Toast.LENGTH_SHORT).show();
-//                inputPhone.setError("Неверный номер телефона");
-//            }
+            } else {
+                Toast.makeText(getMainActivity(), "Неверный Uik", Toast.LENGTH_SHORT).show();
+            }
         } else if (view == clearPhone) {
             mPhoneNumber = "";
             showEditPhoneView();
@@ -406,8 +396,6 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                 && getMainActivity().getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getSelectedPhone() != null
                 && registration.getPhone() != null && registration.getPhone().length() > 6) {
 
-            Log.d("T-L.Reg3Fragment", "sendRegSms: ==================================== 0");
-
             // r {admin_key}:[{user_id} {uik_number} {gps} {gps_network} {reg_time} {phone}] - в квадратных скобках шифрованное
 
             int number1 = registration.getUser_id(); // user_id
@@ -423,20 +411,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
             Log.d("T-L.Reg3Fragment", "sendRegSms: " + sms);
             new Thread(() -> SmsUtils.sendRegSms(getMainActivity(), this, sms)).start();
         } else {
-//            if (getMainActivity() != null)
-//                getMainActivity().runOnUiThread(() -> UiUtils.setButtonEnabled(btnNext, true));
-//            if (getMainActivity().hasReserveChannel() && (registration.getPhone() == null || registration.getPhone().length() < 7)) {
-//                Log.d("T-L.Reg3Fragment", "sendRegSms: ==================================== 1");
-//                try {
-//                    showToast("Введите номер телефона");
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            } else {
-//                Log.d("T-L.Reg3Fragment", "sendRegSms: ==================================== 2");
-//                Log.d("T-L.Reg3Fragment", "sendRegSms ID: " + mRegId);
-                replaceFragment(new HomeFragment());
-//            }
+            replaceFragment(new HomeFragment());
         }
     }
 
@@ -447,7 +422,6 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onSuccess() {
         Log.d("T-L.Reg3Fragment", "SEND REG SMS onSuccess: ");
-//        getDao().setRegStatus(getCurrentUserId(), Constants.Registration.CODE);
         replaceFragment(new Reg4Fragment());
     }
 
@@ -465,13 +439,10 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
         url = getCurrentUser().getConfigR().getExitHost() != null ? getCurrentUser().getConfigR().getExitHost() + Constants.Default.REG_URL : null;
         Log.d("T-L.Reg3Fragment", "REG EXIT URL: " + url);
         List<File> photos = getMainActivity().getRegPhotosByUserId(registration.getUser_id());
-        Log.d("T-L.Reg3Fragment", "====: 1");
         if (photos == null || photos.isEmpty()) {
-            Log.d("T-L.Reg3Fragment", "====: 2");
             showToast(getMainActivity().getString(R.string.no_reg_photo));
             return;
         }
-        Log.d("T-L.Reg3Fragment", "====: 3");
 
         try {
             if (url != null) {
@@ -492,15 +463,11 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
             } else {
                 showToast("Ошибка получения адреса регистрации экзит");
                 getMainActivity().addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Ошибка получения адреса регистрации экзит", "URL: NULL");
-
-//                showNoInternetDialog();
             }
-            Log.d("T-L.Reg3Fragment", "====: 4");
         } catch (Exception e) {
             e.printStackTrace();
             showToast("Ошибка отправки регистрации. Попробуйте снова");
             getMainActivity().addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Ошибка отправки регистрации. Попробуйте снова", e.toString());
-//            showNoInternetDialog();
         }
     }
 
@@ -515,24 +482,15 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
 
         try {
             if (id != null) {
-//                showToast("Регистрация успешна");
                 if (getMainActivity().hasReserveChannel()) getDao().setRegStatus(id, Constants.Registration.SENT_NO_SMS);
                 else getDao().setRegStatus(id, Constants.Registration.SENT);
                 mRegId = String.valueOf(id);
-//                try {
-//                    Log.d("T-L.Reg3Fragment", "onSendRegCallback ID: " + +getDao().getAllRegistrationR().get(0).getId() + " / " + getDao().getAllRegistrationR().get(0).getStatus());
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                replaceFragment(new HomeFragment());
                 sendRegSms();
             }
         } catch (Exception e) {
             e.printStackTrace();
             sendRegSms();
             getMainActivity().addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Регистрация. Ответ сервера не парсится", e.toString());
-
-//            getMainActivity().runOnUiThread(() -> UiUtils.setButtonEnabled(btnNext, true));
         }
     }
 }

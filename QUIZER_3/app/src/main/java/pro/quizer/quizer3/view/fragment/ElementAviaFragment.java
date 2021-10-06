@@ -94,7 +94,6 @@ public class ElementAviaFragment extends ScreenFragment implements
     private LinearLayout titleImagesCont2;
     private LinearLayout questionCont;
     private LinearLayout questionImagesCont;
-    private LinearLayout spinnerCont;
     private RelativeLayout infoCont;
     private FrameLayout tableCont;
     private TextView tvHiddenTitle;
@@ -183,7 +182,6 @@ public class ElementAviaFragment extends ScreenFragment implements
         questionCont = findViewById(R.id.question_cont);
         questionBox = findViewById(R.id.question_box);
         questionImagesCont = findViewById(R.id.question_images_cont);
-        spinnerCont = findViewById(R.id.spinner_cont);
         infoCont = findViewById(R.id.info_cont);
         tableCont = findViewById(R.id.table_cont);
         rvAnswers = findViewById(R.id.answers_recyclerview);
@@ -369,7 +367,6 @@ public class ElementAviaFragment extends ScreenFragment implements
         } else if (view == btnPrev) {
             deactivateButtons();
             TransFragment fragment = new TransFragment();
-//            showToast("1: " + prevList.size());
             if (prevElementId != 0) {
                 prevElementId = prevList.get(prevList.size() - 1).getPrevId();
                 prevList.remove(prevList.size() - 1);
@@ -382,7 +379,6 @@ public class ElementAviaFragment extends ScreenFragment implements
                 }
                 fragment.setStartElement(prevElementId, true);
                 stopRecording();
-//                showToast("2: " + prevList.size());
                 replaceFragmentBack(fragment);
             } else {
                 showExitPoolAlertDialog();
@@ -2001,7 +1997,6 @@ public class ElementAviaFragment extends ScreenFragment implements
         titleImagesCont2 = null;
         questionCont = null;
         questionImagesCont = null;
-        spinnerCont = null;
         infoCont = null;
         tableCont = null;
         tvTitle1 = null;

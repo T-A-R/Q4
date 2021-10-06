@@ -83,7 +83,7 @@ dependencies {
     implementation 'commons-codec:commons-codec:20041127.091804'
     implementation 'com.github.kk121:File-Loader:1.2'
     implementation 'net.sourceforge.streamsupport:android-retrofuture:1.7.0'
-//    implementation 'com.cleveroad:adaptivetablelayout:1.2.1'
+    implementation 'com.cleveroad:adaptivetablelayout:1.2.1'
     implementation 'com.github.vipulasri:timelineview:1.1.2'
     implementation 'commons-net:commons-net:3.6'
     implementation 'com.zolad:zoominimageview:1.0.0'

@@ -27,10 +27,9 @@ public class TransFragment extends ScreenFragment {
 
     @Override
     protected void onReady() {
-
-//        PageElementFragment fragment = new PageElementFragment();
         if(!AVIA) {
             ElementFragment fragment = new ElementFragment();
+//            ElementAviaFragment fragment = new ElementAviaFragment();
             fragment.setStartElement(startElementId, restored);
             if (!restored)
                 replaceFragment(fragment);

@@ -645,7 +645,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public CurrentQuestionnaireR getQuestionnaire() {
-		currentQuestionnaire = getMainActivity().getCurrentQuestionnaire();
+        currentQuestionnaire = getMainActivity().getCurrentQuestionnaire();
         return currentQuestionnaire;
 
     }
@@ -994,7 +994,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                     countQuestions++;
                 }
                 elementDatabaseModel.setDuration(element.getDuration());
-                durationTimeQuestionnaire += element.getDuration();
+                if (element.getDuration() != null)
+                    durationTimeQuestionnaire += element.getDuration();
                 elementDatabaseModel.setType(ElementDatabaseType.SCREEN);
                 countScreens++;
             }
@@ -1279,7 +1280,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         canGoBack = false;
         Observable.interval(1, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(x -> { })
+                .doOnNext(x -> {
+                })
                 .takeUntil(aLong -> aLong == 2)
                 .doOnComplete(() -> canGoBack = true)
                 .subscribe();
@@ -1293,11 +1295,11 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         return encoded.toString();
     }
 
-    public Character getDecrypted (char encrypted) {
+    public Character getDecrypted(char encrypted) {
         return getDao().getSymbolsForDecrypt(encrypted);
     }
 
-    public Character getEncrypted (char decrypted) {
+    public Character getEncrypted(char decrypted) {
         return getDao().getSymbolsForEncrypt(decrypted);
     }
 }

@@ -194,7 +194,9 @@ public class ExpressionUtils {
 //        activity.getMainDao().insertElementPassedR(new ElementPassedR(25, null, activity.getToken(), null, "222", false, null, null, false));
 //        activity.getMainDao().insertElementPassedR(new ElementPassedR(23, null, activity.getToken(), null, "333", false, null, null, false));
 //        activity.getMainDao().insertElementPassedR(new ElementPassedR(84, null, activity.getToken(), null, "444", false, null, null, false));
-//        expression = "47-$e.14.value<($e.25.value+15-$e.23.value)/2<=$e.84a.value";
+//        expression = "47-$e.14.value<($e.25.value+15-$e.23.value)/2<=$e.84.value";
+//        expression = "($e.3.checked && 5<$e.2.value<=17*2) || 21<=$e.2.value + 23 <40";
+//        expression = "47-$e.14.value <($e.25.value+15-$e.23.value)/2<=$e.84a.value && ($e.1.checked || !$e.2.checked)";
         expression = expression.replaceAll(" ", "");
 
         List<PartOfHiddenExpression> partsList = new ArrayList<>();

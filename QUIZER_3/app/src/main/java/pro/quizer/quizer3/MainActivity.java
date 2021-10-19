@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     static public String TAG = "TARLOGS";
     static public boolean AVIA = false;
     static public boolean DEBUG_MODE = false; //TODO FOR TESTS ONLY!
-    static public boolean PLAY_MARKET = true;
+    static public boolean PLAY_MARKET = false;
     static public boolean RECORDING = false;
     public boolean mIsPermDialogShow = false;
     private int mAudioRecordLimitTime;

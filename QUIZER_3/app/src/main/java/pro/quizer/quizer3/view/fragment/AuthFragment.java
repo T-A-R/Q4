@@ -449,7 +449,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_602));
             }
 
-            getMainActivity().copyToClipboard(responseJson);
+//            getMainActivity().copyToClipboard(responseJson);
             final GsonBuilder gsonBuilder = new GsonBuilder();
             ConfigResponseModel configResponseModel = null;
 
@@ -823,7 +823,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void checkGpsAnsStartHomeFragment() {
-        Log.d("T-L.AuthFragment", "checkGpsAnsStartHomeFragment: " + getMainActivity().getConfig().isGps());
         if (getMainActivity().getConfig().isGps())
             getMainActivity().checkSettingsAndStartLocationUpdates(false, this);
         else runEvent(12);

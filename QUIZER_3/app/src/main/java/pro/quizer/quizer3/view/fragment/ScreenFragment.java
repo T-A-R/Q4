@@ -84,7 +84,7 @@ public abstract class ScreenFragment extends SmartFragment {
     public void showScreensaver(int titleId, boolean full) {
         try {
             String title = getResources().getString(titleId);
-            Log.d("T-L.ScreenFragment", "showScreensaver: " + title);
+//            Log.d("T-L.ScreenFragment", "showScreensaver: " + title);
             if (main != null)
                 main.showScreensaver(title, full);
         } catch (Resources.NotFoundException e) {
@@ -114,7 +114,7 @@ public abstract class ScreenFragment extends SmartFragment {
 //        hideKeyboard();
         if (main != null)
             try {
-                Log.d("T-L.ScreenFragment", "showScreensaver: " + title);
+//                Log.d("T-L.ScreenFragment", "showScreensaver: " + title);
                 main.showScreensaver(title, full);
             } catch (Exception e) {
                 e.printStackTrace();

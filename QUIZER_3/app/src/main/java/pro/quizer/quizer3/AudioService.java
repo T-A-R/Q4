@@ -448,7 +448,6 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
 
     @Override
     public void onLoadChildren(@NonNull String parentId, @NonNull Result<List<MediaBrowserCompat.MediaItem>> result) {
-        Log.d(LOG_TAG, "AudioService onLoadChildren()" + isUiMsg());
         // can't browse
         if (TextUtils.isEmpty(parentId)) {
             result.sendResult(null);

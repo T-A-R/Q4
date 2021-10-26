@@ -6,8 +6,8 @@ android {
         applicationId "pro.quizer.quizer3"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 3230800
-        versionName "3.23.8.0"
+        versionCode 3240001
+        versionName "3.24.0.1"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         project.ext.set("archivesBaseName", "Quizer_ " + defaultConfig.versionName)
 //        project.ext.set("archivesBaseName", "Rossiya_ " + defaultConfig.versionName)
@@ -111,6 +111,9 @@ dependencies {
 
     // Location
     implementation 'com.google.android.gms:play-services-location:18.0.0'
+
+    // MathParser
+    implementation 'org.mariuszgromada.math:MathParser.org-mXparser:4.4.2'
 
     // Leakcanary. For memory leaks tests
     // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'

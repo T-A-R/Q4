@@ -1384,7 +1384,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } else {
             prevList = new ArrayList<>();
         }
-        Log.d("T-L.ElementFragment", "INSERT: " + startElementId);
         getDao().insertPrevElementsR(new PrevElementsR(startElementId, nextElementId));
     }
 
@@ -1885,7 +1884,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         } else {
                             checkAndLoadNext();
                             if (!isInHiddenQuotaDialog) {
-                                Log.d("T-L.ElementFragment", "savePREV: 2");
+//                                Log.d("T-L.ElementFragment", "savePREV: 2");
                                 updatePrevElement();
                             }
                         }

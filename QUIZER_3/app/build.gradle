@@ -6,8 +6,8 @@ android {
         applicationId "pro.quizer.quizer3"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 3240001
-        versionName "3.24.0.1"
+        versionCode 3240100
+        versionName "3.24.1.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         project.ext.set("archivesBaseName", "Quizer_ " + defaultConfig.versionName)
 //        project.ext.set("archivesBaseName", "Rossiya_ " + defaultConfig.versionName)
@@ -114,6 +114,9 @@ dependencies {
 
     // MathParser
     implementation 'org.mariuszgromada.math:MathParser.org-mXparser:4.4.2'
+
+    // Image Slider
+    implementation 'com.github.smarteist:autoimageslider:1.4.0'
 
     // Leakcanary. For memory leaks tests
     // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'

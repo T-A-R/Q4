@@ -1,11 +1,13 @@
 package pro.quizer.quizer3.model;
 
+import java.util.List;
+
 public class CardItem {
     int id;
     String title;
     String desc;
     String data;
-    String pic;
+    List<String> pic;
     String thumb;
     boolean isUnChecker;
     boolean checked;
@@ -109,11 +111,11 @@ public class CardItem {
         isAutoCkecker = autoCkecker;
     }
 
-    public String getPic() {
+    public List<String> getPic() {
         return pic;
     }
 
-    public void setPic(String pic) {
+    public void setPic(List<String> pic) {
         this.pic = pic;
     }
 

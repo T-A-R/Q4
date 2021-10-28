@@ -219,7 +219,7 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
             sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
             sliderView.setIndicatorSelectedColor(Color.WHITE);
             sliderView.setIndicatorUnselectedColor(Color.GRAY);
-            sliderView.setScrollTimeInSec(3);
+            sliderView.setScrollTimeInSec(6);
             sliderView.setAutoCycle(true);
             sliderView.startAutoCycle();
         }

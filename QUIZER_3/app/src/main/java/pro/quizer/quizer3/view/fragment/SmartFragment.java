@@ -1083,13 +1083,13 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 //            addLog(getCurrentUser().getLogin(), Constants.LogType.DATABASE, Constants.LogObject.LOG, getString(R.string.load_crash_log_from_db), Constants.LogResult.ERROR, getString(R.string.db_load_error), e.getMessage());
         }
 
-        if (wasStarted) {
-            getDao().insertCrashLog(new CrashLogs(DateUtils.getCurrentTimeMillis(),
-                    "Date: " + DateUtils.getCurrentFormattedDate(DateUtils.PATTERN_FULL) +
-                            "\nVersion: " + DeviceUtils.getAppVersion() +
-                            "\nDevice: " + DeviceUtils.getDeviceInfo() +
-                            "\nПриложение зависло или было закрыто во время анкеты. Лога нет", true));
-        }
+//        if (wasStarted) {
+//            getDao().insertCrashLog(new CrashLogs(DateUtils.getCurrentTimeMillis(),
+//                    "Date: " + DateUtils.getCurrentFormattedDate(DateUtils.PATTERN_FULL) +
+//                            "\nVersion: " + DeviceUtils.getAppVersion() +
+//                            "\nDevice: " + DeviceUtils.getDeviceInfo() +
+//                            "\nПриложение зависло или было закрыто во время анкеты. Лога нет", true));
+//        }
 
         try {
             crashLogsList = getDao().getCrashLogs();
@@ -1112,7 +1112,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 if (ok) {
                     try {
                         getDao().clearCrashLogs();
-                        Log.d(TAG, "Crash Logs Cleared");
                     } catch (Exception e) {
                         e.printStackTrace();
                         Log.d(TAG, "Crash Logs Clear Error: " + e);

@@ -1497,7 +1497,6 @@ public class ElementFragment extends ScreenFragment
         } else {
             prevList = new ArrayList<>();
         }
-        Log.d("T-L.ElementFragment", "INSERT: " + startElementId);
         getDao().insertPrevElementsR(new PrevElementsR(startElementId, nextElementId));
     }
 
@@ -2130,7 +2129,11 @@ public class ElementFragment extends ScreenFragment
                     CardItem item = new CardItem();
                     item.setTitle(counter + ". " + titlesMap.get(element.getRelative_id()).getTitle());
                     if (element.getElementContentsR() != null && element.getElementContentsR().size() > 0) {
-                        item.setPic(element.getElementContentsR().get(0).getData());
+                        List<String> pics = new ArrayList<>();
+                        for (ElementContentsR content : element.getElementContentsR()) {
+                            if(content.getData() != null && !content.getData().equals("")) pics.add(content.getData());
+                        }
+                        item.setPic(pics);
                         item.setThumb(element.getElementContentsR().get(0).getData_thumb());
                     }
                     items.add(item);
@@ -2160,7 +2163,11 @@ public class ElementFragment extends ScreenFragment
                             element.getElementOptionsR().isUnnecessary_fill_open(),
                             element.getElementOptionsR().isAutoChecked());
                     if (element.getElementContentsR() != null && element.getElementContentsR().size() > 0) {
-                        item.setPic(element.getElementContentsR().get(0).getData());
+                        List<String> pics = new ArrayList<>();
+                        for (ElementContentsR content : element.getElementContentsR()) {
+                            if(content.getData() != null && !content.getData().equals("")) pics.add(content.getData());
+                        }
+                        item.setPic(pics);
                         item.setThumb(element.getElementContentsR().get(0).getData_thumb());
                     }
                     items.add(item);

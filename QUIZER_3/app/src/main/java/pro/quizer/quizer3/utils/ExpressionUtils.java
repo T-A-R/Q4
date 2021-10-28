@@ -5,6 +5,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mariuszgromada.math.mxparser.*;
+
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.model.Operators;
@@ -190,213 +192,266 @@ public class ExpressionUtils {
     }
 
     public boolean checkHiddenExpression(String expression) {
-//        activity.getMainDao().insertElementPassedR(new ElementPassedR(14, null, activity.getToken(), null, "111", false, null, null, false));
-//        activity.getMainDao().insertElementPassedR(new ElementPassedR(25, null, activity.getToken(), null, "222", false, null, null, false));
-//        activity.getMainDao().insertElementPassedR(new ElementPassedR(23, null, activity.getToken(), null, "333", false, null, null, false));
-//        activity.getMainDao().insertElementPassedR(new ElementPassedR(84, null, activity.getToken(), null, "444", false, null, null, false));
-//        expression = "47-$e.14.value<($e.25.value+15-$e.23.value)/2<=$e.84a.value";
-        expression = expression.replaceAll(" ", "");
 
-        List<PartOfHiddenExpression> partsList = new ArrayList<>();
-        int indexOfPartEnd = 0;
+//        expression = "($e.3.checked && 5<$e.2.value<=17*2) || 21<=$e.2.value + 23 <40";
+//        expression = "100-$e.2.value <($e.3.value+15-$e.4.value)/2<=$e.5.value && ($e.6.checked || !$e.2.checked)";
+//        expression = "100-$e.2.value =$e.3.value";
+
+        String newExpression = expression.replaceAll("!", "~"); // Замена символа отрицания для парсера. (В парсере ! - это факториал)
 
         for (int i = 0; i < expression.length(); i++) {
-            if (i == expression.indexOf(Operators.LOE, i)) {
-                partsList.add(new PartOfHiddenExpression(expression.substring(indexOfPartEnd, i), Operators.LOE));
-                indexOfPartEnd = i + 2;
-            } else if (i == expression.indexOf(Operators.MOE, i)) {
-                partsList.add(new PartOfHiddenExpression(expression.substring(indexOfPartEnd, i), Operators.MOE));
-                indexOfPartEnd = i + 2;
-            } else if (i == expression.indexOf(Operators.LESS, i)) {
-                partsList.add(new PartOfHiddenExpression(expression.substring(indexOfPartEnd, i), Operators.LESS));
-                indexOfPartEnd = i + 1;
-            } else if (i == expression.indexOf(Operators.MORE, i)) {
-                partsList.add(new PartOfHiddenExpression(expression.substring(indexOfPartEnd, i), Operators.MORE));
-                indexOfPartEnd = i + 1;
-            } else if (i == expression.indexOf(Operators.EQ, i)) {
-                partsList.add(new PartOfHiddenExpression(expression.substring(indexOfPartEnd, i), Operators.EQ));
-                indexOfPartEnd = i + 2;
-            } else if (i == expression.indexOf(Operators.NOT, i)) {
-                partsList.add(new PartOfHiddenExpression(expression.substring(indexOfPartEnd, i), Operators.NOT));
-                indexOfPartEnd = i + 2;
-            }
-        }
+            if (i == expression.indexOf("$e.", i)) {
+                int indexOfPoint = expression.indexOf(".", i + 3);
+                String idString = expression.substring(i + 3, indexOfPoint);
+                int id;
+                int value;
+                try {
+                    id = Integer.parseInt(idString);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    Log.d("T-L.ExpressionUtils", "CANT GET ELEMENT: " + idString);
+                    return false;
+                }
 
-        partsList.add(new PartOfHiddenExpression(expression.substring(indexOfPartEnd), null));
-
-        for (int index = 0; index < partsList.size(); index++) {
-            for (int i = 0; i < partsList.get(index).part.length(); i++) {
-                if (i == partsList.get(index).part.indexOf("$e.", i)) {
-                    String idString = partsList.get(index).part.substring(i + 3, partsList.get(index).part.indexOf(".value", i + 3));
-                    Integer id = null;
-                    Integer value = null;
-                    try {
-                        id = Integer.valueOf(idString);
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
-                        Log.d("T-L.ExpressionUtils", "CANT GET ELEMENT: " + idString);
-                        return false;
-                    }
-                    if (id == null) return false;
-                    else {
-                        ElementPassedR element = activity.getMainDao().getElementPassedR(activity.getToken(), id);
+                String oldPart;
+                ElementPassedR element = activity.getMainDao().getElementPassedR(activity.getToken(), id);
+                switch (expression.charAt(indexOfPoint + 1)) {
+                    case 'v':
                         if (element != null) {
                             try {
                                 value = Integer.parseInt(element.getValue());
                             } catch (NumberFormatException e) {
                                 e.printStackTrace();
-                                value = 0;
+                                return false;
                             }
-                        }
-                        else {
+                        } else {
                             Log.d("T-L.ExpressionUtils", "CANT GET ELEMENT: " + id);
                             return false;
                         }
-                        if (value != null) {
-                            String oldPart = "$e." + idString + ".value";
-                            String newPart = partsList.get(index).part.replace(oldPart, value.toString());
-                            partsList.set(index, new PartOfHiddenExpression(newPart, partsList.get(index).operator));
-                        } else {
-                            Log.d("T-L.ExpressionUtils", "CANT GET VALUE OF: " + element.getValue());
-                            return false;
-                        }
-                    }
+                        oldPart = "$e." + idString + ".value";
+                        newExpression = newExpression.replace(oldPart, Integer.toString(value));
+                        break;
+                    case 'c':
+                        oldPart = "$e." + idString + ".checked";
+                        newExpression = newExpression.replace(oldPart, element != null ? "1.0" : "0.0"); // 1.0 == TRUE ; 0.0 == FALSE
+                        break;
+
                 }
             }
-
-        }
-        
-        for (int index = 0; index < partsList.size(); index++) {
-            double value = eval(partsList.get(index).part);
-            String newString = "" + value;
-            partsList.set(index, new PartOfHiddenExpression(newString, partsList.get(index).operator));
         }
 
-        boolean check = checkHiddenOperator(partsList);
-        return check;
-    }
-
-    private boolean checkHiddenOperator(List<PartOfHiddenExpression> partsList) {
-        for (int index = 0; index < partsList.size() - 1; index++) {
-            Double left = null;
-            Double right = null;
-            try {
-                left = Double.valueOf(partsList.get(index).part);
-                right = Double.valueOf(partsList.get(index + 1).part);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                return false;
-            }
-            if (left == null || right == null) return false;
-            if (partsList.get(index).operator == null) return false;
-            switch (partsList.get(index).operator) {
-                case Operators.LOE:
-                    if (!(left <= right)) return false;
-                    break;
-                case Operators.MOE:
-                    if (!(left >= right)) return false;
-                    break;
-                case Operators.LESS:
-                    if (!(left < right)) return false;
-                    break;
-                case Operators.MORE:
-                    if (!(left > right)) return false;
-                    break;
-                case Operators.EQ:
-                    if (!left.equals(right)) return false;
-                    break;
-                case Operators.NOT:
-                    if (left.equals(right)) return false;
-                    break;
-                case "null":
-                    return false;
-            }
-        }
-
+        Expression e = new Expression(newExpression);
+        Log.d("T-L.ExpressionUtils", "checkHiddenExpression: " + newExpression);
+        Log.d("T-L.ExpressionUtils", "result: " + getBooleanResult(e.calculate()));
         return true;
     }
 
-    public static double eval(final String str) {
-        return new Object() {
-            int pos = -1, ch;
-
-            void nextChar() {
-                ch = (++pos < str.length()) ? str.charAt(pos) : -1;
-            }
-
-            boolean eat(int charToEat) {
-                while (ch == ' ') nextChar();
-                if (ch == charToEat) {
-                    nextChar();
-                    return true;
-                }
-                return false;
-            }
-
-            double parse() {
-                nextChar();
-                double x = parseExpression();
-                if (pos < str.length()) throw new RuntimeException("Unexpected: " + (char) ch);
-                return x;
-            }
-
-            double parseExpression() {
-                double x = parseTerm();
-                for (; ; ) {
-                    if (eat('+')) x += parseTerm(); // addition
-                    else if (eat('-')) x -= parseTerm(); // subtraction
-                    else return x;
-                }
-            }
-
-            double parseTerm() {
-                double x = parseFactor();
-                for (; ; ) {
-                    if (eat('*')) x *= parseFactor(); // multiplication
-                    else if (eat('/')) x /= parseFactor(); // division
-                    else return x;
-                }
-            }
-
-            double parseFactor() {
-                if (eat('+')) return parseFactor(); // unary plus
-                if (eat('-')) return -parseFactor(); // unary minus
-
-                double x;
-                int startPos = this.pos;
-                if (eat('(')) { // parentheses
-                    x = parseExpression();
-                    eat(')');
-                } else if ((ch >= '0' && ch <= '9') || ch == '.') { // numbers
-                    while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
-                    x = Double.parseDouble(str.substring(startPos, this.pos));
-                } else if (ch >= 'a' && ch <= 'z') { // functions
-                    while (ch >= 'a' && ch <= 'z') nextChar();
-                    String func = str.substring(startPos, this.pos);
-                    x = parseFactor();
-                    if (func.equals("sqrt")) x = Math.sqrt(x);
-                    else if (func.equals("sin")) x = Math.sin(Math.toRadians(x));
-                    else if (func.equals("cos")) x = Math.cos(Math.toRadians(x));
-                    else if (func.equals("tan")) x = Math.tan(Math.toRadians(x));
-                    else throw new RuntimeException("Unknown function: " + func);
-                } else {
-                    throw new RuntimeException("Unexpected: " + (char) ch);
-                }
-
-                if (eat('^')) x = Math.pow(x, parseFactor()); // exponentiation
-
-                return x;
-            }
-        }.parse();
+    private boolean getBooleanResult(Double result) {
+        return result == 1.0;
     }
 
-    public class PartOfHiddenExpression {
-        String part;
-        String operator;
-
-        public PartOfHiddenExpression(String part, String operator) {
-            this.part = part;
-            this.operator = operator;
-        }
-    }
+//    public boolean checkHiddenExpression2(String expression) {
+//        expression = expression.replaceAll(" ", "");
+//
+//        List<PartOfHiddenExpression> partsList = new ArrayList<>();
+//        int indexOfPartEnd = 0;
+//
+//        for (int i = 0; i < expression.length(); i++) {
+//            if (i == expression.indexOf(Operators.LOE, i)) {
+//                partsList.add(new PartOfHiddenExpression(expression.substring(indexOfPartEnd, i), Operators.LOE));
+//                indexOfPartEnd = i + 2;
+//            } else if (i == expression.indexOf(Operators.MOE, i)) {
+//                partsList.add(new PartOfHiddenExpression(expression.substring(indexOfPartEnd, i), Operators.MOE));
+//                indexOfPartEnd = i + 2;
+//            } else if (i == expression.indexOf(Operators.LESS, i)) {
+//                partsList.add(new PartOfHiddenExpression(expression.substring(indexOfPartEnd, i), Operators.LESS));
+//                indexOfPartEnd = i + 1;
+//            } else if (i == expression.indexOf(Operators.MORE, i)) {
+//                partsList.add(new PartOfHiddenExpression(expression.substring(indexOfPartEnd, i), Operators.MORE));
+//                indexOfPartEnd = i + 1;
+//            } else if (i == expression.indexOf(Operators.EQ, i)) {
+//                partsList.add(new PartOfHiddenExpression(expression.substring(indexOfPartEnd, i), Operators.EQ));
+//                indexOfPartEnd = i + 2;
+//            } else if (i == expression.indexOf(Operators.NOT, i)) {
+//                partsList.add(new PartOfHiddenExpression(expression.substring(indexOfPartEnd, i), Operators.NOT));
+//                indexOfPartEnd = i + 2;
+//            }
+//        }
+//
+//        partsList.add(new PartOfHiddenExpression(expression.substring(indexOfPartEnd), null));
+//
+//        for (int index = 0; index < partsList.size(); index++) {
+//            for (int i = 0; i < partsList.get(index).part.length(); i++) {
+//                if (i == partsList.get(index).part.indexOf("$e.", i)) {
+//                    String idString = partsList.get(index).part.substring(i + 3, partsList.get(index).part.indexOf(".value", i + 3));
+//                    Integer id = null;
+//                    Integer value = null;
+//                    try {
+//                        id = Integer.valueOf(idString);
+//                    } catch (NumberFormatException e) {
+//                        e.printStackTrace();
+//                        Log.d("T-L.ExpressionUtils", "CANT GET ELEMENT: " + idString);
+//                        return false;
+//                    }
+//                    if (id == null) return false;
+//                    else {
+//                        ElementPassedR element = activity.getMainDao().getElementPassedR(activity.getToken(), id);
+//                        if (element != null) {
+//                            try {
+//                                value = Integer.parseInt(element.getValue());
+//                            } catch (NumberFormatException e) {
+//                                e.printStackTrace();
+//                                value = 0;
+//                            }
+//                        } else {
+//                            Log.d("T-L.ExpressionUtils", "CANT GET ELEMENT: " + id);
+//                            return false;
+//                        }
+//                        if (value != null) {
+//                            String oldPart = "$e." + idString + ".value";
+//                            String newPart = partsList.get(index).part.replace(oldPart, value.toString());
+//                            partsList.set(index, new PartOfHiddenExpression(newPart, partsList.get(index).operator));
+//                        } else {
+//                            Log.d("T-L.ExpressionUtils", "CANT GET VALUE OF: " + element.getValue());
+//                            return false;
+//                        }
+//                    }
+//                }
+//            }
+//
+//        }
+//
+//        for (int index = 0; index < partsList.size(); index++) {
+//            double value = eval(partsList.get(index).part);
+//            String newString = "" + value;
+//            partsList.set(index, new PartOfHiddenExpression(newString, partsList.get(index).operator));
+//        }
+//
+//        boolean check = checkHiddenOperator(partsList);
+//        return check;
+//    }
+//
+//    private boolean checkHiddenOperator(List<PartOfHiddenExpression> partsList) {
+//        for (int index = 0; index < partsList.size() - 1; index++) {
+//            Double left = null;
+//            Double right = null;
+//            try {
+//                left = Double.valueOf(partsList.get(index).part);
+//                right = Double.valueOf(partsList.get(index + 1).part);
+//            } catch (NumberFormatException e) {
+//                e.printStackTrace();
+//                return false;
+//            }
+//            if (left == null || right == null) return false;
+//            if (partsList.get(index).operator == null) return false;
+//            switch (partsList.get(index).operator) {
+//                case Operators.LOE:
+//                    if (!(left <= right)) return false;
+//                    break;
+//                case Operators.MOE:
+//                    if (!(left >= right)) return false;
+//                    break;
+//                case Operators.LESS:
+//                    if (!(left < right)) return false;
+//                    break;
+//                case Operators.MORE:
+//                    if (!(left > right)) return false;
+//                    break;
+//                case Operators.EQ:
+//                    if (!left.equals(right)) return false;
+//                    break;
+//                case Operators.NOT:
+//                    if (left.equals(right)) return false;
+//                    break;
+//                case "null":
+//                    return false;
+//            }
+//        }
+//
+//        return true;
+//    }
+//
+//    public static double eval(final String str) {
+//        return new Object() {
+//            int pos = -1, ch;
+//
+//            void nextChar() {
+//                ch = (++pos < str.length()) ? str.charAt(pos) : -1;
+//            }
+//
+//            boolean eat(int charToEat) {
+//                while (ch == ' ') nextChar();
+//                if (ch == charToEat) {
+//                    nextChar();
+//                    return true;
+//                }
+//                return false;
+//            }
+//
+//            double parse() {
+//                nextChar();
+//                double x = parseExpression();
+//                if (pos < str.length()) throw new RuntimeException("Unexpected: " + (char) ch);
+//                return x;
+//            }
+//
+//            double parseExpression() {
+//                double x = parseTerm();
+//                for (; ; ) {
+//                    if (eat('+')) x += parseTerm(); // addition
+//                    else if (eat('-')) x -= parseTerm(); // subtraction
+//                    else return x;
+//                }
+//            }
+//
+//            double parseTerm() {
+//                double x = parseFactor();
+//                for (; ; ) {
+//                    if (eat('*')) x *= parseFactor(); // multiplication
+//                    else if (eat('/')) x /= parseFactor(); // division
+//                    else return x;
+//                }
+//            }
+//
+//            double parseFactor() {
+//                if (eat('+')) return parseFactor(); // unary plus
+//                if (eat('-')) return -parseFactor(); // unary minus
+//
+//                double x;
+//                int startPos = this.pos;
+//                if (eat('(')) { // parentheses
+//                    x = parseExpression();
+//                    eat(')');
+//                } else if ((ch >= '0' && ch <= '9') || ch == '.') { // numbers
+//                    while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
+//                    x = Double.parseDouble(str.substring(startPos, this.pos));
+//                } else if (ch >= 'a' && ch <= 'z') { // functions
+//                    while (ch >= 'a' && ch <= 'z') nextChar();
+//                    String func = str.substring(startPos, this.pos);
+//                    x = parseFactor();
+//                    if (func.equals("sqrt")) x = Math.sqrt(x);
+//                    else if (func.equals("sin")) x = Math.sin(Math.toRadians(x));
+//                    else if (func.equals("cos")) x = Math.cos(Math.toRadians(x));
+//                    else if (func.equals("tan")) x = Math.tan(Math.toRadians(x));
+//                    else throw new RuntimeException("Unknown function: " + func);
+//                } else {
+//                    throw new RuntimeException("Unexpected: " + (char) ch);
+//                }
+//
+//                if (eat('^')) x = Math.pow(x, parseFactor()); // exponentiation
+//
+//                return x;
+//            }
+//        }.parse();
+//    }
+//
+//    public class PartOfHiddenExpression {
+//        String part;
+//        String operator;
+//
+//        public PartOfHiddenExpression(String part, String operator) {
+//            this.part = part;
+//            this.operator = operator;
+//        }
+//    }
 }

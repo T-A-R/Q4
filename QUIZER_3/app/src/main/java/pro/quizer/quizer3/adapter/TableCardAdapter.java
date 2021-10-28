@@ -2,6 +2,7 @@ package pro.quizer.quizer3.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,9 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 
+import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
+import com.smarteist.autoimageslider.SliderAnimations;
+import com.smarteist.autoimageslider.SliderView;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -83,10 +87,10 @@ public class TableCardAdapter extends ArrayAdapter<CardItem> {
             }
 
             cont.setOnClickListener(v -> {
-                String pic = Objects.requireNonNull(getItem(position)).getPic();
-                if (pic != null) {
+                List<String> pics = Objects.requireNonNull(getItem(position)).getPic();
+                if (pics != null && pics.size() > 0) {
                     try {
-                        showAdditionalInfoDialog(pic);
+                        showAdditionalInfoDialog(pics);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -140,26 +144,38 @@ public class TableCardAdapter extends ArrayAdapter<CardItem> {
         return path + FileUtils.FOLDER_DIVIDER + fileName;
     }
 
-    private void showAdditionalInfoDialog(String data) {
+    private void showAdditionalInfoDialog(List<String> data) {
         final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mContext);
         final View mView = layoutInflaterAndroid.inflate(R.layout.dialog_table_question_additional_info, null);
         final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
         dialog.setView(mView);
 
         final TextView title = mView.findViewById(R.id.title);
-        final ImageView image = mView.findViewById(R.id.image);
+        final SliderView sliderView = mView.findViewById(R.id.imageSlider);
         final TextView description = mView.findViewById(R.id.description);
+
+        SliderAdapterExample adapter;
+
         description.setTypeface(description.getTypeface(), Typeface.ITALIC);
 
         title.setVisibility(View.GONE);
         description.setVisibility(View.GONE);
 
         if (data != null) {
-            showPic(image, data);
+            adapter = new SliderAdapterExample(mContext);
+            adapter.renewItems(data);
+            sliderView.setSliderAdapter(adapter);
+            sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+            sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+            sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
+            sliderView.setIndicatorSelectedColor(Color.WHITE);
+            sliderView.setIndicatorUnselectedColor(Color.GRAY);
+            sliderView.setScrollTimeInSec(6);
+            sliderView.setAutoCycle(true);
+            sliderView.startAutoCycle();
         }
 
         dialog.setCancelable(true);
-//                .setPositiveButton(R.string.view_OK, (dialogBox, id) -> dialogBox.cancel());
 
         final AlertDialog alertDialog = dialog.create();
 

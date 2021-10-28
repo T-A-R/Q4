@@ -123,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     static public String TAG = "TARLOGS";
     static public boolean AVIA = false;
     static public boolean DEBUG_MODE = false; //TODO FOR TESTS ONLY!
+    static public boolean PLAY_MARKET = false;
     static public boolean RECORDING = false;
     public boolean mIsPermDialogShow = false;
     private int mAudioRecordLimitTime;
@@ -589,34 +590,58 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public boolean checkPermission() {
-        final int location = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
-        final int camera = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
-        final int audio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
-        final int sms = ContextCompat.checkSelfPermission(getApplicationContext(), SEND_SMS);
-        final int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
-        final int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
-        final int phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_STATE);
+        if (!PLAY_MARKET) {
+            final int location = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
+            final int camera = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
+            final int audio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
+            final int sms = ContextCompat.checkSelfPermission(getApplicationContext(), SEND_SMS);
+            final int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+            final int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+            final int phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_STATE);
 
-        return location == PackageManager.PERMISSION_GRANTED &&
-                camera == PackageManager.PERMISSION_GRANTED &&
-                audio == PackageManager.PERMISSION_GRANTED &&
-                sms == PackageManager.PERMISSION_GRANTED &&
-                writeStorage == PackageManager.PERMISSION_GRANTED &&
-                readStorage == PackageManager.PERMISSION_GRANTED &&
-                phoneState == PackageManager.PERMISSION_GRANTED;
+            return location == PackageManager.PERMISSION_GRANTED &&
+                    camera == PackageManager.PERMISSION_GRANTED &&
+                    audio == PackageManager.PERMISSION_GRANTED &&
+                    sms == PackageManager.PERMISSION_GRANTED &&
+                    writeStorage == PackageManager.PERMISSION_GRANTED &&
+                    readStorage == PackageManager.PERMISSION_GRANTED &&
+                    phoneState == PackageManager.PERMISSION_GRANTED;
+        } else {
+            final int location = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
+            final int camera = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
+            final int audio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
+            final int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+            final int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+            final int phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_STATE);
+
+            return location == PackageManager.PERMISSION_GRANTED &&
+                    camera == PackageManager.PERMISSION_GRANTED &&
+                    audio == PackageManager.PERMISSION_GRANTED &&
+                    writeStorage == PackageManager.PERMISSION_GRANTED &&
+                    readStorage == PackageManager.PERMISSION_GRANTED &&
+                    phoneState == PackageManager.PERMISSION_GRANTED;
+        }
     }
 
     public void requestPermission() {
         if (!mIsPermDialogShow)
-            ActivityCompat.requestPermissions(this, new String[]{
-                    ACCESS_FINE_LOCATION,
-                    CAMERA,
-                    RECORD_AUDIO,
-                    WRITE_EXTERNAL_STORAGE,
-                    READ_EXTERNAL_STORAGE,
-                    SEND_SMS,
-                    READ_PHONE_STATE
-            }, 200);
+            ActivityCompat.requestPermissions(this,
+                    PLAY_MARKET ? new String[]{
+                            ACCESS_FINE_LOCATION,
+                            CAMERA,
+                            RECORD_AUDIO,
+                            WRITE_EXTERNAL_STORAGE,
+                            READ_EXTERNAL_STORAGE,
+                            READ_PHONE_STATE
+                    } : new String[]{
+                            ACCESS_FINE_LOCATION,
+                            CAMERA,
+                            RECORD_AUDIO,
+                            WRITE_EXTERNAL_STORAGE,
+                            READ_EXTERNAL_STORAGE,
+                            SEND_SMS,
+                            READ_PHONE_STATE
+                    }, 200);
     }
 
     @SuppressLint("MissingPermission")
@@ -625,24 +650,44 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         switch (requestCode) {
             case 200:
                 if (grantResults.length > 0) {
-                    final boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    final boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                    final boolean audioAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
-                    final boolean writeStorageAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED;
-                    final boolean readStorageAccepted = grantResults[4] == PackageManager.PERMISSION_GRANTED;
-                    final boolean sendSms = grantResults[5] == PackageManager.PERMISSION_GRANTED;
-                    final boolean phoneState = grantResults[6] == PackageManager.PERMISSION_GRANTED;
+                    if(!PLAY_MARKET) {
+                        final boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                        final boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                        final boolean audioAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                        final boolean writeStorageAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+                        final boolean readStorageAccepted = grantResults[4] == PackageManager.PERMISSION_GRANTED;
+                        final boolean sendSms = grantResults[5] == PackageManager.PERMISSION_GRANTED;
+                        final boolean phoneState = grantResults[6] == PackageManager.PERMISSION_GRANTED;
 
-                    if (!locationAccepted
-                            || !cameraAccepted
-                            || !audioAccepted
-                            || !writeStorageAccepted
-                            || !readStorageAccepted
-                            || !sendSms
-                            || !phoneState) {
+                        if (!locationAccepted
+                                || !cameraAccepted
+                                || !audioAccepted
+                                || !writeStorageAccepted
+                                || !readStorageAccepted
+                                || !sendSms
+                                || !phoneState) {
 
-                        showPermissionDialog();
-                        return;
+                            showPermissionDialog();
+                            return;
+                        }
+                    } else {
+                        final boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                        final boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                        final boolean audioAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                        final boolean writeStorageAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+                        final boolean readStorageAccepted = grantResults[4] == PackageManager.PERMISSION_GRANTED;
+                        final boolean phoneState = grantResults[5] == PackageManager.PERMISSION_GRANTED;
+
+                        if (!locationAccepted
+                                || !cameraAccepted
+                                || !audioAccepted
+                                || !writeStorageAccepted
+                                || !readStorageAccepted
+                                || !phoneState) {
+
+                            showPermissionDialog();
+                            return;
+                        }
                     }
                 }
                 break;
@@ -1164,7 +1209,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public void activateExitReminder() {
-        if (isExit() && getReserveChannel() != null) {
+        if (isExit() && getReserveChannel() != null && !PLAY_MARKET) {
 
             Integer mNotificationOffset = getReserveChannel().getNotificationOffset();
 

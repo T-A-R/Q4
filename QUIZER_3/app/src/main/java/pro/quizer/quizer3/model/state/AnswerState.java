@@ -32,7 +32,7 @@ public class AnswerState implements Serializable {
         this.enabled = true;
     }
 
-    public AnswerState(Integer relative_id, boolean checked, boolean open, String data, boolean enabled) {
+    public AnswerState(Integer relative_id, boolean checked, String data, boolean enabled) {
         this.relative_id = relative_id;
         this.checked = checked;
         this.open = open;

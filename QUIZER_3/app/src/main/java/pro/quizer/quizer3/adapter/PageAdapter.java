@@ -56,7 +56,8 @@ public class PageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             List<AnswerState> answersStates = new ArrayList<>();
             List<ElementItemR> answers = questions.get(i).getElements();
             for (int k = 0; k < questions.get(i).getElements().size(); k++) {
-                answersStates.add(new AnswerState(answers.get(k).getRelative_id(), false, ""));
+                Log.d("T-L.PageAdapter", "PageAdapter: " + k + "." + answers.get(k).isEnabled());
+                answersStates.add(new AnswerState(answers.get(k).getRelative_id(), false, "", answers.get(k).isEnabled()));
             }
             pageAnswersStates.put(questions.get(i).getRelative_id(), answersStates);
         }

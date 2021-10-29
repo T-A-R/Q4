@@ -1,5 +1,7 @@
 package pro.quizer.quizer3.adapter;
 
+import android.annotation.SuppressLint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.model.state.SelectItem;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.Fonts;
+import pro.quizer.quizer3.utils.UiUtils;
 
 public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.PageSelectViewHolder> {
 
@@ -33,6 +36,7 @@ public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.PageSelect
         this.isAvia = isAvia;
         this.onAnswerClickListener = onAnswerClickListener;
         this.time = DateUtils.getFullCurrentTime();
+//        answersFullList.get(0).setEnabled(false); //TODO FOR TESTS
     }
 
     @NonNull
@@ -71,15 +75,36 @@ public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.PageSelect
             this.onItemClickListener = onItemClickListener;
         }
 
+        @SuppressLint("ResourceAsColor")
         public void bind(final SelectItem item, int position) {
             answerText.setText(item.getTitle());
-            answerText.setEnabled(item.isEnabled());
-            checker.setImageResource(isMulti ? item.isChecked() ? isAvia ? R.drawable.checkbox_checked_red : R.drawable.checkbox_checked : R.drawable.checkbox_unchecked_dark_gray
-                    : item.isChecked() ? isAvia ? R.drawable.radio_button_checked_red : R.drawable.radio_button_checked : R.drawable.radio_button_dark_gray);
+            if(!item.isEnabled()) {
+                answerText.setTextColor(R.color.lightGray);
+                answerText.setClickable(false);
+            }
+//            else {
+//                answerText.setTextColor(R.color.brand_color_dark);
+//            }
+            Log.d("T-L.SelectAdapter", "bind ENABLED: " + position + "." + item.isEnabled());
+            if(!item.isEnabled()) {
+                answerText.setTextColor(R.color.lightGray);
+                answerText.setClickable(false);
+                checker.setImageResource(isMulti ? R.drawable.checkbox_unchecked_dark_gray : R.drawable.radio_button_dark_gray);
+            } else {
+                checker.setImageResource(
+                        isMulti ?
+                                item.isChecked() ?
+                                        isAvia ? R.drawable.checkbox_checked_red : R.drawable.checkbox_checked :
+                                        isAvia ? R.drawable.checkbox_unchecked_dark_gray : R.drawable.checkbox_unchecked
+                                : item.isChecked() ?
+                                isAvia ? R.drawable.radio_button_checked_red : R.drawable.radio_button_checked :
+                                isAvia ? R.drawable.radio_button_dark_gray : R.drawable.radio_button_unchecked);
+            }
             cont.setOnClickListener(v -> checkItem(position));
         }
 
         public void checkItem(int position) {
+            if(!answers.get(position).isEnabled()) return;
             if (isMulti) {
                 SelectItem item = answers.get(position);
                 item.setChecked(!item.isChecked());

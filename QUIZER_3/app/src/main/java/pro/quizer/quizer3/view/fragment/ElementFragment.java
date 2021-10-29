@@ -776,6 +776,24 @@ public class ElementFragment extends ScreenFragment
             case ElementSubtype.SELECT:
                 List<ElementItemR> elementsList = new ArrayList<>();
                 elementsList.add(currentElement);
+
+                List<Boolean> enabled = new ArrayList<>();
+
+                if (isQuota) {
+                    List<Integer> passedQuotaBlock = getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder());
+                    ElementItemR[][] quotaTree = getMainActivity().getTree(null);
+                    Integer order = currentElement.getElementOptionsR().getOrder();
+                    for (ElementItemR item : answersList) {
+                        enabled.add(canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), order));
+                    }
+                } else {
+                    for (ElementItemR ignored : answersList) {
+                        enabled.add(true);
+                    }
+                }
+
+                for(elementsList)
+
                 pageAdapter = new PageAdapter(getMainActivity(), elementsList, this);
                 rvPage.setLayoutManager(new LinearLayoutManager(getContext()));
                 rvPage.setAdapter(pageAdapter);
@@ -2131,7 +2149,7 @@ public class ElementFragment extends ScreenFragment
                     if (element.getElementContentsR() != null && element.getElementContentsR().size() > 0) {
                         List<String> pics = new ArrayList<>();
                         for (ElementContentsR content : element.getElementContentsR()) {
-                            if(content.getData() != null && !content.getData().equals("")) pics.add(content.getData());
+                            if (content.getData() != null && !content.getData().equals("")) pics.add(content.getData());
                         }
                         item.setPic(pics);
                         item.setThumb(element.getElementContentsR().get(0).getData_thumb());
@@ -2165,7 +2183,7 @@ public class ElementFragment extends ScreenFragment
                     if (element.getElementContentsR() != null && element.getElementContentsR().size() > 0) {
                         List<String> pics = new ArrayList<>();
                         for (ElementContentsR content : element.getElementContentsR()) {
-                            if(content.getData() != null && !content.getData().equals("")) pics.add(content.getData());
+                            if (content.getData() != null && !content.getData().equals("")) pics.add(content.getData());
                         }
                         item.setPic(pics);
                         item.setThumb(element.getElementContentsR().get(0).getData_thumb());

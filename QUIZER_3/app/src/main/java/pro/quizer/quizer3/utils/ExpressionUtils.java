@@ -193,11 +193,47 @@ public class ExpressionUtils {
 
     public boolean checkHiddenExpression(String expression) {
 
+//        expression = "2<20<=170/2";
+
 //        expression = "($e.3.checked && 5<$e.2.value<=17*2) || 21<=$e.2.value + 23 <40";
 //        expression = "100-$e.2.value <($e.3.value+15-$e.4.value)/2<=$e.5.value && ($e.6.checked || !$e.2.checked)";
 //        expression = "100-$e.2.value =$e.3.value";
 
-        String newExpression = expression.replaceAll("!", "~"); // Замена символа отрицания для парсера. (В парсере ! - это факториал)
+//        Log.d("T-L.ExpressionUtils", "===============================");
+//        Log.d("T-L.ExpressionUtils", "START: " + expression);
+
+        expression = expression.replaceAll(" ", "");
+        String newExpression = expression;
+
+        for (int i = 0; i < expression.length(); i++) {
+            if (expression.charAt(i) == '<' && i < expression.length() - 3) {
+                String temp = expression.substring(expression.charAt(i + 1) == '=' ? i + 1 : i);
+                String between = null;
+                int end = 0;
+                for (int k = 1; k < temp.length(); k++) {
+//                    Log.d("T-L.ExpressionUtils", "char: " + temp.charAt(k));
+                    if (temp.charAt(k) == '(' || temp.charAt(k) == ')' || temp.charAt(k) == '&' || temp.charAt(k) == '|') {
+//                        Log.d("T-L.ExpressionUtils", "break! ");
+                        break;
+                    } else if (temp.charAt(k) == '<') {
+                        between = temp.substring(0, temp.charAt(k - 1) == '=' ? k : k + 1);
+                        end = k;
+//                        Log.d("T-L.ExpressionUtils", "between: " + between);
+                        break;
+                    }
+                }
+                if (between != null) {
+                    newExpression = expression.replace(between, between.substring(0, between.length() - 1) + "&&" + between.substring(1));
+//                    Log.d("T-L.ExpressionUtils", "expression: " + newExpression);
+                    i += end;
+                }
+            }
+        }
+
+        newExpression = newExpression.replaceAll("!", "~"); // Замена символа отрицания для парсера. (В парсере ! - это факториал)
+        expression = newExpression;
+
+//        Log.d("T-L.ExpressionUtils", "checkHiddenExpression !!!!!!!!!!!: " + newExpression);
 
         for (int i = 0; i < expression.length(); i++) {
             if (i == expression.indexOf("$e.", i)) {
@@ -240,10 +276,12 @@ public class ExpressionUtils {
             }
         }
 
+//        newExpression = "2<20 && 20< 17/2";
+//        Log.d("T-L.ExpressionUtils", "checkHiddenExpression 1: " + );
         Expression e = new Expression(newExpression);
-        Log.d("T-L.ExpressionUtils", "checkHiddenExpression: " + newExpression);
-        Log.d("T-L.ExpressionUtils", "result: " + getBooleanResult(e.calculate()));
-        return true;
+//        Log.d("T-L.ExpressionUtils", "checkHiddenExpression: " + newExpression);
+//        Log.d("T-L.ExpressionUtils", "result: " + e.calculate() + "/" + getBooleanResult(e.calculate()));
+        return getBooleanResult(e.calculate());
     }
 
     private boolean getBooleanResult(Double result) {

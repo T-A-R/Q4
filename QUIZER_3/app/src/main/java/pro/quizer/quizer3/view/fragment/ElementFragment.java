@@ -1070,8 +1070,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
                     saved = true;
 
+                    int checkedAnswers = 0;
                     for (int i = 0; i < answerStates.size(); i++) {
                         if (answerStates.get(i).isChecked()) {
+                            checkedAnswers++;
                             ElementPassedR answerPassedR = new ElementPassedR();
                             answerPassedR.setRelative_id(answerStates.get(i).getRelative_id());
                             answerPassedR.setProject_id(currentElement.getProjectId());
@@ -1090,6 +1092,27 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             }
                         }
                     }
+                    if (checkedAnswers == 0) {
+                        //TODO INSERT PASSED ?   =============================================================
+//                        ElementPassedR answerPassedR = new ElementPassedR();
+//                        answerPassedR.setRelative_id(-404);
+//                        answerPassedR.setProject_id(currentElement.getProjectId());
+//                        answerPassedR.setToken(getQuestionnaire().getToken());
+//                        answerPassedR.setValue(null);
+//                        answerPassedR.setRank(1);
+//                        answerPassedR.setFrom_quotas_block(isQuota);
+//
+//                        try {
+//                            getDao().insertElementPassedR(answerPassedR);
+//                            saved = true;
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                            saved = false;
+//                            return saved;
+//                        }
+                    }
+                } else {
+                    Log.d("T-L.ElementFragment", "saveElement: EMPTY");
                 }
                 break;
             }
@@ -1744,11 +1767,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } else {
             try {
                 Log.d("T-L.ElementFragment", "Clear Questionnaire: 3");
-
+                getDao().deleteElementDatabaseModelByToken(getMainActivity().getCurrentQuestionnaireForce().getToken());
                 getDao().clearCurrentQuestionnaireR();
                 getDao().clearElementPassedR();
                 getDao().clearPrevElementsR();
-                getDao().deleteElementDatabaseModelByToken(getMainActivity().getCurrentQuestionnaireForce().getToken());
                 getMainActivity().setCurrentQuestionnaireNull();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -2004,7 +2026,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     if (element.getElementContentsR() != null && element.getElementContentsR().size() > 0) {
                         List<String> pics = new ArrayList<>();
                         for (ElementContentsR content : element.getElementContentsR()) {
-                            if(content.getData() != null && !content.getData().equals("")) pics.add(content.getData());
+                            if (content.getData() != null && !content.getData().equals("")) pics.add(content.getData());
                         }
                         item.setPic(pics);
                         item.setThumb(element.getElementContentsR().get(0).getData_thumb());
@@ -2034,11 +2056,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             element.getElementOptionsR().getOpen_type(),
                             element.getElementOptionsR().getPlaceholder(),
                             element.getElementOptionsR().isUnnecessary_fill_open(),
-                            element.getElementOptionsR().isAutoChecked());
+                            element.getElementOptionsR().isAutoChecked(),
+                            element.getElementOptionsR().isHelper());
                     if (element.getElementContentsR() != null && element.getElementContentsR().size() > 0) {
                         List<String> pics = new ArrayList<>();
                         for (ElementContentsR content : element.getElementContentsR()) {
-                            if(content.getData() != null && !content.getData().equals("")) pics.add(content.getData());
+                            if (content.getData() != null && !content.getData().equals("")) pics.add(content.getData());
                         }
                         item.setPic(pics);
                         item.setThumb(element.getElementContentsR().get(0).getData_thumb());
@@ -2258,9 +2281,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void checkHidden() {
-//        ExpressionUtils expressionUtilsTest = new ExpressionUtils(getMainActivity());
-//        Log.d("T-L.ElementFragment", "?????? checkHidden: " + expressionUtilsTest.checkHiddenExpression(null));
-        //============================================================================
         ElementItemR nextElement = getElement(nextElementId);
         if (nextElement.getSubtype().equals(ElementSubtype.HIDDEN)) {
             boolean saved = false;
@@ -2292,16 +2312,31 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
                 }
 
+//                boolean hiddenFound = false;
                 for (ElementItemR answer : answers) {
                     String expression = answer.getElementOptionsR().getPrev_condition();
                     if (expression == null || expression.length() == 0 || expressionUtils.checkHiddenExpression(expression)) {
                         if (hiddenInQuotaBox) {
+//                            hiddenFound = true;
                             answersHidden.add(answer);
-                            if (answer.isEnabled()) enabledCounter++;
+                            if (answer.isEnabled() || answer.getElementOptionsR().isHelper()) enabledCounter++;
                         }
                         answerStatesHidden.add(new AnswerState(answer.getRelative_id(), true, answer.getElementOptionsR().getTitle()));
                     }
                 }
+
+//                if(!hiddenFound) {
+//                    //TODO SETUP HELPER
+//                    Log.d("T-L.ElementFragment", "????????? checkHidden: NOT FOUND");
+//                    enabledCounter++;
+////                    ElementItemR element = new ElementItemR();
+////                    element.setChecked(true);
+////                    element.setRelative_id(-404);
+////                    answersHidden.add(element);
+////                    answerStatesHidden.add(new AnswerState(-404, true, ""));
+//                } else {
+//                    Log.d("T-L.ElementFragment", "????????? checkHidden: FOUND");
+//                }
 
                 if (hiddenInQuotaBox) {
                     if (answersHidden.size() == 1 && enabledCounter == 0) {
@@ -2366,28 +2401,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
                 }
             }
-//        Log.d("T-L.ElementFragment", "savePREV: 1");
-//        updatePrevElement();
-//        getDao().insertPrevElementsR(new PrevElementsR(nextElementId, nextElement.getElementOptionsR().getJump()));
     }
 
     private void showHiddenExitAlertDialog(String message) {
+        Log.d("T-L.ElementFragment", "showHiddenAlertDialog: 1");
         stopAllRecording();
-//        try {
-//            String token = getMainActivity().getCurrentQuestionnaireForce().getToken();
-//            getDao().clearCurrentQuestionnaireR();
-//            getDao().clearElementPassedR();
-//            getDao().clearPrevElementsR();
-//            getDao().deleteElementDatabaseModelByToken(token);
-//            getDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");
-//            getMainActivity().setCurrentQuestionnaireNull();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            activateButtons();
-//        }
-
         saveAndExit(false);
-
         if (getMainActivity() != null && !getMainActivity().isFinishing()) {
             getMainActivity().runOnUiThread(new Runnable() {
                 public void run() {
@@ -2436,21 +2455,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             .setNeutralButton(R.string.view_finish_quiz, (dialog, which) -> {
                                 stopAllRecording();
                                 saveAndExit(true);
-//                                try {
-//
-//                                    getDao().clearCurrentQuestionnaireR();
-//                                    getDao().clearElementPassedR();
-//                                    getDao().clearPrevElementsR();
-//                                    getDao().deleteElementDatabaseModelByToken(getMainActivity().getCurrentQuestionnaireForce().getToken());
-//                                    getDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");
-//                                    getMainActivity().setCurrentQuestionnaireNull();
-//                                } catch (Exception e) {
-//                                    e.printStackTrace();
-//                                    activateButtons();
-//                                }
-//                                dialog.dismiss();
-//                                getMainActivity().restartHome();
-//                        replaceFragment(new HomeFragment());
                             })
                             .show();
                 }

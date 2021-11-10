@@ -462,6 +462,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                         elementOptionsR.setWith_card(optionsModelNew.getWithCard());
                         elementOptionsR.setShow_in_card(optionsModelNew.getShowInCard());
                         elementOptionsR.setAuto_check(optionsModelNew.isAutoCheck());
+                        elementOptionsR.setHelper(optionsModelNew.isHelper());
 
                         elementItemR.setElementOptionsR(elementOptionsR);
                     }

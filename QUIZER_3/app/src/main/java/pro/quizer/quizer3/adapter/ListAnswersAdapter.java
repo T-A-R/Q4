@@ -114,6 +114,10 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         return answersState.get(position).isChecked();
     }
 
+    public boolean isHelper(int position) {
+        return answersList.get(position).getElementOptionsR().isHelper();
+    }
+
     private List<ElementItemR> makeRotation(ElementItemR question, List<ElementItemR> answers) {
         if (question.getElementOptionsR() != null && question.getElementOptionsR().isRotation()) {
             List<ElementItemR> shuffleList = new ArrayList<>();
@@ -148,7 +152,12 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ListObjectViewHolder holder, int position) {
-        holder.bind(answersList.get(position), position);
+        if (!isHelper(position)) {
+            holder.cont.setVisibility(View.VISIBLE);
+            holder.bind(answersList.get(position), position);
+        } else {
+            holder.cont.setVisibility(View.GONE);
+        }
     }
 
     @Override

@@ -15,11 +15,13 @@ public class CardItem {
     boolean isAutoCkecker;
     String open;
     String hint;
+    boolean helper;
 
     public CardItem() {
+        this.helper = false;
     }
 
-    public CardItem(int id, String title, String desc, boolean isUnChecker, boolean checked, String open, String hint , boolean unnecessaryFillOpen, boolean isAutoCkecker) {
+    public CardItem(int id, String title, String desc, boolean isUnChecker, boolean checked, String open, String hint , boolean unnecessaryFillOpen, boolean isAutoCkecker, boolean helper) {
         this.id = id;
         this.title = title;
         this.desc = desc;
@@ -29,6 +31,7 @@ public class CardItem {
         this.hint = hint;
         this.unnecessaryFillOpen = unnecessaryFillOpen;
         this.isAutoCkecker = isAutoCkecker;
+        this.helper = helper;
     }
 
     public int getId() {
@@ -125,5 +128,13 @@ public class CardItem {
 
     public void setThumb(String thumb) {
         this.thumb = thumb;
+    }
+
+    public void setHelper(boolean helper) {
+        this.helper = helper;
+    }
+
+    public boolean isHelper() {
+        return helper;
     }
 }

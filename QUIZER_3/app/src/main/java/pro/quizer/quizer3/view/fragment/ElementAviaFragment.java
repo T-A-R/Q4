@@ -2173,7 +2173,8 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
                             answersHidden.add(answer);
                             if (answer.isEnabled()) enabledCounter++;
                         }
-                        answerStatesHidden.add(new AnswerState(answer.getRelative_id(), true, answer.getElementOptionsR().getTitle()));
+                        AnswerState answerState = new AnswerState(answer.getRelative_id(), true, answer.getElementOptionsR().getTitle());
+                        answerStatesHidden.add(answerState);
                     }
                 }
 

@@ -40,6 +40,9 @@ public class ElementPassedR {
     @ColumnInfo(name = "from_quotas_block")
     private boolean from_quotas_block;
 
+    @ColumnInfo(name = "helper")
+    private Boolean helper;
+
     public ElementPassedR() {
     }
 
@@ -134,5 +137,13 @@ public class ElementPassedR {
 
     public void setFrom_quotas_block(boolean from_quotas_block) {
         this.from_quotas_block = from_quotas_block;
+    }
+
+    public Boolean isHelper() {
+        return helper;
+    }
+
+    public void setHelper(Boolean helper) {
+        this.helper = helper;
     }
 }

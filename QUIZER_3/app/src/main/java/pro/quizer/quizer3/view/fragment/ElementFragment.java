@@ -1081,7 +1081,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             answerPassedR.setValue(answerStates.get(i).getData());
                             answerPassedR.setRank(i + 1);
                             answerPassedR.setFrom_quotas_block(isQuota);
-
+                            try {
+                                answerPassedR.setHelper(getElement(answerStates.get(i).getRelative_id()).getElementOptionsR().isHelper());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             try {
                                 getDao().insertElementPassedR(answerPassedR);
                                 saved = true;
@@ -1240,6 +1244,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     elementPassedR.setProject_id(currentElement.getProjectId());
                     elementPassedR.setToken(getQuestionnaire().getToken());
                     elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
+
                     try {
                         if (!isRestored) {
                             getDao().insertElementPassedR(elementPassedR);
@@ -1260,6 +1265,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                 answerPassedR.setValue(answerStates[i][k].getData());
                                 answerPassedR.setProject_id(currentElement.getProjectId());
                                 answerPassedR.setToken(getQuestionnaire().getToken());
+                                try {
+                                    answerPassedR.setHelper(getElement(answerStates[i][k].getRelative_id()).getElementOptionsR().isHelper());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                                 try {
                                     if (!isRestored) {
                                         getDao().insertElementPassedR(answerPassedR);
@@ -2393,6 +2403,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     answerPassedR.setToken(getQuestionnaire().getToken());
                     answerPassedR.setValue(answerStatesHidden.get(i).getData());
                     answerPassedR.setFrom_quotas_block(isQuota);
+                    try {
+                        answerPassedR.setHelper(getElement(answerStatesHidden.get(i).getRelative_id()).getElementOptionsR().isHelper());
+                        Log.d("T-L.ElementFragment", "saveHidden: " + getElement(answerStatesHidden.get(i).getRelative_id()).getElementOptionsR().isHelper());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                     try {
                         getDao().insertElementPassedR(answerPassedR);

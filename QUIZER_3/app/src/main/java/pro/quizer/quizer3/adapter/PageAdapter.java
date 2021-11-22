@@ -45,6 +45,7 @@ public class PageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Map<Integer, List<AnswerState>> pageAnswersStates;
     private final MainActivity mActivity;
     private final boolean isAvia;
+    private List<Boolean> enabled = null;
 
     public PageAdapter(final Context context, List<ElementItemR> questions, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
@@ -135,6 +136,10 @@ public class PageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return map;
     }
 
+    public void setEnabled(List<Boolean> enabled) {
+        this.enabled = enabled;
+    }
+
     public class PageSelectViewHolder extends RecyclerView.ViewHolder {
 
         TextView questionText;
@@ -163,6 +168,15 @@ public class PageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             StringBuilder answerTextBuilder = null;
             List<AnswerState> answerStates = pageAnswersStates.get(item.getRelative_id());
             List<ElementItemR> answersList = item.getElements();
+
+            //===========================================================================
+
+            for(int i = 0; i < answersList.size(); i++) {
+                answersList.get(i).setEnabled(enabled.get(i));
+            }
+            
+            //===========================================================================
+
 
             for (int i = 0; i < answerStates.size(); i++) {
                 if (answerStates.get(i).isChecked()) {

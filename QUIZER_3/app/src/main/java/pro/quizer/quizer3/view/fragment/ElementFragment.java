@@ -776,6 +776,7 @@ public class ElementFragment extends ScreenFragment
                 List<ElementItemR> elementsList = new ArrayList<>();
                 elementsList.add(currentElement);
 
+                //TODO ====================== MOVE TO ADAPTER ======================
                 List<Boolean> enabled = new ArrayList<>();
 
                 if (isQuota) {
@@ -791,7 +792,11 @@ public class ElementFragment extends ScreenFragment
                     }
                 }
 
-                for(elementsList)
+                for(int i = 0; i < answersList.size(); i++) {
+                    answersList.get(i).setEnabled(enabled.get(i));
+                }
+
+                //TODO SET QUOTA TO SELECT!!!!  ^^^^^^^^^^^^^^^^^^^^^^^
 
                 pageAdapter = new PageAdapter(getMainActivity(), elementsList, this);
                 rvPage.setLayoutManager(new LinearLayoutManager(getContext()));

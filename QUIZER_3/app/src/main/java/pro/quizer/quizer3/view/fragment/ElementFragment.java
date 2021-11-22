@@ -71,7 +71,6 @@ import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.ExpressionUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
-import pro.quizer.quizer3.utils.SmsUtils;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
@@ -765,6 +764,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 rvAnswers.setAdapter(adapterList);
                 break;
             case ElementSubtype.RANK:
+                removeHelper();
                 adapterRank = new RankQuestionAdapter(getActivity(), currentElement, answersList,
                         null, null, titlesMap, this);
                 rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -809,6 +809,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 break;
 
             case ElementSubtype.SELECT:
+                removeHelper();
                 if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isRotation()) {
                     List<ElementItemR> shuffleList = new ArrayList<>();
                     for (ElementItemR elementItemR : answersList) {
@@ -932,6 +933,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 initTable();
                 break;
             case ElementSubtype.SCALE:
+                removeHelper();
                 adapterScale = new ScaleQuestionAdapter(getActivity(), currentElement, answersList,
                         this);
                 if (isAvia())
@@ -941,6 +943,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 rvScale.setAdapter(adapterScale);
                 break;
         }
+    }
+
+    private void removeHelper() {
+        int helperId = -1;
+        for(int i = 0; i < answersList.size(); i ++) {
+            if(answersList.get(i).getElementOptionsR().isHelper()) {
+                helperId = i;
+                break;
+            }
+        }
+        if(helperId != -1) answersList.remove(helperId);
     }
 
     private void initTable() {
@@ -1065,6 +1078,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     elementPassedR.setToken(getQuestionnaire().getToken());
                     elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
                     elementPassedR.setFrom_quotas_block(false);
+                    elementPassedR.setHelper(answerStates.size() == 1 && getElement(answerStates.get(0).getRelative_id()).getElementOptionsR().isHelper());
 
                     getDao().insertElementPassedR(elementPassedR);
                     getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
@@ -1440,7 +1454,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     getDao().deleteOldElementsPassedR(id);
                     if (!force)
                         getMainActivity().runOnUiThread(() -> showToast(getString(R.string.data_changed)));
-//                    if (!force) showToast(getString(R.string.data_changed));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -1497,8 +1510,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
                 adapterList.setAnswers(answerStatesRestored);
                 adapterList.setRestored(true);
-//                if (!currentElement.getElementOptionsR().isPolyanswer())
-//                    adapterList.setLastSelectedPosition(lastSelectedPosition);
                 adapterList.notifyDataSetChanged();
                 break;
             }
@@ -1636,10 +1647,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 answerStateNew.setRelative_id(answerStatesAdapter.get(i).getRelative_id());
                 answerStatesRestored.add(answerStateNew);
             }
-
-//            for (int i = 0; i < answerStatesRestored.size(); i++) {
-//                if(answerStatesRestored.get(i).is)
-//            }
 
             adapterList.setAnswers(answerStatesRestored);
             adapterList.setRestored(true);
@@ -1857,7 +1864,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         dQuota2.setTextColor(getResources().getColor(R.color.black));
         dQuota1.setText(getString(R.string.label_login, getMainActivity().getCurrentUser().getLogin()));
         dQuota2.setText(getString(R.string.label_inter, getUserName()));
-//        dQuota3.setText(getString(R.string.label_project, getMainActivity().getConfig().getProjectInfo().getName()));
         UiUtils.setTextOrHide(dQuota3, getString(R.string.label_project, getMainActivity().getConfig().getProjectInfo().getName()));
 
         dialogBuilder.setView(layoutView);
@@ -1889,12 +1895,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     try {
                         if (answerType.equals(ElementSubtype.END)) {
                             nextElementId = currentElement.getElementOptionsR().getJump();
-//                            Log.d("T-L.ElementFragment", "=== END NEXT ELEMENT: " + nextElementId);
-//                            showToast("=== END NEXT ELEMENT: " + nextElementId);
-                        } else {
-//                            showToast("=== NEXT ELEMENT: " + nextElementId);
                         }
-//                        Log.d("T-L.ElementFragment", "=== NEXT ELEMENT: " + nextElementId);
                         if (nextElementId == null) {
                             showRestartDialog();
                         } else if (nextElementId == 0) {
@@ -1916,7 +1917,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         } else {
                             checkAndLoadNext();
                             if (!isInHiddenQuotaDialog) {
-//                                Log.d("T-L.ElementFragment", "savePREV: 2");
                                 updatePrevElement();
                             }
                         }
@@ -1950,7 +1950,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     checkHidden();
                     if (!isInHiddenQuotaDialog) {
                         TransFragment fragment = new TransFragment();
-                        fragment.setStartElement(nextElementId);
+                        fragment.setStartElement(currentElement.getRelative_id(), nextElementId);
                         stopRecording();
                         replaceFragment(fragment);
                     }
@@ -2135,12 +2135,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     public boolean canShow(ElementItemR[][] tree, List<Integer> passedElementsId, Integer relativeId, Integer order) {
-
-        for (Integer element : passedElementsId) {
-            Log.d("T-L.ElementFragment", "id: " + element);
-        }
-
-
         if (tree == null || order == null || relativeId == null) {
             return true;
         }
@@ -2159,22 +2153,15 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             for (int k = 0; k < tree[0].length; k++) {
                 for (int i = 0; i < endPassedElement; ) {
                     if (tree[i][k].getRelative_id().equals(passedElementsId.get(i))) {
-//                        Log.d("T-L.ElementFragment", "if canShow: 1");
-//                        Log.d("T-L.ElementFragment", "endPassedElement: " + i + "/" + endPassedElement);
                         if (i == (endPassedElement - 1)) { // Если последний, то
-                            Log.d("T-L.ElementFragment", "if canShow: 2");
-                            Log.d("T-L.ElementFragment", "==== " + tree[i + 1][k].getRelative_id() + "/" + relativeId);
                             if (tree[i + 1][k].getRelative_id().equals(relativeId)) { // Если следующий за последним равен Relative ID
-                                Log.d("T-L.ElementFragment", "if canShow: 3");
                                 if (tree[i + 1][k].isEnabled()) {
-                                    Log.d("T-L.ElementFragment", "if canShow: 4");
                                     return true;
                                 }
                             }
                         }
                         i++;
                     } else {
-                        Log.d("T-L.ElementFragment", ">>>> break ");
                         break;
                     }
                 }
@@ -2184,15 +2171,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     public boolean canShowFromMapBlock(ElementItemR[][] tree, Map<Integer, List<Integer>> passedElementsId, Integer relativeId, Integer order) {
-//        Log.d("T-L.ElementFragment", ">>>>>>>>>>>>>>>>>>>>>>> PASSED: " + passedElementsId.size());
-//        for (int n = 0; n < passedElementsId.size(); n++) {
-//            for (int t = 0; t < passedElementsId.get(n).size(); t++) {
-//                Log.d("T-L.ElementFragment", "canShowFromMapBlock: " + n + ":" + passedElementsId.get(n).get(t));
-//            }
-//            Log.d("T-L.ElementFragment", "================");
-//        }
-
-
         if (tree == null || order == null || relativeId == null) {
             return true;
         }
@@ -2224,11 +2202,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                 }
                                 i++;
                                 equals = true;
+                            } else {
+                                break;
                             }
-//                            else {
-//                                Log.d("T-L.ElementFragment", ">>>> break ");
-//                                break;
-//                            }
                         }
                         if (!equals) break;
                     }

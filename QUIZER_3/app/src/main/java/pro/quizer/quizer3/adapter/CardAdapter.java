@@ -57,6 +57,11 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
         this.isMulti = isMulti;
     }
 
+    public boolean isHelper(int position) {
+        return mItems.get(position).isHelper();
+    }
+
+
     @Nullable
     @Override
     public CardItem getItem(int position) {
@@ -81,79 +86,86 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
             holder = vi.inflate(isAutoZoom ? R.layout.holder_card_auto : R.layout.holder_card, null);
         }
 
-        if (getItem(position) != null) {
-            String text = Objects.requireNonNull(getItem(position)).getTitle();
+        CardView cont = holder.findViewById(R.id.cont_card);
 
-            if (text != null) {
-                boolean checked = Objects.requireNonNull(getItem(position)).isChecked();
-                String openType = Objects.requireNonNull(getItem(position)).getOpen();
-                String data = Objects.requireNonNull(getItem(position)).getData();
-                String hint = Objects.requireNonNull(getItem(position)).getHint();
-                String thumb = Objects.requireNonNull(getItem(position)).getThumb();
-                boolean open = !openType.equals("checkbox");
+        if (isHelper(position)) {
+            cont.setVisibility(View.GONE);
+        } else {
+            cont.setVisibility(View.VISIBLE);
 
-                CardView cont = holder.findViewById(R.id.cont_card);
-                TextView textView = holder.findViewById(R.id.text1);
-                TextView cardInput = holder.findViewById(R.id.card_input);
-                ImageView checker = holder.findViewById(R.id.checker);
-                ImageView titleImage = holder.findViewById(R.id.title_image);
+            if (getItem(position) != null) {
+                String text = Objects.requireNonNull(getItem(position)).getTitle();
 
-                if (thumb != null && thumb.length() > 0) {
-                    titleImage.setVisibility(View.VISIBLE);
-                    showPic(titleImage, thumb);
-                    titleImage.setOnClickListener(v -> {
-                        List<String> pics = Objects.requireNonNull(getItem(position)).getPic();
-                        if (pics != null && pics.size() > 0) {
-                            try {
-                                showAdditionalInfoDialog(pics);
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                if (text != null) {
+                    boolean checked = Objects.requireNonNull(getItem(position)).isChecked();
+                    String openType = Objects.requireNonNull(getItem(position)).getOpen();
+                    String data = Objects.requireNonNull(getItem(position)).getData();
+                    String hint = Objects.requireNonNull(getItem(position)).getHint();
+                    String thumb = Objects.requireNonNull(getItem(position)).getThumb();
+                    boolean open = !openType.equals("checkbox");
+
+                    TextView textView = holder.findViewById(R.id.text1);
+                    TextView cardInput = holder.findViewById(R.id.card_input);
+                    ImageView checker = holder.findViewById(R.id.checker);
+                    ImageView titleImage = holder.findViewById(R.id.title_image);
+
+                    if (thumb != null && thumb.length() > 0) {
+                        titleImage.setVisibility(View.VISIBLE);
+                        showPic(titleImage, thumb);
+                        titleImage.setOnClickListener(v -> {
+                            List<String> pics = Objects.requireNonNull(getItem(position)).getPic();
+                            if (pics != null && pics.size() > 0) {
+                                try {
+                                    showAdditionalInfoDialog(pics);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
+                        });
+                    } else {
+                        titleImage.setVisibility(View.GONE);
+                    }
+
+                    if (data != null && data.length() > 0) {
+                        cardInput.setTextColor(mContext.getResources().getColor(R.color.brand_color_dark));
+                        UiUtils.setTextOrHide(cardInput, data);
+                    } else if (hint != null && hint.length() > 0) {
+                        cardInput.setTextColor(mContext.getResources().getColor(R.color.gray));
+                        cardInput.setText(hint);
+                    } else {
+                        cardInput.setTextColor(mContext.getResources().getColor(R.color.gray));
+                        cardInput.setText(R.string.enter_answer);
+                    }
+                    cardInput.setVisibility(open ? View.VISIBLE : View.GONE);
+
+                    if (isMulti) {
+                        checker.setImageResource(checked ? R.drawable.checkbox_checked : R.drawable.checkbox_unchecked);
+                    } else {
+                        checker.setImageResource(checked ? R.drawable.radio_button_checked : R.drawable.radio_button_unchecked);
+                    }
+                    checker.setVisibility(View.VISIBLE);
+
+                    UiUtils.setTextOrHide(textView, text);
+
+                    cont.setOnClickListener(v -> {
+                        if ((open && !getItem(position).isChecked()) || (open && getItem(position).isAutoCkecker())) {
+                            switch (getItem(position).getOpen()) {
+                                case "text":
+                                case "number":
+                                    showInputDialog(cardInput, position);
+                                    break;
+                                case "date":
+                                    setDate(cardInput, position);
+                                    break;
+                                case "time":
+                                    setTime(cardInput, position);
+                                    break;
+                            }
+                        } else {
+                            checkItem(position);
                         }
                     });
-                } else {
-                    titleImage.setVisibility(View.GONE);
                 }
-
-                if (data != null && data.length() > 0) {
-                    cardInput.setTextColor(mContext.getResources().getColor(R.color.brand_color_dark));
-                    UiUtils.setTextOrHide(cardInput, data);
-                } else if (hint != null && hint.length() > 0) {
-                    cardInput.setTextColor(mContext.getResources().getColor(R.color.gray));
-                    cardInput.setText(hint);
-                } else {
-                    cardInput.setTextColor(mContext.getResources().getColor(R.color.gray));
-                    cardInput.setText(R.string.enter_answer);
-                }
-                cardInput.setVisibility(open ? View.VISIBLE : View.GONE);
-
-                if (isMulti) {
-                    checker.setImageResource(checked ? R.drawable.checkbox_checked : R.drawable.checkbox_unchecked);
-                } else {
-                    checker.setImageResource(checked ? R.drawable.radio_button_checked : R.drawable.radio_button_unchecked);
-                }
-                checker.setVisibility(View.VISIBLE);
-
-                UiUtils.setTextOrHide(textView, text);
-
-                cont.setOnClickListener(v -> {
-                    if ((open && !getItem(position).isChecked()) || (open && getItem(position).isAutoCkecker())) {
-                        switch (getItem(position).getOpen()) {
-                            case "text":
-                            case "number":
-                                showInputDialog(cardInput, position);
-                                break;
-                            case "date":
-                                setDate(cardInput, position);
-                                break;
-                            case "time":
-                                setTime(cardInput, position);
-                                break;
-                        }
-                    } else {
-                        checkItem(position);
-                    }
-                });
             }
         }
 

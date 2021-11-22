@@ -101,6 +101,9 @@ public class OptionsModel implements Serializable {
     @SerializedName("is_media")
     private boolean is_media;
 
+    @SerializedName("helper")
+    private boolean helper;
+
     public String getData() {
         return data;
     }
@@ -224,5 +227,13 @@ public class OptionsModel implements Serializable {
 
     public boolean isMedia() {
         return is_media;
+    }
+
+    public boolean isHelper() {
+        return helper;
+    }
+
+    public void setHelper(boolean helper) {
+        this.helper = helper;
     }
 }

@@ -1887,7 +1887,8 @@ public class ElementAviaFragment extends ScreenFragment implements
                             element.getElementOptionsR().getOpen_type(),
                             element.getElementOptionsR().getPlaceholder(),
                             element.getElementOptionsR().isUnnecessary_fill_open(),
-                            element.getElementOptionsR().isAutoChecked()));
+                            element.getElementOptionsR().isAutoChecked(),
+                            element.getElementOptionsR().isHelper()));
                     counter++;
                 }
             }
@@ -2073,7 +2074,8 @@ public class ElementAviaFragment extends ScreenFragment implements
                             answersHidden.add(answer);
                             if (answer.isEnabled()) enabledCounter++;
                         }
-                        answerStatesHidden.add(new AnswerState(answer.getRelative_id(), true, answer.getElementOptionsR().getTitle()));
+                        AnswerState answerState = new AnswerState(answer.getRelative_id(), true, answer.getElementOptionsR().getTitle());
+                        answerStatesHidden.add(answerState);
                     }
                 }
 

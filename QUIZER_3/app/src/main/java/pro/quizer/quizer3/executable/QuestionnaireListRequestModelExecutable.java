@@ -88,16 +88,18 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
             final List<ElementDatabaseModelR> elements = activity.getMainDao().getElementByToken(questionnaireDatabaseModel.getToken());
 
             for (final ElementDatabaseModelR element : elements) {
-                final ElementRequestModel elementRequestModel = new ElementRequestModel(
-                        element.getRelative_id(),
-                        element.getDuration(),
-                        element.getClick_rank(),
-                        element.getRank(),
-                        element.getValue(),
-                        element.getSend_sms()
-                );
+                if (element.isHelper() == null || !element.isHelper()) {
+                    final ElementRequestModel elementRequestModel = new ElementRequestModel(
+                            element.getRelative_id(),
+                            element.getDuration(),
+                            element.getClick_rank(),
+                            element.getRank(),
+                            element.getValue(),
+                            element.getSend_sms()
+                    );
 
-                questionnaireRequestModel.addElement(elementRequestModel);
+                    questionnaireRequestModel.addElement(elementRequestModel);
+                }
             }
 
             requestModel.addQuestionnaire(questionnaireRequestModel);

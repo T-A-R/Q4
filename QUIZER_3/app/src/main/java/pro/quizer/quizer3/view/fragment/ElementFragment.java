@@ -72,7 +72,6 @@ import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.ExpressionUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
-import pro.quizer.quizer3.utils.SmsUtils;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
@@ -811,6 +810,7 @@ public class ElementFragment extends ScreenFragment
                 rvAnswers.setAdapter(adapterList);
                 break;
             case ElementSubtype.RANK:
+                removeHelper();
                 adapterRank = new RankQuestionAdapter(getActivity(), currentElement, answersList,
                         null, null, titlesMap, this);
                 rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -854,130 +854,135 @@ public class ElementFragment extends ScreenFragment
                 itemTouchHelper.attachToRecyclerView(rvAnswers);
                 break;
 
-//            case ElementSubtype.SELECT:
-//                if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isRotation()) {
-//                    List<ElementItemR> shuffleList = new ArrayList<>();
-//                    for (ElementItemR elementItemR : answersList) {
-//                        if (elementItemR.getElementOptionsR() != null && !elementItemR.getElementOptionsR().isFixed_order()) {
-//                            shuffleList.add(elementItemR);
-//                        }
-//                    }
-//                    Collections.shuffle(shuffleList, new Random());
-//                    int k = 0;
-//
-//                    for (int i = 0; i < answersList.size(); i++) {
-//                        if (answersList.get(i).getElementOptionsR() != null && !answersList.get(i).getElementOptionsR().isFixed_order()) {
-//                            answersList.set(i, shuffleList.get(k));
-//                            k++;
-//                        }
-//                    }
-//                }
-//
-//                itemsList.clear();
-//
-//                Integer unchecker = null;
-//                for (int i = 0; i < answersList.size(); i++) {
-//                    itemsList.add(Objects.requireNonNull(titlesMap.get(answersList.get(i).getRelative_id())).getTitle());
-//                    if (answersList.get(i).getElementOptionsR().isUnchecker()) unchecker = i;
-//                }
-//
-//                if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isPolyanswer()) {
-//                    isMultiSpinner = true;
-//                    multiSelectionSpinner = findViewById(R.id.answers_multi_spinner);
-//                    multiSelectionSpinner.setVisibility(View.VISIBLE);
-//                    multiSelectionSpinner.setItems(itemsList);
-//                    if (unchecker != null)
-//                        multiSelectionSpinner.hasNoneOption(true, unchecker);
-//                    multiSelectionSpinner.setSelection(new int[]{});
-//
-//                    multiSelectionSpinner.setListener(new MultiSelectSpinner.OnMultipleItemsSelectedListener() {
-//                        @Override
-//                        public void selectedIndices(List<Integer> indices) {
-//                            if (isRestored) {
-//                                if (!indices.equals(spinnerMultipleSelection)) {
-//                                    try {
-//                                        isRestored = false;
-//                                        int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
-//                                        getDao().deleteOldElementsPassedR(id);
-//                                        showToast(getString(R.string.data_changed));
-//                                    } catch (Exception e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                }
-//                            }
-//                            spinnerMultipleSelection = indices;
-//                        }
-//
-//                        @Override
-//                        public void selectedStrings(List<String> strings) {
-//
-//                        }
-//                    });
-////            ===============================================================================================
-//                } else {
-//                    isMultiSpinner = false;
-//                    List<Boolean> enabled = new ArrayList<>();
-//
-//                    if (isQuota) {
-//                        List<Integer> passedQuotaBlock = getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder());
-//                        ElementItemR[][] quotaTree = getMainActivity().getTree(null);
-//                        Integer order = currentElement.getElementOptionsR().getOrder();
-//                        for (ElementItemR item : answersList) {
-//                            enabled.add(canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), order));
-//                        }
-//                    } else {
-//                        for (ElementItemR ignored : answersList) {
-//                            enabled.add(true);
-//                        }
-//                    }
-//
-//                    spinnerAnswers = new SearchableSpinner(getMainActivity(), null, enabled);
-//                    spinnerAnswers = findViewById(R.id.answers_spinner);
-//                    spinnerAnswers.setVisibility(View.VISIBLE);
-//
-//                    itemsList.add(getString(R.string.select_spinner));
-//
-//                    adapterSpinner = new ArrayAdapter<String>(getMainActivity(), android.R.layout.simple_spinner_item, itemsList) {
-//                        public int getCount() {
-//                            return (itemsList.size() - 1);
-//                        }
-//                    };
-//                    adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//                    spinnerAnswers.setVisibility(View.VISIBLE);
-//                    spinnerAnswers.setEnabledList(enabled);
-//                    spinnerAnswers.setAdapter(adapterSpinner);
-//                    spinnerAnswers.setSelection(itemsList.size() - 1);
-//                    spinnerAnswers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//                        @Override
-//                        public void onItemSelected(AdapterView<?> parent, View view, int position, long selectionId) {
-//                            if (position != answersList.size()) {
-//                                if (isRestored) {
-//                                    if (position != spinnerSelection) {
-//                                        try {
-//                                            isRestored = false;
-//                                            int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
-//                                            getDao().deleteOldElementsPassedR(id);
-//                                            showToast(getString(R.string.data_changed));
-//                                        } catch (Exception e) {
-//                                            e.printStackTrace();
-//                                        }
-//                                    }
-//                                }
-//                                spinnerSelection = position;
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onNothingSelected(AdapterView<?> parent) {
-//                            showToast(getString(R.string.enter_answer_empty));
-//                        }
-//                    });
-//                }
-//                break;
+
+/*
+            case ElementSubtype.SELECT:
+                removeHelper();
+                if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isRotation()) {
+                    List<ElementItemR> shuffleList = new ArrayList<>();
+                    for (ElementItemR elementItemR : answersList) {
+                        if (elementItemR.getElementOptionsR() != null && !elementItemR.getElementOptionsR().isFixed_order()) {
+                            shuffleList.add(elementItemR);
+                        }
+                    }
+                    Collections.shuffle(shuffleList, new Random());
+                    int k = 0;
+
+                    for (int i = 0; i < answersList.size(); i++) {
+                        if (answersList.get(i).getElementOptionsR() != null && !answersList.get(i).getElementOptionsR().isFixed_order()) {
+                            answersList.set(i, shuffleList.get(k));
+                            k++;
+                        }
+                    }
+                }
+
+                itemsList.clear();
+
+                Integer unchecker = null;
+                for (int i = 0; i < answersList.size(); i++) {
+                    itemsList.add(Objects.requireNonNull(titlesMap.get(answersList.get(i).getRelative_id())).getTitle());
+                    if (answersList.get(i).getElementOptionsR().isUnchecker()) unchecker = i;
+                }
+
+                if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isPolyanswer()) {
+                    isMultiSpinner = true;
+                    multiSelectionSpinner = findViewById(R.id.answers_multi_spinner);
+                    multiSelectionSpinner.setVisibility(View.VISIBLE);
+                    multiSelectionSpinner.setItems(itemsList);
+                    if (unchecker != null)
+                        multiSelectionSpinner.hasNoneOption(true, unchecker);
+                    multiSelectionSpinner.setSelection(new int[]{});
+
+                    multiSelectionSpinner.setListener(new MultiSelectSpinner.OnMultipleItemsSelectedListener() {
+                        @Override
+                        public void selectedIndices(List<Integer> indices) {
+                            if (isRestored) {
+                                if (!indices.equals(spinnerMultipleSelection)) {
+                                    try {
+                                        isRestored = false;
+                                        int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
+                                        getDao().deleteOldElementsPassedR(id);
+                                        showToast(getString(R.string.data_changed));
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                            spinnerMultipleSelection = indices;
+                        }
+
+                        @Override
+                        public void selectedStrings(List<String> strings) {
+
+                        }
+                    });
+//            ===============================================================================================
+                } else {
+                    isMultiSpinner = false;
+                    List<Boolean> enabled = new ArrayList<>();
+
+                    if (isQuota) {
+                        List<Integer> passedQuotaBlock = getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder());
+                        ElementItemR[][] quotaTree = getMainActivity().getTree(null);
+                        Integer order = currentElement.getElementOptionsR().getOrder();
+                        for (ElementItemR item : answersList) {
+                            enabled.add(canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), order));
+                        }
+                    } else {
+                        for (ElementItemR ignored : answersList) {
+                            enabled.add(true);
+                        }
+                    }
+
+                    spinnerAnswers = new SearchableSpinner(getMainActivity(), null, enabled);
+                    spinnerAnswers = findViewById(R.id.answers_spinner);
+                    spinnerAnswers.setVisibility(View.VISIBLE);
+
+                    itemsList.add(getString(R.string.select_spinner));
+
+                    adapterSpinner = new ArrayAdapter<String>(getMainActivity(), android.R.layout.simple_spinner_item, itemsList) {
+                        public int getCount() {
+                            return (itemsList.size() - 1);
+                        }
+                    };
+                    adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinnerAnswers.setVisibility(View.VISIBLE);
+                    spinnerAnswers.setEnabledList(enabled);
+                    spinnerAnswers.setAdapter(adapterSpinner);
+                    spinnerAnswers.setSelection(itemsList.size() - 1);
+                    spinnerAnswers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long selectionId) {
+                            if (position != answersList.size()) {
+                                if (isRestored) {
+                                    if (position != spinnerSelection) {
+                                        try {
+                                            isRestored = false;
+                                            int id = getDao().getElementPassedR(getQuestionnaire().getToken(), currentElement.getRelative_id()).getId();
+                                            getDao().deleteOldElementsPassedR(id);
+                                            showToast(getString(R.string.data_changed));
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
+                                spinnerSelection = position;
+                            }
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+                            showToast(getString(R.string.enter_answer_empty));
+                        }
+                    });
+                }
+                break;
+                */
             case ElementSubtype.TABLE:
                 initTable();
                 break;
             case ElementSubtype.SCALE:
+                removeHelper();
                 adapterScale = new ScaleQuestionAdapter(getActivity(), currentElement, answersList,
                         this);
                 if (isAvia())
@@ -987,6 +992,17 @@ public class ElementFragment extends ScreenFragment
                 rvScale.setAdapter(adapterScale);
                 break;
         }
+    }
+
+    private void removeHelper() {
+        int helperId = -1;
+        for(int i = 0; i < answersList.size(); i ++) {
+            if(answersList.get(i).getElementOptionsR().isHelper()) {
+                helperId = i;
+                break;
+            }
+        }
+        if(helperId != -1) answersList.remove(helperId);
     }
 
     private void initTable() {
@@ -1111,13 +1127,16 @@ public class ElementFragment extends ScreenFragment
                     elementPassedR.setToken(getQuestionnaire().getToken());
                     elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
                     elementPassedR.setFrom_quotas_block(false);
+                    elementPassedR.setHelper(answerStates.size() == 1 && getElement(answerStates.get(0).getRelative_id()).getElementOptionsR().isHelper());
 
                     getDao().insertElementPassedR(elementPassedR);
                     getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
                     saved = true;
 
+                    int checkedAnswers = 0;
                     for (int i = 0; i < answerStates.size(); i++) {
                         if (answerStates.get(i).isChecked()) {
+                            checkedAnswers++;
                             ElementPassedR answerPassedR = new ElementPassedR();
                             answerPassedR.setRelative_id(answerStates.get(i).getRelative_id());
                             answerPassedR.setProject_id(currentElement.getProjectId());
@@ -1125,7 +1144,11 @@ public class ElementFragment extends ScreenFragment
                             answerPassedR.setValue(answerStates.get(i).getData());
                             answerPassedR.setRank(i + 1);
                             answerPassedR.setFrom_quotas_block(isQuota);
-
+                            try {
+                                answerPassedR.setHelper(getElement(answerStates.get(i).getRelative_id()).getElementOptionsR().isHelper());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             try {
                                 getDao().insertElementPassedR(answerPassedR);
                                 saved = true;
@@ -1136,6 +1159,27 @@ public class ElementFragment extends ScreenFragment
                             }
                         }
                     }
+                    if (checkedAnswers == 0) {
+                        //TODO INSERT PASSED ?   =============================================================
+//                        ElementPassedR answerPassedR = new ElementPassedR();
+//                        answerPassedR.setRelative_id(-404);
+//                        answerPassedR.setProject_id(currentElement.getProjectId());
+//                        answerPassedR.setToken(getQuestionnaire().getToken());
+//                        answerPassedR.setValue(null);
+//                        answerPassedR.setRank(1);
+//                        answerPassedR.setFrom_quotas_block(isQuota);
+//
+//                        try {
+//                            getDao().insertElementPassedR(answerPassedR);
+//                            saved = true;
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                            saved = false;
+//                            return saved;
+//                        }
+                    }
+                } else {
+                    Log.d("T-L.ElementFragment", "saveElement: EMPTY");
                 }
                 break;
             }
@@ -1263,6 +1307,7 @@ public class ElementFragment extends ScreenFragment
                     elementPassedR.setProject_id(currentElement.getProjectId());
                     elementPassedR.setToken(getQuestionnaire().getToken());
                     elementPassedR.setDuration(DateUtils.getCurrentTimeMillis() - startTime);
+
                     try {
                         if (!isRestored) {
                             getDao().insertElementPassedR(elementPassedR);
@@ -1283,6 +1328,11 @@ public class ElementFragment extends ScreenFragment
                                 answerPassedR.setValue(answerStates[i][k].getData());
                                 answerPassedR.setProject_id(currentElement.getProjectId());
                                 answerPassedR.setToken(getQuestionnaire().getToken());
+                                try {
+                                    answerPassedR.setHelper(getElement(answerStates[i][k].getRelative_id()).getElementOptionsR().isHelper());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                                 try {
                                     if (!isRestored) {
                                         getDao().insertElementPassedR(answerPassedR);
@@ -1538,7 +1588,6 @@ public class ElementFragment extends ScreenFragment
                     getDao().deleteOldElementsPassedR(id);
                     if (!force)
                         getMainActivity().runOnUiThread(() -> showToast(getString(R.string.data_changed)));
-//                    if (!force) showToast(getString(R.string.data_changed));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -1595,8 +1644,6 @@ public class ElementFragment extends ScreenFragment
                 }
                 adapterList.setAnswers(answerStatesRestored);
                 adapterList.setRestored(true);
-//                if (!currentElement.getElementOptionsR().isPolyanswer())
-//                    adapterList.setLastSelectedPosition(lastSelectedPosition);
                 adapterList.notifyDataSetChanged();
                 break;
             }
@@ -1755,10 +1802,6 @@ public class ElementFragment extends ScreenFragment
                 answerStatesRestored.add(answerStateNew);
             }
 
-//            for (int i = 0; i < answerStatesRestored.size(); i++) {
-//                if(answerStatesRestored.get(i).is)
-//            }
-
             adapterList.setAnswers(answerStatesRestored);
             adapterList.setRestored(true);
             adapterList.notifyDataSetChanged();
@@ -1895,11 +1938,10 @@ public class ElementFragment extends ScreenFragment
         } else {
             try {
                 Log.d("T-L.ElementFragment", "Clear Questionnaire: 3");
-
+                getDao().deleteElementDatabaseModelByToken(getMainActivity().getCurrentQuestionnaireForce().getToken());
                 getDao().clearCurrentQuestionnaireR();
                 getDao().clearElementPassedR();
                 getDao().clearPrevElementsR();
-                getDao().deleteElementDatabaseModelByToken(getMainActivity().getCurrentQuestionnaireForce().getToken());
                 getMainActivity().setCurrentQuestionnaireNull();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1976,7 +2018,6 @@ public class ElementFragment extends ScreenFragment
         dQuota2.setTextColor(getResources().getColor(R.color.black));
         dQuota1.setText(getString(R.string.label_login, getMainActivity().getCurrentUser().getLogin()));
         dQuota2.setText(getString(R.string.label_inter, getUserName()));
-//        dQuota3.setText(getString(R.string.label_project, getMainActivity().getConfig().getProjectInfo().getName()));
         UiUtils.setTextOrHide(dQuota3, getString(R.string.label_project, getMainActivity().getConfig().getProjectInfo().getName()));
 
         dialogBuilder.setView(layoutView);
@@ -2063,7 +2104,7 @@ public class ElementFragment extends ScreenFragment
                     checkHidden();
                     if (!isInHiddenQuotaDialog) {
                         TransFragment fragment = new TransFragment();
-                        fragment.setStartElement(nextElementId);
+                        fragment.setStartElement(currentElement.getRelative_id(), nextElementId);
                         stopRecording();
                         replaceFragment(fragment);
                     }
@@ -2179,7 +2220,8 @@ public class ElementFragment extends ScreenFragment
                             element.getElementOptionsR().getOpen_type(),
                             element.getElementOptionsR().getPlaceholder(),
                             element.getElementOptionsR().isUnnecessary_fill_open(),
-                            element.getElementOptionsR().isAutoChecked());
+                            element.getElementOptionsR().isAutoChecked(),
+                            element.getElementOptionsR().isHelper());
                     if (element.getElementContentsR() != null && element.getElementContentsR().size() > 0) {
                         List<String> pics = new ArrayList<>();
                         for (ElementContentsR content : element.getElementContentsR()) {
@@ -2247,12 +2289,6 @@ public class ElementFragment extends ScreenFragment
     }
 
     public boolean canShow(ElementItemR[][] tree, List<Integer> passedElementsId, Integer relativeId, Integer order) {
-
-        for (Integer element : passedElementsId) {
-            Log.d("T-L.ElementFragment", "id: " + element);
-        }
-
-
         if (tree == null || order == null || relativeId == null) {
             return true;
         }
@@ -2271,22 +2307,15 @@ public class ElementFragment extends ScreenFragment
             for (int k = 0; k < tree[0].length; k++) {
                 for (int i = 0; i < endPassedElement; ) {
                     if (tree[i][k].getRelative_id().equals(passedElementsId.get(i))) {
-//                        Log.d("T-L.ElementFragment", "if canShow: 1");
-//                        Log.d("T-L.ElementFragment", "endPassedElement: " + i + "/" + endPassedElement);
                         if (i == (endPassedElement - 1)) { // Если последний, то
-                            Log.d("T-L.ElementFragment", "if canShow: 2");
-                            Log.d("T-L.ElementFragment", "==== " + tree[i + 1][k].getRelative_id() + "/" + relativeId);
                             if (tree[i + 1][k].getRelative_id().equals(relativeId)) { // Если следующий за последним равен Relative ID
-                                Log.d("T-L.ElementFragment", "if canShow: 3");
                                 if (tree[i + 1][k].isEnabled()) {
-                                    Log.d("T-L.ElementFragment", "if canShow: 4");
                                     return true;
                                 }
                             }
                         }
                         i++;
                     } else {
-                        Log.d("T-L.ElementFragment", ">>>> break ");
                         break;
                     }
                 }
@@ -2296,15 +2325,6 @@ public class ElementFragment extends ScreenFragment
     }
 
     public boolean canShowFromMapBlock(ElementItemR[][] tree, Map<Integer, List<Integer>> passedElementsId, Integer relativeId, Integer order) {
-//        Log.d("T-L.ElementFragment", ">>>>>>>>>>>>>>>>>>>>>>> PASSED: " + passedElementsId.size());
-//        for (int n = 0; n < passedElementsId.size(); n++) {
-//            for (int t = 0; t < passedElementsId.get(n).size(); t++) {
-//                Log.d("T-L.ElementFragment", "canShowFromMapBlock: " + n + ":" + passedElementsId.get(n).get(t));
-//            }
-//            Log.d("T-L.ElementFragment", "================");
-//        }
-
-
         if (tree == null || order == null || relativeId == null) {
             return true;
         }
@@ -2336,11 +2356,9 @@ public class ElementFragment extends ScreenFragment
                                 }
                                 i++;
                                 equals = true;
+                            } else {
+                                break;
                             }
-//                            else {
-//                                Log.d("T-L.ElementFragment", ">>>> break ");
-//                                break;
-//                            }
                         }
                         if (!equals) break;
                     }
@@ -2402,9 +2420,6 @@ public class ElementFragment extends ScreenFragment
     }
 
     private void checkHidden() {
-//        ExpressionUtils expressionUtilsTest = new ExpressionUtils(getMainActivity());
-//        Log.d("T-L.ElementFragment", "?????? checkHidden: " + expressionUtilsTest.checkHiddenExpression(null));
-        //============================================================================
         ElementItemR nextElement = getElement(nextElementId);
         if (nextElement.getSubtype().equals(ElementSubtype.HIDDEN)) {
             boolean saved = false;
@@ -2436,16 +2451,31 @@ public class ElementFragment extends ScreenFragment
                     }
                 }
 
+//                boolean hiddenFound = false;
                 for (ElementItemR answer : answers) {
                     String expression = answer.getElementOptionsR().getPrev_condition();
                     if (expression == null || expression.length() == 0 || expressionUtils.checkHiddenExpression(expression)) {
                         if (hiddenInQuotaBox) {
+//                            hiddenFound = true;
                             answersHidden.add(answer);
-                            if (answer.isEnabled()) enabledCounter++;
+                            if (answer.isEnabled() || answer.getElementOptionsR().isHelper()) enabledCounter++;
                         }
                         answerStatesHidden.add(new AnswerState(answer.getRelative_id(), true, answer.getElementOptionsR().getTitle()));
                     }
                 }
+
+//                if(!hiddenFound) {
+//                    //TODO SETUP HELPER
+//                    Log.d("T-L.ElementFragment", "????????? checkHidden: NOT FOUND");
+//                    enabledCounter++;
+////                    ElementItemR element = new ElementItemR();
+////                    element.setChecked(true);
+////                    element.setRelative_id(-404);
+////                    answersHidden.add(element);
+////                    answerStatesHidden.add(new AnswerState(-404, true, ""));
+//                } else {
+//                    Log.d("T-L.ElementFragment", "????????? checkHidden: FOUND");
+//                }
 
                 if (hiddenInQuotaBox) {
                     if (answersHidden.size() == 1 && enabledCounter == 0) {
@@ -2502,6 +2532,12 @@ public class ElementFragment extends ScreenFragment
                     answerPassedR.setToken(getQuestionnaire().getToken());
                     answerPassedR.setValue(answerStatesHidden.get(i).getData());
                     answerPassedR.setFrom_quotas_block(isQuota);
+                    try {
+                        answerPassedR.setHelper(getElement(answerStatesHidden.get(i).getRelative_id()).getElementOptionsR().isHelper());
+                        Log.d("T-L.ElementFragment", "saveHidden: " + getElement(answerStatesHidden.get(i).getRelative_id()).getElementOptionsR().isHelper());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                     try {
                         getDao().insertElementPassedR(answerPassedR);
@@ -2510,28 +2546,12 @@ public class ElementFragment extends ScreenFragment
                     }
                 }
             }
-//        Log.d("T-L.ElementFragment", "savePREV: 1");
-//        updatePrevElement();
-//        getDao().insertPrevElementsR(new PrevElementsR(nextElementId, nextElement.getElementOptionsR().getJump()));
     }
 
     private void showHiddenExitAlertDialog(String message) {
+        Log.d("T-L.ElementFragment", "showHiddenAlertDialog: 1");
         stopAllRecording();
-//        try {
-//            String token = getMainActivity().getCurrentQuestionnaireForce().getToken();
-//            getDao().clearCurrentQuestionnaireR();
-//            getDao().clearElementPassedR();
-//            getDao().clearPrevElementsR();
-//            getDao().deleteElementDatabaseModelByToken(token);
-//            getDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");
-//            getMainActivity().setCurrentQuestionnaireNull();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            activateButtons();
-//        }
-
         saveAndExit(false);
-
         if (getMainActivity() != null && !getMainActivity().isFinishing()) {
             getMainActivity().runOnUiThread(new Runnable() {
                 public void run() {
@@ -2580,21 +2600,6 @@ public class ElementFragment extends ScreenFragment
                             .setNeutralButton(R.string.view_finish_quiz, (dialog, which) -> {
                                 stopAllRecording();
                                 saveAndExit(true);
-//                                try {
-//
-//                                    getDao().clearCurrentQuestionnaireR();
-//                                    getDao().clearElementPassedR();
-//                                    getDao().clearPrevElementsR();
-//                                    getDao().deleteElementDatabaseModelByToken(getMainActivity().getCurrentQuestionnaireForce().getToken());
-//                                    getDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");
-//                                    getMainActivity().setCurrentQuestionnaireNull();
-//                                } catch (Exception e) {
-//                                    e.printStackTrace();
-//                                    activateButtons();
-//                                }
-//                                dialog.dismiss();
-//                                getMainActivity().restartHome();
-//                        replaceFragment(new HomeFragment());
                             })
                             .show();
                 }

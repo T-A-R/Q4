@@ -42,6 +42,9 @@ public class ElementDatabaseModelR {
     @ColumnInfo(name = "send_sms")
     private boolean send_sms;
 
+    @ColumnInfo(name = "helper")
+    private Boolean helper;
+
     public ElementDatabaseModelR() {
     }
 
@@ -146,5 +149,13 @@ public class ElementDatabaseModelR {
 
     public void setSend_sms(boolean send_sms) {
         this.send_sms = send_sms;
+    }
+
+    public Boolean isHelper() {
+        return helper;
+    }
+
+    public void setHelper(Boolean helper) {
+        this.helper = helper;
     }
 }

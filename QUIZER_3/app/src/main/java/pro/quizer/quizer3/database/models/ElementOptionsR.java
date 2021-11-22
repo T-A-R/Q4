@@ -111,6 +111,9 @@ public class ElementOptionsR {
     @ColumnInfo(name = "auto_check")
     private boolean auto_check;
 
+    @ColumnInfo(name = "helper")
+    private boolean helper;
+
     public ElementOptionsR() {
     }
 
@@ -427,5 +430,13 @@ public class ElementOptionsR {
 
     public void setPrev_condition(String prev_condition) {
         this.prev_condition = prev_condition;
+    }
+
+    public boolean isHelper() {
+        return helper;
+    }
+
+    public void setHelper(boolean helper) {
+        this.helper = helper;
     }
 }

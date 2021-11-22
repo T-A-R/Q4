@@ -48,7 +48,7 @@ import pro.quizer.quizer3.database.models.WarningsR;
         ElementStatusImageR.class,
         CurrentQuestionnaireR.class,
         ElementDatabaseModelR.class,
-        QuestionnaireDatabaseModelR.class}, version = 80)
+        QuestionnaireDatabaseModelR.class}, version = 84)
 
 public abstract class QuizerDatabase extends RoomDatabase {
 

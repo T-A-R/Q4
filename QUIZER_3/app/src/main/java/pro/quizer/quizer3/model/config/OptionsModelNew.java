@@ -116,6 +116,9 @@ public class OptionsModelNew implements Serializable {
     @SerializedName("prev_condition")
     private String prev_condition;
 
+    @SerializedName("helper")
+    private boolean helper;
+
     public String getData() {
         return data;
     }
@@ -341,5 +344,13 @@ public class OptionsModelNew implements Serializable {
 
     public String getPrevCondition() {
         return prev_condition;
+    }
+
+    public boolean isHelper() {
+        return helper;
+    }
+
+    public void setHelper(boolean helper) {
+        this.helper = helper;
     }
 }

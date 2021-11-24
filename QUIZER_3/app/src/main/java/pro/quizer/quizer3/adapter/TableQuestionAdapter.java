@@ -9,6 +9,7 @@ import android.content.res.Resources;
 
 import androidx.annotation.NonNull;
 
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.InputType;
 import android.util.Log;
@@ -24,6 +25,9 @@ import android.widget.TextView;
 import com.cleveroad.adaptivetablelayout.LinkedAdaptiveTableAdapter;
 import com.cleveroad.adaptivetablelayout.OnItemClickListener;
 import com.cleveroad.adaptivetablelayout.ViewHolderImpl;
+import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
+import com.smarteist.autoimageslider.SliderAnimations;
+import com.smarteist.autoimageslider.SliderView;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -67,8 +71,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
     private boolean mHasTopImages = false;
     private List<ElementItemR> mLeftSide;
     private List<ElementItemR> mTopSide;
-    private List<ElementContentsR> mLeftSideImages;
-    private List<ElementContentsR> mTopSideImages;
+    private List<List<ElementContentsR>> mLeftSideImages;
+    private List<List<ElementContentsR>> mTopSideImages;
     private List<ElementItemR> mAnswers;
     private AnswerState[][] mAnswersState;
     private boolean[] mLine;
@@ -151,7 +155,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         for (ElementItemR element : mTopSide) {
             List<ElementContentsR> elementContentsRS = mContext.getMainDao().getElementContentsR(element.getRelative_id());
             if (elementContentsRS != null && elementContentsRS.size() > 0) {
-                mTopSideImages.add(elementContentsRS.get(0));
+                List<ElementContentsR> picsList = new ArrayList<>(elementContentsRS);
+                mTopSideImages.add(picsList);
                 imagesCounter++;
             } else
                 mTopSideImages.add(null);
@@ -164,7 +169,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         for (ElementItemR element : mLeftSide) {
             List<ElementContentsR> elementContentsRS = mContext.getMainDao().getElementContentsR(element.getRelative_id());
             if (elementContentsRS != null && elementContentsRS.size() > 0) {
-                mLeftSideImages.add(elementContentsRS.get(0));
+                List<ElementContentsR> picsList = new ArrayList<>(elementContentsRS);
+                mLeftSideImages.add(picsList);
                 imagesCounter++;
             } else
                 mLeftSideImages.add(null);
@@ -284,7 +290,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         if (mHasTopImages) {
             vh.mColumnImage.setVisibility(View.VISIBLE);
             if (mTopSideImages.get(column - 1) != null) {
-                showPic(vh.mColumnImage, mTopSideImages.get(column - 1).getData_thumb());
+                showPic(vh.mColumnImage, mTopSideImages.get(column - 1).get(0).getData_thumb());
             }
         }
 
@@ -309,7 +315,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         if (mHasLeftImages) {
             vh.mRowImage.setVisibility(View.VISIBLE);
             if (mLeftSideImages.get(row - 1) != null) {
-                showPic(vh.mRowImage, mLeftSideImages.get(row - 1).getData_thumb());
+                showPic(vh.mRowImage, mLeftSideImages.get(row - 1).get(0).getData_thumb());
             }
         }
 //        vh.mHeaderRowTextView.setText(!mIsFlipColsAndRows ? titles.get(row - 1) : Objects.requireNonNull(titlesMap.get(mLeftSide.get(row - 1).getRelative_id())).getTitle());
@@ -657,12 +663,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     @Override
     public void onRowHeaderClick(final int row) {
-        showAdditionalInfoDialog(mLeftSide.get(row - 1).getElementOptionsR(), mLeftSideImages.get(row - 1) != null ? mLeftSideImages.get(row - 1).getData() : null);
+        showAdditionalInfoDialog(mLeftSide.get(row - 1).getElementOptionsR(), mLeftSideImages.get(row - 1) != null ? mLeftSideImages.get(row - 1) : null);
     }
 
     @Override
     public void onColumnHeaderClick(final int column) {
-        showAdditionalInfoDialog(mTopSide.get(column - 1).getElementOptionsR(), mTopSideImages.get(column - 1) != null ? mTopSideImages.get(column - 1).getData() : null);
+        showAdditionalInfoDialog(mTopSide.get(column - 1).getElementOptionsR(), mTopSideImages.get(column - 1) != null ? mTopSideImages.get(column - 1) : null);
     }
 
     @Override
@@ -670,14 +676,14 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     }
 
-    private void showAdditionalInfoDialog(final ElementOptionsR pOptionsModel, String data) {
+    private void showAdditionalInfoDialog(final ElementOptionsR pOptionsModel, List<ElementContentsR> data) {
         final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mContext);
         final View mView = layoutInflaterAndroid.inflate(R.layout.dialog_table_question_additional_info, null);
         final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
         dialog.setView(mView);
 
         final TextView title = mView.findViewById(R.id.title);
-        final ImageView image = mView.findViewById(R.id.image);
+        final SliderView sliderView = mView.findViewById(R.id.imageSlider);
         final TextView description = mView.findViewById(R.id.description);
         description.setTypeface(description.getTypeface(), Typeface.ITALIC);
 
@@ -685,8 +691,27 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         UiUtils.setTextOrHide(title, Objects.requireNonNull(titlesMap.get(pOptionsModel.getRelative_id())).getTitle());
         UiUtils.setTextOrHide(description, pOptionsModel.getDescription());
 
+        SliderAdapterExample adapter;
+
         if (data != null) {
-            showPic(image, data);
+            List<String> pics = new ArrayList<>();
+            for (ElementContentsR elementContentsR : data) {
+                if (elementContentsR != null && !elementContentsR.getData().isEmpty()) {
+                    pics.add(elementContentsR.getData());
+                }
+            }
+//            showPic(image, data);
+            adapter = new SliderAdapterExample(mContext);
+            adapter.renewItems(pics);
+            sliderView.setSliderAdapter(adapter);
+            sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+            sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+            sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
+            sliderView.setIndicatorSelectedColor(Color.WHITE);
+            sliderView.setIndicatorUnselectedColor(Color.GRAY);
+            sliderView.setScrollTimeInSec(6);
+            sliderView.setAutoCycle(true);
+            sliderView.startAutoCycle();
         }
 
         dialog.setCancelable(false)

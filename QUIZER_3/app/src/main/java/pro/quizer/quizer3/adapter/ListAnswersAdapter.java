@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -174,6 +175,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         ImageView button;
         ImageView editButton;
         ImageView penButton;
+        Button addPicButton;
+        ImageView cancelPicButton;
         ImageView image1;
         ImageView image2;
         ImageView image3;
@@ -194,6 +197,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             button = itemView.findViewById(R.id.radio_button);
             editButton = itemView.findViewById(R.id.edit_button);
             penButton = itemView.findViewById(R.id.pen_button);
+            addPicButton = itemView.findViewById(R.id.btn_add_photo);
+            cancelPicButton = itemView.findViewById(R.id.btn_pic_cancel);
             image1 = itemView.findViewById(R.id.answer_image_1);
             image2 = itemView.findViewById(R.id.answer_image_2);
             image3 = itemView.findViewById(R.id.answer_image_3);
@@ -237,6 +242,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 editButton.setOnClickListener(v -> onClick(answerEditText, position, false));
                 answerEditText.setOnClickListener(v -> onClick(answerEditText, position, false));
                 penButton.setOnClickListener(v -> onClick(answerEditText, position, true));
+                addPicButton.setOnClickListener(v -> showPictureDialog(position));
+                cancelPicButton.setOnClickListener(v -> clearPicture());
             }
 
             setChecked(position);
@@ -264,6 +271,9 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             UiUtils.setTextOrHide(answerEditText, answersState.get(position).getData());
 
             setEnabled(position);
+        }
+
+        private void clearPicture() {
         }
 
         public void setChecked(int position) {
@@ -739,6 +749,41 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         }
     }
 
+    private void showPictureDialog(int position) {
+        final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mActivity);
+        final View mView = layoutInflaterAndroid.inflate(mActivity.isAutoZoom() ? R.layout.pic_upload_view : R.layout.pic_upload_view, null);
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
+        dialog.setView(mView);
+
+        final View mAddBtn = mView.findViewById(R.id.btn_save);
+        final View mUploadBtn = mView.findViewById(R.id.btn_prize_load);
+        final View mCancelBtn = mView.findViewById(R.id.btn_prize_cancel);
+
+        dialog.setCancelable(false);
+        final AlertDialog alertDialog = dialog.create();
+        UiUtils.setButtonEnabled(mAddBtn, false);
+
+        mAddBtn.setOnClickListener(v -> {
+            onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
+            checkItem(position);
+            if (!mActivity.isFinishing()) {
+                alertDialog.dismiss();
+            }
+        });
+
+        mUploadBtn.setOnClickListener(v -> {
+            UiUtils.setButtonEnabled(mAddBtn, true);
+            // From AddRaffleFragment  <<<<<<<<<
+        });
+
+        mCancelBtn.setOnClickListener(v -> {
+            UiUtils.setButtonEnabled(mAddBtn, false);
+        });
+
+        if (!mActivity.isFinishing()) {
+            alertDialog.show();
+        }
+    }
 
     //For Tests
     private void showEnabled() {

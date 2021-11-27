@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="50dp">
+
+    <ImageView
+        android:id="@+id/img_part_prize"
+        android:layout_width="match_parent"
+        android:layout_height="174dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginRight="24dp"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/bg_frame_dotted_blue" />
+
+    <ImageButton
+        android:id="@+id/btn_prize_load"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="75dp"
+        android:background="@drawable/bg_circle_blue"
+        android:padding="12dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ico_upload"
+        android:tint="@android:color/white" />
+
+    <ImageButton
+        android:id="@+id/btn_prize_cancel"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="35dp"
+        android:layout_marginRight="37dp"
+        android:background="@drawable/bg_circle_blue"
+        android:padding="6dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ico_close_white"
+        android:tint="@android:color/white"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/txt_prize_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_prize_load"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="@dimen/_21sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_marginRight="@dimen/_21sdp"
+        android:gravity="center"
+        android:text="@string/prize_photo_load"
+        android:textColor="@color/blue"
+        android:textSize="@dimen/_15ssp" />
+
+    <TextView
+        android:id="@+id/txt_prize_photo_two"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txt_prize_photo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="@dimen/_21sdp"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:layout_marginRight="@dimen/_21sdp"
+        android:gravity="center"
+        android:text="@string/prize_photo_load_two"
+        android:textColor="@color/blue"
+        android:textSize="@dimen/_11ssp" />
+
+</RelativeLayout>

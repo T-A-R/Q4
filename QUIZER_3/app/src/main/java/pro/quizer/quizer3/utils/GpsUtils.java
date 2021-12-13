@@ -32,18 +32,18 @@ public final class GpsUtils {
             try {
                 TelephonyManager manager = (TelephonyManager) pContext.getSystemService(Context.TELEPHONY_SERVICE);
 
-                if (ActivityCompat.checkSelfPermission(pContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(pContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    Log.d("T-L.GPSTracker", "getLocationAlternative 3: NO PERMISSIONS!");
-                } else {
-                    GsmCellLocation loc = (GsmCellLocation) manager.getCellLocation();
-                    if (loc != null) {
-                        Log.d("T-L.GPSTracker", "getLocationAlternative 2: " + loc.getPsc() + " lac=" + loc.getLac() + " cid=" + loc.getCid());
-//                        latitudeNetwork = loc.getLatitude();
-//                        longitudeNetwork = loc.getLongitude();
-//                        gpstimeNetwork = loc.getTime();
-                    }
-
-                }
+//                if (ActivityCompat.checkSelfPermission(pContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(pContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                    Log.d("T-L.GPSTracker", "getLocationAlternative 3: NO PERMISSIONS!");
+//                } else {
+//                    GsmCellLocation loc = (GsmCellLocation) manager.getCellLocation();
+////                    if (loc != null) {
+////                        Log.d("T-L.GPSTracker", "getLocationAlternative 2: " + loc.getPsc() + " lac=" + loc.getLac() + " cid=" + loc.getCid());
+////                        latitudeNetwork = loc.getLatitude();
+////                        longitudeNetwork = loc.getLongitude();
+////                        gpstimeNetwork = loc.getTime();
+////                    }
+//
+//                }
 
                 lat = gps.getLatitude();
                 lon = gps.getLongitude();

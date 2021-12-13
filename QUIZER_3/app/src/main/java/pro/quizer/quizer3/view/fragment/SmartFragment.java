@@ -865,7 +865,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
                 if (!saveElement(currentQuiz, element)) {
                     showToast("Ошибка сохранения элемента анкеты");
-                    Log.d(TAG, "saveQuestionnaireToDatabase: Elements List is empty");
+                    Log.d(TAG, "saveQuestionnaireToDatabase: Elements List is empty: " + element.getRelative_id());
                     return false;
                 }
             }
@@ -979,6 +979,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             if (elementItemR != null) {
                 parentId = elementItemR.getRelative_parent_id();
             } else {
+
                 return false;
             }
             elementDatabaseModel.setToken(element.getToken());
@@ -986,7 +987,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             elementDatabaseModel.setRelative_parent_id(parentId);
             elementDatabaseModel.setItem_order(elementItemR.getElementOptionsR().getOrder());
             if (ElementType.ANSWER.equals(elementItemR.getType())) {
-                if(element.isHelper()) {
+                if(element.isHelper() != null && element.isHelper()) {
                     elementDatabaseModel.setHelper(true);
                 }
                 elementDatabaseModel.setValue(element.getValue());
@@ -1002,7 +1003,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 elementDatabaseModel.setType(ElementDatabaseType.SCREEN);
                 countScreens++;
             }
-
             try {
                 getDao().insertElement(elementDatabaseModel);
             } catch (Exception e) {

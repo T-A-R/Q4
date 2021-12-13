@@ -61,6 +61,7 @@ import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementOptionsR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
+import pro.quizer.quizer3.executable.QuotasTreeMaker;
 import pro.quizer.quizer3.model.CardItem;
 import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.ElementType;
@@ -754,6 +755,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             case ElementSubtype.LIST:
                 MainActivity activity = getMainActivity();
                 if (isQuota) {
+                    removeHelper();
                     adapterList = new ListAnswersAdapter(activity, currentElement, answersList,
                             getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), titlesMap, this);
                 } else {
@@ -876,6 +878,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     if (isQuota) {
                         List<Integer> passedQuotaBlock = getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder());
                         ElementItemR[][] quotaTree = getMainActivity().getTree(null);
+
+                        for(Integer id : passedQuotaBlock) {
+                            Log.d("T-L.ElementFragment", ">>>>>>>>>>>>>>: " + id);
+                        }
+//                        QuotasTreeMaker.showTree(quotaTree);
+
                         Integer order = currentElement.getElementOptionsR().getOrder();
                         for (ElementItemR item : answersList) {
                             enabled.add(canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), order));
@@ -2135,6 +2143,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     public boolean canShow(ElementItemR[][] tree, List<Integer> passedElementsId, Integer relativeId, Integer order) {
+//        Log.d("T-L.ElementFragment", "canShow ID: " + relativeId);
         if (tree == null || order == null || relativeId == null) {
             return true;
         }
@@ -2167,6 +2176,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
             }
         }
+//        Log.d("T-L.ElementFragment", "canShow: 2");
         return false;
     }
 

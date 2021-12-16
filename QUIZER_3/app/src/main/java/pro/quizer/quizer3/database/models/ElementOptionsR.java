@@ -114,6 +114,12 @@ public class ElementOptionsR {
     @ColumnInfo(name = "helper")
     private boolean helper;
 
+    @ColumnInfo(name = "photo_answer")
+    private boolean photo_answer;
+
+    @ColumnInfo(name = "photo_answer_required")
+    private boolean photo_answer_required;
+
     public ElementOptionsR() {
     }
 
@@ -438,5 +444,21 @@ public class ElementOptionsR {
 
     public void setHelper(boolean helper) {
         this.helper = helper;
+    }
+
+    public boolean isPhoto_answer() {
+        return photo_answer;
+    }
+
+    public void setPhoto_answer(boolean photo_answer) {
+        this.photo_answer = photo_answer;
+    }
+
+    public boolean isPhoto_answer_required() {
+        return photo_answer_required;
+    }
+
+    public void setPhoto_answer_required(boolean photo_answer_required) {
+        this.photo_answer_required = photo_answer_required;
     }
 }

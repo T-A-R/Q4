@@ -232,13 +232,19 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 openAnswerCont.setVisibility(View.VISIBLE);
             }
 
+            if (item.getElementOptionsR().isPhoto_answer()) {
+                addPicButton.setVisibility(View.VISIBLE);
+            } else {
+                addPicButton.setVisibility(View.GONE);
+            }
+
             if (!canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder())) {
                 answerTitle.setTextColor(Color.parseColor("#AAAAAA"));
                 item.setEnabled(false);
             }
 
             if (item.isEnabled()) {
-                cont.setOnClickListener(v -> onClick(answerEditText, position, false));
+//                cont.setOnClickListener(v -> onClick(answerEditText, position, false));
                 editButton.setOnClickListener(v -> onClick(answerEditText, position, false));
                 answerEditText.setOnClickListener(v -> onClick(answerEditText, position, false));
                 penButton.setOnClickListener(v -> onClick(answerEditText, position, true));

@@ -82,6 +82,7 @@ public class TransFragment extends ScreenFragment {
     private void fillPassedQuotas() {
         Integer startPosition = null;
         for (int i = 0; i < quotaElementsList.size(); i++) {
+            Log.d("T-L.TransFragment", "fillPassedQuotas startElementId: " + startElementId);
             if (quotaElementsList.get(i).getRelative_id().equals(startElementId)) {
                 startPosition = i;
                 break;
@@ -89,7 +90,7 @@ public class TransFragment extends ScreenFragment {
         }
         if (startPosition != null && startPosition != (quotaElementsList.size() - 1)) {
             for (int i = startPosition + 1; i < quotaElementsList.size(); i++) {
-//                Log.d("T-L.TransFragment", "fillPassedQuotas: " + quotaElementsList.get(i).getRelative_id() + "/" + nextElementId);
+                Log.d("T-L.TransFragment", "fillPassedQuotas: " + quotaElementsList.get(i).getRelative_id() + "/" + nextElementId);
 
                 if (!quotaElementsList.get(i).getRelative_id().equals(nextElementId)) {
                     //TODO ADD PASSED_QUOTA
@@ -114,6 +115,7 @@ public class TransFragment extends ScreenFragment {
             if (answer.getElementOptionsR().isHelper()) {
                 elementPassedR.setRelative_id(answer.getRelative_id());
                 elementPassedR.setFrom_quotas_block(true);
+                Log.d("T-L.TransFragment", "savePassedElement 10: " + elementPassedR.getRelative_id());
                 getDao().insertElementPassedR(elementPassedR);
                 break;
             }

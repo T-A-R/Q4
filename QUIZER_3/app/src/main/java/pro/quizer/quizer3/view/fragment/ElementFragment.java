@@ -879,7 +879,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         List<Integer> passedQuotaBlock = getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder());
                         ElementItemR[][] quotaTree = getMainActivity().getTree(null);
 
-                        for(Integer id : passedQuotaBlock) {
+                        for (Integer id : passedQuotaBlock) {
                             Log.d("T-L.ElementFragment", ">>>>>>>>>>>>>>: " + id);
                         }
 //                        QuotasTreeMaker.showTree(quotaTree);
@@ -955,13 +955,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     private void removeHelper() {
         int helperId = -1;
-        for(int i = 0; i < answersList.size(); i ++) {
-            if(answersList.get(i).getElementOptionsR().isHelper()) {
+        for (int i = 0; i < answersList.size(); i++) {
+            if (answersList.get(i).getElementOptionsR().isHelper()) {
                 helperId = i;
                 break;
             }
         }
-        if(helperId != -1) answersList.remove(helperId);
+        if (helperId != -1) answersList.remove(helperId);
     }
 
     private void initTable() {
@@ -2364,6 +2364,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             }
             if (!isInHiddenQuotaDialog) {
                 nextElementId = nextElement.getElementOptionsR().getJump();
+                currentElement = nextElement;
                 checkAndLoadNext();
             }
         }
@@ -2380,9 +2381,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         getDao().insertElementPassedR(elementPassedR);
         getDao().setWasElementShown(true, nextElement.getRelative_id(), nextElement.getUserId(), nextElement.getProjectId());
 
-        if (answerStatesHidden.size() > 0)
+        if (answerStatesHidden.size() > 0) {
+            boolean found = false;
             for (int i = 0; i < answerStatesHidden.size(); i++) {
+                if(found && getElement(answerStatesHidden.get(i).getRelative_id()).getElementOptionsR().isHelper()) break;
                 if (answerStatesHidden.get(i).isChecked()) {
+                    found = true;
                     ElementPassedR answerPassedR = new ElementPassedR();
                     answerPassedR.setRelative_id(answerStatesHidden.get(i).getRelative_id());
                     answerPassedR.setProject_id(nextElement.getProjectId());
@@ -2397,12 +2401,15 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
 
                     try {
+                        Log.d("T-L.TransFragment", "savePassedElement 1: " + answerPassedR.getRelative_id());
                         getDao().insertElementPassedR(answerPassedR);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    if (isQuota) break;
                 }
             }
+        }
     }
 
     private void showHiddenExitAlertDialog(String message) {
@@ -2447,6 +2454,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                 nextElementId = nextElement.getElementOptionsR().getJump();
                                 isInHiddenQuotaDialog = false;
                                 dialog.dismiss();
+                                currentElement = nextElement;
                                 checkAndLoadNext();
                             })
                             .setNegativeButton(R.string.view_cancel, (dialog, which) -> {

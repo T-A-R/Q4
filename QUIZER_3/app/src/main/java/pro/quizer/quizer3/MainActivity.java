@@ -739,7 +739,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public void startRecording(int relativeId, String token) {
-        Log.d("T-L.MainActivity", "startRecording: " + token);
+//        Log.d("T-L.MainActivity", "startRecording: " + token);
         if (mIsMediaConnected) {
             final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
             if (mediaCntrlr == null) {
@@ -766,7 +766,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             if (pbState != PlaybackStateCompat.STATE_PLAYING) {
 
                 mIsAudioStarted = true;
-                Log.d(TAG, "******************* startRecording: **********************");
+//                Log.d(TAG, "******************* startRecording: **********************");
                 try {
                     audioNumber = getCurrentQuestionnaireForce().getAudio_number();
                     getMainDao().setAudioNumber(audioNumber + 1);
@@ -1658,7 +1658,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             e.printStackTrace();
             int statusCode = ((ApiException) e).getStatusCode();
 
-            Log.d("T-L.MainActivity", "checkSettingsAndStartLocationUpdates CODE: " + getLocationMode());
+//            Log.d("T-L.MainActivity", "checkSettingsAndStartLocationUpdates CODE: " + getLocationMode());
             if (isAirplaneMode()) {
                 listener.runEvent(10);
             } else {

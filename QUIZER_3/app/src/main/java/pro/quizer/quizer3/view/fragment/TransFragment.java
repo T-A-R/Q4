@@ -7,6 +7,8 @@ import pro.quizer.quizer3.model.ElementSubtype;
 
 import static pro.quizer.quizer3.MainActivity.AVIA;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +45,6 @@ public class TransFragment extends ScreenFragment {
     @Override
     protected void onReady() {
 
-//        PageElementFragment fragment = new PageElementFragment();
         if (!AVIA) {
             ElementFragment fragment = new ElementFragment();
             fragment.setStartElement(nextElementId, restored);
@@ -71,6 +72,9 @@ public class TransFragment extends ScreenFragment {
                 getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
             isQuota = true;
             quotaElementsList = getElement(currentElement.getRelative_parent_id()).getElements();
+//            for (ElementItemR item : quotaElementsList) {
+//                Log.d("T-L.TransFragment", "checkQuotaJump: >>> " + item.getRelative_id());
+//            }
         }
         return isQuota;
     }
@@ -78,6 +82,7 @@ public class TransFragment extends ScreenFragment {
     private void fillPassedQuotas() {
         Integer startPosition = null;
         for (int i = 0; i < quotaElementsList.size(); i++) {
+            Log.d("T-L.TransFragment", "fillPassedQuotas startElementId: " + startElementId);
             if (quotaElementsList.get(i).getRelative_id().equals(startElementId)) {
                 startPosition = i;
                 break;
@@ -85,10 +90,12 @@ public class TransFragment extends ScreenFragment {
         }
         if (startPosition != null && startPosition != (quotaElementsList.size() - 1)) {
             for (int i = startPosition + 1; i < quotaElementsList.size(); i++) {
-                if(!quotaElementsList.get(i).getRelative_id().equals(nextElementId)) {
+                Log.d("T-L.TransFragment", "fillPassedQuotas: " + quotaElementsList.get(i).getRelative_id() + "/" + nextElementId);
+
+                if (!quotaElementsList.get(i).getRelative_id().equals(nextElementId)) {
                     //TODO ADD PASSED_QUOTA
                     savePassedElement(quotaElementsList.get(i).getRelative_id());
-                }
+                } else break;
             }
         }
     }
@@ -104,10 +111,11 @@ public class TransFragment extends ScreenFragment {
         getDao().insertElementPassedR(elementPassedR);
 
         List<ElementItemR> answers = currentElement.getElements();
-        for(ElementItemR answer : answers) {
-            if(answer.getElementOptionsR().isHelper()) {
+        for (ElementItemR answer : answers) {
+            if (answer.getElementOptionsR().isHelper()) {
                 elementPassedR.setRelative_id(answer.getRelative_id());
                 elementPassedR.setFrom_quotas_block(true);
+                Log.d("T-L.TransFragment", "savePassedElement 10: " + elementPassedR.getRelative_id());
                 getDao().insertElementPassedR(elementPassedR);
                 break;
             }

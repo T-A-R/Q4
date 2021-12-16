@@ -1055,6 +1055,7 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
                     elementPassedR.setFrom_quotas_block(false);
 
                     getDao().insertElementPassedR(elementPassedR);
+                    Log.d("T-L.ElementAviaFragment", "saveElement: ");
                     getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
                     saved = true;
 

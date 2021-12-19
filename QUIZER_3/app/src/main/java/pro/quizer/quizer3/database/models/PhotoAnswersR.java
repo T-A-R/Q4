@@ -7,28 +7,28 @@ import androidx.room.PrimaryKey;
 import pro.quizer.quizer3.Constants;
 
 @Entity
-public class SmsItemR {
+public class PhotoAnswersR {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private int id;
 
-    @ColumnInfo(name = "smsNumber")
-    private String smsNumber;
+    @ColumnInfo(name = "token")
+    private String token;
 
-    @ColumnInfo(name = "smsText")
-    private String smsText;
+    @ColumnInfo(name = "file")
+    private String file;
 
-    @ColumnInfo(name = "smsStatus")
-    private String smsStatus;
+    @ColumnInfo(name = "status")
+    private String status;
 
-    public SmsItemR() {
+    public PhotoAnswersR() {
     }
 
-    public SmsItemR(String smsNumber, String smsText) {
-        this.smsNumber = smsNumber;
-        this.smsText = smsText;
-        this.smsStatus = Constants.SmsStatus.NOT_SENT;
+    public PhotoAnswersR(String token, String file, String status) {
+        this.token = token;
+        this.file = file;
+        this.status = status;
     }
 
     public int getId() {
@@ -39,27 +39,27 @@ public class SmsItemR {
         this.id = id;
     }
 
-    public String getSmsNumber() {
-        return smsNumber;
+    public String getToken() {
+        return token;
     }
 
-    public void setSmsNumber(String smsNumber) {
-        this.smsNumber = smsNumber;
+    public void setToken(String token) {
+        this.token = token;
     }
 
-    public String getSmsText() {
-        return smsText;
+    public String getFile() {
+        return file;
     }
 
-    public void setSmsText(String smsText) {
-        this.smsText = smsText;
+    public void setFile(String file) {
+        this.file = file;
     }
 
-    public String getSmsStatus() {
-        return smsStatus;
+    public String getStatus() {
+        return status;
     }
 
-    public void setSmsStatus(String smsStatus) {
-        this.smsStatus = smsStatus;
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

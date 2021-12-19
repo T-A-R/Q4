@@ -21,8 +21,12 @@ public class AnswerState implements Serializable {
     @SerializedName("enabled")
     private boolean enabled;
 
+    @SerializedName("has_photo")
+    private boolean has_photo;
+
     public AnswerState() {
         this.enabled = true;
+        this.has_photo = false;
     }
 
     public AnswerState(Integer relative_id, boolean checked, String data) {
@@ -30,6 +34,7 @@ public class AnswerState implements Serializable {
         this.checked = checked;
         this.data = data;
         this.enabled = true;
+        this.has_photo = false;
     }
 
     public AnswerState(Integer relative_id, boolean checked, boolean open, String data, boolean enabled) {
@@ -38,6 +43,7 @@ public class AnswerState implements Serializable {
         this.open = open;
         this.data = data;
         this.enabled = enabled;
+        this.has_photo = false;
     }
 
     public Integer getRelative_id() {
@@ -78,5 +84,13 @@ public class AnswerState implements Serializable {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean hasPhoto() {
+        return has_photo;
+    }
+
+    public void setHasPhoto(boolean has_photo) {
+        this.has_photo = has_photo;
     }
 }

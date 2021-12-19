@@ -3,6 +3,11 @@ package pro.quizer.quizer3.database.models;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import java.util.List;
+
+import pro.quizer.quizer3.database.ListStringConverter;
 
 @Entity
 public class CurrentQuestionnaireR {
@@ -321,4 +326,5 @@ public class CurrentQuestionnaireR {
     public void setPermissions(String permissions) {
         this.permissions = permissions;
     }
+
 }

@@ -19,6 +19,7 @@ import pro.quizer.quizer3.database.models.ElementOptionsR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.EncryptionTableR;
 import pro.quizer.quizer3.database.models.OptionsR;
+import pro.quizer.quizer3.database.models.PhotoAnswersR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
@@ -462,4 +463,19 @@ public interface QuizerDao {
 
     @Query("SELECT encrypted FROM EncryptionTableR WHERE decrypted = :decrypted ORDER BY RANDOM() LIMIT 1")
     Character getSymbolsForEncrypt(Character decrypted);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertPhotoAnswerR(PhotoAnswersR statistics);
+
+    @Query("SELECT * FROM PhotoAnswersR WHERE token = :token")
+    List<PhotoAnswersR> getPhotoAnswersByToken(String token);
+
+    @Query("DELETE FROM PhotoAnswersR WHERE token = :token")
+    void clearPhotoAnswersByToken(String token);
+
+    @Query("SELECT * FROM PhotoAnswersR WHERE status = :status")
+    List<PhotoAnswersR> getPhotoAnswersByStatus(String status);
+
+    @Query("DELETE FROM PhotoAnswersR WHERE status = :status")
+    void clearPhotoAnswersByStatus(String status);
 }

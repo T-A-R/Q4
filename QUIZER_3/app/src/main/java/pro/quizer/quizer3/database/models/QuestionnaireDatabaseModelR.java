@@ -4,6 +4,11 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import java.util.List;
+
+import pro.quizer.quizer3.database.ListStringConverter;
 
 @Entity(indices = {@Index("token")})
 public class QuestionnaireDatabaseModelR {
@@ -497,4 +502,5 @@ public class QuestionnaireDatabaseModelR {
     public void setPermissions(String permissions) {
         this.permissions = permissions;
     }
+
 }

@@ -5,7 +5,15 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.hardware.Camera;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -17,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -26,8 +35,16 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.androidhiddencamera.CameraConfig;
+import com.androidhiddencamera.HiddenCameraUtils;
+import com.androidhiddencamera.config.CameraFacing;
+import com.androidhiddencamera.config.CameraImageFormat;
+import com.androidhiddencamera.config.CameraResolution;
+import com.androidhiddencamera.config.CameraRotation;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,10 +58,14 @@ import java.util.Random;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.camera.ShowCamera;
 import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
+import pro.quizer.quizer3.database.models.PhotoAnswersR;
+import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.model.view.TitleModel;
+import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
@@ -216,6 +237,11 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         }
 
         public void bind(final ElementItemR item, int position) {
+            File file = new File(getAnswerImagePath(position));
+            if (file.exists()) {
+                answersState.get(position).setHasPhoto(true);
+            }
+
             UiUtils.setTextOrHide(answerTitle, titles.get(position));
             if (item.getElementOptionsR().getDescription() != null && titlesMap.get(item.getRelative_id()) != null) {
                 answerDesc.setVisibility(View.VISIBLE);
@@ -234,6 +260,10 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
             if (item.getElementOptionsR().isPhoto_answer()) {
                 addPicButton.setVisibility(View.VISIBLE);
+                if (answersState.get(position).hasPhoto()) {
+                    addPicButton.setTextColor(mActivity.getResources().getColor(R.color.brand_color));
+                    addPicButton.setText("Просмотреть фото");
+                }
             } else {
                 addPicButton.setVisibility(View.GONE);
             }
@@ -288,8 +318,15 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                     editButton.setVisibility(View.GONE);
                     button.setImageResource(MainActivity.AVIA ? R.drawable.radio_button_checked_red : R.drawable.radio_button_checked);
                     if (isOpen(position)) {
-                        answerEditText.setVisibility(View.VISIBLE);
-                        penButton.setVisibility(View.VISIBLE);
+                        if (answersState.get(position).getData() != null && answersState.get(position).getData().length() > 0) {
+                            answerEditText.setVisibility(View.VISIBLE);
+                            penButton.setVisibility(View.VISIBLE);
+                            editButton.setVisibility(View.GONE);
+                        } else {
+                            answerEditText.setVisibility(View.GONE);
+                            penButton.setVisibility(View.GONE);
+                            editButton.setVisibility(View.VISIBLE);
+                        }
                     } else {
                         answerEditText.setVisibility(View.GONE);
                         editButton.setVisibility(View.GONE);
@@ -434,7 +471,10 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         }
 
         public void onClick(TextView cardInput, int position, boolean isPenButton) {
-            if ((isOpen(position) && !isChecked(position)) || (isOpen(position) && isAutoChecked(position)) || isOpen(position) && isPenButton) {
+            if ((isOpen(position) && !isChecked(position))
+                    || (isOpen(position) && isAutoChecked(position))
+                    || isOpen(position) && isPenButton
+                    || (isOpen(position) && (answersState.get(position).getData() == null || answersState.get(position).getData().length() == 0))) {
                 mFromPenButton = isPenButton;
                 switch (answersList.get(position).getElementOptionsR().getOpen_type()) {
                     case "text":
@@ -574,8 +614,10 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     }
 
     private void checkItem(int position) {
+        Log.d("T-L.ListAnswersAdapter", "checkItem: ????");
         new Thread(() -> {
             if (isChecked(position) && !isMulti) {
+                mActivity.runOnUiThread(() -> notifyItemChanged(position));
                 return;
             }
             if (isMulti && mFromPenButton) {
@@ -757,46 +799,256 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
     private void showPictureDialog(int position) {
         final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mActivity);
-        final View mView = layoutInflaterAndroid.inflate(mActivity.isAutoZoom() ? R.layout.pic_upload_view : R.layout.pic_upload_view, null);
+        final View mView = layoutInflaterAndroid.inflate(mActivity.isAutoZoom() ? R.layout.dialog_photo_answer : R.layout.dialog_photo_answer, null);
         final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
         dialog.setView(mView);
 
-        final View mAddBtn = mView.findViewById(R.id.btn_save);
-        final View mUploadBtn = mView.findViewById(R.id.btn_prize_load);
-        final View mCancelBtn = mView.findViewById(R.id.btn_prize_cancel);
+        final Button btnPhoto = mView.findViewById(R.id.btn_photo);
+        final Button btnBack = mView.findViewById(R.id.btn_back);
+        final ImageView photoView = mView.findViewById(R.id.photo_image);
+        final FrameLayout cameraCont = mView.findViewById(R.id.camera_cont);
+
+        Camera camera = null;
+        ShowCamera showCamera;
+        boolean hasPhoto = false;
 
         dialog.setCancelable(false);
         final AlertDialog alertDialog = dialog.create();
-        UiUtils.setButtonEnabled(mAddBtn, false);
+        UiUtils.setButtonEnabled(btnPhoto, false);
 
-        mAddBtn.setOnClickListener(v -> {
-            onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
-            checkItem(position);
-            if (!mActivity.isFinishing()) {
-                alertDialog.dismiss();
+        if (camera != null) {
+            camera.release();
+        }
+        try {
+            camera = Camera.open(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+//            camera.unlock();
+            try {
+                camera = Camera.open(0);
+            } catch (Exception exception) {
+                exception.printStackTrace();
             }
-        });
+        }
+        if (camera != null) {
+            showCamera = new ShowCamera(mActivity, camera);
+            cameraCont.addView(showCamera);
+            UiUtils.setButtonEnabled(btnPhoto, true);
+        } else {
+//            UiUtils.setButtonEnabled(btnNext, true);
+        }
+        hasPhoto = answersState.get(position).hasPhoto();
+        if (hasPhoto) {
+            photoView.setVisibility(View.VISIBLE);
+            cameraCont.setVisibility(View.INVISIBLE);
+            File image = new File(getAnswerImagePath(position));
+            Picasso.with(mActivity)
+                    .load(image)
+                    .into(photoView);
+            btnPhoto.setText("Переделать");
+            btnBack.setVisibility(View.VISIBLE);
+            btnBack.setOnClickListener(v -> alertDialog.dismiss());
+        } else {
+            photoView.setVisibility(View.INVISIBLE);
+            cameraCont.setVisibility(View.VISIBLE);
+        }
 
-        mUploadBtn.setOnClickListener(v -> {
-            UiUtils.setButtonEnabled(mAddBtn, true);
-            // From AddRaffleFragment  <<<<<<<<<
-        });
-
-        mCancelBtn.setOnClickListener(v -> {
-            UiUtils.setButtonEnabled(mAddBtn, false);
-        });
+        Camera finalCamera = camera;
 
         if (!mActivity.isFinishing()) {
             alertDialog.show();
         }
+
+        Camera.PictureCallback mPictureCallback = (bytes, camera1) -> {
+
+            new Thread(() -> {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                UserModelR user = mActivity.getCurrentUser();
+                String token = mActivity.getToken();
+
+                //            [admin]^[project_id]^[user_login]^[token]^[answer_id].[extension]
+
+                try {
+                    File dir = new File(FileUtils.getAnswersStoragePath(mActivity) + File.separator
+                            + user.getUser_id());
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return;
+                }
+
+                try {
+                    File dir = new File(FileUtils.getAnswersStoragePath(mActivity) + File.separator
+                            + user.getUser_id() + File.separator + token);
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return;
+                }
+
+                String path = FileUtils.getAnswersStoragePath(mActivity) + File.separator
+                        + user.getUser_id() + File.separator
+                        + token + File.separator
+                        + user.getConfigR().getLoginAdmin()
+                        + "^" + user.getConfigR().getProjectInfo().getProjectId()
+                        + "^" + user.getLogin()
+                        + "^" + token
+                        + "^" + answersState.get(position).getRelative_id();
+
+                CameraConfig mCameraConfig = new CameraConfig()
+                        .getBuilder(mActivity)
+                        .setCameraFacing(CameraFacing.REAR_FACING_CAMERA)
+                        .setCameraResolution(CameraResolution.MEDIUM_RESOLUTION)
+                        .setImageFormat(CameraImageFormat.FORMAT_JPEG)
+                        .setImageRotation(CameraRotation.ROTATION_270)
+                        .buildForReg(path);
+
+                Bitmap rotatedBitmap;
+
+//            if (mCameraConfig.getImageRotation() != CameraRotation.ROTATION_0) {
+//                rotatedBitmap = flip(HiddenCameraUtils.rotateBitmap(bitmap, mCameraConfig.getImageRotation()));
+                rotatedBitmap = flip(bitmap);
+
+                //noinspection UnusedAssignment
+                bitmap = null;
+//            } else {
+//                rotatedBitmap = bitmap;
+//            }
+
+                //Save image to the file.
+                if (HiddenCameraUtils.saveImageFromFile(rotatedBitmap,
+                        mCameraConfig.getImageFile(),
+                        mCameraConfig.getImageFormat())) {
+                    answersState.get(position).setHasPhoto(true);
+                    addPhotoName(getAnswerImagePath(position));
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!mActivity.isFinishing()) {
+                                if (finalCamera != null) {
+                                    try {
+                                        finalCamera.stopPreview();
+                                        finalCamera.release();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                alertDialog.dismiss();
+                                notifyItemChanged(position);
+                            }
+
+                        }
+                    });
+                }
+
+            }).start();
+        };
+
+        if (!hasPhoto) {
+            btnPhoto.setOnClickListener(v -> {
+                capturePhoto(finalCamera, mPictureCallback);
+                if (!answersState.get(position).isChecked())
+                    checkItem(position);
+            });
+        } else {
+            btnPhoto.setOnClickListener(v -> {
+                UserModelR user = mActivity.getCurrentUser();
+                String token = mActivity.getToken();
+                deleteRecursive(new File(
+                        FileUtils.getAnswersStoragePath(mActivity) + File.separator
+                                + mActivity.getCurrentUserId() + File.separator
+                                + token + File.separator
+                                + user.getConfigR().getLoginAdmin()
+                                + "^" + user.getConfigR().getProjectInfo().getProjectId()
+                                + "^" + user.getLogin()
+                                + "^" + token
+                                + "^" + answersState.get(position).getRelative_id()
+
+                ));
+                answersState.get(position).setHasPhoto(false);
+                alertDialog.dismiss();
+                showPictureDialog(position);
+//                capturePhoto(finalCamera, mPictureCallback);
+//                checkItem(position);
+            });
+        }
     }
 
-    //For Tests
-    private void showEnabled() {
-        Log.d("T-L.ListAnswersAdapter", "=========================================================");
-        for (int i = 0; i < answersList.size(); i++) {
-            Log.d("T-L.ListAnswersAdapter", "showEnabled: (" + i + ") " + answersList.get(i).isEnabled());
+    public static Bitmap flip(Bitmap src) {
+        Matrix matrix = new Matrix();
+//        matrix.preScale(-1.0f, 1.0f);
+//        return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
+
+        matrix.postRotate(90);
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(src, src.getWidth(), src.getHeight(), true);
+        return Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+    }
+
+    private void deleteRecursive(File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory())
+            for (File child : fileOrDirectory.listFiles())
+                deleteRecursive(child);
+        fileOrDirectory.delete();
+    }
+
+    private void capturePhoto(Camera camera, Camera.PictureCallback mPictureCallback) {
+        if (camera != null) {
+            boolean isSafeToTakePic = false;
+            try {
+                camera.startPreview();
+                isSafeToTakePic = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (isSafeToTakePic) {
+                try {
+                    camera.startFaceDetection();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    camera.takePicture(null, null, mPictureCallback);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+//                else {
+//                    UiUtils.setButtonEnabled(btnNext, true);
+//                }
         }
-        Log.d("T-L.ListAnswersAdapter", "=========================================================");
+
+//        else {
+//            try {
+//                camera.startPreview();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            UiUtils.setButtonEnabled(btnNext, false);
+//            if (mTimeToken != null)
+//                deleteRecursive(new File(
+//                        FileUtils.getRegStoragePath(mActivity) + File.separator
+//                                + mActivity.getCurrentUserId() + File.separator + mTimeToken));
+//        }
+    }
+
+    private String getAnswerImagePath(int position) {
+        UserModelR user = mActivity.getCurrentUser();
+        String token = mActivity.getToken();
+        return FileUtils.getAnswersStoragePath(mActivity) + File.separator
+                + mActivity.getCurrentUserId() + File.separator
+                + token + File.separator
+                + user.getConfigR().getLoginAdmin()
+                + "^" + user.getConfigR().getProjectInfo().getProjectId()
+                + "^" + user.getLogin()
+                + "^" + token
+                + "^" + answersState.get(position).getRelative_id() + ".jpeg";
+    }
+
+    private void addPhotoName(String name) {
+        mActivity.getMainDao().insertPhotoAnswerR(new PhotoAnswersR(mActivity.getToken(), name, Constants.SmsStatus.NOT_SENT));
     }
 }

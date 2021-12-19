@@ -2,6 +2,7 @@ package pro.quizer.quizer3.database;
 
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 
 import pro.quizer.quizer3.database.models.ActivationModelR;
 import pro.quizer.quizer3.database.models.AppLogsR;
@@ -15,6 +16,7 @@ import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.ElementStatusImageR;
 import pro.quizer.quizer3.database.models.EncryptionTableR;
 import pro.quizer.quizer3.database.models.OptionsR;
+import pro.quizer.quizer3.database.models.PhotoAnswersR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
@@ -39,6 +41,7 @@ import pro.quizer.quizer3.database.models.WarningsR;
         ElementItemR.class,
         RegistrationR.class,
         PrevElementsR.class,
+        PhotoAnswersR.class,
         TokensCounterR.class,
         ElementPassedR.class,
         ElementOptionsR.class,
@@ -48,7 +51,8 @@ import pro.quizer.quizer3.database.models.WarningsR;
         ElementStatusImageR.class,
         CurrentQuestionnaireR.class,
         ElementDatabaseModelR.class,
-        QuestionnaireDatabaseModelR.class}, version = 85)
+        QuestionnaireDatabaseModelR.class}, version = 88)
+@TypeConverters({ListStringConverter.class})
 
 public abstract class QuizerDatabase extends RoomDatabase {
 

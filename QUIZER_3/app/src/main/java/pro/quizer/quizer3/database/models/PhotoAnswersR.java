@@ -19,15 +19,19 @@ public class PhotoAnswersR {
     @ColumnInfo(name = "file")
     private String file;
 
+    @ColumnInfo(name = "name")
+    private String name;
+
     @ColumnInfo(name = "status")
     private String status;
 
     public PhotoAnswersR() {
     }
 
-    public PhotoAnswersR(String token, String file, String status) {
+    public PhotoAnswersR(String token, String file, String name, String status) {
         this.token = token;
         this.file = file;
+        this.name = name;
         this.status = status;
     }
 
@@ -61,5 +65,13 @@ public class PhotoAnswersR {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

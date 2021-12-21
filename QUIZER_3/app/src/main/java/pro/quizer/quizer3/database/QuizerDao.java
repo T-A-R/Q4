@@ -478,4 +478,10 @@ public interface QuizerDao {
 
     @Query("DELETE FROM PhotoAnswersR WHERE status = :status")
     void clearPhotoAnswersByStatus(String status);
+
+    @Query("UPDATE PhotoAnswersR SET status = :status WHERE token =:token")
+    void setPhotoAnswerStatus(String token, String status);
+
+    @Query("DELETE FROM PhotoAnswersR WHERE name = :name")
+    void clearPhotoAnswersByName(String name);
 }

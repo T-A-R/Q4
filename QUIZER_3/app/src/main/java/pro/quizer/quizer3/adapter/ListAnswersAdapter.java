@@ -105,7 +105,10 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         this.isMulti = Objects.requireNonNull(question.getElementOptionsR()).isPolyanswer();
         this.answersState = new ArrayList<>();
         for (int i = 0; i < answersList.size(); i++) {
-            this.answersState.add(new AnswerState(answersList.get(i).getRelative_id(), isAutoChecked(i), ""));
+            AnswerState state = new AnswerState(answersList.get(i).getRelative_id(), isAutoChecked(i), "");
+            if (answersList.get(i).getElementOptionsR().isPhoto_answer() && answersList.get(i).getElementOptionsR().isPhoto_answer_required())
+                state.setIsPhotoAnswer(true);
+            this.answersState.add(state);
         }
 
         titles = new ArrayList<>();
@@ -614,7 +617,6 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     }
 
     private void checkItem(int position) {
-        Log.d("T-L.ListAnswersAdapter", "checkItem: ????");
         new Thread(() -> {
             if (isChecked(position) && !isMulti) {
                 mActivity.runOnUiThread(() -> notifyItemChanged(position));
@@ -902,7 +904,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 CameraConfig mCameraConfig = new CameraConfig()
                         .getBuilder(mActivity)
                         .setCameraFacing(CameraFacing.REAR_FACING_CAMERA)
-                        .setCameraResolution(CameraResolution.MEDIUM_RESOLUTION)
+                        .setCameraResolution(CameraResolution.LOW_RESOLUTION)
                         .setImageFormat(CameraImageFormat.FORMAT_JPEG)
                         .setImageRotation(CameraRotation.ROTATION_270)
                         .buildForReg(path);
@@ -924,7 +926,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                         mCameraConfig.getImageFile(),
                         mCameraConfig.getImageFormat())) {
                     answersState.get(position).setHasPhoto(true);
-                    addPhotoName(getAnswerImagePath(position));
+                    addPhotoName(getAnswerImagePath(position), getAnswerImageName(position));
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
@@ -1016,23 +1018,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                     e.printStackTrace();
                 }
             }
-//                else {
-//                    UiUtils.setButtonEnabled(btnNext, true);
-//                }
         }
-
-//        else {
-//            try {
-//                camera.startPreview();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            UiUtils.setButtonEnabled(btnNext, false);
-//            if (mTimeToken != null)
-//                deleteRecursive(new File(
-//                        FileUtils.getRegStoragePath(mActivity) + File.separator
-//                                + mActivity.getCurrentUserId() + File.separator + mTimeToken));
-//        }
     }
 
     private String getAnswerImagePath(int position) {
@@ -1048,7 +1034,18 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 + "^" + answersState.get(position).getRelative_id() + ".jpeg";
     }
 
-    private void addPhotoName(String name) {
-        mActivity.getMainDao().insertPhotoAnswerR(new PhotoAnswersR(mActivity.getToken(), name, Constants.SmsStatus.NOT_SENT));
+    private String getAnswerImageName(int position) {
+        UserModelR user = mActivity.getCurrentUser();
+        String token = mActivity.getToken();
+        return user.getConfigR().getLoginAdmin()
+                + "^" + user.getConfigR().getProjectInfo().getProjectId()
+                + "^" + user.getLogin()
+                + "^" + token
+                + "^" + answersState.get(position).getRelative_id() + ".jpeg";
+    }
+
+    private void addPhotoName(String path, String name) {
+        Log.d("T-L.ListAnswersAdapter", "???? addPhotoName: " + name);
+        mActivity.getMainDao().insertPhotoAnswerR(new PhotoAnswersR(mActivity.getToken(), path, name, Constants.SmsStatus.NOT_SENT));
     }
 }

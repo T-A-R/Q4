@@ -551,6 +551,12 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         return FileUtils.getFilesRecursion(JPEG, FileUtils.getPhotosStoragePath(this) + FileUtils.FOLDER_DIVIDER + pUserId);
     }
 
+    public List<File> getPhotosAnswersByToken(final String token) {
+        return FileUtils.getFilesRecursion(JPEG, FileUtils.getAnswersStoragePath(this) + File.separator
+                + getCurrentUserId() + File.separator
+                + token);
+    }
+
     public List<File> getRegPhotosByUserId(final int pUserId) {
         return FileUtils.getFilesRecursion(JPEG, FileUtils.getRegStoragePath(this) + FileUtils.FOLDER_DIVIDER + pUserId);
     }

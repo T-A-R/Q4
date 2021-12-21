@@ -48,6 +48,7 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
+import pro.quizer.quizer3.database.models.PhotoAnswersR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
@@ -60,6 +61,8 @@ import pro.quizer.quizer3.executable.QuotasViewModelExecutable;
 import pro.quizer.quizer3.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizer3.executable.SyncInfoExecutable;
 import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
+import pro.quizer.quizer3.executable.files.PhotosAnswersSendingExecutable;
+import pro.quizer.quizer3.executable.files.PhotosSendingByUserModelExecutable;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.config.ActiveRegistrationData;
@@ -84,7 +87,7 @@ import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.DEBUG_MODE;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class HomeFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.SendRegCallback, SmartFragment.Events {
+public class HomeFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.SendRegCallback, SmartFragment.Events, ICallback {
 
     private LinearLayout contContinue;
     private Button btnContinue;
@@ -362,7 +365,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     makeQuotaTree();
                     isQuotaUpdated = true;
                 }
-
+                sendPhotoAnswers();
                 hideScreensaver();
                 getInfo(false);
                 initSyncInfoViews();
@@ -1781,6 +1784,29 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 activateButtons();
             }
         }
+    }
+
+    private void sendPhotoAnswers() {
+        List<PhotoAnswersR> list = getDao().getPhotoAnswersByStatus(Constants.LogStatus.READY_FOR_SEND);
+        Log.d("T-L.HomeFragment", "sendPhotoAnswers: PHOTO LIST SIZE = " + list.size());
+        if(list != null && list.size() >0) {
+            new PhotosAnswersSendingExecutable(activity, mUserModel, list, HomeFragment.this).execute();
+        }
+    }
+
+    @Override
+    public void onStarting() {
+
+    }
+
+    @Override
+    public void onSuccess() {
+
+    }
+
+    @Override
+    public void onError(Exception pException) {
+
     }
 }
 

@@ -198,7 +198,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                             mBaseActivity.getMainDao().deleteElementDatabaseModelByToken(token);
                             mBaseActivity.addLog(Constants.LogObject.QUESTIONNAIRE, "DELETE", Constants.LogResult.SUCCESS, token, null);
                             mBaseActivity.setSettings(Constants.Settings.SENT_TIME, String.valueOf(DateUtils.getCurrentTimeMillis()));
-
+                            mBaseActivity.getMainDao().setPhotoAnswerStatus(token, Constants.LogStatus.READY_FOR_SEND);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

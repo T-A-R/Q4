@@ -61,6 +61,7 @@ public final class Constants {
         String GET_QUOTA = "get_quota";
         String STATISTICS = "statistics";
         String PHOTO_FILE = "photo_file";
+        String PHOTO_FILE_ANSWER = "photo_file_answer";
         String AUDIO_FILE = "audio_file";
         String DOWNLOAD_UPDATE = "download_update";
         String CRASH = "crash";
@@ -80,6 +81,7 @@ public final class Constants {
     public interface LogStatus {
         String SENT = "sent";
         String NOT_SENT = "not_sent";
+        String READY_FOR_SEND = "ready";
     }
 
     public interface LogType {

@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import pro.quizer.quizer3.API.QuizerAPI;
+import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.UserModelR;
@@ -183,6 +184,7 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
             String responseJson = null;
             try {
                 responseJson = responseBody.string();
+                Log.d("T-L.AbstractFilesSendin", "sendFile: " + responseJson);
             } catch (IOException e) {
                 e.printStackTrace();
                 onError(new Exception(mBaseActivity.getString(R.string.server_response_error) + " " + mBaseActivity.getString(R.string.error_302)));
@@ -194,8 +196,8 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
                 deletingListResponseModel = new GsonBuilder().create().fromJson(responseJson, DeletingListResponseModel.class);
             } catch (Exception pE) {
                 onError(new Exception(mBaseActivity.getString(R.string.server_response_error) + " " + mBaseActivity.getString(R.string.error_303)));
+                Log.d("T-L.AbstractFilesSendin", "sendFile: DeletingListResponseModel - ERROR");
             }
-
             if (deletingListResponseModel != null) {
                 if(deletingListResponseModel.isProjectActive() != null) {
                     try {
@@ -206,22 +208,21 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
                 }
                 if (deletingListResponseModel.getResult() != 0) {
                     final List<String> tokensToRemove = deletingListResponseModel.getAccepted();
-
                     if (tokensToRemove == null || tokensToRemove.isEmpty()) {
                         Log.d(TAG, "sendFile: TOKEN = NULL");
                         pSendingFileCallback.onError(position);
                         onError(new Exception(mBaseActivity.getString(R.string.empty_tokens_list_error) + " " + mBaseActivity.getString(R.string.error_304)));
                     } else {
                         for (final String token : tokensToRemove) {
-                            Log.d(TAG, "sendFile: TOKEN = " + token);
                             final String path = FileUtils.getFullPathByFileName(file, token);
 
                             if (StringUtils.isNotEmpty(path)) {
                                 final boolean isDeleted = new File(path).delete();
                                 Log.d("Deleting audio", (isDeleted ? "NOT" : "") + " DELETED: " + path);
                             }
-                        }
+                            mBaseActivity.getMainDao().clearPhotoAnswersByName(token);
 
+                        }
                         pSendingFileCallback.onSuccess(position);
                         onSuccess();
                     }

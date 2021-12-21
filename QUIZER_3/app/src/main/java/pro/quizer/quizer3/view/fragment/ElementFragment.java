@@ -1045,7 +1045,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 } else {
                     answerStates = adapterList.getAnswers();
                 }
-                if (answerStates != null && notEmpty(answerStates)) {
+                if (answerStates != null && notEmpty(answerStates) && answersHavePhoto(answerStates)) {
                     if (answerType.equals(ElementSubtype.RANK)) {
                         List<AnswerState> answerStatesRang = new ArrayList<>();
                         for (int i = 0; i < answersList.size(); i++) {
@@ -1368,6 +1368,16 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         if (currentElement.getElementOptionsR().getMax_answers() != null) {
             if (spinnerMultipleSelection.size() > currentElement.getElementOptionsR().getMax_answers()) {
                 showToast("Выберите максимум " + currentElement.getElementOptionsR().getMax_answers() + " ответов");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean answersHavePhoto(List<AnswerState> answerStates) {
+        for(AnswerState answerState : answerStates) {
+            if(answerState.isIsPhotoAnswer() && !answerState.hasPhoto()) {
+                showToast("Пожалуйта сделайте фото");
                 return false;
             }
         }

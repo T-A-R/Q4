@@ -974,8 +974,6 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 answersState.get(position).setHasPhoto(false);
                 alertDialog.dismiss();
                 showPictureDialog(position);
-//                capturePhoto(finalCamera, mPictureCallback);
-//                checkItem(position);
             });
         }
     }
@@ -1045,7 +1043,6 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     }
 
     private void addPhotoName(String path, String name) {
-        Log.d("T-L.ListAnswersAdapter", "???? addPhotoName: " + name);
         mActivity.getMainDao().insertPhotoAnswerR(new PhotoAnswersR(mActivity.getToken(), path, name, Constants.SmsStatus.NOT_SENT));
     }
 }

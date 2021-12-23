@@ -1376,7 +1376,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     private boolean answersHavePhoto(List<AnswerState> answerStates) {
         for(AnswerState answerState : answerStates) {
-            if(answerState.isIsPhotoAnswer() && !answerState.hasPhoto()) {
+            Log.d("T-L.ElementFragment", "answersHavePhoto: " + answerState.getRelative_id() + " " + answerState.isChecked() + " " + answerState.isIsPhotoAnswer() + " " + answerState.hasPhoto());
+            if(answerState.isChecked() && answerState.isIsPhotoAnswer() && !answerState.hasPhoto()) {
                 showToast("Пожалуйта сделайте фото");
                 return false;
             }

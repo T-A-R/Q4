@@ -8,7 +8,7 @@
     <ImageView
         android:id="@+id/photo_image"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_360sdp"
+        android:layout_height="@dimen/_350sdp"
         android:layout_marginStart="@dimen/_20sdp"
         android:layout_marginTop="@dimen/_20sdp"
         android:layout_marginEnd="@dimen/_20sdp"
@@ -18,7 +18,7 @@
     <FrameLayout
         android:id="@+id/camera_cont"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_360sdp"
+        android:layout_height="@dimen/_350sdp"
         android:layout_marginStart="@dimen/_20sdp"
         android:layout_marginTop="@dimen/_20sdp"
         android:layout_marginEnd="@dimen/_20sdp"
@@ -41,7 +41,7 @@
             android:maxLines="1"
             android:layout_weight="1"
             android:text="@string/back"
-            android:textSize="@dimen/_12ssp"
+            android:textSize="@dimen/_10ssp"
             android:visibility="gone"/>
 
         <Button
@@ -54,7 +54,7 @@
             android:maxLines="1"
             android:layout_weight="1"
             android:text="@string/button_make_photo"
-            android:textSize="@dimen/_12ssp" />
+            android:textSize="@dimen/_10ssp" />
 
     </LinearLayout>
 

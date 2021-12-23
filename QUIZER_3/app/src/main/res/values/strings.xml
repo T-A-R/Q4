@@ -498,4 +498,5 @@
     <string name="add_photo">Выбрать фото</string>
     <string name="button_add">Добавить</string>
     <string name="button_add_photo">Добавить фото</string>
+    <string name="button_view_photo">Просмотреть фото</string>
 </resources>

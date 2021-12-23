@@ -42,6 +42,7 @@ import com.androidhiddencamera.config.CameraImageFormat;
 import com.androidhiddencamera.config.CameraResolution;
 import com.androidhiddencamera.config.CameraRotation;
 import com.google.gson.Gson;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -263,9 +264,12 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
             if (item.getElementOptionsR().isPhoto_answer()) {
                 addPicButton.setVisibility(View.VISIBLE);
-                if (answersState.get(position).hasPhoto()) {
+                if (answersState.get(getAdapterPosition()).hasPhoto()) {
                     addPicButton.setTextColor(mActivity.getResources().getColor(R.color.brand_color));
-                    addPicButton.setText("Просмотреть фото");
+                    addPicButton.setText(R.string.button_view_photo);
+                } else {
+                    addPicButton.setTextColor(mActivity.getResources().getColor(R.color.gray));
+                    addPicButton.setText(R.string.button_add_photo);
                 }
             } else {
                 addPicButton.setVisibility(View.GONE);
@@ -681,6 +685,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             this.answersState = answers;
             for (int i = 0; i < answers.size(); i++) {
                 answersList.get(i).setEnabled(true);
+                if (answersList.get(i).getElementOptionsR().isPhoto_answer() && answersList.get(i).getElementOptionsR().isPhoto_answer_required())
+                    answers.get(i).setIsPhotoAnswer(true);
             }
             for (int i = 0; i < answers.size(); i++) {
                 if (answersList.get(i).getElementOptionsR().isUnchecker() && answers.get(i).isChecked()) {
@@ -846,6 +852,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             File image = new File(getAnswerImagePath(position));
             Picasso.with(mActivity)
                     .load(image)
+                    .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
                     .into(photoView);
             btnPhoto.setText("Переделать");
             btnBack.setVisibility(View.VISIBLE);

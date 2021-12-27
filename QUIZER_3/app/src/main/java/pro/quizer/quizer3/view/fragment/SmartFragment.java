@@ -842,7 +842,11 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public boolean saveQuestionnaireToDatabase(CurrentQuestionnaireR currentQuiz, boolean aborted) {
 
-        getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.ATTEMPT, currentQuiz.getToken(), null);
+        try {
+            getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.ATTEMPT, currentQuiz.getToken(), null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         boolean saved = true;
         countElements = 0;
@@ -932,8 +936,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
         if (saved) {
             try {
-                Log.d("T-L.ElementFragment", "Clear Questionnaire: 6");
-
                 getDao().clearCurrentQuestionnaireR();
                 getDao().clearElementPassedR();
                 getDao().clearPrevElementsR();
@@ -1303,4 +1305,5 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public Character getEncrypted (char decrypted) {
         return getDao().getSymbolsForEncrypt(decrypted);
     }
+
 }

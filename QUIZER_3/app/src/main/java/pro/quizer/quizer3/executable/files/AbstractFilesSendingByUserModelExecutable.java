@@ -2,7 +2,9 @@ package pro.quizer.quizer3.executable.files;
 
 import android.content.Context;
 import android.os.Build;
+
 import androidx.appcompat.app.AlertDialog;
+
 import android.util.Log;
 
 import com.google.gson.GsonBuilder;
@@ -93,7 +95,12 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
             @Override
             public void onSuccess(int position) {
                 cancelAlert();
-
+                if (getNameForm().equals(Constants.NameForm.PHOTO_FILE_ANSWER))
+                    try {
+                        mBaseActivity.getMainDao().clearPhotoAnswersByName(getFileNameByPosition(position));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 final int next = position + 1;
                 sendFile(next, this);
             }
@@ -199,7 +206,7 @@ public abstract class AbstractFilesSendingByUserModelExecutable extends BaseExec
                 Log.d("T-L.AbstractFilesSendin", "sendFile: DeletingListResponseModel - ERROR");
             }
             if (deletingListResponseModel != null) {
-                if(deletingListResponseModel.isProjectActive() != null) {
+                if (deletingListResponseModel.isProjectActive() != null) {
                     try {
                         mBaseActivity.getMainDao().setProjectActive(deletingListResponseModel.isProjectActive());
                     } catch (Exception e) {

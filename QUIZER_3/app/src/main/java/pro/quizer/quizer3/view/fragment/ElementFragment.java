@@ -1376,7 +1376,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     private boolean answersHavePhoto(List<AnswerState> answerStates) {
         for(AnswerState answerState : answerStates) {
-            Log.d("T-L.ElementFragment", "answersHavePhoto: " + answerState.getRelative_id() + " " + answerState.isChecked() + " " + answerState.isIsPhotoAnswer() + " " + answerState.hasPhoto());
             if(answerState.isChecked() && answerState.isIsPhotoAnswer() && !answerState.hasPhoto()) {
                 showToast("Пожалуйта сделайте фото");
                 return false;
@@ -1728,7 +1727,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     public void exitQuestionnaire() {
         stopAllRecording();
         try {
-            Log.d("T-L.ElementFragment", "Clear Questionnaire: 1");
             getDao().setOption(Constants.OptionName.QUIZ_STARTED, "false");
             getDao().clearCurrentQuestionnaireR();
             getDao().clearElementPassedR();
@@ -1784,7 +1782,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 showToast(getString(R.string.save_questionnaire));
 
                 try {
-                    Log.d("T-L.ElementFragment", "Clear Questionnaire: 2");
                     getDao().clearCurrentQuestionnaireR();
                     getDao().clearElementPassedR();
                     getDao().clearPrevElementsR();
@@ -1802,7 +1799,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             }
         } else {
             try {
-                Log.d("T-L.ElementFragment", "Clear Questionnaire: 3");
                 getDao().deleteElementDatabaseModelByToken(getMainActivity().getCurrentQuestionnaireForce().getToken());
                 getDao().clearCurrentQuestionnaireR();
                 getDao().clearElementPassedR();

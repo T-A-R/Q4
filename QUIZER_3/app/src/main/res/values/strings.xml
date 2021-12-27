@@ -322,6 +322,7 @@
     <string name="view_unsent_count_quiz">Количество неотправленных анкет: %1$s</string>
     <string name="view_unsent_count_audio">Количество неотправленных аудио файлов: %1$s</string>
     <string name="view_unsent_count_photo">Количество неотправленных фото файлов: %1$s</string>
+    <string name="view_unsent_count_photo_answers">Количество неотправленных фотоответов: %1$s</string>
     <string name="button_delete_users">Удалить пользователей</string>
     <string name="button_delete_files">Удалить аудио и фото</string>
     <string name="button_delete_data_quizer">Очистить диск</string>
@@ -336,6 +337,7 @@
     <string name="button_exit">Выход</string>
     <string name="button_send_audio">Отправить аудио</string>
     <string name="button_send_photo">Отправить фото</string>
+    <string name="button_send_photo_answers">Отправить фотоответы</string>
     <string name="button_send_log">Отправить журнал на сервер</string>
     <string name="button_clear_logs">Очистить журнал логов</string>
     <string name="button_update_config">Обновить конфиг</string>

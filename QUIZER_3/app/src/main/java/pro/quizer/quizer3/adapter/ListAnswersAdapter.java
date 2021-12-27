@@ -816,11 +816,14 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         final ImageView photoView = mView.findViewById(R.id.photo_image);
         final FrameLayout cameraCont = mView.findViewById(R.id.camera_cont);
 
+        btnPhoto.setTypeface(Fonts.getFuturaPtBook());
+        btnBack.setTypeface(Fonts.getFuturaPtBook());
+
         Camera camera = null;
         ShowCamera showCamera;
         boolean hasPhoto = false;
 
-        dialog.setCancelable(false);
+        dialog.setCancelable(true);
         final AlertDialog alertDialog = dialog.create();
         UiUtils.setButtonEnabled(btnPhoto, false);
 
@@ -855,6 +858,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                     .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
                     .into(photoView);
             btnPhoto.setText("Переделать");
+            UiUtils.setButtonEnabledRed(btnPhoto, true);
             btnBack.setVisibility(View.VISIBLE);
             btnBack.setOnClickListener(v -> alertDialog.dismiss());
         } else {
@@ -917,16 +921,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                         .buildForReg(path);
 
                 Bitmap rotatedBitmap;
-
-//            if (mCameraConfig.getImageRotation() != CameraRotation.ROTATION_0) {
-//                rotatedBitmap = flip(HiddenCameraUtils.rotateBitmap(bitmap, mCameraConfig.getImageRotation()));
                 rotatedBitmap = flip(bitmap);
-
-                //noinspection UnusedAssignment
                 bitmap = null;
-//            } else {
-//                rotatedBitmap = bitmap;
-//            }
 
                 //Save image to the file.
                 if (HiddenCameraUtils.saveImageFromFile(rotatedBitmap,
@@ -965,9 +961,10 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             });
         } else {
             btnPhoto.setOnClickListener(v -> {
+
                 UserModelR user = mActivity.getCurrentUser();
                 String token = mActivity.getToken();
-                deleteRecursive(new File(
+                File file = new File(
                         FileUtils.getAnswersStoragePath(mActivity) + File.separator
                                 + mActivity.getCurrentUserId() + File.separator
                                 + token + File.separator
@@ -975,10 +972,18 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                                 + "^" + user.getConfigR().getProjectInfo().getProjectId()
                                 + "^" + user.getLogin()
                                 + "^" + token
-                                + "^" + answersState.get(position).getRelative_id()
+                                + "^" + answersState.get(position).getRelative_id() + ".jpeg"
 
-                ));
+                );
+                deleteRecursive(file);
+                mActivity.getMainDao().clearPhotoAnswersByName(getAnswerImageName(position));
                 answersState.get(position).setHasPhoto(false);
+
+                try {
+                    notifyItemChanged(position);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 alertDialog.dismiss();
                 showPictureDialog(position);
             });

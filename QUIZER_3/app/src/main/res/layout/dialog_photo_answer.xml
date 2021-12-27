@@ -40,8 +40,9 @@
             android:layout_marginStart="8dp"
             android:maxLines="1"
             android:layout_weight="1"
+            android:textAllCaps="false"
             android:text="@string/back"
-            android:textSize="@dimen/_10ssp"
+            android:textSize="@dimen/_12ssp"
             android:visibility="gone"/>
 
         <Button
@@ -53,8 +54,9 @@
             android:layout_marginStart="8dp"
             android:maxLines="1"
             android:layout_weight="1"
+            android:textAllCaps="false"
             android:text="@string/button_make_photo"
-            android:textSize="@dimen/_10ssp" />
+            android:textSize="@dimen/_12ssp" />
 
     </LinearLayout>
 

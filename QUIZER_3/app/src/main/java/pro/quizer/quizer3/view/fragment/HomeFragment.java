@@ -87,7 +87,7 @@ import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.DEBUG_MODE;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
-public class HomeFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.SendRegCallback, SmartFragment.Events, ICallback {
+public class HomeFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.SendRegCallback, SmartFragment.Events {
 
     private LinearLayout contContinue;
     private Button btnContinue;
@@ -1790,23 +1790,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         List<PhotoAnswersR> list = getDao().getPhotoAnswersByStatus(Constants.LogStatus.READY_FOR_SEND);
         Log.d("T-L.HomeFragment", "sendPhotoAnswers: PHOTO LIST SIZE = " + list.size());
         if(list != null && list.size() >0) {
-            new PhotosAnswersSendingExecutable(activity, mUserModel, list, HomeFragment.this).execute();
+            new PhotosAnswersSendingExecutable(activity, mUserModel, list, null).execute();
         }
-    }
-
-    @Override
-    public void onStarting() {
-
-    }
-
-    @Override
-    public void onSuccess() {
-
-    }
-
-    @Override
-    public void onError(Exception pException) {
-
     }
 }
 

@@ -82,7 +82,6 @@ public class TransFragment extends ScreenFragment {
     private void fillPassedQuotas() {
         Integer startPosition = null;
         for (int i = 0; i < quotaElementsList.size(); i++) {
-            Log.d("T-L.TransFragment", "fillPassedQuotas startElementId: " + startElementId);
             if (quotaElementsList.get(i).getRelative_id().equals(startElementId)) {
                 startPosition = i;
                 break;
@@ -90,8 +89,6 @@ public class TransFragment extends ScreenFragment {
         }
         if (startPosition != null && startPosition != (quotaElementsList.size() - 1)) {
             for (int i = startPosition + 1; i < quotaElementsList.size(); i++) {
-                Log.d("T-L.TransFragment", "fillPassedQuotas: " + quotaElementsList.get(i).getRelative_id() + "/" + nextElementId);
-
                 if (!quotaElementsList.get(i).getRelative_id().equals(nextElementId)) {
                     //TODO ADD PASSED_QUOTA
                     savePassedElement(quotaElementsList.get(i).getRelative_id());

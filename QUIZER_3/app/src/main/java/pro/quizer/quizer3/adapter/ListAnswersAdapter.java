@@ -10,6 +10,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.hardware.camera2.*;
+
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -872,6 +874,19 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             alertDialog.show();
         }
 
+        Camera.Parameters params = finalCamera.getParameters();
+        List<Camera.Size> sizes = params.getSupportedPictureSizes();
+
+        Camera.Size mSize = null;
+        for (Camera.Size size : sizes) {
+            Log.i(TAG, "Available resolution: "+size.width+" "+size.height);
+            mSize = size;
+        }
+        if(mSize != null) {
+            params.setPictureSize(mSize.width, mSize.height);
+            finalCamera.setParameters(params);
+        }
+
         Camera.PictureCallback mPictureCallback = (bytes, camera1) -> {
 
             new Thread(() -> {
@@ -915,7 +930,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 CameraConfig mCameraConfig = new CameraConfig()
                         .getBuilder(mActivity)
                         .setCameraFacing(CameraFacing.REAR_FACING_CAMERA)
-                        .setCameraResolution(CameraResolution.LOW_RESOLUTION)
+                        .setCameraResolution(CameraResolution.HIGH_RESOLUTION)
                         .setImageFormat(CameraImageFormat.FORMAT_JPEG)
                         .setImageRotation(CameraRotation.ROTATION_270)
                         .buildForReg(path);

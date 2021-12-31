@@ -1696,6 +1696,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         if (!mActivity.checkPermission()) {
             mActivity.requestPermission();
         }
+        if(adapterList != null) {
+            adapterList.onResume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(adapterList != null) {
+            adapterList.onPause();
+        }
     }
 
     @Override

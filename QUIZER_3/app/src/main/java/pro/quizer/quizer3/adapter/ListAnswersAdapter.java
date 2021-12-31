@@ -8,12 +8,18 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.ImageFormat;
 import android.graphics.Matrix;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.camera2.*;
 
+import android.media.Image;
+import android.media.ImageReader;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -22,8 +28,11 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.Surface;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -49,8 +58,12 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -74,6 +87,7 @@ import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.PhoneFormatter;
+import pro.quizer.quizer3.view.activity.PhotoTempActivity;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.model.OptionsOpenType.CHECKBOX;
@@ -95,6 +109,15 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     private final List<String> titles;
     private final Map<Integer, TitleModel> titlesMap;
     boolean mFromPenButton = false;
+
+    CameraService[] myCameras = null;
+    CameraManager mCameraManager = null;
+    final int CAMERA1 = 0;
+    final int CAMERA2 = 1;
+    HandlerThread mBackgroundThread;
+    Handler mBackgroundHandler = null;
+
+    AlertDialog photoDialog;
 
     public ListAnswersAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> passedQuotaBlock, ElementItemR[][] quotaTree, Map<Integer, TitleModel> titlesMap, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
@@ -124,6 +147,23 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 titles.add(Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle());
             }
         }
+
+        mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+        startBackgroundThread();
+    }
+
+    public void onPause() {
+        if (myCameras[CAMERA1].isOpen()) {
+            myCameras[CAMERA1].closeCamera();
+        }
+        if (myCameras[CAMERA2].isOpen()) {
+            myCameras[CAMERA2].closeCamera();
+        }
+        stopBackgroundThread();
+    }
+
+    public void onResume() {
+        startBackgroundThread();
     }
 
     public boolean isAutoChecked(int position) {
@@ -619,7 +659,205 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             }
         }
 
+        private void showPictureDialog(int position) {
+            final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mActivity);
+            final View mView = layoutInflaterAndroid.inflate(mActivity.isAutoZoom() ? R.layout.dialog_photo_answer : R.layout.dialog_photo_answer, null);
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
+            dialog.setView(mView);
 
+            final Button btnPhoto = mView.findViewById(R.id.btn_photo);
+            final Button btnBack = mView.findViewById(R.id.btn_back);
+            final ImageView photoView = mView.findViewById(R.id.photo_image);
+            final TextureView cameraCont = mView.findViewById(R.id.camera_cont);
+
+            btnPhoto.setTypeface(Fonts.getFuturaPtBook());
+            btnBack.setTypeface(Fonts.getFuturaPtBook());
+
+            boolean hasPhoto = false;
+
+            cameraCont.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+                @Override
+                public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surface, int width, int height) {
+                    UiUtils.setButtonEnabled(btnPhoto, true);
+                    mCameraManager = (CameraManager) mActivity.getSystemService(Context.CAMERA_SERVICE);
+                    try {
+                        myCameras = new CameraService[mCameraManager.getCameraIdList().length];
+
+                        for (String cameraID : mCameraManager.getCameraIdList()) {
+                            int id = Integer.parseInt(cameraID);
+                            myCameras[id] = new CameraService(mCameraManager, cameraID, surface, position);
+                        }
+                    } catch (CameraAccessException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (myCameras[CAMERA1] != null) {
+                        if (!myCameras[CAMERA1].isOpen()) myCameras[CAMERA1].openCamera();
+                    }
+                }
+
+                @Override
+                public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surface, int width, int height) {
+
+                }
+
+                @Override
+                public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surface) {
+                    return false;
+                }
+
+                @Override
+                public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surface) {
+
+                }
+            });
+
+            dialog.setCancelable(true);
+            final AlertDialog alertDialog = dialog.create();
+            photoDialog = alertDialog;
+            UiUtils.setButtonEnabled(btnPhoto, false);
+
+            hasPhoto = answersState.get(position).hasPhoto();
+            if (hasPhoto) {
+                photoView.setVisibility(View.VISIBLE);
+                cameraCont.setVisibility(View.INVISIBLE);
+                File image = new File(getAnswerImagePath(position));
+                Picasso.with(mActivity)
+                        .load(image)
+                        .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                        .into(photoView);
+                btnPhoto.setText("Переделать");
+                UiUtils.setButtonEnabledRed(btnPhoto, true);
+                btnBack.setVisibility(View.VISIBLE);
+                btnBack.setOnClickListener(v -> alertDialog.dismiss());
+            } else {
+                photoView.setVisibility(View.INVISIBLE);
+                cameraCont.setVisibility(View.VISIBLE);
+            }
+
+            if (!mActivity.isFinishing()) {
+                alertDialog.show();
+            }
+
+//        Camera.PictureCallback mPictureCallback = (bytes, camera1) -> {
+//
+//            new Thread(() -> {
+//                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//                UserModelR user = mActivity.getCurrentUser();
+//                String token = mActivity.getToken();
+//
+//                //            [admin]^[project_id]^[user_login]^[token]^[answer_id].[extension]
+//
+//                try {
+//                    File dir = new File(FileUtils.getAnswersStoragePath(mActivity) + File.separator
+//                            + user.getUser_id());
+//                    if (!dir.exists()) {
+//                        dir.mkdirs();
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    return;
+//                }
+//
+//                try {
+//                    File dir = new File(FileUtils.getAnswersStoragePath(mActivity) + File.separator
+//                            + user.getUser_id() + File.separator + token);
+//                    if (!dir.exists()) {
+//                        dir.mkdirs();
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    return;
+//                }
+//
+//                String path = FileUtils.getAnswersStoragePath(mActivity) + File.separator
+//                        + user.getUser_id() + File.separator
+//                        + token + File.separator
+//                        + user.getConfigR().getLoginAdmin()
+//                        + "^" + user.getConfigR().getProjectInfo().getProjectId()
+//                        + "^" + user.getLogin()
+//                        + "^" + token
+//                        + "^" + answersState.get(position).getRelative_id();
+//
+//                CameraConfig mCameraConfig = new CameraConfig()
+//                        .getBuilder(mActivity)
+//                        .setCameraFacing(CameraFacing.REAR_FACING_CAMERA)
+//                        .setCameraResolution(CameraResolution.HIGH_RESOLUTION)
+//                        .setImageFormat(CameraImageFormat.FORMAT_JPEG)
+//                        .setImageRotation(CameraRotation.ROTATION_270)
+//                        .buildForReg(path);
+//
+//                Bitmap rotatedBitmap;
+//                rotatedBitmap = flip(bitmap);
+//                bitmap = null;
+//
+//                //Save image to the file.
+//                if (HiddenCameraUtils.saveImageFromFile(rotatedBitmap,
+//                        mCameraConfig.getImageFile(),
+//                        mCameraConfig.getImageFormat())) {
+//                    answersState.get(position).setHasPhoto(true);
+//                    addPhotoName(getAnswerImagePath(position), getAnswerImageName(position));
+//                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            if (!mActivity.isFinishing()) {
+//                                if (finalCamera != null) {
+//                                    try {
+//                                        finalCamera.stopPreview();
+//                                        finalCamera.release();
+//                                    } catch (Exception e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//                                alertDialog.dismiss();
+//                                notifyItemChanged(position);
+//                            }
+//
+//                        }
+//                    });
+//                }
+//
+//            }).start();
+//        };
+
+            if (!hasPhoto) {
+                btnPhoto.setOnClickListener(v -> {
+                    if (myCameras[CAMERA1].isOpen()) myCameras[CAMERA1].makePhoto();
+                    if (myCameras[CAMERA2].isOpen()) myCameras[CAMERA2].makePhoto();
+//                capturePhoto(finalCamera, mPictureCallback);
+                    if (!answersState.get(position).isChecked())
+                        checkItem(position);
+                });
+            } else {
+                btnPhoto.setOnClickListener(v -> {
+
+                    UserModelR user = mActivity.getCurrentUser();
+                    String token = mActivity.getToken();
+                    File file = new File(
+                            FileUtils.getAnswersStoragePath(mActivity) + File.separator
+                                    + mActivity.getCurrentUserId() + File.separator
+                                    + token + File.separator
+                                    + user.getConfigR().getLoginAdmin()
+                                    + "^" + user.getConfigR().getProjectInfo().getProjectId()
+                                    + "^" + user.getLogin()
+                                    + "^" + token
+                                    + "^" + answersState.get(position).getRelative_id() + ".jpeg"
+
+                    );
+                    deleteRecursive(file);
+                    mActivity.getMainDao().clearPhotoAnswersByName(getAnswerImageName(position));
+                    answersState.get(position).setHasPhoto(false);
+
+                    try {
+                        notifyItemChanged(position);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    alertDialog.dismiss();
+                    showPictureDialog(position);
+                });
+            }
+        }
     }
 
     private void checkItem(int position) {
@@ -807,213 +1045,16 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         }
     }
 
-    private void showPictureDialog(int position) {
-        final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mActivity);
-        final View mView = layoutInflaterAndroid.inflate(mActivity.isAutoZoom() ? R.layout.dialog_photo_answer : R.layout.dialog_photo_answer, null);
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
-        dialog.setView(mView);
 
-        final Button btnPhoto = mView.findViewById(R.id.btn_photo);
-        final Button btnBack = mView.findViewById(R.id.btn_back);
-        final ImageView photoView = mView.findViewById(R.id.photo_image);
-        final FrameLayout cameraCont = mView.findViewById(R.id.camera_cont);
-
-        btnPhoto.setTypeface(Fonts.getFuturaPtBook());
-        btnBack.setTypeface(Fonts.getFuturaPtBook());
-
-        Camera camera = null;
-        ShowCamera showCamera;
-        boolean hasPhoto = false;
-
-        dialog.setCancelable(true);
-        final AlertDialog alertDialog = dialog.create();
-        UiUtils.setButtonEnabled(btnPhoto, false);
-
-        if (camera != null) {
-            camera.release();
-        }
-        try {
-            camera = Camera.open(0);
-        } catch (Exception e) {
-            e.printStackTrace();
-//            camera.unlock();
-            try {
-                camera = Camera.open(0);
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-        }
-        if (camera != null) {
-            showCamera = new ShowCamera(mActivity, camera);
-            cameraCont.addView(showCamera);
-            UiUtils.setButtonEnabled(btnPhoto, true);
-        } else {
-//            UiUtils.setButtonEnabled(btnNext, true);
-        }
-        hasPhoto = answersState.get(position).hasPhoto();
-        if (hasPhoto) {
-            photoView.setVisibility(View.VISIBLE);
-            cameraCont.setVisibility(View.INVISIBLE);
-            File image = new File(getAnswerImagePath(position));
-            Picasso.with(mActivity)
-                    .load(image)
-                    .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                    .into(photoView);
-            btnPhoto.setText("Переделать");
-            UiUtils.setButtonEnabledRed(btnPhoto, true);
-            btnBack.setVisibility(View.VISIBLE);
-            btnBack.setOnClickListener(v -> alertDialog.dismiss());
-        } else {
-            photoView.setVisibility(View.INVISIBLE);
-            cameraCont.setVisibility(View.VISIBLE);
-        }
-
-        Camera finalCamera = camera;
-
-        if (!mActivity.isFinishing()) {
-            alertDialog.show();
-        }
-
-        Camera.Parameters params = finalCamera.getParameters();
-        List<Camera.Size> sizes = params.getSupportedPictureSizes();
-
-        Camera.Size mSize = null;
-        for (Camera.Size size : sizes) {
-            Log.i(TAG, "Available resolution: "+size.width+" "+size.height);
-            mSize = size;
-        }
-        if(mSize != null) {
-            params.setPictureSize(mSize.width, mSize.height);
-            finalCamera.setParameters(params);
-        }
-
-        Camera.PictureCallback mPictureCallback = (bytes, camera1) -> {
-
-            new Thread(() -> {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                UserModelR user = mActivity.getCurrentUser();
-                String token = mActivity.getToken();
-
-                //            [admin]^[project_id]^[user_login]^[token]^[answer_id].[extension]
-
-                try {
-                    File dir = new File(FileUtils.getAnswersStoragePath(mActivity) + File.separator
-                            + user.getUser_id());
-                    if (!dir.exists()) {
-                        dir.mkdirs();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return;
-                }
-
-                try {
-                    File dir = new File(FileUtils.getAnswersStoragePath(mActivity) + File.separator
-                            + user.getUser_id() + File.separator + token);
-                    if (!dir.exists()) {
-                        dir.mkdirs();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return;
-                }
-
-                String path = FileUtils.getAnswersStoragePath(mActivity) + File.separator
-                        + user.getUser_id() + File.separator
-                        + token + File.separator
-                        + user.getConfigR().getLoginAdmin()
-                        + "^" + user.getConfigR().getProjectInfo().getProjectId()
-                        + "^" + user.getLogin()
-                        + "^" + token
-                        + "^" + answersState.get(position).getRelative_id();
-
-                CameraConfig mCameraConfig = new CameraConfig()
-                        .getBuilder(mActivity)
-                        .setCameraFacing(CameraFacing.REAR_FACING_CAMERA)
-                        .setCameraResolution(CameraResolution.HIGH_RESOLUTION)
-                        .setImageFormat(CameraImageFormat.FORMAT_JPEG)
-                        .setImageRotation(CameraRotation.ROTATION_270)
-                        .buildForReg(path);
-
-                Bitmap rotatedBitmap;
-                rotatedBitmap = flip(bitmap);
-                bitmap = null;
-
-                //Save image to the file.
-                if (HiddenCameraUtils.saveImageFromFile(rotatedBitmap,
-                        mCameraConfig.getImageFile(),
-                        mCameraConfig.getImageFormat())) {
-                    answersState.get(position).setHasPhoto(true);
-                    addPhotoName(getAnswerImagePath(position), getAnswerImageName(position));
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!mActivity.isFinishing()) {
-                                if (finalCamera != null) {
-                                    try {
-                                        finalCamera.stopPreview();
-                                        finalCamera.release();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                alertDialog.dismiss();
-                                notifyItemChanged(position);
-                            }
-
-                        }
-                    });
-                }
-
-            }).start();
-        };
-
-        if (!hasPhoto) {
-            btnPhoto.setOnClickListener(v -> {
-                capturePhoto(finalCamera, mPictureCallback);
-                if (!answersState.get(position).isChecked())
-                    checkItem(position);
-            });
-        } else {
-            btnPhoto.setOnClickListener(v -> {
-
-                UserModelR user = mActivity.getCurrentUser();
-                String token = mActivity.getToken();
-                File file = new File(
-                        FileUtils.getAnswersStoragePath(mActivity) + File.separator
-                                + mActivity.getCurrentUserId() + File.separator
-                                + token + File.separator
-                                + user.getConfigR().getLoginAdmin()
-                                + "^" + user.getConfigR().getProjectInfo().getProjectId()
-                                + "^" + user.getLogin()
-                                + "^" + token
-                                + "^" + answersState.get(position).getRelative_id() + ".jpeg"
-
-                );
-                deleteRecursive(file);
-                mActivity.getMainDao().clearPhotoAnswersByName(getAnswerImageName(position));
-                answersState.get(position).setHasPhoto(false);
-
-                try {
-                    notifyItemChanged(position);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                alertDialog.dismiss();
-                showPictureDialog(position);
-            });
-        }
-    }
-
-    public static Bitmap flip(Bitmap src) {
-        Matrix matrix = new Matrix();
-//        matrix.preScale(-1.0f, 1.0f);
-//        return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
-
-        matrix.postRotate(90);
-        Bitmap scaledBitmap = Bitmap.createScaledBitmap(src, src.getWidth(), src.getHeight(), true);
-        return Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
-    }
+//    public static Bitmap flip(Bitmap src) {
+//        Matrix matrix = new Matrix();
+////        matrix.preScale(-1.0f, 1.0f);
+////        return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
+//
+//        matrix.postRotate(90);
+//        Bitmap scaledBitmap = Bitmap.createScaledBitmap(src, src.getWidth(), src.getHeight(), true);
+//        return Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+//    }
 
     private void deleteRecursive(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())
@@ -1071,5 +1112,224 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
     private void addPhotoName(String path, String name) {
         mActivity.getMainDao().insertPhotoAnswerR(new PhotoAnswersR(mActivity.getToken(), path, name, Constants.SmsStatus.NOT_SENT));
+    }
+
+    public class CameraService {
+
+        //        private File mFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "test1.jpg");
+        private File mFile;
+
+        private String mCameraID;
+        private CameraDevice mCameraDevice = null;
+        private CameraCaptureSession mCaptureSession;
+        private ImageReader mImageReader;
+        private SurfaceTexture texture;
+        int position;
+//        private TextureView cameraCont;
+
+
+        public CameraService(CameraManager cameraManager, String cameraID, SurfaceTexture texture, int position) {
+
+            mCameraManager = cameraManager;
+            mCameraID = cameraID;
+            this.texture = texture;
+            this.position = position;
+            mFile = new File(getAnswerImagePath(position));
+        }
+
+        public void makePhoto() {
+
+            try {
+                // This is the CaptureRequest.Builder that we use to take a picture.
+                final CaptureRequest.Builder captureBuilder =
+                        mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+                captureBuilder.addTarget(mImageReader.getSurface());
+                CameraCaptureSession.CaptureCallback CaptureCallback = new CameraCaptureSession.CaptureCallback() {
+
+                    @Override
+                    public void onCaptureCompleted(@NonNull CameraCaptureSession session,
+                                                   @NonNull CaptureRequest request,
+                                                   @NonNull TotalCaptureResult result) {
+
+                        Log.d("T-L.ListAnswersAdapter", "onCaptureCompleted: ");
+                    }
+                };
+
+                mCaptureSession.stopRepeating();
+                mCaptureSession.abortCaptures();
+                mCaptureSession.capture(captureBuilder.build(), CaptureCallback, mBackgroundHandler);
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private final ImageReader.OnImageAvailableListener mOnImageAvailableListener = new ImageReader.OnImageAvailableListener() {
+            @Override
+            public void onImageAvailable(ImageReader reader) {
+                mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile, position));
+            }
+        };
+
+        private CameraDevice.StateCallback mCameraCallback = new CameraDevice.StateCallback() {
+
+            @Override
+            public void onOpened(CameraDevice camera) {
+                mCameraDevice = camera;
+                createCameraPreviewSession();
+            }
+
+            @Override
+            public void onDisconnected(CameraDevice camera) {
+                mCameraDevice.close();
+
+                mCameraDevice = null;
+            }
+
+            @Override
+            public void onError(CameraDevice camera, int error) {
+                Log.d("T-L.ListAnswersAdapter", "error! camera id:" + camera.getId() + " error:" + error);
+            }
+        };
+
+        private void createCameraPreviewSession() {
+
+            mImageReader = ImageReader.newInstance(1920, 1080, ImageFormat.JPEG, 1);
+            mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, null);
+//            SurfaceTexture texture = cameraCont.getSurfaceTexture();
+            texture.setDefaultBufferSize(1920, 1080);
+            Surface surface = new Surface(texture);
+
+            try {
+                final CaptureRequest.Builder builder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+                builder.addTarget(surface);
+
+                mCameraDevice.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()),
+                        new CameraCaptureSession.StateCallback() {
+
+                            @Override
+                            public void onConfigured(CameraCaptureSession session) {
+                                mCaptureSession = session;
+                                try {
+                                    mCaptureSession.setRepeatingRequest(builder.build(), null, mBackgroundHandler);
+                                } catch (CameraAccessException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onConfigureFailed(CameraCaptureSession session) {
+                            }
+                        }, mBackgroundHandler);
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        public boolean isOpen() {
+            if (mCameraDevice == null) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        @SuppressLint("MissingPermission")
+        public void openCamera() {
+            try {
+                mCameraManager.openCamera(mCameraID, mCameraCallback, mBackgroundHandler);
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void closeCamera() {
+
+            if (mCameraDevice != null) {
+                mCameraDevice.close();
+                mCameraDevice = null;
+            }
+        }
+    }
+
+    private class ImageSaver implements Runnable {
+
+        /**
+         * The JPEG image
+         */
+        private final Image mImage;
+        /**
+         * The file we save the image into.
+         */
+        private final File mFile;
+        private final int position;
+
+        ImageSaver(Image image, File file, int position) {
+            mImage = image;
+            mFile = file;
+            this.position = position;
+        }
+
+        @Override
+        public void run() {
+            Log.d("T-L.ListAnswersAdapter", "run: " + mImage.getWidth() + " " + mFile.getPath());
+
+//            ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
+//            byte[] bytes = new byte[buffer.remaining()];
+//            buffer.get(bytes);
+//            FileOutputStream output = null;
+
+            try {
+//                output = new FileOutputStream(mFile);
+//                output.write(bytes);
+                ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
+                byte[] bytes = new byte[buffer.remaining()];
+                buffer.get(bytes);
+                Bitmap myBitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length,null);
+                HiddenCameraUtils.saveImageFromFile(myBitmap, mFile, CameraImageFormat.FORMAT_JPEG);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                mImage.close();
+//                if (null != output) {
+//                    try {
+//                        output.close();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+                try {
+                    answersState.get(position).setHasPhoto(true);
+                    addPhotoName(getAnswerImagePath(position), getAnswerImageName(position));
+                    mActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            photoDialog.dismiss();
+                            notifyItemChanged(position);
+                        }
+                    });
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void startBackgroundThread() {
+        mBackgroundThread = new HandlerThread("CameraBackground");
+        mBackgroundThread.start();
+        mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
+    }
+
+    private void stopBackgroundThread() {
+        mBackgroundThread.quitSafely();
+        try {
+            mBackgroundThread.join();
+            mBackgroundThread = null;
+            mBackgroundHandler = null;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

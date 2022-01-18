@@ -125,6 +125,12 @@ public class OptionsModelNew implements Serializable {
     @SerializedName("photo_answer_required")
     private boolean photo_answer_required;
 
+    @SerializedName("min_number")
+    private Integer min_number;
+
+    @SerializedName("max_number")
+    private Integer max_number;
+
     public String getData() {
         return data;
     }
@@ -374,5 +380,21 @@ public class OptionsModelNew implements Serializable {
 
     public void setPhotoAnswerRequired(boolean photo_answer_required) {
         this.photo_answer_required = photo_answer_required;
+    }
+
+    public Integer getMinNumber() {
+        return min_number;
+    }
+
+    public void setMinNumber(Integer min_number) {
+        this.min_number = min_number;
+    }
+
+    public Integer getMaxNumber() {
+        return max_number;
+    }
+
+    public void setMaxNumber(Integer max_number) {
+        this.max_number = max_number;
     }
 }

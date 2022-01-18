@@ -16,12 +16,8 @@ import android.hardware.camera2.*;
 
 import android.media.Image;
 import android.media.ImageReader;
-import android.net.Uri;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Looper;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -36,7 +32,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -46,20 +41,12 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.androidhiddencamera.CameraConfig;
 import com.androidhiddencamera.HiddenCameraUtils;
-import com.androidhiddencamera.config.CameraFacing;
 import com.androidhiddencamera.config.CameraImageFormat;
-import com.androidhiddencamera.config.CameraResolution;
-import com.androidhiddencamera.config.CameraRotation;
-import com.google.gson.Gson;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -74,20 +61,17 @@ import java.util.Random;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
-import pro.quizer.quizer3.camera.ShowCamera;
 import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.PhotoAnswersR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.model.view.TitleModel;
-import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.PhoneFormatter;
-import pro.quizer.quizer3.view.activity.PhotoTempActivity;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 import static pro.quizer.quizer3.model.OptionsOpenType.CHECKBOX;
@@ -153,11 +137,15 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     }
 
     public void onPause() {
-        if (myCameras[CAMERA1].isOpen()) {
-            myCameras[CAMERA1].closeCamera();
-        }
-        if (myCameras[CAMERA2].isOpen()) {
-            myCameras[CAMERA2].closeCamera();
+        try {
+            if (myCameras[CAMERA1].isOpen()) {
+                myCameras[CAMERA1].closeCamera();
+            }
+            if (myCameras[CAMERA2].isOpen()) {
+                myCameras[CAMERA2].closeCamera();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         stopBackgroundThread();
     }
@@ -1003,8 +991,11 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         final View mNextBtn = mView.findViewById(R.id.view_ok);
 
         if (answersList.get(position).getElementOptionsR().getOpen_type().equals(NUMBER)) {
-            mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+//            mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            mEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
         }
+
+//        mEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(10, 100)});
 
         String hint = answersList.get(position).getElementOptionsR().getPlaceholder();
         String answer = answersState.get(position).getData();
@@ -1046,15 +1037,12 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     }
 
 
-//    public static Bitmap flip(Bitmap src) {
-//        Matrix matrix = new Matrix();
-////        matrix.preScale(-1.0f, 1.0f);
-////        return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
-//
-//        matrix.postRotate(90);
-//        Bitmap scaledBitmap = Bitmap.createScaledBitmap(src, src.getWidth(), src.getHeight(), true);
-//        return Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
-//    }
+    public static Bitmap flip(Bitmap src) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(src, src.getWidth(), src.getHeight(), true);
+        return Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+    }
 
     private void deleteRecursive(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())
@@ -1116,17 +1104,13 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
     public class CameraService {
 
-        //        private File mFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "test1.jpg");
         private File mFile;
-
         private String mCameraID;
         private CameraDevice mCameraDevice = null;
         private CameraCaptureSession mCaptureSession;
         private ImageReader mImageReader;
         private SurfaceTexture texture;
         int position;
-//        private TextureView cameraCont;
-
 
         public CameraService(CameraManager cameraManager, String cameraID, SurfaceTexture texture, int position) {
 
@@ -1195,7 +1179,6 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
             mImageReader = ImageReader.newInstance(1920, 1080, ImageFormat.JPEG, 1);
             mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, null);
-//            SurfaceTexture texture = cameraCont.getSurfaceTexture();
             texture.setDefaultBufferSize(1920, 1080);
             Surface surface = new Surface(texture);
 
@@ -1272,32 +1255,43 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
         @Override
         public void run() {
-            Log.d("T-L.ListAnswersAdapter", "run: " + mImage.getWidth() + " " + mFile.getPath());
+//            [admin]^[project_id]^[user_login]^[token]^[answer_id].[extension]
 
-//            ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
-//            byte[] bytes = new byte[buffer.remaining()];
-//            buffer.get(bytes);
-//            FileOutputStream output = null;
+            UserModelR user = mActivity.getCurrentUser();
+            String token = mActivity.getToken();
 
             try {
-//                output = new FileOutputStream(mFile);
-//                output.write(bytes);
+                File dir = new File(FileUtils.getAnswersStoragePath(mActivity) + File.separator
+                        + user.getUser_id());
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+
+            try {
+                File dir = new File(FileUtils.getAnswersStoragePath(mActivity) + File.separator
+                        + user.getUser_id() + File.separator + token);
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+
+            try {
                 ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
                 byte[] bytes = new byte[buffer.remaining()];
                 buffer.get(bytes);
-                Bitmap myBitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length,null);
-                HiddenCameraUtils.saveImageFromFile(myBitmap, mFile, CameraImageFormat.FORMAT_JPEG);
+                Bitmap myBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
+                HiddenCameraUtils.saveImageFromFile(flip(myBitmap), mFile, CameraImageFormat.FORMAT_JPEG);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 mImage.close();
-//                if (null != output) {
-//                    try {
-//                        output.close();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
                 try {
                     answersState.get(position).setHasPhoto(true);
                     addPhotoName(getAnswerImagePath(position), getAnswerImageName(position));

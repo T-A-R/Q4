@@ -1987,7 +1987,9 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
                             element.getElementOptionsR().getPlaceholder(),
                             element.getElementOptionsR().isUnnecessary_fill_open(),
                             element.getElementOptionsR().isAutoChecked(),
-                            element.getElementOptionsR().isHelper()));
+                            element.getElementOptionsR().isHelper(),
+                            element.getElementOptionsR().getMin_number(),
+                            element.getElementOptionsR().getMax_number()));
                     counter++;
                 }
             }

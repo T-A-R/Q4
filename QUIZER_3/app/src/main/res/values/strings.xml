@@ -277,6 +277,7 @@
     <string name="empty_string_warning">Заполните текстовое поле в выбранных вариантах ответа.</string>
     <string name="empty_rank_warning">Не заполнен открытый ответ.</string>
     <string name="empty_input_warning">Заполните текстовое поле.</string>
+    <string name="number_out_range_warning">Число вне разрешенного диапазона.</string>
     <string name="empty_phone_warning">Номер телефона указан не полностью.</string>
     <string name="not_full_phone_warning">Номер введён не полностью. Чтобы продолжить анкету вы можете или удалить его, или ввести до конца.</string>
     <string name="empty_answers_warning">Вы не выбрали ни одного ответа.</string>

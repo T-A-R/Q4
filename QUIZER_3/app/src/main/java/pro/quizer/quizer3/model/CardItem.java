@@ -16,12 +16,14 @@ public class CardItem {
     String open;
     String hint;
     boolean helper;
+    Integer min;
+    Integer max;
 
     public CardItem() {
         this.helper = false;
     }
 
-    public CardItem(int id, String title, String desc, boolean isUnChecker, boolean checked, String open, String hint , boolean unnecessaryFillOpen, boolean isAutoCkecker, boolean helper) {
+    public CardItem(int id, String title, String desc, boolean isUnChecker, boolean checked, String open, String hint , boolean unnecessaryFillOpen, boolean isAutoCkecker, boolean helper, Integer min, Integer max) {
         this.id = id;
         this.title = title;
         this.desc = desc;
@@ -32,6 +34,8 @@ public class CardItem {
         this.unnecessaryFillOpen = unnecessaryFillOpen;
         this.isAutoCkecker = isAutoCkecker;
         this.helper = helper;
+        this.min = min;
+        this.max = max;
     }
 
     public int getId() {
@@ -136,5 +140,21 @@ public class CardItem {
 
     public boolean isHelper() {
         return helper;
+    }
+
+    public Integer getMin() {
+        return min;
+    }
+
+    public void setMin(Integer min) {
+        this.min = min;
+    }
+
+    public Integer getMax() {
+        return max;
+    }
+
+    public void setMax(Integer max) {
+        this.max = max;
     }
 }

@@ -989,13 +989,13 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
         final EditText mEditText = mView.findViewById(R.id.input_answer);
         final View mNextBtn = mView.findViewById(R.id.view_ok);
-
-        if (answersList.get(position).getElementOptionsR().getOpen_type().equals(NUMBER)) {
+        final boolean isNumber = (answersList.get(position).getElementOptionsR().getOpen_type() != null && answersList.get(position).getElementOptionsR().getOpen_type().equals(NUMBER));
+        final Integer min = answersList.get(position).getElementOptionsR().getMin_number();
+        final Integer max = answersList.get(position).getElementOptionsR().getMax_number();;
+        if (isNumber) {
 //            mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
             mEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
         }
-
-//        mEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(10, 100)});
 
         String hint = answersList.get(position).getElementOptionsR().getPlaceholder();
         String answer = answersState.get(position).getData();
@@ -1019,13 +1019,17 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         mNextBtn.setOnClickListener(v -> {
             String text = mEditText.getText().toString();
             if ((text.length() > 0) || answersList.get(position).getElementOptionsR().isUnnecessary_fill_open()) {
-                answersState.get(position).setData(text);
-                pEditText.setText(text);
-                onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
-                checkItem(position);
-                if (!mActivity.isFinishing()) {
-                    mActivity.hideKeyboardFrom(mEditText);
-                    alertDialog.dismiss();
+                if(isNumber && !checkNumber(text, min, max)) {
+                    mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
+                } else {
+                    answersState.get(position).setData(text);
+                    pEditText.setText(text);
+                    onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
+                    checkItem(position);
+                    if (!mActivity.isFinishing()) {
+                        mActivity.hideKeyboardFrom(mEditText);
+                        alertDialog.dismiss();
+                    }
                 }
             } else
                 mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
@@ -1036,6 +1040,18 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         }
     }
 
+    private boolean checkNumber(String text, Integer min, Integer max) {
+        Integer number = null;
+        try {
+            number = Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        if(number == null) return false;
+        if(min != null && number < min) return false;
+        if(max != null && number > max) return false;
+        return true;
+    }
 
     public static Bitmap flip(Bitmap src) {
         Matrix matrix = new Matrix();

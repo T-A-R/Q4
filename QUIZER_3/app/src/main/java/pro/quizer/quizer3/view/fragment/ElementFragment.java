@@ -2093,7 +2093,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             element.getElementOptionsR().getPlaceholder(),
                             element.getElementOptionsR().isUnnecessary_fill_open(),
                             element.getElementOptionsR().isAutoChecked(),
-                            element.getElementOptionsR().isHelper());
+                            element.getElementOptionsR().isHelper(),
+                            element.getElementOptionsR().getMin_number(),
+                            element.getElementOptionsR().getMax_number());
                     if (element.getElementContentsR() != null && element.getElementContentsR().size() > 0) {
                         List<String> pics = new ArrayList<>();
                         for (ElementContentsR content : element.getElementContentsR()) {

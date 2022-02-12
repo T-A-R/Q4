@@ -15,6 +15,10 @@ import java.lang.annotation.RetentionPolicy;
         ElementSubtype.VIDEO,
         ElementSubtype.CONTAINER,
         ElementSubtype.ABORTED,
+        ElementSubtype.SELECT,
+        ElementSubtype.SCALE,
+        ElementSubtype.QUOTA,
+        ElementSubtype.TABLE,
         ElementSubtype.HIDDEN,
         ElementSubtype.SLIDER})
 public @interface ElementSubtype {

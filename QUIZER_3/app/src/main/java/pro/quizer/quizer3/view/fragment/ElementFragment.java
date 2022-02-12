@@ -757,7 +757,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 if (isQuota) {
                     removeHelper();
                     adapterList = new ListAnswersAdapter(activity, currentElement, answersList,
-                            getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), titlesMap, this);
+                            getMultiPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), titlesMap, this);
                 } else {
                     adapterList = new ListAnswersAdapter(activity, currentElement, answersList,
                             null, null, titlesMap, this);
@@ -876,13 +876,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     List<Boolean> enabled = new ArrayList<>();
 
                     if (isQuota) {
-                        List<Integer> passedQuotaBlock = getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder());
+                        List<List<Integer>> passedQuotaBlock = getMultiPassedQuotasBlock(currentElement.getElementOptionsR().getOrder());
                         ElementItemR[][] quotaTree = getMainActivity().getTree(null);
-
-                        for (Integer id : passedQuotaBlock) {
-                            Log.d("T-L.ElementFragment", ">>>>>>>>>>>>>>: " + id);
-                        }
-//                        QuotasTreeMaker.showTree(quotaTree);
 
                         Integer order = currentElement.getElementOptionsR().getOrder();
                         for (ElementItemR item : answersList) {
@@ -1098,6 +1093,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             checkedAnswers++;
                             ElementPassedR answerPassedR = new ElementPassedR();
                             answerPassedR.setRelative_id(answerStates.get(i).getRelative_id());
+                            answerPassedR.setParent_id(getElement(answerStates.get(i).getRelative_id()).getRelative_parent_id());
                             answerPassedR.setProject_id(currentElement.getProjectId());
                             answerPassedR.setToken(getQuestionnaire().getToken());
                             answerPassedR.setValue(answerStates.get(i).getData());
@@ -1222,6 +1218,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
                         ElementPassedR answerPassedR = new ElementPassedR();
                         answerPassedR.setRelative_id(answersList.get(spinnerSelection).getRelative_id());
+                        answerPassedR.setParent_id(getElement(answersList.get(spinnerSelection).getRelative_id()).getRelative_parent_id());
                         answerPassedR.setProject_id(currentElement.getProjectId());
                         answerPassedR.setToken(getQuestionnaire().getToken());
                         answerPassedR.setFrom_quotas_block(isQuota);
@@ -2162,7 +2159,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         });
     }
 
-    public boolean canShow(ElementItemR[][] tree, List<Integer> passedElementsId, Integer relativeId, Integer order) {
+    public boolean canShow(ElementItemR[][] tree, List<List<Integer>> passedElementsId, Integer relativeId, Integer order) {
 //        Log.d("T-L.ElementFragment", "canShow ID: " + relativeId);
         if (tree == null || order == null || relativeId == null) {
             return true;
@@ -2181,7 +2178,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
             for (int k = 0; k < tree[0].length; k++) {
                 for (int i = 0; i < endPassedElement; ) {
-                    if (tree[i][k].getRelative_id().equals(passedElementsId.get(i))) {
+//                    if (tree[i][k].getRelative_id().equals(passedElementsId.get(i))) {
+                    if (passedElementsId.get(i).contains(tree[i][k].getRelative_id())) {
                         if (i == (endPassedElement - 1)) { // Если последний, то
                             if (tree[i + 1][k].getRelative_id().equals(relativeId)) { // Если следующий за последним равен Relative ID
                                 if (tree[i + 1][k].isEnabled()) {
@@ -2409,6 +2407,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     found = true;
                     ElementPassedR answerPassedR = new ElementPassedR();
                     answerPassedR.setRelative_id(answerStatesHidden.get(i).getRelative_id());
+                    answerPassedR.setParent_id(getElement(answerStatesHidden.get(i).getRelative_id()).getRelative_parent_id());
                     answerPassedR.setProject_id(nextElement.getProjectId());
                     answerPassedR.setToken(getQuestionnaire().getToken());
                     answerPassedR.setValue(answerStatesHidden.get(i).getData());

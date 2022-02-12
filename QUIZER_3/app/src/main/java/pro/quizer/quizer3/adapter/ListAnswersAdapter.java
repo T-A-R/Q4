@@ -86,7 +86,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     public boolean isMulti;
     public boolean isRestored = false;
     private final MainActivity mActivity;
-    private final List<Integer> passedQuotaBlock;
+    private final List<List<Integer>> passedQuotaBlock;
     private final ElementItemR[][] quotaTree;
     private final Context mContext;
     private int counter = 1;
@@ -103,7 +103,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
     AlertDialog photoDialog;
 
-    public ListAnswersAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<Integer> passedQuotaBlock, ElementItemR[][] quotaTree, Map<Integer, TitleModel> titlesMap, OnAnswerClickListener onAnswerClickListener) {
+    public ListAnswersAdapter(final Context context, ElementItemR question, List<ElementItemR> answersList, List<List<Integer>> passedQuotaBlock, ElementItemR[][] quotaTree, Map<Integer, TitleModel> titlesMap, OnAnswerClickListener onAnswerClickListener) {
         this.mActivity = (MainActivity) context;
         this.question = question;
         this.passedQuotaBlock = passedQuotaBlock;
@@ -405,7 +405,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             }
         }
 
-        public boolean canShow(ElementItemR[][] tree, List<Integer> passedElementsId, int relativeId, int order) {
+        public boolean canShow(ElementItemR[][] tree, List<List<Integer>> passedElementsId, int relativeId, int order) {
 
             if (tree == null) {
                 return true;
@@ -424,7 +424,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
                 for (int k = 0; k < tree[0].length; k++) {
                     for (int i = 0; i < endPassedElement; ) {
-                        if (tree[i][k].getRelative_id().equals(passedElementsId.get(i))) {
+//                        if (tree[i][k].getRelative_id().equals(passedElementsId.get(i))) {
+                        if (passedElementsId.get(i).contains(tree[i][k].getRelative_id())) {
                             if (i == (endPassedElement - 1)) { // Если последний, то
                                 if (tree[i + 1][k].getRelative_id().equals(relativeId)) { // Если следующий за последним равен Relative ID
                                     if (tree[i + 1][k].isEnabled()) {

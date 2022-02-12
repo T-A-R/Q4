@@ -16,6 +16,9 @@ public class ElementPassedR {
     @ColumnInfo(name = "relative_id")
     private Integer relative_id;
 
+    @ColumnInfo(name = "parent_id")
+    private Integer parent_id;
+
     @ColumnInfo(name = "project_id")
     private Integer project_id;
 
@@ -44,19 +47,6 @@ public class ElementPassedR {
     private Boolean helper;
 
     public ElementPassedR() {
-    }
-
-    public ElementPassedR(Integer relative_id, Integer project_id, String token, Long duration,
-                          String value, boolean send_sms, Integer rank, Integer click_rank, boolean from_quotas_block) {
-        this.relative_id = relative_id;
-        this.project_id = project_id;
-        this.token = token;
-        this.duration = duration;
-        this.value = value;
-        this.send_sms = send_sms;
-        this.rank = rank;
-        this.click_rank = click_rank;
-        this.from_quotas_block = from_quotas_block;
     }
 
     public int getId() {
@@ -145,5 +135,13 @@ public class ElementPassedR {
 
     public void setHelper(Boolean helper) {
         this.helper = helper;
+    }
+
+    public Integer getParent_id() {
+        return parent_id;
+    }
+
+    public void setParent_id(Integer parent_id) {
+        this.parent_id = parent_id;
     }
 }

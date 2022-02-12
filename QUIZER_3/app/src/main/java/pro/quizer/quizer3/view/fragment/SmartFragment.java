@@ -592,6 +592,37 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         return passedQuotasBlockNew;
     }
 
+    public List<List<Integer>> getMultiPassedQuotasBlock(int max) {
+        List<List<Integer>> passedQuotasBlock = new ArrayList<>();
+        List<ElementPassedR> passedElements = getDao().getQuotaPassedElements(getMainActivity().getCurrentQuestionnaire().getToken(), true);
+        if (passedElements == null || passedElements.size() == 0) {
+            return null;
+        }
+
+        Integer savedParent = null;
+        for (int k = 0; k < passedElements.size(); k++) {
+            Integer parentId = passedElements.get(k).getParent_id();
+            if (!parentId.equals(savedParent)) {
+                savedParent = parentId;
+                List<Integer> passedAnswersList = getDao().getQuotaPassedAnswers(getMainActivity().getCurrentQuestionnaire().getToken(), true, parentId);
+                passedQuotasBlock.add(passedAnswersList);
+            }
+        }
+
+        for (List<Integer> item : passedQuotasBlock) {
+            Log.d("T-A-R.SmartFragment", "PASSED ID >>>>>: " + item.get(0));
+        }
+
+        List<List<Integer>> passedQuotasBlockNew = new ArrayList<>();
+
+        if (passedQuotasBlock.size() > 0) {
+            for (int i = 0; i < max - 1; i++) {
+                passedQuotasBlockNew.add(passedQuotasBlock.get(i));
+            }
+        }
+        return passedQuotasBlockNew;
+    }
+
     public Map<Integer, List<Integer>> getPassedQuotasMap(int max) {
         Map<Integer, List<Integer>> mapBlock = new HashMap<>();
         Map<Integer, List<Integer>> limitedMapBlock = new HashMap<>();
@@ -645,7 +676,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public CurrentQuestionnaireR getQuestionnaire() {
-		currentQuestionnaire = getMainActivity().getCurrentQuestionnaire();
+        currentQuestionnaire = getMainActivity().getCurrentQuestionnaire();
         return currentQuestionnaire;
 
     }
@@ -990,7 +1021,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             elementDatabaseModel.setRelative_parent_id(parentId);
             elementDatabaseModel.setItem_order(elementItemR.getElementOptionsR().getOrder());
             if (ElementType.ANSWER.equals(elementItemR.getType())) {
-                if(element.isHelper() != null && element.isHelper()) {
+                if (element.isHelper() != null && element.isHelper()) {
                     elementDatabaseModel.setHelper(true);
                 }
                 elementDatabaseModel.setValue(element.getValue());
@@ -1285,7 +1316,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         canGoBack = false;
         Observable.interval(1, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(x -> { })
+                .doOnNext(x -> {
+                })
                 .takeUntil(aLong -> aLong == 2)
                 .doOnComplete(() -> canGoBack = true)
                 .subscribe();
@@ -1299,11 +1331,11 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         return encoded.toString();
     }
 
-    public Character getDecrypted (char encrypted) {
+    public Character getDecrypted(char encrypted) {
         return getDao().getSymbolsForDecrypt(encrypted);
     }
 
-    public Character getEncrypted (char decrypted) {
+    public Character getEncrypted(char decrypted) {
         return getDao().getSymbolsForEncrypt(decrypted);
     }
 

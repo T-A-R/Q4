@@ -278,6 +278,12 @@ public interface QuizerDao {
     @Query("SELECT * FROM ElementPassedR WHERE token =:token")
     List<ElementPassedR> getAllElementsPassedR(String token);
 
+    @Query("SELECT * FROM ElementPassedR WHERE token =:token AND from_quotas_block =:from_quotas_block")
+    List<ElementPassedR> getQuotaPassedElements(String token, boolean from_quotas_block);
+
+    @Query("SELECT relative_id FROM ElementPassedR WHERE token =:token AND from_quotas_block =:from_quotas_block AND parent_id =:parent_id")
+    List<Integer> getQuotaPassedAnswers(String token, boolean from_quotas_block, Integer parent_id);
+
     @Query("SELECT * FROM ElementPassedR")
     List<ElementPassedR> getAllElementsPassedRNoToken();
 

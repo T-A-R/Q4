@@ -751,7 +751,7 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
                 if (isQuota) {
 
                     adapterList = new ListAnswersAdapter(activity, currentElement, answersList,
-                            getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), titlesMap, this);
+                            getMultiPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), titlesMap, this);
                 } else {
                     adapterList = new ListAnswersAdapter(activity, currentElement, answersList,
                             null, null, titlesMap, this);

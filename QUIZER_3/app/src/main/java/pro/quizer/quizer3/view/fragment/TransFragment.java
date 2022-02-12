@@ -111,6 +111,7 @@ public class TransFragment extends ScreenFragment {
         for (ElementItemR answer : answers) {
             if (answer.getElementOptionsR().isHelper()) {
                 elementPassedR.setRelative_id(answer.getRelative_id());
+                elementPassedR.setParent_id(answer.getRelative_parent_id());
                 elementPassedR.setFrom_quotas_block(true);
                 Log.d("T-L.TransFragment", "savePassedElement 10: " + elementPassedR.getRelative_id());
                 getDao().insertElementPassedR(elementPassedR);

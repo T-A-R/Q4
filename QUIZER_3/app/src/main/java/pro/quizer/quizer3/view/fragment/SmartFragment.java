@@ -915,9 +915,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             questionnaireDatabaseModel.setCount_interrupted(currentQuiz.getCount_interrupted());
         }
         questionnaireDatabaseModel.setQuestions_passed(countQuestions);
-        questionnaireDatabaseModel.setScreens_passed(countScreens); //TODO сделать подсчет экранов.
+        questionnaireDatabaseModel.setScreens_passed(countScreens);
         questionnaireDatabaseModel.setSelected_questions(countElements);
-        questionnaireDatabaseModel.setDuration_time_questionnaire((int) durationTimeQuestionnaire);
+        questionnaireDatabaseModel.setDate_end_interview(endTime);
+        questionnaireDatabaseModel.setDuration_time_questionnaire((int) (endTime - currentQuiz.getStart_date()));
         questionnaireDatabaseModel.setAuth_time_difference(SPUtils.getAuthTimeDifference(getContext()));
         questionnaireDatabaseModel.setQuota_time_difference(SPUtils.getQuotaTimeDifference(getContext()));
         questionnaireDatabaseModel.setSend_time_difference(SPUtils.getSendTimeDifference(getContext()));

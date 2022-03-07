@@ -609,9 +609,9 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             }
         }
 
-        for (List<Integer> item : passedQuotasBlock) {
-            Log.d("T-A-R.SmartFragment", "PASSED ID >>>>>: " + item.get(0));
-        }
+//        for (List<Integer> item : passedQuotasBlock) {
+//            Log.d("T-A-R.SmartFragment", "PASSED ID >>>>>: " + item.get(0));
+//        }
 
         List<List<Integer>> passedQuotasBlockNew = new ArrayList<>();
 

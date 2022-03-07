@@ -2341,9 +2341,15 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                 if (answer.isEnabled()) enabledCounter++;
                             }
                         }
+
                         answerStatesHidden.add(new AnswerState(answer.getRelative_id(), true, answer.getElementOptionsR().getTitle()));
+
                     }
                 }
+
+//                for(AnswerState answerhidden : answerStatesHidden) {
+//                    Log.d("T-A-R.ElementFragment", "Hidden ID: " + answerhidden.getRelative_id());
+//                }
 
 //                if(!hiddenFound) {
 //                    //TODO SETUP HELPER

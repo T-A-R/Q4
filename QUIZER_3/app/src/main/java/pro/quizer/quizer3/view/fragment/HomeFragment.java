@@ -223,10 +223,15 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            Log.d("T-A-R.HomeFragment", "onReady: 1");
             deactivateButtons();
             getMainActivity().freeMemory();
+            Log.d("T-A-R.HomeFragment", "onReady: 2");
+
             initViews();
+
             sendCrashLogs();
+
 
             if (mIsStartAfterAuth) {
                 quotaUpdate();

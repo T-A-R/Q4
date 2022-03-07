@@ -8,6 +8,7 @@ import java.util.List;
 import org.mariuszgromada.math.mxparser.*;
 
 import pro.quizer.quizer3.MainActivity;
+import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.model.Operators;
 import pro.quizer.quizer3.model.config.ElementModelNew;
@@ -194,46 +195,84 @@ public class ExpressionUtils {
     public boolean checkHiddenExpression(String expression) {
 
 //        expression = "2<20<=170/2";
-
 //        expression = "($e.3.checked && 5<$e.2.value<=17*2) || 21<=$e.2.value + 23 <40";
 //        expression = "100-$e.2.value <($e.3.value+15-$e.4.value)/2<=$e.5.value && ($e.6.checked || !$e.2.checked)";
 //        expression = "100-$e.2.value =$e.3.value";
+//        expression = "$uik == 108";
 
 //        Log.d("T-L.ExpressionUtils", "===============================");
 //        Log.d("T-L.ExpressionUtils", "START: " + expression);
+        Log.d("T-A-R.ExpressionUtils", "checkHidden Expression: " + expression);
 
         expression = expression.replaceAll(" ", "");
         String newExpression = expression;
 
+        boolean normalDirection = true;
         for (int i = 0; i < expression.length(); i++) {
-            if (expression.charAt(i) == '<' && i < expression.length() - 3) {
-                String temp = expression.substring(expression.charAt(i + 1) == '=' ? i + 1 : i);
-                String between = null;
-                int end = 0;
-                for (int k = 1; k < temp.length(); k++) {
+            if (expression.charAt(i) == '<') break;
+            if (expression.charAt(i) == '>') {
+                normalDirection = false;
+                break;
+            }
+        }
+
+        if (normalDirection) {
+            for (int i = 0; i < expression.length(); i++) {
+                if (expression.charAt(i) == '<' && i < expression.length() - 3) {
+                    String temp = expression.substring(expression.charAt(i + 1) == '=' ? i + 1 : i);
+                    String between = null;
+                    int end = 0;
+                    for (int k = 1; k < temp.length(); k++) {
 //                    Log.d("T-L.ExpressionUtils", "char: " + temp.charAt(k));
-                    if (temp.charAt(k) == '(' || temp.charAt(k) == ')' || temp.charAt(k) == '&' || temp.charAt(k) == '|') {
+                        if (temp.charAt(k) == '(' || temp.charAt(k) == ')' || temp.charAt(k) == '&' || temp.charAt(k) == '|') {
 //                        Log.d("T-L.ExpressionUtils", "break! ");
-                        break;
-                    } else if (temp.charAt(k) == '<') {
-                        between = temp.substring(0, temp.charAt(k - 1) == '=' ? k : k + 1);
-                        end = k;
+                            break;
+                        } else if (temp.charAt(k) == '<') {
+                            between = temp.substring(0, temp.charAt(k - 1) == '=' ? k : k + 1);
+                            end = k;
 //                        Log.d("T-L.ExpressionUtils", "between: " + between);
-                        break;
+                            break;
+                        }
+                    }
+                    if (between != null) {
+                        newExpression = expression.replace(between, between.substring(0, between.length() - 1) + "&&" + between.substring(1));
+//                    Log.d("T-L.ExpressionUtils", "expression: " + newExpression);
+                        i += end;
                     }
                 }
-                if (between != null) {
-                    newExpression = expression.replace(between, between.substring(0, between.length() - 1) + "&&" + between.substring(1));
+            }
+        } else {
+            for (int i = 0; i < expression.length(); i++) {
+                if (expression.charAt(i) == '>' && i < expression.length() - 3) {
+                    String temp = expression.substring(expression.charAt(i + 1) == '=' ? i + 1 : i);
+                    String between = null;
+                    int end = 0;
+                    for (int k = 1; k < temp.length(); k++) {
+//                    Log.d("T-L.ExpressionUtils", "char: " + temp.charAt(k));
+                        if (temp.charAt(k) == '(' || temp.charAt(k) == ')' || temp.charAt(k) == '&' || temp.charAt(k) == '|') {
+//                        Log.d("T-L.ExpressionUtils", "break! ");
+                            break;
+                        } else if (temp.charAt(k) == '>') {
+                            between = temp.substring(0, temp.charAt(k - 1) == '=' ? k : k + 1);
+                            end = k;
+//                        Log.d("T-L.ExpressionUtils", "between: " + between);
+                            break;
+                        }
+                    }
+                    if (between != null) {
+                        newExpression = expression.replace(between, between.substring(0, between.length() - 1) + "&&" + between.substring(1));
 //                    Log.d("T-L.ExpressionUtils", "expression: " + newExpression);
-                    i += end;
+                        i += end;
+                    }
                 }
             }
+
         }
 
         newExpression = newExpression.replaceAll("!", "~"); // Замена символа отрицания для парсера. (В парсере ! - это факториал)
         expression = newExpression;
 
-//        Log.d("T-L.ExpressionUtils", "checkHiddenExpression !!!!!!!!!!!: " + newExpression);
+        Log.d("T-A-R.", "checkHiddenExpression !!!!!!!!!!!: " + newExpression);
 
         for (int i = 0; i < expression.length(); i++) {
             if (i == expression.indexOf("$e.", i)) {
@@ -272,6 +311,31 @@ public class ExpressionUtils {
                         newExpression = newExpression.replace(oldPart, element != null ? "1.0" : "0.0"); // 1.0 == TRUE ; 0.0 == FALSE
                         break;
 
+                }
+            } else if (i == expression.indexOf("$ui", i)) {
+                String idString = expression.substring(i + 6);
+                Log.d("T-A-R.ExpressionUtils", "FOUND UIK EXPRESSION: " + idString);
+                String oldPart = "!!!!!!!!!!!!!!!!!!";
+                for (int n = 0; n < idString.length() - 1; n++) {
+                    if (!Character.isDigit(idString.charAt(n + 1))) {
+                        idString = idString.substring(0, i + 1);
+                        oldPart = "$uik==" + idString;
+                        Log.d("T-A-R.ExpressionUtils", ">>> UIK: " + idString + " N: " + n);
+                        break;
+                    }
+                    if((n == idString.length() - 2) && Character.isDigit(idString.charAt(n + 1))) {
+                        oldPart = "$uik==" + idString;
+                        Log.d("T-A-R.ExpressionUtils", ">>> UIK: " + idString + " N: " + n);
+                        break;
+                    }
+                }
+
+                CurrentQuestionnaireR quiz = activity.getCurrentQuestionnaire();
+                quiz.setRegistered_uik("108"); //TODO ДЛЯ ТЕСТОВ! УБРАТЬ!
+                if(quiz != null && quiz.getRegistered_uik() != null && !quiz.getRegistered_uik().isEmpty() && quiz.getRegistered_uik().equals(idString)) {
+                    newExpression = newExpression.replace(oldPart, "1.0");
+                } else {
+                    newExpression = newExpression.replace(oldPart, "0.0");
                 }
             }
         }

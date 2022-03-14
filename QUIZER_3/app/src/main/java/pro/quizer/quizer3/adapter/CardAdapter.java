@@ -316,7 +316,7 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
         final AlertDialog alertDialog = dialog.create();
 
         mNextBtn.setOnClickListener(v -> {
-            if (isNumber && !checkNumber(mEditText.getText().toString(), min, max)) {
+            if (isNumber && !checkNumber(mEditText.getText().toString(), min, max, position, mActivity)) {
                 mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
             } else {
                 mItems.get(position).setData(mEditText.getText().toString());
@@ -335,16 +335,24 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
         }
     }
 
-    private boolean checkNumber(String text, Integer min, Integer max) {
+    private boolean checkNumber(String text, Integer min, Integer max, int position, MainActivity mActivity) {
         Integer number = null;
         try {
             number = Integer.parseInt(text);
         } catch (NumberFormatException e) {
             return false;
         }
-        if(number == null) return false;
-        if(min != null && number < min) return false;
-        if(max != null && number > max) return false;
+        if(text.equals("")) return true;
+        if (min != null && number < min) {
+            mActivity.showToastfromActivity(String.format(mActivity.getString(R.string.limits_warning_start), String.valueOf (position + 1)) + " " +
+                    String.format(mActivity.getString(R.string.limits_warning_min), String.valueOf (min)));
+            return false;
+        }
+        if (max != null && number > max) {
+            mActivity.showToastfromActivity(String.format(mActivity.getString(R.string.limits_warning_start), String.valueOf (position + 1)) + " " +
+                    String.format(mActivity.getString(R.string.limits_warning_max), String.valueOf (max)));
+            return false;
+        }
         return true;
     }
 

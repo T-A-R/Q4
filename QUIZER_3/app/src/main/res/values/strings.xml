@@ -502,4 +502,7 @@
     <string name="button_add">Добавить</string>
     <string name="button_add_photo">Добавить фото</string>
     <string name="button_view_photo">Просмотреть фото</string>
+    <string name="limits_warning_start">Значение в ответе %1$s должно быть</string>
+    <string name="limits_warning_min">не менее %1$s</string>
+    <string name="limits_warning_max">не более %1$s</string>
 </resources>

@@ -171,7 +171,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                 try {
                     mBaseActivity.getMainDao().clearQuotaR(userProjectId);
                     mBaseActivity.getMainDao().insertQuotaR(quotaRList);
-                    mBaseActivity.setSettings(Constants.Settings.QUOTA_TIME, String.valueOf(DateUtils.getCurrentTimeMillis()));
+                    mBaseActivity.setSettings(Constants.Settings.QUOTA_TIME, String.valueOf(DateUtils.getFullCurrentTime()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

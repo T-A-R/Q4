@@ -992,7 +992,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         final View mNextBtn = mView.findViewById(R.id.view_ok);
         final boolean isNumber = (answersList.get(position).getElementOptionsR().getOpen_type() != null && answersList.get(position).getElementOptionsR().getOpen_type().equals(NUMBER));
         final Integer min = answersList.get(position).getElementOptionsR().getMin_number();
-        final Integer max = answersList.get(position).getElementOptionsR().getMax_number();;
+        final Integer max = answersList.get(position).getElementOptionsR().getMax_number();
+        ;
         if (isNumber) {
 //            mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
             mEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
@@ -1019,10 +1020,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
         mNextBtn.setOnClickListener(v -> {
             String text = mEditText.getText().toString();
-            if ((text.length() > 0) || answersList.get(position).getElementOptionsR().isUnnecessary_fill_open()) {
-                if(isNumber && !checkNumber(text, min, max)) {
-                    mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
-                } else {
+            if (!isNumber) {
+                if ((text.length() > 0) || answersList.get(position).getElementOptionsR().isUnnecessary_fill_open()) {
                     answersState.get(position).setData(text);
                     pEditText.setText(text);
                     onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
@@ -1031,9 +1030,33 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                         mActivity.hideKeyboardFrom(mEditText);
                         alertDialog.dismiss();
                     }
+                } else {
+                    mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
                 }
-            } else
-                mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
+            } else {
+                if (answersList.get(position).getElementOptionsR().isUnnecessary_fill_open() && text.equals("")) {
+                    answersState.get(position).setData(text);
+                    pEditText.setText(text);
+                    onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
+                    checkItem(position);
+                    if (!mActivity.isFinishing()) {
+                        mActivity.hideKeyboardFrom(mEditText);
+                        alertDialog.dismiss();
+                    }
+                } else {
+                    if (text.equals("")) mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
+                    else if (checkNumber(text, min, max, position)) {
+                        answersState.get(position).setData(text);
+                        pEditText.setText(text);
+                        onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
+                        checkItem(position);
+                        if (!mActivity.isFinishing()) {
+                            mActivity.hideKeyboardFrom(mEditText);
+                            alertDialog.dismiss();
+                        }
+                    }
+                }
+            }
         });
 
         if (!mActivity.isFinishing()) {
@@ -1041,16 +1064,24 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         }
     }
 
-    private boolean checkNumber(String text, Integer min, Integer max) {
+    private boolean checkNumber(String text, Integer min, Integer max, int position) {
         Integer number = null;
         try {
             number = Integer.parseInt(text);
         } catch (NumberFormatException e) {
             return false;
         }
-        if(number == null) return false;
-        if(min != null && number < min) return false;
-        if(max != null && number > max) return false;
+
+        if (min != null && number < min) {
+            mActivity.showToastfromActivity(String.format(mActivity.getString(R.string.limits_warning_start), String.valueOf (position + 1)) + " " +
+                            String.format(mActivity.getString(R.string.limits_warning_min), String.valueOf (min)));
+            return false;
+        }
+        if (max != null && number > max) {
+            mActivity.showToastfromActivity(String.format(mActivity.getString(R.string.limits_warning_start), String.valueOf (position + 1)) + " " +
+                    String.format(mActivity.getString(R.string.limits_warning_max), String.valueOf (max)));
+            return false;
+        }
         return true;
     }
 

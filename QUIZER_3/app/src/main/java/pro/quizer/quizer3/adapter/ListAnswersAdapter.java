@@ -993,9 +993,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         final boolean isNumber = (answersList.get(position).getElementOptionsR().getOpen_type() != null && answersList.get(position).getElementOptionsR().getOpen_type().equals(NUMBER));
         final Integer min = answersList.get(position).getElementOptionsR().getMin_number();
         final Integer max = answersList.get(position).getElementOptionsR().getMax_number();
-        ;
+
         if (isNumber) {
-//            mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
             mEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
         }
 

@@ -102,7 +102,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
                         }
                         mainActivity.getMainDao().clearQuotaR(userProjectId);
                         mainActivity.getMainDao().insertQuotaR(quotaRList);
-                        mainActivity.setSettings(Constants.Settings.QUOTA_TIME, String.valueOf(DateUtils.getFullCurrentTime()));
+                        mainActivity.setSettings(Constants.Settings.QUOTA_TIME, String.valueOf(DateUtils.getCurrentTimeMillis()));
 
                     }
                 } catch (Exception e) {

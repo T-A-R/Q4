@@ -65,6 +65,7 @@ import pro.quizer.quizer3.executable.QuotasTreeMaker;
 import pro.quizer.quizer3.model.CardItem;
 import pro.quizer.quizer3.model.ElementSubtype;
 import pro.quizer.quizer3.model.ElementType;
+import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.model.view.TitleModel;
 import pro.quizer.quizer3.utils.ConditionUtils;
@@ -981,7 +982,16 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         if (element != null) {
             final ElementOptionsR options = element.getElementOptionsR();
             if (options != null && options.getPre_condition() != null) {
+                if(element.getRelative_id().equals("425")) {
+                    HashMap<Integer, ElementModelNew> map = getMainActivity().getMap(false);
+                    for (Map.Entry<Integer, ElementModelNew> entry : map.entrySet()) {
+                        Log.d("T-A-R.ElementFragment", "map: "+entry.getKey() + " / " + entry.getValue().getRelativeID() + " / " + entry.getValue().getOptions().getTitle());
+                        System.out.println(entry.getKey() + "/" + entry.getValue());
+                    }
+                }
+                Log.d("T-A-R.ElementFragment", "checkConditions: ID: " + element.getRelative_id() + " TItle: " + element.getElementOptionsR().getTitle() + " Exp: " + options.getPre_condition());
                 final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), getMainActivity());
+                Log.d("T-A-R.ElementFragment", "showValue: " + showValue);
                 if (showValue != ConditionUtils.CAN_SHOW) {
                     if (showValue != ConditionUtils.CANT_SHOW) {
                         nextElementId = showValue;

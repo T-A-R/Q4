@@ -470,6 +470,13 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
 
         final EditText mEditText = mView.findViewById(R.id.input_answer);
         final View mNextBtn = mView.findViewById(R.id.view_ok);
+        final boolean isNumber = (answersList.get(position).getElementOptionsR().getOpen_type() != null && answersList.get(position).getElementOptionsR().getOpen_type().equals(NUMBER));
+        final Integer min = answersList.get(position).getElementOptionsR().getMin_number();
+        final Integer max = answersList.get(position).getElementOptionsR().getMax_number();
+
+        if (isNumber) {
+            mEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+        }
 
         if (answersList.get(position).getElementOptionsR().getOpen_type().equals(NUMBER)) {
             mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -495,23 +502,67 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         final AlertDialog alertDialog = dialog.create();
 
         mNextBtn.setOnClickListener(v -> {
-            if ((mEditText.getText() != null && mEditText.getText().length() > 0) || answersList.get(position).getElementOptionsR().isUnnecessary_fill_open()) {
-                answersState.get(position).setChecked(true);
-                answersState.get(position).setData(mEditText.getText().toString());
-                pEditText.setText(mEditText.getText().toString());
+            String text = mEditText.getText().toString();
+            if (!isNumber) {
+                if ((text.length() > 0) || answersList.get(position).getElementOptionsR().isUnnecessary_fill_open()) {
+                    answersState.get(position).setChecked(true);
+                    answersState.get(position).setData(mEditText.getText().toString());
+                    pEditText.setText(mEditText.getText().toString());
+                } else {
+                    mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
+                    pEditText.setEnabled(true);
+                }
+                if (mActivity != null && !mActivity.isFinishing()) {
+                    mActivity.hideKeyboardFrom(mEditText);
+                    alertDialog.dismiss();
+                }
             } else {
-                mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
-//                editButton.setVisibility(View.VISIBLE);
-                pEditText.setEnabled(true);
-            }
-            if (mActivity != null && !mActivity.isFinishing()) {
-                mActivity.hideKeyboardFrom(mEditText);
-                alertDialog.dismiss();
+                if (answersList.get(position).getElementOptionsR().isUnnecessary_fill_open() && text.equals("")) {
+                    answersState.get(position).setChecked(true);
+                    answersState.get(position).setData(mEditText.getText().toString());
+                    pEditText.setText(mEditText.getText().toString());
+                    if (!mActivity.isFinishing()) {
+                        mActivity.hideKeyboardFrom(mEditText);
+                        alertDialog.dismiss();
+                    }
+                } else {
+                    if (text.equals("")) mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
+                    else if (checkNumber(text, min, max, position)) {
+                        answersState.get(position).setChecked(true);
+                        answersState.get(position).setData(mEditText.getText().toString());
+                        pEditText.setText(mEditText.getText().toString());
+                        if (!mActivity.isFinishing()) {
+                            mActivity.hideKeyboardFrom(mEditText);
+                            alertDialog.dismiss();
+                        }
+                    }
+                }
             }
         });
 
         if (mActivity != null && !mActivity.isFinishing()) {
             alertDialog.show();
         }
+    }
+
+    private boolean checkNumber(String text, Integer min, Integer max, int position) {
+        Integer number = null;
+        try {
+            number = Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+
+        if (min != null && number < min) {
+            mActivity.showToastfromActivity(String.format(mActivity.getString(R.string.limits_warning_start), String.valueOf (position + 1)) + " " +
+                    String.format(mActivity.getString(R.string.limits_warning_min), String.valueOf (min)));
+            return false;
+        }
+        if (max != null && number > max) {
+            mActivity.showToastfromActivity(String.format(mActivity.getString(R.string.limits_warning_start), String.valueOf (position + 1)) + " " +
+                    String.format(mActivity.getString(R.string.limits_warning_max), String.valueOf (max)));
+            return false;
+        }
+        return true;
     }
 }

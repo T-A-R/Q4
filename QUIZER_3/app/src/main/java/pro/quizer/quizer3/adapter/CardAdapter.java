@@ -316,7 +316,7 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
         final AlertDialog alertDialog = dialog.create();
 
         mNextBtn.setOnClickListener(v -> {
-            if (isNumber && !checkNumber(mEditText.getText().toString(), min, max, position, mActivity)) {
+            if (isNumber && !checkNumber(mEditText.getText().toString(), min, max, position, mActivity, mEditText)) {
                 mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
             } else {
                 mItems.get(position).setData(mEditText.getText().toString());
@@ -335,7 +335,7 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
         }
     }
 
-    private boolean checkNumber(String text, Integer min, Integer max, int position, MainActivity mActivity) {
+    private boolean checkNumber(String text, Integer min, Integer max, int position, MainActivity mActivity, EditText mInput) {
         Integer number = null;
         try {
             number = Integer.parseInt(text);
@@ -346,11 +346,23 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
         if (min != null && number < min) {
             mActivity.showToastfromActivity(String.format(mActivity.getString(R.string.limits_warning_start), String.valueOf (position + 1)) + " " +
                     String.format(mActivity.getString(R.string.limits_warning_min), String.valueOf (min)));
+            mInput.setText(String.valueOf(min));
+            try {
+                mInput.setSelection(mInput.getText().length());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return false;
         }
         if (max != null && number > max) {
             mActivity.showToastfromActivity(String.format(mActivity.getString(R.string.limits_warning_start), String.valueOf (position + 1)) + " " +
                     String.format(mActivity.getString(R.string.limits_warning_max), String.valueOf (max)));
+            mInput.setText(String.valueOf(max));
+            try {
+                mInput.setSelection(mInput.getText().length());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return false;
         }
         return true;

@@ -615,6 +615,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
         List<List<Integer>> passedQuotasBlockNew = new ArrayList<>();
 
+        for(List<Integer> block : passedQuotasBlock) {
+            Log.d("T-A-R.SmartFragment", "????: " + block.get(0));
+        }
+
         if (passedQuotasBlock.size() > 0) {
             for (int i = 0; i < max - 1; i++) {
                 passedQuotasBlockNew.add(passedQuotasBlock.get(i));
@@ -1006,6 +1010,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     private boolean saveElement(CurrentQuestionnaireR currentQuiz, final ElementPassedR element) {
         try {
+//            Log.d("T-A-R.SmartFragment", "saveElement ID: " + element.getRelative_id());
             final ElementDatabaseModelR elementDatabaseModel = new ElementDatabaseModelR();
             ElementItemR elementItemR = null;
             elementItemR = getDao().getElementById(element.getRelative_id());
@@ -1032,8 +1037,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 if (ElementType.QUESTION.equals(elementItemR.getType())) {
                     countQuestions++;
                 }
-                elementDatabaseModel.setDuration(element.getDuration());
-                durationTimeQuestionnaire += element.getDuration();
+                if(element.getDuration() != null) {
+                    elementDatabaseModel.setDuration(element.getDuration());
+                    durationTimeQuestionnaire += element.getDuration();
+                }
                 elementDatabaseModel.setType(ElementDatabaseType.SCREEN);
                 countScreens++;
             }

@@ -288,6 +288,7 @@ public class ExpressionUtils {
                                 value = Integer.parseInt(element.getValue());
                             } catch (NumberFormatException e) {
                                 e.printStackTrace();
+                                Log.d("T-A-R.ExpressionUtils", "checkHiddenExpression: Cant get Value: " + element.getValue());
                                 return false;
                             }
                         } else {
@@ -312,7 +313,7 @@ public class ExpressionUtils {
                         oldPart = "$uik==" + idString;
                         break;
                     }
-                    if((n == idString.length() - 2) && Character.isDigit(idString.charAt(n + 1))) {
+                    if ((n == idString.length() - 2) && Character.isDigit(idString.charAt(n + 1))) {
                         oldPart = "$uik==" + idString;
                         break;
                     }
@@ -320,7 +321,7 @@ public class ExpressionUtils {
 
                 CurrentQuestionnaireR quiz = activity.getCurrentQuestionnaire();
 //                quiz.setRegistered_uik("108"); //TODO ДЛЯ ТЕСТОВ! УБРАТЬ!
-                if(quiz != null && quiz.getRegistered_uik() != null && !quiz.getRegistered_uik().isEmpty() && quiz.getRegistered_uik().equals(idString)) {
+                if (quiz != null && quiz.getRegistered_uik() != null && !quiz.getRegistered_uik().isEmpty() && quiz.getRegistered_uik().equals(idString)) {
                     newExpression = newExpression.replace(oldPart, "1.0");
                 } else {
                     newExpression = newExpression.replace(oldPart, "0.0");
@@ -329,8 +330,9 @@ public class ExpressionUtils {
         }
 
         Expression e = new Expression(newExpression);
-
-        return getBooleanResult(e.calculate());
+        boolean result = getBooleanResult(e.calculate());
+        Log.d("T-A-R.ExpressionUtils", "checkHiddenExpression RESULT: " + result);
+        return result;
     }
 
     private boolean getBooleanResult(Double result) {

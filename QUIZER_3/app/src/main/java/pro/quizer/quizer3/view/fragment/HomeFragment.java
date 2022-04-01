@@ -223,10 +223,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Log.d("T-A-R.HomeFragment", "onReady: 1");
             deactivateButtons();
             getMainActivity().freeMemory();
-            Log.d("T-A-R.HomeFragment", "onReady: 2");
 
             initViews();
 
@@ -716,7 +714,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 int counter = 0;
 
                 for (int k = 0; k < answersTotal; k++) {
-                    tree[i][k] = ElementItemR.clone(answers.get(n));
+                    tree[i][k] = cloneElement(answers.get(n));
                     counter++;
                     if (counter == (answersTotal / answersMultiple)) {
                         n++;
@@ -1797,6 +1795,26 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         if(list != null && list.size() >0) {
             new PhotosAnswersSendingExecutable(activity, mUserModel, list, null).execute();
         }
+    }
+
+    private ElementItemR cloneElement(ElementItemR item) {
+        if (item == null) {
+            return null;
+        }
+        ElementItemR newItem = new ElementItemR();
+        newItem.setConfigId(item.getConfigId());
+        newItem.setUserId(item.getUserId());
+        newItem.setProjectId(item.getProjectId());
+        newItem.setQuestionnaireId(item.getQuestionnaireId());
+        newItem.setType(item.getType());
+        newItem.setSubtype(item.getSubtype());
+        newItem.setRelative_id(item.getRelative_id());
+        newItem.setRelative_parent_id(item.getRelative_parent_id());
+        newItem.setWas_shown(false);
+        newItem.setChecked(false);
+        newItem.setEnabled(true);
+
+        return newItem;
     }
 }
 

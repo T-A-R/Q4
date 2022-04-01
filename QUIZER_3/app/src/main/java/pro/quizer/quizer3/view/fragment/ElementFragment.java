@@ -982,16 +982,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         if (element != null) {
             final ElementOptionsR options = element.getElementOptionsR();
             if (options != null && options.getPre_condition() != null) {
-                if(element.getRelative_id().equals("425")) {
-                    HashMap<Integer, ElementModelNew> map = getMainActivity().getMap(false);
-                    for (Map.Entry<Integer, ElementModelNew> entry : map.entrySet()) {
-                        Log.d("T-A-R.ElementFragment", "map: "+entry.getKey() + " / " + entry.getValue().getRelativeID() + " / " + entry.getValue().getOptions().getTitle());
-                        System.out.println(entry.getKey() + "/" + entry.getValue());
-                    }
-                }
+
                 Log.d("T-A-R.ElementFragment", "checkConditions: ID: " + element.getRelative_id() + " TItle: " + element.getElementOptionsR().getTitle() + " Exp: " + options.getPre_condition());
                 final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), getMainActivity().getMap(false), getMainActivity());
-                Log.d("T-A-R.ElementFragment", "showValue: " + showValue);
                 if (showValue != ConditionUtils.CAN_SHOW) {
                     if (showValue != ConditionUtils.CANT_SHOW) {
                         nextElementId = showValue;
@@ -2305,10 +2298,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void checkHidden() {
-        Log.d("T-A-R.ElementFragment", "checkHidden: ================");
         ElementItemR nextElement = getElement(nextElementId);
         if (nextElement.getSubtype().equals(ElementSubtype.HIDDEN)) {
-            Log.d("T-A-R.ElementFragment", "checkHidden: 7");
             boolean saved = false;
             for (PrevElementsR prevElement : prevList) {
                 if (prevElement.getPrevId().equals(nextElementId)) {
@@ -2317,18 +2308,18 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
             }
             if (!saved) {
-                Log.d("T-A-R.ElementFragment", "checkHidden: 8");
                 List<AnswerState> answerStatesHidden = new ArrayList<>();
                 List<ElementItemR> answers = nextElement.getElements();
                 List<ElementItemR> answersHidden = new ArrayList<>();
                 ExpressionUtils expressionUtils = new ExpressionUtils(getMainActivity());
                 boolean hiddenInQuotaBox = false;
                 int enabledCounter = 0;
+                int canShowCounter = 0;
 
                 //=========================================================================================================
-
-                if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0 &&
-                        getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
+//                Log.d("T-A-R.ElementFragment", "????checkHidden: " + currentElement.getRelative_parent_id() + "/" + currentElement.getRelative_id());
+                if (nextElement.getRelative_parent_id() != null && nextElement.getRelative_parent_id() != 0 &&
+                        getElement(nextElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
 
                     hiddenInQuotaBox = true;
                     Map<Integer, List<Integer>> passedQuotaBlock = getPassedQuotasMap(nextElement.getElementOptionsR().getOrder());
@@ -2339,12 +2330,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
                 }
 
-//                boolean hiddenFound = false;
                 for (ElementItemR answer : answers) {
+                    if (answer.isEnabled()) canShowCounter++;
                     String expression = answer.getElementOptionsR().getPrev_condition();
                     if (expression == null || expression.length() == 0 || expressionUtils.checkHiddenExpression(expression)) {
                         if (hiddenInQuotaBox) {
-//                            hiddenFound = true;
                             if (!answer.getElementOptionsR().isHelper()) {
                                 answersHidden.add(answer);
 //                            if (answer.isEnabled() || answer.getElementOptionsR().isHelper()) enabledCounter++;
@@ -2357,32 +2347,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
                 }
 
-//                for(AnswerState answerhidden : answerStatesHidden) {
-//                    Log.d("T-A-R.ElementFragment", "Hidden ID: " + answerhidden.getRelative_id());
-//                }
-
-//                if(!hiddenFound) {
-//                    //TODO SETUP HELPER
-//                    Log.d("T-L.ElementFragment", "????????? checkHidden: NOT FOUND");
-//                    enabledCounter++;
-////                    ElementItemR element = new ElementItemR();
-////                    element.setChecked(true);
-////                    element.setRelative_id(-404);
-////                    answersHidden.add(element);
-////                    answerStatesHidden.add(new AnswerState(-404, true, ""));
-//                } else {
-//                    Log.d("T-L.ElementFragment", "????????? checkHidden: FOUND");
-//                }
-
                 if (hiddenInQuotaBox) {
-                    Log.d("T-A-R.ElementFragment", "checkHidden: 1: DATA: " + answersHidden.size() + " / " + enabledCounter);
                     if (answersHidden.size() == 1 && enabledCounter == 0) {
-                        Log.d("T-A-R.ElementFragment", "checkHidden: 2");
                         String message = "Квота по варианту ответа \u2022 \"" + answersHidden.get(0).getElementOptionsR().getTitle() + "\" закончилась";
                         showScreensaver(true);
                         showHiddenExitAlertDialog(message);
                     } else if (answersHidden.size() != enabledCounter) {
-                        Log.d("T-A-R.ElementFragment", "checkHidden: 3");
                         String message = "";
                         for (ElementItemR answer : answersHidden) {
                             if (answer.isEnabled())
@@ -2392,24 +2362,23 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         }
                         isInHiddenQuotaDialog = true;
                         if (enabledCounter == 0) {
-                            Log.d("T-A-R.ElementFragment", "checkHidden: 3.1");
                             showScreensaver(true);
                             showHiddenExitAlertDialog(message);
                         } else {
-                            Log.d("T-A-R.ElementFragment", "checkHidden: 3.2");
                             showHiddenAlertDialog(message, nextElement, answerStatesHidden, answersHidden);
                         }
                         return;
-                    } else if(answersHidden.size() == 0 && enabledCounter == 0) {
+                    } else if (answersHidden.size() == 0 && enabledCounter == 0 && canShowCounter == 1) {
                         showScreensaver(true);
                         showHiddenExitAlertDialog("Нет вариантов ответов для продолжения");
                     } else {
-                        Log.d("T-A-R.ElementFragment", "checkHidden: 4");
+                        Log.d("T-A-R.ElementFragment", "checkHidden: <<<<<<<<<<<<<<<<<<<<<");
+                        if(answerStatesHidden.size() == 1) {
+                            answerStatesHidden.get(0).setChecked(true);
+                        }
                         saveHidden(nextElement, answerStatesHidden);
-
                     }
                 } else {
-                    Log.d("T-A-R.ElementFragment", "checkHidden: 5");
                     saveHidden(nextElement, answerStatesHidden);
                 }
             }
@@ -2422,6 +2391,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void saveHidden(ElementItemR nextElement, List<AnswerState> answerStatesHidden) {
+        Log.d("T-A-R.ElementFragment", "saveHidden: " + answerStatesHidden.size());
         ElementPassedR elementPassedR = new ElementPassedR();
         elementPassedR.setRelative_id(nextElement.getRelative_id());
         elementPassedR.setProject_id(nextElement.getProjectId());
@@ -2433,11 +2403,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         getDao().setWasElementShown(true, nextElement.getRelative_id(), nextElement.getUserId(), nextElement.getProjectId());
 
         if (answerStatesHidden.size() > 0) {
-            boolean found = false;
+//            boolean found = false;
             for (int i = 0; i < answerStatesHidden.size(); i++) {
-                if (found && getElement(answerStatesHidden.get(i).getRelative_id()).getElementOptionsR().isHelper()) break;
+//                if (found && getElement(answerStatesHidden.get(i).getRelative_id()).getElementOptionsR().isHelper()) break;
+                if (getElement(answerStatesHidden.get(i).getRelative_id()).getElementOptionsR().isHelper() && answerStatesHidden.size() != 1) continue;
                 if (answerStatesHidden.get(i).isChecked()) {
-                    found = true;
+//                    found = true;
                     ElementPassedR answerPassedR = new ElementPassedR();
                     answerPassedR.setRelative_id(answerStatesHidden.get(i).getRelative_id());
                     answerPassedR.setParent_id(getElement(answerStatesHidden.get(i).getRelative_id()).getRelative_parent_id());
@@ -2458,7 +2429,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    if (isQuota) break;
+//                    if (isQuota) break;
                 }
             }
         }

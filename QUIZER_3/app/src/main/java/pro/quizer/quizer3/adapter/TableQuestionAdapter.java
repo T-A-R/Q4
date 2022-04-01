@@ -483,8 +483,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                     mEditText.setOnClickListener(view -> setDate(mEditText));
                     break;
                 case OptionsOpenType.NUMBER:
-                    mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
-
+                    mEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                     break;
                 case OptionsOpenType.TEXT:
                     mEditText.setInputType(InputType.TYPE_CLASS_TEXT);

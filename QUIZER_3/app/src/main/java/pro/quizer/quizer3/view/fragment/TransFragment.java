@@ -72,29 +72,40 @@ public class TransFragment extends ScreenFragment {
                 getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
             isQuota = true;
             quotaElementsList = getElement(currentElement.getRelative_parent_id()).getElements();
-//            for (ElementItemR item : quotaElementsList) {
-//                Log.d("T-L.TransFragment", "checkQuotaJump: >>> " + item.getRelative_id());
-//            }
         }
+//        Log.d("T-A-R.TransFragment", "checkQuotaJump: " + isQuota);
         return isQuota;
     }
 
     private void fillPassedQuotas() {
-        Integer startPosition = null;
+//        Log.d("T-A-R.TransFragment", "=== quotaElementsList: " + quotaElementsList.size());
+//        Log.d("T-A-R.TransFragment", "=== startElementId: " + startElementId);
+        int startPosition = 0;
         for (int i = 0; i < quotaElementsList.size(); i++) {
             if (quotaElementsList.get(i).getRelative_id().equals(startElementId)) {
                 startPosition = i;
                 break;
             }
         }
-        if (startPosition != null && startPosition != (quotaElementsList.size() - 1)) {
+
+        if(startPosition == 0) {
+            for (int i = 0; i < quotaElementsList.size(); i++) {
+                if (!quotaElementsList.get(i).getRelative_id().equals(nextElementId)) {
+                    savePassedElement(quotaElementsList.get(i).getRelative_id());
+                } else break;
+            }
+        } else if (startPosition != (quotaElementsList.size() - 1)) {
             for (int i = startPosition + 1; i < quotaElementsList.size(); i++) {
                 if (!quotaElementsList.get(i).getRelative_id().equals(nextElementId)) {
-                    //TODO ADD PASSED_QUOTA
                     savePassedElement(quotaElementsList.get(i).getRelative_id());
                 } else break;
             }
         }
+
+//        List<ElementPassedR> passed = getDao().getQuotaPassedElements(getMainActivity().getToken(), true);
+//        for(ElementPassedR item : passed) {
+//            Log.d("T-A-R.TransFragment", "passed: " + item.getRelative_id());
+//        }
     }
 
     private void savePassedElement(int id) {

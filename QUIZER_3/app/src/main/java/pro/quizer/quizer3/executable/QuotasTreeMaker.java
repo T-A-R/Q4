@@ -210,4 +210,24 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
         Log.d(TAG, "getLocalQuotas: " + counter);
         return counter;
     }
+
+    private ElementItemR cloneElement(ElementItemR item) {
+        if (item == null) {
+            return null;
+        }
+        ElementItemR newItem = new ElementItemR();
+        newItem.setConfigId(item.getConfigId());
+        newItem.setUserId(item.getUserId());
+        newItem.setProjectId(item.getProjectId());
+        newItem.setQuestionnaireId(item.getQuestionnaireId());
+        newItem.setType(item.getType());
+        newItem.setSubtype(item.getSubtype());
+        newItem.setRelative_id(item.getRelative_id());
+        newItem.setRelative_parent_id(item.getRelative_parent_id());
+        newItem.setWas_shown(false);
+        newItem.setChecked(false);
+        newItem.setEnabled(true);
+
+        return newItem;
+    }
 }

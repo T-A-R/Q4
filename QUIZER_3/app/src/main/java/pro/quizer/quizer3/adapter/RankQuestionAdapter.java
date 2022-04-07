@@ -6,8 +6,10 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -138,7 +140,6 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
 
         holder.answerPosition.setVisibility(View.VISIBLE);
         holder.answerPosition.setText(String.valueOf(position + 1));
-//        holder.answerEditText.setText(answersState.get(position).getData());
         UiUtils.setTextOrHide(holder.answerEditText, answersState.get(position).getData());
         holder.answerEditText.setFocusableInTouchMode(false);
         holder.answerEditText.clearFocus();
@@ -185,7 +186,6 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
 
             answerTitle.setTypeface(Fonts.getFuturaPtBook());
             answerPosition.setTypeface(Fonts.getFuturaPtBook());
-//            answerDesc.setTypeface(Fonts.getFuturaPtBook());
             answerEditText.setTypeface(Fonts.getFuturaPtBook());
             answerEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
@@ -193,11 +193,9 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         }
 
         public void bind(final ElementItemR item, int position) {
-//            answerTitle.setText(Objects.requireNonNull(titlesMap.get(item.getRelative_id())).getTitle());
             UiUtils.setTextOrHide(answerTitle, Objects.requireNonNull(titlesMap.get(item.getRelative_id())).getTitle());
             if (item.getElementOptionsR().getDescription() != null && item.getElementOptionsR().getDescription().length() > 0) {
                 answerDesc.setVisibility(View.VISIBLE);
-//                answerDesc.setText(Objects.requireNonNull(titlesMap.get(item.getRelative_id())).getDescription());
                 UiUtils.setTextOrHide(answerDesc, Objects.requireNonNull(titlesMap.get(item.getRelative_id())).getDescription());
             } else {
                 answerDesc.setVisibility(View.GONE);
@@ -317,29 +315,10 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
             if (answersState.get(position).getData() != null && answersState.get(position).getData().length() > 0 || lastSelectedPosition == position) {
                 editButton.setVisibility(View.GONE);
                 answerEditText.setVisibility(View.VISIBLE);
-//                answerEditText.setText(answersState.get(position).getData());
-                UiUtils.setTextOrHide(answerEditText, answersState.get(position).getData());
-                if (lastSelectedPosition == position) {
-                    switch (item.getElementOptionsR().getOpen_type()) {
-                        case TEXT:
-                        case NUMBER:
-                            showInputDialog(answerEditText, position);
-//                            answerEditText.setFocusable(false);
-//                            answerEditText.setFocusableInTouchMode(false);
-                            break;
-                        case TIME:
-                            setTime(answerEditText);
-                            answersState.get(position).setData(answerEditText.getText().toString());
-                            break;
-                        case DATE:
-                            setDate(answerEditText);
-                            answersState.get(position).setData(answerEditText.getText().toString());
-                            break;
-                    }
-                }
+//                UiUtils.setTextOrHide(answerEditText, answersState.get(position).getData());
             } else {
                 editButton.setVisibility(View.VISIBLE);
-//                answerEditText.setEnabled(false);
+                answerEditText.setVisibility(View.GONE);
             }
         }
 
@@ -351,19 +330,32 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
                 cont.requestFocus();
                 return;
             }
-//            if (lastSelectedPosition != getAdapterPosition()) {
-                lastSelectedPosition = getAdapterPosition();
-                boolean isOpen = !answersList.get(getAdapterPosition()).getElementOptionsR().getOpen_type().equals(CHECKBOX);
+            lastSelectedPosition = getAdapterPosition();
+            boolean isOpen = !answersList.get(getAdapterPosition()).getElementOptionsR().getOpen_type().equals(CHECKBOX);
 
-                if (isOpen) {
-                    isPressed.set(getAdapterPosition(), true);
-                    checkFilled(answersList.get(lastSelectedPosition), lastSelectedPosition);
-                    String answer = null;
-                    if (answerEditText.getText() != null)
-                        answer = answerEditText.getText().toString();
-                    onUserClickListener.onAnswerClick(lastSelectedPosition, isChecked, answer);
+            if (isOpen) {
+                switch (answersList.get(getAdapterPosition()).getElementOptionsR().getOpen_type()) {
+                    case TEXT:
+                    case NUMBER:
+                        showInputDialog(answerEditText, editButton, getAdapterPosition());
+                        break;
+                    case TIME:
+                        setTime(answerEditText);
+                        answersState.get(getAdapterPosition()).setData(answerEditText.getText().toString());
+                        break;
+                    case DATE:
+                        setDate(answerEditText);
+                        answersState.get(getAdapterPosition()).setData(answerEditText.getText().toString());
+                        break;
                 }
-//            }
+
+
+                isPressed.set(getAdapterPosition(), true);
+                String answer = null;
+                if (answerEditText.getText() != null)
+                    answer = answerEditText.getText().toString();
+                onUserClickListener.onAnswerClick(lastSelectedPosition, isChecked, answer);
+            }
         }
     }
 
@@ -462,7 +454,7 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         }
     }
 
-    private void showInputDialog(final TextView pEditText, int position) {
+    private void showInputDialog(final TextView pEditText, final ImageView pEditButton, int position) {
         final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mActivity);
         final View mView = layoutInflaterAndroid.inflate(mActivity.isAutoZoom() ? R.layout.dialog_input_answer_auto : R.layout.dialog_input_answer, null);
         final android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
@@ -498,6 +490,7 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         final AlertDialog alertDialog = dialog.create();
 
         mNextBtn.setOnClickListener(v -> {
+            boolean needUpdate = true;
             String text = mEditText.getText().toString();
             if (!isNumber) {
                 if ((text.length() > 0) || answersList.get(position).getElementOptionsR().isUnnecessary_fill_open()) {
@@ -506,6 +499,7 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
                     pEditText.setText(mEditText.getText().toString());
                 } else {
                     mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
+                    needUpdate = false;
                     pEditText.setEnabled(true);
                 }
                 if (mActivity != null && !mActivity.isFinishing()) {
@@ -515,15 +509,21 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
             } else {
                 if (answersList.get(position).getElementOptionsR().isUnnecessary_fill_open() && text.equals("")) {
                     answersState.get(position).setChecked(true);
-                    answersState.get(position).setData(mEditText.getText().toString());
-                    pEditText.setText(mEditText.getText().toString());
+                    needUpdate = false;
+                    answersState.get(position).setData("");
+                    pEditText.setText("");
+                    pEditButton.setVisibility(View.VISIBLE);
+                    pEditText.setVisibility(View.GONE);
+
                     if (!mActivity.isFinishing()) {
                         mActivity.hideKeyboardFrom(mEditText);
                         alertDialog.dismiss();
                     }
                 } else {
-                    if (text.equals("")) mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
-                    else if (checkNumber(text, min, max, position, mEditText)) {
+                    if (text.equals("")) {
+                        mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
+                        needUpdate = false;
+                    } else if (checkNumber(text, min, max, position, mEditText)) {
                         answersState.get(position).setChecked(true);
                         answersState.get(position).setData(mEditText.getText().toString());
                         pEditText.setText(mEditText.getText().toString());
@@ -531,8 +531,14 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
                             mActivity.hideKeyboardFrom(mEditText);
                             alertDialog.dismiss();
                         }
-                    }
+                    } else needUpdate = false;
                 }
+            }
+            try {
+                if (needUpdate)
+                    notifyItemChanged(position);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
@@ -550,8 +556,8 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
         }
 
         if (min != null && number < min) {
-            mActivity.showToastfromActivity(String.format(mActivity.getString(R.string.limits_warning_start), String.valueOf (position + 1)) + " " +
-                    String.format(mActivity.getString(R.string.limits_warning_min), String.valueOf (min)));
+            mActivity.showToastfromActivity(String.format(mActivity.getString(R.string.limits_warning_start), String.valueOf(position + 1)) + " " +
+                    String.format(mActivity.getString(R.string.limits_warning_min), String.valueOf(min)));
             mInput.setText(String.valueOf(min));
             try {
                 mInput.setSelection(mInput.getText().length());
@@ -561,8 +567,8 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
             return false;
         }
         if (max != null && number > max) {
-            mActivity.showToastfromActivity(String.format(mActivity.getString(R.string.limits_warning_start), String.valueOf (position + 1)) + " " +
-                    String.format(mActivity.getString(R.string.limits_warning_max), String.valueOf (max)));
+            mActivity.showToastfromActivity(String.format(mActivity.getString(R.string.limits_warning_start), String.valueOf(position + 1)) + " " +
+                    String.format(mActivity.getString(R.string.limits_warning_max), String.valueOf(max)));
             mInput.setText(String.valueOf(max));
             try {
                 mInput.setSelection(mInput.getText().length());

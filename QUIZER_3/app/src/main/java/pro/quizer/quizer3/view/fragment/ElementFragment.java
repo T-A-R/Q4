@@ -1369,6 +1369,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             return false;
         }
         if (currentElement.getElementOptionsR().getMin_answers() != null) {
+            for(Integer id : spinnerMultipleSelection) {
+                if(getElement(id).getElementOptionsR() != null && getElement(id).getElementOptionsR().isUnchecker()) {
+                    return true;
+                }
+            }
             if (spinnerMultipleSelection.size() < currentElement.getElementOptionsR().getMin_answers()) {
                 showToast("Выберите минимум " + currentElement.getElementOptionsR().getMin_answers() + " ответов");
                 return false;
@@ -1404,6 +1409,9 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     element = getElement(state.getRelative_id());
                     if (!element.getElementOptionsR().getOpen_type().equals("checkbox")) {
                         openType = true;
+                    }
+                    if(element.getElementOptionsR().isUnchecker()) {
+                        return true;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

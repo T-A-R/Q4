@@ -256,7 +256,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             e.printStackTrace();
         }
 
-        if (activity.isExit()) checkRegistration();
+        if (activity.isExit() && !getCurrentUser().getConfigR().isRegsDisabled()) checkRegistration();
 
     }
 
@@ -1602,7 +1602,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     private void checkRegForSend() {
         new Thread(() -> {
-            if (getMainActivity().isExit() && getMainActivity().getConfig().has_registration()) {
+            if (getMainActivity().isExit() && (getMainActivity().getConfig().has_registration() || getMainActivity().getConfig().isRegsDisabled())) {
                 RegistrationR reg = getDao().getRegistrationR(getCurrentUserId());
                 if (reg != null && reg.notSent()) {
                     sendReg(reg);

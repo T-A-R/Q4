@@ -97,6 +97,9 @@ public class ConfigModel implements Serializable {
     @SerializedName("config_forced_update_date")
     private Long config_forced_update_date;
 
+    @SerializedName("regs_disabled")
+    private Boolean regs_disabled = true;
+
     public String getServerUrl() {
         return server_url;
     }
@@ -274,5 +277,13 @@ public class ConfigModel implements Serializable {
 
     public void setWork_periods(List<PeriodModel> work_periods) {
         this.work_periods = work_periods;
+    }
+
+    public Boolean isRegsDisabled() {
+        return regs_disabled;
+    }
+
+    public void setRegsDisabled(Boolean regs_disabled) {
+        this.regs_disabled = regs_disabled;
     }
 }

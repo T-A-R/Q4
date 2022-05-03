@@ -178,6 +178,14 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
 
             }
 
+            if (deletingListResponseModel.isRegsDisabled() != null) {
+                ConfigModel config = mBaseActivity.getCurrentUser().getConfigR();
+                config.setRegsDisabled(deletingListResponseModel.isRegsDisabled());
+                String newConfig = new Gson().toJson(config);
+                mBaseActivity.getMainDao().updateConfig(newConfig, mBaseActivity.getCurrentUser().getUser_id(), mBaseActivity.getCurrentUser().getUser_project_id());
+                mBaseActivity.getConfigForce();
+            }
+
             if (deletingListResponseModel.getResult() != 0) {
                 final List<String> tokensToRemove = deletingListResponseModel.getAccepted();
 

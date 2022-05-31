@@ -160,7 +160,8 @@ public class QuotaModel implements Serializable {
     }
 
     public boolean isCanDisplayed() {
-        return getLimit() != 0;
+//        return getLimit() != 0;
+        return true;
     }
 
 }

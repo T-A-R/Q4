@@ -692,7 +692,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         SliderAdapterExample adapter;
 
-        if (data != null) {
+        if (data != null && data.size() > 0) {
+            sliderView.setVisibility(View.VISIBLE);
             List<String> pics = new ArrayList<>();
             for (ElementContentsR elementContentsR : data) {
                 if (elementContentsR != null && !elementContentsR.getData().isEmpty()) {
@@ -711,6 +712,8 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             sliderView.setScrollTimeInSec(6);
             sliderView.setAutoCycle(true);
             sliderView.startAutoCycle();
+        } else {
+            sliderView.setVisibility(View.GONE);
         }
 
         dialog.setCancelable(false)

@@ -711,7 +711,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         }
 
         if (checkedAnswersList.size() == 0) {
-            nextElementId = answersList.get(0).getElementOptionsR().getJump();
+            try {
+                nextElementId = answersList.get(0).getElementOptionsR().getJump();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             if (nextElementId == null) {
                 nextElementId = currentElement.getElementOptionsR().getJump();
@@ -2318,7 +2322,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //        Log.d("T-A-R.ElementFragment", "checkHidden: " + answerType);
 
         ElementItemR nextElement = null;
-        if (answerType.equals(ElementSubtype.HIDDEN)) nextElement = currentElement;
+        if (answerType == null || answerType.equals(ElementSubtype.HIDDEN)) nextElement = currentElement;
         else nextElement = getElement(nextElementId);
         if (nextElement.getSubtype().equals(ElementSubtype.HIDDEN)) {
             boolean saved = false;

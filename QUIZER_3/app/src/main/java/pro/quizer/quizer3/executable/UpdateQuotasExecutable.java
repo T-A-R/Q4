@@ -73,7 +73,7 @@ public class UpdateQuotasExecutable extends BaseExecutable implements QuizerAPI.
             onError(new Exception(mContext.getString(R.string.load_quotas_error) + " " + mContext.getString(R.string.error_102)));
             return;
         }
-        mainActivity.copyToClipboard(responseJson);
+//        mainActivity.copyToClipboard(responseJson);
         QuotaResponseModel quotaResponseModel;
 
         try {

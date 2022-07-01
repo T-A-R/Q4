@@ -16,6 +16,9 @@ public class UserSettings implements Serializable {
     @SerializedName("active_registration_data")
     private ActiveRegistrationData active_registration_data;
 
+    @SerializedName("stages")
+    private List<StagesModel> stages;
+
     public UserSettings() {
     }
 
@@ -41,5 +44,9 @@ public class UserSettings implements Serializable {
 
     public void setActive_registration_data(ActiveRegistrationData active_registration_data) {
         this.active_registration_data = active_registration_data;
+    }
+
+    public List<StagesModel> getStages() {
+        return stages;
     }
 }

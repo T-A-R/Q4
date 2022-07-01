@@ -100,6 +100,9 @@ public class ConfigModel implements Serializable {
     @SerializedName("regs_disabled")
     private Boolean regs_disabled = true;
 
+    @SerializedName("dt_reloading_config")
+    private Long dt_reloading_config = -1L;
+
     public String getServerUrl() {
         return server_url;
     }
@@ -285,5 +288,13 @@ public class ConfigModel implements Serializable {
 
     public void setRegsDisabled(Boolean regs_disabled) {
         this.regs_disabled = regs_disabled;
+    }
+
+    public Long getDtReloadingConfig() {
+        return dt_reloading_config;
+    }
+
+    public void setDtReloadingConfig(Long dt_reloading_config) {
+        this.dt_reloading_config = dt_reloading_config;
     }
 }

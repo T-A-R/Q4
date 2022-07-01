@@ -42,6 +42,7 @@ import java.util.Objects;
 import java.util.Random;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.*;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -601,7 +602,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         tvTitleDesc2.setVisibility(View.VISIBLE);
                     }
 
-                    showContent(parentElement, titleImagesCont1);
+                    showContent(parentElement, titleImagesCont2);
 
                     if (parentElement.getRelative_parent_id() != null) {
                         ElementItemR parentElement2 = null;
@@ -641,7 +642,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                                     });
                                     tvTitleDesc1.setVisibility(View.VISIBLE);
                                 }
-                                showContent(parentElement2, titleImagesCont2);
+                                showContent(parentElement2, titleImagesCont1);
                             }
                         }
                     }
@@ -660,13 +661,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         final List<ElementContentsR> contents = getDao().getElementContentsR(element.getRelative_id());
 
         if (contents != null && !contents.isEmpty()) {
-            String data1 = contents.get(0).getData();
+            String data1 = contents.get(0).getData_small();
             String data2 = null;
             String data3 = null;
             if (contents.size() > 1)
-                data2 = contents.get(1).getData();
+                data2 = contents.get(1).getData_small();
             if (contents.size() > 2)
-                data3 = contents.get(2).getData();
+                data3 = contents.get(2).getData_small();
 
             hasQuestionImage = true;
             if (cont.equals(questionImagesCont)) {
@@ -674,10 +675,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 if (data2 != null) showPic(questionImagesCont, questionImage2, data2);
                 if (data3 != null) showPic(questionImagesCont, questionImage3, data3);
             } else if (cont.equals(titleImagesCont1)) {
+                Log.d("T-A-R.ElementFragment", "showContent: 2");
                 if (data1 != null) showPic(titleImagesCont1, title1Image1, data1);
                 if (data2 != null) showPic(titleImagesCont1, title1Image2, data2);
                 if (data3 != null) showPic(titleImagesCont1, title1Image3, data3);
             } else if (cont.equals(titleImagesCont2)) {
+                Log.d("T-A-R.ElementFragment", "showContent: 3");
                 if (data1 != null) showPic(titleImagesCont2, title2Image1, data1);
                 if (data2 != null) showPic(titleImagesCont2, title2Image2, data2);
                 if (data3 != null) showPic(titleImagesCont2, title2Image3, data3);
@@ -687,15 +690,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     private void showPic(View cont, ImageView view, String data) {
         final String filePhotoPath = getFilePath(data);
-
+        Log.d("T-A-R.ElementFragment", "showPic: " + data);
         if (StringUtils.isEmpty(filePhotoPath)) {
             return;
         }
         cont.setVisibility(View.VISIBLE);
         view.setVisibility(View.VISIBLE);
-        Picasso.with(getActivity())
-                .load(new File(filePhotoPath))
-                .into(view);
+        try {
+            Picasso.with(getActivity()).load(new File(filePhotoPath)).into(view);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void setAnswersList() {
@@ -723,6 +728,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         } else {
             answersList = checkedAnswersList;
         }
+    }
+
+    private List<ElementItemR> checkTableAnswers(List<ElementItemR> elements) {
+        List<ElementItemR> checkedAnswersList = new ArrayList<>();
+        for (int a = 0; a < elements.size(); a++) {
+            boolean check = checkConditions(elements.get(a));
+            if (check) {
+                checkedAnswersList.add(elements.get(a));
+            }
+        }
+        return checkedAnswersList;
     }
 
     private void initRecyclerView() {

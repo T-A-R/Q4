@@ -396,11 +396,11 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                 && getMainActivity().getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getSelectedPhone() != null
                 && registration.getPhone() != null && registration.getPhone().length() > 6) {
 
-            // r {admin_key}:[{user_id} {uik_number} {gps} {gps_network} {reg_time} {phone}] - в квадратных скобках шифрованное
+            // r{admin_key}:[{user_id} {uik_number} {gps} {gps_network} {reg_time} {phone}] - в квадратных скобках шифрованное
 
             int number1 = registration.getUser_id(); // user_id
             String number2 = registration.getUik_number(); // uik
-            String decodedMessage = "r " + getDao().getKey() + ":";
+            String decodedMessage = "r" + getDao().getKey() + ":";
             String message = number1
                     + " " + number2
                     + " " + registration.getGps()

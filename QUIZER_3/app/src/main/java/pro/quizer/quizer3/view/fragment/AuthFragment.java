@@ -51,8 +51,11 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.SmsItemR;
 import pro.quizer.quizer3.database.models.UserModelR;
+import pro.quizer.quizer3.executable.DeleteUsersExecutable;
 import pro.quizer.quizer3.executable.ICallback;
+import pro.quizer.quizer3.executable.ServiceInfoExecutable;
 import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
+import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.QuestionsMatchesModel;
 import pro.quizer.quizer3.model.config.StagesModel;
 import pro.quizer.quizer3.utils.DateUtils;
@@ -150,7 +153,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 //        tvUsers.setText(String.format(getString(R.string.auth_users_on_device), (usersCountValue + "/" + MAX_USERS)));
         UiUtils.setTextOrHide(tvVersionView, String.format(getString(R.string.auth_version_button), BuildConfig.VERSION_NAME));
 //        LiveData<Integer> usersCounter = getDao().getUserCount();
-
 
 
         mSavedUserModels = getSavedUserModels();
@@ -364,7 +366,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             } catch (Exception e) {
                 showToast(getString(R.string.db_clear_error));
             }
-            List<StagesModel> stages = getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getStages();
+            List<StagesModel> stages = getCurrentUser().getConfigR().getUserSettings().getStages();
             if (stages != null)
                 for (int i = 0; i < stages.size(); i++) {
                     List<QuestionsMatchesModel> questionsMatchesModels = stages.get(i).getQuestionsMatches();
@@ -447,6 +449,12 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 //                getMainActivity().copyToClipboard(responseJson);
             } catch (IOException e) {
                 showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_602));
+            }
+
+            try {
+                getMainActivity().addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.SENT, "Load Config", responseJson);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
 //            getMainActivity().copyToClipboard(responseJson);
@@ -604,9 +612,8 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 getMainActivity().setSettings(Constants.Settings.LAST_LOGIN_TIME, String.valueOf(DateUtils.getCurrentTimeMillis()));
                 if (isNeedDownloadConfig(authResponseModel)) {
                     downloadConfig(login, passwordMD5, authResponseModel);
-                } else {
+                } else if (checkConfigTime(true))
                     onLoggedIn(login, passwordMD5, authResponseModel);
-                }
             } else {
                 showToast(authResponseModel.getError());
                 activateButtons();
@@ -829,4 +836,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             getMainActivity().checkSettingsAndStartLocationUpdates(false, this);
         else runEvent(12);
     }
+
+
 }

@@ -256,7 +256,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             e.printStackTrace();
         }
 
-        if (activity.isExit() && !getCurrentUser().getConfigR().isRegsDisabled()) checkRegistration();
+//        if (activity.isExit() && !getCurrentUser().getConfigR().isRegsDisabled()) checkRegistration();
+        if (activity.isExit()) checkRegistration();
 
     }
 
@@ -307,51 +308,53 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     @Override
     public void onClick(View view) {
-        if (view == btnStart) {
-            if (isRegistrationRequired) {
-                replaceFragment(new Reg1Fragment());
-            } else if(isCodeRequired) {
-                replaceFragment(new Reg4Fragment());
-            } else {
-                if (activity.getConfig().isGps()) {
-                    activity.checkSettingsAndStartLocationUpdates(isForceGps, this);
+        if(checkConfigTime(false)) {
+            if (view == btnStart) {
+                if (isRegistrationRequired) {
+                    replaceFragment(new Reg1Fragment());
+                } else if (isCodeRequired) {
+                    replaceFragment(new Reg4Fragment());
                 } else {
-                    runEvent(12);
+                    if (activity.getConfig().isGps()) {
+                        activity.checkSettingsAndStartLocationUpdates(isForceGps, this);
+                    } else {
+                        runEvent(12);
+                    }
                 }
+            } else if (view == btnInfo) {
+                getInfo(true);
+            } else if (view == btnQuotas) {
+                replaceFragment(new QuotasFragment());
+            } else if (view == btnContinue) {
+                activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Continue", null);
+                try {
+                    activity.stopRecording();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    getDao().setCurrentQuestionnairePaused(false);
+                    currentQuestionnaire.setPaused(false);
+                    int counter = currentQuestionnaire.getCount_interrupted() + 1;
+                    getDao().setInterruptedCounter(currentQuestionnaire.getConfig_id(), counter);
+                    currentQuestionnaire.setCount_interrupted(counter);
+                    getDao().updateQuestionnaireStart(true, getCurrentUserId());
+                    getDao().setOption(Constants.OptionName.QUIZ_STARTED, "true");
+                    showToast("Продолжение прерванной анкеты");
+                    startRecording();
+                    TransFragment fragment = new TransFragment();
+                    List<PrevElementsR> prevElementsRList = getDao().getPrevElementsR();
+                    fragment.setStartElement(prevElementsRList.get(prevElementsRList.size() - 1).getNextId(), true);
+                    replaceFragment(fragment);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showToast("Ошибка продолжения прерванной анкеты");
+                }
+            } else if (view == btnDelete) {
+                showDeleteDialog();
+            } else if (view == btnExit) {
+                showExitAlertDialog();
             }
-        } else if (view == btnInfo) {
-            getInfo(true);
-        } else if (view == btnQuotas) {
-            replaceFragment(new QuotasFragment());
-        } else if (view == btnContinue) {
-            activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Continue", null);
-            try {
-                activity.stopRecording();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            try {
-                getDao().setCurrentQuestionnairePaused(false);
-                currentQuestionnaire.setPaused(false);
-                int counter = currentQuestionnaire.getCount_interrupted() + 1;
-                getDao().setInterruptedCounter(currentQuestionnaire.getConfig_id(), counter);
-                currentQuestionnaire.setCount_interrupted(counter);
-                getDao().updateQuestionnaireStart(true, getCurrentUserId());
-                getDao().setOption(Constants.OptionName.QUIZ_STARTED, "true");
-                showToast("Продолжение прерванной анкеты");
-                startRecording();
-                TransFragment fragment = new TransFragment();
-                List<PrevElementsR> prevElementsRList = getDao().getPrevElementsR();
-                fragment.setStartElement(prevElementsRList.get(prevElementsRList.size() - 1).getNextId(), true);
-                replaceFragment(fragment);
-            } catch (Exception e) {
-                e.printStackTrace();
-                showToast("Ошибка продолжения прерванной анкеты");
-            }
-        } else if (view == btnDelete) {
-            showDeleteDialog();
-        } else if (view == btnExit) {
-            showExitAlertDialog();
         }
     }
 
@@ -464,6 +467,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         if (!mBaseActivity.checkPermission()) {
             mBaseActivity.requestPermission();
         }
+        checkConfigTime(false);
     }
 
     @Override
@@ -1333,6 +1337,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         newConfig = activity.getCurrentUser().getConfig_new();
         if (newConfig != null) {
+            getDao().setConfigTime(DateUtils.getCurrentTimeMillis());
             getDao().updateConfig(newConfig, activity.getCurrentUser().getUser_id(), activity.getCurrentUser().getUser_project_id());
             getDao().updateNewConfig(null, activity.getCurrentUser().getUser_id(), activity.getCurrentUser().getUser_project_id());
             activity.getConfigForce();
@@ -1518,6 +1523,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             long currentTime = DateUtils.getCurrentTimeMillis();
             ConfigModel configModel = activity.getConfig();
             RegistrationR reg = getDao().getRegistrationR(getCurrentUserId());
+
+            // Любая регистрация полученная с сервера
             ActiveRegistrationData handReg = configModel.getUserSettings() != null ? configModel.getUserSettings().getActive_registration_data() : null;
 
             if(reg == null) Log.d("T-L.HomeFragment", "checkRegistration: NO HAVE SAVES REG");
@@ -1574,6 +1581,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 }
             }
 
+            if(getCurrentUser().getConfigR().isRegsDisabled()) isRegistrationRequired = false;
+
             if(isRegistrationRequired && !activity.hasReserveChannel() && reg != null) {
                 getDao().clearRegistrationRByUser(getCurrentUserId());
                 UiUtils.setButtonEnabled(btnStart, true);
@@ -1581,6 +1590,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             checkRegForSend();
 
             if (!isRegistrationRequired) {
+                btnStart.setText("Начать");
                 List<PeriodModel> workPeriods = configModel.getWork_periods();
                 boolean inTime = false;
                 if (workPeriods != null)

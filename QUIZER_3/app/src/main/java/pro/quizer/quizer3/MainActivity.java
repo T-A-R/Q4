@@ -661,7 +661,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         switch (requestCode) {
             case 200:
                 if (grantResults.length > 0) {
-                    if(!PLAY_MARKET) {
+                    if (!PLAY_MARKET) {
                         final boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                         final boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                         final boolean audioAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
@@ -731,7 +731,13 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                        String desc,
                        String data) {
         AppLogsR appLogsR = new AppLogsR();
-        String login = getCurrentUser().getLogin();
+        String login = null;
+        try {
+            if (getCurrentUser() != null)
+                login = getCurrentUser().getLogin();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (login == null) login = "no_login";
         appLogsR.setLogin(login);
         appLogsR.setDevice(DeviceUtils.getDeviceInfo());
@@ -1230,7 +1236,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                     mTimer.cancel();
                 }
 
-                List<StagesModel> stages = getReserveChannel().getStages();
+                List<StagesModel> stages = getConfig().getUserSettings().getStages();
                 List<Integer> datesList = new ArrayList<>();
                 Long startDate = null;
                 Date startDateForDialog = null;
@@ -1420,7 +1426,12 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public ConfigModel getConfigForce() {
-        mConfig = getCurrentUserForce().getConfigR();
+        try {
+            if(getCurrentUserForce() != null)
+            mConfig = getCurrentUserForce().getConfigR();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return mConfig;
     }
 
@@ -1599,7 +1610,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 e.printStackTrace();
                 return telMgr.getSimState() == TelephonyManager.SIM_STATE_READY;
             }
-        } else  {
+        } else {
             int simState = telMgr.getSimState();
             return simState == TelephonyManager.SIM_STATE_READY;
         }
@@ -1648,7 +1659,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public boolean isGpsOn() {
-        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 

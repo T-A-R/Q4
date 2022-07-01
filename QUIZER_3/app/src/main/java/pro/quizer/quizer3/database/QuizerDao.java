@@ -106,9 +106,6 @@ public interface QuizerDao {
     @Query("UPDATE UserModelR SET quotas = :quotas WHERE user_project_id = :userProjectId")
     void updateQuotas(String quotas, int userProjectId);
 
-//    @Query("SELECT * FROM UserModelR")
-//    List<UserModelR> getAllUsers();
-
     @Query("SELECT id, login, password, user_id, user_project_id, questionnaire_opened FROM UserModelR")
     List<UserModelR> getAllUsers();
 
@@ -370,6 +367,9 @@ public interface QuizerDao {
 
     @Query("UPDATE SettingsR SET last_quota_time = :data")
     void setLastQuotaTime(Long data);
+
+    @Query("UPDATE SettingsR SET config_time = :data")
+    void setConfigTime(Long data);
 
     @Query("UPDATE SettingsR SET last_login_time = :data")
     void setLastLoginTime(Long data);

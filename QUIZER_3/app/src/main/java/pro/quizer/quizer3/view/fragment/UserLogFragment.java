@@ -84,7 +84,7 @@ public class UserLogFragment extends ScreenFragment implements View.OnClickListe
     public void onClick(View view) {
         if (view == btnSend) {
             try {
-                List<AppLogsR> logs = getDao().getAppLogsByLoginWithStatus(mLogin, Constants.LogStatus.NOT_SENT);
+                List<AppLogsR> logs = getDao().getAllLogsWithStatus(Constants.LogStatus.NOT_SENT);
                 if (logs.size() > 0) {
                     showScreensaver(false);
                     LogsRequestModel logsRequestModel = new LogsRequestModel(getLoginAdmin(), logs);
@@ -100,7 +100,7 @@ public class UserLogFragment extends ScreenFragment implements View.OnClickListe
                             }
 
                             try {
-                                getDao().setLogsStatusByLogin(mLogin, Constants.LogStatus.SENT);
+                                getDao().setLogsStatus(Constants.LogStatus.SENT);
                                 showToast(getString(R.string.send_logs_success));
                             } catch (Exception e) {
                                 e.printStackTrace();

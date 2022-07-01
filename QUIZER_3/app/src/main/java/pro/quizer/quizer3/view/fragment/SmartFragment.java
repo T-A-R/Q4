@@ -454,10 +454,12 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         if (oldConfig == null) {
             userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
             userModelR.setConfig_id(pModel.getConfigId());
+            getDao().setConfigTime(DateUtils.getCurrentTimeMillis());
         } else {
             userModelR.setConfig(oldConfig);
             userModelR.setConfig_new(new GsonBuilder().create().toJson(pConfigModel));
             userModelR.setConfig_id(pModel.getConfigId());
+            getDao().setConfigTime(DateUtils.getCurrentTimeMillis());
         }
 
         try {
@@ -860,6 +862,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 return false;
             } else {
                 Log.d(TAG, "==== SAVE TO CONFIG COZ NO HAVE QUIZ ====");
+                getDao().setConfigTime(DateUtils.getCurrentTimeMillis());
                 getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
                 getMainActivity().getConfigForce();
 

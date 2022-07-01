@@ -50,6 +50,7 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.model.OptionsOpenType;
 import pro.quizer.quizer3.model.view.TitleModel;
+import pro.quizer.quizer3.utils.ConditionUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
@@ -125,13 +126,12 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             }
         }
 
-        if (mQuestions != null)
-            mAnswers = mQuestions.get(0).getElements();
+        if (mQuestions != null) mAnswers = checkTableAnswers(mQuestions.get(0).getElements());
 
         this.mAnswersState = new AnswerState[mQuestions.size()][mAnswers.size()];
         if (mQuestions != null) {
             for (int i = 0; i < mQuestions.size(); i++) {
-                List<ElementItemR> pAnswers = mQuestions.get(i).getElements();
+                List<ElementItemR> pAnswers = checkTableAnswers(mQuestions.get(i).getElements());
                 for (int k = 0; k < pAnswers.size(); k++) {
                     mAnswersState[i][k] = new AnswerState(pAnswers.get(k).getRelative_id(), false, "");
                 }
@@ -870,5 +870,28 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final String fileName = FileUtils.getFileName(data);
 
         return path + FileUtils.FOLDER_DIVIDER + fileName;
+    }
+
+    private List<ElementItemR> checkTableAnswers(List<ElementItemR> elements) {
+        List<ElementItemR> checkedAnswersList = new ArrayList<>();
+        for (int a = 0; a < elements.size(); a++) {
+            boolean check = checkConditions(elements.get(a));
+            if (check) {
+                checkedAnswersList.add(elements.get(a));
+            }
+        }
+        return checkedAnswersList;
+    }
+
+    private boolean checkConditions(ElementItemR element) {
+        if (element != null) {
+            final ElementOptionsR options = element.getElementOptionsR();
+            if (options != null && options.getPre_condition() != null) {
+                final int showValue = ConditionUtils.evaluateCondition(options.getPre_condition(), mContext.getMap(false), mContext);
+                return showValue == ConditionUtils.CAN_SHOW;
+            } else return true;
+        } else {
+            return false;
+        }
     }
 }

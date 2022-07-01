@@ -503,4 +503,10 @@ public class SettingsFragment extends ScreenFragment implements View.OnClickList
         getDao().clearRegistrationRByUser(getCurrentUserId());
         replaceFragment(new Reg1Fragment());
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkConfigTime(false);
+    }
 }

@@ -35,7 +35,7 @@ public class SmsViewModelExecutable extends BaseModelExecutable<SmsViewModel> {
         final ReserveChannelModel reserveChannelModel = projectInfoModel.getReserveChannel();
 
         if (reserveChannelModel != null){
-            final List<StagesModel> stagesModels = reserveChannelModel.getStages();
+            final List<StagesModel> stagesModels = configModel.getUserSettings().getStages();
             final List<SmsStage> smsStages = new ArrayList<>();
 
             for (final StagesModel stageModel : stagesModels) {

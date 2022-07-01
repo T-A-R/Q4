@@ -245,6 +245,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
                 });
 
                 mSendAudioButton.setOnClickListener(view -> {
+                    activity.addLog(Constants.LogObject.AUDIO, "key", Constants.LogResult.ATTEMPT, "Press send audio", null);
                     if (hasUnfinishedOrSend(mQUnsendedCount, hasUnfinishedQuiz)) return;
 
                     new AudiosSendingByUserModelExecutable((MainActivity) getActivity(), mUserModel, SyncFragment.this).execute();
@@ -354,6 +355,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void sendPhotoAnswers() {
+        getMainActivity().addLog(Constants.LogObject.PHOTOS, "key", Constants.LogResult.ATTEMPT, "Press send PHOTOS", null);
         List<PhotoAnswersR> list = getDao().getPhotoAnswersByStatus(Constants.LogStatus.READY_FOR_SEND);
         if (list != null && list.size() > 0) {
             new PhotosAnswersSendingExecutable(getMainActivity(), mUserModel, list, new ICallback() {
@@ -373,6 +375,12 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
                 }
             }).execute();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkConfigTime(false);
     }
 }
 

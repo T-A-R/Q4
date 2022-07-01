@@ -321,7 +321,11 @@ public class ExpressionUtils {
 
                 CurrentQuestionnaireR quiz = activity.getCurrentQuestionnaire();
 //                quiz.setRegistered_uik("108"); //TODO ДЛЯ ТЕСТОВ! УБРАТЬ!
-                if (quiz != null && quiz.getRegistered_uik() != null && !quiz.getRegistered_uik().isEmpty() && quiz.getRegistered_uik().equals(idString)) {
+                if ((quiz != null && quiz.getRegistered_uik() != null && !quiz.getRegistered_uik().isEmpty() && quiz.getRegistered_uik().equals(idString))
+                        || (activity.getConfig().getUserSettings() != null
+                        && activity.getConfig().getUserSettings().getAllowed_uiks() != null
+                        && activity.getConfig().getUserSettings().getAllowed_uiks().size() > 0
+                        && activity.getConfig().getUserSettings().getAllowed_uiks().get(0).equals(idString))) {
                     newExpression = newExpression.replace(oldPart, "1.0");
                 } else {
                     newExpression = newExpression.replace(oldPart, "0.0");

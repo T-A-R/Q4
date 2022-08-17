@@ -1,23 +1,24 @@
 package pro.quizer.quizer3.adapter;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.UserModelR;
 
-public class UsersBtnRecyclerAdapter extends RecyclerView.Adapter<UsersBtnRecyclerAdapter.ListObjectViewHolder> {
+public class PhonesAdapter extends RecyclerView.Adapter<PhonesAdapter.ListObjectViewHolder> {
 
-    private List<UserModelR> mItemList;
+    private List<String> mItemList;
     private OnUserClickListener mOnUserClickListener;
 
-    public UsersBtnRecyclerAdapter(List<UserModelR> mItemList, OnUserClickListener onUserClickListener) {
+    public PhonesAdapter(List<String> mItemList, OnUserClickListener onUserClickListener) {
         this.mItemList = mItemList;
         this.mOnUserClickListener = onUserClickListener;
 
@@ -26,7 +27,7 @@ public class UsersBtnRecyclerAdapter extends RecyclerView.Adapter<UsersBtnRecycl
     @NonNull
     @Override
     public ListObjectViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.holder_user_log_btn, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.holder_phone, viewGroup, false);
         return new ListObjectViewHolder(view, mOnUserClickListener);
     }
 
@@ -56,18 +57,18 @@ public class UsersBtnRecyclerAdapter extends RecyclerView.Adapter<UsersBtnRecycl
             btn.setOnClickListener(this);
         }
 
-        public void bind(final UserModelR item) {
-            btn.setText(item.getLogin());
+        public void bind(final String phone) {
+            btn.setText(phone);
         }
 
         @Override
         public void onClick(View v) {
-            onUserClickListener.onUserClick(getAdapterPosition());
+            onUserClickListener.onUserClick(mItemList.get(getAdapterPosition()));
         }
     }
 
     public interface OnUserClickListener {
-        void onUserClick(int position);
+        void onUserClick(String phone);
     }
 
 }

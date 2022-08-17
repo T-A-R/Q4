@@ -36,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -145,6 +146,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 myCameras[CAMERA2].closeCamera();
             }
         } catch (Exception e) {
+            Log.d("T-A-R.ListAnswersAdapt", "================ Camera ERROR ================");
             e.printStackTrace();
         }
         stopBackgroundThread();
@@ -271,8 +273,16 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         }
 
         public void bind(final ElementItemR item, int position) {
-            File file = new File(getAnswerImagePath(position));
-            if (file.exists()) {
+            String filename;
+            filename = getAnswerImagePath(position);
+            File file = null;
+            if(filename != null) {
+                file = new File(filename);
+            } else {
+                Toast.makeText(mActivity, "Ошибка загрузки файла. Закройте и перезапустите приложение", Toast.LENGTH_SHORT).show();
+            }
+
+            if (file != null && file.exists()) {
                 answersState.get(position).setHasPhoto(true);
             }
 
@@ -406,29 +416,52 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         }
 
         public boolean canShow(ElementItemR[][] tree, List<List<Integer>> passedElementsId, int relativeId, int order) {
+            Log.d("T-A-R.ListAnswersAdapt", "=== ID:" + relativeId + " order:" + order);
 
+//            try {
+//                if (relativeId == 9)
+//                    for (int i = 0; i < tree[0].length; i++) {
+//                        Log.d("T-A-R.ListAnswersAdapt", "Q:" + tree[0][i].getRelative_id() + "/" + tree[0][i].isEnabled() + " | " +
+//                                tree[1][i].getRelative_id() + "/" + tree[1][i].isEnabled() + " | " +
+//                                tree[2][i].getRelative_id() + "/" + tree[2][i].isEnabled()
+//                        );
+//                    }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
             if (tree == null) {
+                Log.d("T-A-R.ListAnswersAdapt", "canShow ID: " + relativeId + " / true 1");
                 return true;
             }
 
             if (order == 1) {
                 for (int k = 0; k < tree[0].length; k++) {
                     if (tree[0][k].getRelative_id().equals(relativeId)) {
-                        if (tree[0][k].isEnabled())
+                        if (tree[0][k].isEnabled()) {
+                            Log.d("T-A-R.ListAnswersAdapt", "canShow ID: " + relativeId + " / true 2");
                             return true;
+                        }
                     }
                 }
+                Log.d("T-A-R.ListAnswersAdapt", "canShow ID: " + relativeId + " / false 1");
                 return false;
             } else {
                 int endPassedElement = order - 1;
 
                 for (int k = 0; k < tree[0].length; k++) {
                     for (int i = 0; i < endPassedElement; ) {
+                        Log.d("T-A-R.ListAnswersAdapt", "tree[i][k]: " + tree[i][k].getRelative_id());
 //                        if (tree[i][k].getRelative_id().equals(passedElementsId.get(i))) {
-                        if (passedElementsId.get(i).contains(tree[i][k].getRelative_id())) {
+                        if (passedElementsId.get(i).contains(tree[i][k].getRelative_id()) && tree[i][k].getRelative_id() < 999999) {
                             if (i == (endPassedElement - 1)) { // Если последний, то
+                                Log.d("T-A-R.ListAnswersAdapt", "tree[i + 1][k]: " + tree[i + 1][k].getRelative_id());
                                 if (tree[i + 1][k].getRelative_id().equals(relativeId)) { // Если следующий за последним равен Relative ID
                                     if (tree[i + 1][k].isEnabled()) {
+                                        try {
+                                            Log.d("T-A-R.ListAnswersAdapt", "canShow ID: " + relativeId + " / true 3 (" + tree[0][k].getRelative_id() + "/" + tree[1][k].getRelative_id() + "/" + tree[2][k].getRelative_id() + ")");
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
                                         return true;
                                     }
                                 }
@@ -438,6 +471,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                     }
                 }
             }
+            Log.d("T-A-R.ListAnswersAdapt", "canShow ID: " + relativeId + " / false 2");
             return false;
         }
 
@@ -710,11 +744,17 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             if (hasPhoto) {
                 photoView.setVisibility(View.VISIBLE);
                 cameraCont.setVisibility(View.INVISIBLE);
-                File image = new File(getAnswerImagePath(position));
-                Picasso.with(mActivity)
-                        .load(image)
-                        .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                        .into(photoView);
+                String filename;
+                filename = getAnswerImagePath(position);
+                if(filename != null) {
+                    File image = new File(filename);
+                    Picasso.with(mActivity)
+                            .load(image)
+                            .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                            .into(photoView);
+                } else {
+                    Toast.makeText(mActivity, "Ошибка загрузки файла. Закройте и перезапустите приложение", Toast.LENGTH_SHORT).show();
+                }
                 btnPhoto.setText("Переделать");
                 UiUtils.setButtonEnabledRed(btnPhoto, true);
                 btnBack.setVisibility(View.VISIBLE);
@@ -1072,8 +1112,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         }
 
         if (min != null && number < min) {
-            mActivity.showToastfromActivity(String.format(mActivity.getString(R.string.limits_warning_start), String.valueOf (position + 1)) + " " +
-                            String.format(mActivity.getString(R.string.limits_warning_min), String.valueOf (min)));
+            mActivity.showToastfromActivity(String.format(mActivity.getString(R.string.limits_warning_start), String.valueOf(position + 1)) + " " +
+                    String.format(mActivity.getString(R.string.limits_warning_min), String.valueOf(min)));
             mInput.setText(String.valueOf(min));
             try {
                 mInput.setSelection(mInput.getText().length());
@@ -1083,8 +1123,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             return false;
         }
         if (max != null && number > max) {
-            mActivity.showToastfromActivity(String.format(mActivity.getString(R.string.limits_warning_start), String.valueOf (position + 1)) + " " +
-                    String.format(mActivity.getString(R.string.limits_warning_max), String.valueOf (max)));
+            mActivity.showToastfromActivity(String.format(mActivity.getString(R.string.limits_warning_start), String.valueOf(position + 1)) + " " +
+                    String.format(mActivity.getString(R.string.limits_warning_max), String.valueOf(max)));
             mInput.setText(String.valueOf(max));
             try {
                 mInput.setSelection(mInput.getText().length());
@@ -1135,8 +1175,14 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     }
 
     private String getAnswerImagePath(int position) {
-        UserModelR user = mActivity.getCurrentUser();
-        String token = mActivity.getToken();
+        UserModelR user = null;
+        String token = null;
+        try {
+            user = mActivity.getCurrentUser();
+            token = mActivity.getToken();
+        } catch (Exception e) {
+            return null;
+        }
         return FileUtils.getAnswersStoragePath(mActivity) + File.separator
                 + mActivity.getCurrentUserId() + File.separator
                 + token + File.separator
@@ -1177,7 +1223,13 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             mCameraID = cameraID;
             this.texture = texture;
             this.position = position;
-            mFile = new File(getAnswerImagePath(position));
+            String file;
+            file = getAnswerImagePath(position);
+            if (file != null) {
+                mFile = new File(file);
+            } else {
+                Toast.makeText(mActivity, "Ошибка сохранения файла. Закройте и перезапустите приложение", Toast.LENGTH_SHORT).show();
+            }
         }
 
         public void makePhoto() {
@@ -1194,7 +1246,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                                                    @NonNull CaptureRequest request,
                                                    @NonNull TotalCaptureResult result) {
 
-                        Log.d("T-L.ListAnswersAdapter", "onCaptureCompleted: ");
+                        Log.d("T-A-R.ListAnswersAdap", "onCaptureCompleted: ");
                     }
                 };
 
@@ -1230,7 +1282,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
             @Override
             public void onError(CameraDevice camera, int error) {
-                Log.d("T-L.ListAnswersAdapter", "error! camera id:" + camera.getId() + " error:" + error);
+                Log.d("T-A-R.ListAnswersAdap", "error! camera id:" + camera.getId() + " error:" + error);
             }
         };
 
@@ -1353,14 +1405,21 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 mImage.close();
                 try {
                     answersState.get(position).setHasPhoto(true);
-                    addPhotoName(getAnswerImagePath(position), getAnswerImageName(position));
-                    mActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            photoDialog.dismiss();
-                            notifyItemChanged(position);
-                        }
-                    });
+                    String file;
+                    file = getAnswerImagePath(position);
+                    if (file != null) {
+                        addPhotoName(file, getAnswerImageName(position));
+                        mActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                photoDialog.dismiss();
+                                notifyItemChanged(position);
+                            }
+                        });
+                    } else {
+                        Toast.makeText(mActivity, "Ошибка сохранения файла. Закройте и перезапустите приложение", Toast.LENGTH_SHORT).show();
+                    }
+
 
                 } catch (Exception e) {
                     e.printStackTrace();

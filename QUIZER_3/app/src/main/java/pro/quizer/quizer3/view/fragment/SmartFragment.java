@@ -415,7 +415,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             e.printStackTrace();
         }
 
-        if (oldUser != null) {
+        if (oldUser != null && oldUser.getUser_id() == pModel.getUserId()) {
             String configId = oldUser.getConfigR().getConfigId();
             if (configId == null)
                 configId = oldUser.getConfig_id();
@@ -466,6 +466,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             getDao().insertUser(userModelR);
             getDao().insertOption(new OptionsR(Constants.OptionName.QUIZ_STARTED, "false"));
         } catch (Exception e) {
+            e.printStackTrace();
             showToast(getString(R.string.db_save_error));
         }
 
@@ -491,6 +492,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             try {
                 mCurrentUser = getUserByUserId(getCurrentUserId());
             } catch (Exception e) {
+                e.printStackTrace();
                 showToast(getString(R.string.db_load_error));
             }
         }
@@ -597,16 +599,28 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public List<List<Integer>> getMultiPassedQuotasBlock(int max) {
         List<List<Integer>> passedQuotasBlock = new ArrayList<>();
         List<ElementPassedR> passedElements = getDao().getQuotaPassedElements(getMainActivity().getCurrentQuestionnaire().getToken(), true);
+//        List<ElementPassedR> passedElements2 = getDao().getAllElementsPassedRNoToken();
         if (passedElements == null || passedElements.size() == 0) {
             return null;
         }
 
+        for (ElementPassedR item : passedElements) {
+            Log.d("T-A-R.SmartFragment", "PASSED ID >>>>>: " + item.getRelative_id());
+        }
+
         Integer savedParent = null;
         for (int k = 0; k < passedElements.size(); k++) {
+//            Log.d("T-A-R.SmartFragment", "Passed ID: " + passedElements.get(k).getRelative_id());
             Integer parentId = passedElements.get(k).getParent_id();
+//            Log.d("T-A-R.SmartFragment", "getMultiPassedQuotasBlock PARENT: " + parentId);
             if (!parentId.equals(savedParent)) {
                 savedParent = parentId;
                 List<Integer> passedAnswersList = getDao().getQuotaPassedAnswers(getMainActivity().getCurrentQuestionnaire().getToken(), true, parentId);
+//                try {
+//                    Log.d("T-A-R.SmartFragment", "getMultiPassedQuotasBlock LIST: " + passedAnswersList.size());
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
                 passedQuotasBlock.add(passedAnswersList);
             }
         }
@@ -616,10 +630,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 //        }
 
         List<List<Integer>> passedQuotasBlockNew = new ArrayList<>();
-
-        for(List<Integer> block : passedQuotasBlock) {
-            Log.d("T-A-R.SmartFragment", "????: " + block.get(0));
-        }
+//
+//        for(List<Integer> block : passedQuotasBlock) {
+//            Log.d("T-A-R.SmartFragment", "????: " + block.get(0));
+//        }
 
         if (passedQuotasBlock.size() > 0) {
             for (int i = 0; i < max - 1; i++) {
@@ -964,7 +978,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         try {
             getDao().insertQuestionnaire(questionnaireDatabaseModel);
             getMainActivity().setSettings(Constants.Settings.QUIZ_TIME, String.valueOf(DateUtils.getCurrentTimeMillis()));
-            Log.d("T-L.SmartFragment", "saveQuestionnaireToDatabase: " + questionnaireDatabaseModel.toString());
+            Log.d("T-A-R.SmartFragment", "saveQuestionnaireToDatabase: " + questionnaireDatabaseModel.toString());
             saveQuizToFile(questionnaireDatabaseModel.getToken());
             getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.SUCCESS, questionnaireDatabaseModel.getToken(), null);
         } catch (Exception e) {

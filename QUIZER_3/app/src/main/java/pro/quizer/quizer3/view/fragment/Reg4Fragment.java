@@ -42,9 +42,11 @@ public class Reg4Fragment extends ScreenFragment implements View.OnClickListener
     private boolean inExitDialog = false;
     private String mCode;
     private String mCodeShort;
+    private Boolean success;
 
-    public Reg4Fragment() {
+    public Reg4Fragment(Boolean success) {
         super(R.layout.fragment_reg4);
+        this.success = success;
     }
 
     @Override
@@ -86,7 +88,17 @@ public class Reg4Fragment extends ScreenFragment implements View.OnClickListener
             }
         });
 
-        startResendTimer();
+        if(success) {
+            startResendTimer();
+        } else {
+            try {
+                UiUtils.setButtonEnabled(btnResend, true);
+                counterText.setVisibility(View.INVISIBLE);
+                canResend = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         getCode();
     }
 

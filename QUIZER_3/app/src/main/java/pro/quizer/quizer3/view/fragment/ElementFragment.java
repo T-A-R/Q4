@@ -154,6 +154,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private Map<Integer, TitleModel> titlesMap;
     private CompositeDisposable disposables;
     private boolean isInHiddenQuotaDialog = false;
+    private boolean isFragmentLoading = false;
 
     public ElementFragment() {
         super(R.layout.fragment_element);
@@ -320,6 +321,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
 
                 if (currentElement.getSubtype().equals(ElementSubtype.HIDDEN)) {
+                    Log.d("T-A-R.ElementFragment", "checkHidden: 1");
                     checkHidden();
                 }
 
@@ -342,6 +344,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                 });
 
             } else {
+                Log.d("T-A-R.ElementFragment", "check: 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
                 checkAndLoadNext();
             }
 
@@ -744,7 +747,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private void initRecyclerView() {
 
         List<String> itemsList = new ArrayList<>();
-        Log.d("T-A-R.ElementFragment", "initRecyclerView: " + currentElement.getRelative_id() + " " + answerType);
+//        Log.d("T-A-R.ElementFragment", "initRecyclerView: " + currentElement.getRelative_id() + " " + answerType);
         switch (answerType) {
             case ElementSubtype.LIST:
             case ElementSubtype.RANK:
@@ -774,25 +777,35 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 rvScale.setVisibility(View.VISIBLE);
                 break;
         }
-
+//        Log.d("T-A-R.ElementFragment", "initRecyclerView: 1");
 
         for (ElementItemR element : answersList) {
             itemsList.add(Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle());
         }
 
+//        Log.d("T-A-R.ElementFragment", "initRecyclerView: 2");
+
         switch (answerType) {
             case ElementSubtype.LIST:
+//                Log.d("T-A-R.ElementFragment", "initRecyclerView: 3");
                 MainActivity activity = getMainActivity();
                 if (isQuota) {
+//                    Log.d("T-A-R.ElementFragment", "initRecyclerView: 4");
                     removeHelper();
+//                    Log.d("T-A-R.ElementFragment", "initRecyclerView: 5");
+                    Log.d("T-A-R.ElementFragment", "id: " + currentElement.getRelative_id() + " order: " + currentElement.getElementOptionsR().getOrder());
                     adapterList = new ListAnswersAdapter(activity, currentElement, answersList,
                             getMultiPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), titlesMap, this);
+//                    Log.d("T-A-R.ElementFragment", "initRecyclerView: 6");
                 } else {
+
                     adapterList = new ListAnswersAdapter(activity, currentElement, answersList,
                             null, null, titlesMap, this);
                 }
+
                 rvAnswers.setLayoutManager(new LinearLayoutManager(getContext()));
                 rvAnswers.setAdapter(adapterList);
+//                Log.d("T-A-R.ElementFragment", "initRecyclerView: 7");
                 break;
             case ElementSubtype.RANK:
                 removeHelper();
@@ -861,10 +874,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
                 itemsList.clear();
 
-                Integer unchecker = null;
+                List<Integer> uncheckers = new ArrayList<>();
                 for (int i = 0; i < answersList.size(); i++) {
                     itemsList.add(Objects.requireNonNull(titlesMap.get(answersList.get(i).getRelative_id())).getTitle());
-                    if (answersList.get(i).getElementOptionsR().isUnchecker()) unchecker = i;
+                    if (answersList.get(i).getElementOptionsR().isUnchecker()) uncheckers.add(i);
                 }
 
                 if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isPolyanswer()) {
@@ -872,8 +885,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     multiSelectionSpinner = findViewById(R.id.answers_multi_spinner);
                     multiSelectionSpinner.setVisibility(View.VISIBLE);
                     multiSelectionSpinner.setItems(itemsList);
-                    if (unchecker != null)
-                        multiSelectionSpinner.hasNoneOption(true, unchecker);
+                    if (uncheckers.size() > 0)
+                        multiSelectionSpinner.hasNoneOption(true, uncheckers);
                     multiSelectionSpinner.setSelection(new int[]{});
 
                     multiSelectionSpinner.setListener(new MultiSelectSpinner.OnMultipleItemsSelectedListener() {
@@ -975,6 +988,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 rvScale.setAdapter(adapterScale);
                 break;
         }
+
+        Log.d("T-A-R.ElementFragment", "initRecyclerView: END");
     }
 
     private void removeHelper() {
@@ -1115,6 +1130,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     elementPassedR.setFrom_quotas_block(false);
                     elementPassedR.setHelper(answerStates.size() == 1 && getElement(answerStates.get(0).getRelative_id()).getElementOptionsR().isHelper());
 
+                    Log.d("T-A-R.ElementFragment", "saveElement 1: " + elementPassedR.getRelative_id());
                     getDao().insertElementPassedR(elementPassedR);
                     getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
                     saved = true;
@@ -1137,6 +1153,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                 e.printStackTrace();
                             }
                             try {
+                                Log.d("T-A-R.ElementFragment", "saveElement 2: " + answerPassedR.getRelative_id());
                                 getDao().insertElementPassedR(answerPassedR);
                                 saved = true;
                             } catch (Exception e) {
@@ -1166,7 +1183,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //                        }
                     }
                 } else {
-                    Log.d("T-L.ElementFragment", "saveElement: EMPTY");
+                    Log.d("T-A-R.ElementFragment", "saveElement: EMPTY");
                 }
                 break;
             }
@@ -1192,6 +1209,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
                         try {
                             if (!isRestored) {
+                                Log.d("T-A-R.ElementFragment", "saveElement 3: " + elementPassedR.getRelative_id());
                                 getDao().insertElementPassedR(elementPassedR);
                                 getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
                             }
@@ -1210,6 +1228,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
                             try {
                                 if (!isRestored) {
+                                    Log.d("T-A-R.ElementFragment", "saveElement 4: " + answerPassedR.getRelative_id());
+
                                     getDao().insertElementPassedR(answerPassedR);
                                 }
                                 saved = true;
@@ -1239,6 +1259,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
                         try {
                             if (!isRestored) {
+                                Log.d("T-A-R.ElementFragment", "saveElement 5: " + elementPassedR.getRelative_id());
                                 getDao().insertElementPassedR(elementPassedR);
                                 getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
                             }
@@ -1257,6 +1278,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
                         try {
                             if (!isRestored) {
+                                Log.d("T-A-R.ElementFragment", "saveElement 6: " + answerPassedR.getRelative_id());
                                 getDao().insertElementPassedR(answerPassedR);
                             }
                             saved = true;
@@ -1298,6 +1320,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
                     try {
                         if (!isRestored) {
+                            Log.d("T-A-R.ElementFragment", "saveElement 7: " + elementPassedR.getRelative_id());
+
                             getDao().insertElementPassedR(elementPassedR);
                             getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
                         }
@@ -1323,6 +1347,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                 }
                                 try {
                                     if (!isRestored) {
+                                        Log.d("T-A-R.ElementFragment", "saveElement 8: " + answerPassedR.getRelative_id());
+
                                         getDao().insertElementPassedR(answerPassedR);
                                     }
                                     saved = true;
@@ -1370,6 +1396,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
                 try {
                     if (!isRestored) {
+                        Log.d("T-A-R.ElementFragment", "saveElement 9: " + elementPassedR.getRelative_id());
+
                         getDao().insertElementPassedR(elementPassedR);
                         getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
                     }
@@ -1389,8 +1417,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             return false;
         }
         if (currentElement.getElementOptionsR().getMin_answers() != null) {
-            for(Integer id : spinnerMultipleSelection) {
-                if(getElement(id).getElementOptionsR() != null && getElement(id).getElementOptionsR().isUnchecker()) {
+            for (Integer id : spinnerMultipleSelection) {
+                if (getElement(id).getElementOptionsR() != null && getElement(id).getElementOptionsR().isUnchecker()) {
                     return true;
                 }
             }
@@ -1430,7 +1458,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     if (!element.getElementOptionsR().getOpen_type().equals("checkbox")) {
                         openType = true;
                     }
-                    if(element.getElementOptionsR().isUnchecker()) {
+                    if (element.getElementOptionsR().isUnchecker()) {
                         return true;
                     }
                 } catch (Exception e) {
@@ -1978,6 +2006,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                 exitQuestionnaire();
                             }
                         } else {
+                            Log.d("T-A-R.ElementFragment", "check: 4 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
                             checkAndLoadNext();
                             if (!isInHiddenQuotaDialog) {
                                 updatePrevElement();
@@ -2007,22 +2036,62 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void checkAndLoadNext() {
+        Log.d("T-A-R.ElementFragment", "?????????? checkAndLoadNext: " + nextElementId);
         if (!isInHiddenQuotaDialog) {
             if (nextElementId != null && !nextElementId.equals(0) && !nextElementId.equals(-1)) {
                 if (checkConditions(getElement(nextElementId))) {
                     checkHidden();
-                    if (!isInHiddenQuotaDialog) {
-                        TransFragment fragment = new TransFragment();
-                        fragment.setStartElement(currentElement.getRelative_id(), nextElementId);
-                        stopRecording();
-                        replaceFragment(fragment);
+                    if (nextElementId == 0) {
+                        if (saveQuestionnaire(false)) {
+                            exitQuestionnaire();
+                        } else {
+                            activateButtons();
+                        }
+                    } else if (nextElementId == -1) {
+                        if (getMainActivity().getConfig().isSaveAborted()) {
+                            if (saveQuestionnaire(true)) {
+                                exitQuestionnaire();
+                            } else {
+                                activateButtons();
+                            }
+                        } else {
+                            exitQuestionnaire();
+                        }
+                    } else if (!isInHiddenQuotaDialog) {
+                        Log.d("T-A-R.ElementFragment", "THREAD: " + Thread.currentThread().getId());
+                        Log.d("T-A-R.ElementFragment", "checkAndLoadNext: !isInHiddenQuotaDialog = " + currentElement.getRelative_id() + "/"+ nextElementId);
+                        if(!isFragmentLoading) {
+                            isFragmentLoading = true;
+                            TransFragment fragment = new TransFragment();
+                            fragment.setStartElement(currentElement.getRelative_id(), nextElementId);
+                            stopRecording();
+                            replaceFragment(fragment);
+                        }
                     }
                 } else {
+                    Log.d("T-A-R.ElementFragment", "check: 5 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
                     checkAndLoadNext();
                 }
             } else {
-                hideScreensaver();
-                activateButtons();
+//                hideScreensaver();
+//                activateButtons();
+                if (nextElementId == 0) {
+                    if (saveQuestionnaire(false)) {
+                        exitQuestionnaire();
+                    } else {
+                        activateButtons();
+                    }
+                } else if (nextElementId == -1) {
+                    if (getMainActivity().getConfig().isSaveAborted()) {
+                        if (saveQuestionnaire(true)) {
+                            exitQuestionnaire();
+                        } else {
+                            activateButtons();
+                        }
+                    } else {
+                        exitQuestionnaire();
+                    }
+                }
             }
         }
     }
@@ -2035,6 +2104,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 stopRecording();
                 replaceFragment(fragment);
             } else {
+                Log.d("T-A-R.ElementFragment", "check: 2 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
                 checkAndLoadNext();
             }
         } else {
@@ -2335,7 +2405,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void checkHidden() {
-//        Log.d("T-A-R.ElementFragment", "checkHidden: " + answerType);
+        Log.d("T-A-R.ElementFragment", "checkHidden: ");
 
         ElementItemR nextElement = null;
         if (answerType == null || answerType.equals(ElementSubtype.HIDDEN)) nextElement = currentElement;
@@ -2376,6 +2446,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     if (answer.isEnabled()) canShowCounter++;
                     String expression = answer.getElementOptionsR().getPrev_condition();
                     if (expression == null || expression.length() == 0 || expressionUtils.checkHiddenExpression(expression)) {
+                        answer.setChecked(true);
                         if (hiddenInQuotaBox) {
                             if (!answer.getElementOptionsR().isHelper()) {
                                 answersHidden.add(answer);
@@ -2383,11 +2454,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                 if (answer.isEnabled()) enabledCounter++;
                             }
                         }
-
-                        answerStatesHidden.add(new AnswerState(answer.getRelative_id(), true, answer.getElementOptionsR().getTitle()));
+                        Log.d("T-A-R.ElementFragment", "check ENABLED: " + answer.getRelative_id() + " / " + answer.isEnabled());
+                        answerStatesHidden.add(new AnswerState(answer.getRelative_id(), answer.isChecked(), true, answer.getElementOptionsR().getTitle(), answer.isEnabled()));
 
                     }
                 }
+
+                //TODO Если все выбранные квотные в скрытом закрыты, то не пускаем далее. Если все не выбраны то пускаем далее
+
+//                for(AnswerState item : answerStatesHidden) {
+//                    Log.d("T-A-R.ElementFragment", "run 0: " + item.getRelative_id() + " / " +item.isEnabled());
+//                }
 
                 if (hiddenInQuotaBox) {
                     if (answersHidden.size() == 1 && enabledCounter == 0) {
@@ -2418,16 +2495,19 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         if (answerStatesHidden.size() == 1) {
                             answerStatesHidden.get(0).setChecked(true);
                         }
+                        Log.d("T-A-R.ElementFragment", "SAVE Hidden: 1");
                         saveHidden(nextElement, answerStatesHidden);
                     }
                 } else {
+                    Log.d("T-A-R.ElementFragment", "SAVE Hidden: 2");
                     saveHidden(nextElement, answerStatesHidden);
                 }
             }
             if (!isInHiddenQuotaDialog) {
 //                nextElementId = nextElement.getElementOptionsR().getJump();
 //                Log.d("T-A-R.ElementFragment", "checkHidden: ---- " + nextElementId);
-                if(answerStatesHidden.size() > 0) nextElementId = getElement(answerStatesHidden.get(0).getRelative_id()).getElementOptionsR().getJump();
+                //TODO Проверить логику <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                if (answerStatesHidden.size() > 0) nextElementId = getElement(answerStatesHidden.get(0).getRelative_id()).getElementOptionsR().getJump();
                 else nextElementId = nextElement.getElementOptionsR().getJump();
 //                Log.d("T-A-R.ElementFragment", "checkHidden: +++++++++++++++++++++++ " + nextElementId);
                 if (!answerType.equals(ElementSubtype.HIDDEN)) {
@@ -2435,14 +2515,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 } else {
                     currentElement = getElement(nextElementId);
                 }
-
-            checkAndLoadNext();
+                Log.d("T-A-R.ElementFragment", "check: 3 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                checkAndLoadNext();
             }
         }
     }
 
     private void saveHidden(ElementItemR nextElement, List<AnswerState> answerStatesHidden) {
-        Log.d("T-A-R.ElementFragment", "saveHidden: " + answerStatesHidden.size());
+        Log.d("T-A-R.ElementFragment", "saveHidden ID: " + nextElement.getRelative_id());
         ElementPassedR elementPassedR = new ElementPassedR();
         elementPassedR.setRelative_id(nextElement.getRelative_id());
         elementPassedR.setProject_id(nextElement.getProjectId());
@@ -2456,6 +2536,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         if (answerStatesHidden.size() > 0) {
 //            boolean found = false;
             for (int i = 0; i < answerStatesHidden.size(); i++) {
+                Log.d("T-A-R.ElementFragment", "answerStatesHidden.ID: " + answerStatesHidden.get(i).getRelative_id() + " / " + answerStatesHidden.get(i).isChecked());
 //                if (found && getElement(answerStatesHidden.get(i).getRelative_id()).getElementOptionsR().isHelper()) break;
                 if (getElement(answerStatesHidden.get(i).getRelative_id()).getElementOptionsR().isHelper() && answerStatesHidden.size() != 1) continue;
                 if (answerStatesHidden.get(i).isChecked()) {
@@ -2466,16 +2547,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     answerPassedR.setProject_id(nextElement.getProjectId());
                     answerPassedR.setToken(getQuestionnaire().getToken());
                     answerPassedR.setValue(answerStatesHidden.get(i).getData());
+                    Log.d("T-A-R.ElementFragment", "saveHidden IsQUOTA: " + isQuota);
                     answerPassedR.setFrom_quotas_block(isQuota);
                     try {
                         answerPassedR.setHelper(getElement(answerStatesHidden.get(i).getRelative_id()).getElementOptionsR().isHelper());
-                        Log.d("T-L.ElementFragment", "saveHidden: " + getElement(answerStatesHidden.get(i).getRelative_id()).getElementOptionsR().isHelper());
+                        Log.d("T-A-R.ElementFragment", "saveHidden: " + getElement(answerStatesHidden.get(i).getRelative_id()).getElementOptionsR().isHelper());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
                     try {
-                        Log.d("T-L.TransFragment", "savePassedElement 1: " + answerPassedR.getRelative_id());
+                        Log.d("T-A-R.TransFragment", "savePassedElement 1: " + answerPassedR.getRelative_id());
                         getDao().insertElementPassedR(answerPassedR);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -2487,7 +2569,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void showHiddenExitAlertDialog(String message) {
-        Log.d("T-L.ElementFragment", "showHiddenAlertDialog: 1");
+        Log.d("T-A-R.ElementFragment", "showHiddenAlertDialog: 1");
         stopAllRecording();
         saveAndExit(false);
         if (getMainActivity() != null && !getMainActivity().isFinishing()) {
@@ -2509,6 +2591,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     private void showHiddenAlertDialog(String message, ElementItemR nextElement, List<AnswerState> answerStatesHidden, List<ElementItemR> answersHidden) {
         MainActivity activity = getMainActivity();
+        Log.d("T-A-R.ElementFragment", "showHiddenAlertDialog: " + answerStatesHidden.size() + " / " + answersHidden.size());
+        for(AnswerState item : answerStatesHidden) {
+            Log.d("T-A-R.ElementFragment", "run 1: " + item.getRelative_id() + " / " +item.isEnabled());
+        }
+        for(ElementItemR item : answersHidden) {
+            Log.d("T-A-R.ElementFragment", "run 2: " + item.getRelative_id() + " / " +item.isEnabled());
+        }
         activity.runOnUiThread(new Runnable() {
             public void run() {
                 if (!activity.isFinishing()) {
@@ -2518,17 +2607,25 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             .setMessage(message)
                             .setPositiveButton(R.string.view_continue, (dialog, which) -> {
                                 List<AnswerState> answersStatesEnabled = new ArrayList<>();
-                                for (int index = 0; index < answersHidden.size(); index++) {
-                                    if (answersHidden.get(index).isEnabled()) {
+                                for (int index = 0; index < answerStatesHidden.size(); index++) {
+                                    if (answerStatesHidden.get(index).isEnabled()) {
+                                        Log.d("T-A-R.ElementFragment", "enabled: " + answerStatesHidden.get(index).getRelative_id());
+                                        answerStatesHidden.get(index).setChecked(true);
                                         answersStatesEnabled.add(answerStatesHidden.get(index));
                                     }
                                 }
+
                                 updatePrevElement();
+                                Log.d("T-A-R.ElementFragment", "SAVE Hidden: 3");
+                                for(AnswerState item : answersStatesEnabled) {
+                                    Log.d("T-A-R.ElementFragment", "run 3: " + item.getRelative_id());
+                                }
                                 saveHidden(nextElement, answersStatesEnabled);
                                 nextElementId = nextElement.getElementOptionsR().getJump();
                                 isInHiddenQuotaDialog = false;
                                 dialog.dismiss();
                                 currentElement = nextElement;
+                                Log.d("T-A-R.ElementFragment", "check: 6 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
                                 checkAndLoadNext();
                             })
                             .setNegativeButton(R.string.view_cancel, (dialog, which) -> {

@@ -24,12 +24,14 @@ public class TransFragment extends ScreenFragment {
     }
 
     public TransFragment setStartElement(Integer nextElementId) {
+        Log.d("T-A-R.TransFragment", "setStartElement: 1");
         this.nextElementId = nextElementId;
         this.restored = false;
         return this;
     }
 
     public TransFragment setStartElement(Integer startElementId, Integer nextElementId) {
+        Log.d("T-A-R.TransFragment", "setStartElement: 2");
         this.startElementId = startElementId;
         this.nextElementId = nextElementId;
         this.restored = false;
@@ -37,6 +39,7 @@ public class TransFragment extends ScreenFragment {
     }
 
     public TransFragment setStartElement(Integer nextElementId, boolean restored) {
+        Log.d("T-A-R.TransFragment", "setStartElement: 3");
         this.nextElementId = nextElementId;
         this.restored = restored;
         return this;
@@ -49,7 +52,7 @@ public class TransFragment extends ScreenFragment {
             ElementFragment fragment = new ElementFragment();
             fragment.setStartElement(nextElementId, restored);
             if (!restored) {
-                if (checkQuotaJump(nextElementId)) fillPassedQuotas();
+                if (nextElementId != 0 && nextElementId != -1 && checkQuotaJump(nextElementId)) fillPassedQuotas();
                 replaceFragment(fragment);
             } else
                 replaceFragmentBack(fragment);
@@ -67,6 +70,7 @@ public class TransFragment extends ScreenFragment {
 
     private boolean checkQuotaJump(int relativeId) {
         boolean isQuota = false;
+        Log.d("T-A-R.TransFragment", "======= checkQuotaJump: " + relativeId);
         ElementItemR currentElement = getElement(relativeId);
         if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0 &&
                 getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
@@ -124,7 +128,7 @@ public class TransFragment extends ScreenFragment {
                 elementPassedR.setRelative_id(answer.getRelative_id());
                 elementPassedR.setParent_id(answer.getRelative_parent_id());
                 elementPassedR.setFrom_quotas_block(true);
-                Log.d("T-L.TransFragment", "savePassedElement 10: " + elementPassedR.getRelative_id());
+                Log.d("T-A-R.TransFragment", "savePassedElement 10: " + elementPassedR.getRelative_id());
                 getDao().insertElementPassedR(elementPassedR);
                 break;
             }

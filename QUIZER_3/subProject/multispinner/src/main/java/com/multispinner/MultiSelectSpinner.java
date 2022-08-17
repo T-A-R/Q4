@@ -12,6 +12,7 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +37,8 @@ public class MultiSelectSpinner extends Spinner implements DialogInterface.OnMul
     Context c;
     ArrayAdapter<String> simple_adapter;
     private boolean hasNone = false;
-    private int uncheckerIndex = -101;
+    //    private int uncheckerIndex = -101;
+    private List<Integer> uncheckers = new ArrayList<>();
     private TextView item;
 
     public MultiSelectSpinner(Context context) {
@@ -44,7 +46,7 @@ public class MultiSelectSpinner extends Spinner implements DialogInterface.OnMul
         Log.d("TARLOGS", "ADAPTER 1");
         c = context;
         simple_adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item) {
-//        simple_adapter = new ArrayAdapter<String>(context, android.R.layout.simple_expandable_list_item_1) {
+            //        simple_adapter = new ArrayAdapter<String>(context, android.R.layout.simple_expandable_list_item_1) {
             @Override
             public boolean isEnabled(int position) {
                 if (!mEnabled[position]) {
@@ -93,25 +95,37 @@ public class MultiSelectSpinner extends Spinner implements DialogInterface.OnMul
     public void onClick(DialogInterface dialog, int position, boolean isChecked) {
         if (mSelection != null && position < mSelection.length) {
             if (hasNone) {
-                Log.d("TARLOGS", "??? onClick ENABLED: " + mEnabled[position]);
-                if (position == uncheckerIndex && isChecked && mSelection.length > 1) {
+                boolean checkerPressed = false;
+                if (mSelection.length > 0)
+                    for (int z = 0; z < mSelection.length; z++) {
+                        if(uncheckers.contains(mSelection[z])) {
+                            checkerPressed = true;
+                            break;
+                        }
+                    }
+                if (uncheckers.contains(position) && isChecked && mSelection.length > 1) {
+                    Log.d("T-A-R.MultiSelect", "onClick: 1");
                     for (int i = 0; i < mSelection.length; i++) {
-                        if (i != uncheckerIndex)
+                        if (i != position)
                             mSelection[i] = false;
                         mEnabled[i] = false;
                         ((AlertDialog) dialog).getListView().setItemChecked(i, false);
                     }
-                } else if (position == uncheckerIndex && !isChecked && mSelection.length > 1) {
+                } else if (uncheckers.contains(position) && !isChecked && mSelection.length > 1) {
+                    Log.d("T-A-R.MultiSelect", "onClick: 2");
                     for (int i = 0; i < mSelection.length; i++) {
                         mEnabled[i] = true;
                     }
-                } else if (position != uncheckerIndex && mSelection[uncheckerIndex] && isChecked) {
+                } else if (!uncheckers.contains(position) && checkerPressed && isChecked) {
+                    Log.d("T-A-R.MultiSelect", "onClick: 3");
                     for (int i = 0; i < mSelection.length; i++) {
-                        if (i != uncheckerIndex) {
+                        if (i != position) {
                             mSelection[i] = false;
                             ((AlertDialog) dialog).getListView().setItemChecked(i, false);
                         }
                     }
+                } else {
+                    Log.d("T-A-R.MultiSelect", "onClick: 4");
                 }
             }
             if (mEnabled[position])
@@ -328,9 +342,9 @@ public class MultiSelectSpinner extends Spinner implements DialogInterface.OnMul
         return sb.toString();
     }
 
-    public void hasNoneOption(boolean val, int uncheckerIndex) {
+    public void hasNoneOption(boolean val, List<Integer> uncheckerIndex) {
         hasNone = val;
-        this.uncheckerIndex = uncheckerIndex;
+        this.uncheckers = uncheckerIndex;
     }
 
     @Override

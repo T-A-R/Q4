@@ -102,7 +102,7 @@ public class ExpressionUtils {
                             }
                         } catch (NumberFormatException e) {
                             e.printStackTrace();
-                            Log.d("T-L.StringUtils", "PRINT DECODE ERROR");
+                            Log.d("T-A-R.StringUtils", "PRINT DECODE ERROR");
                             return expression;
                         }
 
@@ -275,7 +275,7 @@ public class ExpressionUtils {
                     id = Integer.parseInt(idString);
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
-                    Log.d("T-L.ExpressionUtils", "CANT GET ELEMENT: " + idString);
+                    Log.d("T-A-R.ExpressionUtils", "CANT GET ELEMENT: " + idString);
                     return false;
                 }
 
@@ -292,7 +292,7 @@ public class ExpressionUtils {
                                 return false;
                             }
                         } else {
-                            Log.d("T-L.ExpressionUtils", "CANT GET ELEMENT: " + id);
+                            Log.d("T-A-R.ExpressionUtils", "CANT GET ELEMENT: " + id);
                             return false;
                         }
                         oldPart = "$e." + idString + ".value";
@@ -307,20 +307,22 @@ public class ExpressionUtils {
             } else if (i == expression.indexOf("$ui", i)) {
                 String idString = expression.substring(i + 6);
                 String oldPart = "!!!!!!!!!!!!!!!!!!";
-                for (int n = 0; n < idString.length() - 1; n++) {
-                    if (!Character.isDigit(idString.charAt(n + 1))) {
-                        idString = idString.substring(0, i + 1);
-                        oldPart = "$uik==" + idString;
-                        break;
+                if (idString.length() > 1)
+                    for (int n = 0; n < idString.length() - 1; n++) {
+                        if (!Character.isDigit(idString.charAt(n + 1))) {
+                            idString = idString.substring(0, i + 1);
+                            oldPart = "$uik==" + idString;
+                            break;
+                        }
+                        if ((n == idString.length() - 2) && Character.isDigit(idString.charAt(n + 1))) {
+                            oldPart = "$uik==" + idString;
+                            break;
+                        }
                     }
-                    if ((n == idString.length() - 2) && Character.isDigit(idString.charAt(n + 1))) {
-                        oldPart = "$uik==" + idString;
-                        break;
-                    }
-                }
+                else oldPart = "$uik==" + idString;
 
                 CurrentQuestionnaireR quiz = activity.getCurrentQuestionnaire();
-//                quiz.setRegistered_uik("108"); //TODO ДЛЯ ТЕСТОВ! УБРАТЬ!
+
                 if ((quiz != null && quiz.getRegistered_uik() != null && !quiz.getRegistered_uik().isEmpty() && quiz.getRegistered_uik().equals(idString))
                         || (activity.getConfig().getUserSettings() != null
                         && activity.getConfig().getUserSettings().getAllowed_uiks() != null
@@ -335,7 +337,7 @@ public class ExpressionUtils {
 
         Expression e = new Expression(newExpression);
         boolean result = getBooleanResult(e.calculate());
-        Log.d("T-A-R.ExpressionUtils", "checkHiddenExpression RESULT: " + result);
+        Log.d("T-A-R.ExpressionUtils", "checkHiddenExpression: (" + newExpression + ") RESULT: " + result);
         return result;
     }
 

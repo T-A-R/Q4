@@ -259,7 +259,14 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
         mTelephonyMgr = (TelephonyManager)
                 getMainActivity().getSystemService(Context.TELEPHONY_SERVICE);
 
-        return mTelephonyMgr.getLine1Number();
+        String phoneNumber = "";
+        try {
+            phoneNumber = mTelephonyMgr.getLine1Number();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return phoneNumber;
     }
 
     private boolean checkPhoneNumber() {
@@ -422,16 +429,17 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onSuccess() {
         Log.d("T-L.Reg3Fragment", "SEND REG SMS onSuccess: ");
-        replaceFragment(new Reg4Fragment());
+        replaceFragment(new Reg4Fragment(true));
     }
 
     @Override
     public void onError(Exception pException) {
         Log.d("T-L.Reg3Fragment", "SEND REG SMS onError: " + pException.getMessage());
-        getMainActivity().runOnUiThread(() -> {
-            showToast("Ошибка отправки СМС. \nСвяжитесь с тех. поддержкой");
-            UiUtils.setButtonEnabled(btnNext, true);
-        });
+        replaceFragment(new Reg4Fragment(false));
+//        getMainActivity().runOnUiThread(() -> {
+//            showToast("Ошибка отправки СМС. \nСвяжитесь с тех. поддержкой");
+//            UiUtils.setButtonEnabled(btnNext, true);
+//        });
     }
 
     private void sendRegByInternet() {

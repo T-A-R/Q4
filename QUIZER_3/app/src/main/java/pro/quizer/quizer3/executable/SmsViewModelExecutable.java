@@ -34,13 +34,14 @@ public class SmsViewModelExecutable extends BaseModelExecutable<SmsViewModel> {
         final ProjectInfoModel projectInfoModel = configModel.getProjectInfo();
         final ReserveChannelModel reserveChannelModel = projectInfoModel.getReserveChannel();
 
-        if (reserveChannelModel != null){
+        if (reserveChannelModel != null) {
             final List<StagesModel> stagesModels = configModel.getUserSettings().getStages();
             final List<SmsStage> smsStages = new ArrayList<>();
 
-            for (final StagesModel stageModel : stagesModels) {
-                smsStages.add(new SmsStage(mBaseActivity, stageModel, mBaseActivity));
-            }
+            if (stagesModels != null && stagesModels.size() > 0)
+                for (final StagesModel stageModel : stagesModels) {
+                    smsStages.add(new SmsStage(mBaseActivity, stageModel, mBaseActivity));
+                }
 
             smsViewModel.setSmsStages(smsStages);
         }

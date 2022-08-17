@@ -81,7 +81,7 @@ public class NavigationTestJava {
     @Rule
     public GrantPermissionRule permissionRule11 = GrantPermissionRule.grant(Manifest.permission.VIBRATE);
     @Rule
-    public GrantPermissionRule permissionRule12 = GrantPermissionRule.grant(Manifest.permission.READ_PHONE_STATE);
+    public GrantPermissionRule permissionRule12 = GrantPermissionRule.grant(Manifest.permission.READ_PHONE_NUMBERS);
     @Rule
     public GrantPermissionRule permissionRule14 = GrantPermissionRule.grant(Manifest.permission.ACCESS_WIFI_STATE);
     @Rule

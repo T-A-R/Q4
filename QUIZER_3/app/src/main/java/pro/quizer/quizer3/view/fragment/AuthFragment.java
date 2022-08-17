@@ -5,6 +5,8 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 
 import androidx.appcompat.app.AlertDialog;
@@ -34,9 +36,12 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import okhttp3.ResponseBody;
 import pro.quizer.quizer3.API.QuizerAPI;
@@ -48,16 +53,23 @@ import pro.quizer.quizer3.BuildConfig;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
+import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
+import pro.quizer.quizer3.database.models.QuotaR;
 import pro.quizer.quizer3.database.models.SmsItemR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.DeleteUsersExecutable;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.ServiceInfoExecutable;
 import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
+import pro.quizer.quizer3.model.ElementType;
+import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.QuestionsMatchesModel;
+import pro.quizer.quizer3.model.config.SaveUserModel;
 import pro.quizer.quizer3.model.config.StagesModel;
+import pro.quizer.quizer3.model.quota.QuotaModel;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
@@ -77,6 +89,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     private TextView tvVersionWarning;
     private TextView tvVersionView;
+    private TextView tvKeyView;
     private EditSpinner esLogin;
     private EditText etPass;
     private Button btnSend;
@@ -108,6 +121,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         tvVersionWarning = findViewById(R.id.version_warning);
         TextView tvUsers = findViewById(R.id.users_count);
         tvVersionView = findViewById(R.id.version_view);
+        tvKeyView = findViewById(R.id.key_view);
 
         MainFragment.disableSideMenu();
 
@@ -152,6 +166,10 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 //        usersCountValue = getDao().getAllUsers().size();
 //        tvUsers.setText(String.format(getString(R.string.auth_users_on_device), (usersCountValue + "/" + MAX_USERS)));
         UiUtils.setTextOrHide(tvVersionView, String.format(getString(R.string.auth_version_button), BuildConfig.VERSION_NAME));
+
+        String key = getDao().getKey();
+        UiUtils.setTextOrHide(tvKeyView, String.format(getString(R.string.auth_key_button), key));
+//        tvKeyView.setText(key);
 //        LiveData<Integer> usersCounter = getDao().getUserCount();
 
 
@@ -345,18 +363,22 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                                   final AuthResponseModel pAuthResponseModel,
                                   final String pLogin,
                                   final String pPassword) {
-        try {
-            saveUser(pLogin, pPassword, pAuthResponseModel, pConfigResponseModel.getConfig());
-            saveCurrentUserId(pAuthResponseModel.getUserId());
-        } catch (final Exception e) {
-            showToast(getString(R.string.server_response_error) + "\n" + e);
-            e.printStackTrace();
-            return;
-        }
+        SaveUserModel model = new SaveUserModel(pConfigResponseModel, pAuthResponseModel, pLogin, pPassword);
+        saveCurrentUserId(model.getpAuthResponseModel().getUserId());
+        new SaveUser().execute(model);
 
-        makeSmsDatabase();
-
-        downloadQuotas(pAuthResponseModel, pLogin, pPassword);
+//        try {
+//            saveUser(pLogin, pPassword, pAuthResponseModel, pConfigResponseModel.getConfig());
+//            saveCurrentUserId(pAuthResponseModel.getUserId());
+//        } catch (final Exception e) {
+//            showToast(getString(R.string.server_response_error) + "\n" + e);
+//            e.printStackTrace();
+//            return;
+//        }
+//
+//        makeSmsDatabase();
+//
+//        downloadQuotas(pAuthResponseModel, pLogin, pPassword);
     }
 
     private void makeSmsDatabase() {
@@ -457,7 +479,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 e.printStackTrace();
             }
 
-//            getMainActivity().copyToClipboard(responseJson);
             final GsonBuilder gsonBuilder = new GsonBuilder();
             ConfigResponseModel configResponseModel = null;
 
@@ -467,23 +488,48 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             } catch (final Exception pE) {
                 pE.printStackTrace();
                 Log.d("T-A-R.AuthFragment", "downloadConfig ERROR: " + responseJson);
-//                getMainActivity().copyToClipboard(responseJson);
                 showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_603));
             }
 
             if (configResponseModel != null) {
-                if (configResponseModel.isProjectActive() != null) {
-                    try {
-                        getDao().setProjectActive(configResponseModel.isProjectActive());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (configResponseModel.getResult() != 0) {
-                    isRebuildDB = true;
-                    downloadFiles(configResponseModel, pModel, pLogin, pPassword);
+                Integer ver = configResponseModel.getConfig().getMinAppVersion();
+//                ver = 4000000;
+                if (ver != null && ver > BuildConfig.VERSION_CODE) {
+                    showDialog("Внимание!", getString(R.string.please_download_last_app_version), "Скачать", null,
+                            new ICallback() {
+                                @Override
+                                public void onStarting() {
+
+                                }
+
+                                @Override
+                                public void onSuccess() {
+                                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://quizerplus.ru/apps/quizer"));
+                                    startActivity(browserIntent);
+                                    replaceFragment(new AuthFragment());
+                                }
+
+                                @Override
+                                public void onError(Exception pException) {
+
+                                }
+                            }, null);
                 } else {
-                    showToast(configResponseModel.getError());
+                    if (configResponseModel.isProjectActive() != null) {
+                        try {
+                            getDao().setProjectActive(configResponseModel.isProjectActive());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (configResponseModel.getResult() != 0) {
+//                        Log.d("T-A-R.AuthFragment", ">>>>>> SET TIME 1");
+                        getDao().setConfigTime(DateUtils.getCurrentTimeMillis());
+                        isRebuildDB = true;
+                        downloadFiles(configResponseModel, pModel, pLogin, pPassword);
+                    } else {
+                        showToast(configResponseModel.getError());
+                    }
                 }
             } else {
                 try {
@@ -837,5 +883,30 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         else runEvent(12);
     }
 
+    @SuppressLint("StaticFieldLeak")
+    private class SaveUser extends AsyncTask<SaveUserModel, Void, SaveUserModel> {
 
+        @Override
+        protected SaveUserModel doInBackground(SaveUserModel... saveUserModels) {
+            SaveUserModel model = saveUserModels[0];
+            try {
+                saveUser(model.getpLogin(), model.getpPassword(), model.getpAuthResponseModel(), model.getpConfigResponseModel().getConfig());
+                saveCurrentUserId(model.getpAuthResponseModel().getUserId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return model;
+        }
+
+        protected void onPreExecute() {
+
+        }
+
+        protected void onPostExecute(SaveUserModel model) {
+            makeSmsDatabase();
+
+            downloadQuotas(model.getpAuthResponseModel(), model.getpLogin(), model.getpPassword());
+        }
+    }
 }

@@ -824,10 +824,10 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
 
                 itemsList.clear();
 
-                Integer unchecker = null;
+                List<Integer> uncheckers = new ArrayList<>();
                 for (int i = 0; i < answersList.size(); i++) {
                     itemsList.add(Objects.requireNonNull(titlesMap.get(answersList.get(i).getRelative_id())).getTitle());
-                    if (answersList.get(i).getElementOptionsR().isUnchecker()) unchecker = i;
+                    if (answersList.get(i).getElementOptionsR().isUnchecker()) uncheckers.add(i);
                 }
 
                 if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isPolyanswer()) {
@@ -835,8 +835,8 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
                     multiSelectionSpinner = findViewById(R.id.answers_multi_spinner);
                     multiSelectionSpinner.setVisibility(View.VISIBLE);
                     multiSelectionSpinner.setItems(itemsList);
-                    if (unchecker != null)
-                        multiSelectionSpinner.hasNoneOption(true, unchecker);
+                    if (uncheckers.size() > 0)
+                        multiSelectionSpinner.hasNoneOption(true, uncheckers);
                     multiSelectionSpinner.setSelection(new int[]{});
                     multiSelectionSpinner.setListener(new MultiSelectSpinner.OnMultipleItemsSelectedListener() {
                         @Override

@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -271,7 +272,8 @@ public abstract class ScreenFragment extends SmartFragment {
         }
         if (configReloadTime == null) configReloadTime = -1L;
         Long configTime = getDao().getSettings().getConfig_time();
-        if (configReloadTime != -1L && configReloadTime < DateUtils.getCurrentTimeMillis() && configTime < configReloadTime) {
+//        Log.d("T-A-R.ScreenFragment", ">>>>> checkConfigTime: " + configTime + " / " + configReloadTime);
+        if (configReloadTime != -1L && configTime != -1L  && configReloadTime < DateUtils.getCurrentTimeMillis() && configTime < configReloadTime) {
             showClearDbAlertDialog("ВНИМАНИЕ! Перед началом работы должна быть обновлена база данных приложения!",
                     "Сейчас база приложения будет очищена и потребуется заново ввести ключ, логин и пароль при наличии Интернет!");
             return false;
@@ -329,6 +331,34 @@ public abstract class ScreenFragment extends SmartFragment {
                             }
                         }).execute();
                     }).show();
+        }
+    }
+
+    public void showDialog(String title, String message, String yes, String no, ICallback listenerYes, ICallback listenerNo) {
+        MainActivity activity = getMainActivity();
+        if (activity != null && !activity.isFinishing()) {
+
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity, R.style.AlertDialogStyleRed);
+            alertDialog.setCancelable(false);
+            if (title != null) alertDialog.setTitle(title);
+            alertDialog.setMessage(message);
+            if (listenerYes != null)
+                alertDialog.setPositiveButton(yes, (dialog, which) -> {
+                    listenerYes.onSuccess();
+                    if (alertDialog != null) {
+                        dialog.dismiss();
+                    }
+                });
+
+            if (listenerNo != null)
+                alertDialog.setPositiveButton(no, (dialog, which) -> {
+                    listenerNo.onSuccess();
+                    if (alertDialog != null) {
+                        dialog.dismiss();
+                    }
+                });
+
+            alertDialog.show();
         }
     }
 

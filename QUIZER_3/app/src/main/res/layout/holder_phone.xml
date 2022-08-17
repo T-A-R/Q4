@@ -4,16 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingVertical="@dimen/_4sdp">
 
     <Button
         android:id="@+id/user_logs_btn"
-        style="@style/ButtonStyle"
+        android:background="@drawable/button_background_transparent"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_36sdp"
         android:layout_gravity="center_horizontal"
         android:maxLines="1"
         android:textSize="@dimen/_12ssp"
-        android:text="user_login" />
+        android:text="phone" />
 
 </RelativeLayout>

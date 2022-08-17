@@ -13,8 +13,11 @@ import android.provider.Settings;
 
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -23,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -30,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -45,6 +50,8 @@ import pro.quizer.quizer3.API.models.response.StatisticsResponseModel;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.adapter.PhonesAdapter;
+import pro.quizer.quizer3.adapter.UsersBtnRecyclerAdapter;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
@@ -104,6 +111,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private TextView tvProjectStatus;
     private TextView tvCountAll;
     private TextView tvCountSent;
+    private TextView tvRegInfo;
     private ProgressBar pb;
 
     private boolean isStartBtnPressed = false;
@@ -126,6 +134,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private boolean isTimeToDownloadConfig = false;
     private boolean isRegistrationRequired = false;
     private boolean isCodeRequired = false;
+    private boolean isDialogRequired = false;
     private StatisticR finalStatistics;
     private AlertDialog infoDialog;
     private int completedCounter = 0;
@@ -165,6 +174,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         tvProjectStatus = findViewById(R.id.project_status);
         tvCountAll = findViewById(R.id.count_all);
         tvCountSent = findViewById(R.id.count_sent);
+        tvRegInfo = findViewById(R.id.tv_reg_info);
         pb = findViewById(R.id.progressBarQuota);
 
         MainFragment.enableSideMenu(true, getMainActivity().isExit());
@@ -258,7 +268,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
 //        if (activity.isExit() && !getCurrentUser().getConfigR().isRegsDisabled()) checkRegistration();
         if (activity.isExit()) checkRegistration();
-
+//        showSnackBar("", false);
     }
 
     @Override
@@ -303,17 +313,31 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             case 15: // Settings OK but location fail to start
                 getMainActivity().isGoogleLocation = false;
                 start();
+                break;
+            case 21:
+                showSnackBar("", true);
+                break;
+            case 22:
+                showSnackBar("", false);
+                break;
+            case 23:
+                try {
+                    UiUtils.setButtonEnabled(btnStart, false);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
         }
     }
 
     @Override
     public void onClick(View view) {
-        if(checkConfigTime(false)) {
+        if (checkConfigTime(false)) {
             if (view == btnStart) {
                 if (isRegistrationRequired) {
                     replaceFragment(new Reg1Fragment());
                 } else if (isCodeRequired) {
-                    replaceFragment(new Reg4Fragment());
+                    replaceFragment(new Reg4Fragment(true));
                 } else {
                     if (activity.getConfig().isGps()) {
                         activity.checkSettingsAndStartLocationUpdates(isForceGps, this);
@@ -362,7 +386,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         new SendQuestionnairesByUserModelExecutable(getMainActivity(), mUserModel, new ICallback() {
             @Override
             public void onStarting() {
-                showScreensaver("Отправка анкет",true);
+                showScreensaver("Отправка анкет", true);
             }
 
             @Override
@@ -954,7 +978,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             List<QuestionnaireDatabaseModelR> abortedUserQuestionnairesList = null;
             List<QuestionnaireDatabaseModelR> correctedQuestionnairesList = null;
             List<QuestionnaireDatabaseModelR> correctedUserQuestionnairesList = null;
-            Log.d("T-L.HomeFragment", "==================================== START");
             try {
                 abortedUserQuestionnairesList = getDao().getQuestionnaireByStatusAndName(userId, settings.getUser_name(), settings.getUser_date(), Constants.QuestionnaireStatuses.ABORTED, Constants.LogStatus.NOT_SENT);
                 abortedQuestionnairesList = getDao().getQuestionnaireSurveyStatus(userId, Constants.QuestionnaireStatuses.ABORTED, Constants.LogStatus.NOT_SENT);
@@ -1292,7 +1315,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                         boolean mCheckMemory = checkMemory();
                                         if (mCheckTime && (canContWithZeroGps || checkGps()) && mCheckMemory) {
                                             startQuestionnaire();
-                                        } else if(!mCheckTime) {
+                                        } else if (!mCheckTime) {
                                             activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check time false.", null);
                                             showToast("Неверное время");
                                         } else if (!mCheckMemory) {
@@ -1519,95 +1542,154 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
     private void checkRegistration() {
         if (getCurrentUser().getConfigR().has_registration()) {
-            boolean isPeriodFound = false;
+            PeriodModel workPeriod = null;
+            PeriodModel regPeriod = null;
+            PeriodModel nextWorkPeriod = null;
+            PeriodModel nextRegPeriod = null;
             long currentTime = DateUtils.getCurrentTimeMillis();
             ConfigModel configModel = activity.getConfig();
-            RegistrationR reg = getDao().getRegistrationR(getCurrentUserId());
+            RegistrationR phoneReg = getDao().getRegistrationR(getCurrentUserId());
+            RegistrationR activeReg = null;
+
+            List<String> phonesList = new ArrayList<>();
+            Boolean regDisabled = getCurrentUser().getConfigR().isRegsDisabled();
+            Boolean hasSms = getCurrentUser().getConfigR().hasReserveChannels();
 
             // Любая регистрация полученная с сервера
             ActiveRegistrationData handReg = configModel.getUserSettings() != null ? configModel.getUserSettings().getActive_registration_data() : null;
-
-            if(reg == null) Log.d("T-L.HomeFragment", "checkRegistration: NO HAVE SAVES REG");
-            else {
-                if(!reg.isAccepted()) Log.d("T-L.HomeFragment", "checkRegistration: REG NOT ACCEPTED / STATUS: " + reg.getStatus());
-                Log.d("T-L.HomeFragment", "checkRegistration: ALL REGS: " + getDao().getAllRegistrationR().size());
-                Log.d("T-L.HomeFragment", "checkRegistration STATUS: " + reg.getStatus());
+            if (handReg != null && handReg.getReg_phones() != null) {
+                phonesList = handReg.getReg_phones();
+            }
+            if (phonesList.size() == 0 && phoneReg != null) {
+                phonesList.add(phoneReg.getPhone());
             }
 
-            btnStart.setText("Регистрация");
-            UiUtils.setButtonEnabled(btnStart, false);
-            isRegistrationRequired = true;
+            Log.d("T-A-R.HomeFragment", ">>>>> phonesList: " + phonesList.size());
 
-            List<PeriodModel> periods = configModel.getRegistrationPeriods();
-            if (periods != null && periods.size() > 0) {
-                for (PeriodModel period : periods) {
-                    if(currentTime > period.getStart() && currentTime < period.getEnd()) {
-                        isPeriodFound = true;
-                        Log.d("T-L.HomeFragment", "checkRegistration: PERIOD FOUND");
-                        if(handReg != null && handReg.getReg_time() > period.getStart() && handReg.getReg_time() < period.getEnd()) {
-                            getDao().clearRegistrationRByUser(getCurrentUserId());
-                            RegistrationR registrationR = new RegistrationR();
-                            registrationR.setUik_number(configModel.getUserSettings().getActive_registration_data().getUik_number());
-                            registrationR.setReg_time(handReg.getReg_time());
-                            registrationR.setUser_id(getCurrentUserId());
-                            registrationR.setStatus(Constants.Registration.SENT);
-                            getDao().insertRegistrationR(registrationR);
-                            btnStart.setText("Начать");
-                            isRegistrationRequired = false;
-                            Log.d("T-L.HomeFragment", "checkRegistration: HAND REG FOUND" + handReg.getReg_time());
-                            break;
-                        } else if (reg != null) {
-                            if(reg.getReg_time() > period.getStart() && reg.getReg_time() < period.getEnd()) {
-                                if(reg.isCode()) {
-                                    btnStart.setText("Ввести код");
-                                    UiUtils.setButtonEnabled(btnStart, true);
-                                    isCodeRequired = true;
-                                    Log.d("T-L.HomeFragment", "checkRegistration: WAITING CODE");
-                                } else if(reg.isAccepted() || reg.smsClosed()) {
-                                    btnStart.setText("Начать");
-                                    isRegistrationRequired = false;
-                                    Log.d("T-L.HomeFragment", "checkRegistration: REG ACCEPTED");
-                                }
-                            } else {
-                                getDao().clearRegistrationRByUser(getCurrentUserId());
-                                UiUtils.setButtonEnabled(btnStart, true);
-                            }
-                        } else {
-                            UiUtils.setButtonEnabled(btnStart, true);
-                        }
+            List<PeriodModel> regPeriods = configModel.getRegistrationPeriods();
+            List<PeriodModel> workPeriods = configModel.getWork_periods();
+
+            if (workPeriods != null && workPeriods.size() > 0) {
+                boolean isFound = false;
+                for (PeriodModel period : workPeriods) {
+                    if (currentTime < period.getStart()) nextWorkPeriod = period;
+                    if (currentTime > period.getStart() && currentTime < period.getEnd()) {
+                        workPeriod = period;
+                        isFound = true;
                     }
-
-                    if(isPeriodFound) break;
+                    if (isFound) break;
                 }
             }
 
-            if(getCurrentUser().getConfigR().isRegsDisabled()) isRegistrationRequired = false;
+            if (workPeriod != null)
+                Log.d("T-A-R.HomeFragment", "workPeriod: " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, workPeriod.getStart()) + " / " + workPeriod.getStart());
+            if (nextWorkPeriod != null)
+                Log.d("T-A-R.HomeFragment", "nextWorkPeriod: " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextWorkPeriod.getStart()) + " / " + nextWorkPeriod.getStart());
 
-            if(isRegistrationRequired && !activity.hasReserveChannel() && reg != null) {
-                getDao().clearRegistrationRByUser(getCurrentUserId());
-                UiUtils.setButtonEnabled(btnStart, true);
+            if (regPeriods != null && regPeriods.size() > 0) {
+                boolean isFound = false;
+                for (PeriodModel period : regPeriods) {
+                    if (currentTime < period.getStart()) nextRegPeriod = period;
+                    if (currentTime > period.getStart() && currentTime < period.getEnd()) {
+                        regPeriod = period;
+                        if (phoneReg != null && phoneReg.getReg_time() > period.getStart() && phoneReg.getReg_time() < period.getEnd()) {
+                            activeReg = phoneReg;
+                        } else if (handReg != null && handReg.getReg_time() > period.getStart() && handReg.getReg_time() < period.getEnd()) {
+                            getDao().clearRegistrationRByUser(getCurrentUserId());
+                            activeReg = new RegistrationR();
+                            activeReg.setUik_number(configModel.getUserSettings().getActive_registration_data().getUik_number());
+                            activeReg.setReg_time(handReg.getReg_time());
+                            activeReg.setUser_id(getCurrentUserId());
+                            activeReg.setStatus(Constants.Registration.HAND);
+                            activeReg.setPhone("");
+//                            getDao().insertRegistrationR(activeReg);
+                        } else {
+                            getDao().clearRegistrationRByUser(getCurrentUserId());
+                        }
+                        isFound = true;
+                    }
+                    if (isFound) break;
+                }
             }
+
+            if (regPeriod != null)
+                Log.d("T-A-R.HomeFragment", "regPeriod: " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, regPeriod.getStart()) + " / " + regPeriod.getStart());
+            if (nextRegPeriod != null)
+                Log.d("T-A-R.HomeFragment", "nextRegPeriod: " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextRegPeriod.getStart()) + " / " + nextRegPeriod.getStart());
+
+            if (regPeriod == null) {
+                isRegistrationRequired = true;
+                btnStart.setText("Регистрация");
+                UiUtils.setButtonEnabled(btnStart, false);
+                if (!regDisabled && nextRegPeriod != null) {
+                    String info = "Внимание! Период регистрации начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextRegPeriod.getStart() * 1000L) + "!";
+                    tvRegInfo.setText(info);
+                    tvRegInfo.setVisibility(View.VISIBLE);
+                    activity.startCounter(nextRegPeriod.getStart() * 1000L, 1, this);
+                }
+            } else {
+                if (workPeriod == null) {
+                    if (activeReg == null) {
+                        btnStart.setText("Регистрация");
+                        UiUtils.setButtonEnabled(btnStart, true);
+                        isRegistrationRequired = true;
+                    } else {
+                        isRegistrationRequired = false;
+                        if (activeReg.isCode()) {
+                            btnStart.setText("Ввести код");
+                            UiUtils.setButtonEnabled(btnStart, true);
+                            isCodeRequired = true;
+                        } else if (activeReg.isAccepted() || activeReg.smsClosed()) {
+                            if (nextWorkPeriod != null) {
+                                String info = "Внимание! Рабочий период начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextWorkPeriod.getStart() * 1000L) + "!";
+                                tvRegInfo.setText(info);
+                                tvRegInfo.setVisibility(View.VISIBLE);
+                                activity.startCounter(nextWorkPeriod.getStart() * 1000L, 2, this);
+                            }
+
+                            btnStart.setText("Начать");
+                            UiUtils.setButtonEnabled(btnStart, false);
+                            isCodeRequired = false;
+                            isRegistrationRequired = false;
+                        }
+
+                        isDialogRequired = false;
+                    }
+                } else {
+                    if (activeReg == null) {
+                        btnStart.setText("Регистрация");
+                        UiUtils.setButtonEnabled(btnStart, true);
+                        isRegistrationRequired = true;
+                    } else {
+                        isRegistrationRequired = false;
+                        if (activeReg.isCode()) {
+                            btnStart.setText("Ввести код");
+                            UiUtils.setButtonEnabled(btnStart, true);
+                            isCodeRequired = true;
+                        } else {
+                            btnStart.setText("Начать");
+                            UiUtils.setButtonEnabled(btnStart, true);
+                            activity.startCounter(workPeriod.getEnd() * 1000L, 3, this);
+                            isCodeRequired = false;
+                            isDialogRequired = true;
+                        }
+                    }
+                }
+            }
+
             checkRegForSend();
 
-            if (!isRegistrationRequired) {
-                btnStart.setText("Начать");
-                List<PeriodModel> workPeriods = configModel.getWork_periods();
-                boolean inTime = false;
-                if (workPeriods != null)
-                    for (PeriodModel period : workPeriods) {
-                        inTime = currentTime > period.getStart() && currentTime < period.getEnd();
-                        if (inTime) break;
-                    }
-                UiUtils.setButtonEnabled(btnStart, inTime);
-            } else {
-                Log.d("T-L.HomeFragment", "checkRegistration: NEED REG");
+            if (isDialogRequired || (activeReg != null && activeReg.getPhone().equals(""))) {
+                if(getCurrentUser().getConfigR().hasReserveChannels() && mIsStartAfterAuth) {
+                    showPhoneRegDialog(phonesList);
+                }
             }
-            if (DEBUG_MODE) {
-                UiUtils.setButtonEnabled(btnStart, true);
-            }
+
+
         } else {
             Log.d("T-L.HomeFragment", "checkRegistration: NO NEED TO REG ");
         }
+
     }
 
     private void checkRegForSend() {
@@ -1690,7 +1772,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 boolean mCheckMemory = checkMemory();
                 if (mCheckTime && mCheckGps && mCheckMemory) {
                     startQuestionnaire();
-                } else if(!mCheckTime) {
+                } else if (!mCheckTime) {
                     activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check time false.", null);
                     showToast("Неверное время");
                 } else if (!mCheckMemory) {
@@ -1708,7 +1790,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void startQuestionnaire() {
-        activity.addLog(Constants.LogObject.QUESTIONNAIRE, Constants.LogType.DIALOG, Constants.LogResult.ERROR, "Start dialog cant start coz duplicate.", null);
         try {
             activity.stopRecording();
         } catch (Exception e) {
@@ -1752,7 +1833,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         currentQuestionnaire.setProject_id(config.getProjectInfo().getProjectId());
         currentQuestionnaire.setUser_project_id(user_project_id);
         currentQuestionnaire.setStart_date(DateUtils.getCurrentTimeMillis());
-        String uik = reg != null ? reg.getUik_number() : null;
+        String uikFromConfig = getCurrentUser().getConfigR().getUserSettings() != null ? getCurrentUser().getConfigR().getUserSettings().getAllowed_uiks() != null ? getCurrentUser().getConfigR().getUserSettings().getAllowed_uiks().get(0) : null : null;
+        String uik = reg != null ? reg.getUik_number() != null ? reg.getUik_number() : uikFromConfig : uikFromConfig;
         currentQuestionnaire.setRegistered_uik(uik);
         currentQuestionnaire.setGps(mGpsString);
         currentQuestionnaire.setGps_network(mGpsNetworkString);
@@ -1802,7 +1884,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private void sendPhotoAnswers() {
         List<PhotoAnswersR> list = getDao().getPhotoAnswersByStatus(Constants.LogStatus.READY_FOR_SEND);
         Log.d("T-L.HomeFragment", "sendPhotoAnswers: PHOTO LIST SIZE = " + list.size());
-        if(list != null && list.size() >0) {
+        if (list != null && list.size() > 0) {
             new PhotosAnswersSendingExecutable(activity, mUserModel, list, null).execute();
         }
     }
@@ -1825,6 +1907,89 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         newItem.setEnabled(true);
 
         return newItem;
+    }
+
+    private void showPhoneRegDialog(List<String> phonesList) {
+        Log.d("T-A-R.HomeFragment", "showPhoneRegDialog: <<<<<<<<<<<<<<");
+        try {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getMainActivity());
+            View layoutView = getLayoutInflater().inflate(R.layout.dialog_phone_reg_auto, null);
+            RecyclerView rv = layoutView.findViewById(R.id.rv_phones);
+            Button regBtn = layoutView.findViewById(R.id.btn_reg_phone);
+
+//            try {
+////                phonesList = getCurrentUser().getConfigR().getUserSettings().getRegPhones();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+            if (phonesList.size() > 0) {
+                PhonesAdapter adapter = new PhonesAdapter(phonesList, phone -> {
+                    try {
+                        isDialogRequired = false;
+                        RegistrationR phoneReg = getDao().getRegistrationR(getCurrentUserId());
+                        getDao().updateUserPhone(phone, getCurrentUserId());
+                        if (phoneReg != null)
+                            getDao().setRegPhone(phoneReg.getId(), phone);
+                        infoDialog.dismiss();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+                rv.setLayoutManager(new LinearLayoutManager(getContext()));
+                rv.setAdapter(adapter);
+            }
+
+            regBtn.setOnClickListener(v -> {
+                try {
+                    getDao().clearRegistrationRByUser(getCurrentUserId());
+                    replaceFragment(new Reg1Fragment());
+                    infoDialog.dismiss();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+
+
+            dialogBuilder.setView(layoutView);
+            infoDialog = dialogBuilder.create();
+            infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+            infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            infoDialog.setCancelable(false);
+            if (activity != null && !activity.isFinishing())
+                infoDialog.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showSnackBar(String text, boolean isReg) {
+        String message = "";
+        if (isReg) {
+            btnStart.setText("Регистрация");
+            message = "Внимание! Начался период регистрации!";
+        } else {
+            btnStart.setText("Начать");
+            message = "Внимание! Рабочий период начался!";
+        }
+        tvRegInfo.setVisibility(View.GONE);
+        UiUtils.setButtonEnabled(btnStart, true);
+        Snackbar snack = Snackbar.make(findViewById(R.id.cont_home_fragment), message, Snackbar.LENGTH_INDEFINITE);
+                snack.setAction("OK", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        snack.dismiss();
+                    }
+                });
+//                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light));
+
+        View view = snack.getView();
+        TextView mTextView = (TextView) view.findViewById(com.google.android.material.R.id.snackbar_text);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+            mTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        else
+            mTextView.setGravity(Gravity.CENTER_HORIZONTAL);
+        snack.show();
     }
 }
 

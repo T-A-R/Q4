@@ -97,6 +97,9 @@ public interface QuizerDao {
     @Query("UPDATE UserModelR SET questionnaire_opened = :wasStarted WHERE user_id = :userId")
     void updateQuestionnaireStart(boolean wasStarted, int userId);
 
+    @Query("UPDATE UserModelR SET phone = :phone WHERE user_id = :userId")
+    void updateUserPhone(String phone, int userId);
+
     @Query("UPDATE UserModelR SET config = :config WHERE user_id = :userId AND user_project_id = :userProjectId")
     void updateConfig(String config, int userId, int userProjectId);
 
@@ -460,6 +463,9 @@ public interface QuizerDao {
 
     @Query("UPDATE RegistrationR SET status = :status WHERE id =:id")
     void setRegStatus(Integer id, String status);
+
+    @Query("UPDATE RegistrationR SET phone = :phone WHERE id =:id")
+    void setRegPhone(Integer id, String phone);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertEncryptionTableR(EncryptionTableR encryptionTableR);

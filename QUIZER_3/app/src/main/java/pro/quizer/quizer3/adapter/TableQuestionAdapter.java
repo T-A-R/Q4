@@ -610,9 +610,9 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
         final int clickedRelativeId = pClickedElement.getRelative_id();
 
-        List<ElementItemR> answersList = pQuestion.getElements();
+//        List<ElementItemR> answersList = pQuestion.getElements();
         if (!mIsFlipColsAndRows) {
-            for (int i = 0; i < answersList.size(); i++) {
+            for (int i = 0; i < mAnswers.size(); i++) {
                 if (clickedRelativeId != mAnswersState[row - 1][i].getRelative_id()) {
                     mAnswersState[row - 1][i].setChecked(false);
                     setLine();
@@ -627,7 +627,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             }
             notifyItemChanged(row - 1, 0);
         } else {
-            for (int i = 0; i < answersList.size(); i++) {
+            for (int i = 0; i < mAnswers.size(); i++) {
                 if (clickedRelativeId != mAnswersState[column - 1][i].getRelative_id()) {
                     mAnswersState[column - 1][i].setChecked(false);
                     setLine();

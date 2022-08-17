@@ -61,6 +61,7 @@
     <string name="auth_enter_login">Введите логин</string>
     <string name="auth_enter_password">Введите пароль</string>
     <string name="auth_version_button">Версия: %1$s</string>
+    <string name="auth_key_button">Ключ: %1$s</string>
     <string name="notification_empty_login_or_pass">Логин или пароль пуст. Пожалуйста, введите логин и пароль, а затем повторите попытку входа.</string>
     <string name="notification_max_users">Достигнуто максимальное количество пользователей на устройстве (%1$s)! Обратитесь к менеджеру!</string>
     <string name="notification_short_login">Минимальная длина логина - 3 символа. Пожалуйста, введите логин и повторите попытку входа.</string>
@@ -505,4 +506,8 @@
     <string name="limits_warning_start">Значение в ответе %1$s должно быть</string>
     <string name="limits_warning_min">не менее %1$s</string>
     <string name="limits_warning_max">не более %1$s</string>
+    <string name="please_download_last_app_version">У вас установлена неактуальная версия приложения. На ней работа невозможна. Пожалуйста, скачайте последнюю версию</string>
+    <string name="reg_phone_info">У Вашего логина для работы зарегистрированы следующие номера телефонов. Выберите среди них номер телефона, sim-карта для которого установлена на устройстве с приложением, а при его отсутствии в списке зарегистрируйте новый номер.</string>
+    <string name="reg_new_phone">Зарегистрировать новый номер</string>
+    <string name="reg_phone_warning">Внимание! Если вы неверно укажете номер телефона на sim-карте для устройства, то ваша работа не будет учтена.</string>
 </resources>

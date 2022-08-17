@@ -59,6 +59,8 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
             getMainActivity().makeEncryptionTable();
         }
 
+        getMainActivity().getSettings();
+
         btnSend.setOnClickListener(this);
 
         cont.startAnimation(Anim.getAppear(getContext()));

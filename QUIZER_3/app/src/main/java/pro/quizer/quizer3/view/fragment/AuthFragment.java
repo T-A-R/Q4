@@ -98,6 +98,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     private boolean isCanBackPress = true;
     private boolean isRebuildDB = false;
     private int mVersionTapCount = 0;
+    private int mKeyTapCount = 0;
 
     String login;
     String password;
@@ -169,9 +170,8 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
         String key = getDao().getKey();
         UiUtils.setTextOrHide(tvKeyView, String.format(getString(R.string.auth_key_button), key));
-//        tvKeyView.setText(key);
-//        LiveData<Integer> usersCounter = getDao().getUserCount();
 
+        tvKeyView.setOnClickListener(view -> onKeyClick());
 
         mSavedUserModels = getSavedUserModels();
         mSavedUsers = getSavedUserLogins();
@@ -293,6 +293,21 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         if (mVersionTapCount == MAX_VERSION_TAP_COUNT) {
             mVersionTapCount = 0;
             replaceFragment(new ServiceFragment());
+        }
+    }
+
+    private void onKeyClick() {
+        mKeyTapCount++;
+
+        if (mKeyTapCount == MAX_VERSION_TAP_COUNT) {
+            mKeyTapCount = 0;
+            if (getActivity() != null && !getActivity().isFinishing()) {
+                try {
+                    showClearDbAlertDialog();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -467,7 +482,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             String responseJson = null;
             try {
                 responseJson = responseBody.string();
-//                Log.d(TAG, "downloadConfig: " + responseJson);
 //                getMainActivity().copyToClipboard(responseJson);
             } catch (IOException e) {
                 showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_602));
@@ -907,6 +921,62 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             makeSmsDatabase();
 
             downloadQuotas(model.getpAuthResponseModel(), model.getpLogin(), model.getpPassword());
+        }
+    }
+
+    public void showClearDbAlertDialog() {
+        MainActivity activity = getMainActivity();
+        if (activity != null && !activity.isFinishing()) {
+            new AlertDialog.Builder(activity, R.style.AlertDialogStyleRed)
+                    .setCancelable(false)
+                    .setTitle(R.string.clear_db_title)
+                    .setMessage(R.string.dialog_clear_db_warning)
+                    .setPositiveButton(R.string.view_yes, (dialog, which) -> {
+                        showScreensaver(getString(R.string.notification_clear_db), true);
+                        new DeleteUsersExecutable(activity, new ICallback() {
+                            @Override
+                            public void onStarting() {
+                            }
+
+                            @Override
+                            public void onSuccess() {
+                                hideScreensaver();
+                                ConfigModel config1 = null;
+                                ConfigModel config2 = null;
+                                Integer users = 0;
+                                try {
+                                    users = getDao().getAllUsers().size();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    config1 = activity.getConfig();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    config2 = activity.getConfigForce();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+
+                                try {
+                                    String log = "Users: " + users + " Config: " + config1 + " / " + config2;
+                                    getMainActivity().addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ATTEMPT, "clear db", log);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                replaceFragment(new KeyFragment());
+                            }
+
+                            @Override
+                            public void onError(Exception pException) {
+                                showToast("Ошибка очистки базы. Рекомендуется переустановить приложение.");
+                            }
+                        }).execute();
+                    })
+                    .setNegativeButton(R.string.view_no, null).show();
         }
     }
 }

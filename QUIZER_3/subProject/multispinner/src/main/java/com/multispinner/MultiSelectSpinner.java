@@ -96,15 +96,20 @@ public class MultiSelectSpinner extends Spinner implements DialogInterface.OnMul
         if (mSelection != null && position < mSelection.length) {
             if (hasNone) {
                 boolean checkerPressed = false;
-                if (mSelection.length > 0)
-                    for (int z = 0; z < mSelection.length; z++) {
-                        if(uncheckers.contains(mSelection[z])) {
-                            checkerPressed = true;
-                            break;
+                if (uncheckers.size() > 0 && mSelection.length > 0)
+                    for (int z = 0; z < uncheckers.size(); z++) {
+                        try {
+                            if(mSelection[uncheckers.get(z)]) {
+                                checkerPressed = true;
+                                break;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
+//                Log.d("T-A-R.MultiSelect", "checkerPressed: " + checkerPressed);
                 if (uncheckers.contains(position) && isChecked && mSelection.length > 1) {
-                    Log.d("T-A-R.MultiSelect", "onClick: 1");
+//                    Log.d("T-A-R.MultiSelect", "onClick: 1");
                     for (int i = 0; i < mSelection.length; i++) {
                         if (i != position)
                             mSelection[i] = false;
@@ -112,20 +117,23 @@ public class MultiSelectSpinner extends Spinner implements DialogInterface.OnMul
                         ((AlertDialog) dialog).getListView().setItemChecked(i, false);
                     }
                 } else if (uncheckers.contains(position) && !isChecked && mSelection.length > 1) {
-                    Log.d("T-A-R.MultiSelect", "onClick: 2");
+//                    Log.d("T-A-R.MultiSelect", "onClick: 2");
                     for (int i = 0; i < mSelection.length; i++) {
                         mEnabled[i] = true;
                     }
                 } else if (!uncheckers.contains(position) && checkerPressed && isChecked) {
-                    Log.d("T-A-R.MultiSelect", "onClick: 3");
+//                    Log.d("T-A-R.MultiSelect", "onClick: 3");
                     for (int i = 0; i < mSelection.length; i++) {
-                        if (i != position) {
+                        if (!uncheckers.contains(i)) {
                             mSelection[i] = false;
                             ((AlertDialog) dialog).getListView().setItemChecked(i, false);
                         }
                     }
                 } else {
-                    Log.d("T-A-R.MultiSelect", "onClick: 4");
+//                    Log.d("T-A-R.MultiSelect", "onClick: 4: ");
+//                    for(int g =0; g < mSelection.length; g++) {
+//                        Log.d("T-A-R.MultiSelect", "selection: " + g + ": " + mSelection[g]);
+//                    }
                 }
             }
             if (mEnabled[position])

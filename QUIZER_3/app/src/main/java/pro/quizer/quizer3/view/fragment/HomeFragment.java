@@ -1564,15 +1564,20 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 phonesList.add(phoneReg.getPhone());
             }
 
-            Log.d("T-A-R.HomeFragment", ">>>>> phonesList: " + phonesList.size());
-
             List<PeriodModel> regPeriods = configModel.getRegistrationPeriods();
             List<PeriodModel> workPeriods = configModel.getWork_periods();
 
             if (workPeriods != null && workPeriods.size() > 0) {
                 boolean isFound = false;
                 for (PeriodModel period : workPeriods) {
-                    if (currentTime < period.getStart()) nextWorkPeriod = period;
+                    if (currentTime < period.getStart()) {
+                        nextWorkPeriod = period;
+                        isFound = true;
+                    }
+                    if (isFound) break;
+                }
+                isFound = false;
+                for (PeriodModel period : workPeriods) {
                     if (currentTime > period.getStart() && currentTime < period.getEnd()) {
                         workPeriod = period;
                         isFound = true;
@@ -1589,7 +1594,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             if (regPeriods != null && regPeriods.size() > 0) {
                 boolean isFound = false;
                 for (PeriodModel period : regPeriods) {
-                    if (currentTime < period.getStart()) nextRegPeriod = period;
+                    if (currentTime < period.getStart()) {
+                        nextRegPeriod = period;
+                        isFound = true;
+                    }
+                    if (isFound) break;
+                }
+                isFound = false;
+                for (PeriodModel period : regPeriods) {
                     if (currentTime > period.getStart() && currentTime < period.getEnd()) {
                         regPeriod = period;
                         if (phoneReg != null && phoneReg.getReg_time() > period.getStart() && phoneReg.getReg_time() < period.getEnd()) {
@@ -1626,6 +1638,15 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     tvRegInfo.setText(info);
                     tvRegInfo.setVisibility(View.VISIBLE);
                     activity.startCounter(nextRegPeriod.getStart() * 1000L, 1, this);
+                } else if(regDisabled && nextWorkPeriod != null && !getCurrentUser().getConfigR().hasReserveChannels()) {
+                    String info = "Внимание! Рабочий период начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextWorkPeriod.getStart() * 1000L) + "!";
+                    tvRegInfo.setText(info);
+                    tvRegInfo.setVisibility(View.VISIBLE);
+                    activity.startCounter(nextWorkPeriod.getStart() * 1000L, 2, this);
+                    btnStart.setText("Начать");
+                    UiUtils.setButtonEnabled(btnStart, false);
+                    isCodeRequired = false;
+                    isRegistrationRequired = false;
                 }
             } else {
                 if (workPeriod == null) {

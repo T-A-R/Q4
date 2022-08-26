@@ -112,6 +112,7 @@ import static android.Manifest.permission.CALL_PHONE;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.READ_PHONE_NUMBERS;
+import static android.Manifest.permission.READ_PHONE_STATE;
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.SEND_SMS;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -610,8 +611,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             final int sms = ContextCompat.checkSelfPermission(getApplicationContext(), SEND_SMS);
             final int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
             final int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
-            final int phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_NUMBERS);
+            final int phoneState;
+            if (Build.VERSION.SDK_INT >= 28) {
+                phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_NUMBERS);
 
+            } else {
+                phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_STATE);
+
+            }
             return location == PackageManager.PERMISSION_GRANTED &&
                     camera == PackageManager.PERMISSION_GRANTED &&
                     audio == PackageManager.PERMISSION_GRANTED &&
@@ -625,7 +632,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             final int audio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
             final int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
             final int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
-            final int phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_NUMBERS);
+            final int phoneState;
+            if (Build.VERSION.SDK_INT >= 28) {
+                phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_NUMBERS);
+
+            } else {
+                phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_STATE);
+
+            }
 
             return location == PackageManager.PERMISSION_GRANTED &&
                     camera == PackageManager.PERMISSION_GRANTED &&
@@ -638,23 +652,43 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void requestPermission() {
         if (!mIsPermDialogShow)
-            ActivityCompat.requestPermissions(this,
-                    PLAY_MARKET ? new String[]{
-                            ACCESS_FINE_LOCATION,
-                            CAMERA,
-                            RECORD_AUDIO,
-                            WRITE_EXTERNAL_STORAGE,
-                            READ_EXTERNAL_STORAGE,
-                            READ_PHONE_NUMBERS
-                    } : new String[]{
-                            ACCESS_FINE_LOCATION,
-                            CAMERA,
-                            RECORD_AUDIO,
-                            WRITE_EXTERNAL_STORAGE,
-                            READ_EXTERNAL_STORAGE,
-                            SEND_SMS,
-                            READ_PHONE_NUMBERS
-                    }, 200);
+            if (Build.VERSION.SDK_INT >= 28) {
+                ActivityCompat.requestPermissions(this,
+                        PLAY_MARKET ? new String[]{
+                                ACCESS_FINE_LOCATION,
+                                CAMERA,
+                                RECORD_AUDIO,
+                                WRITE_EXTERNAL_STORAGE,
+                                READ_EXTERNAL_STORAGE,
+                                READ_PHONE_NUMBERS
+                        } : new String[]{
+                                ACCESS_FINE_LOCATION,
+                                CAMERA,
+                                RECORD_AUDIO,
+                                WRITE_EXTERNAL_STORAGE,
+                                READ_EXTERNAL_STORAGE,
+                                SEND_SMS,
+                                READ_PHONE_NUMBERS
+                        }, 200);
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        PLAY_MARKET ? new String[]{
+                                ACCESS_FINE_LOCATION,
+                                CAMERA,
+                                RECORD_AUDIO,
+                                WRITE_EXTERNAL_STORAGE,
+                                READ_EXTERNAL_STORAGE,
+                                READ_PHONE_STATE
+                        } : new String[]{
+                                ACCESS_FINE_LOCATION,
+                                CAMERA,
+                                RECORD_AUDIO,
+                                WRITE_EXTERNAL_STORAGE,
+                                READ_EXTERNAL_STORAGE,
+                                SEND_SMS,
+                                READ_PHONE_STATE
+                        }, 200);
+            }
     }
 
     @SuppressLint("MissingPermission")

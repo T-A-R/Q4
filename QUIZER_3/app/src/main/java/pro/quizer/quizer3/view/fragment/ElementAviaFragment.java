@@ -266,7 +266,7 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
 
         st("load prev elements");
 
-        initCurrentElements();
+        initElements();
         st("init curr element");
         loadResumedData();
         st("load resumed data");
@@ -456,7 +456,7 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
         startTime = DateUtils.getCurrentTimeMillis();
 
         if (getQuestionnaire() == null) {
-            initCurrentElements();
+            initElements();
         }
         if (getQuestionnaire() != null)
             if (prevList != null && prevList.size() > 0) {

@@ -416,8 +416,6 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         }
 
         public boolean canShow(ElementItemR[][] tree, List<List<Integer>> passedElementsId, int relativeId, int order) {
-            Log.d("T-A-R.ListAnswersAdapt", "=== ID:" + relativeId + " order:" + order);
-
 //            try {
 //                if (relativeId == 9)
 //                    for (int i = 0; i < tree[0].length; i++) {
@@ -430,7 +428,6 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 //                e.printStackTrace();
 //            }
             if (tree == null) {
-                Log.d("T-A-R.ListAnswersAdapt", "canShow ID: " + relativeId + " / true 1");
                 return true;
             }
 
@@ -438,30 +435,21 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 for (int k = 0; k < tree[0].length; k++) {
                     if (tree[0][k].getRelative_id().equals(relativeId)) {
                         if (tree[0][k].isEnabled()) {
-                            Log.d("T-A-R.ListAnswersAdapt", "canShow ID: " + relativeId + " / true 2");
                             return true;
                         }
                     }
                 }
-                Log.d("T-A-R.ListAnswersAdapt", "canShow ID: " + relativeId + " / false 1");
                 return false;
             } else {
                 int endPassedElement = order - 1;
 
                 for (int k = 0; k < tree[0].length; k++) {
                     for (int i = 0; i < endPassedElement; ) {
-                        Log.d("T-A-R.ListAnswersAdapt", "tree[i][k]: " + tree[i][k].getRelative_id());
 //                        if (tree[i][k].getRelative_id().equals(passedElementsId.get(i))) {
                         if (passedElementsId.get(i).contains(tree[i][k].getRelative_id()) && tree[i][k].getRelative_id() < 999999) {
                             if (i == (endPassedElement - 1)) { // Если последний, то
-                                Log.d("T-A-R.ListAnswersAdapt", "tree[i + 1][k]: " + tree[i + 1][k].getRelative_id());
                                 if (tree[i + 1][k].getRelative_id().equals(relativeId)) { // Если следующий за последним равен Relative ID
                                     if (tree[i + 1][k].isEnabled()) {
-                                        try {
-                                            Log.d("T-A-R.ListAnswersAdapt", "canShow ID: " + relativeId + " / true 3 (" + tree[0][k].getRelative_id() + "/" + tree[1][k].getRelative_id() + "/" + tree[2][k].getRelative_id() + ")");
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
                                         return true;
                                     }
                                 }
@@ -471,7 +459,6 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                     }
                 }
             }
-            Log.d("T-A-R.ListAnswersAdapt", "canShow ID: " + relativeId + " / false 2");
             return false;
         }
 

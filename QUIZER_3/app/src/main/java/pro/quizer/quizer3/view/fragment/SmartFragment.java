@@ -74,7 +74,6 @@ import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.model.logs.Crash;
 import pro.quizer.quizer3.utils.DateUtils;
-import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.FontUtils;
 import pro.quizer.quizer3.utils.SPUtils;
@@ -520,7 +519,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public void showElementsDB() {
         Log.d(TAG, "========== DATABASE ========== ");
-        initCurrentElements();
+        initElements();
         Log.d(TAG, "Elements: " + getCurrentElements().size());
 
         for (int i = 0; i < getCurrentElements().size(); i++) {
@@ -528,7 +527,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         }
     }
 
-    public void initCurrentElements() {
+    public void initElements() {
         try {
             elementItemRList = getMainActivity().getElementItemRList();
             currentQuestionnaire = getMainActivity().getCurrentQuestionnaire();

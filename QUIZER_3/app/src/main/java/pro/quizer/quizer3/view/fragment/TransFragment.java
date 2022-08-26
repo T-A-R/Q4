@@ -24,14 +24,12 @@ public class TransFragment extends ScreenFragment {
     }
 
     public TransFragment setStartElement(Integer nextElementId) {
-        Log.d("T-A-R.TransFragment", "setStartElement: 1");
         this.nextElementId = nextElementId;
         this.restored = false;
         return this;
     }
 
     public TransFragment setStartElement(Integer startElementId, Integer nextElementId) {
-        Log.d("T-A-R.TransFragment", "setStartElement: 2");
         this.startElementId = startElementId;
         this.nextElementId = nextElementId;
         this.restored = false;
@@ -39,7 +37,6 @@ public class TransFragment extends ScreenFragment {
     }
 
     public TransFragment setStartElement(Integer nextElementId, boolean restored) {
-        Log.d("T-A-R.TransFragment", "setStartElement: 3");
         this.nextElementId = nextElementId;
         this.restored = restored;
         return this;

@@ -4,6 +4,11 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import java.util.List;
+
+import pro.quizer.quizer3.database.ListStringConverter;
 
 @Entity(indices = {@Index("token")})
 public class QuestionnaireDatabaseModelR {
@@ -41,6 +46,9 @@ public class QuestionnaireDatabaseModelR {
 
     @ColumnInfo(name = "date_interview")
     private long date_interview;
+
+    @ColumnInfo(name = "date_end_interview")
+    private long date_end_interview;
 
     @ColumnInfo(name = "gps")
     private String gps;
@@ -134,40 +142,6 @@ public class QuestionnaireDatabaseModelR {
 
     public QuestionnaireDatabaseModelR() {
         this.is_online = true;
-    }
-
-    public QuestionnaireDatabaseModelR(String token, String login_admin, String login, int user_id, String passw, int questionnaire_id, int project_id, int billing_questions, int user_project_id, long date_interview, String gps, String gps_network, Long gps_time, Long gps_time_network, int questions_passed, int screens_passed, int selected_questions, int duration_time_questionnaire, Long quota_time_difference, Long send_time_difference, Long auth_time_difference, String status, String survey_status, String has_photo, boolean used_fake_gps) {
-
-        this.token = token;
-        this.login_admin = login_admin;
-        this.login = login;
-        this.user_id = user_id;
-        this.passw = passw;
-        this.questionnaire_id = questionnaire_id;
-        this.project_id = project_id;
-        this.billing_questions = billing_questions;
-        this.user_project_id = user_project_id;
-        this.date_interview = date_interview;
-        this.gps = gps;
-        this.gps_network = gps_network;
-        this.gps_time = gps_time;
-        this.gps_time_network = gps_time_network;
-        this.questions_passed = questions_passed;
-        this.screens_passed = screens_passed;
-        this.selected_questions = selected_questions;
-        this.duration_time_questionnaire = duration_time_questionnaire;
-        this.quota_time_difference = quota_time_difference;
-        this.send_time_difference = send_time_difference;
-        this.auth_time_difference = auth_time_difference;
-        this.status = status;
-        this.survey_status = survey_status;
-        this.has_photo = has_photo;
-        this.send_sms = false;
-        this.used_fake_gps = used_fake_gps;
-        this.count_interrupted = 0;
-        this.is_online = true;
-        this.is_google_gps = true;
-        this.registered_uik = null;
     }
 
     public Long getGps_time_fk() {
@@ -496,5 +470,13 @@ public class QuestionnaireDatabaseModelR {
 
     public void setPermissions(String permissions) {
         this.permissions = permissions;
+    }
+
+    public long getDate_end_interview() {
+        return date_end_interview;
+    }
+
+    public void setDate_end_interview(long date_end_interview) {
+        this.date_end_interview = date_end_interview;
     }
 }

@@ -67,11 +67,15 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
 
         final List<ElementDatabaseModelR> allElements = new ArrayList<>();
 
+        final Integer userId = activity.getCurrentUserId();
+
         final List<QuestionnaireDatabaseModelR> questionnaires = activity.getMainDao().getQuestionnaireWithTime(
                 mUserId,
                 pStatus,
                 mStagesModel.getTimeFrom(),
                 mStagesModel.getTimeTo());
+
+        final Integer quizCounter = questionnaires.size();
 
         for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : questionnaires) {
             final String token = questionnaireDatabaseModel.getToken();
@@ -96,6 +100,9 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
                     final int countAnswers = getCountAnswersByOrder(elementsByQuestionId, i);
                     smsAnswer.put(i - 1, countAnswers);
                 }
+
+                smsAnswer.setUserId(userId);
+                smsAnswer.setQuizCount(quizCounter);
 
                 result.put(index, smsAnswer);
             }

@@ -287,8 +287,13 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
         final EditText mEditText = mView.findViewById(R.id.input_answer);
         final View mNextBtn = mView.findViewById(R.id.view_ok);
 
-        if (mItems.get(position).getOpen().equals(NUMBER)) {
-            mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        final boolean isNumber = (mItems.get(position).getOpen() != null && mItems.get(position).getOpen().equals(NUMBER));
+        final Integer min = mItems.get(position).getMin();
+        final Integer max = mItems.get(position).getMax();
+
+        if (isNumber) {
+//            mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            mEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
         }
 
         String hint = mItems.get(position).getHint();
@@ -311,19 +316,56 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
         final AlertDialog alertDialog = dialog.create();
 
         mNextBtn.setOnClickListener(v -> {
-            mItems.get(position).setData(mEditText.getText().toString());
-            pEditText.setText(mEditText.getText().toString());
-            checkItem(position);
+            if (isNumber && !checkNumber(mEditText.getText().toString(), min, max, position, mActivity, mEditText)) {
+                mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
+            } else {
+                mItems.get(position).setData(mEditText.getText().toString());
+                pEditText.setText(mEditText.getText().toString());
+                checkItem(position);
 
-            if (mActivity != null && !mActivity.isFinishing()) {
-                mActivity.hideKeyboardFrom(mEditText);
-                alertDialog.dismiss();
+                if (mActivity != null && !mActivity.isFinishing()) {
+                    mActivity.hideKeyboardFrom(mEditText);
+                    alertDialog.dismiss();
+                }
             }
         });
 
         if (mActivity != null && !mActivity.isFinishing()) {
             alertDialog.show();
         }
+    }
+
+    private boolean checkNumber(String text, Integer min, Integer max, int position, MainActivity mActivity, EditText mInput) {
+        Integer number = null;
+        try {
+            number = Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        if(text.equals("")) return true;
+        if (min != null && number < min) {
+            mActivity.showToastfromActivity(String.format(mActivity.getString(R.string.limits_warning_start), String.valueOf (position + 1)) + " " +
+                    String.format(mActivity.getString(R.string.limits_warning_min), String.valueOf (min)));
+            mInput.setText(String.valueOf(min));
+            try {
+                mInput.setSelection(mInput.getText().length());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+        if (max != null && number > max) {
+            mActivity.showToastfromActivity(String.format(mActivity.getString(R.string.limits_warning_start), String.valueOf (position + 1)) + " " +
+                    String.format(mActivity.getString(R.string.limits_warning_max), String.valueOf (max)));
+            mInput.setText(String.valueOf(max));
+            try {
+                mInput.setSelection(mInput.getText().length());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+        return true;
     }
 
     private Calendar mCalendar = Calendar.getInstance();

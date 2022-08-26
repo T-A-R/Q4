@@ -145,6 +145,7 @@ public class TableCardAdapter extends ArrayAdapter<CardItem> {
     }
 
     private void showAdditionalInfoDialog(List<String> data) {
+        Log.d("T-A-R.TableCardAdapter", "showAdditionalInfoDialog: START");
         final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mContext);
         final View mView = layoutInflaterAndroid.inflate(R.layout.dialog_table_question_additional_info, null);
         final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
@@ -161,7 +162,8 @@ public class TableCardAdapter extends ArrayAdapter<CardItem> {
         title.setVisibility(View.GONE);
         description.setVisibility(View.GONE);
 
-        if (data != null) {
+        if (data != null && data.size() > 0) {
+            sliderView.setVisibility(View.VISIBLE);
             adapter = new SliderAdapterExample(mContext);
             adapter.renewItems(data);
             sliderView.setSliderAdapter(adapter);
@@ -173,6 +175,8 @@ public class TableCardAdapter extends ArrayAdapter<CardItem> {
             sliderView.setScrollTimeInSec(6);
             sliderView.setAutoCycle(true);
             sliderView.startAutoCycle();
+        } else {
+            sliderView.setVisibility(View.GONE);
         }
 
         dialog.setCancelable(true);

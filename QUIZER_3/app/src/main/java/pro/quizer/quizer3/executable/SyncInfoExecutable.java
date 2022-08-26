@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.util.List;
 
+import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
@@ -45,12 +46,15 @@ public class SyncInfoExecutable extends BaseModelExecutable<SyncViewModel> {
 
                 final List<TokensCounterR> sendFromThisDevice = SmartFragment.getDao().getTokens(pUserId);
 
+                final Integer mPhotoAnswers = SmartFragment.getDao().getPhotoAnswersByStatus(Constants.LogStatus.READY_FOR_SEND).size();
+
                 syncViewModel.setmSentTokensFromThisDevice(sendFromThisDevice);
                 syncViewModel.setNotSentQuestionnaireModels(notSentQDM);
                 syncViewModel.setAllQuestionnaireModels(allQDM);
                 syncViewModel.setNotSendedPhoto(mainFragment.getPhotosByUserId(pUserId));
                 syncViewModel.setNotSendedAudio(mainFragment.getAudioByUserId(pUserId));
                 syncViewModel.setHasReserveChannel(configModel.hasReserveChannels());
+                syncViewModel.setmNotSendedPhotoAnswers(mPhotoAnswers);
                 if (activity.getCurrentQuestionnaireForce() != null) {
                     syncViewModel.setHasUnfinishedQuiz(true);
                 } else {

@@ -13,6 +13,7 @@ public final class DateUtils {
     public static String PATTERN_FULL = "yyyy-MM-dd HH:mm";
     public static String PATTERN_FULL_SMS = "HH:mm dd.MM.yyyy";
     public static String PATTERN_FILE = "dd_MM_yyyy_HH_mm";
+    public static String PATTERN_TIMER = "HH:mm";
 
     public static long getCurrentTimeMillis() {
         return System.currentTimeMillis() / 1000;

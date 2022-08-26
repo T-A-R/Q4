@@ -30,6 +30,9 @@ public class DeletingListResponseModel implements Serializable {
     @SerializedName("project_is_active")
     private Boolean project_is_active;
 
+    @SerializedName("regs_disabled")
+    private Boolean regs_disabled;
+
     public int getResult() {
         return result;
     }
@@ -56,5 +59,9 @@ public class DeletingListResponseModel implements Serializable {
 
     public String getMessage() {
         return message;
+    }
+
+    public Boolean isRegsDisabled() {
+        return regs_disabled;
     }
 }

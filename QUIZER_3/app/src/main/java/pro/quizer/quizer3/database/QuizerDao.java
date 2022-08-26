@@ -19,6 +19,7 @@ import pro.quizer.quizer3.database.models.ElementOptionsR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.EncryptionTableR;
 import pro.quizer.quizer3.database.models.OptionsR;
+import pro.quizer.quizer3.database.models.PhotoAnswersR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
@@ -96,6 +97,9 @@ public interface QuizerDao {
     @Query("UPDATE UserModelR SET questionnaire_opened = :wasStarted WHERE user_id = :userId")
     void updateQuestionnaireStart(boolean wasStarted, int userId);
 
+    @Query("UPDATE UserModelR SET phone = :phone WHERE user_id = :userId")
+    void updateUserPhone(String phone, int userId);
+
     @Query("UPDATE UserModelR SET config = :config WHERE user_id = :userId AND user_project_id = :userProjectId")
     void updateConfig(String config, int userId, int userProjectId);
 
@@ -104,9 +108,6 @@ public interface QuizerDao {
 
     @Query("UPDATE UserModelR SET quotas = :quotas WHERE user_project_id = :userProjectId")
     void updateQuotas(String quotas, int userProjectId);
-
-//    @Query("SELECT * FROM UserModelR")
-//    List<UserModelR> getAllUsers();
 
     @Query("SELECT id, login, password, user_id, user_project_id, questionnaire_opened FROM UserModelR")
     List<UserModelR> getAllUsers();
@@ -277,6 +278,12 @@ public interface QuizerDao {
     @Query("SELECT * FROM ElementPassedR WHERE token =:token")
     List<ElementPassedR> getAllElementsPassedR(String token);
 
+    @Query("SELECT * FROM ElementPassedR WHERE token =:token AND from_quotas_block =:from_quotas_block")
+    List<ElementPassedR> getQuotaPassedElements(String token, boolean from_quotas_block);
+
+    @Query("SELECT relative_id FROM ElementPassedR WHERE token =:token AND from_quotas_block =:from_quotas_block AND parent_id =:parent_id")
+    List<Integer> getQuotaPassedAnswers(String token, boolean from_quotas_block, Integer parent_id);
+
     @Query("SELECT * FROM ElementPassedR")
     List<ElementPassedR> getAllElementsPassedRNoToken();
 
@@ -363,6 +370,9 @@ public interface QuizerDao {
 
     @Query("UPDATE SettingsR SET last_quota_time = :data")
     void setLastQuotaTime(Long data);
+
+    @Query("UPDATE SettingsR SET config_time = :data")
+    void setConfigTime(Long data);
 
     @Query("UPDATE SettingsR SET last_login_time = :data")
     void setLastLoginTime(Long data);
@@ -454,6 +464,9 @@ public interface QuizerDao {
     @Query("UPDATE RegistrationR SET status = :status WHERE id =:id")
     void setRegStatus(Integer id, String status);
 
+    @Query("UPDATE RegistrationR SET phone = :phone WHERE id =:id")
+    void setRegPhone(Integer id, String phone);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertEncryptionTableR(EncryptionTableR encryptionTableR);
 
@@ -462,4 +475,25 @@ public interface QuizerDao {
 
     @Query("SELECT encrypted FROM EncryptionTableR WHERE decrypted = :decrypted ORDER BY RANDOM() LIMIT 1")
     Character getSymbolsForEncrypt(Character decrypted);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertPhotoAnswerR(PhotoAnswersR statistics);
+
+    @Query("SELECT * FROM PhotoAnswersR WHERE token = :token")
+    List<PhotoAnswersR> getPhotoAnswersByToken(String token);
+
+    @Query("DELETE FROM PhotoAnswersR WHERE token = :token")
+    void clearPhotoAnswersByToken(String token);
+
+    @Query("SELECT * FROM PhotoAnswersR WHERE status = :status")
+    List<PhotoAnswersR> getPhotoAnswersByStatus(String status);
+
+    @Query("DELETE FROM PhotoAnswersR WHERE status = :status")
+    void clearPhotoAnswersByStatus(String status);
+
+    @Query("UPDATE PhotoAnswersR SET status = :status WHERE token =:token")
+    void setPhotoAnswerStatus(String token, String status);
+
+    @Query("DELETE FROM PhotoAnswersR WHERE name = :name")
+    void clearPhotoAnswersByName(String name);
 }

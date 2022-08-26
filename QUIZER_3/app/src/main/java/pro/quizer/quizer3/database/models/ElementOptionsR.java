@@ -114,47 +114,59 @@ public class ElementOptionsR {
     @ColumnInfo(name = "helper")
     private boolean helper;
 
+    @ColumnInfo(name = "photo_answer")
+    private boolean photo_answer;
+
+    @ColumnInfo(name = "photo_answer_required")
+    private boolean photo_answer_required;
+
+    @ColumnInfo(name = "min_number")
+    private Integer min_number;
+
+    @ColumnInfo(name = "max_number")
+    private Integer max_number;
+
     public ElementOptionsR() {
     }
 
-    public ElementOptionsR(Integer relative_id, String title, Integer jump, boolean search, String pre_condition,
-                           String post_condition, String data, Integer order, Integer number,
-                           boolean polyanswer, boolean record_sound, boolean take_photo,
-                           String description, boolean flip_cols_and_rows, boolean rotation,
-                           boolean fixed_order, Integer min_answers, Integer max_answers,
-                           String open_type, String placeholder, boolean unchecker,
-                           Integer start_value, Integer end_value, String type_behavior,
-                           boolean show_scale, boolean show_images, boolean unnecessary_fill_open, Integer type_end, boolean auto_check) {
-        this.relative_id = relative_id;
-        this.title = title;
-        this.jump = jump;
-        this.search = search;
-        this.pre_condition = pre_condition;
-        this.post_condition = post_condition;
-        this.data = data;
-        this.order = order;
-        this.number = number;
-        this.polyanswer = polyanswer;
-        this.record_sound = record_sound;
-        this.take_photo = take_photo;
-        this.description = description;
-        this.flip_cols_and_rows = flip_cols_and_rows;
-        this.rotation = rotation;
-        this.fixed_order = fixed_order;
-        this.min_answers = min_answers;
-        this.max_answers = max_answers;
-        this.open_type = open_type;
-        this.placeholder = placeholder;
-        this.unchecker = unchecker;
-        this.start_value = start_value;
-        this.end_value = end_value;
-        this.type_behavior = type_behavior;
-        this.show_scale = show_scale;
-        this.show_images = show_images;
-        this.unnecessary_fill_open = unnecessary_fill_open;
-        this.type_end = type_end;
-        this.auto_check = auto_check;
-    }
+//    public ElementOptionsR(Integer relative_id, String title, Integer jump, boolean search, String pre_condition,
+//                           String post_condition, String data, Integer order, Integer number,
+//                           boolean polyanswer, boolean record_sound, boolean take_photo,
+//                           String description, boolean flip_cols_and_rows, boolean rotation,
+//                           boolean fixed_order, Integer min_answers, Integer max_answers,
+//                           String open_type, String placeholder, boolean unchecker,
+//                           Integer start_value, Integer end_value, String type_behavior,
+//                           boolean show_scale, boolean show_images, boolean unnecessary_fill_open, Integer type_end, boolean auto_check) {
+//        this.relative_id = relative_id;
+//        this.title = title;
+//        this.jump = jump;
+//        this.search = search;
+//        this.pre_condition = pre_condition;
+//        this.post_condition = post_condition;
+//        this.data = data;
+//        this.order = order;
+//        this.number = number;
+//        this.polyanswer = polyanswer;
+//        this.record_sound = record_sound;
+//        this.take_photo = take_photo;
+//        this.description = description;
+//        this.flip_cols_and_rows = flip_cols_and_rows;
+//        this.rotation = rotation;
+//        this.fixed_order = fixed_order;
+//        this.min_answers = min_answers;
+//        this.max_answers = max_answers;
+//        this.open_type = open_type;
+//        this.placeholder = placeholder;
+//        this.unchecker = unchecker;
+//        this.start_value = start_value;
+//        this.end_value = end_value;
+//        this.type_behavior = type_behavior;
+//        this.show_scale = show_scale;
+//        this.show_images = show_images;
+//        this.unnecessary_fill_open = unnecessary_fill_open;
+//        this.type_end = type_end;
+//        this.auto_check = auto_check;
+//    }
 
     public int getId() {
         return id;
@@ -438,5 +450,37 @@ public class ElementOptionsR {
 
     public void setHelper(boolean helper) {
         this.helper = helper;
+    }
+
+    public boolean isPhoto_answer() {
+        return photo_answer;
+    }
+
+    public void setPhoto_answer(boolean photo_answer) {
+        this.photo_answer = photo_answer;
+    }
+
+    public boolean isPhoto_answer_required() {
+        return photo_answer_required;
+    }
+
+    public void setPhoto_answer_required(boolean photo_answer_required) {
+        this.photo_answer_required = photo_answer_required;
+    }
+
+    public Integer getMin_number() {
+        return min_number;
+    }
+
+    public void setMin_number(Integer min_number) {
+        this.min_number = min_number;
+    }
+
+    public Integer getMax_number() {
+        return max_number;
+    }
+
+    public void setMax_number(Integer max_number) {
+        this.max_number = max_number;
     }
 }

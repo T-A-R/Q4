@@ -17,12 +17,14 @@ import pro.quizer.quizer3.API.models.request.RegistrationRequestModel;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.database.models.PhotoAnswersR;
 import pro.quizer.quizer3.database.models.RegistrationR;
 import pro.quizer.quizer3.database.models.UserModelR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizer3.executable.SyncInfoExecutable;
 import pro.quizer.quizer3.executable.files.AudiosSendingByUserModelExecutable;
+import pro.quizer.quizer3.executable.files.PhotosAnswersSendingExecutable;
 import pro.quizer.quizer3.executable.files.PhotosSendingByUserModelExecutable;
 import pro.quizer.quizer3.model.view.SyncViewModel;
 import pro.quizer.quizer3.utils.Internet;
@@ -36,6 +38,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
     private Button mSendDataButton;
     private Button mSendAudioButton;
     private Button mSendPhotoButton;
+    private Button mSendPhotoAnswersButton;
     private Button mSyncSms;
     private Button mDelete;
     private Button mSendReg;
@@ -44,12 +47,14 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
     private TextView mQUnsendedView;
     private TextView mAUnsendedView;
     private TextView mPUnsendedView;
+    private TextView mPUnsendedPAView;
 
     private UserModelR mUserModel;
 
     private String mQUnsendedViewString;
     private String mAUnsendedViewString;
     private String mPUnsendedViewString;
+    private String mPUnsendedPAViewString;
 
     public SyncFragment() {
         super(R.layout.fragment_sync);
@@ -74,11 +79,13 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
         mSendDataButton = findViewById(R.id.send_q);
         mSendAudioButton = findViewById(R.id.send_audio);
         mSendPhotoButton = findViewById(R.id.send_photo);
+        mSendPhotoAnswersButton = findViewById(R.id.send_photo_answers);
         mSyncSms = findViewById(R.id.sync_sms);
         mUnfinishedView = findViewById(R.id.have_unfinished);
         mQUnsendedView = findViewById(R.id.unsended_q);
         mAUnsendedView = findViewById(R.id.unsended_audio);
         mPUnsendedView = findViewById(R.id.unsended_photo);
+        mPUnsendedPAView = findViewById(R.id.unsended_photo_answers);
         mDelete = findViewById(R.id.btn_delete);
         mSendReg = findViewById(R.id.send_reg);
 
@@ -93,6 +100,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
         mSendDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mSendAudioButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mSendPhotoButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
+        mSendPhotoAnswersButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mSyncSms.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
         mToolbar.setTitle(getString(R.string.sync_screen));
@@ -164,12 +172,14 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
         mQUnsendedViewString = getString(R.string.view_unsent_count_quiz);
         mAUnsendedViewString = getString(R.string.view_unsent_count_audio);
         mPUnsendedViewString = getString(R.string.view_unsent_count_photo);
+        mPUnsendedPAViewString = getString(R.string.view_unsent_count_photo_answers);
     }
 
     private void updateData(final SyncViewModel pSyncViewModel) {
         final int mQUnsendedCount = pSyncViewModel.getmNotSentQuestionnaireModels().size();
         final int mAUnsendedCount = pSyncViewModel.getmNotSendedAudio().size();
         final int mPUnsendedCount = pSyncViewModel.getmNotSendedPhoto().size();
+        final Integer mPUnsendedPAnswersCount = pSyncViewModel.getmNotSendedPhotoAnswers();
         final boolean hasReserveChannel = pSyncViewModel.hasReserveChannel();
         final boolean hasUnfinishedQuiz = pSyncViewModel.hasUnfinishedQuiz();
 
@@ -195,11 +205,29 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
                     UiUtils.setButtonEnabled(mSendDataButton, mQUnsendedCount > 0);
                     UiUtils.setButtonEnabled(mSendPhotoButton, mPUnsendedCount > 0);
                     UiUtils.setButtonEnabled(mSendAudioButton, mAUnsendedCount > 0);
+                    if (mPUnsendedPAnswersCount > 0) {
+                        mSendPhotoAnswersButton.setVisibility(View.VISIBLE);
+                        mPUnsendedPAView.setVisibility(View.VISIBLE);
+                        UiUtils.setButtonEnabled(mSendPhotoAnswersButton, true);
+                        UiUtils.setTextOrHide(mPUnsendedPAView, (String.format(mPUnsendedPAViewString, mPUnsendedPAnswersCount)));
+                    } else {
+                        mSendPhotoAnswersButton.setVisibility(View.GONE);
+                        mPUnsendedPAView.setVisibility(View.GONE);
+                    }
                 } else {
                     mProjectStatusView.setVisibility(View.VISIBLE);
                     UiUtils.setButtonEnabledLightGreen(mSendDataButton, mQUnsendedCount > 0);
                     UiUtils.setButtonEnabledLightGreen(mSendPhotoButton, mPUnsendedCount > 0);
                     UiUtils.setButtonEnabledLightGreen(mSendAudioButton, mAUnsendedCount > 0);
+                    if (mPUnsendedPAnswersCount > 0) {
+                        mSendPhotoAnswersButton.setVisibility(View.VISIBLE);
+                        mPUnsendedPAView.setVisibility(View.VISIBLE);
+                        UiUtils.setButtonEnabledLightGreen(mSendPhotoAnswersButton, true);
+                        UiUtils.setTextOrHide(mPUnsendedPAView, (String.format(mPUnsendedPAViewString, mPUnsendedPAnswersCount)));
+                    } else {
+                        mSendPhotoAnswersButton.setVisibility(View.GONE);
+                        mPUnsendedPAView.setVisibility(View.GONE);
+                    }
                 }
 
                 UiUtils.setTextOrHide(mQUnsendedView, (String.format(mQUnsendedViewString, mQUnsendedCount)));
@@ -217,10 +245,13 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
                 });
 
                 mSendAudioButton.setOnClickListener(view -> {
+                    activity.addLog(Constants.LogObject.AUDIO, "key", Constants.LogResult.ATTEMPT, "Press send audio", null);
                     if (hasUnfinishedOrSend(mQUnsendedCount, hasUnfinishedQuiz)) return;
 
                     new AudiosSendingByUserModelExecutable((MainActivity) getActivity(), mUserModel, SyncFragment.this).execute();
                 });
+
+                mSendPhotoAnswersButton.setOnClickListener(v -> sendPhotoAnswers());
             }
         });
     }
@@ -321,6 +352,35 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
             showToast("Ошибка регистрации");
             UiUtils.setButtonEnabled(mSendReg, true);
         }
+    }
+
+    private void sendPhotoAnswers() {
+        getMainActivity().addLog(Constants.LogObject.PHOTOS, "key", Constants.LogResult.ATTEMPT, "Press send PHOTOS", null);
+        List<PhotoAnswersR> list = getDao().getPhotoAnswersByStatus(Constants.LogStatus.READY_FOR_SEND);
+        if (list != null && list.size() > 0) {
+            new PhotosAnswersSendingExecutable(getMainActivity(), mUserModel, list, new ICallback() {
+                @Override
+                public void onStarting() {
+
+                }
+
+                @Override
+                public void onSuccess() {
+                    updateData(new SyncInfoExecutable(getContext()).execute());
+                }
+
+                @Override
+                public void onError(Exception pException) {
+
+                }
+            }).execute();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkConfigTime(false);
     }
 }
 

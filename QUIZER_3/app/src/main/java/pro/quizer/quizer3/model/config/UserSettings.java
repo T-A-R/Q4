@@ -16,6 +16,12 @@ public class UserSettings implements Serializable {
     @SerializedName("active_registration_data")
     private ActiveRegistrationData active_registration_data;
 
+    @SerializedName("reserve_channel_stages")
+    private List<StagesModel> stages;
+
+    @SerializedName("reg_phones")
+    private List<String> reg_phones;
+
     public UserSettings() {
     }
 
@@ -41,5 +47,13 @@ public class UserSettings implements Serializable {
 
     public void setActive_registration_data(ActiveRegistrationData active_registration_data) {
         this.active_registration_data = active_registration_data;
+    }
+
+    public List<StagesModel> getStages() {
+        return stages;
+    }
+
+    public List<String> getRegPhones() {
+        return reg_phones;
     }
 }

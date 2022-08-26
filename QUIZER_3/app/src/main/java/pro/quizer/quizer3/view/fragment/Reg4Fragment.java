@@ -41,9 +41,12 @@ public class Reg4Fragment extends ScreenFragment implements View.OnClickListener
     private boolean canResend = false;
     private boolean inExitDialog = false;
     private String mCode;
+    private String mCodeShort;
+    private Boolean success;
 
-    public Reg4Fragment() {
+    public Reg4Fragment(Boolean success) {
         super(R.layout.fragment_reg4);
+        this.success = success;
     }
 
     @Override
@@ -85,14 +88,27 @@ public class Reg4Fragment extends ScreenFragment implements View.OnClickListener
             }
         });
 
-        startResendTimer();
+        if(success) {
+            startResendTimer();
+        } else {
+            try {
+                UiUtils.setButtonEnabled(btnResend, true);
+                counterText.setVisibility(View.INVISIBLE);
+                canResend = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         getCode();
     }
 
     private void getCode() {
         ConfigModel config = getMainActivity().getConfig();
         // user_project_id изменено на user_id по просьбе Zverev Alexandr 16/09/2021
-        mCode = config.getProjectInfo().getProjectId() + " " + getCurrentUserId() + " " + DateUtils.getCurrentDateOfMonth();
+        String quizer_user_id = String.valueOf(getCurrentUserId());
+        mCode = config.getProjectInfo().getProjectId() + " " + quizer_user_id + " " + DateUtils.getCurrentDateOfMonth();
+        if(quizer_user_id.length() <= 2) mCodeShort = quizer_user_id;
+                else mCodeShort = quizer_user_id.substring(quizer_user_id.length() - 2);
         Log.d("T-L.Reg4Fragment", "getCode: " + mCode);
         if(DEBUG_MODE) showToast(mCode);
     }
@@ -155,7 +171,7 @@ public class Reg4Fragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void finishReg() {
-        if (mCode.equals(DEBUG_MODE ? codeEditText.getText().toString() : decode(codeEditText.getText().toString()))) {
+        if (mCode.equals(DEBUG_MODE ? codeEditText.getText().toString() : decode(codeEditText.getText().toString())) || mCodeShort.equals(decode(codeEditText.getText().toString()))) {
             getDao().setRegStatus(getCurrentUserId(), Constants.Registration.SMS);
             showToast("Регистрация успешна");
             replaceFragment(new HomeFragment());

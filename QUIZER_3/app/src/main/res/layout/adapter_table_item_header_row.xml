@@ -54,14 +54,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/table_header_row_text_view"
-        android:layout_toEndOf="@+id/row_image"
         android:layout_toStartOf="@+id/fullscreen"
+        android:layout_toEndOf="@+id/row_image"
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:maxLines="7"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
+        android:text="text"
         android:textSize="12sp"
-        android:textStyle="italic"
-        android:text="text" />
+        android:textStyle="italic" />
 </RelativeLayout>

@@ -11,6 +11,8 @@ public class SmsAnswer implements Serializable {
     private final String mSmsIndex;
     private String mSmsStatus;
     private final int[] mAnswers;
+    private Integer mQuizCount;
+    private Integer mUserId;
 
     public SmsAnswer(String mSmsIndex, final int pArraySize) {
         this.mSmsIndex = mSmsIndex;
@@ -34,15 +36,29 @@ public class SmsAnswer implements Serializable {
         return mAnswers.length;
     }
 
+    public void setQuizCount(Integer mQuizCount) {
+        this.mQuizCount = mQuizCount;
+    }
+
+    public void setUserId(Integer mUserId) {
+        this.mUserId = mUserId;
+    }
+
     @Override
     public String toString() {
-        final StringBuilder result = new StringBuilder(mSmsIndex);
+        //OLD SMS - d{quizer_project_id} {report_number} {questionaires_count} {count_for_answer_1} {count_for_answer_2} ... {count_for_answer_N})
+        //NEW SMS - d{admin_key}:{quizer_user_id} {report_number} {questionaires_count} {count_for_answer_1} {count_for_answer_2} ... {count_for_answer_N})
+
+//        final StringBuilder result = new StringBuilder(mSmsIndex);
+        final StringBuilder result = new StringBuilder();
+        final String adminKey = getDao().getKey();
+        result.append(mUserId).append(" ").append(mSmsIndex).append(" ").append(mQuizCount);
 
         for (final int answer : mAnswers) {
             result.append(" ").append(answer);
         }
 
-        return "d" + encode(result.toString());
+        return "d" + adminKey + ":" + encode(result.toString());
     }
 
     public String getmSmsStatus() {

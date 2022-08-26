@@ -53,6 +53,9 @@ public class SettingsR {
     @ColumnInfo(name = "registered")
     private boolean registered;
 
+    @ColumnInfo(name = "config_time")
+    private Long config_time;
+
     public SettingsR() {
         this.started = false;
         this.auto_zoom = true;
@@ -62,6 +65,7 @@ public class SettingsR {
         this.project_is_active = true;
         this.root = false;
         this.registered = false;
+        this.config_time = -1L;
     }
 
     public int getId() {
@@ -182,5 +186,13 @@ public class SettingsR {
 
     public void setRegistered(boolean registered) {
         this.registered = registered;
+    }
+
+    public Long getConfig_time() {
+        return config_time;
+    }
+
+    public void setConfig_time(Long config_time) {
+        this.config_time = config_time;
     }
 }

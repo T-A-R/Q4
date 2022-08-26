@@ -149,15 +149,19 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
         return tree;
     }
 
-    private static void showTree(ElementItemR[][] tree) {
+    public static void showTree(ElementItemR[][] tree) {
         if (tree != null) {
 
             Log.d(TAG, "=============== Final Quotas ======================");
             try {
                 for (int i = 0; i < tree[0].length; i++) {
-                    Log.d(TAG, tree[0][i].getElementOptionsR().getTitle() + " " + tree[0][i].getDone() + "/" + tree[0][i].getLimit() + "/" + tree[0][i].isEnabled() + " | " +
-                            tree[1][i].getElementOptionsR().getTitle() + " " + tree[1][i].getDone() + "/" + tree[1][i].getLimit() + "/" + tree[1][i].isEnabled() + " | " +
-                            tree[2][i].getElementOptionsR().getTitle() + " " + tree[2][i].getDone() + "/" + tree[2][i].getLimit() + "/" + tree[2][i].isEnabled() + " | "
+                    Log.d(TAG, tree[0][i].getElementOptionsR().getRelative_id() + " " + tree[0][i].getDone() + "/" + tree[0][i].getLimit() + "/" + tree[0][i].isEnabled() + " | " +
+                            tree[1][i].getElementOptionsR().getRelative_id() + " " + tree[1][i].getDone() + "/" + tree[1][i].getLimit() + "/" + tree[1][i].isEnabled() + " | " +
+                            tree[2][i].getElementOptionsR().getRelative_id() + " " + tree[2][i].getDone() + "/" + tree[2][i].getLimit() + "/" + tree[2][i].isEnabled() + " | "+
+                            tree[3][i].getElementOptionsR().getRelative_id() + " " + tree[3][i].getDone() + "/" + tree[3][i].getLimit() + "/" + tree[3][i].isEnabled() + " | "+
+                            tree[4][i].getElementOptionsR().getRelative_id() + " " + tree[4][i].getDone() + "/" + tree[4][i].getLimit() + "/" + tree[4][i].isEnabled() + " | "+
+                            tree[5][i].getElementOptionsR().getRelative_id() + " " + tree[5][i].getDone() + "/" + tree[5][i].getLimit() + "/" + tree[5][i].isEnabled() + " | "+
+                            tree[6][i].getElementOptionsR().getRelative_id() + " " + tree[6][i].getDone() + "/" + tree[6][i].getLimit() + "/" + tree[6][i].isEnabled() + " | "
 
                     );
                 }
@@ -205,5 +209,25 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
         }
         Log.d(TAG, "getLocalQuotas: " + counter);
         return counter;
+    }
+
+    private ElementItemR cloneElement(ElementItemR item) {
+        if (item == null) {
+            return null;
+        }
+        ElementItemR newItem = new ElementItemR();
+        newItem.setConfigId(item.getConfigId());
+        newItem.setUserId(item.getUserId());
+        newItem.setProjectId(item.getProjectId());
+        newItem.setQuestionnaireId(item.getQuestionnaireId());
+        newItem.setType(item.getType());
+        newItem.setSubtype(item.getSubtype());
+        newItem.setRelative_id(item.getRelative_id());
+        newItem.setRelative_parent_id(item.getRelative_parent_id());
+        newItem.setWas_shown(false);
+        newItem.setChecked(false);
+        newItem.setEnabled(true);
+
+        return newItem;
     }
 }

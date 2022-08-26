@@ -61,6 +61,7 @@
     <string name="auth_enter_login">Введите логин</string>
     <string name="auth_enter_password">Введите пароль</string>
     <string name="auth_version_button">Версия: %1$s</string>
+    <string name="auth_key_button">Ключ: %1$s</string>
     <string name="notification_empty_login_or_pass">Логин или пароль пуст. Пожалуйста, введите логин и пароль, а затем повторите попытку входа.</string>
     <string name="notification_max_users">Достигнуто максимальное количество пользователей на устройстве (%1$s)! Обратитесь к менеджеру!</string>
     <string name="notification_short_login">Минимальная длина логина - 3 символа. Пожалуйста, введите логин и повторите попытку входа.</string>
@@ -277,6 +278,7 @@
     <string name="empty_string_warning">Заполните текстовое поле в выбранных вариантах ответа.</string>
     <string name="empty_rank_warning">Не заполнен открытый ответ.</string>
     <string name="empty_input_warning">Заполните текстовое поле.</string>
+    <string name="number_out_range_warning">Число вне разрешенного диапазона.</string>
     <string name="empty_phone_warning">Номер телефона указан не полностью.</string>
     <string name="not_full_phone_warning">Номер введён не полностью. Чтобы продолжить анкету вы можете или удалить его, или ввести до конца.</string>
     <string name="empty_answers_warning">Вы не выбрали ни одного ответа.</string>
@@ -322,6 +324,7 @@
     <string name="view_unsent_count_quiz">Количество неотправленных анкет: %1$s</string>
     <string name="view_unsent_count_audio">Количество неотправленных аудио файлов: %1$s</string>
     <string name="view_unsent_count_photo">Количество неотправленных фото файлов: %1$s</string>
+    <string name="view_unsent_count_photo_answers">Количество неотправленных фотоответов: %1$s</string>
     <string name="button_delete_users">Удалить пользователей</string>
     <string name="button_delete_files">Удалить аудио и фото</string>
     <string name="button_delete_data_quizer">Очистить диск</string>
@@ -336,6 +339,7 @@
     <string name="button_exit">Выход</string>
     <string name="button_send_audio">Отправить аудио</string>
     <string name="button_send_photo">Отправить фото</string>
+    <string name="button_send_photo_answers">Отправить фотоответы</string>
     <string name="button_send_log">Отправить журнал на сервер</string>
     <string name="button_clear_logs">Очистить журнал логов</string>
     <string name="button_update_config">Обновить конфиг</string>
@@ -495,4 +499,15 @@
     <string name="error_start_quiz">Ошибка подготовки анкеты. Перезапустите приложение и попробуйте еще раз</string>
     <string name="screensaver_start_quiz">Подождите,  идет запуск анкеты</string>
     <string name="cant_reg_coz_no_internet">Отсутствует Интернет-соединение, регистрация невозможна</string>
+    <string name="add_photo">Выбрать фото</string>
+    <string name="button_add">Добавить</string>
+    <string name="button_add_photo">Добавить фото</string>
+    <string name="button_view_photo">Просмотреть фото</string>
+    <string name="limits_warning_start">Значение в ответе %1$s должно быть</string>
+    <string name="limits_warning_min">не менее %1$s</string>
+    <string name="limits_warning_max">не более %1$s</string>
+    <string name="please_download_last_app_version">У вас установлена неактуальная версия приложения. На ней работа невозможна. Пожалуйста, скачайте последнюю версию</string>
+    <string name="reg_phone_info">У Вашего логина для работы зарегистрированы следующие номера телефонов. Выберите среди них номер телефона, sim-карта для которого установлена на устройстве с приложением, а при его отсутствии в списке зарегистрируйте новый номер.</string>
+    <string name="reg_new_phone">Зарегистрировать новый номер</string>
+    <string name="reg_phone_warning">Внимание! Если вы неверно укажете номер телефона на sim-карте для устройства, то ваша работа не будет учтена.</string>
 </resources>

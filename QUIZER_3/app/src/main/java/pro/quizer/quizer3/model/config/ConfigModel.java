@@ -97,6 +97,16 @@ public class ConfigModel implements Serializable {
     @SerializedName("config_forced_update_date")
     private Long config_forced_update_date;
 
+    // Условная регистрация
+    @SerializedName("regs_disabled")
+    private Boolean regs_disabled = true;
+
+    @SerializedName("dt_reloading_config")
+    private Long dt_reloading_config = -1L;
+
+    @SerializedName("min_ver_android_app")
+    private Integer min_ver_android_app = 0;
+
     public String getServerUrl() {
         return server_url;
     }
@@ -275,4 +285,22 @@ public class ConfigModel implements Serializable {
     public void setWork_periods(List<PeriodModel> work_periods) {
         this.work_periods = work_periods;
     }
+
+    public Boolean isRegsDisabled() {
+        return regs_disabled;
+    }
+
+    public void setRegsDisabled(Boolean regs_disabled) {
+        this.regs_disabled = regs_disabled;
+    }
+
+    public Long getDtReloadingConfig() {
+        return dt_reloading_config;
+    }
+
+    public void setDtReloadingConfig(Long dt_reloading_config) {
+        this.dt_reloading_config = dt_reloading_config;
+    }
+
+    public Integer getMinAppVersion() { return min_ver_android_app; }
 }

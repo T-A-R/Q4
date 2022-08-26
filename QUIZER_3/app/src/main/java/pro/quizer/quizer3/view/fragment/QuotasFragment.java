@@ -256,7 +256,7 @@ public class QuotasFragment extends ScreenFragment implements ICallback {
 
         if (getDao().getQuotaR(userProjectId) != null) {
             if (gotQuotaTime != null) {
-                String text = mMainActivity.getString(R.string.quota_renew_time) + " " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, gotQuotaTime);
+                String text = mMainActivity.getString(R.string.quota_renew_time) + " " + DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, gotQuotaTime * 1000);
                 quotaText3 = text;
             }
 

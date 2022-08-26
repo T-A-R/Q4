@@ -111,6 +111,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CALL_PHONE;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.READ_PHONE_NUMBERS;
 import static android.Manifest.permission.READ_PHONE_STATE;
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.SEND_SMS;
@@ -160,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private String configId;
 
     private Timer mTimer;
+    private Timer mTimerPeriodInfo;
     private AlertSmsTask mAlertSmsTask;
     private ConfigModel mConfig;
     private boolean isHomeFragmentStarted = false;
@@ -168,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private Boolean mHomeRestart;
     public boolean isGoogleLocation = false;
     public boolean isGotAnswerFromGPS = false;
+    private SmartFragment.Events messageListener = null;
 
     private RelativeLayout mainCont;
 
@@ -362,7 +365,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private void generateTempMap(final List<ElementModelNew> elements) {
         for (final ElementModelNew element : elements) {
             mTempMap.put(element.getRelativeID(), element);
-            Log.d("T-L.MainActivity", "??? generateTempMap: " + element.getRelativeID());
+            Log.d("T-A-R.MainActivity", "??? generateTempMap: " + element.getRelativeID());
             final List<ElementModelNew> nestedList = element.getElements();
             if (nestedList != null && !nestedList.isEmpty()) {
                 generateTempMap(nestedList);
@@ -463,6 +466,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                         elementOptionsR.setShow_in_card(optionsModelNew.getShowInCard());
                         elementOptionsR.setAuto_check(optionsModelNew.isAutoCheck());
                         elementOptionsR.setHelper(optionsModelNew.isHelper());
+                        elementOptionsR.setPhoto_answer(optionsModelNew.isPhotoAnswer());
+                        elementOptionsR.setPhoto_answer_required(optionsModelNew.isPhotoAnswerRequired());
+                        elementOptionsR.setMin_number(optionsModelNew.getMinNumber());
+                        elementOptionsR.setMax_number(optionsModelNew.getMaxNumber());
 
                         elementItemR.setElementOptionsR(elementOptionsR);
                     }
@@ -549,6 +556,12 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         return FileUtils.getFilesRecursion(JPEG, FileUtils.getPhotosStoragePath(this) + FileUtils.FOLDER_DIVIDER + pUserId);
     }
 
+    public List<File> getPhotosAnswersByToken(final String token) {
+        return FileUtils.getFilesRecursion(JPEG, FileUtils.getAnswersStoragePath(this) + File.separator
+                + getCurrentUserId() + File.separator
+                + token);
+    }
+
     public List<File> getRegPhotosByUserId(final int pUserId) {
         return FileUtils.getFilesRecursion(JPEG, FileUtils.getRegStoragePath(this) + FileUtils.FOLDER_DIVIDER + pUserId);
     }
@@ -598,8 +611,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             final int sms = ContextCompat.checkSelfPermission(getApplicationContext(), SEND_SMS);
             final int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
             final int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
-            final int phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_STATE);
+            final int phoneState;
+            if (Build.VERSION.SDK_INT >= 28) {
+                phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_NUMBERS);
 
+            } else {
+                phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_STATE);
+
+            }
             return location == PackageManager.PERMISSION_GRANTED &&
                     camera == PackageManager.PERMISSION_GRANTED &&
                     audio == PackageManager.PERMISSION_GRANTED &&
@@ -613,7 +632,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             final int audio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
             final int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
             final int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
-            final int phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_STATE);
+            final int phoneState;
+            if (Build.VERSION.SDK_INT >= 28) {
+                phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_NUMBERS);
+
+            } else {
+                phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_STATE);
+
+            }
 
             return location == PackageManager.PERMISSION_GRANTED &&
                     camera == PackageManager.PERMISSION_GRANTED &&
@@ -626,23 +652,43 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void requestPermission() {
         if (!mIsPermDialogShow)
-            ActivityCompat.requestPermissions(this,
-                    PLAY_MARKET ? new String[]{
-                            ACCESS_FINE_LOCATION,
-                            CAMERA,
-                            RECORD_AUDIO,
-                            WRITE_EXTERNAL_STORAGE,
-                            READ_EXTERNAL_STORAGE,
-                            READ_PHONE_STATE
-                    } : new String[]{
-                            ACCESS_FINE_LOCATION,
-                            CAMERA,
-                            RECORD_AUDIO,
-                            WRITE_EXTERNAL_STORAGE,
-                            READ_EXTERNAL_STORAGE,
-                            SEND_SMS,
-                            READ_PHONE_STATE
-                    }, 200);
+            if (Build.VERSION.SDK_INT >= 28) {
+                ActivityCompat.requestPermissions(this,
+                        PLAY_MARKET ? new String[]{
+                                ACCESS_FINE_LOCATION,
+                                CAMERA,
+                                RECORD_AUDIO,
+                                WRITE_EXTERNAL_STORAGE,
+                                READ_EXTERNAL_STORAGE,
+                                READ_PHONE_NUMBERS
+                        } : new String[]{
+                                ACCESS_FINE_LOCATION,
+                                CAMERA,
+                                RECORD_AUDIO,
+                                WRITE_EXTERNAL_STORAGE,
+                                READ_EXTERNAL_STORAGE,
+                                SEND_SMS,
+                                READ_PHONE_NUMBERS
+                        }, 200);
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        PLAY_MARKET ? new String[]{
+                                ACCESS_FINE_LOCATION,
+                                CAMERA,
+                                RECORD_AUDIO,
+                                WRITE_EXTERNAL_STORAGE,
+                                READ_EXTERNAL_STORAGE,
+                                READ_PHONE_STATE
+                        } : new String[]{
+                                ACCESS_FINE_LOCATION,
+                                CAMERA,
+                                RECORD_AUDIO,
+                                WRITE_EXTERNAL_STORAGE,
+                                READ_EXTERNAL_STORAGE,
+                                SEND_SMS,
+                                READ_PHONE_STATE
+                        }, 200);
+            }
     }
 
     @SuppressLint("MissingPermission")
@@ -651,7 +697,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         switch (requestCode) {
             case 200:
                 if (grantResults.length > 0) {
-                    if(!PLAY_MARKET) {
+                    if (!PLAY_MARKET) {
                         final boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                         final boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                         final boolean audioAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
@@ -721,7 +767,13 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                        String desc,
                        String data) {
         AppLogsR appLogsR = new AppLogsR();
-        String login = getCurrentUser().getLogin();
+        String login = null;
+        try {
+            if (getCurrentUser() != null)
+                login = getCurrentUser().getLogin();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (login == null) login = "no_login";
         appLogsR.setLogin(login);
         appLogsR.setDevice(DeviceUtils.getDeviceInfo());
@@ -739,7 +791,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public void startRecording(int relativeId, String token) {
-        Log.d("T-L.MainActivity", "startRecording: " + token);
+//        Log.d("T-L.MainActivity", "startRecording: " + token);
         if (mIsMediaConnected) {
             final MediaControllerCompat mediaCntrlr = MediaControllerCompat.getMediaController(this);
             if (mediaCntrlr == null) {
@@ -766,7 +818,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             if (pbState != PlaybackStateCompat.STATE_PLAYING) {
 
                 mIsAudioStarted = true;
-                Log.d(TAG, "******************* startRecording: **********************");
+//                Log.d(TAG, "******************* startRecording: **********************");
                 try {
                     audioNumber = getCurrentQuestionnaireForce().getAudio_number();
                     getMainDao().setAudioNumber(audioNumber + 1);
@@ -1209,6 +1261,93 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         }
     }
 
+    public void startCounter(Long time, int type, SmartFragment.Events listener) {
+        messageListener = listener;
+        Date startDateForDialog = new Date((time + 5000) );
+        if (mTimerPeriodInfo != null) {
+            mTimerPeriodInfo.cancel();
+        }
+        mTimerPeriodInfo = new Timer();
+        AlertTask task = new AlertTask();
+        task.setType(type);
+        mTimerPeriodInfo.schedule(task, startDateForDialog);
+
+    }
+
+    class AlertTask extends TimerTask {
+
+        private int type = 0;
+
+        public void setType(int type) {
+            this.type = type;
+        }
+
+        @Override
+        public void run() {
+            if (!isFinishing()) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("T-A-R.MainActivity", "run counter <<<<<<<< ");
+                        try {
+                            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                            r.play();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (!isFinishing()) {
+                            try {
+                                if (messageListener != null) {
+                                    switch (type) {
+                                        case 1:
+                                            messageListener.runEvent(21);
+                                            break;
+                                        case 2:
+                                            messageListener.runEvent(22);
+                                            break;
+                                        case 3:
+                                            messageListener.runEvent(23);
+                                            break;
+                                    }
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    class AlertWorkTask extends TimerTask {
+        @Override
+        public void run() {
+            if (!isFinishing()) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                            r.play();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (!isFinishing()) {
+                            try {
+                                if (messageListener != null) messageListener.runEvent(22);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
+
     public void activateExitReminder() {
         if (isExit() && getReserveChannel() != null && !PLAY_MARKET) {
 
@@ -1220,7 +1359,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                     mTimer.cancel();
                 }
 
-                List<StagesModel> stages = getReserveChannel().getStages();
+                List<StagesModel> stages = getConfig().getUserSettings().getStages();
                 List<Integer> datesList = new ArrayList<>();
                 Long startDate = null;
                 Date startDateForDialog = null;
@@ -1410,7 +1549,12 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public ConfigModel getConfigForce() {
-        mConfig = getCurrentUserForce().getConfigR();
+        try {
+            if (getCurrentUserForce() != null)
+                mConfig = getCurrentUserForce().getConfigR();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return mConfig;
     }
 
@@ -1589,7 +1733,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 e.printStackTrace();
                 return telMgr.getSimState() == TelephonyManager.SIM_STATE_READY;
             }
-        } else  {
+        } else {
             int simState = telMgr.getSimState();
             return simState == TelephonyManager.SIM_STATE_READY;
         }
@@ -1603,7 +1747,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         final int sms = ContextCompat.checkSelfPermission(getApplicationContext(), SEND_SMS);
         final int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
         final int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
-        final int phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_STATE);
+        final int phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_NUMBERS);
 
         StringBuilder permissions = new StringBuilder();
         permissions.append("ACCESS_FINE_LOCATION: ");
@@ -1630,7 +1774,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         permissions.append(readStorage == PackageManager.PERMISSION_GRANTED);
         permissions.append("; ");
 
-        permissions.append("READ_PHONE_STATE: ");
+        permissions.append("READ_PHONE_NUMBERS: ");
         permissions.append(phoneState == PackageManager.PERMISSION_GRANTED);
         permissions.append("; ");
 
@@ -1638,7 +1782,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public boolean isGpsOn() {
-        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
@@ -1658,7 +1802,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             e.printStackTrace();
             int statusCode = ((ApiException) e).getStatusCode();
 
-            Log.d("T-L.MainActivity", "checkSettingsAndStartLocationUpdates CODE: " + getLocationMode());
+//            Log.d("T-L.MainActivity", "checkSettingsAndStartLocationUpdates CODE: " + getLocationMode());
             if (isAirplaneMode()) {
                 listener.runEvent(10);
             } else {

@@ -266,7 +266,7 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
 
         st("load prev elements");
 
-        initCurrentElements();
+        initElements();
         st("init curr element");
         loadResumedData();
         st("load resumed data");
@@ -456,7 +456,7 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
         startTime = DateUtils.getCurrentTimeMillis();
 
         if (getQuestionnaire() == null) {
-            initCurrentElements();
+            initElements();
         }
         if (getQuestionnaire() != null)
             if (prevList != null && prevList.size() > 0) {
@@ -751,7 +751,7 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
                 if (isQuota) {
 
                     adapterList = new ListAnswersAdapter(activity, currentElement, answersList,
-                            getPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), titlesMap, this);
+                            getMultiPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), titlesMap, this);
                 } else {
                     adapterList = new ListAnswersAdapter(activity, currentElement, answersList,
                             null, null, titlesMap, this);
@@ -824,10 +824,10 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
 
                 itemsList.clear();
 
-                Integer unchecker = null;
+                List<Integer> uncheckers = new ArrayList<>();
                 for (int i = 0; i < answersList.size(); i++) {
                     itemsList.add(Objects.requireNonNull(titlesMap.get(answersList.get(i).getRelative_id())).getTitle());
-                    if (answersList.get(i).getElementOptionsR().isUnchecker()) unchecker = i;
+                    if (answersList.get(i).getElementOptionsR().isUnchecker()) uncheckers.add(i);
                 }
 
                 if (currentElement != null && currentElement.getElementOptionsR() != null && currentElement.getElementOptionsR().isPolyanswer()) {
@@ -835,8 +835,8 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
                     multiSelectionSpinner = findViewById(R.id.answers_multi_spinner);
                     multiSelectionSpinner.setVisibility(View.VISIBLE);
                     multiSelectionSpinner.setItems(itemsList);
-                    if (unchecker != null)
-                        multiSelectionSpinner.hasNoneOption(true, unchecker);
+                    if (uncheckers.size() > 0)
+                        multiSelectionSpinner.hasNoneOption(true, uncheckers);
                     multiSelectionSpinner.setSelection(new int[]{});
                     multiSelectionSpinner.setListener(new MultiSelectSpinner.OnMultipleItemsSelectedListener() {
                         @Override
@@ -1055,6 +1055,7 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
                     elementPassedR.setFrom_quotas_block(false);
 
                     getDao().insertElementPassedR(elementPassedR);
+                    Log.d("T-L.ElementAviaFragment", "saveElement: ");
                     getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
                     saved = true;
 
@@ -1986,7 +1987,9 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
                             element.getElementOptionsR().getPlaceholder(),
                             element.getElementOptionsR().isUnnecessary_fill_open(),
                             element.getElementOptionsR().isAutoChecked(),
-                            element.getElementOptionsR().isHelper()));
+                            element.getElementOptionsR().isHelper(),
+                            element.getElementOptionsR().getMin_number(),
+                            element.getElementOptionsR().getMax_number()));
                     counter++;
                 }
             }

@@ -13,6 +13,9 @@ public class ActiveRegistrationData implements Serializable {
     @SerializedName("uik_number")
     private String uik_number;
 
+    @SerializedName("reg_phones")
+    private List<String> reg_phones;
+
     public ActiveRegistrationData() {
     }
 
@@ -30,5 +33,13 @@ public class ActiveRegistrationData implements Serializable {
 
     public void setUik_number(String uik_number) {
         this.uik_number = uik_number;
+    }
+
+    public List<String> getReg_phones() {
+        return reg_phones;
+    }
+
+    public void setReg_phones(List<String> reg_phones) {
+        this.reg_phones = reg_phones;
     }
 }

@@ -119,6 +119,18 @@ public class OptionsModelNew implements Serializable {
     @SerializedName("helper")
     private boolean helper;
 
+    @SerializedName("photo_answer")
+    private boolean photo_answer;
+
+    @SerializedName("photo_answer_required")
+    private boolean photo_answer_required;
+
+    @SerializedName("min_number")
+    private Integer min_number;
+
+    @SerializedName("max_number")
+    private Integer max_number;
+
     public String getData() {
         return data;
     }
@@ -352,5 +364,37 @@ public class OptionsModelNew implements Serializable {
 
     public void setHelper(boolean helper) {
         this.helper = helper;
+    }
+
+    public boolean isPhotoAnswer() {
+        return photo_answer;
+    }
+
+    public void setPhotoAnswer(boolean photo_answer) {
+        this.photo_answer = photo_answer;
+    }
+
+    public boolean isPhotoAnswerRequired() {
+        return photo_answer_required;
+    }
+
+    public void setPhotoAnswerRequired(boolean photo_answer_required) {
+        this.photo_answer_required = photo_answer_required;
+    }
+
+    public Integer getMinNumber() {
+        return min_number;
+    }
+
+    public void setMinNumber(Integer min_number) {
+        this.min_number = min_number;
+    }
+
+    public Integer getMaxNumber() {
+        return max_number;
+    }
+
+    public void setMaxNumber(Integer max_number) {
+        this.max_number = max_number;
     }
 }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -13,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -29,8 +31,13 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import java.util.List;
 import java.util.Objects;
 
+import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.executable.DeleteUsersExecutable;
+import pro.quizer.quizer3.executable.ICallback;
+import pro.quizer.quizer3.model.config.ConfigModel;
+import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.FontUtils;
 import pro.quizer.quizer3.view.activity.ScreenActivity;
 import pro.quizer.quizer3.model.User;
@@ -253,6 +260,105 @@ public abstract class ScreenFragment extends SmartFragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public boolean checkConfigTime(Boolean fromAuth) {
+        Long configReloadTime = null;
+        try {
+            configReloadTime = getMainActivity().getConfig().getDtReloadingConfig();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (configReloadTime == null) configReloadTime = -1L;
+        Long configTime = getDao().getSettings().getConfig_time();
+//        Log.d("T-A-R.ScreenFragment", ">>>>> checkConfigTime: " + configTime + " / " + configReloadTime);
+        if (configReloadTime != -1L && configTime != -1L  && configReloadTime < DateUtils.getCurrentTimeMillis() && configTime < configReloadTime) {
+            showClearDbAlertDialog("ВНИМАНИЕ! Перед началом работы должна быть обновлена база данных приложения!",
+                    "Сейчас база приложения будет очищена и потребуется заново ввести ключ, логин и пароль при наличии Интернет!");
+            return false;
+        } else return true;
+    }
+
+    public void showClearDbAlertDialog(String title, String message) {
+        MainActivity activity = getMainActivity();
+        if (activity != null && !activity.isFinishing()) {
+            new AlertDialog.Builder(activity, R.style.AlertDialogStyleRed)
+                    .setCancelable(false)
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setPositiveButton(R.string.view_yes, (dialog, which) -> {
+                        showScreensaver(getString(R.string.notification_clear_db), true);
+                        new DeleteUsersExecutable(activity, new ICallback() {
+                            @Override
+                            public void onStarting() {
+                            }
+
+                            @Override
+                            public void onSuccess() {
+                                hideScreensaver();
+                                ConfigModel config1 = null;
+                                ConfigModel config2 = null;
+                                Integer users = 0;
+                                try {
+                                    users = getDao().getAllUsers().size();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    config1 = activity.getConfig();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    config2 = activity.getConfigForce();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+
+                                try {
+                                    String log = "Users: " + users + " Config: " + config1 + " / " + config2;
+                                    getMainActivity().addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ATTEMPT, "clear db", log);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                replaceFragment(new KeyFragment());
+                            }
+
+                            @Override
+                            public void onError(Exception pException) {
+                            }
+                        }).execute();
+                    }).show();
+        }
+    }
+
+    public void showDialog(String title, String message, String yes, String no, ICallback listenerYes, ICallback listenerNo) {
+        MainActivity activity = getMainActivity();
+        if (activity != null && !activity.isFinishing()) {
+
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity, R.style.AlertDialogStyleRed);
+            alertDialog.setCancelable(false);
+            if (title != null) alertDialog.setTitle(title);
+            alertDialog.setMessage(message);
+            if (listenerYes != null)
+                alertDialog.setPositiveButton(yes, (dialog, which) -> {
+                    listenerYes.onSuccess();
+                    if (alertDialog != null) {
+                        dialog.dismiss();
+                    }
+                });
+
+            if (listenerNo != null)
+                alertDialog.setPositiveButton(no, (dialog, which) -> {
+                    listenerNo.onSuccess();
+                    if (alertDialog != null) {
+                        dialog.dismiss();
+                    }
+                });
+
+            alertDialog.show();
         }
     }
 

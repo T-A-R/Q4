@@ -161,6 +161,28 @@
                 android:textSize="@dimen/_12ssp"
                 android:text="@string/button_send_photo" />
 
+            <TextView
+                android:layout_marginTop="@dimen/_9sdp"
+                android:id="@+id/unsended_photo_answers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_12ssp"
+                tools:text="ПУСТО" />
+
+
+            <Button
+                android:id="@+id/send_photo_answers"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/button_send_photo_answers" />
+
             <Button
                 android:id="@+id/send_reg"
                 style="@style/ButtonStyle"

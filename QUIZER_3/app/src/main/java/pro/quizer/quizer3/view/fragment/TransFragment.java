@@ -7,6 +7,8 @@ import pro.quizer.quizer3.model.ElementSubtype;
 
 import static pro.quizer.quizer3.MainActivity.AVIA;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,12 +45,11 @@ public class TransFragment extends ScreenFragment {
     @Override
     protected void onReady() {
 
-//        PageElementFragment fragment = new PageElementFragment();
         if (!AVIA) {
             ElementFragment fragment = new ElementFragment();
             fragment.setStartElement(nextElementId, restored);
             if (!restored) {
-                if (checkQuotaJump(nextElementId)) fillPassedQuotas();
+                if (nextElementId != 0 && nextElementId != -1 && checkQuotaJump(nextElementId)) fillPassedQuotas();
                 replaceFragment(fragment);
             } else
                 replaceFragmentBack(fragment);
@@ -66,31 +67,46 @@ public class TransFragment extends ScreenFragment {
 
     private boolean checkQuotaJump(int relativeId) {
         boolean isQuota = false;
+        Log.d("T-A-R.TransFragment", "======= checkQuotaJump: " + relativeId);
         ElementItemR currentElement = getElement(relativeId);
         if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0 &&
                 getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
             isQuota = true;
             quotaElementsList = getElement(currentElement.getRelative_parent_id()).getElements();
         }
+//        Log.d("T-A-R.TransFragment", "checkQuotaJump: " + isQuota);
         return isQuota;
     }
 
     private void fillPassedQuotas() {
-        Integer startPosition = null;
+//        Log.d("T-A-R.TransFragment", "=== quotaElementsList: " + quotaElementsList.size());
+//        Log.d("T-A-R.TransFragment", "=== startElementId: " + startElementId);
+        int startPosition = 0;
         for (int i = 0; i < quotaElementsList.size(); i++) {
             if (quotaElementsList.get(i).getRelative_id().equals(startElementId)) {
                 startPosition = i;
                 break;
             }
         }
-        if (startPosition != null && startPosition != (quotaElementsList.size() - 1)) {
-            for (int i = startPosition + 1; i < quotaElementsList.size(); i++) {
-                if(!quotaElementsList.get(i).getRelative_id().equals(nextElementId)) {
-                    //TODO ADD PASSED_QUOTA
+
+        if(startPosition == 0) {
+            for (int i = 0; i < quotaElementsList.size(); i++) {
+                if (!quotaElementsList.get(i).getRelative_id().equals(nextElementId)) {
                     savePassedElement(quotaElementsList.get(i).getRelative_id());
-                }
+                } else break;
+            }
+        } else if (startPosition != (quotaElementsList.size() - 1)) {
+            for (int i = startPosition + 1; i < quotaElementsList.size(); i++) {
+                if (!quotaElementsList.get(i).getRelative_id().equals(nextElementId)) {
+                    savePassedElement(quotaElementsList.get(i).getRelative_id());
+                } else break;
             }
         }
+
+//        List<ElementPassedR> passed = getDao().getQuotaPassedElements(getMainActivity().getToken(), true);
+//        for(ElementPassedR item : passed) {
+//            Log.d("T-A-R.TransFragment", "passed: " + item.getRelative_id());
+//        }
     }
 
     private void savePassedElement(int id) {
@@ -104,10 +120,12 @@ public class TransFragment extends ScreenFragment {
         getDao().insertElementPassedR(elementPassedR);
 
         List<ElementItemR> answers = currentElement.getElements();
-        for(ElementItemR answer : answers) {
-            if(answer.getElementOptionsR().isHelper()) {
+        for (ElementItemR answer : answers) {
+            if (answer.getElementOptionsR().isHelper()) {
                 elementPassedR.setRelative_id(answer.getRelative_id());
+                elementPassedR.setParent_id(answer.getRelative_parent_id());
                 elementPassedR.setFrom_quotas_block(true);
+                Log.d("T-A-R.TransFragment", "savePassedElement 10: " + elementPassedR.getRelative_id());
                 getDao().insertElementPassedR(elementPassedR);
                 break;
             }

@@ -130,7 +130,7 @@ public class RegistrationR {
     }
 
     public boolean isAccepted() {
-        return status.equals(Constants.Registration.SENT) || status.equals(Constants.Registration.SMS) || status.equals(Constants.Registration.SENT_NO_SMS);
+        return status.equals(Constants.Registration.SENT) || status.equals(Constants.Registration.SMS) || status.equals(Constants.Registration.SENT_NO_SMS)  || status.equals(Constants.Registration.HAND);
     }
 
     public boolean isCode() {
@@ -152,4 +152,6 @@ public class RegistrationR {
     public void setStatus(String status) {
         this.status = status;
     }
+
+
 }

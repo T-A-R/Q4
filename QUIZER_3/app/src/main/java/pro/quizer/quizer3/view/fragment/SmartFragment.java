@@ -74,7 +74,6 @@ import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.model.logs.Crash;
 import pro.quizer.quizer3.utils.DateUtils;
-import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.FontUtils;
 import pro.quizer.quizer3.utils.SPUtils;
@@ -415,7 +414,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             e.printStackTrace();
         }
 
-        if (oldUser != null) {
+        if (oldUser != null && oldUser.getUser_id() == pModel.getUserId()) {
             String configId = oldUser.getConfigR().getConfigId();
             if (configId == null)
                 configId = oldUser.getConfig_id();
@@ -454,16 +453,19 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         if (oldConfig == null) {
             userModelR.setConfig(new GsonBuilder().create().toJson(pConfigModel));
             userModelR.setConfig_id(pModel.getConfigId());
+            getDao().setConfigTime(DateUtils.getCurrentTimeMillis());
         } else {
             userModelR.setConfig(oldConfig);
             userModelR.setConfig_new(new GsonBuilder().create().toJson(pConfigModel));
             userModelR.setConfig_id(pModel.getConfigId());
+            getDao().setConfigTime(DateUtils.getCurrentTimeMillis());
         }
 
         try {
             getDao().insertUser(userModelR);
             getDao().insertOption(new OptionsR(Constants.OptionName.QUIZ_STARTED, "false"));
         } catch (Exception e) {
+            e.printStackTrace();
             showToast(getString(R.string.db_save_error));
         }
 
@@ -489,6 +491,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             try {
                 mCurrentUser = getUserByUserId(getCurrentUserId());
             } catch (Exception e) {
+                e.printStackTrace();
                 showToast(getString(R.string.db_load_error));
             }
         }
@@ -516,7 +519,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public void showElementsDB() {
         Log.d(TAG, "========== DATABASE ========== ");
-        initCurrentElements();
+        initElements();
         Log.d(TAG, "Elements: " + getCurrentElements().size());
 
         for (int i = 0; i < getCurrentElements().size(); i++) {
@@ -524,7 +527,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         }
     }
 
-    public void initCurrentElements() {
+    public void initElements() {
         try {
             elementItemRList = getMainActivity().getElementItemRList();
             currentQuestionnaire = getMainActivity().getCurrentQuestionnaire();
@@ -592,6 +595,53 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         return passedQuotasBlockNew;
     }
 
+    public List<List<Integer>> getMultiPassedQuotasBlock(int max) {
+        List<List<Integer>> passedQuotasBlock = new ArrayList<>();
+        List<ElementPassedR> passedElements = getDao().getQuotaPassedElements(getMainActivity().getCurrentQuestionnaire().getToken(), true);
+//        List<ElementPassedR> passedElements2 = getDao().getAllElementsPassedRNoToken();
+        if (passedElements == null || passedElements.size() == 0) {
+            return null;
+        }
+
+        for (ElementPassedR item : passedElements) {
+            Log.d("T-A-R.SmartFragment", "PASSED ID >>>>>: " + item.getRelative_id());
+        }
+
+        Integer savedParent = null;
+        for (int k = 0; k < passedElements.size(); k++) {
+//            Log.d("T-A-R.SmartFragment", "Passed ID: " + passedElements.get(k).getRelative_id());
+            Integer parentId = passedElements.get(k).getParent_id();
+//            Log.d("T-A-R.SmartFragment", "getMultiPassedQuotasBlock PARENT: " + parentId);
+            if (!parentId.equals(savedParent)) {
+                savedParent = parentId;
+                List<Integer> passedAnswersList = getDao().getQuotaPassedAnswers(getMainActivity().getCurrentQuestionnaire().getToken(), true, parentId);
+//                try {
+//                    Log.d("T-A-R.SmartFragment", "getMultiPassedQuotasBlock LIST: " + passedAnswersList.size());
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+                passedQuotasBlock.add(passedAnswersList);
+            }
+        }
+
+//        for (List<Integer> item : passedQuotasBlock) {
+//            Log.d("T-A-R.SmartFragment", "PASSED ID >>>>>: " + item.get(0));
+//        }
+
+        List<List<Integer>> passedQuotasBlockNew = new ArrayList<>();
+//
+//        for(List<Integer> block : passedQuotasBlock) {
+//            Log.d("T-A-R.SmartFragment", "????: " + block.get(0));
+//        }
+
+        if (passedQuotasBlock.size() > 0) {
+            for (int i = 0; i < max - 1; i++) {
+                passedQuotasBlockNew.add(passedQuotasBlock.get(i));
+            }
+        }
+        return passedQuotasBlockNew;
+    }
+
     public Map<Integer, List<Integer>> getPassedQuotasMap(int max) {
         Map<Integer, List<Integer>> mapBlock = new HashMap<>();
         Map<Integer, List<Integer>> limitedMapBlock = new HashMap<>();
@@ -645,7 +695,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public CurrentQuestionnaireR getQuestionnaire() {
-		currentQuestionnaire = getMainActivity().getCurrentQuestionnaire();
+        currentQuestionnaire = getMainActivity().getCurrentQuestionnaire();
         return currentQuestionnaire;
 
     }
@@ -825,6 +875,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 return false;
             } else {
                 Log.d(TAG, "==== SAVE TO CONFIG COZ NO HAVE QUIZ ====");
+                getDao().setConfigTime(DateUtils.getCurrentTimeMillis());
                 getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
                 getMainActivity().getConfigForce();
 
@@ -842,7 +893,11 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public boolean saveQuestionnaireToDatabase(CurrentQuestionnaireR currentQuiz, boolean aborted) {
 
-        getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.ATTEMPT, currentQuiz.getToken(), null);
+        try {
+            getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.ATTEMPT, currentQuiz.getToken(), null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         boolean saved = true;
         countElements = 0;
@@ -865,7 +920,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
                 if (!saveElement(currentQuiz, element)) {
                     showToast("Ошибка сохранения элемента анкеты");
-                    Log.d(TAG, "saveQuestionnaireToDatabase: Elements List is empty");
+                    Log.d(TAG, "saveQuestionnaireToDatabase: Elements List is empty: " + element.getRelative_id());
                     return false;
                 }
             }
@@ -911,9 +966,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             questionnaireDatabaseModel.setCount_interrupted(currentQuiz.getCount_interrupted());
         }
         questionnaireDatabaseModel.setQuestions_passed(countQuestions);
-        questionnaireDatabaseModel.setScreens_passed(countScreens); //TODO сделать подсчет экранов.
+        questionnaireDatabaseModel.setScreens_passed(countScreens);
         questionnaireDatabaseModel.setSelected_questions(countElements);
-        questionnaireDatabaseModel.setDuration_time_questionnaire((int) durationTimeQuestionnaire);
+        questionnaireDatabaseModel.setDate_end_interview(endTime);
+        questionnaireDatabaseModel.setDuration_time_questionnaire((int) (endTime - currentQuiz.getStart_date()));
         questionnaireDatabaseModel.setAuth_time_difference(SPUtils.getAuthTimeDifference(getContext()));
         questionnaireDatabaseModel.setQuota_time_difference(SPUtils.getQuotaTimeDifference(getContext()));
         questionnaireDatabaseModel.setSend_time_difference(SPUtils.getSendTimeDifference(getContext()));
@@ -921,7 +977,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         try {
             getDao().insertQuestionnaire(questionnaireDatabaseModel);
             getMainActivity().setSettings(Constants.Settings.QUIZ_TIME, String.valueOf(DateUtils.getCurrentTimeMillis()));
-            Log.d("T-L.SmartFragment", "saveQuestionnaireToDatabase: " + questionnaireDatabaseModel.toString());
+            Log.d("T-A-R.SmartFragment", "saveQuestionnaireToDatabase: " + questionnaireDatabaseModel.toString());
             saveQuizToFile(questionnaireDatabaseModel.getToken());
             getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.SUCCESS, questionnaireDatabaseModel.getToken(), null);
         } catch (Exception e) {
@@ -932,8 +988,6 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
         if (saved) {
             try {
-                Log.d("T-L.ElementFragment", "Clear Questionnaire: 6");
-
                 getDao().clearCurrentQuestionnaireR();
                 getDao().clearElementPassedR();
                 getDao().clearPrevElementsR();
@@ -972,6 +1026,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     private boolean saveElement(CurrentQuestionnaireR currentQuiz, final ElementPassedR element) {
         try {
+//            Log.d("T-A-R.SmartFragment", "saveElement ID: " + element.getRelative_id());
             final ElementDatabaseModelR elementDatabaseModel = new ElementDatabaseModelR();
             ElementItemR elementItemR = null;
             elementItemR = getDao().getElementById(element.getRelative_id());
@@ -979,6 +1034,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             if (elementItemR != null) {
                 parentId = elementItemR.getRelative_parent_id();
             } else {
+
                 return false;
             }
             elementDatabaseModel.setToken(element.getToken());
@@ -986,7 +1042,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             elementDatabaseModel.setRelative_parent_id(parentId);
             elementDatabaseModel.setItem_order(elementItemR.getElementOptionsR().getOrder());
             if (ElementType.ANSWER.equals(elementItemR.getType())) {
-                if(element.isHelper()) {
+                if (element.isHelper() != null && element.isHelper()) {
                     elementDatabaseModel.setHelper(true);
                 }
                 elementDatabaseModel.setValue(element.getValue());
@@ -997,12 +1053,13 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 if (ElementType.QUESTION.equals(elementItemR.getType())) {
                     countQuestions++;
                 }
-                elementDatabaseModel.setDuration(element.getDuration());
-                durationTimeQuestionnaire += element.getDuration();
+                if(element.getDuration() != null) {
+                    elementDatabaseModel.setDuration(element.getDuration());
+                    durationTimeQuestionnaire += element.getDuration();
+                }
                 elementDatabaseModel.setType(ElementDatabaseType.SCREEN);
                 countScreens++;
             }
-
             try {
                 getDao().insertElement(elementDatabaseModel);
             } catch (Exception e) {
@@ -1282,7 +1339,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         canGoBack = false;
         Observable.interval(1, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(x -> { })
+                .doOnNext(x -> {
+                })
                 .takeUntil(aLong -> aLong == 2)
                 .doOnComplete(() -> canGoBack = true)
                 .subscribe();
@@ -1296,11 +1354,12 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         return encoded.toString();
     }
 
-    public Character getDecrypted (char encrypted) {
+    public Character getDecrypted(char encrypted) {
         return getDao().getSymbolsForDecrypt(encrypted);
     }
 
-    public Character getEncrypted (char decrypted) {
+    public Character getEncrypted(char decrypted) {
         return getDao().getSymbolsForEncrypt(decrypted);
     }
+
 }

@@ -6,21 +6,21 @@ import java.io.Serializable;
 
 public class QuestionsMatchesModel implements Serializable {
 
-    @SerializedName("question_id")
-    private int question_id;
+    @SerializedName("qi")
+    private int qi;
 
-    @SerializedName("sms_num")
-    private String sms_num;
+    @SerializedName("sn")
+    private String sn;
 
     public QuestionsMatchesModel() {
     }
 
     public int getQuestionId() {
-        return question_id;
+        return qi;
     }
 
     public String getSmsNum() {
-        return sms_num;
+        return sn;
     }
 
 }

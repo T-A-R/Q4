@@ -22,6 +22,7 @@ import pro.quizer.quizer3.executable.files.CleanUpDataQuizerExecutable;
 import pro.quizer.quizer3.executable.files.CleanUpFilesExecutable;
 import pro.quizer.quizer3.executable.files.UploadingExecutable;
 import pro.quizer.quizer3.executable.files.UploadingFTPExecutable;
+import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.view.ServiceViewModel;
 import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.Fonts;
@@ -304,7 +305,7 @@ public class ServiceFragment extends ScreenFragment {
     public void showClearDbAlertDialog() {
         MainActivity activity = getMainActivity();
         if (activity != null && !activity.isFinishing()) {
-            new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
+            new AlertDialog.Builder(activity, R.style.AlertDialogStyleRed)
                     .setCancelable(false)
                     .setTitle(R.string.clear_db_title)
                     .setMessage(R.string.dialog_clear_db_warning)
@@ -318,6 +319,32 @@ public class ServiceFragment extends ScreenFragment {
                             @Override
                             public void onSuccess() {
                                 hideScreensaver();
+                                ConfigModel config1 = null;
+                                ConfigModel config2 = null;
+                                Integer users = 0;
+                                try {
+                                    users = getDao().getAllUsers().size();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    config1 = activity.getConfig();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    config2 = activity.getConfigForce();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+
+                                try {
+                                    String log = "Users: " + users + " Config: " + config1 + " / " + config2;
+                                    getMainActivity().addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ATTEMPT, "clear db", log);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                                 replaceFragment(new KeyFragment());
                             }
 

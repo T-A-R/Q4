@@ -16,6 +16,7 @@ public class SyncViewModel implements Serializable {
     private boolean mHasUnfinishedQuiz;
     private List<File> mNotSendedAudio;
     private List<File> mNotSendedPhoto;
+    private Integer mNotSendedPhotoAnswers;
 
     private List<QuestionnaireDatabaseModelR> mAllQuestionnaireModels;
     private List<QuestionnaireDatabaseModelR> mNotSentQuestionnaireModels;
@@ -93,5 +94,13 @@ public class SyncViewModel implements Serializable {
 
     public void setmSentTokensFromThisDevice(List<TokensCounterR> mSentTokensFromThisDevice) {
         this.mSentTokensFromThisDevice = mSentTokensFromThisDevice;
+    }
+
+    public Integer getmNotSendedPhotoAnswers() {
+        return mNotSendedPhotoAnswers == null ? 0 : mNotSendedPhotoAnswers;
+    }
+
+    public void setmNotSendedPhotoAnswers(Integer mNotSendedPhotoAnswers) {
+        this.mNotSendedPhotoAnswers = mNotSendedPhotoAnswers;
     }
 }

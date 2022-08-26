@@ -45,6 +45,7 @@ public class RemoveUserExecutable extends BaseExecutable {
                     activity.getMainDao().clearElementDatabaseModelR();
                     activity.getMainDao().clearElementPassedR();
                     activity.getMainDao().clearElementItemR();
+                    activity.getMainDao().clearRegistrationRByUser(currentUser.getUser_id());
                 } catch (Exception e) {
                     onError(e);
                     Log.d(TAG, mContext.getString(R.string.db_clear_error));

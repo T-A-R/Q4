@@ -48,19 +48,10 @@ public class UserModelR {
     @ColumnInfo(name = "questionnaire_opened")
     private boolean questionnaire_opened;
 
+    @ColumnInfo(name = "phone")
+    private String phone;
+
     public UserModelR() {
-    }
-
-    public UserModelR(String password, String login, String config_id, int user_id, Integer role_id, int user_project_id, String config, String quotas) {
-
-        this.password = password;
-        this.login = login;
-        this.config_id = config_id;
-        this.user_id = user_id;
-        this.role_id = role_id;
-        this.user_project_id = user_project_id;
-        this.config = config;
-        this.quotas = quotas;
     }
 
     public ConfigModel getConfigR() {
@@ -165,5 +156,13 @@ public class UserModelR {
 
     public void setQuotas_new(String quotas_new) {
         this.quotas_new = quotas_new;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

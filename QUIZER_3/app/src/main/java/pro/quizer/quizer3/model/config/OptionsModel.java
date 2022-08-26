@@ -104,6 +104,12 @@ public class OptionsModel implements Serializable {
     @SerializedName("helper")
     private boolean helper;
 
+    @SerializedName("photo_answer")
+    private boolean photo_answer;
+
+    @SerializedName("photo_answer_required")
+    private boolean photo_answer_required;
+
     public String getData() {
         return data;
     }
@@ -235,5 +241,21 @@ public class OptionsModel implements Serializable {
 
     public void setHelper(boolean helper) {
         this.helper = helper;
+    }
+
+    public boolean isPhotoAnswer() {
+        return photo_answer;
+    }
+
+    public void setPhotoAnswer(boolean photo_answer) {
+        this.photo_answer = photo_answer;
+    }
+
+    public boolean isPhotoAnswerRequired() {
+        return photo_answer_required;
+    }
+
+    public void setPhotoAnswerRequired(boolean photo_answer_required) {
+        this.photo_answer_required = photo_answer_required;
     }
 }

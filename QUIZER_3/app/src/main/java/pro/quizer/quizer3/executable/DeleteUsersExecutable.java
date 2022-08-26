@@ -44,7 +44,7 @@ public class DeleteUsersExecutable extends BaseExecutable {
                 public void run() {
                     onSuccess();
                 }
-            }, 3000);
+            }, 5000);
 
         } catch (Exception e) {
             Log.d(TAG, mContext.getString(R.string.db_clear_error));

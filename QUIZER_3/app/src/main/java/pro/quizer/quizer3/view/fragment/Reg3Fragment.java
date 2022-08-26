@@ -259,7 +259,14 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
         mTelephonyMgr = (TelephonyManager)
                 getMainActivity().getSystemService(Context.TELEPHONY_SERVICE);
 
-        return mTelephonyMgr.getLine1Number();
+        String phoneNumber = "";
+        try {
+            phoneNumber = mTelephonyMgr.getLine1Number();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return phoneNumber;
     }
 
     private boolean checkPhoneNumber() {
@@ -396,11 +403,11 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                 && getMainActivity().getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getSelectedPhone() != null
                 && registration.getPhone() != null && registration.getPhone().length() > 6) {
 
-            // r {admin_key}:[{user_id} {uik_number} {gps} {gps_network} {reg_time} {phone}] - в квадратных скобках шифрованное
+            // r{admin_key}:[{user_id} {uik_number} {gps} {gps_network} {reg_time} {phone}] - в квадратных скобках шифрованное
 
             int number1 = registration.getUser_id(); // user_id
             String number2 = registration.getUik_number(); // uik
-            String decodedMessage = "r " + getDao().getKey() + ":";
+            String decodedMessage = "r" + getDao().getKey() + ":";
             String message = number1
                     + " " + number2
                     + " " + registration.getGps()
@@ -422,16 +429,17 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onSuccess() {
         Log.d("T-L.Reg3Fragment", "SEND REG SMS onSuccess: ");
-        replaceFragment(new Reg4Fragment());
+        replaceFragment(new Reg4Fragment(true));
     }
 
     @Override
     public void onError(Exception pException) {
         Log.d("T-L.Reg3Fragment", "SEND REG SMS onError: " + pException.getMessage());
-        getMainActivity().runOnUiThread(() -> {
-            showToast("Ошибка отправки СМС. \nСвяжитесь с тех. поддержкой");
-            UiUtils.setButtonEnabled(btnNext, true);
-        });
+        replaceFragment(new Reg4Fragment(false));
+//        getMainActivity().runOnUiThread(() -> {
+//            showToast("Ошибка отправки СМС. \nСвяжитесь с тех. поддержкой");
+//            UiUtils.setButtonEnabled(btnNext, true);
+//        });
     }
 
     private void sendRegByInternet() {

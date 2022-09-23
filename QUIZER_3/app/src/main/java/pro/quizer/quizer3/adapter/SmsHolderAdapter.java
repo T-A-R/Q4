@@ -59,6 +59,7 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
         Object[] keys = smsStage.getSmsAnswers().keySet().toArray();
 
         for (int i = 0; i < smsStage.getSmsAnswers().size(); i++) {
+//            Log.d("T-A-R.SmsHolderAdapter", "MAKE TEXT: " + smsStage.getSmsAnswers().get(keys[i]).toString());
             mSmsItems.add(new SmsItem(smsStage.getSmsAnswers().get(keys[i]).getSmsIndex(), smsStage.getSmsAnswers().get(keys[i]).toString(), smsStage.getSmsAnswers().get(keys[i]).getmSmsStatus()));
         }
     }
@@ -71,6 +72,7 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
 
     @Override
     public void onBindViewHolder(SmsViewInnerHolder holder, int position) {
+        Log.d("T-A-R.SmsHolderAdapter", "SET TEXT SMS: <<<<<<<<<<<<");
         holder.mSmsText.setText(mSmsItems.get(position).getSmsText());
         String status = null;
         try {

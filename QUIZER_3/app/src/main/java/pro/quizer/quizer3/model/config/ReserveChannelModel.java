@@ -10,8 +10,8 @@ public class ReserveChannelModel implements Serializable {
     @SerializedName("phone")
     private List<PhoneModel> phones;
 
-    @SerializedName("stages")
-    private List<StagesModel> stages;
+//    @SerializedName("stages")
+//    private List<StagesModel> stages;
 
     @SerializedName("notification_offset")
     private Integer notification_offset;
@@ -39,9 +39,9 @@ public class ReserveChannelModel implements Serializable {
         return phones;
     }
 
-    public List<StagesModel> getStages() {
-        return stages;
-    }
+//    public List<StagesModel> getStages() {
+//        return stages;
+//    }
 
     public Integer getNotificationOffset() {
         return notification_offset;

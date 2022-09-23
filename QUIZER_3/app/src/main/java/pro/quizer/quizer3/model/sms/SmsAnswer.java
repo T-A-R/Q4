@@ -1,8 +1,11 @@
 package pro.quizer.quizer3.model.sms;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import pro.quizer.quizer3.Constants;
+import pro.quizer.quizer3.database.models.SmsAnswersR;
 
 import static pro.quizer.quizer3.view.fragment.SmartFragment.getDao;
 
@@ -40,6 +43,10 @@ public class SmsAnswer implements Serializable {
         this.mQuizCount = mQuizCount;
     }
 
+    public Integer getQuizCount() {
+        return mQuizCount;
+    }
+
     public void setUserId(Integer mUserId) {
         this.mUserId = mUserId;
     }
@@ -52,13 +59,15 @@ public class SmsAnswer implements Serializable {
 //        final StringBuilder result = new StringBuilder(mSmsIndex);
         final StringBuilder result = new StringBuilder();
         final String adminKey = getDao().getKey();
+
         result.append(mUserId).append(" ").append(mSmsIndex).append(" ").append(mQuizCount);
 
         for (final int answer : mAnswers) {
             result.append(" ").append(answer);
         }
 
-        return "d" + adminKey + ":" + encode(result.toString());
+//        return "d" + adminKey + ":" + encode(result.toString());
+        return "d" + adminKey + ":" + result.toString();
     }
 
     public String getmSmsStatus() {
@@ -77,7 +86,19 @@ public class SmsAnswer implements Serializable {
         return encoded.toString();
     }
 
-    private Character getEncrypted (char decrypted) {
+    private Character getEncrypted(char decrypted) {
         return getDao().getSymbolsForEncrypt(decrypted);
+    }
+
+    public List<Integer> getAnswersList() {
+        List<Integer> answers = new ArrayList<>();
+        for (Integer item : mAnswers) {
+            answers.add(item);
+        }
+        return answers;
+    }
+
+    public Integer getmUserId() {
+        return mUserId;
     }
 }

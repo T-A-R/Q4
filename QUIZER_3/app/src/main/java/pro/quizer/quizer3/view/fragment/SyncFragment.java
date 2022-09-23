@@ -194,7 +194,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
             @Override
             public void run() {
                 RegistrationR reg = getDao().getRegistrationR(getCurrentUserId());
-                if (hasReserveChannel && activity.isExit() && reg != null && !reg.smsClosed()) {
+                if (hasReserveChannel && activity.isExit() && ((reg != null && !reg.smsClosed()) || activity.getConfig().getUserSettings().getActive_registration_data() != null)) {
                     showSmsButton();
                 } else {
                     hideSmsButton();
@@ -309,6 +309,7 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
             if (Internet.hasConnection(getMainActivity()) && url != null) {
                 UiUtils.setButtonEnabled(mSendReg, false);
                 Log.d("T-L.Reg3Fragment", "Отправка регистрации...");
+                getMainActivity().addLog(Constants.LogObject.REGISTRATION, "SEND_REG", Constants.LogResult.ATTEMPT, registration.getUser_id() + "/" + registration.getPhone(), url);
                 QuizerAPI.sendReg(url, photos, new RegistrationRequestModel(
                         getDao().getKey(),
                         registration.getUser_id(),
@@ -337,20 +338,25 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
     public void onSendRegCallback(ResponseBody response, Integer id) {
         if (response == null) {
             showToast("Нет ответа от сервера");
+            getMainActivity().addLog(Constants.LogObject.REGISTRATION, "SEND_REG", Constants.LogResult.ERROR, "Нет ответа от сервера", null);
             UiUtils.setButtonEnabled(mSendReg, true);
             return;
-        }
-
-        try {
-            if (id != null) {
-                showToast("Регистрация успешна");
-                getDao().setRegStatus(id, Constants.Registration.SENT);
-                UiUtils.setButtonEnabled(mSendReg, false);
+        } else {
+            try {
+                if (id != null) {
+                    getMainActivity().addLog(Constants.LogObject.REGISTRATION, "SEND_REG", Constants.LogResult.SUCCESS, "Сервер ответил 202", null);
+                    showToast("Регистрация успешна");
+                    getDao().setRegStatus(id, Constants.Registration.SENT);
+                    UiUtils.setButtonEnabled(mSendReg, false);
+                } else {
+                    getMainActivity().addLog(Constants.LogObject.REGISTRATION, "SEND_REG", Constants.LogResult.ERROR, "ID = null", null);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                showToast("Ошибка регистрации");
+                UiUtils.setButtonEnabled(mSendReg, true);
+                getMainActivity().addLog(Constants.LogObject.REGISTRATION, "SEND_REG", Constants.LogResult.ERROR, "Регистрация. Ошибка сохранения статуса", e.toString());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            showToast("Ошибка регистрации");
-            UiUtils.setButtonEnabled(mSendReg, true);
         }
     }
 

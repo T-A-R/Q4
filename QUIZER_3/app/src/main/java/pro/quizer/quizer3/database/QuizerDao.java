@@ -25,6 +25,7 @@ import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
 import pro.quizer.quizer3.database.models.RegistrationR;
 import pro.quizer.quizer3.database.models.SettingsR;
+import pro.quizer.quizer3.database.models.SmsAnswersR;
 import pro.quizer.quizer3.database.models.SmsItemR;
 import pro.quizer.quizer3.database.models.StatisticR;
 import pro.quizer.quizer3.database.models.TokensCounterR;
@@ -221,8 +222,14 @@ public interface QuizerDao {
     @Query("SELECT * FROM AppLogsR WHERE status = :status")
     List<AppLogsR> getAllLogsWithStatus(String status);
 
+    @Query("SELECT * FROM AppLogsR WHERE object =:object AND status = :status")
+    List<AppLogsR> getLogsByObjectWithStatus(String object, String status);
+
     @Query("UPDATE AppLogsR SET status = :status WHERE login = :login")
     void setLogsStatusByLogin(String login, String status);
+
+    @Query("UPDATE AppLogsR SET status = :status WHERE object =:object")
+    void setLogsStatusByObject(String object, String status);
 
     @Query("UPDATE AppLogsR SET status = :status")
     void setLogsStatus(String status);
@@ -496,4 +503,22 @@ public interface QuizerDao {
 
     @Query("DELETE FROM PhotoAnswersR WHERE name = :name")
     void clearPhotoAnswersByName(String name);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertSmsAnswer(SmsAnswersR smsAnswer);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertSmsAnswersList(List<SmsAnswersR> smsAnswersList);
+
+    @Query("SELECT * FROM SmsAnswersR")
+    List<SmsAnswersR> getAllSmsAnswers();
+
+    @Query("SELECT * FROM SmsAnswersR WHERE userId = :userId")
+    List<SmsAnswersR> getSmsAnswersByUserId(Integer userId);
+
+    @Query("SELECT * FROM SmsAnswersR WHERE userId = :userId AND smsIndex = :smsIndex LIMIT 1")
+    SmsAnswersR getSmsAnswersBySmsId(Integer userId, String smsIndex);
+
+    @Query("DELETE FROM SmsAnswersR WHERE userId = :userId")
+    void clearSmsAnswersByUserId(Integer userId);
 }

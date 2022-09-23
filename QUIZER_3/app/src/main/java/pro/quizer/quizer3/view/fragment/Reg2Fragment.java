@@ -108,17 +108,27 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
                     e.printStackTrace();
                 }
             }
-            ScreenFragment reg3 = new Reg3Fragment();
-            Bundle bundle = new Bundle();
-            bundle.putLong("time", mTimeToken);
-            reg3.setArguments(bundle);
-            replaceFragment(reg3);
+            if(mTimeToken != null) {
+                ScreenFragment reg3 = new Reg3Fragment();
+                Bundle bundle = new Bundle();
+                try {
+                    bundle.putLong("time", mTimeToken);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                reg3.setArguments(bundle);
+                replaceFragment(reg3);
+            } else {
+                showToast("Ошибка регистрации. Попробуйте выполнить заново.");
+            }
         }
     }
 
     @Override
     public boolean onBackPressed() {
-        replaceFragment(new Reg1Fragment());
+//        replaceFragment(new Reg1Fragment());
+        getDao().clearRegistrationRByUser(getCurrentUserId());
+        replaceFragment(new HomeFragment());
         return true;
     }
 

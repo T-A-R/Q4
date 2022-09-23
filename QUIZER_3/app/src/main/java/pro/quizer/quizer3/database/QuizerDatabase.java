@@ -21,6 +21,7 @@ import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
 import pro.quizer.quizer3.database.models.RegistrationR;
+import pro.quizer.quizer3.database.models.SmsAnswersR;
 import pro.quizer.quizer3.database.models.StatisticR;
 import pro.quizer.quizer3.database.models.TokensCounterR;
 import pro.quizer.quizer3.database.models.SettingsR;
@@ -38,6 +39,7 @@ import pro.quizer.quizer3.database.models.WarningsR;
         SettingsR.class,
         UserModelR.class,
         StatisticR.class,
+        SmsAnswersR.class,
         ElementItemR.class,
         RegistrationR.class,
         PrevElementsR.class,
@@ -51,8 +53,8 @@ import pro.quizer.quizer3.database.models.WarningsR;
         ElementStatusImageR.class,
         CurrentQuestionnaireR.class,
         ElementDatabaseModelR.class,
-        QuestionnaireDatabaseModelR.class}, version = 96)
-@TypeConverters({ListStringConverter.class})
+        QuestionnaireDatabaseModelR.class}, version = 99)
+@TypeConverters({ListStringConverter.class, ListIntConverter.class})
 
 public abstract class QuizerDatabase extends RoomDatabase {
 

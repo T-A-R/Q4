@@ -365,7 +365,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private void generateTempMap(final List<ElementModelNew> elements) {
         for (final ElementModelNew element : elements) {
             mTempMap.put(element.getRelativeID(), element);
-            Log.d("T-A-R.MainActivity", "??? generateTempMap: " + element.getRelativeID());
+//            Log.d("T-A-R.MainActivity", "??? generateTempMap: " + element.getRelativeID());
             final List<ElementModelNew> nestedList = element.getElements();
             if (nestedList != null && !nestedList.isEmpty()) {
                 generateTempMap(nestedList);
@@ -520,6 +520,12 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         if (mCurrentUser == null)
             mCurrentUser = getUserByUserId(getCurrentUserId());
         return mCurrentUser;
+    }
+
+    public void clearUserData() {
+        mCurrentUser = null;
+        mConfig = null;
+        SPUtils.saveCurrentUserId(this, -1);
     }
 
     public void clearCurrentUser() {
@@ -1450,9 +1456,12 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public CurrentQuestionnaireR getCurrentQuestionnaire() {
         if (currentQuestionnaire == null) {
-            currentQuestionnaire = getMainDao().getCurrentQuestionnaireR();
-        }
-        return currentQuestionnaire;
+//            Log.d("T-A-R.MainActivity", "getCurrentQuestionnaire: NULL");
+            CurrentQuestionnaireR quiz = getMainDao().getCurrentQuestionnaireR();
+            currentQuestionnaire = quiz;
+//            Log.d("T-A-R.MainActivity", "getCurrentQuestionnaire: " + quiz);
+            return quiz;
+        } else return currentQuestionnaire;
     }
 
     public CurrentQuestionnaireR getCurrentQuestionnaireForce() {
@@ -1915,6 +1924,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public boolean isGoogleLocation() {
         return isGoogleLocation;
+    }
+
+    public void setGoogleLocation(boolean flag) {
+        try {
+            isGoogleLocation = flag;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void makeEncryptionTable() {

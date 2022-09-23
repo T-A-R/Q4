@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.database.models.SmsAnswersR;
 import pro.quizer.quizer3.utils.FileUtils;
 
 import static pro.quizer.quizer3.CoreApplication.getQuizerDatabase;
@@ -33,7 +34,7 @@ public class DeleteUsersExecutable extends BaseExecutable {
         onStarting();
 
         try {
-
+            List<SmsAnswersR> smsAnswers = getQuizerDatabase().getQuizerDao().getAllSmsAnswers();
             moveFiles();
 
             getQuizerDatabase().clearAllTables();
@@ -42,9 +43,16 @@ public class DeleteUsersExecutable extends BaseExecutable {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    try {
+                        if (smsAnswers != null && smsAnswers.size() > 0)
+                            getQuizerDatabase().getQuizerDao().insertSmsAnswersList(smsAnswers);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     onSuccess();
                 }
             }, 5000);
+
 
         } catch (Exception e) {
             Log.d(TAG, mContext.getString(R.string.db_clear_error));

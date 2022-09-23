@@ -239,7 +239,11 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 replaceFragment(fragment1);
                 break;
             case 15: // Settings OK but location fail to start
-                getMainActivity().isGoogleLocation = false;
+                try {
+                    getMainActivity().setGoogleLocation(false);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 final HomeFragment fragment3 = new HomeFragment();
                 fragment3.setStartAfterAuth();
                 replaceFragment(fragment3);
@@ -505,7 +509,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_603));
             }
 
-            if (configResponseModel != null) {
+            if (configResponseModel != null && configResponseModel.getConfig() != null) {
                 Integer ver = configResponseModel.getConfig().getMinAppVersion();
 //                ver = 4000000;
                 if (ver != null && ver > BuildConfig.VERSION_CODE) {
@@ -904,8 +908,11 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         protected SaveUserModel doInBackground(SaveUserModel... saveUserModels) {
             SaveUserModel model = saveUserModels[0];
             try {
+                Log.d("T-A-R.AuthFragment", "doInBackground: 1");
                 saveUser(model.getpLogin(), model.getpPassword(), model.getpAuthResponseModel(), model.getpConfigResponseModel().getConfig());
+                Log.d("T-A-R.AuthFragment", "doInBackground: 2");
                 saveCurrentUserId(model.getpAuthResponseModel().getUserId());
+                Log.d("T-A-R.AuthFragment", "doInBackground: 3");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -918,9 +925,11 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         }
 
         protected void onPostExecute(SaveUserModel model) {
+            Log.d("T-A-R.AuthFragment", "onPostExecute: 1");
             makeSmsDatabase();
-
+            Log.d("T-A-R.AuthFragment", "onPostExecute: 2");
             downloadQuotas(model.getpAuthResponseModel(), model.getpLogin(), model.getpPassword());
+            Log.d("T-A-R.AuthFragment", "onPostExecute: 3");
         }
     }
 

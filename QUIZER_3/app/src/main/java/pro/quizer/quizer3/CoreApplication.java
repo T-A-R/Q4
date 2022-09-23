@@ -1,6 +1,8 @@
 package pro.quizer.quizer3;
 
 import android.app.Application;
+import android.content.Context;
+
 import androidx.room.Room;
 
 import com.activeandroid.ActiveAndroid;
@@ -20,11 +22,13 @@ public class CoreApplication extends Application {
     private static RetrofitQuizerAPI retrofitQuizerAPI;
     private static QuizerDatabase quizerDatabase;
     private Retrofit retrofit;
+    private static Context context;
 
     @Override
     public void onCreate() {
         Thread.setDefaultUncaughtExceptionHandler(new CrashLogSender());
         super.onCreate();
+        CoreApplication.context = getApplicationContext();
         ActiveAndroid.initialize(this);
 
         String userAgent = "QUIZER " + BuildConfig.VERSION_NAME + " || " + DeviceUtils.getAndroidVersion() + " || " + DeviceUtils.getDeviceInfo();
@@ -62,5 +66,9 @@ public class CoreApplication extends Application {
 
     public static QuizerDatabase getQuizerDatabase() {
         return quizerDatabase;
+    }
+
+    public static Context getAppContext() {
+        return CoreApplication.context;
     }
 }

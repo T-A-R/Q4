@@ -122,6 +122,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
             @Override
             public void afterTextChanged(Editable s) {
                 if (uikList != null) {
+                    Log.d("T-A-R.Reg3Fragment", "UIK: " +uikList.get(0));
                     if (!uikList.contains(s.toString())) {
                         uik.setError("Неверный UIK");
                         isUikValid = false;
@@ -181,7 +182,9 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
 
     @Override
     public boolean onBackPressed() {
-        replaceFragment(new Reg2Fragment());
+//        replaceFragment(new Reg2Fragment());
+        getDao().clearRegistrationRByUser(getCurrentUserId());
+        replaceFragment(new HomeFragment());
         return true;
     }
 
@@ -456,6 +459,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
             if (url != null) {
                 registration = getDao().getRegistrationR(getCurrentUserId());
                 Log.d("T-L.Reg3Fragment", "Отправка регистрации... ID=" + registration.getId());
+                getMainActivity().addLog(Constants.LogObject.REGISTRATION, "SEND_REG", Constants.LogResult.ATTEMPT, registration.getUser_id() + "/" + registration.getPhone(), url);
                 QuizerAPI.sendReg(url, photos, new RegistrationRequestModel(
                         getDao().getKey(),
                         registration.getUser_id(),
@@ -470,12 +474,12 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                 ), registration.getId(), "jpeg", this);
             } else {
                 showToast("Ошибка получения адреса регистрации экзит");
-                getMainActivity().addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Ошибка получения адреса регистрации экзит", "URL: NULL");
+                getMainActivity().addLog(Constants.LogObject.REGISTRATION, "SEND_REG", Constants.LogResult.ERROR, "Ошибка получения адреса регистрации экзит", "URL: NULL");
             }
         } catch (Exception e) {
             e.printStackTrace();
             showToast("Ошибка отправки регистрации. Попробуйте снова");
-            getMainActivity().addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Ошибка отправки регистрации. Попробуйте снова", e.toString());
+            getMainActivity().addLog(Constants.LogObject.REGISTRATION, "SEND_REG", Constants.LogResult.ERROR, "Ошибка отправки регистрации. Попробуйте снова", e.toString());
         }
     }
 
@@ -483,22 +487,26 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
     public void onSendRegCallback(ResponseBody response, Integer id) {
         if (response == null) {
             showToast("Нет ответа от сервера");
-            getMainActivity().addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Ошибка отправки регистрации. Попробуйте снова", "Сервер не отвечает");
+            getMainActivity().addLog(Constants.LogObject.REGISTRATION, "SEND_REG", Constants.LogResult.ERROR, "Нет ответа от сервера", null);
+//            getMainActivity().addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Ошибка отправки регистрации. Попробуйте снова", "Сервер не отвечает");
             showNoInternetDialog();
             return;
-        }
-
-        try {
-            if (id != null) {
-                if (getMainActivity().hasReserveChannel()) getDao().setRegStatus(id, Constants.Registration.SENT_NO_SMS);
-                else getDao().setRegStatus(id, Constants.Registration.SENT);
-                mRegId = String.valueOf(id);
+        } else {
+            try {
+                if (id != null) {
+                    getMainActivity().addLog(Constants.LogObject.REGISTRATION, "SEND_REG", Constants.LogResult.SUCCESS, "Сервер ответил 202", null);
+                    if (getMainActivity().hasReserveChannel()) getDao().setRegStatus(id, Constants.Registration.SENT_NO_SMS);
+                    else getDao().setRegStatus(id, Constants.Registration.SENT);
+                    mRegId = String.valueOf(id);
+                    sendRegSms();
+                } else {
+                    getMainActivity().addLog(Constants.LogObject.REGISTRATION, "SEND_REG", Constants.LogResult.ERROR, "ID = null", null);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
                 sendRegSms();
+                getMainActivity().addLog(Constants.LogObject.REGISTRATION, "SEND_REG", Constants.LogResult.ERROR, "Регистрация. Ошибка сохранения статуса", e.toString());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            sendRegSms();
-            getMainActivity().addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Регистрация. Ответ сервера не парсится", e.toString());
         }
     }
 }

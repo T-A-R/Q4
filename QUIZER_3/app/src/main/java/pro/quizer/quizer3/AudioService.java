@@ -379,9 +379,13 @@ public class AudioService extends MediaBrowserServiceCompat implements Serializa
                         return null;
                     }
                     if (recorder != null) {
-                        double amplitude = recorder.getMaxAmplitude();
-                        double dbSki = 20 * Math.log10(amplitude / 51805.5336 / 0.0002);
-                        publishProgress(dbSki);
+                        try {
+                            double amplitude = recorder.getMaxAmplitude();
+                            double dbSki = 20 * Math.log10(amplitude / 51805.5336 / 0.0002);
+                            publishProgress(dbSki);
+                        } catch (IllegalStateException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }

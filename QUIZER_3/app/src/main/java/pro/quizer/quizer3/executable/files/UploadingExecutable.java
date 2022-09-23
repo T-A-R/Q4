@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import pro.quizer.quizer3.CoreApplication;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.executable.BaseExecutable;
 import pro.quizer.quizer3.executable.ICallback;
@@ -39,7 +40,7 @@ public class UploadingExecutable extends BaseExecutable {
     private final String UPLOADING_CRASH_FILE_NAME = "quizer_crashlog_%1$s_%2$s" + FileUtils.JSON;
     private final String UPLOADING_LOGS_FILE_NAME = "quizer_applogs_%1$s_%2$s" + FileUtils.JSON;
     public static final String UPLOADING_FOLDER_NAME = "data_quizer";
-    public static final String UPLOADING_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + FOLDER_DIVIDER + UPLOADING_FOLDER_NAME + FOLDER_DIVIDER;
+    public static final String UPLOADING_PATH = FileUtils.getFilesStoragePath(CoreApplication.getAppContext()) + FOLDER_DIVIDER + UPLOADING_FOLDER_NAME + FOLDER_DIVIDER;
 
     private final MainActivity mContext;
 

@@ -1,5 +1,7 @@
 package pro.quizer.quizer3.utils;
 
+import static pro.quizer.quizer3.view.fragment.SmartFragment.getDao;
+
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -7,17 +9,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.telephony.SmsManager;
+import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.database.models.SmsAnswersR;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.model.config.PhoneModel;
 import pro.quizer.quizer3.model.config.QuestionsMatchesModel;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
+import pro.quizer.quizer3.model.sms.SmsAnswer;
 import pro.quizer.quizer3.model.sms.SmsStage;
 
 public final class SmsUtils {
@@ -70,6 +77,20 @@ public final class SmsUtils {
                                 }
                                 if (smsNumber != null && questionId != null)
                                     smsStage.markAsSent(smsNumber, questionId);
+
+                                final Map<String, SmsAnswer> mSmsAnswers = smsStage.getSmsAnswers();
+                                if(mSmsAnswers != null && !mSmsAnswers.isEmpty()) {
+                                    List<SmsAnswersR> answersForSave = new ArrayList<>();
+                                    for (Map.Entry<String, SmsAnswer> item : mSmsAnswers.entrySet()) {
+                                        SmsAnswersR answersR = new SmsAnswersR();
+                                        answersR.setSmsIndex(item.getValue().getSmsIndex());
+                                        answersR.setUserId(item.getValue().getmUserId());
+                                        answersR.setAnswers(item.getValue().getAnswersList());
+                                        answersR.setQuizQuantity(item.getValue().getQuizCount());
+                                        answersForSave.add(answersR);
+                                    }
+                                    getDao().insertSmsAnswersList(answersForSave);
+                                }
                             }
 
                             if (pCallback != null) {
@@ -113,8 +134,33 @@ public final class SmsUtils {
             }, new IntentFilter(DELIVERED));
 
             final SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(phoneNumber, null, smsWithPreffix, sentPI, deliveredPI);
+            int divider = -1;
+            for (int i = 0; i < smsWithPreffix.length(); i++) {
+                if (smsWithPreffix.charAt(i) == ':') {
+                    divider = i + 1;
+                    break;
+                }
+            }
+            if(divider != -1) {
+                String encoded = smsWithPreffix.substring(0, divider) + encode(smsWithPreffix.substring(divider));
+                Log.d("T-A-R.SmsUtils", "sendSms: " + encoded);
+                smsManager.sendTextMessage(phoneNumber, null, encoded, sentPI, deliveredPI);
+            }
+
+
         }
+    }
+
+    static private String encode(String message) {
+        StringBuilder encoded = new StringBuilder();
+        for (Character ch : message.toCharArray()) {
+            encoded.append(getEncrypted(ch));
+        }
+        return encoded.toString();
+    }
+
+    static private Character getEncrypted (char decrypted) {
+        return getDao().getSymbolsForEncrypt(decrypted);
     }
 
     public static String getPhoneNumber(final MainActivity pBaseActivity) {

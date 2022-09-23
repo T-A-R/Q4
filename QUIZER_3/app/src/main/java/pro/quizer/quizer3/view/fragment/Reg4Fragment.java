@@ -109,7 +109,7 @@ public class Reg4Fragment extends ScreenFragment implements View.OnClickListener
         mCode = config.getProjectInfo().getProjectId() + " " + quizer_user_id + " " + DateUtils.getCurrentDateOfMonth();
         if(quizer_user_id.length() <= 2) mCodeShort = quizer_user_id;
                 else mCodeShort = quizer_user_id.substring(quizer_user_id.length() - 2);
-        Log.d("T-L.Reg4Fragment", "getCode: " + mCode);
+        Log.d("T-A-R.Reg4Fragment", "getCode: " + mCode + " / " + mCodeShort);
         if(DEBUG_MODE) showToast(mCode);
     }
 

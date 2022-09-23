@@ -46,6 +46,7 @@ import pro.quizer.quizer3.API.QuizerAPI;
 import pro.quizer.quizer3.API.models.request.AuthRequestModel;
 import pro.quizer.quizer3.API.models.request.ConfigRequestModel;
 import pro.quizer.quizer3.API.models.request.CrashRequestModel;
+import pro.quizer.quizer3.API.models.request.LogsRequestModel;
 import pro.quizer.quizer3.API.models.request.QuestionnaireRequestModel;
 import pro.quizer.quizer3.API.models.response.AuthResponseModel;
 import pro.quizer.quizer3.API.models.response.ConfigResponseModel;
@@ -55,6 +56,7 @@ import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.QuizerDao;
 import pro.quizer.quizer3.database.models.ActivationModelR;
+import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
@@ -391,6 +393,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             SPUtils.saveCurrentUserId(getContext(), pUserId);
             try {
                 MainActivity activity = getMainActivity();
+                Log.d("T-A-R.", "CLEAR: 8");
                 activity.getMainDao().clearCurrentQuestionnaireR();
                 activity.getMainDao().clearPrevElementsR();
                 activity.setCurrentQuestionnaireNull();
@@ -423,6 +426,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             }
         } else {
             try {
+                Log.d("T-A-R.", "CLEAR: 9");
                 getDao().clearCurrentQuestionnaireR();
 //                getDao().clearQuotaR(configId);
             } catch (Exception e) {
@@ -469,7 +473,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             showToast(getString(R.string.db_save_error));
         }
 
-
+        Log.d("T-A-R.SmartFragment", "saveUser: END");
     }
 
     public void updateDatabaseUserByUserId(final String pLogin,
@@ -892,6 +896,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public boolean saveQuestionnaireToDatabase(CurrentQuestionnaireR currentQuiz, boolean aborted) {
+        Log.d("T-A-R.SmartFragment", "saveQuestionnaireToDatabase: ");
 
         try {
             getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.ATTEMPT, currentQuiz.getToken(), null);
@@ -988,6 +993,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
         if (saved) {
             try {
+                Log.d("T-A-R.", "CLEAR: 10");
                 getDao().clearCurrentQuestionnaireR();
                 getDao().clearElementPassedR();
                 getDao().clearPrevElementsR();
@@ -1053,7 +1059,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 if (ElementType.QUESTION.equals(elementItemR.getType())) {
                     countQuestions++;
                 }
-                if(element.getDuration() != null) {
+                if (element.getDuration() != null) {
                     elementDatabaseModel.setDuration(element.getDuration());
                     durationTimeQuestionnaire += element.getDuration();
                 }
@@ -1180,6 +1186,31 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                     Log.d(TAG, "Crash Logs Not Sent: " + message);
                 }
             });
+        }
+    }
+
+    public void sendRegLogs() {
+        try {
+            List<AppLogsR> logs = getDao().getLogsByObjectWithStatus(Constants.LogObject.REGISTRATION, Constants.LogStatus.NOT_SENT);
+            if (logs.size() > 0) {
+                LogsRequestModel logsRequestModel = new LogsRequestModel(getLoginAdmin(), logs);
+                Gson gson = new Gson();
+                String json = gson.toJson(logsRequestModel);
+                QuizerAPI.sendLogs(getServer(), json, ok -> {
+                    if (!ok) {
+                        return;
+                    } else {
+                        try {
+                            getDao().setLogsStatusByObject(Constants.LogObject.REGISTRATION, Constants.LogStatus.SENT);
+                            showToast(getString(R.string.send_logs_success));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "BaseActivity.getDao().clearAppLogsByLogin: " + e.getMessage());
         }
     }
 

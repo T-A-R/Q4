@@ -518,7 +518,14 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                                     e.printStackTrace();
                                 }
                             }
-                            notifyItemChanged(row, 0);
+                            if (isPolyanswer) {
+                                notifyItemChanged(row, column);
+                            } else {
+                                for(int i = 0; i < mAnswersState.length; i++) {
+                                    notifyItemChanged(row, i + 1);
+                                }
+                            }
+//                            notifyLayoutChanged();
                         } else {
                             mAnswersState[column - 1][row - 1].setChecked(true);
                             setLine();
@@ -533,7 +540,13 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                                     e.printStackTrace();
                                 }
                             }
-                            notifyItemChanged(0, column);
+                            if (isPolyanswer) {
+                                notifyItemChanged(row, column);
+                            } else {
+                                for(int i = 0; i < mAnswersState.length; i++) {
+                                    notifyItemChanged(i + 1, column);
+                                }
+                            }
                         }
                         mRefreshRunnable.run();
 
@@ -552,7 +565,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
-                                        notifyItemChanged(row, 0);
+                                        notifyItemChanged(row, column);
                                     }
                                 } else {
                                     if (isPolyanswer) {
@@ -565,7 +578,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
-                                        notifyItemChanged(0, column);
+                                        notifyItemChanged(row, column);
                                     }
                                 }
                                 mRefreshRunnable.run();

@@ -430,8 +430,9 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             if (tree == null) {
                 return true;
             }
-
+            Log.d("T-A-R.ListAnswers", "order: " +order);
             if (order == 1) {
+                Log.d("T-A-R.ListAnswers", "canShow: 2");
                 for (int k = 0; k < tree[0].length; k++) {
                     if (tree[0][k].getRelative_id().equals(relativeId)) {
                         if (tree[0][k].isEnabled()) {
@@ -439,26 +440,46 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                         }
                     }
                 }
+                Log.d("T-A-R.ListAnswers", "canShow: 3");
                 return false;
             } else {
                 int endPassedElement = order - 1;
-
+                for(List<Integer> list : passedElementsId) {
+                    Log.d("T-A-R.ListAnswersA", "=======: ");
+                    for (Integer item : list) {
+                        Log.d("T-A-R.ListAnswersA", "passed: " + item);
+                    }
+                }
                 for (int k = 0; k < tree[0].length; k++) {
                     for (int i = 0; i < endPassedElement; ) {
 //                        if (tree[i][k].getRelative_id().equals(passedElementsId.get(i))) {
-                        if (passedElementsId.get(i).contains(tree[i][k].getRelative_id()) && tree[i][k].getRelative_id() < 999999) {
-                            if (i == (endPassedElement - 1)) { // Если последний, то
-                                if (tree[i + 1][k].getRelative_id().equals(relativeId)) { // Если следующий за последним равен Relative ID
-                                    if (tree[i + 1][k].isEnabled()) {
-                                        return true;
+                        if(passedElementsId.get(i).size() == 1 && passedElementsId.get(i).get(0) > 99999) {
+                            if (passedElementsId.get(i).contains(tree[i][k].getRelative_id())) {
+                                if (i == (endPassedElement - 1)) { // Если последний, то
+                                    if (tree[i + 1][k].getRelative_id().equals(relativeId)) { // Если следующий за последним равен Relative ID
+                                        if (tree[i + 1][k].isEnabled()) {
+                                            return true;
+                                        }
                                     }
                                 }
-                            }
-                            i++;
-                        } else break;
+                                i++;
+                            } else break;
+                        } else {
+                            if (passedElementsId.get(i).contains(tree[i][k].getRelative_id()) && tree[i][k].getRelative_id() < 999999) {
+                                if (i == (endPassedElement - 1)) { // Если последний, то
+                                    if (tree[i + 1][k].getRelative_id().equals(relativeId)) { // Если следующий за последним равен Relative ID
+                                        if (tree[i + 1][k].isEnabled()) {
+                                            return true;
+                                        }
+                                    }
+                                }
+                                i++;
+                            } else break;
+                        }
                     }
                 }
             }
+            Log.d("T-A-R.ListAnswers", "canShow: 4");
             return false;
         }
 

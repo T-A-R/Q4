@@ -5,33 +5,31 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(indices = {@Index("userProjectId")})
-public class QuotaR {
+import java.util.List;
+
+@Entity(indices = {@Index("userId")})
+public class SmsAnswersR {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private int id;
 
-    @ColumnInfo(name = "sequence")
-    private String sequence;
+    @ColumnInfo(name = "answers")
+    private List<Integer> answers;
 
-    @ColumnInfo(name = "limit")
-    private int limit;
+    @ColumnInfo(name = "userId")
+    private Integer userId;
 
-    @ColumnInfo(name = "done")
-    private int done;
+    @ColumnInfo(name = "time")
+    private Long time;
 
-    @ColumnInfo(name = "userProjectId")
-    private Integer userProjectId;
+    @ColumnInfo(name = "smsIndex")
+    private String smsIndex;
 
-    public QuotaR() {
-    }
+    @ColumnInfo(name = "quizQuantity")
+    private Integer quizQuantity;
 
-    public QuotaR(String sequence, int limit, int done, Integer userProjectId) {
-        this.sequence = sequence;
-        this.limit = limit;
-        this.done = done;
-        this.userProjectId = userProjectId;
+    public SmsAnswersR() {
     }
 
     public int getId() {
@@ -42,35 +40,43 @@ public class QuotaR {
         this.id = id;
     }
 
-    public String getSequence() {
-        return sequence;
+    public List<Integer> getAnswers() {
+        return answers;
     }
 
-    public void setSequence(String sequence) {
-        this.sequence = sequence;
+    public void setAnswers(List<Integer> answers) {
+        this.answers = answers;
     }
 
-    public int getLimit() {
-        return limit;
+    public Long getTime() {
+        return time;
     }
 
-    public void setLimit(int limit) {
-        this.limit = limit;
+    public void setTime(Long time) {
+        this.time = time;
     }
 
-    public int getDone() {
-        return done;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setDone(int done) {
-        this.done = done;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
-    public Integer getUserProjectId() {
-        return userProjectId;
+    public String getSmsIndex() {
+        return smsIndex;
     }
 
-    public void setUserProjectId(Integer userProjectId) {
-        this.userProjectId = userProjectId;
+    public void setSmsIndex(String smsIndex) {
+        this.smsIndex = smsIndex;
+    }
+
+    public Integer getQuizQuantity() {
+        return quizQuantity;
+    }
+
+    public void setQuizQuantity(Integer quizQuantity) {
+        this.quizQuantity = quizQuantity;
     }
 }

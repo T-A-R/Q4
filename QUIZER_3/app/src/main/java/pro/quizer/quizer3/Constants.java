@@ -102,6 +102,7 @@ public final class Constants {
         String KEY = "key";
         String CONFIG = "config";
         String QUESTIONNAIRE = "questionnaire";
+        String REGISTRATION = "registration";
         String SMS = "sms";
         String LOG = "log";
         String WARNINGS = "warnings";

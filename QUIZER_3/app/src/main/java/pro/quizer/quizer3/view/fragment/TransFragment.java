@@ -1,6 +1,7 @@
 package pro.quizer.quizer3.view.fragment;
 
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.model.ElementSubtype;
@@ -110,6 +111,8 @@ public class TransFragment extends ScreenFragment {
     }
 
     private void savePassedElement(int id) {
+        CurrentQuestionnaireR quiz =  getQuestionnaire();
+        Log.d("T-A-R.TransFragment", "><><><><><: " + quiz);
         ElementItemR currentElement = getElement(id);
         ElementPassedR elementPassedR = new ElementPassedR();
         elementPassedR.setRelative_id(id);

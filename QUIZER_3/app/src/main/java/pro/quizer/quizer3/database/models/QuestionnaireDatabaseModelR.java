@@ -96,7 +96,10 @@ public class QuestionnaireDatabaseModelR {
     private String has_photo;
 
     @ColumnInfo(name = "send_sms")
-    private boolean send_sms;
+    private boolean send_sms = false;
+
+    @ColumnInfo(name = "sent_sms")
+    private List<Integer> sent_sms;
 
     @ColumnInfo(name = "used_fake_gps")
     private boolean used_fake_gps;
@@ -478,5 +481,13 @@ public class QuestionnaireDatabaseModelR {
 
     public void setDate_end_interview(long date_end_interview) {
         this.date_end_interview = date_end_interview;
+    }
+
+    public List<Integer> getSent_sms() {
+        return sent_sms;
+    }
+
+    public void setSent_sms(List<Integer> sent_sms) {
+        this.sent_sms = sent_sms;
     }
 }

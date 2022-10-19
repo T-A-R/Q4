@@ -72,7 +72,7 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
 
     @Override
     public void onBindViewHolder(SmsViewInnerHolder holder, int position) {
-        Log.d("T-A-R.SmsHolderAdapter", "SET TEXT SMS: <<<<<<<<<<<<");
+//        Log.d("T-A-R.SmsHolderAdapter", "SET TEXT SMS: <<<<<<<<<<<<");
         holder.mSmsText.setText(mSmsItems.get(position).getSmsText());
         String status = null;
         try {

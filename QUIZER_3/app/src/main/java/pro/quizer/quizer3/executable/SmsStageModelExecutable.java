@@ -77,10 +77,13 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
         final List<QuestionnaireDatabaseModelR> questionnaires = activity.getMainDao().getQuestionnaireWithTime(
                 mUserId,
                 pStatus,
+                false,
                 mStagesModel.getTimeFrom(),
                 mStagesModel.getTimeTo());
 
         Integer quizCounter = questionnaires.size();
+
+        Log.d("T-A-R.SmsStageModelEx", "before load: " + userId + "/" + quizCounter);
 
 //        if (saved != null) {
 //            result.append(mUserId).append(" ").append(mSmsIndex).append(" ").append(mQuizCount + saved.getQuizQuantity());
@@ -96,7 +99,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
         }
 
         final List<QuestionsMatchesModel> matches = mStagesModel.getQuestionsMatches();
-        Log.d("T-A-R.SmsStageModelEx", "load: " + userId + "/" + quizCounter);
+        Log.d("T-A-R.SmsStageModelEx", "before load: " + userId + "/" + quizCounter);
         final List<SmsAnswersR> savedAnswers = activity.getMainDao().getSmsAnswersByUserId(userId);
         Map<String, List<Integer>> savedAnswersMap = mapSavedAnswers(savedAnswers);
         for (final QuestionsMatchesModel match : matches) {
@@ -121,15 +124,16 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
                     }
 
                 }
-                Log.d("T-A-R.SmsStageModelEx", "load: elementsByQuestionId.isEmpty()");
+//                Log.d("T-A-R.SmsStageModelEx", "load: elementsByQuestionId.isEmpty()");
             }
             SmsAnswersR savedAnswer = getDao().getSmsAnswersBySmsId(userId, smsAnswer.getSmsIndex());
             if(savedAnswer != null && savedAnswer.getQuizQuantity() != null) {
-                quizCounter += savedAnswer.getQuizQuantity();
+                smsAnswer.setQuizCount(quizCounter + savedAnswer.getQuizQuantity());
+            } else {
+                smsAnswer.setQuizCount(quizCounter);
             }
-            Log.d("T-A-R.SmsStageModelEx", "load: " + userId + "/" + quizCounter);
+            Log.d("T-A-R.SmsStageModelEx", "N:" + smsAnswer.getSmsIndex() + "load: " + quizCounter + "/" + smsAnswer.getQuizCount());
             smsAnswer.setUserId(userId);
-            smsAnswer.setQuizCount(quizCounter);
             result.put(index, smsAnswer);
 
         }

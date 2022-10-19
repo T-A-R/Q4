@@ -9,6 +9,7 @@ import java.util.Map;
 
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.database.models.SmsReportR;
 import pro.quizer.quizer3.executable.SmsStageModelExecutable;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.config.QuestionsMatchesModel;
@@ -56,6 +57,12 @@ public class SmsStage implements Serializable {
         try {
             mContext.getMainDao().setSmsItemStatusBySmsNumber(smsNumber, pStatus);
             mContext.getMainDao().setElementSendSms(true, questionId);
+            SmsReportR report = new SmsReportR();
+            report.setStatus(true);
+            report.setReport_id(Integer.parseInt(smsNumber));
+            report.setUser_id(mContext.getCurrentUserId());
+            mContext.getMainDao().insertSmsReportR(report);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

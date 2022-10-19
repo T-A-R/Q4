@@ -9,6 +9,8 @@ import pro.quizer.quizer3.database.models.SmsAnswersR;
 
 import static pro.quizer.quizer3.view.fragment.SmartFragment.getDao;
 
+import android.util.Log;
+
 public class SmsAnswer implements Serializable {
 
     private final String mSmsIndex;
@@ -40,6 +42,7 @@ public class SmsAnswer implements Serializable {
     }
 
     public void setQuizCount(Integer mQuizCount) {
+        Log.d("T-A-R.SmsAnswer", "setQuizCount: " + mQuizCount);
         this.mQuizCount = mQuizCount;
     }
 

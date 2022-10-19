@@ -3,32 +3,23 @@ package pro.quizer.quizer3.database.models;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
-import pro.quizer.quizer3.Constants;
-
 @Entity
-public class SmsItemR {
+public class SmsReportR {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private int id;
 
-    @ColumnInfo(name = "smsNumber")
-    private String smsNumber;
+    @ColumnInfo(name = "user_id")
+    private int user_id;
 
-    @ColumnInfo(name = "smsText")
-    private String smsText;
+    @ColumnInfo(name = "report_id")
+    private Integer report_id;
 
-    @ColumnInfo(name = "smsStatus")
-    private String smsStatus;
+    @ColumnInfo(name = "status")
+    private boolean status;
 
-    public SmsItemR() {
-    }
-
-    public SmsItemR(String smsNumber, String smsText) {
-        this.smsNumber = smsNumber;
-        this.smsText = smsText;
-        this.smsStatus = Constants.SmsStatus.NOT_SENT;
+    public SmsReportR() {
     }
 
     public int getId() {
@@ -39,27 +30,27 @@ public class SmsItemR {
         this.id = id;
     }
 
-    public String getSmsNumber() {
-        return smsNumber;
+    public Integer getReport_id() {
+        return report_id;
     }
 
-    public void setSmsNumber(String smsNumber) {
-        this.smsNumber = smsNumber;
+    public void setReport_id(Integer report_id) {
+        this.report_id = report_id;
     }
 
-    public String getSmsText() {
-        return smsText;
+    public boolean isStatus() {
+        return status;
     }
 
-    public void setSmsText(String smsText) {
-        this.smsText = smsText;
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
-    public String getSmsStatus() {
-        return smsStatus;
+    public int getUser_id() {
+        return user_id;
     }
 
-    public void setSmsStatus(String smsStatus) {
-        this.smsStatus = smsStatus;
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
 }

@@ -87,6 +87,7 @@ public final class SmsUtils {
                                         answersR.setUserId(item.getValue().getmUserId());
                                         answersR.setAnswers(item.getValue().getAnswersList());
                                         answersR.setQuizQuantity(item.getValue().getQuizCount());
+                                        Log.d("T-A-R.SmsUtils", "??? count: " + item.getValue().getSmsIndex() + " / " + item.getValue().getQuizCount());
                                         answersForSave.add(answersR);
                                     }
                                     getDao().insertSmsAnswersList(answersForSave);

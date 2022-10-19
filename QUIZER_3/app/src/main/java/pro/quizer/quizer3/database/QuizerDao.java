@@ -27,6 +27,7 @@ import pro.quizer.quizer3.database.models.RegistrationR;
 import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.SmsAnswersR;
 import pro.quizer.quizer3.database.models.SmsItemR;
+import pro.quizer.quizer3.database.models.SmsReportR;
 import pro.quizer.quizer3.database.models.StatisticR;
 import pro.quizer.quizer3.database.models.TokensCounterR;
 import pro.quizer.quizer3.database.models.UserModelR;
@@ -177,8 +178,8 @@ public interface QuizerDao {
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status AND send_sms = :send_sms AND survey_status = :survey")
     List<QuestionnaireDatabaseModelR> getQuestionnaireForStage(int userId, String status, String survey, boolean send_sms);
 
-    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status AND date_interview >= :timeFrom AND date_interview <= :timeTo")
-    List<QuestionnaireDatabaseModelR> getQuestionnaireWithTime(int userId, String status, long timeFrom, long timeTo);
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status AND send_sms = :sms_sent AND date_interview >= :timeFrom AND date_interview <= :timeTo")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireWithTime(int userId, String status, boolean sms_sent, long timeFrom, long timeTo);
 
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId")
     List<QuestionnaireDatabaseModelR> getQuestionnaireByUserId(int userId);
@@ -521,4 +522,13 @@ public interface QuizerDao {
 
     @Query("DELETE FROM SmsAnswersR WHERE userId = :userId")
     void clearSmsAnswersByUserId(Integer userId);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertSmsReportR(SmsReportR smsReportR);
+
+    @Query("SELECT * FROM SmsReportR WHERE user_id = :user_id")
+    List<SmsReportR> getSmsReportRByUserId(Integer user_id);
+
+    @Query("DELETE FROM SmsReportR WHERE user_id = :user_id")
+    void clearSmsReportRByUserId(Integer user_id);
 }

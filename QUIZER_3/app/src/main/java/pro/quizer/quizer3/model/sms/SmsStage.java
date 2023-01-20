@@ -1,7 +1,5 @@
 package pro.quizer.quizer3.model.sms;
 
-import android.content.Context;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +56,7 @@ public class SmsStage implements Serializable {
             mContext.getMainDao().setSmsItemStatusBySmsNumber(smsNumber, pStatus);
             mContext.getMainDao().setElementSendSms(true, questionId);
             SmsReportR report = new SmsReportR();
-            report.setStatus(true);
+            report.setSent(true);
             report.setReport_id(Integer.parseInt(smsNumber));
             report.setUser_id(mContext.getCurrentUserId());
             mContext.getMainDao().insertSmsReportR(report);

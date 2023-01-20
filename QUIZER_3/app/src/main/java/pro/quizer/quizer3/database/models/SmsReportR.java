@@ -16,8 +16,8 @@ public class SmsReportR {
     @ColumnInfo(name = "report_id")
     private Integer report_id;
 
-    @ColumnInfo(name = "status")
-    private boolean status;
+    @ColumnInfo(name = "sent")
+    private boolean sent;
 
     public SmsReportR() {
     }
@@ -38,12 +38,12 @@ public class SmsReportR {
         this.report_id = report_id;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean isSent() {
+        return sent;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setSent(boolean sent) {
+        this.sent = sent;
     }
 
     public int getUser_id() {

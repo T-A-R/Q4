@@ -385,19 +385,6 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
         SaveUserModel model = new SaveUserModel(pConfigResponseModel, pAuthResponseModel, pLogin, pPassword);
         saveCurrentUserId(model.getpAuthResponseModel().getUserId());
         new SaveUser().execute(model);
-
-//        try {
-//            saveUser(pLogin, pPassword, pAuthResponseModel, pConfigResponseModel.getConfig());
-//            saveCurrentUserId(pAuthResponseModel.getUserId());
-//        } catch (final Exception e) {
-//            showToast(getString(R.string.server_response_error) + "\n" + e);
-//            e.printStackTrace();
-//            return;
-//        }
-//
-//        makeSmsDatabase();
-//
-//        downloadQuotas(pAuthResponseModel, pLogin, pPassword);
     }
 
     private void makeSmsDatabase() {
@@ -639,6 +626,8 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
             if (authResponseModel == null) {
                 final UserModelR savedUserModel = getLocalUserModel(login, passwordMD5);
+
+                Log.d("T-A-R.AuthFragment", "onAuthUser: " + savedUserModel.getUser_id());
 
                 if (savedUserModel != null) {
                     showToast(getString(R.string.saved_data_login));
@@ -911,7 +900,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 Log.d("T-A-R.AuthFragment", "doInBackground: 1");
                 saveUser(model.getpLogin(), model.getpPassword(), model.getpAuthResponseModel(), model.getpConfigResponseModel().getConfig());
                 Log.d("T-A-R.AuthFragment", "doInBackground: 2");
-                saveCurrentUserId(model.getpAuthResponseModel().getUserId());
+//                saveCurrentUserId(model.getpAuthResponseModel().getUserId());
                 Log.d("T-A-R.AuthFragment", "doInBackground: 3");
             } catch (Exception e) {
                 e.printStackTrace();

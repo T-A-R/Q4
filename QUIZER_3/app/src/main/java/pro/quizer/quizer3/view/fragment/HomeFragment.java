@@ -1086,6 +1086,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         UserModelR userModel = activity.getCurrentUser();
         ConfigModel configModel = activity.getConfig();
         SettingsR settings = activity.getSettings();
+        Log.d("T-A-R.HomeFragment", "getInfo: (" + settings.getUser_name() +")");
         StatisticsRequestModel requestModel = new StatisticsRequestModel(configModel.getLoginAdmin(), userModel.getPassword(), userModel.getLogin(), settings.getUser_name(), settings.getUser_date());
         Gson gson = new Gson();
         String json = gson.toJson(requestModel);
@@ -1148,7 +1149,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void showStatistics(StatisticR statistics) {
-        Log.d("T-L.HomeFragment", "showStatistics: " + statistics);
+        Gson gson = new Gson();
+        String json = gson.toJson(statistics);
+        Log.d("T-L.HomeFragment", "showStatistics: " + json);
         if (statistics == null) {
             ShowStatistics task = new ShowStatistics();
             task.execute();

@@ -37,7 +37,7 @@ public class SyncInfoExecutable extends BaseModelExecutable<SyncViewModel> {
             final MainFragment mainFragment = (MainFragment) activity.getSupportFragmentManager().findFragmentById(R.id.main);
             if (mainFragment != null) {
                 final UserModelR userModel = mainFragment.getCurrentUser();
-                final int pUserId = userModel.getUser_id();
+                final int pUserId = activity.getCurrentUserId();
                 final ConfigModel configModel = activity.getConfig();
 
                 final List<QuestionnaireDatabaseModelR> notSentQDM = SmartFragment.getDao().getQuestionnaireByUserIdWithStatus(pUserId, QuestionnaireStatus.NOT_SENT);

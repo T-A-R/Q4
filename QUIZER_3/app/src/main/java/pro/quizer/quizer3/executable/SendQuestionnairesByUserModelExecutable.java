@@ -183,7 +183,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                 config.setRegsDisabled(deletingListResponseModel.isRegsDisabled());
                 String newConfig = new Gson().toJson(config);
                 mBaseActivity.getMainDao().setConfigTime(DateUtils.getCurrentTimeMillis());
-                mBaseActivity.getMainDao().updateConfig(newConfig, mBaseActivity.getCurrentUser().getUser_id(), mBaseActivity.getCurrentUser().getUser_project_id());
+                mBaseActivity.getMainDao().updateConfig(newConfig, mBaseActivity.getCurrentUserId(), mBaseActivity.getCurrentUser().getUser_project_id());
                 mBaseActivity.getConfigForce();
             }
 

@@ -24,7 +24,8 @@ public class RemoveUserExecutable extends BaseExecutable {
         if (mContext instanceof MainActivity) {
             final MainActivity activity = (MainActivity) mContext;
 
-            final UserModelR currentUser = activity.getCurrentUser();
+//            final UserModelR currentUser = activity.getCurrentUser();
+            final int userId = activity.getCurrentUserId();
 
             final SyncViewModel syncViewModel = new SyncInfoExecutable(mContext).execute();
             final int mQUnsendedCount = syncViewModel.getmNotSentQuestionnaireModels().size();
@@ -36,17 +37,17 @@ public class RemoveUserExecutable extends BaseExecutable {
 
             } else {
                 try {
-                    activity.getMainDao().deleteUserByUserId(currentUser.getUser_id());
+                    activity.getMainDao().deleteUserByUserId(userId);
                     Log.d("T-A-R.", "CLEAR: 1");
                     activity.getMainDao().clearCurrentQuestionnaireR();
                     activity.getMainDao().clearPrevElementsR();
                     activity.setCurrentQuestionnaireNull();
-                    activity.getMainDao().deleteQuestionnaireStatusByUserId(currentUser.getUser_id());
-                    activity.getMainDao().clearTokensCounterR(currentUser.getUser_id());
+                    activity.getMainDao().deleteQuestionnaireStatusByUserId(userId);
+                    activity.getMainDao().clearTokensCounterR(userId);
                     activity.getMainDao().clearElementDatabaseModelR();
                     activity.getMainDao().clearElementPassedR();
                     activity.getMainDao().clearElementItemR();
-                    activity.getMainDao().clearRegistrationRByUser(currentUser.getUser_id());
+                    activity.getMainDao().clearRegistrationRByUser(userId);
                 } catch (Exception e) {
                     onError(e);
                     Log.d(TAG, mContext.getString(R.string.db_clear_error));

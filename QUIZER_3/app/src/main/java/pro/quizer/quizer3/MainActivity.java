@@ -379,7 +379,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     private void initDataForRebuild() {
         projectId = getConfig().getProjectInfo().getProjectId();
-        userId = getCurrentUser().getUser_id();
+        userId = getCurrentUserId();
         configId = getCurrentUser().getConfigR().getConfigId();
         if (configId == null)
             configId = getCurrentUser().getConfig_id();
@@ -940,7 +940,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     private void callRecord(String token) {
-        mUserId = mCurrentUser.getUser_id();
+        mUserId = getCurrentUserId();
         mLoginAdmin = getConfig().getLoginAdmin();
         mProjectId = getConfig().getProjectInfo().getProjectId();
         mLogin = mCurrentUser.getLogin();

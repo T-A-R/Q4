@@ -363,7 +363,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void onLoggedInWithoutUpdateLocalData(final int pUserId) {
-        saveCurrentUserId(pUserId);
+//        saveCurrentUserId(pUserId);
         ElementItemR firstElement = getDao().getOneElement();
         if (firstElement == null || firstElement.getUserId() != pUserId) {
             isRebuildDB = true;
@@ -383,7 +383,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                                   final String pLogin,
                                   final String pPassword) {
         SaveUserModel model = new SaveUserModel(pConfigResponseModel, pAuthResponseModel, pLogin, pPassword);
-        saveCurrentUserId(model.getpAuthResponseModel().getUserId());
+//        saveCurrentUserId(model.getpAuthResponseModel().getUserId());
         new SaveUser().execute(model);
     }
 
@@ -638,6 +638,8 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
                 activateButtons();
                 return;
+            } else {
+                saveCurrentUserId(authResponseModel.getUserId());
             }
 
             if (authResponseModel.getResult() == 0 && authResponseModel.getError() != null) {

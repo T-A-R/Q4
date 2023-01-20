@@ -1387,8 +1387,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         newConfig = activity.getCurrentUser().getConfig_new();
         if (newConfig != null) {
             getDao().setConfigTime(DateUtils.getCurrentTimeMillis());
-            getDao().updateConfig(newConfig, activity.getCurrentUser().getUser_id(), activity.getCurrentUser().getUser_project_id());
-            getDao().updateNewConfig(null, activity.getCurrentUser().getUser_id(), activity.getCurrentUser().getUser_project_id());
+            getDao().updateConfig(newConfig, activity.getCurrentUserId(), activity.getCurrentUser().getUser_project_id());
+            getDao().updateNewConfig(null, activity.getCurrentUserId(), activity.getCurrentUser().getUser_project_id());
             activity.getConfigForce();
             setEventsListener(id -> {
                 switch (id) {

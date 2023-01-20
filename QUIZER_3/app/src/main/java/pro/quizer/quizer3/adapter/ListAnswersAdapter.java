@@ -1377,11 +1377,12 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 //            [admin]^[project_id]^[user_login]^[token]^[answer_id].[extension]
 
             UserModelR user = mActivity.getCurrentUser();
+            int userId = mActivity.getCurrentUserId();
             String token = mActivity.getToken();
 
             try {
                 File dir = new File(FileUtils.getAnswersStoragePath(mActivity) + File.separator
-                        + user.getUser_id());
+                        + userId);
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
@@ -1392,7 +1393,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
             try {
                 File dir = new File(FileUtils.getAnswersStoragePath(mActivity) + File.separator
-                        + user.getUser_id() + File.separator + token);
+                        + userId + File.separator + token);
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }

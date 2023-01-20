@@ -50,9 +50,9 @@ public class UploadingFTPExecutable extends BaseExecutable {
 
     private void sendFTPFiles() {
         mFileList = new ArrayList<>();
-        mFileList.addAll(FileUtils.getFilesRecursion(FileUtils.JSON, UploadingExecutable.UPLOADING_PATH));
-        mFileList.addAll(FileUtils.getFilesRecursion(FileUtils.AMR, UploadingExecutable.UPLOADING_PATH));
-        mFileList.addAll(FileUtils.getFilesRecursion(FileUtils.JPEG, UploadingExecutable.UPLOADING_PATH));
+        mFileList.addAll(FileUtils.getFilesRecursion(FileUtils.JSON));
+        mFileList.addAll(FileUtils.getFilesRecursion(FileUtils.AMR));
+        mFileList.addAll(FileUtils.getFilesRecursion(FileUtils.JPEG));
 
         if (mFileList.isEmpty()) {
             return;

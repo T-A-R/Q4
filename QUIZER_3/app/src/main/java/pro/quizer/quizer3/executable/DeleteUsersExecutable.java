@@ -14,7 +14,6 @@ import pro.quizer.quizer3.utils.FileUtils;
 
 import static pro.quizer.quizer3.CoreApplication.getQuizerDatabase;
 import static pro.quizer.quizer3.MainActivity.TAG;
-import static pro.quizer.quizer3.executable.files.UploadingExecutable.UPLOADING_PATH;
 import static pro.quizer.quizer3.utils.FileUtils.moveFile;
 
 public class DeleteUsersExecutable extends BaseExecutable {
@@ -63,7 +62,7 @@ public class DeleteUsersExecutable extends BaseExecutable {
 
     private void moveFiles() {
 
-        FileUtils.createFolderIfNotExist(UPLOADING_PATH);
+//        FileUtils.createFolderIfNotExist(UPLOADING_PATH);
 
         final List<File> files = new ArrayList<>();
 
@@ -71,7 +70,7 @@ public class DeleteUsersExecutable extends BaseExecutable {
         files.addAll(FileUtils.getFilesRecursion(FileUtils.AMR, FileUtils.getAudioStoragePath(mContext)));
 
         for (final File file : files) {
-            moveFile(file, UPLOADING_PATH);
+            moveFile(file);
         }
     }
 }

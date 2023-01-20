@@ -9,6 +9,7 @@ import android.util.Log;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,6 +41,9 @@ public class FileUtils {
     private static final String FOLDER_REG = "registration";
     private static final String FOLDER_ANSWERS = "answers";
     private static final String CACHE = "cache";
+
+    private static final String UPLOADING_FOLDER_NAME = "data_quizer";
+    private static final String UPLOADING_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + UPLOADING_FOLDER_NAME + "/";
 
     public static String getFileName(final String url) {
         final int end = url.length();
@@ -278,19 +282,6 @@ public class FileUtils {
 //        return String.format(AUDIO_NAME_AMR_TEMPLATE, pUserId, mLoginAdmin, mProjectId, mUserLogin, mToken, mRelativeId);
     }
 
-    public static void saveToFile(String data, String fileName) {
-        File downloadsFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        File file = new File(downloadsFile, fileName);
-        try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-            bw.write(data);
-            bw.close();
-            Log.d(MainActivity.TAG, "FileUtils.saveToFile() file saved: " + file.getAbsolutePath());
-        } catch (IOException e) {
-            Log.d(MainActivity.TAG, "FileUtils.saveToFile() " + e);
-        }
-    }
-
     public static Uri getUriForFile(Context context, File file) {
         return FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", file);
     }
@@ -438,5 +429,72 @@ public class FileUtils {
         createFolderIfNotExist(path);
 
         return path;
+    }
+
+//    public static void saveToFile(String data, String fileName) {
+//        File downloadsFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+//        File file = new File(downloadsFile, fileName);
+//        try {
+//            BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+//            bw.write(data);
+//            bw.close();
+//            Log.d(MainActivity.TAG, "FileUtils.saveToFile() file saved: " + file.getAbsolutePath());
+//        } catch (IOException e) {
+//            Log.d(MainActivity.TAG, "FileUtils.saveToFile() " + e);
+//        }
+//    }
+
+    public static void writeToFile(String fileName, String content){
+//        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+//        File newDir = new File(path + FOLDER_DIVIDER + UPLOADING_FOLDER_NAME + FOLDER_DIVIDER + fileName);
+        File newDir = new File(UPLOADING_PATH);
+        try{
+            if (!newDir.exists()) {
+                newDir.mkdir();
+            }
+            FileOutputStream writer = new FileOutputStream(new File(newDir, fileName));
+            writer.write(content.getBytes());
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean moveFile(final File pFile) {
+//        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+//        File newDir = new File(path + FOLDER_DIVIDER + UPLOADING_FOLDER_NAME + FOLDER_DIVIDER + pFile.getName());
+        File newDir = new File(UPLOADING_PATH);
+        final File newFile = new File(newDir, pFile.getName());
+
+        return pFile.renameTo(newFile);
+    }
+
+    public static List<File> getFilesRecursion(final String pType) {
+        final List<File> inFiles = new ArrayList<>();
+
+        if (StringUtils.isEmpty(UPLOADING_PATH)) {
+            return inFiles;
+        }
+
+        final Queue<File> files = new LinkedList<>();
+
+        final File parentDir = new File(UPLOADING_PATH);
+
+        if (!parentDir.exists()) {
+            return inFiles;
+        }
+
+        files.addAll(Arrays.asList(parentDir.listFiles()));
+
+        while (!files.isEmpty()) {
+            final File file = files.remove();
+            if (file.isDirectory()) {
+                files.addAll(Arrays.asList(file.listFiles()));
+            } else if (file.getName().endsWith(pType)) {
+                inFiles.add(file);
+            }
+        }
+
+        return inFiles;
     }
 }

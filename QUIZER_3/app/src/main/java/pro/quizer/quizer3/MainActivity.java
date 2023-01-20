@@ -525,7 +525,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public void clearUserData() {
         mCurrentUser = null;
         mConfig = null;
-        SPUtils.saveCurrentUserId(this, -1);
+//        SPUtils.saveCurrentUserId(this, -1);
     }
 
     public void clearCurrentUser() {
@@ -534,7 +534,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public UserModelR getCurrentUserForce() {
         try {
+            Log.d("T-A-R.MainActivity", "getCurrentUserForce: ===================");
+            Log.d("T-A-R.MainActivity", "getCurrentUserId: " + getCurrentUserId());
             mCurrentUser = getUserByUserId(getCurrentUserId());
+            Log.d("T-A-R.MainActivity", "mCurrentUser: " + mCurrentUser);
         } catch (Exception e) {
             showToastfromActivity(getString(R.string.db_load_error));
         }
@@ -1564,6 +1567,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Log.d("T-A-R.MainActivity", "getConfigForce: " + mConfig);
         return mConfig;
     }
 

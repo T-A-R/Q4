@@ -10,8 +10,6 @@ import pro.quizer.quizer3.executable.BaseExecutable;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.utils.FileUtils;
 
-import static pro.quizer.quizer3.executable.files.UploadingExecutable.UPLOADING_PATH;
-
 public class CleanUpDataQuizerExecutable extends BaseExecutable {
 
     private final ICallback mCallback;
@@ -28,9 +26,9 @@ public class CleanUpDataQuizerExecutable extends BaseExecutable {
 
         final List<File> files = new ArrayList<>();
 
-        files.addAll(FileUtils.getFilesRecursion(FileUtils.JSON, UPLOADING_PATH));
-        files.addAll(FileUtils.getFilesRecursion(FileUtils.AMR, UPLOADING_PATH));
-        files.addAll(FileUtils.getFilesRecursion(FileUtils.JPEG, UPLOADING_PATH));
+        files.addAll(FileUtils.getFilesRecursion(FileUtils.JSON));
+        files.addAll(FileUtils.getFilesRecursion(FileUtils.AMR));
+        files.addAll(FileUtils.getFilesRecursion(FileUtils.JPEG));
 
         for (final File file : files) {
             final boolean isDeleted = file.delete();

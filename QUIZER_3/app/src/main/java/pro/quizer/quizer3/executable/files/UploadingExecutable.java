@@ -39,8 +39,8 @@ public class UploadingExecutable extends BaseExecutable {
     public final String UPLOADING_QUESTIONNAIRE_FILE_NAME = "data_%1$s_%2$s" + FileUtils.JSON;
     private final String UPLOADING_CRASH_FILE_NAME = "quizer_crashlog_%1$s_%2$s" + FileUtils.JSON;
     private final String UPLOADING_LOGS_FILE_NAME = "quizer_applogs_%1$s_%2$s" + FileUtils.JSON;
-    public static final String UPLOADING_FOLDER_NAME = "data_quizer";
-    public static final String UPLOADING_PATH = FileUtils.getFilesStoragePath(CoreApplication.getAppContext()) + FOLDER_DIVIDER + UPLOADING_FOLDER_NAME + FOLDER_DIVIDER;
+//    public static final String UPLOADING_FOLDER_NAME = "data_quizer";
+//    public static final String UPLOADING_PATH = FileUtils.getFilesStoragePath(CoreApplication.getAppContext()) + FOLDER_DIVIDER + UPLOADING_FOLDER_NAME + FOLDER_DIVIDER;
 
     private final MainActivity mContext;
 
@@ -53,7 +53,7 @@ public class UploadingExecutable extends BaseExecutable {
     @Override
     public void execute() {
         onStarting();
-        FileUtils.createFolderIfNotExist(UPLOADING_PATH);
+//        FileUtils.createFolderIfNotExist(null);
         moveCrashLogs();
         moveLogs();
         moveFiles();
@@ -79,10 +79,10 @@ public class UploadingExecutable extends BaseExecutable {
             final QuestionnaireListRequestModel requestModel = new QuestionnaireListRequestModelExecutable(mContext, user, true).execute();
             if (requestModel != null) {
                 try {
-                    FileUtils.createTxtFile(UPLOADING_PATH, String.format(UPLOADING_QUESTIONNAIRE_FILE_NAME, user.getLogin(), DateUtils.getCurrentTimeMillis()), new Gson().toJson(requestModel));
+                    FileUtils.writeToFile(String.format(UPLOADING_QUESTIONNAIRE_FILE_NAME, user.getLogin(), DateUtils.getCurrentTimeMillis()), new Gson().toJson(requestModel));
                     setSentStatusForUserQuestionnaires(user);
-                } catch (final IOException pE) {
-
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -112,13 +112,16 @@ public class UploadingExecutable extends BaseExecutable {
             Gson gson = new Gson();
             String json = gson.toJson(crashRequestModel);
 
+
             try {
                 Log.d(TAG, "moveCrashLogs: " + json);
-                FileUtils.createTxtFile(UPLOADING_PATH, String.format(UPLOADING_CRASH_FILE_NAME, "android", DateUtils.getCurrentTimeMillis()), json);
+//                FileUtils.createTxtFile(UPLOADING_PATH, String.format(UPLOADING_CRASH_FILE_NAME, "android", DateUtils.getCurrentTimeMillis()), json);
+                FileUtils.writeToFile(String.format(UPLOADING_CRASH_FILE_NAME, "android", DateUtils.getCurrentTimeMillis()), json);
                 mContext.getMainDao().clearCrashLogs();
-            } catch (final IOException pE) {
-                pE.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
         }
     }
 
@@ -134,10 +137,10 @@ public class UploadingExecutable extends BaseExecutable {
 
             try {
                 Log.d(TAG, "moveLogs: " + json);
-                FileUtils.createTxtFile(UPLOADING_PATH, String.format(UPLOADING_LOGS_FILE_NAME, "android", DateUtils.getCurrentTimeMillis()), json);
+                FileUtils.writeToFile(String.format(UPLOADING_LOGS_FILE_NAME, "android", DateUtils.getCurrentTimeMillis()), json);
                 mContext.getMainDao().clearAppLogsR();
-            } catch (final IOException pE) {
-                Log.d(TAG, "Не удалось сформировать файл журнала событий при ручной выгрузке\n" + pE.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -157,7 +160,7 @@ public class UploadingExecutable extends BaseExecutable {
         files.addAll(FileUtils.getFilesRecursion(FileUtils.AMR, FileUtils.getAudioStoragePath(mContext)));
 
         for (final File file : files) {
-            moveFile(file, UPLOADING_PATH);
+            moveFile(file);
         }
     }
 }

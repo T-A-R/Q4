@@ -1,16 +1,7 @@
 package pro.quizer.quizer3.executable;
 
-import android.util.Log;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import pro.quizer.quizer3.database.QuizerDao;
 import pro.quizer.quizer3.database.models.EncryptionTableR;
-import pro.quizer.quizer3.utils.FileUtils;
-
-import static pro.quizer.quizer3.executable.files.UploadingExecutable.UPLOADING_PATH;
 
 public class FillEncryptionTableExecutable extends BaseExecutable {
 

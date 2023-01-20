@@ -82,7 +82,6 @@ import pro.quizer.quizer3.utils.SPUtils;
 
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
-import static pro.quizer.quizer3.executable.files.UploadingExecutable.UPLOADING_PATH;
 import static pro.quizer.quizer3.utils.FileUtils.AMR;
 import static pro.quizer.quizer3.utils.FileUtils.JPEG;
 
@@ -1022,11 +1021,11 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             Gson gson = new Gson();
             String json = gson.toJson(requestModel);
             try {
-                FileUtils.createTxtFile(UPLOADING_PATH, String.format("data_%1$s_%2$s" + FileUtils.JSON, user.getLogin(), DateUtils.getCurrentTimeMillis()), json);
+                FileUtils.writeToFile(String.format("data_%1$s_%2$s" + FileUtils.JSON, user.getLogin(), DateUtils.getCurrentTimeMillis()), json);
                 getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_FILE", Constants.LogResult.ATTEMPT, token, json);
 
-            } catch (final IOException pE) {
-
+            } catch (Exception pE) {
+                pE.printStackTrace();
             }
         }
     }

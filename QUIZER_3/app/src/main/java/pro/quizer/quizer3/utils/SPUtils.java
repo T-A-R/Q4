@@ -2,6 +2,7 @@ package pro.quizer.quizer3.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import pro.quizer.quizer3.Constants;
 
@@ -12,9 +13,18 @@ public class SPUtils {
 
     public static void saveCurrentUserId(final Context pContext, final int pCurrentUsedId) {
         final SharedPreferences.Editor editor = getSharedPreferences(pContext).edit();
-
+        Log.d("T-A-R.SPUtils", "++++++++++++++++++++ saveCurrentUserId: " + pCurrentUsedId);
         editor.putInt(Constants.SP.CURRENT_USED_ID, pCurrentUsedId);
         editor.apply();
+    }
+
+    public static int getCurrentUserId(final Context pContext) {
+        return getCurrentUserId(getSharedPreferences(pContext));
+    }
+
+    private static int getCurrentUserId(final SharedPreferences pSharedPreferences) {
+        Log.d("T-A-R.SPUtils", "getCurrentUserId: " + getInt(pSharedPreferences, Constants.SP.CURRENT_USED_ID));
+        return getInt(pSharedPreferences, Constants.SP.CURRENT_USED_ID);
     }
 
     public static void saveFontSizePosition(final Context pContext, final int pFontSizePosition) {
@@ -91,10 +101,6 @@ public class SPUtils {
         editor.apply();
     }
 
-    public static int getCurrentUserId(final Context pContext) {
-        return getCurrentUserId(getSharedPreferences(pContext));
-    }
-
     public static Long getAuthTimeDifference(final Context pContext) {
         return getAuthTimeDifference(getSharedPreferences(pContext));
     }
@@ -147,10 +153,6 @@ public class SPUtils {
 
     private static int getInt(final SharedPreferences pSharedPreferences, final String pKey) {
         return getInt(pSharedPreferences, pKey, -1);
-    }
-
-    private static int getCurrentUserId(final SharedPreferences pSharedPreferences) {
-        return getInt(pSharedPreferences, Constants.SP.CURRENT_USED_ID);
     }
 
     private static Long getAuthTimeDifference(final SharedPreferences pSharedPreferences) {

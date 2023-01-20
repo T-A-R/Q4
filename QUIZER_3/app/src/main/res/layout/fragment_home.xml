@@ -175,17 +175,6 @@
                 android:layout_marginTop="@dimen/_3sdp"
                 android:orientation="vertical">
 
-                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
-                    android:id="@+id/config_agreement"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_8sdp"
-                    android:gravity="center|top"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    tools:text="Экзит пул agreement..." />
-
-
                 <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
                     android:id="@+id/config_name"
                     android:layout_width="match_parent"
@@ -196,6 +185,16 @@
                     android:textSize="16sp"
                     android:textStyle="bold"
                     tools:text="Экзит пул" />
+
+                <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                    android:id="@+id/config_agreement"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:gravity="center|top"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    tools:text="Экзит пул agreement..." />
 
                 <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
                     android:id="@+id/project_status"

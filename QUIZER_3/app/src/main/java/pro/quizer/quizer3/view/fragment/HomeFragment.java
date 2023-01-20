@@ -800,61 +800,65 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 return tree;
             }
 
-            for (int q = 0; q < quotas.size(); q++) {
-                Integer[] sequence = quotas.get(q).getArray();
-                int localQuota = getLocalQuotas(activity, sequence);
-                for (int i = 0; i < tree.length; i++) {
-                    for (int k = 0; k < tree[i].length; k++) {
-                        if (sequence[0].equals(tree[i][k].getRelative_id())) {
-                            int temp = i + 1;
-                            if (sequence.length > 1) {
-                                for (int s = 1; s < sequence.length; ) {
-                                    if (sequence[s].equals(tree[temp][k].getRelative_id())) {
-                                        if (s == sequence.length - 1) {
-                                            if (tree[temp][k].getLimit() > quotas.get(q).getLimit()) {
-                                                tree[temp][k].setLimit(quotas.get(q).getLimit());
-                                                int lc = quotas.get(q).getSent() + localQuota;
-                                                tree[temp][k].setDone(lc);
-                                                int done = tree[temp][k].getDone();
-                                                int local = 0;
-                                                int total = done + local;
-                                                int limit = tree[temp][k].getLimit();
-                                                if (total >= limit) {
-                                                    tree[temp][k].setEnabled(false);
-                                                    for (int x = temp - 1; x >= 0; x--) {
-                                                        tree[x][k].setEnabled(false);
+            try {
+                for (int q = 0; q < quotas.size(); q++) {
+                    Integer[] sequence = quotas.get(q).getArray();
+                    int localQuota = getLocalQuotas(activity, sequence);
+                    for (int i = 0; i < tree.length; i++) {
+                        for (int k = 0; k < tree[i].length; k++) {
+                            if (sequence[0].equals(tree[i][k].getRelative_id())) {
+                                int temp = i + 1;
+                                if (sequence.length > 1) {
+                                    for (int s = 1; s < sequence.length; ) {
+                                        if (sequence[s].equals(tree[temp][k].getRelative_id())) {
+                                            if (s == sequence.length - 1) {
+                                                if (tree[temp][k].getLimit() > quotas.get(q).getLimit()) {
+                                                    tree[temp][k].setLimit(quotas.get(q).getLimit());
+                                                    int lc = quotas.get(q).getSent() + localQuota;
+                                                    tree[temp][k].setDone(lc);
+                                                    int done = tree[temp][k].getDone();
+                                                    int local = 0;
+                                                    int total = done + local;
+                                                    int limit = tree[temp][k].getLimit();
+                                                    if (total >= limit) {
+                                                        tree[temp][k].setEnabled(false);
+                                                        for (int x = temp - 1; x >= 0; x--) {
+                                                            tree[x][k].setEnabled(false);
+                                                        }
                                                     }
                                                 }
                                             }
-                                        }
-                                        s++;
-                                    } else {
-                                        temp++;
-                                        if (temp == tree.length) {
-                                            break;
+                                            s++;
+                                        } else {
+                                            temp++;
+                                            if (temp == tree.length) {
+                                                break;
+                                            }
                                         }
                                     }
-                                }
-                            } else {
-                                if (tree[i][k].getLimit() > quotas.get(q).getLimit()) {
-                                    tree[i][k].setLimit(quotas.get(q).getLimit());
-                                    int lc = quotas.get(q).getSent() + localQuota;
-                                    tree[i][k].setDone(lc);
-                                    int done = tree[i][k].getDone();
-                                    int limit = tree[i][k].getLimit();
-                                    int local = 0;
-                                    int total = done + local;
-                                    if (total >= limit) {
-                                        tree[i][k].setEnabled(false);
+                                } else {
+                                    if (tree[i][k].getLimit() > quotas.get(q).getLimit()) {
+                                        tree[i][k].setLimit(quotas.get(q).getLimit());
+                                        int lc = quotas.get(q).getSent() + localQuota;
+                                        tree[i][k].setDone(lc);
+                                        int done = tree[i][k].getDone();
+                                        int limit = tree[i][k].getLimit();
+                                        int local = 0;
+                                        int total = done + local;
+                                        if (total >= limit) {
+                                            tree[i][k].setEnabled(false);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
 
-                progress = progress + ((float) 90 / (float) quotas.size());
-                publishProgress((int) progress);
+                    progress = progress + ((float) 90 / (float) quotas.size());
+                    publishProgress((int) progress);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
 //            showTree(tree); // Для отладки
             publishProgress(100);

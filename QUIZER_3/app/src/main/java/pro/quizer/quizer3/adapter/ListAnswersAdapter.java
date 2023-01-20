@@ -551,6 +551,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         }
 
         public void onClick(TextView cardInput, int position, boolean isPenButton) {
+            Log.d("T-A-R.ListAnswersAdapt", "onClick: " + position);
             if ((isOpen(position) && !isChecked(position))
                     || (isOpen(position) && isAutoChecked(position))
                     || isOpen(position) && isPenButton

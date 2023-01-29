@@ -27,6 +27,8 @@ public final class ConditionUtils {
     private static final String DISPLAY_CONDITION_DIVIDER = "else";
     private static final String IF = "if";
     public static final String FALSE = "F";
+
+    public static final String FALSE_FULL = "false";
     public static final String TRUE = "T";
     public static final String SPACE = " ";
     public static final String RIGHT_BRACKET = "}";
@@ -95,20 +97,33 @@ public final class ConditionUtils {
 //        Log.d(TAG, "************************************");
 
         for (final String conditionElement : conditionArray) {
+            if(conditionElement.contains(FALSE_FULL)) {
+                Log.d("T-A-R.ConditionUtils", "evaluateCondition: " + conditionElement);
+            }
             if (conditionElement.contains(IF)) {
                 String condition = conditionElement.replace(IF, Constants.Strings.EMPTY);
 
                 if (condition.contains(DisplayConditionType.SHOW)) {
-                    condition = condition.replace(LEFT_BRACKET + DisplayConditionType.SHOW + RIGHT_BRACKET, Constants.Strings.EMPTY);
+                    if(condition.contains(FALSE_FULL)) {
+                        Log.d("T-A-R.ConditionUtils", "evaluateCondition: <<<<<<<<< 1");
+//                        return CANT_SHOW;
+                    } else {
+                        condition = condition.replace(LEFT_BRACKET + DisplayConditionType.SHOW + RIGHT_BRACKET, Constants.Strings.EMPTY);
 //                    Log.d(TAG, "evaluateCondition: 2.1 " + formatCondition(condition, pModel, pBaseActivity));
-                    final boolean isCanShow = TreeBooleanEvaluator.evaluateBoolean(evaluator, formatCondition(condition, pModel, pBaseActivity));
+                        final boolean isCanShow = TreeBooleanEvaluator.evaluateBoolean(evaluator, formatCondition(condition, pModel, pBaseActivity));
 //                    Log.d(TAG, "evaluateCondition: 2.2 " + isCanShow);
-                    if (isCanShow) {
+                        if (isCanShow) {
 //                        Log.d(TAG, "evaluateCondition: 2.3");
-                        return CAN_SHOW;
+                            return CAN_SHOW;
+                        }
                     }
                 } else if (condition.contains(DisplayConditionType.JUMP)) {
                     int jump = Integer.valueOf(condition.substring(condition.indexOf(DisplayConditionType.JUMP) + DisplayConditionType.JUMP.length(), condition.indexOf(RIGHT_BRACKET)));
+
+                    if(condition.contains(FALSE_FULL)) {
+                        Log.d("T-A-R.ConditionUtils", "evaluateCondition: <<<<<<<<< 2");
+                        return jump;
+                    }
 
                     condition = condition.replace(LEFT_BRACKET + DisplayConditionType.JUMP + jump + RIGHT_BRACKET, Constants.Strings.EMPTY);
                     final boolean isNeedJump = TreeBooleanEvaluator.evaluateBoolean(evaluator, formatCondition(condition, pModel, pBaseActivity));
@@ -118,6 +133,11 @@ public final class ConditionUtils {
                         return jump;
                     }
                 } else if (condition.contains(DisplayConditionType.HIDE)) {
+                    if(condition.contains(FALSE_FULL)) {
+                        Log.d("T-A-R.ConditionUtils", "evaluateCondition: <<<<<<<<< 3");
+                        return CANT_SHOW;
+                    }
+
                     condition = condition.replace(LEFT_BRACKET + DisplayConditionType.HIDE + RIGHT_BRACKET, Constants.Strings.EMPTY);
                     final boolean isCantShow = TreeBooleanEvaluator.evaluateBoolean(evaluator, formatCondition(condition, pModel, pBaseActivity));
 

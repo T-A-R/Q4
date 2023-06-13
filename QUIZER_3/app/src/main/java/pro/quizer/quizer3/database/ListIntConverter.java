@@ -14,7 +14,7 @@ public class ListIntConverter {
     @TypeConverter
     public static List<Integer> fromString(String value) {
         Type listType = new TypeToken<List<Integer>>() {}.getType();
-        Log.d("T-A-R.ListStringConv", "fromString: " + value);
+        Log.d("T-A-R.ListStringConv", "fromString 2: " + value);
         return new Gson().fromJson(value, listType);
     }
 

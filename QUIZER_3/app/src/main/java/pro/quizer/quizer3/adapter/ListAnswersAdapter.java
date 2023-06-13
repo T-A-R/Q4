@@ -44,6 +44,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.androidhiddencamera.HiddenCameraUtils;
 import com.androidhiddencamera.config.CameraImageFormat;
+import com.google.gson.Gson;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -65,7 +66,9 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.PhotoAnswersR;
+import pro.quizer.quizer3.database.models.QuotaR;
 import pro.quizer.quizer3.database.models.UserModelR;
+import pro.quizer.quizer3.model.quota.QuotaModel;
 import pro.quizer.quizer3.model.state.AnswerState;
 import pro.quizer.quizer3.model.view.TitleModel;
 import pro.quizer.quizer3.utils.FileUtils;
@@ -315,7 +318,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 addPicButton.setVisibility(View.GONE);
             }
 
-            if (!canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder())) {
+            if (mActivity.quotaIds.contains(item.getRelative_id()) && !canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder())) {
                 answerTitle.setTextColor(Color.parseColor("#AAAAAA"));
                 item.setEnabled(false);
             }
@@ -416,40 +419,39 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         }
 
         public boolean canShow(ElementItemR[][] tree, List<List<Integer>> passedElementsId, int relativeId, int order) {
-//            try {
-//                if (relativeId == 9)
-//                    for (int i = 0; i < tree[0].length; i++) {
-//                        Log.d("T-A-R.ListAnswersAdapt", "Q:" + tree[0][i].getRelative_id() + "/" + tree[0][i].isEnabled() + " | " +
-//                                tree[1][i].getRelative_id() + "/" + tree[1][i].isEnabled() + " | " +
-//                                tree[2][i].getRelative_id() + "/" + tree[2][i].isEnabled()
-//                        );
-//                    }
-//            } catch (Exception e) {
-//                e.printStackTrace();
+            Log.d("T-A-R", "====== canShow: " + relativeId);
+
+//            for(List<Integer> id : passedElementsId) {
+//                Log.d("T-A-R", "list: " + id.get(0));
 //            }
+
             if (tree == null) {
                 return true;
             }
-            Log.d("T-A-R.ListAnswers", "order: " +order);
+
             if (order == 1) {
-                Log.d("T-A-R.ListAnswers", "canShow: 2");
                 for (int k = 0; k < tree[0].length; k++) {
                     if (tree[0][k].getRelative_id().equals(relativeId)) {
                         if (tree[0][k].isEnabled()) {
-                            return true;
+                            boolean hasHelper = false;
+                            for(int n = 0; n < tree.length; n++) {
+                                if(tree[n][k].getRelative_id() > 100000) {
+                                    hasHelper = true;
+                                    break;
+                                }
+                            }
+                            if(!hasHelper)
+                            {
+                                Log.d("T-A-R", "canShow: 1");
+                                return true;
+                            }
                         }
                     }
                 }
-                Log.d("T-A-R.ListAnswers", "canShow: 3");
                 return false;
             } else {
                 int endPassedElement = order - 1;
-                for(List<Integer> list : passedElementsId) {
-                    Log.d("T-A-R.ListAnswersA", "=======: ");
-                    for (Integer item : list) {
-                        Log.d("T-A-R.ListAnswersA", "passed: " + item);
-                    }
-                }
+
                 for (int k = 0; k < tree[0].length; k++) {
                     for (int i = 0; i < endPassedElement; ) {
 //                        if (tree[i][k].getRelative_id().equals(passedElementsId.get(i))) {
@@ -458,6 +460,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                                 if (i == (endPassedElement - 1)) { // Если последний, то
                                     if (tree[i + 1][k].getRelative_id().equals(relativeId)) { // Если следующий за последним равен Relative ID
                                         if (tree[i + 1][k].isEnabled()) {
+                                            Log.d("T-A-R", "canShow: 2");
                                             return true;
                                         }
                                     }
@@ -465,11 +468,22 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                                 i++;
                             } else break;
                         } else {
-                            if (passedElementsId.get(i).contains(tree[i][k].getRelative_id()) && tree[i][k].getRelative_id() < 999999) {
+                            if (passedElementsId.get(i).contains(tree[i][k].getRelative_id()) && tree[i][k].getRelative_id() < 99999) {
                                 if (i == (endPassedElement - 1)) { // Если последний, то
                                     if (tree[i + 1][k].getRelative_id().equals(relativeId)) { // Если следующий за последним равен Relative ID
                                         if (tree[i + 1][k].isEnabled()) {
-                                            return true;
+                                            Log.d("T-A-R", "canShow ID: " + tree[i][k].getRelative_id() + " " + tree[i + 1][k].isEnabled());
+                                            boolean hasHelper = false;
+                                            for(int n = i + 2; n < tree.length; n++) {
+                                                if(tree[n][k].getRelative_id() > 100000) {
+                                                    hasHelper = true;
+                                                    break;
+                                                }
+                                            }
+                                            if(!hasHelper) {
+                                                Log.d("T-A-R", "canShow: 3");
+                                                return true;
+                                            }
                                         }
                                     }
                                 }
@@ -479,7 +493,6 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                     }
                 }
             }
-            Log.d("T-A-R.ListAnswers", "canShow: 4");
             return false;
         }
 

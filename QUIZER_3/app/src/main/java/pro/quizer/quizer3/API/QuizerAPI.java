@@ -207,6 +207,30 @@ public class QuizerAPI {
         void onGetStatisticsCallback(ResponseBody data);
     }
 
+    static public void getRoutes(String url, String json, final GetRoutesCallback listener) {
+
+        Map<String, String> fields = new HashMap<>();
+        fields.put(Constants.ServerFields.JSON_DATA, json);
+
+        CoreApplication.getQuizerApi().getRoutes(url, fields).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d(TAG, "QuizerAPI.getRoutes.onResponse() Message: " + response.message());
+                listener.onGetRoutesCallback(response.body());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d(TAG, "QuizerAPI.getRoutes.onFailure() " + t);
+                listener.onGetRoutesCallback(null);
+            }
+        });
+    }
+
+    public interface GetRoutesCallback {
+        void onGetRoutesCallback(ResponseBody data);
+    }
+
     /**
      * Отправка файлов (аудио и фото).
      */

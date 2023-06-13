@@ -79,6 +79,7 @@ import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.FontUtils;
 import pro.quizer.quizer3.utils.SPUtils;
+import pro.quizer.quizer3.utils.StringUtils;
 
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
@@ -238,7 +239,9 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public Context getContext() {
         View view = getView();
-        return view != null ? view.getContext() : null;
+        Context context = view != null ? view.getContext() : null;
+        if (context == null) context = getMainActivity();
+        return context;
     }
 
     public int getLayoutSrc() {
@@ -895,7 +898,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public boolean saveQuestionnaireToDatabase(CurrentQuestionnaireR currentQuiz, boolean aborted) {
-        Log.d("T-A-R.SmartFragment", "saveQuestionnaireToDatabase: ");
+        Log.d("T-A-R.SmartFragment", "saveQuestionnaireToDatabase 1: ");
 
         try {
             getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.ATTEMPT, currentQuiz.getToken(), null);
@@ -982,10 +985,11 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         try {
             getDao().insertQuestionnaire(questionnaireDatabaseModel);
             getMainActivity().setSettings(Constants.Settings.QUIZ_TIME, String.valueOf(DateUtils.getCurrentTimeMillis()));
-            Log.d("T-A-R.SmartFragment", "saveQuestionnaireToDatabase: " + questionnaireDatabaseModel.toString());
+            Log.d("T-A-R.SmartFragment", "saveQuestionnaireToDatabase 2: " + StringUtils.getJson(questionnaireDatabaseModel) );
             saveQuizToFile(questionnaireDatabaseModel.getToken());
             getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.SUCCESS, questionnaireDatabaseModel.getToken(), null);
         } catch (Exception e) {
+            e.printStackTrace();
             showToast(getString(R.string.db_save_error));
             getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.ERROR, currentQuiz.getToken(), null);
             saved = false;
@@ -1082,7 +1086,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     @Override
     public void onImageCapture(@NonNull File pImageFile) {
-        if (FileUtils.renameFile(getContext(),
+        if (FileUtils.renameFile(getMainActivity(),
                 pImageFile,
                 getCurrentUserId(),
                 FileUtils.generatePhotoFileName(mLoginAdmin, mProjectId, mUserLogin, mToken, mRelativeId))) {
@@ -1270,7 +1274,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             super.onPreExecute();
             try {
                 startCamera(new CameraConfig()
-                        .getBuilder(getContext())
+                        .getBuilder(getMainActivity())
                         .setCameraFacing(CameraFacing.FRONT_FACING_CAMERA)
                         .setCameraResolution(CameraResolution.LOW_RESOLUTION)
                         .setImageFormat(CameraImageFormat.FORMAT_JPEG)

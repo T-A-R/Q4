@@ -40,7 +40,7 @@ public class ElementDatabaseModelR {
     private String type;
 
     @ColumnInfo(name = "send_sms")
-    private boolean send_sms;
+    private Boolean send_sms;
 
     @ColumnInfo(name = "helper")
     private Boolean helper;
@@ -143,11 +143,11 @@ public class ElementDatabaseModelR {
         this.type = type;
     }
 
-    public boolean getSend_sms() {
+    public Boolean getSend_sms() {
         return send_sms;
     }
 
-    public void setSend_sms(boolean send_sms) {
+    public void setSend_sms(Boolean send_sms) {
         this.send_sms = send_sms;
     }
 

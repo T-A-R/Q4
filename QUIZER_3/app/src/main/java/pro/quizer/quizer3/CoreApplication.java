@@ -6,6 +6,7 @@ import android.content.Context;
 import androidx.room.Room;
 
 import com.activeandroid.ActiveAndroid;
+import com.yandex.mapkit.MapKitFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +31,8 @@ public class CoreApplication extends Application {
         super.onCreate();
         CoreApplication.context = getApplicationContext();
         ActiveAndroid.initialize(this);
+
+        MapKitFactory.setApiKey("f50fc4e2-db74-493f-b009-3af612205541");
 
         String userAgent = "QUIZER " + BuildConfig.VERSION_NAME + " || " + DeviceUtils.getAndroidVersion() + " || " + DeviceUtils.getDeviceInfo();
 

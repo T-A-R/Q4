@@ -90,14 +90,22 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
 
             for (final ElementDatabaseModelR element : elements) {
                 if (element.isHelper() == null || !element.isHelper()) {
-                    final ElementRequestModel elementRequestModel = new ElementRequestModel(
+                    ElementRequestModel elementRequestModel = new ElementRequestModel(
                             element.getRelative_id(),
-                            element.getDuration(),
-                            element.getClick_rank(),
-                            element.getRank(),
-                            element.getValue(),
-                            element.getSend_sms()
+                            element.getDuration()
                     );
+
+                    if(element.getRank() != null) elementRequestModel.setRank(element.getRank());
+                    if(element.getValue() != null && !element.getValue().isEmpty()) elementRequestModel.setValue(element.getValue());
+
+//                    final ElementRequestModel elementRequestModel = new ElementRequestModel(
+//                            element.getRelative_id(),
+//                            element.getDuration(),
+//                            element.getClick_rank(),
+//                            element.getRank(),
+//                            element.getValue(),
+//                            element.getSend_sms()
+//                    );
 
                     questionnaireRequestModel.addElement(elementRequestModel);
                 }

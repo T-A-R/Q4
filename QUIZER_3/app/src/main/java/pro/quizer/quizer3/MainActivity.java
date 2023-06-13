@@ -1,6 +1,7 @@
 package pro.quizer.quizer3;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ClipData;
@@ -68,6 +69,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -85,6 +87,7 @@ import pro.quizer.quizer3.executable.FillEncryptionTableExecutable;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.QuotasTreeMaker;
 import pro.quizer.quizer3.model.ElementSubtype;
+import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.User;
 import pro.quizer.quizer3.model.config.ConfigModel;
@@ -186,6 +189,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             }
         }
     };
+
+    public List<Integer> quotaIds = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -470,6 +475,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                         elementOptionsR.setPhoto_answer_required(optionsModelNew.isPhotoAnswerRequired());
                         elementOptionsR.setMin_number(optionsModelNew.getMinNumber());
                         elementOptionsR.setMax_number(optionsModelNew.getMaxNumber());
+                        elementOptionsR.setShowRandomQuestion(optionsModelNew.getShowRandomQuestion());
 
                         elementItemR.setElementOptionsR(elementOptionsR);
                     }
@@ -534,10 +540,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public UserModelR getCurrentUserForce() {
         try {
-            Log.d("T-A-R.MainActivity", "getCurrentUserForce: ===================");
-            Log.d("T-A-R.MainActivity", "getCurrentUserId: " + getCurrentUserId());
+//            Log.d("T-A-R.MainActivity", "getCurrentUserForce: ===================");
+//            Log.d("T-A-R.MainActivity", "getCurrentUserId: " + getCurrentUserId());
             mCurrentUser = getUserByUserId(getCurrentUserId());
-            Log.d("T-A-R.MainActivity", "mCurrentUser: " + mCurrentUser);
+//            Log.d("T-A-R.MainActivity", "mCurrentUser: " + mCurrentUser);
         } catch (Exception e) {
             showToastfromActivity(getString(R.string.db_load_error));
         }
@@ -1272,7 +1278,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void startCounter(Long time, int type, SmartFragment.Events listener) {
         messageListener = listener;
-        Date startDateForDialog = new Date((time + 5000) );
+        Date startDateForDialog = new Date((time + 5000));
         if (mTimerPeriodInfo != null) {
             mTimerPeriodInfo.cancel();
         }
@@ -1449,6 +1455,23 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         }
         return currentElementsList;
     }
+
+//    public List<ElementItemR> checkForRandoms(List<ElementItemR> list) {
+//        for (ElementItemR element : list) {
+//            if (element.getType().equals(ElementType.BOX)
+//                    && element.getElementOptionsR().getShowRandomQuestion() != null
+//                    && element.getElementOptionsR().getShowRandomQuestion()) {
+//                List<ElementItemR> subList = element.getElements();
+//                if (subList != null && subList.size() > 0) {
+//                    Random rand = new Random();
+//                    ElementItemR randomElement = subList.get(rand.nextInt(subList.size()));
+//                    subList = new ArrayList<>();
+//                    subList.add(randomElement);
+//                    element.setE
+//                }
+//            }
+//        }
+//    }
 
     public List<ElementModelFlat> getFlatElementsList() {
         if (currentElementsFlatList == null) {
@@ -1958,4 +1981,5 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         });
         task.execute();
     }
+
 }

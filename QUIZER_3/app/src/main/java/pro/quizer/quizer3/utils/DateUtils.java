@@ -1,8 +1,10 @@
 package pro.quizer.quizer3.utils;
 
 import android.text.format.DateFormat;
+import android.util.Log;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
 
@@ -15,13 +17,17 @@ public final class DateUtils {
     public static String PATTERN_FILE = "dd_MM_yyyy_HH_mm";
     public static String PATTERN_TIMER = "HH:mm";
 
-    public static long getCurrentTimeMillis() {
-        return System.currentTimeMillis() / 1000;
-//        return System.currentTimeMillis();
-    }
+//    public static long getCurrentTimeMillis() {
+//        return System.currentTimeMillis() / 1000;
+//    }
 
     public static long getFullCurrentTime() {
-        return System.currentTimeMillis();
+        return getCurrentTimeMillis() * 1000;
+    }
+
+    public static long getCurrentTimeMillis() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) return Instant.now().getEpochSecond();
+        else return System.currentTimeMillis() / 1000;
     }
 
     public static Date getDate() {
@@ -43,6 +49,6 @@ public final class DateUtils {
     }
 
     public static String getCurrentDateOfMonth() {
-        return (String) DateFormat.format("dd",   getDate());
+        return (String) DateFormat.format("dd", getDate());
     }
 }

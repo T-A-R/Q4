@@ -483,15 +483,22 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
                 if (found) {
                     boolean isBox = getCurrentElements().get(i).getType().equals(ElementType.BOX);
+                    boolean isRandom = getCurrentElements().get(i).getElementOptionsR().getShowRandomQuestion() != null && getCurrentElements().get(i).getElementOptionsR().getShowRandomQuestion();
                     boolean isTable = getCurrentElements().get(i).getSubtype().equals(ElementSubtype.TABLE);
                     if (!isBox || isTable) {
                         startElementId = getCurrentElements().get(i).getRelative_id();
                         currentElement = getCurrentElements().get(i);
                         break;
                     } else {
+                        Log.d("T-A-R.ElementFragment", "isBox: " + isBox);
                         if (!checkConditions(getCurrentElements().get(i))) {
                             Log.d("T-A-R.ElementFragment", ">>>>>>>>>>>>>: HIDE BOX");
                             checkAndLoadNext();
+                            break;
+                        } else if (isBox && isRandom) {
+                            Log.d("T-A-R.ElementFragment", "isRandom: ");
+                            currentElement = getCurrentElements().get(i).getElements().get(0);
+                            startElementId = currentElement.getRelative_id();
                             break;
                         }
                     }
@@ -798,10 +805,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 //                Log.d("T-A-R.ElementFragment", "initRecyclerView: 3");
                 MainActivity activity = getMainActivity();
                 if (isQuota) {
-//                    Log.d("T-A-R.ElementFragment", "initRecyclerView: 4");
                     removeHelper();
-//                    Log.d("T-A-R.ElementFragment", "initRecyclerView: 5");
-                    Log.d("T-A-R.ElementFragment", "id: " + currentElement.getRelative_id() + " order: " + currentElement.getElementOptionsR().getOrder());
+
+
+
                     adapterList = new ListAnswersAdapter(activity, currentElement, answersList,
                             getMultiPassedQuotasBlock(currentElement.getElementOptionsR().getOrder()), activity.getTree(null), titlesMap, this);
 //                    Log.d("T-A-R.ElementFragment", "initRecyclerView: 6");
@@ -1037,21 +1044,13 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
         if (element != null) {
             final ElementOptionsR options = element.getElementOptionsR();
             if (options != null && options.getPre_condition() != null) {
-                Log.d("T-A-R.ElementFragment", "checkConditions: 1");
                 String conditions = options.getPre_condition();
-                Log.d("T-A-R.ElementFragment", "checkConditions: 1.1 - " + conditions);
-//                conditions = "if(!$e.41.checked){show}else{jump:100}";
                 final int showValue = ConditionUtils.evaluateCondition(conditions, getMainActivity().getMap(false), getMainActivity());
-                Log.d("T-A-R.ElementFragment", "checkConditions: 1.2");
                 if (showValue != ConditionUtils.CAN_SHOW) {
-                    Log.d("T-A-R.ElementFragment", "checkConditions: 2");
                     if (showValue != ConditionUtils.CANT_SHOW) {
-                        Log.d("T-A-R.ElementFragment", "checkConditions: 3");
                         nextElementId = showValue;
                     } else {
-                        Log.d("T-A-R.ElementFragment", "checkConditions: 4");
                         if (!element.equals(currentElement)) {
-                            Log.d("T-A-R.ElementFragment", "checkConditions: 5");
                             return false;
                         }
                         nextElementId = options.getJump();
@@ -1070,7 +1069,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         }
                     }
                     if (nextElementId.equals(0)) {
-                        Log.d("T-A-R.ElementFragment", "SAVE: 1");
                         if (saveQuestionnaire(false)) {
                             exitQuestionnaire();
                         } else {
@@ -1092,12 +1090,14 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private boolean saveElement() {
+        Log.d("T-A-R.ElementFragment", "saveElement: ===============================");
         boolean saved = false;
         switch (answerType) {
             case ElementSubtype.LIST:
             case ElementSubtype.QUOTA:
             case ElementSubtype.SCALE:
             case ElementSubtype.RANK: {
+                Log.d("T-A-R.ElementFragment", "saveElement: LIST");
                 List<AnswerState> answerStates;
                 if (answerType.equals(ElementSubtype.SCALE)) {
                     answerStates = adapterScale.getAnswers();
@@ -1120,18 +1120,33 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             answerStatesRang.add(new AnswerState(id, true, data));
                         }
                         answerStates = answerStatesRang;
-                        nextElementId = currentElement.getElementOptionsR().getJump();
+                        if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0
+                                && getElement(currentElement.getRelative_parent_id()).getType().equals(ElementType.BOX)
+                                && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion() != null
+                                && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion()) {
+                            nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                        } else
+                            nextElementId = currentElement.getElementOptionsR().getJump();
                         if (nextElementId == null)
                             nextElementId = answersList.get(0).getElementOptionsR().getJump();
                     } else {
-                        for (int i = 0; i < answerStates.size(); i++) {
-                            if (answerStates.get(i).isChecked()) {
-                                int id = answerStates.get(i).getRelative_id();
-                                nextElementId = getElement(id).getElementOptionsR().getJump();
-                                break;
+                        if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0
+                                && getElement(currentElement.getRelative_parent_id()).getType().equals(ElementType.BOX)
+                                && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion() != null
+                                && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion()) {
+                            nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+
+                        } else {
+                            for (int i = 0; i < answerStates.size(); i++) {
+                                if (answerStates.get(i).isChecked()) {
+                                    int id = answerStates.get(i).getRelative_id();
+                                    nextElementId = getElement(id).getElementOptionsR().getJump();
+                                    break;
+                                }
                             }
                         }
                     }
+
 
                     //TODO вернуть для ротации вопросов
 //                if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
@@ -1151,7 +1166,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     elementPassedR.setHelper(answerStates.size() == 1 && getElement(answerStates.get(0).getRelative_id()).getElementOptionsR().isHelper());
 
                     getDao().insertElementPassedR(elementPassedR);
-                    Log.d("T-A-R.ElementFragment", "setWasElementShown: 3 = " + startElementId);
                     getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
                     saved = true;
 
@@ -1173,7 +1187,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                                 e.printStackTrace();
                             }
                             try {
-                                Log.d("T-A-R.ElementFragment", "saveElement 2: " + answerPassedR.getRelative_id());
                                 getDao().insertElementPassedR(answerPassedR);
                                 saved = true;
                             } catch (Exception e) {
@@ -1211,9 +1224,21 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 if (isMultiSpinner) {
                     if (checkMultipleSpinner()) {
                         ElementPassedR elementPassedR = new ElementPassedR();
-                        nextElementId = currentElement.getElementOptionsR().getJump();
-                        if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+                        if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0
+                                && getElement(currentElement.getRelative_parent_id()).getType().equals(ElementType.BOX)
+                                && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion() != null
+                                && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion()) {
+                            nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                        } else
                             nextElementId = currentElement.getElementOptionsR().getJump();
+                        if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
+                            if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0
+                                    && getElement(currentElement.getRelative_parent_id()).getType().equals(ElementType.BOX)
+                                    && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion() != null
+                                    && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion()) {
+                                nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                            } else
+                                nextElementId = currentElement.getElementOptionsR().getJump();
                             if (nextElementId == null || nextElementId.equals(-2)) {
                                 nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
                             }
@@ -1266,9 +1291,21 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 } else {
                     if (spinnerSelection != -1) {
                         ElementPassedR elementPassedR = new ElementPassedR();
-                        nextElementId = answersList.get(spinnerSelection).getElementOptionsR().getJump();
+                        if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0
+                                && getElement(currentElement.getRelative_parent_id()).getType().equals(ElementType.BOX)
+                                && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion() != null
+                                && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion()) {
+                            nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                        } else
+                            nextElementId = answersList.get(spinnerSelection).getElementOptionsR().getJump();
                         if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
-                            nextElementId = currentElement.getElementOptionsR().getJump();
+                            if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0
+                                    && getElement(currentElement.getRelative_parent_id()).getType().equals(ElementType.BOX)
+                                    && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion() != null
+                                    && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion()) {
+                                nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                            } else
+                                nextElementId = currentElement.getElementOptionsR().getJump();
                             if (nextElementId.equals(-2)) {
                                 nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
                             }
@@ -1322,13 +1359,24 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     }
                 }
                 if (answerStates != null && answerStates[0][0].getRelative_id() != null && adapterTable.isCompleted()) {
-                    if (currentElement.getElementOptionsR().getJump() != null)
+                    if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0
+                            && getElement(currentElement.getRelative_parent_id()).getType().equals(ElementType.BOX)
+                            && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion() != null
+                            && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion()) {
+                        nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                    } else if (currentElement.getElementOptionsR().getJump() != null)
                         nextElementId = currentElement.getElementOptionsR().getJump();
                     else
                         nextElementId = getElement(answerStates[0][0].getRelative_id()).getElementOptionsR().getJump();
 
                     if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
-                        nextElementId = currentElement.getElementOptionsR().getJump();
+                        if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0
+                                && getElement(currentElement.getRelative_parent_id()).getType().equals(ElementType.BOX)
+                                && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion() != null
+                                && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion()) {
+                            nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                        } else
+                            nextElementId = currentElement.getElementOptionsR().getJump();
                         if (nextElementId == -2) {
                             nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
                         }
@@ -1388,9 +1436,21 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             case ElementSubtype.END:
                 ElementPassedR elementPassedR = new ElementPassedR();
                 if (answerType.equals(ElementSubtype.END)) {
-                    nextElementId = currentElement.getElementOptionsR().getType_end();
+                    if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0
+                            && getElement(currentElement.getRelative_parent_id()).getType().equals(ElementType.BOX)
+                            && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion() != null
+                            && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion()) {
+                        nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                    } else
+                        nextElementId = currentElement.getElementOptionsR().getType_end();
                 } else {
-                    nextElementId = currentElement.getElementOptionsR().getJump();
+                    if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0
+                            && getElement(currentElement.getRelative_parent_id()).getType().equals(ElementType.BOX)
+                            && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion() != null
+                            && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getShowRandomQuestion()) {
+                        nextElementId = getElement(currentElement.getRelative_parent_id()).getElementOptionsR().getJump();
+                    } else
+                        nextElementId = currentElement.getElementOptionsR().getJump();
                     if (currentElement.getRelative_parent_id() != 0 && currentElement.getRelative_parent_id() != null && getElement(currentElement.getRelative_parent_id()).getElementOptionsR().isRotation()) {
                         nextElementId = currentElement.getElementOptionsR().getJump();
                         if (nextElementId == -2) {
@@ -2481,7 +2541,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 //TODO Если все выбранные квотные в скрытом закрыты, то не пускаем далее. Если все не выбраны то пускаем далее
 
                 if (hiddenInQuotaBox) {
-                    Log.d("T-A-R.ElementFragment", "show dialog: " + answersHidden.size() +"/"+ enabledCounter);
+                    try {
+                        Log.d("T-A-R.ElementFragment", "show dialog: " + answerStatesHidden.get(0).getRelative_id() + "/" + answersHidden.size() + "/" + enabledCounter + "/" + canShowCounter);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                     if (answersHidden.size() == 1 && enabledCounter == 0) {
                         String message = "Квота по варианту ответа \u2022 \"" + answersHidden.get(0).getElementOptionsR().getTitle() + "\" закончилась";
                         showScreensaver(true);
@@ -2502,14 +2566,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             Log.d("T-A-R.ElementFragment", "?????: 2");
                             showHiddenExitAlertDialog(message);
                         } else {
-                            showHiddenAlertDialog(message, nextElement, answerStatesHidden, answersHidden);
+                            showHiddenAlertDialog(message, nextElement, answerStatesHidden, answersHidden, true);
                         }
                         return;
-                    } else if (answersHidden.size() == 0 && enabledCounter == 0 && canShowCounter == 1) {
-                        showScreensaver(true);
+                    } else if (answersHidden.size() == 0 && enabledCounter == 0 && canShowCounter > 0) {
+//                        showScreensaver(true);
                         Log.d("T-A-R.ElementFragment", "?????: 3");
                         isInHiddenQuotaDialog = true;
-                        showHiddenExitAlertDialog("Нет вариантов ответов для продолжения");
+//                        answerStatesHidden.add(helper);
+                        showHiddenAlertDialog("Ни один вариант ответа не подходит под условие", nextElement, answerStatesHidden, answersHidden, false);
+//                        showHiddenExitAlertDialog("Нет вариантов ответов для продолжения");
+                        return;
                     } else {
                         if (answerStatesHidden.size() == 1) {
                             answerStatesHidden.get(0).setChecked(true);
@@ -2603,21 +2670,17 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     }
 
-    private void showHiddenAlertDialog(String message, ElementItemR nextElement, List<AnswerState> answerStatesHidden, List<ElementItemR> answersHidden) {
+    private void showHiddenAlertDialog(String message, ElementItemR nextElement, List<AnswerState> answerStatesHidden, List<ElementItemR> answersHidden, boolean showTitle) {
         MainActivity activity = getMainActivity();
-        Log.d("T-A-R.ElementFragment", "showHiddenAlertDialog: " + answerStatesHidden.size() + " / " + answersHidden.size());
-        for (AnswerState item : answerStatesHidden) {
-            Log.d("T-A-R.ElementFragment", "run 1: " + item.getRelative_id() + " / " + item.isEnabled());
-        }
-        for (ElementItemR item : answersHidden) {
-            Log.d("T-A-R.ElementFragment", "run 2: " + item.getRelative_id() + " / " + item.isEnabled());
-        }
+        final String title;
+        if(showTitle) title = "Превышение пределов квот в скрытом вопросе";
+        else title = "";
         activity.runOnUiThread(new Runnable() {
             public void run() {
                 if (!activity.isFinishing()) {
                     new AlertDialog.Builder(activity, R.style.AlertDialogTheme)
                             .setCancelable(false)
-                            .setTitle(R.string.hidden_quotas_header)
+                            .setTitle(title)
                             .setMessage(message)
                             .setPositiveButton(R.string.view_continue, (dialog, which) -> {
                                 List<AnswerState> answersStatesEnabled = new ArrayList<>();

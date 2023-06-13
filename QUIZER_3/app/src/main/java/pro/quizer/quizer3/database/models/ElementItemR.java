@@ -6,11 +6,17 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 //import android.arch.persistence.room.TypeConverters;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 //import pro.quizer.quizer3.database.ElementOptionsRConverter;
 
 import static pro.quizer.quizer3.view.fragment.SmartFragment.getDao;
+
+import android.util.Log;
+
+import pro.quizer.quizer3.model.ElementType;
 
 
 @Entity(indices = {@Index("relative_id")})
@@ -61,6 +67,9 @@ public class ElementItemR {
 
     @ColumnInfo(name = "limit")
     private Integer limit;
+
+//    @ColumnInfo(name = "elements")
+//    public transient List<ElementItemR> elements;
 
     public ElementItemR() {
         this.was_shown = false;
@@ -206,14 +215,31 @@ public class ElementItemR {
     }
 
     public List<ElementItemR> getElements() {
+//        Log.d("T-A-R.ElementItemR", "===== getElements(): " + relative_id);
         List<ElementItemR> elements = null;
         try {
             elements = getDao().getChildElements(relative_id);
+            if (elements != null
+                    && elements.size() > 1
+                    && type.equals(ElementType.BOX)
+                    && getElementOptionsR().getShowRandomQuestion() != null
+                    && getElementOptionsR().getShowRandomQuestion()) {
+
+                Random rand = new Random();
+                ElementItemR randomElement = elements.get(rand.nextInt(elements.size()));
+                Log.d("T-A-R.ElementItemR", "randomElement: " + randomElement.getElementOptionsR().getTitle());
+                elements = new ArrayList<>();
+                elements.add(randomElement);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return elements;
     }
+
+//    public void setElements(List<ElementItemR> elements) {
+//        this.elements = elements;
+//    }
 
     public boolean isEnabled() {
         return enabled;

@@ -141,43 +141,45 @@
     <string name="dialog_close_app_body">Вы уверены, что хотите выйти из приложения?</string>
     <string name="dialog_delete_body">После очистки очереди вы не сможете продолжить прерванную анкету. Вы действительно хотите очистить очередь?</string>
 
-    <string name="error_101">Ошибка 1.01</string>
-    <string name="error_102">Ошибка 1.02</string>
-    <string name="error_103">Ошибка 1.03</string>
-    <string name="error_104">Ошибка 1.04</string>
-    <string name="error_105">Ошибка 1.05</string>
-    <string name="error_107">Ошибка: 1.07</string>
-    <string name="error_108">Ошибка: 1.08</string>
+    // Квоты
+    <string name="error_101">Ошибка 1.01</string> // Нет ответа от сервера
+    <string name="error_102">Ошибка 1.02</string> // Ответ пришел но не удалось получить из него строку с данными
+    <string name="error_103">Ошибка 1.03</string> // Ответ пришел но не удалось распарсить его
+    <string name="error_104">Ошибка 1.04</string> // В ответе result = 0
+    <string name="error_105">Ошибка 1.05</string> // Ответ пришел но не удалось распарсить его
 
-    <string name="error_201">Ошибка 2.01</string>
-    <string name="error_202">Ошибка 2.02</string>
-    <string name="error_203">Ошибка 2.03</string>
-    <string name="error_204">Ошибка 2.04</string>
-    <string name="error_205">Ошибка: 2.05</string>
-    <string name="error_206">Ошибка: 2.06</string>
-    <string name="error_207">Ошибка: 2.07</string>
+    // Отправка анкеты
+    <string name="error_201">Ошибка 2.01</string> // Нет ответа от сервера
+    <string name="error_202">Ошибка 2.02</string> // Ответ пришел но не удалось получить из него строку с данными
+    <string name="error_203">Ошибка 2.03</string> // Ответ пришел но не удалось распарсить его
+    <string name="error_204">Ошибка 2.04</string> // Список токенов принятых анкет пуст
+    <string name="error_205">Ошибка: 2.05</string> // В ответе result = 0
+    <string name="error_206">Ошибка: 2.06</string> // Ответ пришел но не удалось распарсить его
 
-    <string name="error_301">Ошибка 3.01</string>
-    <string name="error_302">Ошибка 3.02</string>
-    <string name="error_303">Ошибка 3.03</string>
-    <string name="error_304">Ошибка 3.04</string>
-    <string name="error_305">Ошибка 3.05</string>
-    <string name="error_306">Ошибка 3.06</string>
+    // Отправка файлов
+    <string name="error_301">Ошибка 3.01</string> // Нет ответа от сервера
+    <string name="error_302">Ошибка 3.02</string> // Ответ пришел но не удалось получить из него строку с данными
+    <string name="error_303">Ошибка 3.03</string> // Ответ пришел но не удалось распарсить его
+    <string name="error_304">Ошибка 3.04</string> // Список токенов принятых анкет пуст
+    <string name="error_305">Ошибка 3.05</string> // В ответе result = 0
+    <string name="error_306">Ошибка 3.06</string> // Ответ пришел но не удалось распарсить его
 
-    <string name="error_401">Ошибка 4.01</string>
-    <string name="error_402">Ошибка 4.02</string>
-    <string name="error_403">Ошибка 4.03</string>
-    <string name="error_404">Ошибка 4.04</string>
+    // Авторизация
+    <string name="error_401">Ошибка 4.01</string> // Нет ответа от сервера
+    <string name="error_402">Ошибка 4.02</string> // Ответ пришел но не удалось получить из него строку с данными
+    <string name="error_403">Ошибка 4.03</string> // Ответ пришел но не удалось распарсить его
+    <string name="error_404">Ошибка 4.04</string> // В ответе нет времени сервера
 
-    <string name="error_501">Ошибка 5.01</string>
-    <string name="error_502">Ошибка 5.02</string>
-    <string name="error_503">Ошибка 5.03</string>
-    <string name="error_504">Ошибка 5.04</string>
+    // Отправка ключа
+    <string name="error_501">Ошибка 5.01</string> // Нет ответа от сервера
+    <string name="error_502">Ошибка 5.02</string> // Ответ пришел но не удалось получить из него строку с данными
+    <string name="error_503">Ошибка 5.03</string> // Ответ пришел но не удалось распарсить его
+    <string name="error_504">Ошибка 5.04</string> // В ответе нет времени сервера
 
-    <string name="error_601">Ошибка 6.01</string>
-    <string name="error_602">Ошибка 6.02</string>
-    <string name="error_603">Ошибка 6.03</string>
-    <string name="error_604">Ошибка 6.04</string>
+    // Получение конфига
+    <string name="error_601">Ошибка 6.01</string> // Нет ответа от сервера
+    <string name="error_602">Ошибка 6.02</string> // Ответ пришел но не удалось получить из него строку с данными
+    <string name="error_603">Ошибка 6.03</string> // Ответ пришел но не удалось распарсить его
 
     <string name="server_not_response">Нет ответа от сервера. Возможны проблемы с подключением к сети интеренет.</string>
     <string name="server_response_error">Ошибка при ответе сервера.</string>
@@ -237,6 +239,7 @@
     <string name="button_version">Кнопка версия на экране авторизации</string>
     <string name="button_continue">Продолжить</string>
     <string name="button_start">Начать</string>
+    <string name="button_waypoints">Маршруты</string>
     <string name="button_start_avia">Старт</string>
     <string name="button_quotas">Квоты</string>
     <string name="button_info">Инфо</string>
@@ -510,4 +513,5 @@
     <string name="reg_phone_info">У Вашего логина для работы зарегистрированы следующие номера телефонов. Выберите среди них номер телефона, sim-карта для которого установлена на устройстве с приложением, а при его отсутствии в списке зарегистрируйте новый номер.</string>
     <string name="reg_new_phone">Зарегистрировать новый номер</string>
     <string name="reg_phone_warning">Внимание! Если вы неверно укажете номер телефона на sim-карте для устройства, то ваша работа не будет учтена.</string>
+    <string name="no_waypoints">Нет маршрутов</string>
 </resources>

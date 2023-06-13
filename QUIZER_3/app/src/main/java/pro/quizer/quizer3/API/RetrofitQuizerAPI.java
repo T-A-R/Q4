@@ -44,6 +44,10 @@ public interface RetrofitQuizerAPI {
     @POST()
     Call<ResponseBody> getStatistics(@Url String apiname, @FieldMap Map<String, String> fields);
 
+    @FormUrlEncoded
+    @POST()
+    Call<ResponseBody> getRoutes(@Url String apiname, @FieldMap Map<String, String> fields);
+
     @Multipart
     @Headers("Accept: application/json")
     @POST()

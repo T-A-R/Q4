@@ -43,6 +43,11 @@
         <item name="android:background">@drawable/button_background_green</item>
     </style>
 
+    <style name="ButtonWhite" parent="ButtonStyle">
+        <item name="android:background">@drawable/button_background_white</item>
+        <item name="android:textColor">@color/brand_color</item>
+    </style>
+
     <style name="ButtonRed" parent="ButtonStyle">
         <item name="android:background">@drawable/button_background_red</item>
     </style>

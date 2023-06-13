@@ -6,7 +6,7 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 //@Entity
-@Entity(indices = {@Index(value = {"relative_id"} , unique = true)})
+@Entity(indices = {@Index(value = {"relative_id"} , unique = true), @Index("token")})
 public class ElementPassedR {
 
     @PrimaryKey(autoGenerate = true)

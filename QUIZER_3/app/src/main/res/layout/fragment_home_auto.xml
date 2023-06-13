@@ -111,6 +111,16 @@
             android:text="@string/button_start"
             android:textSize="@dimen/_12ssp" />
 
+        <Button
+            android:id="@+id/btn_waypoints"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_gravity="center_horizontal"
+            android:maxLines="1"
+            android:text="@string/button_waypoints"
+            android:textSize="@dimen/_12ssp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -181,26 +191,25 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/config_agreement"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_8sdp"
-                    android:gravity="center|top"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/_12ssp"
-                    tools:text="Экзит пул agreement..." />
-
-
-                <TextView
                     android:id="@+id/config_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"
-                    android:gravity="center|top"
+                    android:gravity="start"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/_12ssp"
+                    android:textSize="@dimen/_16ssp"
                     android:textStyle="bold"
                     tools:text="Экзит пул" />
+
+                <TextView
+                    android:id="@+id/config_agreement"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:gravity="start"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/_12ssp"
+                    tools:text="Экзит пул agreement..." />
 
                 <TextView
                     android:id="@+id/project_status"

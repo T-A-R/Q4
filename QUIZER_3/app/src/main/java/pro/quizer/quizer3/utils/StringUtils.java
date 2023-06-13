@@ -1,14 +1,10 @@
 package pro.quizer.quizer3.utils;
 
-import android.util.Log;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import pro.quizer.quizer3.Constants;
-import pro.quizer.quizer3.model.SubString;
 
 import static pro.quizer.quizer3.utils.DateUtils.PATTERN_TOKEN;
+
+import com.google.gson.Gson;
 
 public final class StringUtils {
 
@@ -33,4 +29,8 @@ public final class StringUtils {
         return longString.substring(0, Math.min(longString.length(), maxLenght));
     }
 
+    public static String getJson(Object object) {
+        Gson gson = new Gson();
+        return gson.toJson(object);
+    }
 }

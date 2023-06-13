@@ -20,6 +20,7 @@ import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.EncryptionTableR;
 import pro.quizer.quizer3.database.models.OptionsR;
 import pro.quizer.quizer3.database.models.PhotoAnswersR;
+import pro.quizer.quizer3.database.models.PointR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
@@ -531,4 +532,16 @@ public interface QuizerDao {
 
     @Query("DELETE FROM SmsReportR WHERE user_id = :user_id")
     void clearSmsReportRByUserId(Integer user_id);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertPolygon(List<PointR> points);
+
+    @Query("SELECT * FROM PointR")
+    List<PointR> getAllPoints();
+
+    @Query("SELECT * FROM PointR WHERE project_id =:project_id")
+    List<PointR> getPolygon(Integer project_id);
+
+    @Query("DELETE FROM PointR WHERE project_id = :project_id")
+    void clearPolygonByProjectId(Integer project_id);
 }

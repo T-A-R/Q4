@@ -131,6 +131,9 @@ public class OptionsModelNew implements Serializable {
     @SerializedName("max_number")
     private Integer max_number;
 
+    @SerializedName("show_random_question")
+    private Boolean show_random_question;
+
     public String getData() {
         return data;
     }
@@ -396,5 +399,13 @@ public class OptionsModelNew implements Serializable {
 
     public void setMaxNumber(Integer max_number) {
         this.max_number = max_number;
+    }
+
+    public Boolean getShowRandomQuestion() {
+        return show_random_question;
+    }
+
+    public void setShowRandomQuestion(Boolean showRandomQuestion) {
+        this.show_random_question = showRandomQuestion;
     }
 }

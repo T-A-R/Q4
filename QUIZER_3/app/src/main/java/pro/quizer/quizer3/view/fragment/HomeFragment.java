@@ -57,6 +57,7 @@ import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.PhotoAnswersR;
+import pro.quizer.quizer3.database.models.PointR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
@@ -101,6 +102,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private Button btnContinue;
     private Button btnDelete;
     private Button btnStart;
+    private Button btnWaypoints;
     private Button btnInfo;
     private Button btnQuotas;
     private Button btnExit;
@@ -164,6 +166,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         btnContinue = findViewById(R.id.btn_continue);
         btnDelete = findViewById(R.id.btn_delete);
         btnStart = findViewById(R.id.btn_start);
+        btnWaypoints = findViewById(R.id.btn_waypoints);
         btnInfo = findViewById(R.id.btn_info);
         btnQuotas = findViewById(R.id.btn_quotas);
         btnExit = findViewById(R.id.btn_exit);
@@ -181,6 +184,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         MainFragment.enableSideMenu(true, getMainActivity().isExit());
 
         btnStart.setOnClickListener(this);
+        btnWaypoints.setOnClickListener(this);
         btnInfo.setOnClickListener(this);
         btnQuotas.setOnClickListener(this);
         if (AVIA)
@@ -202,6 +206,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             btnExit.setVisibility(View.VISIBLE);
             btnDelete.setVisibility(View.GONE);
             btnInfo.setVisibility(View.GONE);
+            btnWaypoints.setVisibility(View.GONE);
             btnQuotas.setVisibility(View.GONE);
             toolbar.setVisibility(View.GONE);
 
@@ -217,12 +222,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             sendQuestionnaires();
 
         } else {
+            btnWaypoints.setVisibility(View.GONE);
             cont.startAnimation(Anim.getAppear(getContext()));
             btnContinue.startAnimation(Anim.getAppearSlide(getContext(), 500));
             btnDelete.startAnimation(Anim.getAppearSlide(getContext(), 500));
             btnStart.startAnimation(Anim.getAppearSlide(getContext(), 500));
             btnInfo.startAnimation(Anim.getAppearSlide(getContext(), 500));
             btnQuotas.startAnimation(Anim.getAppearSlide(getContext(), 500));
+            btnWaypoints.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
             toolbar.setTitle(getString(R.string.home_screen));
             toolbar.showOptionsView(v -> MainFragment.showDrawer(), null);
@@ -283,6 +290,19 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             sendRegLogs();
         }
 //        showSnackBar("", false);
+        setPolygon();
+    }
+
+    private void setPolygon() {
+        getDao().clearPolygonByProjectId(getMainActivity().getConfig().getProjectInfo().getProjectId());
+        List<PointR> polygon = new ArrayList<>();
+        polygon.add(new PointR(32.08874604325848, 34.77542656211854, getMainActivity().getConfig().getProjectInfo().getProjectId()));
+        polygon.add(new PointR(32.08436174950824, 34.78186386375429, getMainActivity().getConfig().getProjectInfo().getProjectId()));
+        polygon.add(new PointR(32.08589627647745, 34.78349464683533, getMainActivity().getConfig().getProjectInfo().getProjectId()));
+        polygon.add(new PointR(32.08874604325848, 34.79542656211854, getMainActivity().getConfig().getProjectInfo().getProjectId()));
+        polygon.add(new PointR(32.08874604325848, 34.77542656211854, getMainActivity().getConfig().getProjectInfo().getProjectId()));
+
+        getDao().insertPolygon(polygon);
     }
 
     @Override
@@ -363,6 +383,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 getInfo(true);
             } else if (view == btnQuotas) {
                 replaceFragment(new QuotasFragment());
+            } else if (view == btnWaypoints) {
+                replaceFragment(new WaypointsFragment());
             } else if (view == btnContinue) {
                 activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Continue", null);
                 try {
@@ -429,6 +451,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         List<ElementItemR> quotasElements = activity.getQuotasElements();
         if (quotasElements != null && quotasElements.size() > 0)
             new UpdateQuotasTree().execute(quotasElements);
+        else getMainActivity().quotaIds = new ArrayList<>();
     }
 
     public void initViews() {
@@ -781,8 +804,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         }
 
         private ElementItemR[][] fillQuotas(ElementItemR[][] tree) {
-            Log.d(TAG, "============== fillQuotas ======================= 1");
+            Log.d("T-A-R", "============== fillQuotas ======================= 1");
             int user_id = activity.getCurrentUserId();
+
+            List<Integer> quotaIds = new ArrayList<>();
 
             Integer user_project_id;
             user_project_id = getCurrentUser().getConfigR().getUserProjectId();
@@ -797,12 +822,15 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
             offlineQuestionnaires = activity.getMainDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), user_project_id, QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
             if (quotas.isEmpty()) {
+                getMainActivity().quotaIds = quotaIds;
                 return tree;
             }
 
             try {
                 for (int q = 0; q < quotas.size(); q++) {
                     Integer[] sequence = quotas.get(q).getArray();
+                    quotaIds.addAll(Arrays.asList(sequence));
+//                    Log.d("T-A-R", "fillQuotas: " + new Gson().toJson(sequence));
                     int localQuota = getLocalQuotas(activity, sequence);
                     for (int i = 0; i < tree.length; i++) {
                         for (int k = 0; k < tree[i].length; k++) {
@@ -811,6 +839,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                 if (sequence.length > 1) {
                                     for (int s = 1; s < sequence.length; ) {
                                         if (sequence[s].equals(tree[temp][k].getRelative_id())) {
+//                                            Log.d("T-A-R", "fillQuotas: ID = " + sequence[s]);
                                             if (s == sequence.length - 1) {
                                                 if (tree[temp][k].getLimit() > quotas.get(q).getLimit()) {
                                                     tree[temp][k].setLimit(quotas.get(q).getLimit());
@@ -821,8 +850,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                                     int total = done + local;
                                                     int limit = tree[temp][k].getLimit();
                                                     if (total >= limit) {
+//                                                        Log.d("T-A-R", "fillQuotas: setEnabled(false) = " + tree[temp][k].getRelative_id());
                                                         tree[temp][k].setEnabled(false);
                                                         for (int x = temp - 1; x >= 0; x--) {
+//                                                            Log.d("T-A-R", "fillQuotas: setEnabled(false) = " + tree[x][k].getRelative_id());
                                                             tree[x][k].setEnabled(false);
                                                         }
                                                     }
@@ -862,6 +893,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
 //            showTree(tree); // Для отладки
             publishProgress(100);
+            getMainActivity().quotaIds = quotaIds;
             return tree;
         }
 

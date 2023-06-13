@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/cont_logs_fragment">
+
+    <pro.quizer.quizer3.view.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/quizer_logo"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_90sdp"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginLeft="@dimen/_40sdp"
+        android:layout_marginVertical="@dimen/_6sdp"
+        android:layout_marginRight="@dimen/_40sdp"
+        android:src="@drawable/quizer" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/waypoints_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/quizer_logo"
+        android:visibility="visible">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/no_waypoints"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/quizer_logo"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_marginRight="@dimen/_12sdp"
+        android:layout_marginLeft="@dimen/_12sdp"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/_20ssp"
+        android:text="@string/no_waypoints"
+        android:visibility="gone"/>
+
+
+</RelativeLayout>

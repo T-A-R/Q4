@@ -851,15 +851,21 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     public boolean isCompleted() {
         boolean completed = false;
+        boolean isUnCheckerSelected = false;
         for (int i = 0; i < mAnswersState.length; i++) {
             int answersCounter = 0;
             for (int k = 0; k < mAnswersState[i].length; k++) {
 
                 if (mAnswersState[i][k].isChecked()) {
                     answersCounter++;
+                    ElementOptionsR opt = mContext.getMainDao().getElementOptionsR(mAnswersState[i][k].getRelative_id());
+                    if(opt.isUnchecker()) isUnCheckerSelected = true;
                 }
             }
+
+
             if (answersCounter > 0) {
+                if(isUnCheckerSelected) return true;
                 Integer min = mQuestions.get(i).getElementOptionsR().getMin_answers();
                 Integer max = mQuestions.get(i).getElementOptionsR().getMax_answers();
                 if (min != null && answersCounter < min) {

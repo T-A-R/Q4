@@ -16,7 +16,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.service.voice.AlwaysOnHotwordDetector;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -27,15 +26,21 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.maps.android.PolyUtil;
+import com.yandex.mapkit.geometry.LinearRing;
+import com.yandex.mapkit.geometry.Point;
+import com.yandex.mapkit.geometry.Polygon;
+import com.yandex.mapkit.map.PolygonMapObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -45,14 +50,17 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.ResponseBody;
 import pro.quizer.quizer3.API.QuizerAPI;
+import pro.quizer.quizer3.API.models.Route;
+import pro.quizer.quizer3.API.models.RoutePolygon;
 import pro.quizer.quizer3.API.models.request.RegistrationRequestModel;
+import pro.quizer.quizer3.API.models.request.RoutesRequestModel;
 import pro.quizer.quizer3.API.models.request.StatisticsRequestModel;
+import pro.quizer.quizer3.API.models.response.RoutesResponseModel;
 import pro.quizer.quizer3.API.models.response.StatisticsResponseModel;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.PhonesAdapter;
-import pro.quizer.quizer3.adapter.UsersBtnRecyclerAdapter;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
@@ -62,6 +70,7 @@ import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
 import pro.quizer.quizer3.database.models.RegistrationR;
+import pro.quizer.quizer3.database.models.RouteR;
 import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.StatisticR;
 import pro.quizer.quizer3.database.models.UserModelR;
@@ -71,7 +80,6 @@ import pro.quizer.quizer3.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizer3.executable.SyncInfoExecutable;
 import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
 import pro.quizer.quizer3.executable.files.PhotosAnswersSendingExecutable;
-import pro.quizer.quizer3.executable.files.PhotosSendingByUserModelExecutable;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.config.ActiveRegistrationData;
@@ -93,7 +101,6 @@ import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
 import static pro.quizer.quizer3.MainActivity.AVIA;
-import static pro.quizer.quizer3.MainActivity.DEBUG_MODE;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class HomeFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.SendRegCallback, SmartFragment.Events {
@@ -138,6 +145,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private boolean isRegistrationRequired = false;
     private boolean isCodeRequired = false;
     private boolean isDialogRequired = false;
+    private boolean canStartOutsideRoute = false;
     private StatisticR finalStatistics;
     private AlertDialog infoDialog;
     private int completedCounter = 0;
@@ -222,7 +230,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             sendQuestionnaires();
 
         } else {
-            btnWaypoints.setVisibility(View.GONE);
+//            btnWaypoints.setVisibility(View.GONE);
             cont.startAnimation(Anim.getAppear(getContext()));
             btnContinue.startAnimation(Anim.getAppearSlide(getContext(), 500));
             btnDelete.startAnimation(Anim.getAppearSlide(getContext(), 500));
@@ -276,7 +284,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
 //        if (activity.isExit() && !getCurrentUser().getConfigR().isRegsDisabled()) checkRegistration();
         if (activity.isExit()) {
-            if(getCurrentUser().getConfigR().hasReserveChannels()) {
+            if (getCurrentUser().getConfigR().hasReserveChannels()) {
                 try {
                     Log.d("T-A-R.HomeFragment", "PHONE: " + getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getPhones().get(0));
                 } catch (Exception e) {
@@ -290,20 +298,20 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             sendRegLogs();
         }
 //        showSnackBar("", false);
-        setPolygon();
+        getRoutes();
     }
 
-    private void setPolygon() {
-        getDao().clearPolygonByProjectId(getMainActivity().getConfig().getProjectInfo().getProjectId());
-        List<PointR> polygon = new ArrayList<>();
-        polygon.add(new PointR(32.08874604325848, 34.77542656211854, getMainActivity().getConfig().getProjectInfo().getProjectId()));
-        polygon.add(new PointR(32.08436174950824, 34.78186386375429, getMainActivity().getConfig().getProjectInfo().getProjectId()));
-        polygon.add(new PointR(32.08589627647745, 34.78349464683533, getMainActivity().getConfig().getProjectInfo().getProjectId()));
-        polygon.add(new PointR(32.08874604325848, 34.79542656211854, getMainActivity().getConfig().getProjectInfo().getProjectId()));
-        polygon.add(new PointR(32.08874604325848, 34.77542656211854, getMainActivity().getConfig().getProjectInfo().getProjectId()));
-
-        getDao().insertPolygon(polygon);
-    }
+//    private void setPolygon() {
+//        getDao().clearPolygonByProjectId(getMainActivity().getConfig().getProjectInfo().getProjectId());
+//        List<PointR> polygon = new ArrayList<>();
+//        polygon.add(new PointR(32.08874604325848, 34.77542656211854, getMainActivity().getConfig().getProjectInfo().getProjectId()));
+//        polygon.add(new PointR(32.08436174950824, 34.78186386375429, getMainActivity().getConfig().getProjectInfo().getProjectId()));
+//        polygon.add(new PointR(32.08589627647745, 34.78349464683533, getMainActivity().getConfig().getProjectInfo().getProjectId()));
+//        polygon.add(new PointR(32.08874604325848, 34.79542656211854, getMainActivity().getConfig().getProjectInfo().getProjectId()));
+//        polygon.add(new PointR(32.08874604325848, 34.77542656211854, getMainActivity().getConfig().getProjectInfo().getProjectId()));
+//
+//        getDao().insertPolygon(polygon);
+//    }
 
     @Override
     public void runEvent(int id) {
@@ -384,7 +392,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             } else if (view == btnQuotas) {
                 replaceFragment(new QuotasFragment());
             } else if (view == btnWaypoints) {
-                replaceFragment(new WaypointsFragment());
+                replaceFragment(new RoutesFragment());
             } else if (view == btnContinue) {
                 activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Continue", null);
                 try {
@@ -743,7 +751,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             pb.setVisibility(View.GONE);
             tvPbText.setVisibility(View.GONE);
             if (activity.getSettings().isProject_is_active()) {
-                if(!activity.isExit()) {
+                if (!activity.isExit()) {
                     btnContinue.setEnabled(true);
                     btnStart.setEnabled(true);
                     UiUtils.setButtonEnabled(btnStart, true);
@@ -1122,7 +1130,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         UserModelR userModel = activity.getCurrentUser();
         ConfigModel configModel = activity.getConfig();
         SettingsR settings = activity.getSettings();
-        Log.d("T-A-R.HomeFragment", "getInfo: (" + settings.getUser_name() +")");
+        Log.d("T-A-R.HomeFragment", "getInfo: (" + settings.getUser_name() + ")");
         StatisticsRequestModel requestModel = new StatisticsRequestModel(configModel.getLoginAdmin(), userModel.getPassword(), userModel.getLogin(), settings.getUser_name(), settings.getUser_date());
         Gson gson = new Gson();
         String json = gson.toJson(requestModel);
@@ -1375,7 +1383,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                     } else {
                                         boolean mCheckTime = checkTime();
                                         boolean mCheckMemory = checkMemory();
-                                        if (mCheckTime && (canContWithZeroGps || checkGps()) && mCheckMemory) {
+                                        if (mCheckTime && (canContWithZeroGps || checkGps()) && mCheckMemory && isOnRoute()) {
                                             startQuestionnaire();
                                         } else if (!mCheckTime) {
                                             activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check time false.", null);
@@ -1383,6 +1391,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                         } else if (!mCheckMemory) {
                                             activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check memory false.", null);
                                             showToast("Недостаточно памяти");
+                                        } else if (!isOnRoute()) {
+                                            activity.runOnUiThread(this::showNotInRouteDialog);
                                         } else {
                                             activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check GPS false.", null);
                                             showToast("Невозможно начать без координат GPS");
@@ -1862,7 +1872,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. Without delete old", null);
                 boolean mCheckTime = checkTime();
                 boolean mCheckMemory = checkMemory();
-                if (mCheckTime && mCheckGps && mCheckMemory) {
+                boolean mIsOnRoute = isOnRoute();
+                if (mCheckTime && mCheckGps && mCheckMemory && mIsOnRoute) {
                     startQuestionnaire();
                 } else if (!mCheckTime) {
                     activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check time false.", null);
@@ -1870,7 +1881,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 } else if (!mCheckMemory) {
                     activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check memory false.", null);
                     showToast("Недостаточно памяти");
-                } else {
+                } else if(!mIsOnRoute) {
+                    activity.runOnUiThread(this::showNotInRouteDialog);
+                }
+                else {
                     activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check GPS false.", null);
                     showToast("Невозможно начать без координат GPS");
                 }
@@ -2011,11 +2025,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             RecyclerView rv = layoutView.findViewById(R.id.rv_phones);
             Button regBtn = layoutView.findViewById(R.id.btn_reg_phone);
 
-//            try {
-////                phonesList = getCurrentUser().getConfigR().getUserSettings().getRegPhones();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
             if (phonesList.size() > 0) {
                 PhonesAdapter adapter = new PhonesAdapter(phonesList, phone -> {
                     try {
@@ -2085,6 +2094,152 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         else
             mTextView.setGravity(Gravity.CENTER_HORIZONTAL);
         snack.show();
+    }
+
+    private void getRoutes() {
+        UserModelR userModel = activity.getCurrentUser();
+        ConfigModel configModel = activity.getConfig();
+        SettingsR settings = activity.getSettings();
+
+        RoutesRequestModel requestModel = new RoutesRequestModel(configModel.getLoginAdmin(), userModel.getPassword(), userModel.getLogin(), settings.getUser_name(), settings.getUser_date());
+        Gson gson = new Gson();
+        String json = gson.toJson(requestModel);
+        String mServerUrl = configModel.getServerUrl();
+
+        Log.d("T-A-R", "getRoutes URL: " + configModel.getServerUrl());
+
+        QuizerAPI.getRoutes(mServerUrl, json, responseBody -> {
+            if (responseBody == null) {
+                showToast("Нет ответа от сервера");
+                return;
+            }
+            String responseJson;
+            try {
+                responseJson = responseBody.string();
+            } catch (IOException e) {
+                showToast("Ответ сервера не найден");
+                return;
+            }
+
+            Log.d("T-A-R", "getRoutes: " + responseJson);
+
+            RoutesResponseModel routesResponseModel;
+
+            try {
+                routesResponseModel = new GsonBuilder().create().fromJson(responseJson, RoutesResponseModel.class);
+            } catch (final Exception pE) {
+                pE.printStackTrace();
+                showToast("Ошибка ответа сервера");
+                return;
+            }
+
+            if (routesResponseModel != null && routesResponseModel.getProjectRoutes() != null && !routesResponseModel.getProjectRoutes().isEmpty()) {
+                getDao().clearAllPoints();
+                getDao().clearAllRoutes();
+
+                List<Route> routes = routesResponseModel.getProjectRoutes();
+                List<RouteR> routesR = new ArrayList<>();
+                List<PointR> pointsR = new ArrayList<>();
+                for (Route item : routes) {
+                    RouteR route = new RouteR();
+                    route.user_project_id = activity.getConfig().getUserProjectId();
+                    route.project_id = activity.getConfig().getProjectInfo().getProjectId();
+                    route.route_limit = item.getRoute_limit();
+                    route.route_id = item.getRoute_id();
+                    route.route_name = item.getRoute_name();
+                    route.route_rqs_count_all = item.getRoute_rqs_count_all();
+                    route.route_rqs_count_correct_inter = item.getRoute_rqs_count_correct_inter();
+                    route.route_rqs_count_correct_login = item.getRoute_rqs_count_correct_login();
+
+                    routesR.add(route);
+
+                    List<RoutePolygon> points = item.getRoute_polygon();
+                    for (RoutePolygon polygon : points) {
+                        PointR pointR = new PointR();
+                        pointR.route_id = item.getRoute_id();
+                        pointR.polygon_number = polygon.getPolygonNumber();
+                        try {
+                            pointR.x = Double.parseDouble(polygon.getX());
+                            pointR.y = Double.parseDouble(polygon.getY());
+                            pointsR.add(pointR);
+//                            Log.d("T-A-R", "Point (" + points.indexOf(polygon) + ") :" + pointR.x + ":" + pointR.y);
+                        } catch (NumberFormatException e) {
+                            Log.d("T-A-R", "getPoint ERROR:" + polygon.getX() + ":" + polygon.getY());
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+
+                if (!pointsR.isEmpty()) {
+                    getDao().insertRoutes(routesR);
+                    getDao().insertPolygon(pointsR);
+                }
+            } else {
+                showToast("Список маршрутов пуст");
+                return;
+            }
+        });
+    }
+
+    private boolean isOnRoute() {
+        if(canStartOutsideRoute) return true;
+        boolean inside = false;
+        if (activity.getLocation() == null || activity.getLocation().getLongitude() == 0 || activity.getLocation().getLatitude() == 0) {
+            return false;
+        } else {
+            List<RouteR> routes = getDao().getRoutes(activity.getConfig().getProjectInfo().getProjectId(), activity.getConfig().getUserProjectId());
+            for (RouteR route : routes) {
+                HashMap<Integer, List<LatLng>> polygonsMap = new HashMap<>();
+                List<PointR> pointsR = getDao().getPolygon(route.route_id);
+                if (pointsR.size() > 1) {
+                    for (PointR point : pointsR) {
+                        List<LatLng> polOnMap = polygonsMap.get(point.polygon_number);
+                        if (polOnMap == null) polOnMap = new ArrayList<>();
+
+                        polOnMap.add(new LatLng(point.x, point.y));
+                        polygonsMap.put(point.polygon_number, polOnMap);
+                    }
+                    for (HashMap.Entry<Integer, List<LatLng>> entry : polygonsMap.entrySet()) {
+                        Integer key = entry.getKey();
+                        List<LatLng> value = entry.getValue();
+
+                        inside = PolyUtil.containsLocation(new LatLng(activity.getLocation().getLatitude(), activity.getLocation().getLongitude()), value, true);
+                        if (inside) break;
+                    }
+
+                }
+                if (inside) break;
+            }
+        }
+        //            inside = PolyUtil.containsLocation(new LatLng(point.getLatitude(), point.getLongitude()), polygonsMap.get(0), true);
+        return inside;
+    }
+
+    private void showNotInRouteDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getMainActivity());
+        dialogBuilder.setCancelable(false);
+        View layoutView = getLayoutInflater().inflate(getMainActivity().isAutoZoom() ? R.layout.dialog_not_in_route_auto : R.layout.dialog_not_in_route_auto, null);
+        Button noBtn = layoutView.findViewById(R.id.btn_wrong_name);
+        Button yesBtn = layoutView.findViewById(R.id.btn_right_name);
+
+        noBtn.setOnClickListener(v -> {
+            activateButtons();
+            infoDialog.dismiss();
+        });
+
+        yesBtn.setOnClickListener(v -> {
+            canStartOutsideRoute = true;
+            infoDialog.dismiss();
+            onClick(btnStart);
+        });
+
+        dialogBuilder.setView(layoutView);
+        infoDialog = dialogBuilder.create();
+        infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+        infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if (getMainActivity() != null && !getMainActivity().isFinishing())
+            infoDialog.show();
     }
 }
 

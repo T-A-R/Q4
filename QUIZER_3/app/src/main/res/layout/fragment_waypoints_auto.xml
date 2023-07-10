@@ -32,12 +32,13 @@
 
     <TextView
         android:id="@+id/no_waypoints"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/quizer_logo"
         android:layout_marginTop="@dimen/_12sdp"
         android:layout_marginRight="@dimen/_12sdp"
         android:layout_marginLeft="@dimen/_12sdp"
+        android:layout_centerHorizontal="true"
         android:textColor="@android:color/black"
         android:textSize="@dimen/_20ssp"
         android:text="@string/no_waypoints"

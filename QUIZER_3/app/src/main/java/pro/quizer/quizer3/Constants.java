@@ -60,6 +60,7 @@ public final class Constants {
         String USER_LOGIN = "user_login";
         String GET_QUOTA = "get_quota";
         String STATISTICS = "statistics";
+        String ROUTES = "project_routes";
         String PHOTO_FILE = "photo_file";
         String PHOTO_FILE_ANSWER = "photo_file_answer";
         String AUDIO_FILE = "audio_file";

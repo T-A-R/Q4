@@ -10,15 +10,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import pro.quizer.quizer3.API.models.Route;
 import pro.quizer.quizer3.R;
-import pro.quizer.quizer3.database.models.UserModelR;
+import pro.quizer.quizer3.database.models.RouteR;
 
 public class WaypointsAdapter extends RecyclerView.Adapter<WaypointsAdapter.ListObjectViewHolder> {
 
-    private List<UserModelR> mItemList;
+    private List<RouteR> mItemList;
     private OnUserClickListener mOnUserClickListener;
 
-    public WaypointsAdapter(List<UserModelR> mItemList, OnUserClickListener onUserClickListener) {
+    public WaypointsAdapter(List<RouteR> mItemList, OnUserClickListener onUserClickListener) {
         this.mItemList = mItemList;
         this.mOnUserClickListener = onUserClickListener;
 
@@ -57,8 +58,8 @@ public class WaypointsAdapter extends RecyclerView.Adapter<WaypointsAdapter.List
             btn.setOnClickListener(this);
         }
 
-        public void bind(final UserModelR item) {
-            btn.setText(item.getLogin());
+        public void bind(final RouteR item) {
+            btn.setText(item.getRoute_name());
         }
 
         @Override

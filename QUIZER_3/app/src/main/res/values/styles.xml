@@ -35,11 +35,22 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
+    <style name="ButtonStyleSmall">
+        <item name="android:padding">8dp</item>
+        <item name="android:background">@drawable/button_background_green</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
     <style name="ButtonStyleWithoutBorder" parent="ButtonStyle">
         <item name="android:background">@drawable/button_background_red_without_border</item>
     </style>
 
     <style name="ButtonGreen" parent="ButtonStyle">
+        <item name="android:background">@drawable/button_background_green</item>
+    </style>
+
+    <style name="ButtonGreenSmall" parent="ButtonStyleSmall">
         <item name="android:background">@drawable/button_background_green</item>
     </style>
 

@@ -511,6 +511,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     }
 
     private void setQuestionType() {
+        Log.d("T-A-R", "setQuestionType: " + currentElement.getRelative_id() + " " + currentElement.getSubtype());
         if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0 &&
                 getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
             isQuota = true;
@@ -779,6 +780,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 questionCont.setVisibility(View.GONE);
                 infoCont.setVisibility(View.VISIBLE);
                 infoText.loadData(currentElement.getElementOptionsR().getData(), "text/html; charset=UTF-8", null);
+                break;
             case ElementSubtype.END:
                 questionCont.setVisibility(View.GONE);
                 infoCont.setVisibility(View.VISIBLE);
@@ -806,7 +808,6 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 MainActivity activity = getMainActivity();
                 if (isQuota) {
                     removeHelper();
-
 
 
                     adapterList = new ListAnswersAdapter(activity, currentElement, answersList,
@@ -2588,7 +2589,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
             }
             if (!isInHiddenQuotaDialog) {
-                if (answerStatesHidden.size() > 0) nextElementId = getElement(answerStatesHidden.get(0).getRelative_id()).getElementOptionsR().getJump();
+                if (answerStatesHidden.size() > 0)
+                    nextElementId = getElement(answerStatesHidden.get(0).getRelative_id()).getElementOptionsR().getJump();
                 else nextElementId = nextElement.getElementOptionsR().getJump();
 //                Log.d("T-A-R.ElementFragment", "checkHidden: +++++++++++++++++++++++ " + nextElementId);
                 if (!answerType.equals(ElementSubtype.HIDDEN)) {
@@ -2619,7 +2621,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
             for (int i = 0; i < answerStatesHidden.size(); i++) {
                 Log.d("T-A-R.ElementFragment", "answerStatesHidden.ID: " + answerStatesHidden.get(i).getRelative_id() + " / " + answerStatesHidden.get(i).isChecked());
 //                if (found && getElement(answerStatesHidden.get(i).getRelative_id()).getElementOptionsR().isHelper()) break;
-                if (getElement(answerStatesHidden.get(i).getRelative_id()).getElementOptionsR().isHelper() && answerStatesHidden.size() != 1) continue;
+                if (getElement(answerStatesHidden.get(i).getRelative_id()).getElementOptionsR().isHelper() && answerStatesHidden.size() != 1)
+                    continue;
                 if (answerStatesHidden.get(i).isChecked()) {
 //                    found = true;
                     ElementPassedR answerPassedR = new ElementPassedR();
@@ -2673,7 +2676,7 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private void showHiddenAlertDialog(String message, ElementItemR nextElement, List<AnswerState> answerStatesHidden, List<ElementItemR> answersHidden, boolean showTitle) {
         MainActivity activity = getMainActivity();
         final String title;
-        if(showTitle) title = "Превышение пределов квот в скрытом вопросе";
+        if (showTitle) title = "Превышение пределов квот в скрытом вопросе";
         else title = "";
         activity.runOnUiThread(new Runnable() {
             public void run() {

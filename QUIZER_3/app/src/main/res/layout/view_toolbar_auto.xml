@@ -132,6 +132,7 @@
                             android:id="@+id/toolbar_view_close"
                             android:layout_width="@dimen/_20sdp"
                             android:layout_height="@dimen/_20sdp"
+                            android:layout_marginHorizontal="@dimen/_4sdp"
                             android:layout_gravity="center_vertical"
                             android:src="@drawable/ic_close"
                             android:tint="@android:color/white"

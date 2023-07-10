@@ -25,6 +25,7 @@ import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
 import pro.quizer.quizer3.database.models.RegistrationR;
+import pro.quizer.quizer3.database.models.RouteR;
 import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.SmsAnswersR;
 import pro.quizer.quizer3.database.models.SmsItemR;
@@ -539,9 +540,27 @@ public interface QuizerDao {
     @Query("SELECT * FROM PointR")
     List<PointR> getAllPoints();
 
-    @Query("SELECT * FROM PointR WHERE project_id =:project_id")
-    List<PointR> getPolygon(Integer project_id);
+    @Query("SELECT * FROM PointR WHERE route_id =:route_id")
+    List<PointR> getPolygon(Integer route_id);
 
-    @Query("DELETE FROM PointR WHERE project_id = :project_id")
-    void clearPolygonByProjectId(Integer project_id);
+    @Query("DELETE FROM PointR WHERE route_id = :route_id")
+    void clearPolygonByProjectId(Integer route_id);
+
+    @Query("DELETE FROM PointR")
+    void clearAllPoints();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertRoutes(List<RouteR> routes);
+
+    @Query("SELECT * FROM RouteR")
+    List<RouteR> getAllRoutes();
+
+    @Query("SELECT * FROM RouteR WHERE project_id =:project_id AND user_project_id =:user_project_id")
+    List<RouteR> getRoutes(Integer project_id, Integer user_project_id);
+
+    @Query("DELETE FROM RouteR WHERE project_id = :user_project_id")
+    void clearRoutesByProjectId(Integer user_project_id);
+
+    @Query("DELETE FROM RouteR")
+    void clearAllRoutes();
 }

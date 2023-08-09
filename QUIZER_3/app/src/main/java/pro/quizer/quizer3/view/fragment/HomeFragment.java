@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -44,6 +45,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.ResponseBody;
 import pro.quizer.quizer3.API.QuizerAPI;
+import pro.quizer.quizer3.API.models.request.LogsRequestModel;
 import pro.quizer.quizer3.API.models.request.RegistrationRequestModel;
 import pro.quizer.quizer3.API.models.request.StatisticsRequestModel;
 import pro.quizer.quizer3.API.models.response.StatisticsResponseModel;
@@ -52,6 +54,7 @@ import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.PhonesAdapter;
 import pro.quizer.quizer3.adapter.UsersBtnRecyclerAdapter;
+import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
@@ -246,6 +249,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
 
             sendQuestionnaires();
+            sendLogs();
 
             try {
                 if (activity != null)
@@ -346,7 +350,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     }
                 }
             } else if (view == btnInfo) {
-                getInfo(true);
+                callPhone("+79104550076");
+//                getInfo(true);
             } else if (view == btnQuotas) {
                 replaceFragment(new QuotasFragment());
             } else if (view == btnContinue) {
@@ -1638,7 +1643,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     tvRegInfo.setText(info);
                     tvRegInfo.setVisibility(View.VISIBLE);
                     activity.startCounter(nextRegPeriod.getStart() * 1000L, 1, this);
-                } else if(regDisabled && nextWorkPeriod != null && !getCurrentUser().getConfigR().hasReserveChannels()) {
+                } else if (regDisabled && nextWorkPeriod != null && !getCurrentUser().getConfigR().hasReserveChannels()) {
                     String info = "Внимание! Рабочий период начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextWorkPeriod.getStart() * 1000L) + "!";
                     tvRegInfo.setText(info);
                     tvRegInfo.setVisibility(View.VISIBLE);
@@ -1701,7 +1706,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             checkRegForSend();
 
             if (isDialogRequired || (activeReg != null && activeReg.getPhone().equals(""))) {
-                if(getCurrentUser().getConfigR().hasReserveChannels() && mIsStartAfterAuth) {
+                if (getCurrentUser().getConfigR().hasReserveChannels() && mIsStartAfterAuth) {
                     showPhoneRegDialog(phonesList);
                 }
             }
@@ -1892,6 +1897,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             activity.addLog(Constants.LogObject.QUESTIONNAIRE, "START", Constants.LogResult.SUCCESS, currentQuestionnaire.getToken(), null);
 //            activity.runOnUiThread(this::hideScreensaver);
+            st("START +++");
             replaceFragment(isAvia() ? new ElementAviaFragment() : new ElementFragment());
         } else {
             if (activity != null) {
@@ -1996,12 +2002,12 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         tvRegInfo.setVisibility(View.GONE);
         UiUtils.setButtonEnabled(btnStart, true);
         Snackbar snack = Snackbar.make(findViewById(R.id.cont_home_fragment), message, Snackbar.LENGTH_INDEFINITE);
-                snack.setAction("OK", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        snack.dismiss();
-                    }
-                });
+        snack.setAction("OK", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                snack.dismiss();
+            }
+        });
 //                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light));
 
         View view = snack.getView();
@@ -2011,6 +2017,47 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         else
             mTextView.setGravity(Gravity.CENTER_HORIZONTAL);
         snack.show();
+    }
+
+    private void sendLogs() {
+        if (getMainActivity().getSettings().isSend_logs())
+            try {
+                List<AppLogsR> logs = getDao().getAllLogsWithStatus(Constants.LogStatus.NOT_SENT);
+                if (logs.size() > 0) {
+                    showScreensaver(false);
+                    LogsRequestModel logsRequestModel = new LogsRequestModel(getLoginAdmin(), logs);
+                    Gson gson = new Gson();
+                    String json = gson.toJson(logsRequestModel);
+                    QuizerAPI.sendLogs(getServer(), json, new QuizerAPI.SendLogsCallback() {
+                        @Override
+                        public void onSendLogs(boolean ok) {
+                            hideScreensaver();
+                            if (!ok) {
+                                showToast(getString(R.string.send_logs_error));
+                                return;
+                            }
+
+                            try {
+                                getDao().setLogsStatus(Constants.LogStatus.SENT);
+                                showToast(getString(R.string.send_logs_success));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                } else {
+                    Log.d("T-A-R", "sendLogs: NO LOGS");
+                }
+            } catch (Exception e) {
+                Log.d(TAG, "BaseActivity.getDao().clearAppLogsByLogin: " + e.getMessage());
+            }
+
+    }
+
+    public void callPhone(String phone){
+        Intent i = new Intent(Intent.ACTION_CALL);
+        i.setData(Uri.parse("tel:" + phone));
+        startActivity(i);
     }
 }
 

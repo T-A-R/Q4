@@ -1362,4 +1362,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         return getDao().getSymbolsForEncrypt(decrypted);
     }
 
+    public void st(String notes) {
+        getMainActivity().showTime(notes);
+    }
+
 }

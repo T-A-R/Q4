@@ -108,6 +108,7 @@ public final class Constants {
         String UI = "ui";
         String AUDIO = "audio";
         String PHOTOS = "photos";
+        String TIMINGS = "timings";
     }
 
     public interface LogResult {

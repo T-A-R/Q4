@@ -174,9 +174,12 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     private RelativeLayout mainCont;
 
+    private SettingsR mTimingsSettings = null;
+
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationRequest locationRequest;
     private Location mLocation;
+    private List<TimingLog> mTimings = new ArrayList<>();
     LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(@NonNull LocationResult locationResult) {
@@ -1263,7 +1266,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void startCounter(Long time, int type, SmartFragment.Events listener) {
         messageListener = listener;
-        Date startDateForDialog = new Date((time + 5000) );
+        Date startDateForDialog = new Date((time + 5000));
         if (mTimerPeriodInfo != null) {
             mTimerPeriodInfo.cancel();
         }
@@ -1429,9 +1432,23 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         this.canContZeroLoc = canContZeroLoc;
     }
 
-    public static void showTime(String notes) {
-        Log.d("TIME", "deltaTime (" + notes + ") :" + (DateUtils.getFullCurrentTime() - alphaTime));
-        alphaTime = DateUtils.getFullCurrentTime();
+    public void showTime(String notes) {
+        if (mTimingsSettings.isTimings_debug()) {
+            try {
+                mTimings.add(new TimingLog(notes, (DateUtils.getFullCurrentTime() - alphaTime), getToken()));
+                Log.d("TIME", "deltaTime (" + notes + ") :" + (DateUtils.getFullCurrentTime() - alphaTime));
+                alphaTime = DateUtils.getFullCurrentTime();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void saveTimings() {
+        for (TimingLog timing : mTimings) {
+            addLog(Constants.LogObject.TIMINGS, timing.name, Constants.LogResult.SUCCESS, timing.time.toString(), timing.token);
+        }
+        mTimings.clear();
     }
 
     public List<ElementItemR> getElementItemRList() {
@@ -1478,12 +1495,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public SettingsR getSettings() {
         SettingsR settings = getMainDao().getSettings();
+        mTimingsSettings = settings;
         if (settings == null) {
             settings = new SettingsR();
             if (AVIA) settings.setAuto_zoom(false);
             getMainDao().insertSettings(settings);
             checkRoot();
         }
+        mTimingsSettings = settings;
         return settings;
     }
 
@@ -1511,6 +1530,33 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                     break;
             }
         }
+    }
+
+    public boolean needResetDebug() {
+        return getSettings().isReset_debug();
+    }
+
+    public void setResetDebug(boolean value) {
+        getMainDao().setResetDebug(value);
+        getSettings();
+    }
+
+    public boolean isTimingsLogMode() {
+        return getSettings().isTimings_debug();
+    }
+
+    public void setTimingsLogMode(boolean value) {
+        getMainDao().setTimingsLogMode(value);
+        getSettings();
+    }
+
+    public boolean isSendLogMode() {
+        return getSettings().isSend_logs();
+    }
+
+    public void setSendLogMode(boolean value) {
+        getMainDao().setSendLogMode(value);
+        getSettings();
     }
 
     public boolean isTableSpeedMode() {
@@ -1615,7 +1661,11 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public String getToken() {
-        return getCurrentQuestionnaire().getToken();
+        try {
+            return getCurrentQuestionnaire().getToken();
+        } catch (Exception e) {
+            return "0";
+        }
     }
 
     public Observable<String> getConvertedTitle(String title) {
@@ -1936,5 +1986,17 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             }
         });
         task.execute();
+    }
+
+    class TimingLog {
+        private String name;
+        private Long time;
+        private String token;
+
+        public TimingLog(String name, Long time, String token) {
+            this.name = name;
+            this.time = time;
+            this.token = token;
+        }
     }
 }

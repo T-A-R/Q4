@@ -230,7 +230,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             sendQuestionnaires();
 
         } else {
-//            btnWaypoints.setVisibility(View.GONE);
+            btnWaypoints.setVisibility(View.GONE); // <<<<<<<<<<<<<<<<<<<< МАРШРУТЫ <<<<<<<<<<<<<<<<<<<<<<
             cont.startAnimation(Anim.getAppear(getContext()));
             btnContinue.startAnimation(Anim.getAppearSlide(getContext(), 500));
             btnDelete.startAnimation(Anim.getAppearSlide(getContext(), 500));

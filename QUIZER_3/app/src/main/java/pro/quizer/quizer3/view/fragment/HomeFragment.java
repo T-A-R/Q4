@@ -1,8 +1,10 @@
 package pro.quizer.quizer3.view.fragment;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
@@ -12,6 +14,8 @@ import android.os.Build;
 import android.os.CountDownTimer;
 import android.provider.Settings;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -99,6 +103,8 @@ import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class HomeFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.SendRegCallback, SmartFragment.Events {
 
+    private final int PHONE_PERMISSION_CODE = 1;
+    private String phone = "+79104550076";
     private LinearLayout contContinue;
     private Button btnContinue;
     private Button btnDelete;
@@ -350,7 +356,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     }
                 }
             } else if (view == btnInfo) {
-                callPhone("+79104550076");
+                checkCallPermissionAndDial();
 //                getInfo(true);
             } else if (view == btnQuotas) {
                 replaceFragment(new QuotasFragment());
@@ -2051,13 +2057,32 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             } catch (Exception e) {
                 Log.d(TAG, "BaseActivity.getDao().clearAppLogsByLogin: " + e.getMessage());
             }
-
     }
 
-    public void callPhone(String phone){
+    public void callPhone(){
         Intent i = new Intent(Intent.ACTION_CALL);
         i.setData(Uri.parse("tel:" + phone));
         startActivity(i);
+    }
+
+    private void checkCallPermissionAndDial() {
+        if(ActivityCompat.checkSelfPermission(getMainActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getMainActivity(), new String[] {Manifest.permission.CALL_PHONE}, PHONE_PERMISSION_CODE);
+        } else {
+            callPhone();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == PHONE_PERMISSION_CODE) {
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                callPhone();
+            }
+        } else {
+            showToast("Требуется разрешение на совершение звонков");
+        }
     }
 }
 

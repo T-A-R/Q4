@@ -2071,6 +2071,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                getMainActivity().addLog(Constants.LogObject.WARNINGS, "press NEXT", Constants.LogResult.ERROR, "Cant go next Element", e.toString());
+
+                activateButtons();
+
             }
             st("DoNext() ---");
             return null;
@@ -2089,10 +2093,40 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
     private void checkAndLoadNext() {
         st("checkAndLoadNext() +++");
-        if (!isInHiddenQuotaDialog) {
-            if (nextElementId != null && !nextElementId.equals(0) && !nextElementId.equals(-1)) {
-                if (checkConditions(getElement(nextElementId))) {
-                    checkHidden();
+        try {
+            if (!isInHiddenQuotaDialog) {
+                if (nextElementId != null && !nextElementId.equals(0) && !nextElementId.equals(-1)) {
+                    if (checkConditions(getElement(nextElementId))) {
+                        checkHidden();
+                        if (nextElementId == 0) {
+                            if (saveQuestionnaire(false)) {
+                                exitQuestionnaire();
+                            } else {
+                                activateButtons();
+                            }
+                        } else if (nextElementId == -1) {
+                            if (getMainActivity().getConfig().isSaveAborted()) {
+                                if (saveQuestionnaire(true)) {
+                                    exitQuestionnaire();
+                                } else {
+                                    activateButtons();
+                                }
+                            } else {
+                                exitQuestionnaire();
+                            }
+                        } else if (!isInHiddenQuotaDialog) {
+                            if (!isFragmentLoading) {
+                                isFragmentLoading = true;
+                                TransFragment fragment = new TransFragment();
+                                fragment.setStartElement(currentElement.getRelative_id(), nextElementId);
+                                stopRecording();
+                                replaceFragment(fragment);
+                            }
+                        }
+                    } else {
+                        checkAndLoadNext();
+                    }
+                } else {
                     if (nextElementId == 0) {
                         if (saveQuestionnaire(false)) {
                             exitQuestionnaire();
@@ -2109,37 +2143,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                         } else {
                             exitQuestionnaire();
                         }
-                    } else if (!isInHiddenQuotaDialog) {
-                        if (!isFragmentLoading) {
-                            isFragmentLoading = true;
-                            TransFragment fragment = new TransFragment();
-                            fragment.setStartElement(currentElement.getRelative_id(), nextElementId);
-                            stopRecording();
-                            replaceFragment(fragment);
-                        }
-                    }
-                } else {
-                    checkAndLoadNext();
-                }
-            } else {
-                if (nextElementId == 0) {
-                    if (saveQuestionnaire(false)) {
-                        exitQuestionnaire();
-                    } else {
-                        activateButtons();
-                    }
-                } else if (nextElementId == -1) {
-                    if (getMainActivity().getConfig().isSaveAborted()) {
-                        if (saveQuestionnaire(true)) {
-                            exitQuestionnaire();
-                        } else {
-                            activateButtons();
-                        }
-                    } else {
-                        exitQuestionnaire();
                     }
                 }
             }
+        } catch (Exception e) {
+            getMainActivity().addLog(Constants.LogObject.WARNINGS, "press NEXT 2", Constants.LogResult.ERROR, "Cant go next Element", e.toString());
+            activateButtons();
         }
         st("checkAndLoadNext() ---");
     }

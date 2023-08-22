@@ -369,6 +369,15 @@ public interface QuizerDao {
     @Query("UPDATE SettingsR SET table_speed = :data")
     void setSettingsTableSpeed(boolean data);
 
+    @Query("UPDATE SettingsR SET timings_debug = :data")
+    void setTimingsLogMode(boolean data);
+
+    @Query("UPDATE SettingsR SET send_logs = :data")
+    void setSendLogMode(boolean data);
+
+    @Query("UPDATE SettingsR SET reset_debug = :data")
+    void setResetDebug(boolean data);
+
     @Query("UPDATE SettingsR SET memory_check = :data")
     void setSettingsMemoryCheck(boolean data);
 

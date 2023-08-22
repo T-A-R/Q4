@@ -128,6 +128,14 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
         if (getMainActivity().isHomeRestart()) {
             replaceFragment(new HomeFragment());
+        } else {
+            boolean timingsMode = getMainActivity().isTimingsLogMode();
+            boolean needResetDebug = getMainActivity().needResetDebug();
+            if (needResetDebug) getMainActivity().setResetDebug(false);
+            else if (timingsMode) {
+                getMainActivity().setTimingsLogMode(false);
+                getMainActivity().setSendLogMode(false);
+            }
         }
 
         btnSend.setOnClickListener(this);

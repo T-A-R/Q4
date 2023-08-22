@@ -45,12 +45,13 @@ public class TransFragment extends ScreenFragment {
 
     @Override
     protected void onReady() {
-
+        st("Trans +++");
         if (!AVIA) {
             ElementFragment fragment = new ElementFragment();
             fragment.setStartElement(nextElementId, restored);
             if (!restored) {
                 if (nextElementId != 0 && nextElementId != -1 && checkQuotaJump(nextElementId)) fillPassedQuotas();
+                st("Trans ---");
                 replaceFragment(fragment);
             } else
                 replaceFragmentBack(fragment);
@@ -67,6 +68,7 @@ public class TransFragment extends ScreenFragment {
     }
 
     private boolean checkQuotaJump(int relativeId) {
+        st("checkQuotaJump() +++");
         boolean isQuota = false;
         Log.d("T-A-R.TransFragment", "======= checkQuotaJump: " + relativeId);
         ElementItemR currentElement = getElement(relativeId);
@@ -75,11 +77,12 @@ public class TransFragment extends ScreenFragment {
             isQuota = true;
             quotaElementsList = getElement(currentElement.getRelative_parent_id()).getElements();
         }
-//        Log.d("T-A-R.TransFragment", "checkQuotaJump: " + isQuota);
+        st("checkQuotaJump() ---");
         return isQuota;
     }
 
     private void fillPassedQuotas() {
+        st("fillPassedQuotas() +++");
 //        Log.d("T-A-R.TransFragment", "=== quotaElementsList: " + quotaElementsList.size());
 //        Log.d("T-A-R.TransFragment", "=== startElementId: " + startElementId);
         int startPosition = 0;
@@ -90,7 +93,7 @@ public class TransFragment extends ScreenFragment {
             }
         }
 
-        if(startPosition == 0) {
+        if (startPosition == 0) {
             for (int i = 0; i < quotaElementsList.size(); i++) {
                 if (!quotaElementsList.get(i).getRelative_id().equals(nextElementId)) {
                     savePassedElement(quotaElementsList.get(i).getRelative_id());
@@ -104,15 +107,15 @@ public class TransFragment extends ScreenFragment {
             }
         }
 
-//        List<ElementPassedR> passed = getDao().getQuotaPassedElements(getMainActivity().getToken(), true);
-//        for(ElementPassedR item : passed) {
-//            Log.d("T-A-R.TransFragment", "passed: " + item.getRelative_id());
-//        }
+        st("fillPassedQuotas() ---");
     }
 
     private void savePassedElement(int id) {
         CurrentQuestionnaireR quiz =  getQuestionnaire();
         Log.d("T-A-R.TransFragment", "><><><><><: " + quiz);
+
+        st("savePassedElement() +++");
+
         ElementItemR currentElement = getElement(id);
         ElementPassedR elementPassedR = new ElementPassedR();
         elementPassedR.setRelative_id(id);
@@ -133,5 +136,6 @@ public class TransFragment extends ScreenFragment {
                 break;
             }
         }
+        st("savePassedElement() ---");
     }
 }

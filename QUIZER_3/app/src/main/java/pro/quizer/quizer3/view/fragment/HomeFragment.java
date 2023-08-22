@@ -1,16 +1,21 @@
 package pro.quizer.quizer3.view.fragment;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.provider.Settings;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -52,6 +57,7 @@ import okhttp3.ResponseBody;
 import pro.quizer.quizer3.API.QuizerAPI;
 import pro.quizer.quizer3.API.models.Route;
 import pro.quizer.quizer3.API.models.RoutePolygon;
+import pro.quizer.quizer3.API.models.request.LogsRequestModel;
 import pro.quizer.quizer3.API.models.request.RegistrationRequestModel;
 import pro.quizer.quizer3.API.models.request.RoutesRequestModel;
 import pro.quizer.quizer3.API.models.request.StatisticsRequestModel;
@@ -61,6 +67,8 @@ import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.PhonesAdapter;
+import pro.quizer.quizer3.adapter.UsersBtnRecyclerAdapter;
+import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
@@ -105,6 +113,8 @@ import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class HomeFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.SendRegCallback, SmartFragment.Events {
 
+    private final int PHONE_PERMISSION_CODE = 1;
+    private String phone = "+79104550076";
     private LinearLayout contContinue;
     private Button btnContinue;
     private Button btnDelete;
@@ -262,6 +272,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
 
             sendQuestionnaires();
+            sendLogs();
 
             try {
                 if (activity != null)
@@ -388,6 +399,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     }
                 }
             } else if (view == btnInfo) {
+//                checkCallPermissionAndDial();
                 getInfo(true);
             } else if (view == btnQuotas) {
                 replaceFragment(new QuotasFragment());
@@ -897,7 +909,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     publishProgress((int) progress);
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                // ADD PRINT E
             }
 //            showTree(tree); // Для отладки
             publishProgress(100);
@@ -1130,7 +1142,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         UserModelR userModel = activity.getCurrentUser();
         ConfigModel configModel = activity.getConfig();
         SettingsR settings = activity.getSettings();
-        Log.d("T-A-R.HomeFragment", "getInfo: (" + settings.getUser_name() + ")");
         StatisticsRequestModel requestModel = new StatisticsRequestModel(configModel.getLoginAdmin(), userModel.getPassword(), userModel.getLogin(), settings.getUser_name(), settings.getUser_date());
         Gson gson = new Gson();
         String json = gson.toJson(requestModel);
@@ -1193,9 +1204,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void showStatistics(StatisticR statistics) {
-        Gson gson = new Gson();
-        String json = gson.toJson(statistics);
-        Log.d("T-L.HomeFragment", "showStatistics: " + json);
         if (statistics == null) {
             ShowStatistics task = new ShowStatistics();
             task.execute();
@@ -1348,7 +1356,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         } else {
                             getDao().deleteElementDatabaseModelByToken(currentQuestionnaire.getToken());
                         }
-                        Log.d("T-A-R.", "CLEAR: 5");
                         getDao().clearCurrentQuestionnaireR();
                         getDao().clearPrevElementsR();
                         getDao().clearElementPassedR();
@@ -1427,7 +1434,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void updateLocalConfig() {
-        Log.d(TAG, "updateLocalConfig: START !");
         String newConfig = null;
 
         newConfig = activity.getCurrentUser().getConfig_new();
@@ -1453,7 +1459,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                             initViews();
                             if (currentQuestionnaire != null)
                                 if (saveQuestionnaireToDatabase(currentQuestionnaire, true)) {
-                                    Log.d("T-A-R.", "CLEAR: 6");
                                     getDao().clearCurrentQuestionnaireR();
                                     getDao().clearPrevElementsR();
                                     getDao().clearElementPassedR();
@@ -1614,7 +1619,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void checkRegistration() {
-        Log.d("T-A-R.HomeFragment", "checkRegistration: <<<<<<<<<<<<<<<<");
         if (getCurrentUser().getConfigR().has_registration()) {
             PeriodModel workPeriod = null;
             PeriodModel regPeriod = null;
@@ -1924,7 +1928,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 if (config.isSaveAborted()) {
                     saveQuestionnaireToDatabase(currentQuestionnaire, true);
                 } else {
-                    Log.d("T-A-R.", "CLEAR: 7");
                     getDao().clearCurrentQuestionnaireR();
                     getDao().clearPrevElementsR();
                     getDao().clearElementPassedR();
@@ -1979,6 +1982,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             activity.addLog(Constants.LogObject.QUESTIONNAIRE, "START", Constants.LogResult.SUCCESS, currentQuestionnaire.getToken(), null);
 //            activity.runOnUiThread(this::hideScreensaver);
+            st("START +++");
             replaceFragment(isAvia() ? new ElementAviaFragment() : new ElementFragment());
         } else {
             if (activity != null) {
@@ -2240,6 +2244,66 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         if (getMainActivity() != null && !getMainActivity().isFinishing())
             infoDialog.show();
+    }
+    
+    private void sendLogs() {
+        if (getMainActivity().getSettings().isSend_logs())
+            try {
+                List<AppLogsR> logs = getDao().getAllLogsWithStatus(Constants.LogStatus.NOT_SENT);
+                if (logs.size() > 0) {
+                    showScreensaver(false);
+                    LogsRequestModel logsRequestModel = new LogsRequestModel(getLoginAdmin(), logs);
+                    Gson gson = new Gson();
+                    String json = gson.toJson(logsRequestModel);
+                    QuizerAPI.sendLogs(getServer(), json, new QuizerAPI.SendLogsCallback() {
+                        @Override
+                        public void onSendLogs(boolean ok) {
+                            hideScreensaver();
+                            if (!ok) {
+                                showToast(getString(R.string.send_logs_error));
+                                return;
+                            }
+
+                            try {
+                                getDao().setLogsStatus(Constants.LogStatus.SENT);
+                                showToast(getString(R.string.send_logs_success));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                } else {
+                    Log.d("T-A-R", "sendLogs: NO LOGS");
+                }
+            } catch (Exception e) {
+                Log.d(TAG, "BaseActivity.getDao().clearAppLogsByLogin: " + e.getMessage());
+            }
+    }
+
+    public void callPhone(){
+        Intent i = new Intent(Intent.ACTION_CALL);
+        i.setData(Uri.parse("tel:" + phone));
+        startActivity(i);
+    }
+
+    private void checkCallPermissionAndDial() {
+        if(ActivityCompat.checkSelfPermission(getMainActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getMainActivity(), new String[] {Manifest.permission.CALL_PHONE}, PHONE_PERMISSION_CODE);
+        } else {
+            callPhone();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == PHONE_PERMISSION_CODE) {
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                callPhone();
+            }
+        } else {
+            showToast("Требуется разрешение на совершение звонков");
+        }
     }
 }
 

@@ -86,6 +86,27 @@
                 android:textSize="16sp"
                 tools:text="@string/view_unsent_count_photo" />
 
+            <pro.quizer.quizer3.view.element.customswitch.ResizableSwitch
+                android:id="@+id/times_logs_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/_12sdp"
+                android:checked="false"
+                android:text="@string/timer_switcher_text"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+            <pro.quizer.quizer3.view.element.customswitch.ResizableSwitch
+                android:id="@+id/send_logs_with_quiz_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_12sdp"
+                android:checked="true"
+                android:text="Отправлять логи с анкетой"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:visibility="gone"/>
+
             <Button
                 android:id="@+id/send_data"
                 style="@style/ButtonStyle"

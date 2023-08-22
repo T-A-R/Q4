@@ -2,7 +2,9 @@ package pro.quizer.quizer3.view.fragment;
 
 import androidx.appcompat.app.AlertDialog;
 
+import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -29,6 +31,7 @@ import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
+import pro.quizer.quizer3.view.element.customswitch.ResizableSwitch;
 
 public class ServiceFragment extends ScreenFragment {
 
@@ -41,6 +44,8 @@ public class ServiceFragment extends ScreenFragment {
     private Button mUploadDataButton;
     private Button mUploadFTPDataButton;
     private Button mLogsButton;
+    private ResizableSwitch mTimerSwitch;
+    private ResizableSwitch mSendLogsSwitch;
 
     private TextView mUsersCount;
     private String mUsersCountString;
@@ -77,6 +82,8 @@ public class ServiceFragment extends ScreenFragment {
         mUploadDataButton = findViewById(R.id.upload_data);
         mUploadFTPDataButton = findViewById(R.id.upload_ftp_data);
         mLogsButton = findViewById(R.id.logs_btn);
+        mTimerSwitch = findViewById(R.id.times_logs_switch);
+        mSendLogsSwitch = findViewById(R.id.send_logs_with_quiz_switch);
 
         mUsersCount = findViewById(R.id.users_count);
         mUnsendedQuestionaires = findViewById(R.id.unsended_questionnaires_count);
@@ -111,6 +118,19 @@ public class ServiceFragment extends ScreenFragment {
         mClearDbButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mUploadDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mUploadFTPDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
+
+        mTimerSwitch.setChecked(getMainActivity().isTimingsLogMode());
+        mSendLogsSwitch.setChecked(mTimerSwitch.isChecked());
+        mTimerSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
+            mSendLogsSwitch.setChecked(mTimerSwitch.isChecked());
+            if(b) mSendLogsSwitch.setVisibility(View.VISIBLE);
+            else mSendLogsSwitch.setVisibility(View.GONE);
+            getMainActivity().setTimingsLogMode(b);
+            getMainActivity().setResetDebug(b);
+        });
+        mSendLogsSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
+            getMainActivity().setSendLogMode(b);
+        });
     }
 
     private void initStrings() {

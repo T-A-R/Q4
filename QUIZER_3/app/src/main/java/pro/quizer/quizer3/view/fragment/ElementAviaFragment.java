@@ -1942,10 +1942,6 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
         }
     }
 
-    private void st(String notes) {
-//        MainActivity.showTime(notes);
-    }
-
     @SuppressLint("RestrictedApi")
     private void showCardDialog() {
         dialogBuilder = new AlertDialog.Builder(getMainActivity());

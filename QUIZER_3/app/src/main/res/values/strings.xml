@@ -518,4 +518,5 @@
     <string name="route_rqs_count_all">Собрано всего корректных анкет на маршруте: %1$s</string>
     <string name="route_rqs_count_correct_login">Корректных анкет собрано на данном логин на маршруте: %1$s</string>
     <string name="route_rqs_count_correct_inter">Корректных анкет собрано данным интервьюером на маршруте: %1$s</string>
+    <string name="timer_switcher_text">Отслеживание скорости работы</string>
 </resources>

@@ -309,7 +309,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             sendRegLogs();
         }
 //        showSnackBar("", false);
-        getRoutes();
+        if(btnWaypoints.getVisibility() == View.VISIBLE) getRoutes();
     }
 
 //    private void setPolygon() {

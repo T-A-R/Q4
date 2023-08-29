@@ -69,7 +69,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
     }
 
     private void load(@QuestionnaireStatus final String pStatus, final Map<String, SmsAnswer> result) {
-        Log.d("T-A-R.SmsStageModelEx", "load: <<<<<<<<<<<<<<<<<<<<<<");
+//        Log.d("T-A-R.SmsStageModelEx", "load: <<<<<<<<<<<<<<<<<<<<<<");
         final List<ElementDatabaseModelR> allElements = new ArrayList<>();
 
         final Integer userId = activity.getCurrentUserId();
@@ -83,7 +83,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
 
         Integer quizCounter = questionnaires.size();
 
-        Log.d("T-A-R.SmsStageModelEx", "before load: " + userId + "/" + quizCounter);
+//        Log.d("T-A-R.SmsStageModelEx", "before load: " + userId + "/" + quizCounter);
 
 //        if (saved != null) {
 //            result.append(mUserId).append(" ").append(mSmsIndex).append(" ").append(mQuizCount + saved.getQuizQuantity());
@@ -99,7 +99,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
         }
 
         final List<QuestionsMatchesModel> matches = mStagesModel.getQuestionsMatches();
-        Log.d("T-A-R.SmsStageModelEx", "before load: " + userId + "/" + quizCounter);
+//        Log.d("T-A-R.SmsStageModelEx", "before load: " + userId + "/" + quizCounter);
         final List<SmsAnswersR> savedAnswers = activity.getMainDao().getSmsAnswersByUserId(userId);
         Map<String, List<Integer>> savedAnswersMap = mapSavedAnswers(savedAnswers);
         for (final QuestionsMatchesModel match : matches) {
@@ -112,6 +112,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
             if (!elementsByQuestionId.isEmpty()) {
                 for (int i = 1; i <= answersCount; i++) {
                     int countAnswers = getCountAnswersByOrder(elementsByQuestionId, i);
+                    Log.d("T-A-R", "countAnswers: " + countAnswers);
                     if(saved != null && !saved.isEmpty()) {
                         countAnswers += saved.get(i - 1);
                     }
@@ -132,7 +133,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
             } else {
                 smsAnswer.setQuizCount(quizCounter);
             }
-            Log.d("T-A-R.SmsStageModelEx", "N:" + smsAnswer.getSmsIndex() + "load: " + quizCounter + "/" + smsAnswer.getQuizCount());
+//            Log.d("T-A-R.SmsStageModelEx", "N:" + smsAnswer.getSmsIndex() + "load: " + quizCounter + "/" + smsAnswer.getQuizCount());
             smsAnswer.setUserId(userId);
             result.put(index, smsAnswer);
 

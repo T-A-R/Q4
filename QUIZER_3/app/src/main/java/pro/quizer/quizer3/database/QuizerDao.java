@@ -168,6 +168,9 @@ public interface QuizerDao {
     @Query("UPDATE QuestionnaireDatabaseModelR SET send_sms = :send_sms WHERE token = :token")
     void setQuestionnaireSendSms(boolean send_sms, String token);
 
+    @Query("UPDATE QuestionnaireDatabaseModelR SET sent_sms = :sent_sms WHERE token = :token")
+    void setQuestionnaireSentSms(String sent_sms, String token);
+
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status")
     List<QuestionnaireDatabaseModelR> getQuestionnaireByStatus(String status);
 
@@ -254,6 +257,9 @@ public interface QuizerDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertSmsItem(SmsItemR smsItemR);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertSmsItemList(List<SmsItemR> smsItemsList);
 
     @Query("UPDATE SmsItemR SET smsStatus = :status WHERE smsNumber = :smsNumber")
     void setSmsItemStatusBySmsNumber(String smsNumber, String status);
@@ -377,6 +383,9 @@ public interface QuizerDao {
 
     @Query("UPDATE SettingsR SET reset_debug = :data")
     void setResetDebug(boolean data);
+
+    @Query("UPDATE SettingsR SET need_update_config = :data")
+    void setUpdateConfig(boolean data);
 
     @Query("UPDATE SettingsR SET memory_check = :data")
     void setSettingsMemoryCheck(boolean data);

@@ -65,6 +65,9 @@ public class SettingsR {
     @ColumnInfo(name = "send_logs")
     private boolean send_logs;
 
+    @ColumnInfo(name = "need_update_config")
+    private boolean need_update_config;
+
     public SettingsR() {
         this.started = false;
         this.auto_zoom = true;
@@ -77,6 +80,7 @@ public class SettingsR {
         this.timings_debug = false;
         this.reset_debug = false;
         this.send_logs = false;
+        this.need_update_config = false;
         this.config_time = -1L;
     }
 
@@ -230,5 +234,13 @@ public class SettingsR {
 
     public void setSend_logs(boolean send_logs) {
         this.send_logs = send_logs;
+    }
+
+    public boolean isNeed_update_config() {
+        return need_update_config;
+    }
+
+    public void setNeed_update_config(boolean need_update_config) {
+        this.need_update_config = need_update_config;
     }
 }

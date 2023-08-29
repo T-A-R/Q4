@@ -481,6 +481,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
             String responseJson = null;
             try {
                 responseJson = responseBody.string();
+                Log.d("T-A-R", "downloadConfig: " + responseJson);
 //                getMainActivity().copyToClipboard(responseJson);
             } catch (IOException e) {
                 showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_602));
@@ -498,6 +499,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
             try {
                 configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
+                Log.d("T-A-R", "downloadConfig 2: " + new Gson().toJson(configRequestModel));
             } catch (final Exception pE) {
                 pE.printStackTrace();
                 Log.d("T-A-R.AuthFragment", "downloadConfig ERROR: " + responseJson);

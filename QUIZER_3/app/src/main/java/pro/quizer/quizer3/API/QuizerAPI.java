@@ -426,4 +426,48 @@ public class QuizerAPI {
     public interface SendRegCallback {
         void onSendRegCallback(ResponseBody data, Integer id);
     }
+
+    static public void sendSms(String url, String sms, String phone, int id, final SendSmsCallback listener) {
+
+        RequestBody description = RequestBody.create(MultipartBody.FORM, "");
+        List<MultipartBody.Part> parts = new ArrayList<>();
+
+        parts.add(prepareRegPart("text", sms));
+        parts.add(prepareRegPart("sender", phone));
+
+        Log.d("T-A-R.QuizerAPI", "sendSms: " + sms + " sender: " + phone);
+
+        CoreApplication.getQuizerApi().sendFiles(url, description, parts).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d("T-A-R.QuizerAPI", "QuizerAPI.sendSms.onResponse() Code: " + response.code() + " Message: " + response.message());
+//                if(response.headers().get("X-QProject") != null) {
+                if (response.code() == 202 || response.code() == 200) {
+                    listener.onSendSmsCallback(response.body(), id);
+                } else {
+                    try {
+                        if (response.body() != null) {
+                            Log.d("T-A-R.QuizerAPI", "QuizerAPI.sendSms.onResponse() SERVER ERROR: " + response.body().string());
+                        }
+                        if (response.errorBody() != null)
+                            Log.d("T-A-R.QuizerAPI", "QuizerAPI.sendSms.onResponse() SERVER ERROR: " + response.errorBody().string());
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    listener.onSendSmsCallback(null, id);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d("T-A-R.QuizerAPI", "QuizerAPI.sendSms.onFailure() " + t);
+                listener.onSendSmsCallback(null, id);
+            }
+        });
+    }
+
+    public interface SendSmsCallback {
+        void onSendSmsCallback(ResponseBody data, Integer id);
+    }
 }

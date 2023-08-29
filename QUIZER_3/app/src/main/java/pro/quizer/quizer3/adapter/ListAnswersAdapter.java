@@ -150,7 +150,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             }
         } catch (Exception e) {
             Log.d("T-A-R.ListAnswersAdapt", "================ Camera ERROR ================");
-            e.printStackTrace();
+//            e.printStackTrace();
         }
         stopBackgroundThread();
     }

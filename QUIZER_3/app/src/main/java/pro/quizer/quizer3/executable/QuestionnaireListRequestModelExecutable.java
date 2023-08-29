@@ -60,7 +60,7 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
                     questionnaireDatabaseModel.getGps(),
                     questionnaireDatabaseModel.getGps_network(),
                     questionnaireDatabaseModel.getSurvey_status(),
-                    questionnaireDatabaseModel.getSend_sms(),
+                    questionnaireDatabaseModel.getSentList().list,
                     questionnaireDatabaseModel.getGps_time(),
                     questionnaireDatabaseModel.getGps_time_network(),
                     questionnaireDatabaseModel.getToken(),

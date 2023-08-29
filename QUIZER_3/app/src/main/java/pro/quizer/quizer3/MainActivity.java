@@ -124,10 +124,11 @@ import static pro.quizer.quizer3.utils.FileUtils.JPEG;
 
 public class MainActivity extends AppCompatActivity implements ViewTreeObserver.OnGlobalLayoutListener {
 
-    static public String TAG = "TARLOGS";
+    static public String TAG = "T-A-R";
     static public boolean AVIA = false;
     static public boolean DEBUG_MODE = false; //TODO FOR TESTS ONLY!
     static public boolean PLAY_MARKET = false;
+    static public boolean WAYPOINTS = false;
     static public boolean RECORDING = false;
     public boolean mIsPermDialogShow = false;
     private int mAudioRecordLimitTime;
@@ -1573,6 +1574,15 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void setResetDebug(boolean value) {
         getMainDao().setResetDebug(value);
+        getSettings();
+    }
+
+    public boolean needUpdateConfig() {
+        return getSettings().isNeed_update_config();
+    }
+
+    public void setUpdateConfig(boolean value) {
+        getMainDao().setUpdateConfig(value);
         getSettings();
     }
 

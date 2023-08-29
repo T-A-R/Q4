@@ -171,6 +171,7 @@ public class Reg4Fragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void finishReg() {
+        Log.d("T-A-R", "CODE: " + encode(mCodeShort));
         if (mCode.equals(DEBUG_MODE ? codeEditText.getText().toString() : decode(codeEditText.getText().toString())) || mCodeShort.equals(decode(codeEditText.getText().toString()))) {
             getDao().setRegStatus(getCurrentUserId(), Constants.Registration.SMS);
             showToast("Регистрация успешна");
@@ -187,12 +188,12 @@ public class Reg4Fragment extends ScreenFragment implements View.OnClickListener
         startResendTimer();
     }
 
-    private String decode(String message) {
-        StringBuilder decoded = new StringBuilder();
-        for (Character ch : message.toCharArray()) {
-            decoded.append(getDecrypted(ch));
-        }
-        return decoded.toString();
-    }
+//    private String decode(String message) {
+//        StringBuilder decoded = new StringBuilder();
+//        for (Character ch : message.toCharArray()) {
+//            decoded.append(getDecrypted(ch));
+//        }
+//        return decoded.toString();
+//    }
 }
 

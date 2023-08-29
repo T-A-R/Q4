@@ -10,6 +10,7 @@ import java.util.List;
 
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.SmsAnswersR;
+import pro.quizer.quizer3.database.models.SmsItemR;
 import pro.quizer.quizer3.utils.FileUtils;
 
 import static pro.quizer.quizer3.CoreApplication.getQuizerDatabase;
@@ -33,6 +34,11 @@ public class DeleteUsersExecutable extends BaseExecutable {
         onStarting();
 
         try {
+            Log.d("T-A-R", "execute: DELETE - LOAD SMS");
+            List<SmsItemR> smsItemRS = getQuizerDatabase().getQuizerDao().getSmsItems();
+//            for(SmsItemR item : smsItemRS) {
+//                Log.d("T-A-R", "sms: " + item.getSmsNumber() + " " + item.getSmsStatus());
+//            }
             List<SmsAnswersR> smsAnswers = getQuizerDatabase().getQuizerDao().getAllSmsAnswers();
             moveFiles();
 
@@ -43,8 +49,22 @@ public class DeleteUsersExecutable extends BaseExecutable {
                 @Override
                 public void run() {
                     try {
-                        if (smsAnswers != null && smsAnswers.size() > 0)
+                        if (smsAnswers != null && smsAnswers.size() > 0) {
+                            Log.d("T-A-R", "execute: DELETE - SAVE SMS ANSWERS");
                             getQuizerDatabase().getQuizerDao().insertSmsAnswersList(smsAnswers);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        if (smsItemRS != null && smsItemRS.size() > 0) {
+                            Log.d("T-A-R", "execute: DELETE - SAVE SMS ITEMS");
+                            getQuizerDatabase().getQuizerDao().insertSmsItemList(smsItemRS);
+//                            List<SmsItemR> smsItemRSnew = getQuizerDatabase().getQuizerDao().getSmsItems();
+//                            for(SmsItemR item : smsItemRSnew) {
+//                                Log.d("T-A-R", "sms new: " + item.getSmsNumber() + " " + item.getSmsStatus());
+//                            }
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

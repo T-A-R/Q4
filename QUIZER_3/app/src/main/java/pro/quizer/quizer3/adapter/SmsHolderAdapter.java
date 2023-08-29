@@ -77,6 +77,7 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
         String status = null;
         try {
             status = mBaseActivity.getMainDao().getSmsItemBySmsNumber(mSmsItems.get(position).getSmsNumber()).get(0).getSmsStatus();
+//            Log.d("T-A-R", ">>> sms: " + mSmsItems.get(position).getSmsNumber() + status);
         } catch (Exception e) {
             mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.db_load_error));
         }

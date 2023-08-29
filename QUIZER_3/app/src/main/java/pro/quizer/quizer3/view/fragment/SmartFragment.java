@@ -733,6 +733,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             String responseJson;
             try {
                 responseJson = responseBody.string();
+                Log.d("T-A-R", "reloadConfig: " + responseJson);
             } catch (IOException e) {
                 e.printStackTrace();
                 responseJson = null;
@@ -882,6 +883,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             } else {
                 Log.d(TAG, "==== SAVE TO CONFIG COZ NO HAVE QUIZ ====");
                 getDao().setConfigTime(DateUtils.getCurrentTimeMillis());
+                getMainActivity().setUpdateConfig(false);
                 getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
                 getMainActivity().getConfigForce();
 
@@ -1387,6 +1389,14 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             encoded.append(getEncrypted(ch));
         }
         return encoded.toString();
+    }
+
+    public String decode(String message) {
+        StringBuilder decoded = new StringBuilder();
+        for (Character ch : message.toCharArray()) {
+            decoded.append(getDecrypted(ch));
+        }
+        return decoded.toString();
     }
 
     public Character getDecrypted(char encrypted) {

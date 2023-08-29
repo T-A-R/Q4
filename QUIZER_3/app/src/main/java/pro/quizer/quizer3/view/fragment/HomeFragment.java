@@ -110,6 +110,7 @@ import pro.quizer.quizer3.view.Toolbar;
 
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
+import static pro.quizer.quizer3.MainActivity.WAYPOINTS;
 
 public class HomeFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.SendRegCallback, SmartFragment.Events {
 
@@ -240,7 +241,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             sendQuestionnaires();
 
         } else {
-            btnWaypoints.setVisibility(View.GONE); // <<<<<<<<<<<<<<<<<<<< МАРШРУТЫ <<<<<<<<<<<<<<<<<<<<<<
+            if (!WAYPOINTS) btnWaypoints.setVisibility(View.GONE); // <<<<<<<<<<<<<<<<<<<< МАРШРУТЫ <<<<<<<<<<<<<<<<<<<<<<
             cont.startAnimation(Anim.getAppear(getContext()));
             btnContinue.startAnimation(Anim.getAppearSlide(getContext(), 500));
             btnDelete.startAnimation(Anim.getAppearSlide(getContext(), 500));
@@ -309,7 +310,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             sendRegLogs();
         }
 //        showSnackBar("", false);
-        if(btnWaypoints.getVisibility() == View.VISIBLE) getRoutes();
+        if (WAYPOINTS) getRoutes();
     }
 
 //    private void setPolygon() {
@@ -439,30 +440,31 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void sendQuestionnaires() {
-        new SendQuestionnairesByUserModelExecutable(getMainActivity(), mUserModel, new ICallback() {
-            @Override
-            public void onStarting() {
-                showScreensaver("Отправка анкет", true);
-            }
-
-            @Override
-            public void onSuccess() {
-                if (!isQuotaUpdated && !mIsStartAfterAuth) {
-                    makeQuotaTree();
-                    isQuotaUpdated = true;
+        if (!(activity.isExit() && activity.getConfig().isTestSmsNumber()))
+            new SendQuestionnairesByUserModelExecutable(getMainActivity(), mUserModel, new ICallback() {
+                @Override
+                public void onStarting() {
+                    showScreensaver("Отправка анкет", true);
                 }
-                sendPhotoAnswers();
-                hideScreensaver();
-                getInfo(false);
-                initSyncInfoViews();
-            }
 
-            @Override
-            public void onError(Exception pException) {
-                makeQuotaTree();
-                hideScreensaver();
-            }
-        }, false).execute();
+                @Override
+                public void onSuccess() {
+                    if (!isQuotaUpdated && !mIsStartAfterAuth) {
+                        makeQuotaTree();
+                        isQuotaUpdated = true;
+                    }
+                    sendPhotoAnswers();
+                    hideScreensaver();
+                    getInfo(false);
+                    initSyncInfoViews();
+                }
+
+                @Override
+                public void onError(Exception pException) {
+                    makeQuotaTree();
+                    hideScreensaver();
+                }
+            }, false).execute();
     }
 
     public void makeQuotaTree() {
@@ -1390,7 +1392,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                     } else {
                                         boolean mCheckTime = checkTime();
                                         boolean mCheckMemory = checkMemory();
-                                        if (mCheckTime && (canContWithZeroGps || checkGps()) && mCheckMemory && isOnRoute()) {
+                                        if (mCheckTime && (canContWithZeroGps || checkGps()) && mCheckMemory && (isOnRoute() || !WAYPOINTS)) {
                                             startQuestionnaire();
                                         } else if (!mCheckTime) {
                                             activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check time false.", null);
@@ -1398,7 +1400,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                         } else if (!mCheckMemory) {
                                             activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check memory false.", null);
                                             showToast("Недостаточно памяти");
-                                        } else if (!isOnRoute()) {
+                                        } else if (WAYPOINTS && !isOnRoute()) {
                                             activity.runOnUiThread(this::showNotInRouteDialog);
                                         } else {
                                             activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check GPS false.", null);
@@ -1482,6 +1484,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         if (updateDate != null) {
             isTimeToDownloadConfig = DateUtils.getCurrentTimeMillis() >= updateDate;
         }
+        if(!isTimeToDownloadConfig) {
+            isTimeToDownloadConfig = activity.needUpdateConfig();
+        }
+
+
 
         final MainActivity activity = getMainActivity();
         if (activity != null) {
@@ -1707,9 +1714,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             if (nextRegPeriod != null)
                 Log.d("T-A-R.HomeFragment", "nextRegPeriod: " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextRegPeriod.getStart()) + " / " + nextRegPeriod.getStart());
 
+            Log.d("T-A-R", "???? checkRegistration: TRUE? " + regDisabled + " / NOT NULL: " + nextWorkPeriod + " / FALSE: " + getCurrentUser().getConfigR().hasReserveChannels());
             if (regPeriod == null) {
                 isRegistrationRequired = true;
-                btnStart.setText("Регистрация");
+                if (!regDisabled)
+                    btnStart.setText("Регистрация");
                 UiUtils.setButtonEnabled(btnStart, false);
                 if (!regDisabled && nextRegPeriod != null) {
                     String info = "Внимание! Период регистрации начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextRegPeriod.getStart() * 1000L) + "!";
@@ -1727,19 +1736,26 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     isRegistrationRequired = false;
                 }
             } else {
+                Log.d("T-A-R", "checkRegistration: 1");
                 if (workPeriod == null) {
+                    Log.d("T-A-R", "checkRegistration: 2");
                     if (activeReg == null) {
+                        Log.d("T-A-R", "checkRegistration: 3");
                         btnStart.setText("Регистрация");
                         UiUtils.setButtonEnabled(btnStart, true);
                         isRegistrationRequired = true;
                     } else {
+                        Log.d("T-A-R", "checkRegistration: 4");
                         isRegistrationRequired = false;
                         if (activeReg.isCode()) {
+                            Log.d("T-A-R", "checkRegistration: 5");
                             btnStart.setText("Ввести код");
                             UiUtils.setButtonEnabled(btnStart, true);
                             isCodeRequired = true;
-                        } else if (activeReg.isAccepted() || activeReg.smsClosed()) {
+                        } else if (activeReg.isAccepted() || activeReg.smsClosed() || regDisabled) {
+                            Log.d("T-A-R", "checkRegistration: 6");
                             if (nextWorkPeriod != null) {
+                                Log.d("T-A-R", "checkRegistration: 7");
                                 String info = "Внимание! Рабочий период начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextWorkPeriod.getStart() * 1000L) + "!";
                                 tvRegInfo.setText(info);
                                 tvRegInfo.setVisibility(View.VISIBLE);
@@ -1755,35 +1771,47 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         isDialogRequired = false;
                     }
                 } else {
-                    if (activeReg == null) {
+                    Log.d("T-A-R", "checkRegistration: 8");
+                    if (activeReg == null && !regDisabled) {
+                        Log.d("T-A-R", "checkRegistration: 9");
                         btnStart.setText("Регистрация");
                         UiUtils.setButtonEnabled(btnStart, true);
                         isRegistrationRequired = true;
-                    } else {
+                    } else if (!regDisabled) {
+                        Log.d("T-A-R", "checkRegistration: 10");
                         isRegistrationRequired = false;
                         if (activeReg.isCode()) {
+                            Log.d("T-A-R", "checkRegistration: 11");
                             btnStart.setText("Ввести код");
                             UiUtils.setButtonEnabled(btnStart, true);
                             isCodeRequired = true;
                         } else if (activeReg.getStatus().equals(Constants.Registration.NOT_SENT)) {
+                            Log.d("T-A-R", "checkRegistration: 12");
                             btnStart.setText("Регистрация");
                             UiUtils.setButtonEnabled(btnStart, true);
                             isRegistrationRequired = true;
                         } else {
-                            Log.d("T-A-R.HomeFragment", "checkRegistration: 1");
+                            Log.d("T-A-R", "checkRegistration: 14");
                             btnStart.setText("Начать");
                             UiUtils.setButtonEnabled(btnStart, true);
                             activity.startCounter(workPeriod.getEnd() * 1000L, 3, this);
                             isCodeRequired = false;
                             isDialogRequired = true;
                         }
+                    } else {
+                        Log.d("T-A-R", "checkRegistration: 15");
+                        btnStart.setText("Начать");
+                        UiUtils.setButtonEnabled(btnStart, true);
+                        activity.startCounter(workPeriod.getEnd() * 1000L, 3, this);
+                        isCodeRequired = false;
+                        isDialogRequired = false;
                     }
                 }
             }
 
             checkRegForSend();
 
-            if (isDialogRequired || (activeReg != null && activeReg.getPhone().equals(""))) {
+            if (!regDisabled && (isDialogRequired || (activeReg != null && activeReg.getPhone().equals("")))) {
                 if (getCurrentUser().getConfigR().hasReserveChannels() && mIsStartAfterAuth) {
                     showPhoneRegDialog(phonesList);
                 }
@@ -1877,7 +1905,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 boolean mCheckTime = checkTime();
                 boolean mCheckMemory = checkMemory();
                 boolean mIsOnRoute = isOnRoute();
-                if (mCheckTime && mCheckGps && mCheckMemory && mIsOnRoute) {
+                if (mCheckTime && mCheckGps && mCheckMemory && (mIsOnRoute || !WAYPOINTS)) {
                     startQuestionnaire();
                 } else if (!mCheckTime) {
                     activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check time false.", null);
@@ -1885,10 +1913,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 } else if (!mCheckMemory) {
                     activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check memory false.", null);
                     showToast("Недостаточно памяти");
-                } else if(!mIsOnRoute) {
+                } else if (WAYPOINTS && !mIsOnRoute) {
                     activity.runOnUiThread(this::showNotInRouteDialog);
-                }
-                else {
+                } else {
                     activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check GPS false.", null);
                     showToast("Невозможно начать без координат GPS");
                 }
@@ -2187,7 +2214,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private boolean isOnRoute() {
-        if(canStartOutsideRoute) return true;
+        if (!WAYPOINTS) return true;
+        if (canStartOutsideRoute) return true;
         boolean inside = false;
         if (activity.getLocation() == null || activity.getLocation().getLongitude() == 0 || activity.getLocation().getLatitude() == 0) {
             return false;
@@ -2245,7 +2273,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         if (getMainActivity() != null && !getMainActivity().isFinishing())
             infoDialog.show();
     }
-    
+
     private void sendLogs() {
         if (getMainActivity().getSettings().isSend_logs())
             try {
@@ -2280,15 +2308,15 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
     }
 
-    public void callPhone(){
+    public void callPhone() {
         Intent i = new Intent(Intent.ACTION_CALL);
         i.setData(Uri.parse("tel:" + phone));
         startActivity(i);
     }
 
     private void checkCallPermissionAndDial() {
-        if(ActivityCompat.checkSelfPermission(getMainActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getMainActivity(), new String[] {Manifest.permission.CALL_PHONE}, PHONE_PERMISSION_CODE);
+        if (ActivityCompat.checkSelfPermission(getMainActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getMainActivity(), new String[]{Manifest.permission.CALL_PHONE}, PHONE_PERMISSION_CODE);
         } else {
             callPhone();
         }
@@ -2297,8 +2325,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == PHONE_PERMISSION_CODE) {
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == PHONE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 callPhone();
             }
         } else {

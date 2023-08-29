@@ -1,6 +1,8 @@
 package pro.quizer.quizer3.model.config;
 
 
+import android.util.Log;
+
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
@@ -133,6 +135,12 @@ public class ConfigModel implements Serializable {
 
     public boolean hasReserveChannels() {
         return getProjectInfo().getReserveChannel() != null;
+    }
+
+    public boolean isTestSmsNumber() {
+        return getProjectInfo().getReserveChannel() != null
+                && getProjectInfo().getReserveChannel().getPhones().size() == 1
+                && getProjectInfo().getReserveChannel().getPhones().get(0).getNumber().equals("+1234567890");
     }
 
     public int getAutonomousLimitCountQuestionnare() {

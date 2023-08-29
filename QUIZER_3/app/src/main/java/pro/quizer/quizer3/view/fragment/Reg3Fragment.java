@@ -408,6 +408,8 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
 
             // r{admin_key}:[{user_id} {uik_number} {gps} {gps_network} {reg_time} {phone}] - в квадратных скобках шифрованное
 
+            Log.d("T-A-R", "sendRegSms: " + registration.getGps() +"/"+ registration.getGps_network() );
+
             int number1 = registration.getUser_id(); // user_id
             String number2 = registration.getUik_number(); // uik
             String decodedMessage = "r" + getDao().getKey() + ":";
@@ -417,8 +419,10 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                     + " " + registration.getGps_network()
                     + " " + registration.getReg_time()
                     + " " + registration.getPhone();
+            String encodedMessage = encode(message);
             String sms = decodedMessage + encode(message);
-            Log.d("T-L.Reg3Fragment", "sendRegSms: " + sms);
+            Log.d("T-A-R.Reg3Fragment", "sendRegSms: " + sms);
+            Log.d("T-A-R.Reg3Fragment", "sendRegSms: " + decode(encodedMessage));
             new Thread(() -> SmsUtils.sendRegSms(getMainActivity(), this, sms)).start();
         } else {
             replaceFragment(new HomeFragment());

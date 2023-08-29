@@ -7,7 +7,10 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.krishna.fileloader.FileLoader;
+import com.krishna.fileloader.listener.MultiFileDownloadListener;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +18,10 @@ import java.util.Map;
 
 import okhttp3.ResponseBody;
 import pro.quizer.quizer3.API.QuizerAPI;
+import pro.quizer.quizer3.API.models.request.AuthRequestModel;
+import pro.quizer.quizer3.API.models.request.ConfigRequestModel;
+import pro.quizer.quizer3.API.models.response.AuthResponseModel;
+import pro.quizer.quizer3.API.models.response.ConfigResponseModel;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
@@ -29,6 +36,7 @@ import pro.quizer.quizer3.model.quota.QuotaModel;
 import pro.quizer.quizer3.model.sms.SmsStage;
 import pro.quizer.quizer3.model.view.SmsViewModel;
 import pro.quizer.quizer3.utils.DateUtils;
+import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.NetworkUtils;
 import pro.quizer.quizer3.utils.SPUtils;
 import pro.quizer.quizer3.utils.SmsUtils;
@@ -132,9 +140,12 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
             return;
         }
 
+        Log.d("T-A-R", "onSendQuestionnaires: ========================================");
+
         String responseJson = null;
         try {
             responseJson = responseBody.string();
+            Log.d("T-A-R", "onSendQuestionnaires: " + responseJson);
         } catch (IOException e) {
             e.printStackTrace();
             onError(new Exception(mBaseActivity.getString(R.string.server_response_error) + " " + mBaseActivity.getString(R.string.error_202)));
@@ -178,13 +189,20 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
 
             }
 
+            try {
+                Log.d("T-A-R", "onSendQuestionnaires: " + deletingListResponseModel.isRegsDisabled());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             if (deletingListResponseModel.isRegsDisabled() != null) {
                 ConfigModel config = mBaseActivity.getCurrentUser().getConfigR();
-                config.setRegsDisabled(deletingListResponseModel.isRegsDisabled());
-                String newConfig = new Gson().toJson(config);
-                mBaseActivity.getMainDao().setConfigTime(DateUtils.getCurrentTimeMillis());
-                mBaseActivity.getMainDao().updateConfig(newConfig, mBaseActivity.getCurrentUserId(), mBaseActivity.getCurrentUser().getUser_project_id());
-                mBaseActivity.getConfigForce();
+                mBaseActivity.setUpdateConfig(deletingListResponseModel.isRegsDisabled() != config.isRegsDisabled());
+
+//                config.setRegsDisabled(deletingListResponseModel.isRegsDisabled());
+//                String newConfig = new Gson().toJson(config);
+//                mBaseActivity.getMainDao().setConfigTime(DateUtils.getCurrentTimeMillis());
+//                mBaseActivity.getMainDao().updateConfig(newConfig, mBaseActivity.getCurrentUserId(), mBaseActivity.getCurrentUser().getUser_project_id());
+//                mBaseActivity.getConfigForce();
             }
 
             if (deletingListResponseModel.getResult() != 0) {

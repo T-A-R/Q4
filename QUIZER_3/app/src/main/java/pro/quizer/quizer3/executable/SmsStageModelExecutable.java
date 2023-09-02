@@ -112,7 +112,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
             if (!elementsByQuestionId.isEmpty()) {
                 for (int i = 1; i <= answersCount; i++) {
                     int countAnswers = getCountAnswersByOrder(elementsByQuestionId, i);
-                    Log.d("T-A-R", "countAnswers: " + countAnswers);
+//                    Log.d("T-A-R", "countAnswers: " + countAnswers);
                     if(saved != null && !saved.isEmpty()) {
                         countAnswers += saved.get(i - 1);
                     }

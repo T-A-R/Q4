@@ -22,12 +22,15 @@ import io.reactivex.functions.Consumer;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.database.models.RegistrationR;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.Anim;
 
 import static pro.quizer.quizer3.MainActivity.DEBUG_MODE;
+
+import com.google.gson.Gson;
 
 public class Reg4Fragment extends ScreenFragment implements View.OnClickListener {
 
@@ -171,9 +174,13 @@ public class Reg4Fragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void finishReg() {
-        Log.d("T-A-R", "CODE: " + encode(mCodeShort));
-        if (mCode.equals(DEBUG_MODE ? codeEditText.getText().toString() : decode(codeEditText.getText().toString())) || mCodeShort.equals(decode(codeEditText.getText().toString()))) {
-            getDao().setRegStatus(getCurrentUserId(), Constants.Registration.SMS);
+        Log.d("T-A-R", "CODE: " + mCode);
+        if ((DEBUG_MODE && codeEditText.getText().toString().equals("160434"))  || mCode.equals(decode(codeEditText.getText().toString())) || mCodeShort.equals(decode(codeEditText.getText().toString()))) {
+
+//            Log.d("T-A-R", "finishReg: SET REG TO ID: " + getCurrentUserId());
+            getDao().setRegStatusByUserId(getCurrentUserId(), Constants.Registration.SMS);
+            RegistrationR phoneReg = getDao().getRegistrationR(getCurrentUserId());
+//            Log.d("T-A-R", "finishReg: " + new Gson().toJson(phoneReg));
             showToast("Регистрация успешна");
             replaceFragment(new HomeFragment());
         } else {

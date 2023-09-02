@@ -492,6 +492,9 @@ public interface QuizerDao {
     @Query("UPDATE RegistrationR SET status = :status WHERE id =:id")
     void setRegStatus(Integer id, String status);
 
+    @Query("UPDATE RegistrationR SET status = :status WHERE user_id =:id")
+    void setRegStatusByUserId(Integer id, String status);
+
     @Query("UPDATE RegistrationR SET phone = :phone WHERE id =:id")
     void setRegPhone(Integer id, String phone);
 

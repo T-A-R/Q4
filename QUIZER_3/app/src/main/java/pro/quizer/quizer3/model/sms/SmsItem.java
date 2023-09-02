@@ -6,13 +6,16 @@ public class SmsItem {
     private String smsText;
     private String smsStatus;
 
+    private boolean isEmpty = false;
+
     public SmsItem() {
     }
 
-    public SmsItem(String smsNumber, String smsText, String smsStatus) {
+    public SmsItem(String smsNumber, String smsText, String smsStatus, boolean isEmpty) {
         this.smsNumber = smsNumber;
         this.smsText = smsText;
         this.smsStatus = smsStatus;
+        this.isEmpty = isEmpty;
     }
 
     public String getSmsNumber() {
@@ -37,5 +40,13 @@ public class SmsItem {
 
     public void setSmsStatus(String smsStatus) {
         this.smsStatus = smsStatus;
+    }
+
+    public boolean isEmpty() {
+        return isEmpty;
+    }
+
+    public void setEmpty(boolean empty) {
+        isEmpty = empty;
     }
 }

@@ -1900,7 +1900,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
 //            Log.d("T-L.MainActivity", "checkSettingsAndStartLocationUpdates CODE: " + getLocationMode());
             if (isAirplaneMode()) {
-                listener.runEvent(10);
+//                listener.runEvent(10);
+                listener.runEvent(2); //TODO FOR TESTS!!!!!
             } else {
                 switch (getLocationMode()) {
                     case -1:

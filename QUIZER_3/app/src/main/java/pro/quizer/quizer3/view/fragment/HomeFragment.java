@@ -305,7 +305,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             } else {
                 Log.d("T-A-R.HomeFragment", "RESERVE_CHANNEL: NULL");
             }
-            checkRegistration();
+            if (!isTimeToDownloadConfig)
+                checkRegistration();
             Log.d("T-A-R.HomeFragment", "EXIT: " + getCurrentUser().getConfigR().getExitHost());
             sendRegLogs();
         }
@@ -555,6 +556,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             mBaseActivity.requestPermission();
         }
         checkConfigTime(false);
+//        if (activity.isExit() && !isTimeToDownloadConfig && !mIsStartAfterAuth) checkRegistration();
     }
 
     @Override
@@ -1484,11 +1486,14 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         if (updateDate != null) {
             isTimeToDownloadConfig = DateUtils.getCurrentTimeMillis() >= updateDate;
         }
-        if(!isTimeToDownloadConfig) {
-            isTimeToDownloadConfig = activity.needUpdateConfig();
+        boolean updateFromSmsReg = activity.needUpdateConfig();
+        if (updateFromSmsReg) {
+            isTimeToDownloadConfig = updateFromSmsReg;
+            tvPbText.setVisibility(View.VISIBLE);
+            tvPbText.setText("В настройки проекта были внесены изменения. Для продолжения работы, пожалуйста, обновите конфиг");
+        } else {
+            tvPbText.setVisibility(View.GONE);
         }
-
-
 
         final MainActivity activity = getMainActivity();
         if (activity != null) {
@@ -1778,7 +1783,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         UiUtils.setButtonEnabled(btnStart, true);
                         isRegistrationRequired = true;
                     } else if (!regDisabled) {
-                        Log.d("T-A-R", "checkRegistration: 10");
+                        Log.d("T-A-R", "checkRegistration: 10 ");
                         isRegistrationRequired = false;
                         if (activeReg.isCode()) {
                             Log.d("T-A-R", "checkRegistration: 11");
@@ -1804,14 +1809,15 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         UiUtils.setButtonEnabled(btnStart, true);
                         activity.startCounter(workPeriod.getEnd() * 1000L, 3, this);
                         isCodeRequired = false;
-                        isDialogRequired = false;
+                        isDialogRequired = true;
                     }
                 }
             }
 
             checkRegForSend();
 
-            if (!regDisabled && (isDialogRequired || (activeReg != null && activeReg.getPhone().equals("")))) {
+//            if (!regDisabled && (isDialogRequired || (activeReg != null && activeReg.getPhone().equals("")))) {
+            if (isDialogRequired || (activeReg != null && activeReg.getPhone().equals(""))) {
                 if (getCurrentUser().getConfigR().hasReserveChannels() && mIsStartAfterAuth) {
                     showPhoneRegDialog(phonesList);
                 }

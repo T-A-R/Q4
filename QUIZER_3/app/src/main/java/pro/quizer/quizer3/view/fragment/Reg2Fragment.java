@@ -98,17 +98,18 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
         if (view == btnPhoto) {
             capturePhoto();
         } else if (view == btnNext) {
-            UiUtils.setButtonEnabled(btnNext, false);
-            UiUtils.setButtonEnabled(btnPhoto, false);
-            if (camera != null) {
-                try {
-                    camera.stopPreview(); //TODO TRY CATCH
-                    camera.release();
-                } catch (Exception e) {
-                    e.printStackTrace();
+            if (mTimeToken != null) {
+                UiUtils.setButtonEnabled(btnNext, false);
+                UiUtils.setButtonEnabled(btnPhoto, false);
+                if (camera != null) {
+                    try {
+                        camera.stopPreview(); //TODO TRY CATCH
+                        camera.release();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-            if(mTimeToken != null) {
+
                 ScreenFragment reg3 = new Reg3Fragment();
                 Bundle bundle = new Bundle();
                 try {

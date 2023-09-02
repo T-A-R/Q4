@@ -795,6 +795,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                     }
 
                     if (configResponseModel != null) {
+                        getMainActivity().setUpdateConfig(false);
                         if (configResponseModel.isProjectActive() != null) {
                             try {
                                 getDao().setProjectActive(configResponseModel.isProjectActive());

@@ -358,6 +358,8 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void showNoInternetDialog() {
+        Log.d("T-A-R", "showNoInternetDialog: " + getMainActivity().getCurrentUser().getConfigR().getProjectInfo().getReserveChannel());
+        Log.d("T-A-R", "showNoInternetDialog: " + getMainActivity().getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getSelectedPhone());
         if (getMainActivity().getCurrentUser().getConfigR().getProjectInfo().getReserveChannel() != null
                 && getMainActivity().getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getSelectedPhone() != null) {
             MainActivity activity = getMainActivity();

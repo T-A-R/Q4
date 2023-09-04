@@ -1637,6 +1637,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             PeriodModel nextWorkPeriod = null;
             PeriodModel nextRegPeriod = null;
             long currentTime = DateUtils.getCurrentTimeMillis();
+            Log.d("T-A-R", "currentTime: " + currentTime);
             ConfigModel configModel = activity.getConfig();
             RegistrationR phoneReg = getDao().getRegistrationR(getCurrentUserId());
             RegistrationR activeReg = null;
@@ -1656,6 +1657,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             List<PeriodModel> regPeriods = configModel.getRegistrationPeriods();
             List<PeriodModel> workPeriods = configModel.getWork_periods();
+            workPeriods.add(new PeriodModel(1693765600l, 1693865600l)); //TODO FOR TESTS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
             if (workPeriods != null && workPeriods.size() > 0) {
                 boolean isFound = false;
@@ -1721,10 +1723,32 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             Log.d("T-A-R", "???? checkRegistration: TRUE? " + regDisabled + " / NOT NULL: " + nextWorkPeriod + " / FALSE: " + getCurrentUser().getConfigR().hasReserveChannels());
             if (regPeriod == null) {
+                Log.d("T-A-R", "checkRegistration: 16");
                 isRegistrationRequired = true;
                 if (!regDisabled)
                     btnStart.setText("Регистрация");
                 UiUtils.setButtonEnabled(btnStart, false);
+                if(regDisabled) {
+                    if(nextRegPeriod != null) {
+                        String info = "Внимание! Рабочий период начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextWorkPeriod.getStart() * 1000L) + "!";
+                        tvRegInfo.setText(info);
+                        tvRegInfo.setVisibility(View.VISIBLE);
+                        activity.startCounter(nextWorkPeriod.getStart() * 1000L, 2, this);
+                        btnStart.setText("Начать");
+                        UiUtils.setButtonEnabled(btnStart, false);
+                        isCodeRequired = false;
+                        isRegistrationRequired = false;
+                    }
+                } else {
+                    if(nextRegPeriod != null) {
+                        String info = "Внимание! Период регистрации начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextRegPeriod.getStart() * 1000L) + "!";
+                        tvRegInfo.setText(info);
+                        tvRegInfo.setVisibility(View.VISIBLE);
+                        activity.startCounter(nextRegPeriod.getStart() * 1000L, 1, this);
+                    } else {
+                        
+                    }
+                }
                 if (!regDisabled && nextRegPeriod != null) {
                     String info = "Внимание! Период регистрации начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextRegPeriod.getStart() * 1000L) + "!";
                     tvRegInfo.setText(info);
@@ -2300,7 +2324,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
                             try {
                                 getDao().setLogsStatus(Constants.LogStatus.SENT);
-                                showToast(getString(R.string.send_logs_success));
+//                                showToast(getString(R.string.send_logs_success));
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

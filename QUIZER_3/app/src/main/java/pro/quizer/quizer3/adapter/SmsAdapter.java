@@ -75,6 +75,7 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
         holder.recyclerView.setLayoutManager(linearLayoutManager);
 
         final String timeFromString = DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, timeFrom);
+//        final String timeFromString = "" + timeFrom;
         final String timeToString = DateUtils.getFormattedDate(DateUtils.PATTERN_FULL_SMS, timeTo);
         final String timeInterval = String.format(mBaseActivity.getString(R.string.view_sms_time_interval), timeFromString, timeToString);
 

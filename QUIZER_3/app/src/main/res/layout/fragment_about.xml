@@ -21,7 +21,7 @@
         android:layout_marginRight="@dimen/_40sdp"
         android:src="@drawable/quizer" />
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -71,8 +71,16 @@
                 android:textSize="18sp"
                 tools:text="Версия 3.0.1" />
 
+            <TextView
+                android:id="@+id/tv_config"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textSize="12sp"
+                android:textColor="@android:color/black" />
+
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </FrameLayout>

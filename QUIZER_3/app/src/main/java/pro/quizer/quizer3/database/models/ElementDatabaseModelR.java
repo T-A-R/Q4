@@ -46,6 +46,7 @@ public class ElementDatabaseModelR {
     private Boolean helper;
 
     public ElementDatabaseModelR() {
+        this.send_sms = false;
     }
 
     public ElementDatabaseModelR(String token, Integer relative_id, Integer relative_parent_id,

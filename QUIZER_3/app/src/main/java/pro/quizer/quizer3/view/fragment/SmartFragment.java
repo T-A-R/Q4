@@ -1209,7 +1209,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                     } else {
                         try {
                             getDao().setLogsStatusByObject(Constants.LogObject.REGISTRATION, Constants.LogStatus.SENT);
-                            showToast(getString(R.string.send_logs_success));
+//                            showToast(getString(R.string.send_logs_success));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

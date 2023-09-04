@@ -489,7 +489,6 @@ public class QuestionnaireDatabaseModelR {
     }
 
     public SmsStage.SentList getSentList() {
-//        if(sent_sms == null || sent_sms.isEmpty()) return new SmsStage.SentList();
         return sent_sms == null ? new SmsStage.SentList() : new Gson().fromJson(sent_sms, SmsStage.SentList.class);
     }
 

@@ -11,6 +11,8 @@ import android.content.IntentFilter;
 import android.telephony.SmsManager;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +48,8 @@ public final class SmsUtils {
 
             for (final SmsStage smsStage : pSmsStages) {
                 try {
-                    sms.append(smsStage.getSmsAnswers().get(smsNumber).toString());
+                    if (smsStage.getSmsAnswers() != null && smsStage.getSmsAnswers().get(smsNumber) != null)
+                        sms.append(smsStage.getSmsAnswers().get(smsNumber).toString());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -64,7 +67,7 @@ public final class SmsUtils {
 
             pBaseActivity.showToastfromActivity(pBaseActivity.getString(R.string.notification_sending_sms));
 
-            Log.d("T-A-R", "sendSms: " + pBaseActivity.getConfig().isTestSmsNumber());
+//            Log.d("T-A-R", "sendSms: " + pBaseActivity.getConfig().isTestSmsNumber());
 
             if (!pBaseActivity.getConfig().isTestSmsNumber()) {
                 //---when the SMS has been sent---
@@ -89,13 +92,14 @@ public final class SmsUtils {
                                     if (mSmsAnswers != null && !mSmsAnswers.isEmpty()) {
                                         List<SmsAnswersR> answersForSave = new ArrayList<>();
                                         for (Map.Entry<String, SmsAnswer> item : mSmsAnswers.entrySet()) {
-                                            SmsAnswersR answersR = new SmsAnswersR();
-                                            answersR.setSmsIndex(item.getValue().getSmsIndex());
-                                            answersR.setUserId(item.getValue().getmUserId());
-                                            answersR.setAnswers(item.getValue().getAnswersList());
-                                            answersR.setQuizQuantity(item.getValue().getQuizCount());
-//                                            Log.d("T-A-R.SmsUtils", "??? count: " + item.getValue().getSmsIndex() + " / " + item.getValue().getQuizCount());
-                                            answersForSave.add(answersR);
+                                            if (smsNumbers.contains(item.getValue().getSmsIndex())) {
+                                                SmsAnswersR answersR = new SmsAnswersR();
+                                                answersR.setSmsIndex(item.getValue().getSmsIndex());
+                                                answersR.setUserId(item.getValue().getmUserId());
+                                                answersR.setAnswers(item.getValue().getAnswersList());
+                                                answersR.setQuizQuantity(item.getValue().getQuizCount());
+                                                answersForSave.add(answersR);
+                                            }
                                         }
                                         getDao().insertSmsAnswersList(answersForSave);
                                     }
@@ -151,7 +155,7 @@ public final class SmsUtils {
                 }
                 if (divider != -1) {
                     String encoded = smsWithPreffix.substring(0, divider) + encode(smsWithPreffix.substring(divider));
-                    Log.d("T-A-R.SmsUtils", "sendSms: " + encoded);
+//                    Log.d("T-A-R.SmsUtils", "sendSms: " + encoded);
                     smsManager.sendTextMessage(phoneNumber, null, encoded, sentPI, deliveredPI);
                 }
 
@@ -166,8 +170,8 @@ public final class SmsUtils {
                 }
                 if (divider != -1) {
                     String encoded = smsWithPreffix.substring(0, divider) + encode(smsWithPreffix.substring(divider));
-                    Log.d("T-A-R.SmsUtils", "sendSms by API 1: " + smsWithPreffix.substring(0, divider) + smsWithPreffix.substring(divider));
-                    Log.d("T-A-R.SmsUtils", "sendSms by API 2: " + encoded);
+//                    Log.d("T-A-R.SmsUtils", "sendSms by API 1: " + smsWithPreffix.substring(0, divider) + smsWithPreffix.substring(divider));
+//                    Log.d("T-A-R.SmsUtils", "sendSms by API 2: " + encoded);
 
                     String phone = "0";
                     ActiveRegistrationData handReg = pBaseActivity.getConfig().getUserSettings() != null ? pBaseActivity.getConfig().getUserSettings().getActive_registration_data() : null;
@@ -181,6 +185,10 @@ public final class SmsUtils {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                    }
+
+                    for (String num : smsNumbers) {
+                        Log.d("T-A-R", "????? sendSms: " + num);
                     }
 
                     String url;
@@ -204,13 +212,14 @@ public final class SmsUtils {
                                     if (mSmsAnswers != null && !mSmsAnswers.isEmpty()) {
                                         List<SmsAnswersR> answersForSave = new ArrayList<>();
                                         for (Map.Entry<String, SmsAnswer> item : mSmsAnswers.entrySet()) {
-                                            SmsAnswersR answersR = new SmsAnswersR();
-                                            answersR.setSmsIndex(item.getValue().getSmsIndex());
-                                            answersR.setUserId(item.getValue().getmUserId());
-                                            answersR.setAnswers(item.getValue().getAnswersList());
-                                            answersR.setQuizQuantity(item.getValue().getQuizCount());
-//                                            Log.d("T-A-R.SmsUtils", "??? count: " + item.getValue().getSmsIndex() + " / " + item.getValue().getQuizCount());
-                                            answersForSave.add(answersR);
+                                            if (smsNumbers.contains(item.getValue().getSmsIndex())) {
+                                                SmsAnswersR answersR = new SmsAnswersR();
+                                                answersR.setSmsIndex(item.getValue().getSmsIndex());
+                                                answersR.setUserId(item.getValue().getmUserId());
+                                                answersR.setAnswers(item.getValue().getAnswersList());
+                                                answersR.setQuizQuantity(item.getValue().getQuizCount());
+                                                answersForSave.add(answersR);
+                                            }
                                         }
                                         getDao().insertSmsAnswersList(answersForSave);
                                     }
@@ -220,8 +229,7 @@ public final class SmsUtils {
                                     pCallback.onSuccess();
                                 }
                                 pBaseActivity.showToastfromActivity("Сообщение отправлено через API");
-                            }
-                            else {
+                            } else {
                                 if (pCallback != null) {
                                     pCallback.onError(new Exception("Ошибка отправки сообщения через API"));
                                 }
@@ -361,45 +369,44 @@ public final class SmsUtils {
             smsManager.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
         } else { // TEST SEND BY API <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-                Log.d("T-A-R.SmsUtils", "sendReg by API: " + message);
+            Log.d("T-A-R.SmsUtils", "sendReg by API: " + message);
 
-                String phone = "0";
-                ActiveRegistrationData handReg = pBaseActivity.getConfig().getUserSettings() != null ? pBaseActivity.getConfig().getUserSettings().getActive_registration_data() : null;
-                if (handReg != null && handReg.getReg_phones() != null && handReg.getReg_phones().size() > 0) {
-                    phone = handReg.getReg_phones().get(0);
+            String phone = "0";
+            ActiveRegistrationData handReg = pBaseActivity.getConfig().getUserSettings() != null ? pBaseActivity.getConfig().getUserSettings().getActive_registration_data() : null;
+            if (handReg != null && handReg.getReg_phones() != null && handReg.getReg_phones().size() > 0) {
+                phone = handReg.getReg_phones().get(0);
+            }
+
+            if (phone == null || phone.equals("0") || phone.equals("")) {
+                try {
+                    phone = getDao().getRegistrationR(pBaseActivity.getCurrentUserId()).getPhone();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            }
 
-                if (phone == null || phone.equals("0") || phone.equals("")) {
-                    try {
-                        phone = getDao().getRegistrationR(pBaseActivity.getCurrentUserId()).getPhone();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                String url;
-                url = pBaseActivity.getCurrentUser().getConfigR().getExitHost() != null ? pBaseActivity.getCurrentUser().getConfigR().getExitHost() + Constants.Default.TEST_SMS_URL : null;
-                if (Internet.hasConnection(pBaseActivity) && url != null) {
-                    pBaseActivity.addLog(Constants.LogObject.SMS, "SEND_TEST_REG", Constants.LogResult.ATTEMPT, message + "/" + phone, url);
-                    QuizerAPI.sendSms(url, message, phone, -1, (data, id) -> {
-                        if (data != null) {
-                            if (pCallback != null) {
-                                pCallback.onSuccess();
-                            } else {
-                                if (pCallback != null) {
-                                    pCallback.onError(new Exception("Ошибка отправки сообщения через API"));
-                                }
-                            }
-                            pBaseActivity.showToastfromActivity("Сообщение отправлено через API");
-                        }
-                        else {
+            String url;
+            url = pBaseActivity.getCurrentUser().getConfigR().getExitHost() != null ? pBaseActivity.getCurrentUser().getConfigR().getExitHost() + Constants.Default.TEST_SMS_URL : null;
+            if (Internet.hasConnection(pBaseActivity) && url != null) {
+                pBaseActivity.addLog(Constants.LogObject.SMS, "SEND_TEST_REG", Constants.LogResult.ATTEMPT, message + "/" + phone, url);
+                QuizerAPI.sendSms(url, message, phone, -1, (data, id) -> {
+                    if (data != null) {
+                        if (pCallback != null) {
+                            pCallback.onSuccess();
+                        } else {
                             if (pCallback != null) {
                                 pCallback.onError(new Exception("Ошибка отправки сообщения через API"));
                             }
-                            pBaseActivity.showToastfromActivity("Ошибка отправки сообщения через API");
                         }
-                    });
-                }
+                        pBaseActivity.showToastfromActivity("Сообщение отправлено через API");
+                    } else {
+                        if (pCallback != null) {
+                            pCallback.onError(new Exception("Ошибка отправки сообщения через API"));
+                        }
+                        pBaseActivity.showToastfromActivity("Ошибка отправки сообщения через API");
+                    }
+                });
+            }
 
         }
     }

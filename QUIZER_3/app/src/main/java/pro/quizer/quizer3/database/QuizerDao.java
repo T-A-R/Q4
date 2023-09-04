@@ -140,8 +140,11 @@ public interface QuizerDao {
     @Query("SELECT * FROM ElementDatabaseModelR WHERE token = :token")
     List<ElementDatabaseModelR> getElementByToken(String token);
 
-    @Query("UPDATE ElementDatabaseModelR SET send_sms = :send_sms WHERE relative_id = :relative_id")
-    void setElementSendSms(boolean send_sms, Integer relative_id);
+    @Query("SELECT * FROM ElementDatabaseModelR WHERE token = :token AND send_sms = :sms_status")
+    List<ElementDatabaseModelR> getElementByTokenAndSmsStatus(String token, boolean sms_status);
+
+    @Query("UPDATE ElementDatabaseModelR SET send_sms = :send_sms WHERE relative_id = :relative_id AND token = :token")
+    void setElementSendSms(boolean send_sms, Integer relative_id, String token);
 
     @Query("DELETE FROM ElementDatabaseModelR")
     void clearElementDatabaseModelR();
@@ -183,8 +186,11 @@ public interface QuizerDao {
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status AND send_sms = :send_sms AND survey_status = :survey")
     List<QuestionnaireDatabaseModelR> getQuestionnaireForStage(int userId, String status, String survey, boolean send_sms);
 
-    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status AND send_sms = :sms_sent AND date_interview >= :timeFrom AND date_interview <= :timeTo")
-    List<QuestionnaireDatabaseModelR> getQuestionnaireWithTime(int userId, String status, boolean sms_sent, long timeFrom, long timeTo);
+//    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status AND send_sms = :sms_sent AND date_interview >= :timeFrom AND date_interview <= :timeTo")
+//    List<QuestionnaireDatabaseModelR> getQuestionnaireWithTime(int userId, String status, boolean sms_sent, long timeFrom, long timeTo);
+
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status AND date_interview >= :timeFrom AND date_interview <= :timeTo")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireWithTime(int userId, String status, long timeFrom, long timeTo);
 
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId")
     List<QuestionnaireDatabaseModelR> getQuestionnaireByUserId(int userId);

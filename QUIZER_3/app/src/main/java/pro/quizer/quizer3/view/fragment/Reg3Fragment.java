@@ -121,17 +121,21 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (uikList != null) {
-                    Log.d("T-A-R.Reg3Fragment", "UIK: " +uikList.get(0));
-                    if (!uikList.contains(s.toString())) {
-                        uik.setError("Неверный UIK");
-                        isUikValid = false;
+                try {
+                    if (uikList != null) {
+                        Log.d("T-A-R.Reg3Fragment", "UIK: " + uikList.get(0));
+                        if (!uikList.contains(s.toString())) {
+                            uik.setError("Неверный UIK");
+                            isUikValid = false;
+                        } else {
+                            isUikValid = true;
+                        }
                     } else {
-                        isUikValid = true;
+                        isUikValid = false;
+                        uik.setError("Нет списка UIK");
                     }
-                } else {
-                    isUikValid = false;
-                    uik.setError("Нет списка UIK");
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -183,8 +187,10 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
     @Override
     public boolean onBackPressed() {
 //        replaceFragment(new Reg2Fragment());
+        showToast("Возврат на главную");
         getDao().clearRegistrationRByUser(getCurrentUserId());
-        replaceFragment(new HomeFragment());
+        getMainActivity().restartHome();
+//        replaceFragment(new HomeFragment());
         return true;
     }
 
@@ -396,7 +402,8 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                         .setMessage(R.string.reg_error_message)
                         .setPositiveButton(R.string.button_continue, (dialog, which) -> {
                             dialog.dismiss();
-                            replaceFragment(new HomeFragment());
+                            getMainActivity().restartHome();
+//                            replaceFragment(new HomeFragment());
                         })
                         .show();
             }
@@ -410,7 +417,7 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
 
             // r{admin_key}:[{user_id} {uik_number} {gps} {gps_network} {reg_time} {phone}] - в квадратных скобках шифрованное
 
-            Log.d("T-A-R", "sendRegSms: " + registration.getGps() +"/"+ registration.getGps_network() );
+            Log.d("T-A-R", "sendRegSms: " + registration.getGps() + "/" + registration.getGps_network());
 
             int number1 = registration.getUser_id(); // user_id
             String number2 = registration.getUik_number(); // uik
@@ -427,7 +434,16 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
             Log.d("T-A-R.Reg3Fragment", "sendRegSms: " + decode(encodedMessage));
             new Thread(() -> SmsUtils.sendRegSms(getMainActivity(), this, sms)).start();
         } else {
-            replaceFragment(new HomeFragment());
+            try {
+                if (getMainActivity().getCurrentUser().getConfigR().getProjectInfo().getReserveChannel() != null)
+                    getMainActivity().addLog(Constants.LogObject.REGISTRATION, "SENT", Constants.LogResult.ERROR, "" + getMainActivity().getCurrentUser().getConfigR().getProjectInfo().getReserveChannel()
+                            + " " + getMainActivity().getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getSelectedPhone()
+                            + " " + registration.getPhone() + " " + registration.getPhone().length(), null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            getMainActivity().restartHome();
+//            replaceFragment(new HomeFragment());
         }
     }
 
@@ -438,13 +454,21 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
     @Override
     public void onSuccess() {
         Log.d("T-L.Reg3Fragment", "SEND REG SMS onSuccess: ");
-        replaceFragment(new Reg4Fragment(true));
+        try {
+            replaceFragment(new Reg4Fragment(true));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void onError(Exception pException) {
         Log.d("T-L.Reg3Fragment", "SEND REG SMS onError: " + pException.getMessage());
-        replaceFragment(new Reg4Fragment(false));
+        try {
+            replaceFragment(new Reg4Fragment(false));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 //        getMainActivity().runOnUiThread(() -> {
 //            showToast("Ошибка отправки СМС. \nСвяжитесь с тех. поддержкой");
 //            UiUtils.setButtonEnabled(btnNext, true);
@@ -480,12 +504,20 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
                 ), registration.getId(), "jpeg", this);
             } else {
                 showToast("Ошибка получения адреса регистрации экзит");
-                getMainActivity().addLog(Constants.LogObject.REGISTRATION, "SEND_REG", Constants.LogResult.ERROR, "Ошибка получения адреса регистрации экзит", "URL: NULL");
+                try {
+                    getMainActivity().addLog(Constants.LogObject.REGISTRATION, "SEND_REG", Constants.LogResult.ERROR, "Ошибка получения адреса регистрации экзит", "URL: NULL");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
             showToast("Ошибка отправки регистрации. Попробуйте снова");
-            getMainActivity().addLog(Constants.LogObject.REGISTRATION, "SEND_REG", Constants.LogResult.ERROR, "Ошибка отправки регистрации. Попробуйте снова", e.toString());
+            try {
+                getMainActivity().addLog(Constants.LogObject.REGISTRATION, "SEND_REG", Constants.LogResult.ERROR, "Ошибка отправки регистрации. Попробуйте снова", e.toString());
+            } catch (Exception ex) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -495,7 +527,8 @@ public class Reg3Fragment extends ScreenFragment implements View.OnClickListener
             showToast("Нет ответа от сервера");
             getMainActivity().addLog(Constants.LogObject.REGISTRATION, "SEND_REG", Constants.LogResult.ERROR, "Нет ответа от сервера", null);
 //            getMainActivity().addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Ошибка отправки регистрации. Попробуйте снова", "Сервер не отвечает");
-            showNoInternetDialog();
+//            showNoInternetDialog(); //TODO RETURN LATER
+            sendRegSms();
             return;
         } else {
             try {

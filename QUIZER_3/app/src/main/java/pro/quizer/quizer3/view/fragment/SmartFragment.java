@@ -367,7 +367,9 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
 
     public String getLoginAdmin() {
-        return getActivationModel().getLogin_admin();
+        if (getActivationModel() != null)
+            return getActivationModel().getLogin_admin();
+        else return null;
     }
 
     public String getServer() {
@@ -886,7 +888,9 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                 getDao().setConfigTime(DateUtils.getCurrentTimeMillis());
                 getMainActivity().setUpdateConfig(false);
                 getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
+                getDao().setUpdateConfig(false);
                 getMainActivity().getConfigForce();
+                getMainActivity().getSettings();
 
                 SmartFragment.UpdateQuiz updateQuiz = new SmartFragment.UpdateQuiz();
                 updateQuiz.execute();
@@ -988,7 +992,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         try {
             getDao().insertQuestionnaire(questionnaireDatabaseModel);
             getMainActivity().setSettings(Constants.Settings.QUIZ_TIME, String.valueOf(DateUtils.getCurrentTimeMillis()));
-            Log.d("T-A-R.SmartFragment", "saveQuestionnaireToDatabase 2: " + StringUtils.getJson(questionnaireDatabaseModel) );
+            Log.d("T-A-R.SmartFragment", "saveQuestionnaireToDatabase 2: " + StringUtils.getJson(questionnaireDatabaseModel));
             saveQuizToFile(questionnaireDatabaseModel.getToken());
             getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.SUCCESS, questionnaireDatabaseModel.getToken(), null);
         } catch (Exception e) {
@@ -1409,7 +1413,11 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public void st(String notes) {
-        getMainActivity().showTime(notes);
+        try {
+            getMainActivity().showTime(notes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

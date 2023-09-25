@@ -2076,7 +2076,11 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
 
         cont.setOnClickListener(v -> {
             st("showInfoDialog() ---");
-            infoDialog.dismiss();
+            try {
+                infoDialog.dismiss();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
 
         dQuota1.setTextColor(getResources().getColor(R.color.black));

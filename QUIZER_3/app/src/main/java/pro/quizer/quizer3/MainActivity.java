@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     private RelativeLayout mainCont;
 
-    private SettingsR mTimingsSettings = null;
+//    private SettingsR mTimingsSettings = null;
 
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationRequest locationRequest;
@@ -1449,7 +1449,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public void showTime(String notes) {
-        if (mTimingsSettings.isTimings_debug()) {
+        if (getSettings().isTimings_debug()) {
             try {
                 mTimings.add(new TimingLog(notes, (DateUtils.getFullCurrentTime() - alphaTime), getToken()));
                 Log.d("TIME", "deltaTime (" + notes + ") :" + (DateUtils.getFullCurrentTime() - alphaTime));
@@ -1531,14 +1531,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public SettingsR getSettings() {
         SettingsR settings = getMainDao().getSettings();
-        mTimingsSettings = settings;
+//        mTimingsSettings = settings;
         if (settings == null) {
             settings = new SettingsR();
             if (AVIA) settings.setAuto_zoom(false);
             getMainDao().insertSettings(settings);
             checkRoot();
         }
-        mTimingsSettings = settings;
+//        mTimingsSettings = settings;
         return settings;
     }
 

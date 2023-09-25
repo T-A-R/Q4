@@ -1487,12 +1487,22 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             isTimeToDownloadConfig = DateUtils.getCurrentTimeMillis() >= updateDate;
         }
         boolean updateFromSmsReg = activity.needUpdateConfig();
-        if (updateFromSmsReg) {
-            isTimeToDownloadConfig = updateFromSmsReg;
-            tvPbText.setVisibility(View.VISIBLE);
-            tvPbText.setText("В настройки проекта были внесены изменения. Для продолжения работы, пожалуйста, обновите конфиг");
-        } else {
-            tvPbText.setVisibility(View.GONE);
+
+        try {
+            if (updateFromSmsReg) {
+                isTimeToDownloadConfig = updateFromSmsReg;
+                getMainActivity().runOnUiThread(() -> {
+                    tvPbText.setVisibility(View.VISIBLE);
+                    tvPbText.setText("В настройки проекта были внесены изменения. Для продолжения работы, пожалуйста, обновите конфиг");
+                });
+
+            } else {
+                getMainActivity().runOnUiThread(() -> {
+                    tvPbText.setVisibility(View.GONE);
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         final MainActivity activity = getMainActivity();
@@ -1657,7 +1667,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             List<PeriodModel> regPeriods = configModel.getRegistrationPeriods();
             List<PeriodModel> workPeriods = configModel.getWork_periods();
-            workPeriods.add(new PeriodModel(1693765600l, 1693865600l)); //TODO FOR TESTS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+//            workPeriods.add(new PeriodModel(1693765600l, 1693865600l)); //TODO FOR TESTS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
             if (workPeriods != null && workPeriods.size() > 0) {
                 boolean isFound = false;
@@ -1725,8 +1735,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             if (regPeriod == null) {
                 Log.d("T-A-R", "checkRegistration: 16");
                 isRegistrationRequired = true;
-                if (!regDisabled)
-                    btnStart.setText("Регистрация");
                 UiUtils.setButtonEnabled(btnStart, false);
                 if(regDisabled) {
                     if(nextRegPeriod != null) {
@@ -1735,7 +1743,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         tvRegInfo.setVisibility(View.VISIBLE);
                         activity.startCounter(nextWorkPeriod.getStart() * 1000L, 2, this);
                         btnStart.setText("Начать");
-                        UiUtils.setButtonEnabled(btnStart, false);
                         isCodeRequired = false;
                         isRegistrationRequired = false;
                     }
@@ -1745,25 +1752,24 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         tvRegInfo.setText(info);
                         tvRegInfo.setVisibility(View.VISIBLE);
                         activity.startCounter(nextRegPeriod.getStart() * 1000L, 1, this);
-                    } else {
-                        
+                        btnStart.setText("Регистрация");
                     }
                 }
-                if (!regDisabled && nextRegPeriod != null) {
-                    String info = "Внимание! Период регистрации начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextRegPeriod.getStart() * 1000L) + "!";
-                    tvRegInfo.setText(info);
-                    tvRegInfo.setVisibility(View.VISIBLE);
-                    activity.startCounter(nextRegPeriod.getStart() * 1000L, 1, this);
-                } else if (regDisabled && nextWorkPeriod != null && !getCurrentUser().getConfigR().hasReserveChannels()) {
-                    String info = "Внимание! Рабочий период начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextWorkPeriod.getStart() * 1000L) + "!";
-                    tvRegInfo.setText(info);
-                    tvRegInfo.setVisibility(View.VISIBLE);
-                    activity.startCounter(nextWorkPeriod.getStart() * 1000L, 2, this);
-                    btnStart.setText("Начать");
-                    UiUtils.setButtonEnabled(btnStart, false);
-                    isCodeRequired = false;
-                    isRegistrationRequired = false;
-                }
+//                if (!regDisabled && nextRegPeriod != null) {
+//                    String info = "Внимание! Период регистрации начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextRegPeriod.getStart() * 1000L) + "!";
+//                    tvRegInfo.setText(info);
+//                    tvRegInfo.setVisibility(View.VISIBLE);
+//                    activity.startCounter(nextRegPeriod.getStart() * 1000L, 1, this);
+//                } else if (regDisabled && nextWorkPeriod != null && !getCurrentUser().getConfigR().hasReserveChannels()) {
+//                    String info = "Внимание! Рабочий период начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextWorkPeriod.getStart() * 1000L) + "!";
+//                    tvRegInfo.setText(info);
+//                    tvRegInfo.setVisibility(View.VISIBLE);
+//                    activity.startCounter(nextWorkPeriod.getStart() * 1000L, 2, this);
+//                    btnStart.setText("Начать");
+//                    UiUtils.setButtonEnabled(btnStart, false);
+//                    isCodeRequired = false;
+//                    isRegistrationRequired = false;
+//                }
             } else {
                 Log.d("T-A-R", "checkRegistration: 1");
                 if (workPeriod == null) {
@@ -1916,6 +1922,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void start() {
+        Log.d("T-A-R", "start: isTimeToDownloadConfig = " + isTimeToDownloadConfig);
         boolean mCheckGps = canContWithZeroGps || checkGps();
         new Thread(() -> {
             if (!isTimeToDownloadConfig) {
@@ -1928,6 +1935,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             isStartBtnPressed = true;
             if (isTimeToDownloadConfig) {
+                isTimeToDownloadConfig = false;
                 activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. Reload config", null);
                 reloadConfig();
             } else if (currentQuestionnaire == null && !isNeedUpdate) {

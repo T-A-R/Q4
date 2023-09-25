@@ -389,6 +389,7 @@ public final class SmsUtils {
             url = pBaseActivity.getCurrentUser().getConfigR().getExitHost() != null ? pBaseActivity.getCurrentUser().getConfigR().getExitHost() + Constants.Default.TEST_SMS_URL : null;
             if (Internet.hasConnection(pBaseActivity) && url != null) {
                 pBaseActivity.addLog(Constants.LogObject.SMS, "SEND_TEST_REG", Constants.LogResult.ATTEMPT, message + "/" + phone, url);
+                Log.d("T-A-R", ">>>>> sendRegSms: " + message);
                 QuizerAPI.sendSms(url, message, phone, -1, (data, id) -> {
                     if (data != null) {
                         if (pCallback != null) {

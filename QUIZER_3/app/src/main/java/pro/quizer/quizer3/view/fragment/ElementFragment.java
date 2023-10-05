@@ -155,6 +155,8 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
     private boolean isInHiddenQuotaDialog = false;
     private boolean isFragmentLoading = false;
 
+    private Integer hiddenId;
+
     public ElementFragment() {
         super(R.layout.fragment_element);
     }
@@ -2201,7 +2203,10 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                             if (!isFragmentLoading) {
                                 isFragmentLoading = true;
                                 TransFragment fragment = new TransFragment();
-                                fragment.setStartElement(currentElement.getRelative_id(), nextElementId);
+                                Integer startId;
+                                if(answerType.equals(ElementSubtype.HIDDEN)) startId = hiddenId;
+                                else startId = currentElement.getRelative_id();
+                                fragment.setStartElement(startId, nextElementId);
                                 stopRecording();
                                 replaceFragment(fragment);
                             }
@@ -2636,8 +2641,12 @@ public class ElementFragment extends ScreenFragment implements View.OnClickListe
                     nextElementId = getElement(answerStatesHidden.get(0).getRelative_id()).getElementOptionsR().getJump();
                 else nextElementId = nextElement.getElementOptionsR().getJump();
                 if (!answerType.equals(ElementSubtype.HIDDEN)) {
+//                    Log.d("T-A-R", "checkHidden: 11111111111");
                     currentElement = nextElement;
                 } else {
+//                    Log.d("T-A-R", "checkHidden: 222222222222");
+//                    Log.d("T-A-R", "checkHidden: CUR ID = " + currentElement.getRelative_id());
+                    hiddenId = currentElement.getRelative_id();
                     currentElement = getElement(nextElementId);
                 }
                 checkAndLoadNext();

@@ -921,6 +921,16 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             return tree;
         }
 
+        private void showTree(ElementItemR[][] tree) {
+            Log.d("T-A-R", ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> showTree: ");
+            for(int i = 0; i < tree[0].length; i++) {
+                for(int k = 0; k < tree.length; k++) {
+                    System.out.print(tree[k][i].getRelative_id() + "/" + tree[k][i].isEnabled() + " ");
+                }
+                System.out.println(".");
+            }
+        }
+
         public int getLocalQuotas(MainActivity activity, Integer[] sequence) {
             int counter = 0;
             Set<Integer> mSet = new HashSet<>(Arrays.asList(sequence));

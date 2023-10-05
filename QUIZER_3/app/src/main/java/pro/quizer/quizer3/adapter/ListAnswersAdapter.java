@@ -421,9 +421,12 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         public boolean canShow(ElementItemR[][] tree, List<List<Integer>> passedElementsId, int relativeId, int order) {
             Log.d("T-A-R", "====== canShow: " + relativeId);
 
-//            for(List<Integer> id : passedElementsId) {
-//                Log.d("T-A-R", "list: " + id.get(0));
-//            }
+            for(List<Integer> id : passedElementsId) {
+                Log.d("T-A-R", "list: " + id.get(0));
+            }
+
+            Log.d("T-A-R", "======= TREE ======= ");
+
 
             if (tree == null) {
                 return true;
@@ -448,6 +451,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                         }
                     }
                 }
+                Log.d("T-A-R", "canShow: FALSE 1");
                 return false;
             } else {
                 int endPassedElement = order - 1;
@@ -493,6 +497,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                     }
                 }
             }
+            Log.d("T-A-R", "canShow: FALSE 2");
             return false;
         }
 

@@ -32,6 +32,8 @@ public class ReserveChannelModel implements Serializable {
             }
         }
 
+        if(phones != null && phones.size() > 0) return phones.get(0);
+
         return null;
     }
 

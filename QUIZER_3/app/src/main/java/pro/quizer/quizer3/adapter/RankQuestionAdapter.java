@@ -444,8 +444,8 @@ public class RankQuestionAdapter extends RecyclerView.Adapter<RankQuestionAdapte
     public void clearOldPassed() {
         if (isRestored) {
             try {
-                int id = mActivity.getMainDao().getElementPassedR(mActivity.getCurrentQuestionnaire().getToken(), question.getRelative_id()).getId();
-                mActivity.getMainDao().deleteOldElementsPassedR(id);
+                long id = mActivity.getMainObjectBoxDao().getElementPassedR(mActivity.getCurrentQuestionnaire().getToken(), question.getRelative_id()).getId();
+                mActivity.getMainObjectBoxDao().deleteOldElementsPassedR(id);
                 mActivity.showToastfromActivity(mActivity.getString(R.string.data_changed));
             } catch (Exception e) {
                 e.printStackTrace();

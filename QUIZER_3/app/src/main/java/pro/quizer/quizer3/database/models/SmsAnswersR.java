@@ -1,5 +1,6 @@
 package pro.quizer.quizer3.database.models;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Index;
@@ -10,10 +11,6 @@ import java.util.List;
 @Entity(indices = {@Index("userId")})
 public class SmsAnswersR {
 
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    private int id;
-
     @ColumnInfo(name = "answers")
     private List<Integer> answers;
 
@@ -23,6 +20,8 @@ public class SmsAnswersR {
     @ColumnInfo(name = "time")
     private Long time;
 
+    @NonNull
+    @PrimaryKey()
     @ColumnInfo(name = "smsIndex")
     private String smsIndex;
 
@@ -30,14 +29,6 @@ public class SmsAnswersR {
     private Integer quizQuantity;
 
     public SmsAnswersR() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public List<Integer> getAnswers() {

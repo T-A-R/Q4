@@ -427,7 +427,6 @@ public class FileUtils {
         }
 
         createFolderIfNotExist(path);
-
         return path;
     }
 

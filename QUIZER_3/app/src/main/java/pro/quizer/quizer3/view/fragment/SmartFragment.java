@@ -62,6 +62,7 @@ import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
+import pro.quizer.quizer3.database.models.InterStateR;
 import pro.quizer.quizer3.database.models.OptionsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.SettingsR;
@@ -75,10 +76,13 @@ import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.model.logs.Crash;
+import pro.quizer.quizer3.objectbox.ObjectBoxDao;
+import pro.quizer.quizer3.objectbox.models.ElementPassedOB;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.FontUtils;
 import pro.quizer.quizer3.utils.SPUtils;
+import pro.quizer.quizer3.utils.StringUtils;
 
 import static pro.quizer.quizer3.MainActivity.AVIA;
 import static pro.quizer.quizer3.MainActivity.TAG;
@@ -238,7 +242,9 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public Context getContext() {
         View view = getView();
-        return view != null ? view.getContext() : null;
+        Context context = view != null ? view.getContext() : null;
+        if (context == null) context = getMainActivity();
+        return context;
     }
 
     public int getLayoutSrc() {
@@ -280,6 +286,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public static QuizerDao getDao() {
         return CoreApplication.getQuizerDatabase().getQuizerDao();
     }
+
+    public ObjectBoxDao getObjectBoxDao() {return CoreApplication.getObjectBoxDao();}
 
     //TODO Вернуть логи! Временно выключены из за тестов на учечку памяти.
 
@@ -364,11 +372,17 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
 
     public String getLoginAdmin() {
-        return getActivationModel().getLogin_admin();
+        if (getActivationModel() != null)
+            return getActivationModel().getLogin_admin();
+        else return null;
     }
 
     public String getServer() {
-        return getActivationModel().getServer();
+        return getActivationModel().getServer() + Constants.Default.API_PATH;
+    }
+
+    public String getQuotaUrl() {
+        return getActivationModel().getServer() + Constants.Default.ONLINE_QUOTAS_URL;
     }
 
     public UserModelR getLocalUserModel(final String pLogin, final String pPassword) {
@@ -393,10 +407,15 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             try {
                 MainActivity activity = getMainActivity();
                 Log.d("T-A-R.", "CLEAR: 8");
+                try {
+                    getDao().deleteOnlineQuota(getQuestionnaire().getToken());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
                 activity.getMainDao().clearCurrentQuestionnaireR();
-                activity.getMainDao().clearPrevElementsR();
+                activity.getMainObjectBoxDao().clearPrevElementsR();
                 activity.setCurrentQuestionnaireNull();
-                activity.getMainDao().clearElementPassedR();
+                activity.getMainObjectBoxDao().clearElementPassedR();
                 activity.getMainDao().clearElementItemR();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -409,6 +428,23 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
         String oldConfig = null;
         UserModelR oldUser = null;
+
+        InterStateR interStateR = null;
+
+        Log.d("T-A-R", "saveUser: " + pModel.getUserProjectId());
+        interStateR = getDao().getInterState(pModel.getUserProjectId());
+
+        if (interStateR != null) {
+            if (pConfigModel.getIsBlockedInter() != null) {
+                getDao().setBlockedInter(pModel.getUserProjectId(), pConfigModel.getIsBlockedInter());
+            }
+
+            if (pConfigModel.getDateStartInter() != null && pConfigModel.getDateEndInter() != null) {
+                getDao().setDatesInter(pModel.getUserProjectId(), pConfigModel.getDateStartInter(), pConfigModel.getDateEndInter());
+            }
+        } else if (pConfigModel.getIsBlockedInter() != null) {
+            getDao().insertInterState(new InterStateR(pModel.getUserProjectId(), pConfigModel.getIsBlockedInter(), pConfigModel.getDateStartInter(), pConfigModel.getDateEndInter()));
+        }
 
         try {
             oldUser = getMainActivity().getUserByUserId(pModel.getUserId());
@@ -426,6 +462,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         } else {
             try {
                 Log.d("T-A-R.", "CLEAR: 9");
+                getDao().deleteOnlineQuota(getQuestionnaire().getToken());
                 getDao().clearCurrentQuestionnaireR();
 //                getDao().clearQuotaR(configId);
             } catch (Exception e) {
@@ -577,7 +614,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public List<Integer> getPassedQuotasBlock(int max) {
         List<Integer> passedQuotasBlock = new ArrayList<>();
-        List<ElementPassedR> passedElements = getDao().getAllElementsPassedR(getMainActivity().getCurrentQuestionnaire().getToken());
+//        List<ElementPassedR> passedElements = getDao().getAllElementsPassedR(getMainActivity().getCurrentQuestionnaire().getToken());
+        List<ElementPassedOB> passedElements = getObjectBoxDao().getAllElementsPassedR(getMainActivity().getCurrentQuestionnaire().getToken());
         if (passedElements == null || passedElements.size() == 0) {
             return null;
         }
@@ -600,15 +638,17 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     public List<List<Integer>> getMultiPassedQuotasBlock(int max) {
         List<List<Integer>> passedQuotasBlock = new ArrayList<>();
-        List<ElementPassedR> passedElements = getDao().getQuotaPassedElements(getMainActivity().getCurrentQuestionnaire().getToken(), true);
+//        List<ElementPassedR> passedElements = getDao().getQuotaPassedElements(getMainActivity().getCurrentQuestionnaire().getToken(), true);
+        List<ElementPassedOB> passedElements = getObjectBoxDao().getQuotaPassedElements(getMainActivity().getCurrentQuestionnaire().getToken(), true);
 //        List<ElementPassedR> passedElements2 = getDao().getAllElementsPassedRNoToken();
+//        Log.d("T-A-R", "getMultiPassedQuotasBlock: " + StringUtils.getJson(passedElements));
         if (passedElements == null || passedElements.size() == 0) {
             return null;
         }
 
-        for (ElementPassedR item : passedElements) {
-            Log.d("T-A-R.SmartFragment", "PASSED ID >>>>>: " + item.getRelative_id());
-        }
+//        for (ElementPassedR item : passedElements) {
+//            Log.d("T-A-R.SmartFragment", "PASSED ID >>>>>: " + item.getRelative_id());
+//        }
 
         Integer savedParent = null;
         for (int k = 0; k < passedElements.size(); k++) {
@@ -617,7 +657,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 //            Log.d("T-A-R.SmartFragment", "getMultiPassedQuotasBlock PARENT: " + parentId);
             if (!parentId.equals(savedParent)) {
                 savedParent = parentId;
-                List<Integer> passedAnswersList = getDao().getQuotaPassedAnswers(getMainActivity().getCurrentQuestionnaire().getToken(), true, parentId);
+//                List<Integer> passedAnswersList = getDao().getQuotaPassedAnswers(getMainActivity().getCurrentQuestionnaire().getToken(), true, parentId);
+                List<Integer> passedAnswersList = getObjectBoxDao().getQuotaPassedAnswers(getMainActivity().getCurrentQuestionnaire().getToken(), true, parentId);
 //                try {
 //                    Log.d("T-A-R.SmartFragment", "getMultiPassedQuotasBlock LIST: " + passedAnswersList.size());
 //                } catch (Exception e) {
@@ -627,9 +668,9 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             }
         }
 
-//        for (List<Integer> item : passedQuotasBlock) {
-//            Log.d("T-A-R.SmartFragment", "PASSED ID >>>>>: " + item.get(0));
-//        }
+        for (List<Integer> item : passedQuotasBlock) {
+            Log.d("T-A-R.SmartFragment", "PASSED ID >>>>>: " + item.get(0));
+        }
 
         List<List<Integer>> passedQuotasBlockNew = new ArrayList<>();
 //
@@ -637,6 +678,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 //            Log.d("T-A-R.SmartFragment", "????: " + block.get(0));
 //        }
 
+        Log.d("T-A-R", "getMultiPassedQuotasBlock: " + max + " passed: " + passedQuotasBlock.size());
         if (passedQuotasBlock.size() > 0) {
             for (int i = 0; i < max - 1; i++) {
                 passedQuotasBlockNew.add(passedQuotasBlock.get(i));
@@ -648,7 +690,8 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     public Map<Integer, List<Integer>> getPassedQuotasMap(int max) {
         Map<Integer, List<Integer>> mapBlock = new HashMap<>();
         Map<Integer, List<Integer>> limitedMapBlock = new HashMap<>();
-        List<ElementPassedR> passedElements = getDao().getAllElementsPassedR(getMainActivity().getCurrentQuestionnaire().getToken());
+//        List<ElementPassedR> passedElements = getDao().getAllElementsPassedR(getMainActivity().getCurrentQuestionnaire().getToken());
+        List<ElementPassedOB> passedElements = getObjectBoxDao().getAllElementsPassedR(getMainActivity().getCurrentQuestionnaire().getToken());
         if (passedElements == null || passedElements.size() == 0) {
             return null;
         }
@@ -730,6 +773,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             String responseJson;
             try {
                 responseJson = responseBody.string();
+                Log.d("T-A-R", "reloadConfig: " + responseJson);
             } catch (IOException e) {
                 e.printStackTrace();
                 responseJson = null;
@@ -791,6 +835,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                     }
 
                     if (configResponseModel != null) {
+                        getMainActivity().setUpdateConfig(false);
                         if (configResponseModel.isProjectActive() != null) {
                             try {
                                 getDao().setProjectActive(configResponseModel.isProjectActive());
@@ -844,6 +889,21 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         try {
             String oldConfig = null;
             UserModelR oldUser = null;
+            InterStateR interStateR = null;
+
+            interStateR = getDao().getInterState(pUserModel.getUser_project_id());
+
+            if (interStateR != null) {
+                if (pConfigModel.getIsBlockedInter() != null) {
+                    getDao().setBlockedInter(pUserModel.getUser_project_id(), pConfigModel.getIsBlockedInter());
+                }
+
+                if (pConfigModel.getDateStartInter() != null && pConfigModel.getDateEndInter() != null) {
+                    getDao().setDatesInter(pUserModel.getUser_project_id(), pConfigModel.getDateStartInter(), pConfigModel.getDateEndInter());
+                }
+            } else if (pConfigModel.getIsBlockedInter() != null) {
+                getDao().insertInterState(new InterStateR(pUserModel.getUser_project_id(), pConfigModel.getIsBlockedInter(), pConfigModel.getDateStartInter(), pConfigModel.getDateEndInter()));
+            }
 
             try {
                 Log.d(TAG, "==== pUserModel.getUser_id() = " + pUserModel.getUser_id());
@@ -879,8 +939,11 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             } else {
                 Log.d(TAG, "==== SAVE TO CONFIG COZ NO HAVE QUIZ ====");
                 getDao().setConfigTime(DateUtils.getCurrentTimeMillis());
+                getMainActivity().setUpdateConfig(false);
                 getDao().updateConfig(new GsonBuilder().create().toJson(pConfigModel), pUserModel.getUser_id(), pUserModel.getUser_project_id());
+                getDao().setUpdateConfig(false);
                 getMainActivity().getConfigForce();
+                getMainActivity().getSettings();
 
                 SmartFragment.UpdateQuiz updateQuiz = new SmartFragment.UpdateQuiz();
                 updateQuiz.execute();
@@ -895,7 +958,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
     }
 
     public boolean saveQuestionnaireToDatabase(CurrentQuestionnaireR currentQuiz, boolean aborted) {
-        Log.d("T-A-R.SmartFragment", "saveQuestionnaireToDatabase: ");
+        Log.d("T-A-R.SmartFragment", "saveQuestionnaireToDatabase 1: ");
 
         try {
             getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.ATTEMPT, currentQuiz.getToken(), null);
@@ -913,14 +976,15 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         if (user_project_id == null)
             user_project_id = getCurrentUser().getUser_project_id();
 
-        List<ElementPassedR> elements = null;
+        List<ElementPassedOB> elements = null;
         try {
-            elements = getDao().getAllElementsPassedR(currentQuiz.getToken());
+//            elements = getDao().getAllElementsPassedR(currentQuiz.getToken());
+            elements = getObjectBoxDao().getAllElementsPassedR(currentQuiz.getToken());
         } catch (Exception e) {
             e.printStackTrace();
         }
         if (elements != null && elements.size() > 0) {
-            for (ElementPassedR element : elements) {
+            for (ElementPassedOB element : elements) {
 
                 if (!saveElement(currentQuiz, element)) {
                     showToast("Ошибка сохранения элемента анкеты");
@@ -960,9 +1024,15 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         questionnaireDatabaseModel.setPermissions(currentQuiz.getPermissions());
         questionnaireDatabaseModel.setAirplane_mode(currentQuiz.isAirplane_mode());
         questionnaireDatabaseModel.setGps_on(currentQuiz.isGps_on());
+        questionnaireDatabaseModel.setGps_on(currentQuiz.isQuotas_online_checking_failed());
+        questionnaireDatabaseModel.setQuestionnaire_route_id(currentQuiz.getQuestionnaire_route_id());
 
         if (aborted || getQuestionnaire().isIn_aborted_box() || getQuestionnaireFromDB().isIn_aborted_box()) {
-            questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.ABORTED);
+            if (currentQuiz.isCond_complete()) {
+                questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.COND_COMPLETE);
+            } else {
+                questionnaireDatabaseModel.setSurvey_status(Constants.QuestionnaireStatuses.ABORTED);
+            }
             questionnaireDatabaseModel.setCount_interrupted(currentQuiz.getCount_interrupted() + 1);
 
         } else {
@@ -978,14 +1048,16 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         questionnaireDatabaseModel.setQuota_time_difference(SPUtils.getQuotaTimeDifference(getContext()));
         questionnaireDatabaseModel.setSend_time_difference(SPUtils.getSendTimeDifference(getContext()));
         questionnaireDatabaseModel.setSend_sms(false);
+        questionnaireDatabaseModel.setQuotas_online_checking_failed(currentQuiz.isQuotas_online_checking_failed());
 
         try {
             getDao().insertQuestionnaire(questionnaireDatabaseModel);
             getMainActivity().setSettings(Constants.Settings.QUIZ_TIME, String.valueOf(DateUtils.getCurrentTimeMillis()));
-            Log.d("T-A-R.SmartFragment", "saveQuestionnaireToDatabase: " + questionnaireDatabaseModel.toString());
+            Log.d("T-A-R.SmartFragment", "saveQuestionnaireToDatabase 2: " + StringUtils.getJson(questionnaireDatabaseModel));
             saveQuizToFile(questionnaireDatabaseModel.getToken());
             getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.SUCCESS, questionnaireDatabaseModel.getToken(), null);
         } catch (Exception e) {
+            e.printStackTrace();
             showToast(getString(R.string.db_save_error));
             getMainActivity().addLog(Constants.LogObject.QUESTIONNAIRE, "SAVE_TO_DB", Constants.LogResult.ERROR, currentQuiz.getToken(), null);
             saved = false;
@@ -994,9 +1066,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         if (saved) {
             try {
                 Log.d("T-A-R.", "CLEAR: 10");
+                getDao().deleteOnlineQuota(getQuestionnaire().getToken());
                 getDao().clearCurrentQuestionnaireR();
-                getDao().clearElementPassedR();
-                getDao().clearPrevElementsR();
+                getObjectBoxDao().clearElementPassedR();
+                getObjectBoxDao().clearPrevElementsR();
                 getMainActivity().setCurrentQuestionnaireNull();
             } catch (Exception e) {
                 showToast(getString(R.string.warning_clear_current_quiz_error));
@@ -1030,10 +1103,10 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         }
     }
 
-    private boolean saveElement(CurrentQuestionnaireR currentQuiz, final ElementPassedR element) {
+    private boolean saveElement(CurrentQuestionnaireR currentQuiz, final ElementPassedOB element) {
         try {
-//            Log.d("T-A-R.SmartFragment", "saveElement ID: " + element.getRelative_id());
             final ElementDatabaseModelR elementDatabaseModel = new ElementDatabaseModelR();
+
             ElementItemR elementItemR = null;
             elementItemR = getDao().getElementById(element.getRelative_id());
             Integer parentId;
@@ -1043,12 +1116,15 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
                 return false;
             }
+
             elementDatabaseModel.setToken(element.getToken());
             elementDatabaseModel.setRelative_id(element.getRelative_id());
             elementDatabaseModel.setRelative_parent_id(parentId);
             elementDatabaseModel.setItem_order(elementItemR.getElementOptionsR().getOrder());
+            if(element.getCard_showed() != null) elementDatabaseModel.setCard_showed(element.getCard_showed());
+            if(element.getChecked_in_card() != null) elementDatabaseModel.setChecked_in_card(element.getChecked_in_card());
             if (ElementType.ANSWER.equals(elementItemR.getType())) {
-                if (element.isHelper() != null && element.isHelper()) {
+                if (element.getHelper() != null && element.getHelper()) {
                     elementDatabaseModel.setHelper(true);
                 }
                 elementDatabaseModel.setValue(element.getValue());
@@ -1082,7 +1158,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
 
     @Override
     public void onImageCapture(@NonNull File pImageFile) {
-        if (FileUtils.renameFile(getContext(),
+        if (FileUtils.renameFile(getMainActivity(),
                 pImageFile,
                 getCurrentUserId(),
                 FileUtils.generatePhotoFileName(mLoginAdmin, mProjectId, mUserLogin, mToken, mRelativeId))) {
@@ -1202,7 +1278,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
                     } else {
                         try {
                             getDao().setLogsStatusByObject(Constants.LogObject.REGISTRATION, Constants.LogStatus.SENT);
-                            showToast(getString(R.string.send_logs_success));
+//                            showToast(getString(R.string.send_logs_success));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -1270,7 +1346,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
             super.onPreExecute();
             try {
                 startCamera(new CameraConfig()
-                        .getBuilder(getContext())
+                        .getBuilder(getMainActivity())
                         .setCameraFacing(CameraFacing.FRONT_FACING_CAMERA)
                         .setCameraResolution(CameraResolution.LOW_RESOLUTION)
                         .setImageFormat(CameraImageFormat.FORMAT_JPEG)
@@ -1385,12 +1461,50 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         return encoded.toString();
     }
 
+    public String decode(String message) {
+        StringBuilder decoded = new StringBuilder();
+        for (Character ch : message.toCharArray()) {
+            decoded.append(getDecrypted(ch));
+        }
+        return decoded.toString();
+    }
+
     public Character getDecrypted(char encrypted) {
         return getDao().getSymbolsForDecrypt(encrypted);
     }
 
     public Character getEncrypted(char decrypted) {
         return getDao().getSymbolsForEncrypt(decrypted);
+    }
+
+    public void st(String notes) {
+        try {
+            getMainActivity().showTime(notes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setCondComp(Integer relativeId) {
+//        Log.d("T-A-R", ">>> saveElement(): " + relativeId);
+        if (getMainActivity().getConfig().getCondComplete()) {
+            try {
+                Integer quest = getMainActivity().getConfig().getCondCompleteItems().get(0);
+//                Log.d("T-A-R", "getCondComplete(): " + quest);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+//            Log.d("T-A-R", ">>> getCondComplete(): TRUE");
+            final List<Integer> list = getMainActivity().getConfig().getCondCompleteItems();
+            if (list != null && !list.isEmpty() && list.contains(relativeId)) {
+//                Log.d("T-A-R", ">>> getCondComplete(): FOUND");
+                getDao().setCurrentQuestionnaireCondComplete(true);
+            } else {
+//                Log.d("T-A-R", ">>> getCondComplete(): NOT FOUND");
+            }
+        } else {
+            Log.d("T-A-R", ">>> getCondComplete(): FALSE");
+        }
     }
 
 }

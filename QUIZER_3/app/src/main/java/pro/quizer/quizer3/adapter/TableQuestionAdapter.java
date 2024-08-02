@@ -445,7 +445,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     @Override
     public void onItemClick(final int row, final int column) {
-        Log.d("T-A-R.TableQuestionAdap", "onItemClick: " + row + "/" + column);
+//        Log.d("T-A-R.TableQuestionAdap", "onItemClick: " + row + "/" + column);
         final ElementItemR clickedElement = getElement(row, column);
 
         if (clickedElement == null) {
@@ -459,10 +459,10 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
         final ElementOptionsR options = clickedElement.getElementOptionsR();
         final String openType = options.getOpen_type();
 
-        Log.d("T-A-R.TableQuestionAdap", "onItemClick: 2");
+//        Log.d("T-A-R.TableQuestionAdap", "onItemClick: 2");
 
         if (!OptionsOpenType.CHECKBOX.equals(openType)) {
-            Log.d("T-A-R.TableQuestionAdap", "onItemClick: 3");
+//            Log.d("T-A-R.TableQuestionAdap", "onItemClick: 3");
             final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mContext);
             final View mView = layoutInflaterAndroid.inflate(mContext.isAutoZoom() ? R.layout.dialog_user_input_box_auto : R.layout.dialog_user_input_box, null);
             final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
@@ -476,7 +476,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
             mEditText.setHint(StringUtils.isEmpty(placeholder) ? mContext.getString(R.string.default_placeholder) : placeholder);
             mEditText.setText(textAnswer);
 
-            Log.d("T-A-R.TableQuestionAdap", "onItemClick: 3.1");
+//            Log.d("T-A-R.TableQuestionAdap", "onItemClick: 3.1");
 
             switch (options.getOpen_type()) {
                 case OptionsOpenType.TIME:
@@ -597,55 +597,55 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 alertDialog.show();
             }
         } else {
-            Log.d("T-A-R.TableQuestionAdap", "onItemClick: 4");
+//            Log.d("T-A-R.TableQuestionAdap", "onItemClick: 4");
             try {
                 if (isPolyanswer || !isElementChecked) {
-                    Log.d("T-A-R.TableQuestionAdap", "onItemClick: 4.1");
+//                    Log.d("T-A-R.TableQuestionAdap", "onItemClick: 4.1");
                     if (!mIsFlipColsAndRows) {
-                        Log.d("T-A-R.TableQuestionAdap", "onItemClick: 4.2");
+//                        Log.d("T-A-R.TableQuestionAdap", "onItemClick: 4.2");
                         mAnswersState[row - 1][column - 1].setChecked(!isElementChecked);
                     } else {
-                        Log.d("T-A-R.TableQuestionAdap", "onItemClick: 4.3");
+//                        Log.d("T-A-R.TableQuestionAdap", "onItemClick: 4.3");
                         mAnswersState[column - 1][row - 1].setChecked(!isElementChecked);
                     }
-                    Log.d("T-A-R.TableQuestionAdap", "onItemClick: 4.5");
+//                    Log.d("T-A-R.TableQuestionAdap", "onItemClick: 4.5");
                     setLine();
-                    Log.d("T-A-R.TableQuestionAdap", "onItemClick: 4.6");
+//                    Log.d("T-A-R.TableQuestionAdap", "onItemClick: 4.6");
                 }
             } catch (Exception e) {
-                Log.d("T-A-R.TableQuestionAdap", "onItemClick: 4.7.error");
+//                Log.d("T-A-R.TableQuestionAdap", "onItemClick: 4.7.error");
                 e.printStackTrace();
             }
         }
 
-        Log.d("T-A-R.TableQuestionAdap", "onItemClick: 5");
+//        Log.d("T-A-R.TableQuestionAdap", "onItemClick: 5");
 
         if (!mIsFlipColsAndRows) {
-            Log.d("T-A-R.TableQuestionAdap", "onItemClick: 6");
-            for (int i = 0; i < mAnswersState[0].length; i++) {
-                for (int k = 0; k < mAnswersState.length; k++) {
-                    Log.d("T-A-R.====", "mAnswersState: " + i + "/" + k + " = " + mAnswersState[k][i].isChecked());
-                }
-            }
+//            Log.d("T-A-R.TableQuestionAdap", "onItemClick: 6");
+//            for (int i = 0; i < mAnswersState[0].length; i++) {
+//                for (int k = 0; k < mAnswersState.length; k++) {
+//                    Log.d("T-A-R.====", "mAnswersState: " + i + "/" + k + " = " + mAnswersState[k][i].isChecked());
+//                }
+//            }
             if (!isPolyanswer && mAnswersState[row - 1][column - 1].isChecked()) {
-                Log.d("T-A-R.TableQuestionAdap", "onItemClick: 6.1 = " + row + "/" + column + " " + clickedQuestion.getElementOptionsR().getTitle() + " / " + clickedElement.getElementOptionsR().getTitle());
+//                Log.d("T-A-R.TableQuestionAdap", "onItemClick: 6.1 = " + row + "/" + column + " " + clickedQuestion.getElementOptionsR().getTitle() + " / " + clickedElement.getElementOptionsR().getTitle());
                 unselectOther(row, column, clickedQuestion, clickedElement);
-                Log.d("T-A-R.TableQuestionAdap", "onItemClick: 6.2");
+//                Log.d("T-A-R.TableQuestionAdap", "onItemClick: 6.2");
             }
-            for (int i = 0; i < mAnswersState[0].length; i++) {
-                for (int k = 0; k < mAnswersState.length; k++) {
-                    Log.d("T-A-R.++++", "mAnswersState: " + i + "/" + k + " = " + mAnswersState[k][i].isChecked());
-                }
-            }
-            Log.d("T-A-R.TableQuestionAdap", "onItemClick: 6.3");
+//            for (int i = 0; i < mAnswersState[0].length; i++) {
+//                for (int k = 0; k < mAnswersState.length; k++) {
+//                    Log.d("T-A-R.++++", "mAnswersState: " + i + "/" + k + " = " + mAnswersState[k][i].isChecked());
+//                }
+//            }
+//            Log.d("T-A-R.TableQuestionAdap", "onItemClick: 6.3");
             for (int i = 0; i < mAnswersState[0].length; i++) {
                 notifyItemChanged(row, i + 1);
             }
-            Log.d("T-A-R.TableQuestionAdap", "onItemClick: 6.4");
+//            Log.d("T-A-R.TableQuestionAdap", "onItemClick: 6.4");
             notifyItemChanged(row, 0);
-            Log.d("T-A-R.TableQuestionAdap", "onItemClick: 6.5");
+//            Log.d("T-A-R.TableQuestionAdap", "onItemClick: 6.5");
         } else {
-            Log.d("T-A-R.TableQuestionAdap", "onItemClick: 7");
+//            Log.d("T-A-R.TableQuestionAdap", "onItemClick: 7");
             if (!isPolyanswer && mAnswersState[column - 1][row - 1].isChecked()) {
                 unselectOther(row, column, clickedQuestion, clickedElement);
             }
@@ -851,15 +851,21 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
 
     public boolean isCompleted() {
         boolean completed = false;
+        boolean isUnCheckerSelected = false;
         for (int i = 0; i < mAnswersState.length; i++) {
             int answersCounter = 0;
             for (int k = 0; k < mAnswersState[i].length; k++) {
 
                 if (mAnswersState[i][k].isChecked()) {
                     answersCounter++;
+                    ElementOptionsR opt = mContext.getMainDao().getElementOptionsR(mAnswersState[i][k].getRelative_id());
+                    if(opt.isUnchecker()) isUnCheckerSelected = true;
                 }
             }
+
+
             if (answersCounter > 0) {
+                if(isUnCheckerSelected) return true;
                 Integer min = mQuestions.get(i).getElementOptionsR().getMin_answers();
                 Integer max = mQuestions.get(i).getElementOptionsR().getMax_answers();
                 if (min != null && answersCounter < min) {

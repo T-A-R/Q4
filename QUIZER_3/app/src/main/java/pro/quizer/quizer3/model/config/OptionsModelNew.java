@@ -131,6 +131,12 @@ public class OptionsModelNew implements Serializable {
     @SerializedName("max_number")
     private Integer max_number;
 
+    @SerializedName("show_random_question")
+    private Boolean show_random_question;
+
+    @SerializedName("hide_numbers_answers")
+    private Boolean hide_numbers_answers;
+
     public String getData() {
         return data;
     }
@@ -396,5 +402,21 @@ public class OptionsModelNew implements Serializable {
 
     public void setMaxNumber(Integer max_number) {
         this.max_number = max_number;
+    }
+
+    public Boolean getShowRandomQuestion() {
+        return show_random_question;
+    }
+
+    public void setShowRandomQuestion(Boolean showRandomQuestion) {
+        this.show_random_question = showRandomQuestion;
+    }
+
+    public Boolean getHideNumbersAnswers() {
+        return hide_numbers_answers;
+    }
+
+    public void setHideNumbersAnswers(Boolean hide_numbers_answers) {
+        this.hide_numbers_answers = hide_numbers_answers;
     }
 }

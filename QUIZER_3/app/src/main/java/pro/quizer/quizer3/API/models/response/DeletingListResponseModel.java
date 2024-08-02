@@ -33,6 +33,15 @@ public class DeletingListResponseModel implements Serializable {
     @SerializedName("regs_disabled")
     private Boolean regs_disabled;
 
+    @SerializedName("is_blocked_inter")
+    private Boolean is_blocked_inter = false;
+
+    @SerializedName("date_start_inter")
+    private Long date_start_inter;
+
+    @SerializedName("date_end_inter")
+    private Long date_end_inter;
+
     public int getResult() {
         return result;
     }
@@ -63,5 +72,17 @@ public class DeletingListResponseModel implements Serializable {
 
     public Boolean isRegsDisabled() {
         return regs_disabled;
+    }
+
+    public Boolean getIsBlockedInter() {
+        return is_blocked_inter;
+    }
+
+    public Long getDateStartInter() {
+        return date_start_inter;
+    }
+
+    public Long getDateEndInter() {
+        return date_end_inter;
     }
 }

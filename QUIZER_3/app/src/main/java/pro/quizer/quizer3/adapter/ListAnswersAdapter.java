@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -16,12 +17,14 @@ import android.hardware.camera2.*;
 
 import android.media.Image;
 import android.media.ImageReader;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TimeUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -40,10 +43,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.androidhiddencamera.HiddenCameraUtils;
 import com.androidhiddencamera.config.CameraImageFormat;
+import com.google.gson.Gson;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -65,9 +70,13 @@ import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.database.models.ElementContentsR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.PhotoAnswersR;
+import pro.quizer.quizer3.database.models.QuotaR;
 import pro.quizer.quizer3.database.models.UserModelR;
+import pro.quizer.quizer3.model.quota.QuotaModel;
 import pro.quizer.quizer3.model.state.AnswerState;
+import pro.quizer.quizer3.model.ui.AnswerItem;
 import pro.quizer.quizer3.model.view.TitleModel;
+import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
 import pro.quizer.quizer3.utils.StringUtils;
@@ -82,8 +91,9 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
     private final OnAnswerClickListener onAnswerClickListener;
     private final ElementItemR question;
-    private List<ElementItemR> answersList;
-    private List<AnswerState> answersState;
+
+    private List<AnswerItem> uiAnswersList;
+//    private List<AnswerState> answersState;
     public boolean isMulti;
     public boolean isRestored = false;
     private final MainActivity mActivity;
@@ -94,6 +104,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     private final List<String> titles;
     private final Map<Integer, TitleModel> titlesMap;
     boolean mFromPenButton = false;
+    boolean mAutoZoom = true;
 
     CameraService[] myCameras = null;
     CameraManager mCameraManager = null;
@@ -101,6 +112,12 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     final int CAMERA2 = 1;
     HandlerThread mBackgroundThread;
     Handler mBackgroundHandler = null;
+
+    long timeStart = 0l;
+    long timeEnd = 0l;
+
+    String timeLog = "";
+
 
     AlertDialog photoDialog;
 
@@ -111,26 +128,32 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         this.quotaTree = quotaTree;
         this.mContext = context;
         this.titlesMap = titlesMap;
-        this.answersList = makeRotation(question, answersList);
+        this.uiAnswersList = makeRotation(question, getUiList(answersList));
         this.onAnswerClickListener = onAnswerClickListener;
         this.isMulti = Objects.requireNonNull(question.getElementOptionsR()).isPolyanswer();
-        this.answersState = new ArrayList<>();
-        for (int i = 0; i < answersList.size(); i++) {
-            AnswerState state = new AnswerState(answersList.get(i).getRelative_id(), isAutoChecked(i), "");
-            if (answersList.get(i).getElementOptionsR().isPhoto_answer() && answersList.get(i).getElementOptionsR().isPhoto_answer_required())
-                state.setIsPhotoAnswer(true);
-            this.answersState.add(state);
+//        this.answersState = new ArrayList<>();
+
+
+        if (mActivity != null) {
+            mAutoZoom = mActivity.isAutoZoom();
         }
 
+//        for (int i = 0; i < answersList.size(); i++) {
+//            AnswerState state = new AnswerState(answersList.get(i).getRelative_id(), isAutoChecked(i), "");
+//            if (answersList.get(i).getElementOptionsR().isPhoto_answer() && answersList.get(i).getElementOptionsR().isPhoto_answer_required())
+//                state.setIsPhotoAnswer(true);
+//            this.answersState.add(state);
+//        }
+
         titles = new ArrayList<>();
-        for (ElementItemR element : answersList) {
-            if (element.getElementOptionsR().isShow_in_card()) {
-                String text = counter + ". " + Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle();
-                titles.add(text);
-                counter++;
-            } else {
+        for (AnswerItem element : uiAnswersList) {
+//            if (element.getElementOptionsR().isShow_in_card()) {
+//                String text = counter + ". " + Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle();
+//                titles.add(text);
+//                counter++;
+//            } else {
                 titles.add(Objects.requireNonNull(titlesMap.get(element.getRelative_id())).getTitle());
-            }
+//            }
         }
 
         mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
@@ -147,7 +170,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             }
         } catch (Exception e) {
             Log.d("T-A-R.ListAnswersAdapt", "================ Camera ERROR ================");
-            e.printStackTrace();
+//            e.printStackTrace();
         }
         stopBackgroundThread();
     }
@@ -157,30 +180,30 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     }
 
     public boolean isAutoChecked(int position) {
-        return answersList.get(position).getElementOptionsR().isAutoChecked();
+        return uiAnswersList.get(position).isAutoChecked();
     }
 
     public boolean isUnChecker(int position) {
-        return isMulti && answersList.get(position).getElementOptionsR().isUnchecker();
+        return isMulti && uiAnswersList.get(position).isUnchecker();
     }
 
     public boolean isOpen(int position) {
-        return !answersList.get(position).getElementOptionsR().getOpen_type().equals("checkbox");
+        return !uiAnswersList.get(position).getOpen_type().equals("checkbox");
     }
 
     public boolean isChecked(int position) {
-        return answersState.get(position).isChecked();
+        return uiAnswersList.get(position).isChecked();
     }
 
     public boolean isHelper(int position) {
-        return answersList.get(position).getElementOptionsR().isHelper();
+        return uiAnswersList.get(position).isHelper();
     }
 
-    private List<ElementItemR> makeRotation(ElementItemR question, List<ElementItemR> answers) {
+    private List<AnswerItem> makeRotation(ElementItemR question, List<AnswerItem> answers) {
         if (question.getElementOptionsR() != null && question.getElementOptionsR().isRotation()) {
-            List<ElementItemR> shuffleList = new ArrayList<>();
-            for (ElementItemR elementItemR : answers) {
-                if (elementItemR.getElementOptionsR() != null && !elementItemR.getElementOptionsR().isFixed_order()) {
+            List<AnswerItem> shuffleList = new ArrayList<>();
+            for (AnswerItem elementItemR : answers) {
+                if (!elementItemR.isFixedOrder()) {
                     shuffleList.add(elementItemR);
                 }
             }
@@ -188,7 +211,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             int k = 0;
 
             for (int i = 0; i < answers.size(); i++) {
-                if (answers.get(i).getElementOptionsR() != null && !answers.get(i).getElementOptionsR().isFixed_order()) {
+                if (!answers.get(i).isFixedOrder()) {
                     answers.set(i, shuffleList.get(k));
                     k++;
                 }
@@ -200,27 +223,43 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     @NonNull
     @Override
     public ListObjectViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        MainActivity activity = (MainActivity) mContext;
-        boolean mAutoZoom = true;
-        if (activity != null) {
-            mAutoZoom = activity.isAutoZoom();
-        }
+
         return new ListObjectViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(MainActivity.AVIA ? R.layout.holder_answer_list_avia : mAutoZoom ? R.layout.holder_answer_list_auto : R.layout.holder_answer_list, viewGroup, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull ListObjectViewHolder holder, int position) {
+//        Log.d("T-A-R", "onBindViewHolder: OLD");
         if (!isHelper(position)) {
             holder.cont.setVisibility(View.VISIBLE);
-            holder.bind(answersList.get(position), position);
+            holder.bind(uiAnswersList.get(position), position);
         } else {
             holder.cont.setVisibility(View.GONE);
         }
     }
 
     @Override
+    public void onBindViewHolder(@NonNull ListObjectViewHolder holder, int position, @NonNull List<Object> payloads) {
+        if(payloads.isEmpty())
+            super.onBindViewHolder(holder, position, payloads);
+        else {
+            Bundle bundle = (Bundle) payloads.get(0);
+//            Log.d("T-A-R", ">>>>>> onBindViewHolder: " + position + " / " + bundle.getBoolean("checked"));
+
+
+            if (!isHelper(position)) {
+                holder.cont.setVisibility(View.VISIBLE);
+                holder.bind(uiAnswersList.get(position), position);
+            } else {
+                holder.cont.setVisibility(View.GONE);
+            }
+        }
+
+    }
+
+    @Override
     public int getItemCount() {
-        return answersList.size();
+        return uiAnswersList.size();
     }
 
     public class ListObjectViewHolder extends RecyclerView.ViewHolder {
@@ -272,22 +311,30 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
         }
 
-        public void bind(final ElementItemR item, int position) {
+        public void bind(final AnswerItem item, int position) {
+            timeStart = DateUtils.getFullCurrentTime();
+            timeLog += position + ": ";
             String filename;
             filename = getAnswerImagePath(position);
             File file = null;
-            if(filename != null) {
+            if (filename != null) {
                 file = new File(filename);
             } else {
                 Toast.makeText(mActivity, "Ошибка загрузки файла. Закройте и перезапустите приложение", Toast.LENGTH_SHORT).show();
             }
 
             if (file != null && file.exists()) {
-                answersState.get(position).setHasPhoto(true);
+                uiAnswersList.get(position).setHasPhoto(true);
             }
-
-            UiUtils.setTextOrHide(answerTitle, titles.get(position));
-            if (item.getElementOptionsR().getDescription() != null && titlesMap.get(item.getRelative_id()) != null) {
+//            Log.d("T-A-R", "HIDE: " + question.getElementOptionsR().getHide_numbers_answers());
+            if (question.getElementOptionsR().getHide_numbers_answers() != null && question.getElementOptionsR().getHide_numbers_answers()) {
+//                Log.d("T-A-R", "????????????????????????????????? 1: " + titles.get(position));
+                UiUtils.setTextOrHide(answerTitle, titles.get(position));
+            } else {
+//                Log.d("T-A-R", "????????????????????????????????? 2");
+                UiUtils.setTextOrHide(answerTitle, (position + 1) + ". " + titles.get(position));
+            }
+            if (item.getDescription() != null && titlesMap.get(item.getRelative_id()) != null) {
                 answerDesc.setVisibility(View.VISIBLE);
                 UiUtils.setTextOrHide(answerDesc, Objects.requireNonNull(titlesMap.get(item.getRelative_id())).getDescription());
             } else {
@@ -296,15 +343,15 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
             showContent(item);
 
-            if (item.getElementOptionsR().getOpen_type().equals(CHECKBOX)) {
+            if (item.getOpen_type().equals(CHECKBOX)) {
                 openAnswerCont.setVisibility(View.GONE);
             } else {
                 openAnswerCont.setVisibility(View.VISIBLE);
             }
 
-            if (item.getElementOptionsR().isPhoto_answer()) {
+            if (item.isPhoto_answer()) {
                 addPicButton.setVisibility(View.VISIBLE);
-                if (answersState.get(getAdapterPosition()).hasPhoto()) {
+                if (uiAnswersList.get(getAdapterPosition()).hasPhoto()) {
                     addPicButton.setTextColor(mActivity.getResources().getColor(R.color.brand_color));
                     addPicButton.setText(R.string.button_view_photo);
                 } else {
@@ -315,7 +362,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 addPicButton.setVisibility(View.GONE);
             }
 
-            if (!canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder())) {
+//            Log.d("T-A-R", "passedQuotaBlock: " + new Gson().toJson(passedQuotaBlock));
+            if (mActivity.quotaIds.contains(item.getRelative_id()) && !canShow(quotaTree, passedQuotaBlock, item.getRelative_id(), question.getElementOptionsR().getOrder())) {
                 answerTitle.setTextColor(Color.parseColor("#AAAAAA"));
                 item.setEnabled(false);
             }
@@ -331,7 +379,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
             setChecked(position);
 
-            if (!answersList.get(position).isEnabled()) {
+            if (!item.isEnabled()) {
                 if (!isMulti) {
                     button.setImageResource(R.drawable.radio_button_disabled);
                 } else {
@@ -351,9 +399,11 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             }
 
 //            answerEditText.setText(answersState.get(position).getData());
-            UiUtils.setTextOrHide(answerEditText, answersState.get(position).getData());
+            UiUtils.setTextOrHide(answerEditText, uiAnswersList.get(position).getData());
 
             setEnabled(position);
+            timeEnd = DateUtils.getFullCurrentTime();
+            timeLog += (timeEnd - timeStart) + " / ";
         }
 
         private void clearPicture() {
@@ -365,7 +415,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                     editButton.setVisibility(View.GONE);
                     button.setImageResource(MainActivity.AVIA ? R.drawable.radio_button_checked_red : R.drawable.radio_button_checked);
                     if (isOpen(position)) {
-                        if (answersState.get(position).getData() != null && answersState.get(position).getData().length() > 0) {
+                        if (uiAnswersList.get(position).getData() != null && uiAnswersList.get(position).getData().length() > 0) {
                             answerEditText.setVisibility(View.VISIBLE);
                             penButton.setVisibility(View.VISIBLE);
                             editButton.setVisibility(View.GONE);
@@ -394,19 +444,20 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             } else {
                 if (isChecked(position)) {
                     button.setImageResource(MainActivity.AVIA ? R.drawable.checkbox_checked_red : R.drawable.checkbox_checked);
-                    if (answersState.get(position).getData() != null && !answersState.get(position).getData().equals("")) editButton.setVisibility(View.GONE);
+                    if (uiAnswersList.get(position).getData() != null && !uiAnswersList.get(position).getData().equals(""))
+                        editButton.setVisibility(View.GONE);
                 } else {
                     button.setImageResource(MainActivity.AVIA ? R.drawable.checkbox_unchecked_red : R.drawable.checkbox_unchecked);
                 }
             }
 
             if (isChecked(position)) {
-                if (answersState.get(position).getData() != null && !answersState.get(position).getData().equals("")) {
+                if (uiAnswersList.get(position).getData() != null && !uiAnswersList.get(position).getData().equals("")) {
                     editButton.setVisibility(View.GONE);
                     answerEditText.setVisibility(View.VISIBLE);
                     penButton.setVisibility(View.VISIBLE);
 //                    answerEditText.setText(answersState.get(position).getData());
-                    UiUtils.setTextOrHide(answerEditText, answersState.get(position).getData());
+                    UiUtils.setTextOrHide(answerEditText, uiAnswersList.get(position).getData());
                 }
             } else {
                 answerEditText.setVisibility(View.GONE);
@@ -416,48 +467,42 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         }
 
         public boolean canShow(ElementItemR[][] tree, List<List<Integer>> passedElementsId, int relativeId, int order) {
-//            try {
-//                if (relativeId == 9)
-//                    for (int i = 0; i < tree[0].length; i++) {
-//                        Log.d("T-A-R.ListAnswersAdapt", "Q:" + tree[0][i].getRelative_id() + "/" + tree[0][i].isEnabled() + " | " +
-//                                tree[1][i].getRelative_id() + "/" + tree[1][i].isEnabled() + " | " +
-//                                tree[2][i].getRelative_id() + "/" + tree[2][i].isEnabled()
-//                        );
-//                    }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
             if (tree == null) {
                 return true;
             }
-            Log.d("T-A-R.ListAnswers", "order: " +order);
+
             if (order == 1) {
-                Log.d("T-A-R.ListAnswers", "canShow: 2");
                 for (int k = 0; k < tree[0].length; k++) {
                     if (tree[0][k].getRelative_id().equals(relativeId)) {
                         if (tree[0][k].isEnabled()) {
-                            return true;
+                            boolean hasHelper = false;
+                            for (int n = 0; n < tree.length; n++) {
+                                if (tree[n][k].getRelative_id() > 100000) {
+                                    hasHelper = true;
+                                    break;
+                                }
+                            }
+                            if (!hasHelper) {
+//                                Log.d("T-A-R", "canShow: 1");
+                                return true;
+                            }
                         }
                     }
                 }
-                Log.d("T-A-R.ListAnswers", "canShow: 3");
+//                Log.d("T-A-R", "canShow: FALSE 1");
                 return false;
             } else {
                 int endPassedElement = order - 1;
-                for(List<Integer> list : passedElementsId) {
-                    Log.d("T-A-R.ListAnswersA", "=======: ");
-                    for (Integer item : list) {
-                        Log.d("T-A-R.ListAnswersA", "passed: " + item);
-                    }
-                }
+
                 for (int k = 0; k < tree[0].length; k++) {
                     for (int i = 0; i < endPassedElement; ) {
 //                        if (tree[i][k].getRelative_id().equals(passedElementsId.get(i))) {
-                        if(passedElementsId.get(i).size() == 1 && passedElementsId.get(i).get(0) > 99999) {
+                        if (passedElementsId.get(i).size() == 1 && passedElementsId.get(i).get(0) > 99999) {
                             if (passedElementsId.get(i).contains(tree[i][k].getRelative_id())) {
                                 if (i == (endPassedElement - 1)) { // Если последний, то
                                     if (tree[i + 1][k].getRelative_id().equals(relativeId)) { // Если следующий за последним равен Relative ID
                                         if (tree[i + 1][k].isEnabled()) {
+//                                            Log.d("T-A-R", "canShow: 2");
                                             return true;
                                         }
                                     }
@@ -465,11 +510,22 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                                 i++;
                             } else break;
                         } else {
-                            if (passedElementsId.get(i).contains(tree[i][k].getRelative_id()) && tree[i][k].getRelative_id() < 999999) {
+                            if (passedElementsId.get(i).contains(tree[i][k].getRelative_id()) && tree[i][k].getRelative_id() < 99999) {
                                 if (i == (endPassedElement - 1)) { // Если последний, то
                                     if (tree[i + 1][k].getRelative_id().equals(relativeId)) { // Если следующий за последним равен Relative ID
                                         if (tree[i + 1][k].isEnabled()) {
-                                            return true;
+//                                            Log.d("T-A-R", "canShow ID: " + tree[i][k].getRelative_id() + " " + tree[i + 1][k].isEnabled());
+                                            boolean hasHelper = false;
+                                            for (int n = i + 2; n < tree.length; n++) {
+                                                if (tree[n][k].getRelative_id() > 100000) {
+                                                    hasHelper = true;
+                                                    break;
+                                                }
+                                            }
+                                            if (!hasHelper) {
+//                                                Log.d("T-A-R", "canShow: 3");
+                                                return true;
+                                            }
                                         }
                                     }
                                 }
@@ -479,12 +535,12 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                     }
                 }
             }
-            Log.d("T-A-R.ListAnswers", "canShow: 4");
+//            Log.d("T-A-R", "canShow: FALSE 2");
             return false;
         }
 
-        private void showContent(ElementItemR element) {
-            final List<ElementContentsR> contents = mActivity.getMainDao().getElementContentsR(element.getRelative_id());
+        private void showContent(AnswerItem element) {
+            final List<ElementContentsR> contents = element.getContents();
 
             if (contents != null && !contents.isEmpty()) {
                 String data1 = contents.get(0).getData();
@@ -537,7 +593,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         }
 
         public void setEnabled(int position) {
-            if (!answersList.get(position).isEnabled()) {
+            if (!uiAnswersList.get(position).isEnabled()) {
                 cont.setEnabled(false);
                 editButton.setEnabled(false);
             } else {
@@ -551,13 +607,24 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         }
 
         public void onClick(TextView cardInput, int position, boolean isPenButton) {
-            Log.d("T-A-R.ListAnswersAdapt", "onClick: " + position);
-            if ((isOpen(position) && !isChecked(position))
+//            if(!timeLog.isEmpty()) mActivity.showToastLongFromActivity(timeLog);
+//            timeLog = "";
+
+            mActivity.showTime("ADAPTER CLICK 0:");
+//            Log.d("T-A-R.ListAnswersAdapt", "onClick: " + position);
+            if (!isOpen(position)) {
+                Log.d("T-A-R", "onClick: NOT OPEN QUESTION");
+                mActivity.showTime("ADAPTER CLICK 1:");
+                checkItemNormal(position);
+                Log.d("T-A-R", ">>>>>>> onClick: position: " + position + " id: " + uiAnswersList.get(position).getRelative_id() + " checked: " + isChecked(position));
+                mActivity.showTime("ADAPTER CLICK 2:");
+                onAnswerClickListener.onAnswerClick(position, isChecked(position), uiAnswersList.get(position).getData());
+            } else if ((isOpen(position) && !isChecked(position))
                     || (isOpen(position) && isAutoChecked(position))
                     || isOpen(position) && isPenButton
-                    || (isOpen(position) && (answersState.get(position).getData() == null || answersState.get(position).getData().length() == 0))) {
+                    || (isOpen(position) && (uiAnswersList.get(position).getData() == null || uiAnswersList.get(position).getData().length() == 0))) {
                 mFromPenButton = isPenButton;
-                switch (answersList.get(position).getElementOptionsR().getOpen_type()) {
+                switch (uiAnswersList.get(position).getOpen_type()) {
                     case "text":
                     case "number":
                         showInputDialog(cardInput, position);
@@ -574,8 +641,10 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 }
 //                showPhoneDialog(cardInput, position);
             } else {
-                checkItem(position);
-                onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
+                mActivity.showTime("ADAPTER CLICK 1.2:");
+                checkItemNormal(position);
+                mActivity.showTime("ADAPTER CLICK 2.2:");
+                onAnswerClickListener.onAnswerClick(position, isChecked(position), uiAnswersList.get(position).getData());
             }
 
         }
@@ -594,7 +663,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 //            if (answersList.get(position).getElementOptionsR().getPlaceholder() != null && !answersList.get(position).getElementOptionsR().getPlaceholder().equals(""))
 //                labelPhone.setText(answersList.get(position).getElementOptionsR().getPlaceholder());
 
-            if (answersList.get(position).getElementOptionsR().getOpen_type().equals(NUMBER)) {
+            if (uiAnswersList.get(position).getOpen_type().equals(NUMBER)) {
                 inputPhone.setInputType(InputType.TYPE_CLASS_NUMBER);
             }
 
@@ -644,10 +713,10 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 return false;
             });
 
-            String hint = answersList.get(position).getElementOptionsR().getPlaceholder();
-            String answer = answersState.get(position).getData();
+            String hint = uiAnswersList.get(position).getPlaceholder();
+            String answer = uiAnswersList.get(position).getData();
             if (answer != null && answer.length() > 0) {
-                inputPhone.setText(answersState.get(position).getData());
+                inputPhone.setText(uiAnswersList.get(position).getData());
             } else {
                 if (hint != null && hint.length() > 0) {
                     inputPhone.setHint(hint);
@@ -666,20 +735,20 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
             mNextBtn.setOnClickListener(v -> {
                 mPhone = "7" + phoneFormatter.cleaned(inputPhone.getText().toString());
-                if ((phoneFormatter.getPhone().length() == 16) || (answersList.get(position).getElementOptionsR().isUnnecessary_fill_open() && phoneFormatter.getPhone().length() == 3)) {
-                    if (answersList.get(position).getElementOptionsR().isUnnecessary_fill_open() && phoneFormatter.getPhone().length() == 3) {
-                        answersState.get(position).setData("");
+                if ((phoneFormatter.getPhone().length() == 16) || (uiAnswersList.get(position).isUnnecessary_fill_open() && phoneFormatter.getPhone().length() == 3)) {
+                    if (uiAnswersList.get(position).isUnnecessary_fill_open() && phoneFormatter.getPhone().length() == 3) {
+                        uiAnswersList.get(position).setData("");
                     } else {
-                        answersState.get(position).setData(phoneFormatter.getPhone());
+                        uiAnswersList.get(position).setData(phoneFormatter.getPhone());
                         pEditText.setText(inputPhone.getText().toString());
                     }
-                    onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
+                    onAnswerClickListener.onAnswerClick(position, isChecked(position), uiAnswersList.get(position).getData());
                     checkItem(position);
                     if (!mActivity.isFinishing()) {
                         mActivity.hideKeyboardFrom(inputPhone);
                         alertDialog.dismiss();
                     }
-                } else if (answersList.get(position).getElementOptionsR().isUnnecessary_fill_open()) {
+                } else if (uiAnswersList.get(position).isUnnecessary_fill_open()) {
                     mActivity.showToastLongFromActivity(mActivity.getString(R.string.not_full_phone_warning));
                 } else {
                     mActivity.showToastLongFromActivity(mActivity.getString(R.string.empty_phone_warning));
@@ -693,7 +762,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
         private void showPictureDialog(int position) {
             final LayoutInflater layoutInflaterAndroid = LayoutInflater.from(mActivity);
-            final View mView = layoutInflaterAndroid.inflate(mActivity.isAutoZoom() ? R.layout.dialog_photo_answer : R.layout.dialog_photo_answer, null);
+            final View mView = layoutInflaterAndroid.inflate(mActivity.isAutoZoom() ? R.layout.dialog_photo_answer_new : R.layout.dialog_photo_answer_new, null);
             final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
             dialog.setView(mView);
 
@@ -724,7 +793,13 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                     }
 
                     if (myCameras[CAMERA1] != null) {
-                        if (!myCameras[CAMERA1].isOpen()) myCameras[CAMERA1].openCamera();
+                        try {
+                            myCameras[CAMERA1].closeCamera();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        myCameras[CAMERA1].openCamera();
+
                     }
                 }
 
@@ -749,13 +824,13 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             photoDialog = alertDialog;
             UiUtils.setButtonEnabled(btnPhoto, false);
 
-            hasPhoto = answersState.get(position).hasPhoto();
+            hasPhoto = uiAnswersList.get(position).hasPhoto();
             if (hasPhoto) {
                 photoView.setVisibility(View.VISIBLE);
                 cameraCont.setVisibility(View.INVISIBLE);
                 String filename;
                 filename = getAnswerImagePath(position);
-                if(filename != null) {
+                if (filename != null) {
                     File image = new File(filename);
                     Picasso.with(mActivity)
                             .load(image)
@@ -863,7 +938,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                     if (myCameras[CAMERA1].isOpen()) myCameras[CAMERA1].makePhoto();
                     if (myCameras[CAMERA2].isOpen()) myCameras[CAMERA2].makePhoto();
 //                capturePhoto(finalCamera, mPictureCallback);
-                    if (!answersState.get(position).isChecked())
+                    if (!uiAnswersList.get(position).isChecked())
                         checkItem(position);
                 });
             } else {
@@ -879,14 +954,15 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                                     + "^" + user.getConfigR().getProjectInfo().getProjectId()
                                     + "^" + user.getLogin()
                                     + "^" + token
-                                    + "^" + answersState.get(position).getRelative_id() + ".jpeg"
+                                    + "^" + uiAnswersList.get(position).getRelative_id() + ".jpeg"
 
                     );
                     deleteRecursive(file);
                     mActivity.getMainDao().clearPhotoAnswersByName(getAnswerImageName(position));
-                    answersState.get(position).setHasPhoto(false);
+                    uiAnswersList.get(position).setHasPhoto(false);
 
                     try {
+//                        Log.d("T-A-R", "notifyItemChanged: 1");
                         notifyItemChanged(position);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -901,6 +977,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     private void checkItem(int position) {
         new Thread(() -> {
             if (isChecked(position) && !isMulti) {
+//                Log.d("T-A-R", "notifyItemChanged: 2");
                 mActivity.runOnUiThread(() -> notifyItemChanged(position));
                 return;
             }
@@ -913,37 +990,95 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 //                notifyDataSetChanged();
                 return;
             }
-            answersState.get(position).setChecked(!isChecked(position));
+            uiAnswersList.get(position).setChecked(!isChecked(position));
             if (!isMulti || isUnChecker(position)) {
-                for (int i = 0; i < answersState.size(); i++) {
+                for (int i = 0; i < uiAnswersList.size(); i++) {
                     if (i != position) {
-                        answersState.get(i).setChecked(false);
+                        uiAnswersList.get(i).setChecked(false);
                     }
                 }
             }
             if (isMulti) {
-                for (int i = 0; i < answersState.size(); i++) {
+                for (int i = 0; i < uiAnswersList.size(); i++) {
                     if (i != position && isUnChecker(position)) {
-                        answersState.get(i).setChecked(false);
+                        uiAnswersList.get(i).setChecked(false);
                     }
                 }
             }
 
             if (isUnChecker(position)) {
-                if (answersState.get(position).isChecked()) {
-                    for (int i = 0; i < answersState.size(); i++) {
+                if (uiAnswersList.get(position).isChecked()) {
+                    for (int i = 0; i < uiAnswersList.size(); i++) {
                         if (i != position && !isAutoChecked(i)) {
-                            answersList.get(i).setEnabled(false);
+                            uiAnswersList.get(i).setEnabled(false);
                         }
                     }
                 } else {
-                    for (int i = 0; i < answersState.size(); i++) {
-                        answersList.get(i).setEnabled(true);
+                    for (int i = 0; i < uiAnswersList.size(); i++) {
+                        uiAnswersList.get(i).setEnabled(true);
                     }
                 }
             }
+//            Log.d("T-A-R", "notifyItemChanged: 4");
+
             mActivity.runOnUiThread(this::notifyDataSetChanged);
         }).start();
+    }
+
+    private void checkItemNormal(int position) {
+        List<AnswerItem> newList = new ArrayList<>();
+        for (AnswerItem newItem : uiAnswersList) {
+            newList.add(newItem.clone());
+        }
+
+        if (isChecked(position) && !isMulti) {
+//            Log.d("T-A-R", "notifyItemChanged: 5");
+            notifyItemChanged(position);
+            return;
+        }
+        if (isMulti && mFromPenButton) {
+            mFromPenButton = false;
+            return;
+        }
+        if (isAutoChecked(position)) {
+//                mActivity.runOnUiThread(this::notifyDataSetChanged);
+            notifyDataSetChanged();
+            return;
+        }
+        newList.get(position).setChecked(!isChecked(position));
+        if (!isMulti || isUnChecker(position)) {
+            for (int i = 0; i < newList.size(); i++) {
+                if (i != position) {
+                    newList.get(i).setChecked(false);
+                }
+            }
+        }
+        if (isMulti) {
+            for (int i = 0; i < newList.size(); i++) {
+                if (i != position && isUnChecker(position)) {
+                    newList.get(i).setChecked(false);
+                }
+            }
+        }
+
+        if (isUnChecker(position)) {
+            if (newList.get(position).isChecked()) {
+                for (int i = 0; i < newList.size(); i++) {
+                    if (i != position && !isAutoChecked(i)) {
+                        newList.get(i).setEnabled(false);
+                    }
+                }
+            } else {
+                for (int i = 0; i < newList.size(); i++) {
+                    newList.get(i).setEnabled(true);
+                }
+            }
+        }
+
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ListAnswersDiffUtil(uiAnswersList, newList));
+        diffResult.dispatchUpdatesTo(this);
+        uiAnswersList.clear();
+        uiAnswersList.addAll(newList);
     }
 
     public interface OnAnswerClickListener {
@@ -951,30 +1086,51 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     }
 
     public List<AnswerState> getAnswers() {
+        List<AnswerState> answersState = new ArrayList<>();
+            for(AnswerItem item : uiAnswersList) {
+                answersState.add(new AnswerState(
+                        item.getRelative_id(),
+                        item.isChecked(),
+                        item.getData() != null && !item.getData().isEmpty(),
+                        item.getData(),
+                        item.isEnabled(),
+                        item.isPhoto_answer(),
+                        item.hasPhoto(),
+                        item.isCheckedInCard()
+                        ));
+            }
         return answersState;
     }
 
+    public List<AnswerItem> getUiAnswersList() {
+        return uiAnswersList;
+    }
+
     public void setData(List<ElementItemR> elements) {
-        this.answersList = elements;
+//        Log.d("T-A-R", "setData: <<<<<<<<<<<<<<<<");
+        this.uiAnswersList = getUiList(elements);
     }
 
     public void setAnswers(List<AnswerState> answers) {
+//        Log.d("T-A-R", "setAnswers: <<<<<<<<<<<<<<<<<<<<");
         if (answers != null) {
-            this.answersState = answers;
             for (int i = 0; i < answers.size(); i++) {
-                answersList.get(i).setEnabled(true);
-                if (answersList.get(i).getElementOptionsR().isPhoto_answer() && answersList.get(i).getElementOptionsR().isPhoto_answer_required())
-                    answers.get(i).setIsPhotoAnswer(true);
-            }
-            for (int i = 0; i < answers.size(); i++) {
-                if (answersList.get(i).getElementOptionsR().isUnchecker() && answers.get(i).isChecked()) {
-                    for (int k = 0; k < answersList.size(); k++) {
+
+                uiAnswersList.get(i).setEnabled(answers.get(i).isEnabled());
+                uiAnswersList.get(i).setChecked(answers.get(i).isChecked());
+                uiAnswersList.get(i).setData(answers.get(i).getData());
+                uiAnswersList.get(i).setHasPhoto(answers.get(i).hasPhoto());
+                uiAnswersList.get(i).setCheckedInCard(answers.get(i).isCheckedInCard());
+
+                if (uiAnswersList.get(i).isUnchecker() && answers.get(i).isChecked()) {
+                    for (int k = 0; k < uiAnswersList.size(); k++) {
                         if (k != i && !isAutoChecked(k)) {
-                            answersList.get(k).setEnabled(false);
+                            uiAnswersList.get(k).setEnabled(false);
                         }
                     }
                 }
             }
+
         } else {
             Log.d(TAG, "setAnswers: NULL");
         }
@@ -1022,8 +1178,8 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
         dateFormat.setTimeZone(mCalendar.getTimeZone());
         mEditText.setText(dateFormat.format(mCalendar.getTime()));
-        answersState.get(position).setData(dateFormat.format(mCalendar.getTime()));
-        onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
+        uiAnswersList.get(position).setData(dateFormat.format(mCalendar.getTime()));
+        onAnswerClickListener.onAnswerClick(position, isChecked(position), uiAnswersList.get(position).getData());
         checkItem(position);
     }
 
@@ -1039,18 +1195,18 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
 
         final EditText mEditText = mView.findViewById(R.id.input_answer);
         final View mNextBtn = mView.findViewById(R.id.view_ok);
-        final boolean isNumber = (answersList.get(position).getElementOptionsR().getOpen_type() != null && answersList.get(position).getElementOptionsR().getOpen_type().equals(NUMBER));
-        final Integer min = answersList.get(position).getElementOptionsR().getMin_number();
-        final Integer max = answersList.get(position).getElementOptionsR().getMax_number();
+        final boolean isNumber = (uiAnswersList.get(position).getOpen_type() != null && uiAnswersList.get(position).getOpen_type().equals(NUMBER));
+        final Integer min = uiAnswersList.get(position).getMin_number();
+        final Integer max = uiAnswersList.get(position).getMax_number();
 
         if (isNumber) {
             mEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
         }
 
-        String hint = answersList.get(position).getElementOptionsR().getPlaceholder();
-        String answer = answersState.get(position).getData();
+        String hint = uiAnswersList.get(position).getPlaceholder();
+        String answer = uiAnswersList.get(position).getData();
         if (answer != null && answer.length() > 0) {
-            mEditText.setText(answersState.get(position).getData());
+            mEditText.setText(uiAnswersList.get(position).getData());
         } else {
             if (hint != null && hint.length() > 0) {
                 mEditText.setHint(hint);
@@ -1063,45 +1219,63 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         mEditText.requestFocus();
         mActivity.showKeyboard();
 
-        dialog.setCancelable(false);
+        dialog.setCancelable(true);
+        dialog.setOnCancelListener(dialog1 -> {
+            if (!mActivity.isFinishing()) {
+                try {
+                    mActivity.hideKeyboardFrom(mEditText);
+                } catch (Exception e) {
+
+                }
+            }
+        });
         final AlertDialog alertDialog = dialog.create();
 
         mNextBtn.setOnClickListener(v -> {
             String text = mEditText.getText().toString();
             if (!isNumber) {
-                if ((text.length() > 0) || answersList.get(position).getElementOptionsR().isUnnecessary_fill_open()) {
-                    answersState.get(position).setData(text);
+                if ((text.length() > 0) || uiAnswersList.get(position).isUnnecessary_fill_open()) {
+                    uiAnswersList.get(position).setData(text);
                     pEditText.setText(text);
-                    onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
+                    onAnswerClickListener.onAnswerClick(position, isChecked(position), uiAnswersList.get(position).getData());
                     checkItem(position);
-                    if (!mActivity.isFinishing()) {
-                        mActivity.hideKeyboardFrom(mEditText);
-                        alertDialog.dismiss();
-                    }
+
                 } else {
-                    mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
+                    uiAnswersList.get(position).setData("");
+                    pEditText.setText("");
                 }
+                if (!mActivity.isFinishing()) {
+                    mActivity.hideKeyboardFrom(mEditText);
+                    alertDialog.dismiss();
+                }
+//                else {
+//                    mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
+//                }
             } else {
-                if (answersList.get(position).getElementOptionsR().isUnnecessary_fill_open() && text.equals("")) {
-                    answersState.get(position).setData(text);
+                if (uiAnswersList.get(position).isUnnecessary_fill_open() && text.equals("")) {
+                    uiAnswersList.get(position).setData(text);
                     pEditText.setText(text);
-                    onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
+                    onAnswerClickListener.onAnswerClick(position, isChecked(position), uiAnswersList.get(position).getData());
                     checkItem(position);
                     if (!mActivity.isFinishing()) {
                         mActivity.hideKeyboardFrom(mEditText);
                         alertDialog.dismiss();
                     }
                 } else {
-                    if (text.equals("")) mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
-                    else if (checkNumber(text, min, max, position, mEditText)) {
-                        answersState.get(position).setData(text);
+                    if (text.equals("")) {
+                        uiAnswersList.get(position).setData("");
+                        pEditText.setText("");
+//                        mActivity.showToastfromActivity(mActivity.getString(R.string.empty_input_warning));
+                    } else if (checkNumber(text, min, max, position, mEditText)) {
+                        uiAnswersList.get(position).setData(text);
                         pEditText.setText(text);
-                        onAnswerClickListener.onAnswerClick(position, isChecked(position), answersState.get(position).getData());
+                        onAnswerClickListener.onAnswerClick(position, isChecked(position), uiAnswersList.get(position).getData());
                         checkItem(position);
-                        if (!mActivity.isFinishing()) {
-                            mActivity.hideKeyboardFrom(mEditText);
-                            alertDialog.dismiss();
-                        }
+
+                    }
+                    if (!mActivity.isFinishing()) {
+                        mActivity.hideKeyboardFrom(mEditText);
+                        alertDialog.dismiss();
                     }
                 }
             }
@@ -1199,7 +1373,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 + "^" + user.getConfigR().getProjectInfo().getProjectId()
                 + "^" + user.getLogin()
                 + "^" + token
-                + "^" + answersState.get(position).getRelative_id() + ".jpeg";
+                + "^" + uiAnswersList.get(position).getRelative_id() + ".jpeg";
     }
 
     private String getAnswerImageName(int position) {
@@ -1209,7 +1383,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                 + "^" + user.getConfigR().getProjectInfo().getProjectId()
                 + "^" + user.getLogin()
                 + "^" + token
-                + "^" + answersState.get(position).getRelative_id() + ".jpeg";
+                + "^" + uiAnswersList.get(position).getRelative_id() + ".jpeg";
     }
 
     private void addPhotoName(String path, String name) {
@@ -1414,7 +1588,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
             } finally {
                 mImage.close();
                 try {
-                    answersState.get(position).setHasPhoto(true);
+                    uiAnswersList.get(position).setHasPhoto(true);
                     String file;
                     file = getAnswerImagePath(position);
                     if (file != null) {
@@ -1423,6 +1597,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
                             @Override
                             public void run() {
                                 photoDialog.dismiss();
+//                                Log.d("T-A-R", "notifyItemChanged: 7");
                                 notifyItemChanged(position);
                             }
                         });
@@ -1439,6 +1614,7 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
     }
 
     private void startBackgroundThread() {
+//        Log.d("T-A-R", "startBackgroundThread: <<<");
         mBackgroundThread = new HandlerThread("CameraBackground");
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
@@ -1453,5 +1629,46 @@ public class ListAnswersAdapter extends RecyclerView.Adapter<ListAnswersAdapter.
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private List<AnswerItem> getUiList(List<ElementItemR> oldList) {
+//        Log.d("T-A-R", "getUiList: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        List<AnswerItem> newList = new ArrayList<>();
+        int index = 0;
+        for(ElementItemR item : oldList) {
+            AnswerItem newAnswer = new AnswerItem();
+            newAnswer.setRelative_id(item.getElementOptionsR().getRelative_id());
+            newAnswer.setTitle(item.getElementOptionsR().getTitle());
+            newAnswer.setAuto_check(item.getElementOptionsR().isAutoChecked());
+            newAnswer.setUnchecker(item.getElementOptionsR().isUnchecker());
+            newAnswer.setOpen_type(item.getElementOptionsR().getOpen_type());
+            newAnswer.setHelper(item.getElementOptionsR().isHelper());
+            newAnswer.setDescription(item.getElementOptionsR().getDescription());
+            final List<ElementContentsR> contents = mActivity.getMainDao().getElementContentsR(item.getRelative_id());
+            newAnswer.setContents(contents);
+            newAnswer.setPhoto_answer(item.getElementOptionsR().isPhoto_answer());
+            newAnswer.setPlaceholder(item.getElementOptionsR().getPlaceholder());
+            newAnswer.setUnnecessary_fill_open(item.getElementOptionsR().isUnnecessary_fill_open());
+            newAnswer.setPhoto_answer_required(item.getElementOptionsR().isPhoto_answer_required());
+            newAnswer.setMin_number(item.getElementOptionsR().getMin_number());
+            newAnswer.setMax_number(item.getElementOptionsR().getMax_number());
+            newAnswer.setEnabled(item.isEnabled());
+            newAnswer.setData(item.getElementOptionsR().getData());
+            newAnswer.setFixedOrder(item.getElementOptionsR().isFixed_order());
+            newAnswer.setChecked(item.getElementOptionsR().isAutoChecked());
+            newAnswer.setShow_in_card(item.getElementOptionsR().isShow_in_card());
+
+            newList.add(newAnswer);
+            index++;
+        }
+
+        return newList;
+    }
+
+    public void updateAnswers(ArrayList<AnswerItem> newAnswers) {
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ListAnswersDiffUtil(uiAnswersList, newAnswers));
+        diffResult.dispatchUpdatesTo(this);
+        uiAnswersList.clear();
+        uiAnswersList.addAll(newAnswers);
     }
 }

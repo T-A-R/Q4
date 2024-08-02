@@ -1,8 +1,11 @@
 package pro.quizer.quizer3.executable;
 
 import static pro.quizer.quizer3.view.fragment.SmartFragment.getDao;
-
-import android.util.Log;
+//
+//import android.service.voice.AlwaysOnHotwordDetector;
+//import android.util.Log;
+//
+//import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,7 +72,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
     }
 
     private void load(@QuestionnaireStatus final String pStatus, final Map<String, SmsAnswer> result) {
-        Log.d("T-A-R.SmsStageModelEx", "load: <<<<<<<<<<<<<<<<<<<<<<");
+//        Log.d("T-A-R.SmsStageModelEx", "load: <<<<<<<<<<<<<<<<<<<<<<");
         final List<ElementDatabaseModelR> allElements = new ArrayList<>();
 
         final Integer userId = activity.getCurrentUserId();
@@ -77,13 +80,20 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
         final List<QuestionnaireDatabaseModelR> questionnaires = activity.getMainDao().getQuestionnaireWithTime(
                 mUserId,
                 pStatus,
-                false,
                 mStagesModel.getTimeFrom(),
                 mStagesModel.getTimeTo());
 
         Integer quizCounter = questionnaires.size();
+//        if (quizCounter > 0)
+//            Log.d("T-A-R", "load: " + mStagesModel.getTimeFrom());
+//        if (mStagesModel.getTimeFrom() == 1693741500) {
+//            final List<QuestionnaireDatabaseModelR> questionnaire = activity.getMainDao().getQuestionnaireByUserId(mUserId);
+//            Log.d("T-A-R", "load: " + new Gson().toJson(questionnaire));
+//            Log.d("T-A-R", ">>> load quiz: " + mUserId + " / " + pStatus + " / " + mStagesModel.getTimeFrom() + " / " + mStagesModel.getTimeTo());
+//            Log.d("T-A-R", ">>> quizCounter: " + quizCounter);
+//        }
 
-        Log.d("T-A-R.SmsStageModelEx", "before load: " + userId + "/" + quizCounter);
+//        Log.d("T-A-R.SmsStageModelEx", "before load: " + userId + "/" + quizCounter);
 
 //        if (saved != null) {
 //            result.append(mUserId).append(" ").append(mSmsIndex).append(" ").append(mQuizCount + saved.getQuizQuantity());
@@ -91,15 +101,18 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
 
         for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : questionnaires) {
             final String token = questionnaireDatabaseModel.getToken();
-
+//            Log.d("T-A-R", ">>>> add token: " + token);
             mSmsStage.addToken(token);
 
-            final List<ElementDatabaseModelR> elements = activity.getMainDao().getElementByToken(token);
+//            final List<ElementDatabaseModelR> elements = activity.getMainDao().getElementByToken(token);
+            final List<ElementDatabaseModelR> elements = activity.getMainDao().getElementByTokenAndSmsStatus(token, false);
+//            Log.d("T-A-R", ">>> elements size: " + elements.size());
+//            Log.d("T-A-R", ">>>> elements: " + new Gson().toJson(elements));
             allElements.addAll(elements);
         }
 
         final List<QuestionsMatchesModel> matches = mStagesModel.getQuestionsMatches();
-        Log.d("T-A-R.SmsStageModelEx", "before load: " + userId + "/" + quizCounter);
+//        Log.d("T-A-R.SmsStageModelEx", "before load: " + userId + "/" + quizCounter);
         final List<SmsAnswersR> savedAnswers = activity.getMainDao().getSmsAnswersByUserId(userId);
         Map<String, List<Integer>> savedAnswersMap = mapSavedAnswers(savedAnswers);
         for (final QuestionsMatchesModel match : matches) {
@@ -112,14 +125,15 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
             if (!elementsByQuestionId.isEmpty()) {
                 for (int i = 1; i <= answersCount; i++) {
                     int countAnswers = getCountAnswersByOrder(elementsByQuestionId, i);
-                    if(saved != null && !saved.isEmpty()) {
+//                    Log.d("T-A-R", "countAnswers: " + countAnswers);
+                    if (saved != null && !saved.isEmpty()) {
                         countAnswers += saved.get(i - 1);
                     }
                     smsAnswer.put(i - 1, countAnswers);
                 }
             } else {
                 for (int i = 0; i < answersCount; i++) {
-                    if(saved != null && !saved.isEmpty()) {
+                    if (saved != null && !saved.isEmpty()) {
                         smsAnswer.put(i, saved.get(i));
                     }
 
@@ -127,12 +141,23 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
 //                Log.d("T-A-R.SmsStageModelEx", "load: elementsByQuestionId.isEmpty()");
             }
             SmsAnswersR savedAnswer = getDao().getSmsAnswersBySmsId(userId, smsAnswer.getSmsIndex());
-            if(savedAnswer != null && savedAnswer.getQuizQuantity() != null) {
-                smsAnswer.setQuizCount(quizCounter + savedAnswer.getQuizQuantity());
+//            if (smsAnswer.getSmsIndex().equals("162"))
+//                if (savedAnswer != null) Log.d("T-A-R", "quizCounter + saved: " + quizCounter + " " + savedAnswer.getQuizQuantity());
+//                else Log.d("T-A-R", "quizCounter: " + quizCounter);
+
+            if (savedAnswer != null && savedAnswer.getQuizQuantity() != null) {
+                int count = quizCounter;
+                if (count > 0) {
+                    for (QuestionnaireDatabaseModelR quiz : questionnaires) {
+                        if (quiz.getSentList().smsNumbers.contains(smsAnswer.getSmsIndex())) count--;
+                    }
+                    smsAnswer.setQuizCount(count + savedAnswer.getQuizQuantity());
+                } else
+                    smsAnswer.setQuizCount(savedAnswer.getQuizQuantity());
             } else {
                 smsAnswer.setQuizCount(quizCounter);
             }
-            Log.d("T-A-R.SmsStageModelEx", "N:" + smsAnswer.getSmsIndex() + "load: " + quizCounter + "/" + smsAnswer.getQuizCount());
+//            Log.d("T-A-R.SmsStageModelEx", "N:" + smsAnswer.getSmsIndex() + "load: " + quizCounter + "/" + smsAnswer.getQuizCount());
             smsAnswer.setUserId(userId);
             result.put(index, smsAnswer);
 
@@ -141,7 +166,7 @@ public class SmsStageModelExecutable extends BaseModelExecutable<Map<String, Sms
 
     private Map<String, List<Integer>> mapSavedAnswers(List<SmsAnswersR> list) {
         Map<String, List<Integer>> saved = new HashMap<>();
-        for(SmsAnswersR item : list) {
+        for (SmsAnswersR item : list) {
             saved.put(item.getSmsIndex(), item.getAnswers());
         }
         return saved;

@@ -12,6 +12,7 @@ import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.model.Operators;
 import pro.quizer.quizer3.model.config.ElementModelNew;
+import pro.quizer.quizer3.objectbox.models.ElementPassedOB;
 
 public class ExpressionUtils {
 
@@ -90,12 +91,12 @@ public class ExpressionUtils {
                                 String title = elementModelNew != null ? elementModelNew.getOptions().getTitle() : expression.substring(i);
                                 decodedExpression.append(title);
                             } else if (expression.charAt(k + nextSymbol + 1) == 'v') { // VALUE
-                                ElementPassedR element = activity.getMainDao().getElementPassedR(activity.getToken(), relativeId);
+                                ElementPassedOB element = activity.getMainObjectBoxDao().getElementPassedR(activity.getToken(), relativeId);
 //                                String value = element != null ? element.getValue() : expression.substring(i);
                                 String value = element != null ? element.getValue() : "";
                                 decodedExpression.append(value);
                             } else if (expression.charAt(k + nextSymbol + 1) == 'c') { // CHECKED
-                                Boolean isChecked = activity.getMainDao().getElementPassedR(activity.getToken(), relativeId) != null;
+                                Boolean isChecked = activity.getMainObjectBoxDao().getElementPassedR(activity.getToken(), relativeId) != null;
                                 return isChecked.toString();
                             } else {
                                 return expression;
@@ -280,20 +281,23 @@ public class ExpressionUtils {
                 }
 
                 String oldPart;
-                ElementPassedR element = activity.getMainDao().getElementPassedR(activity.getToken(), id);
+                ElementPassedOB element = activity.getMainObjectBoxDao().getElementPassedR(activity.getToken(), id);
                 switch (expression.charAt(indexOfPoint + 1)) {
                     case 'v':
                         if (element != null) {
                             try {
+                                Log.d("T-A-R", "??? checkHiddenExpression: " + element.getValue());
                                 value = Integer.parseInt(element.getValue());
                             } catch (NumberFormatException e) {
                                 e.printStackTrace();
                                 Log.d("T-A-R.ExpressionUtils", "checkHiddenExpression: Cant get Value: " + element.getValue());
-                                return false;
+                                value = 0;
+//                                return false;
                             }
                         } else {
-                            Log.d("T-A-R.ExpressionUtils", "CANT GET ELEMENT: " + id);
-                            return false;
+                            Log.d("T-A-R.ExpressionUtils", "element in expression not found in passed: " + id);
+                            value = 0;
+//                            return false;
                         }
                         oldPart = "$e." + idString + ".value";
                         newExpression = newExpression.replace(oldPart, Integer.toString(value));

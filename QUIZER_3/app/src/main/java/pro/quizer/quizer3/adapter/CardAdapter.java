@@ -149,6 +149,7 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
 
                     cont.setOnClickListener(v -> {
                         if ((open && !getItem(position).isChecked()) || (open && getItem(position).isAutoCkecker())) {
+                            getItem(position).setCheckedInCard(true);
                             switch (getItem(position).getOpen()) {
                                 case "text":
                                 case "number":
@@ -250,11 +251,14 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
             return;
         }
         if (mItems.get(position).isAutoCkecker()) return;
+
         mItems.get(position).setChecked(!mItems.get(position).isChecked());
+        mItems.get(position).setCheckedInCard(mItems.get(position).isChecked());
         if (!isMulti || mItems.get(position).isUnChecker()) {
             for (int i = 0; i < mItems.size(); i++) {
                 if (i != position) {
                     mItems.get(i).setChecked(false);
+                    mItems.get(i).setCheckedInCard(false);
                 }
             }
         }
@@ -262,6 +266,7 @@ public class CardAdapter extends ArrayAdapter<CardItem> {
             for (int i = 0; i < mItems.size(); i++) {
                 if (i != position && mItems.get(i).isUnChecker()) {
                     mItems.get(i).setChecked(false);
+                    mItems.get(i).setCheckedInCard(false);
                 }
             }
         }

@@ -39,13 +39,18 @@ public class RemoveUserExecutable extends BaseExecutable {
                 try {
                     activity.getMainDao().deleteUserByUserId(userId);
                     Log.d("T-A-R.", "CLEAR: 1");
+                    try {
+                        activity.getMainDao().deleteOnlineQuota(activity.getCurrentQuestionnaire().getToken());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                     activity.getMainDao().clearCurrentQuestionnaireR();
-                    activity.getMainDao().clearPrevElementsR();
+                    activity.getMainObjectBoxDao().clearPrevElementsR();
                     activity.setCurrentQuestionnaireNull();
                     activity.getMainDao().deleteQuestionnaireStatusByUserId(userId);
                     activity.getMainDao().clearTokensCounterR(userId);
                     activity.getMainDao().clearElementDatabaseModelR();
-                    activity.getMainDao().clearElementPassedR();
+                    activity.getMainObjectBoxDao().clearElementPassedR();
                     activity.getMainDao().clearElementItemR();
                     activity.getMainDao().clearRegistrationRByUser(userId);
                 } catch (Exception e) {

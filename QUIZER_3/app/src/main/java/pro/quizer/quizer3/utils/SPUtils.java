@@ -2,6 +2,7 @@ package pro.quizer.quizer3.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import pro.quizer.quizer3.Constants;
@@ -23,7 +24,7 @@ public class SPUtils {
     }
 
     private static int getCurrentUserId(final SharedPreferences pSharedPreferences) {
-        Log.d("T-A-R.SPUtils", "getCurrentUserId: " + getInt(pSharedPreferences, Constants.SP.CURRENT_USED_ID));
+//        Log.d("T-A-R.SPUtils", "getCurrentUserId: " + getInt(pSharedPreferences, Constants.SP.CURRENT_USED_ID));
         return getInt(pSharedPreferences, Constants.SP.CURRENT_USED_ID);
     }
 
@@ -192,6 +193,7 @@ public class SPUtils {
     }
 
     private static SharedPreferences getSharedPreferences(final Context pContext) {
-        return pContext.getSharedPreferences(SHARED_PREFERENCES_INSTANCE, MODE_PRIVATE);
+//        return pContext.getSharedPreferences(SHARED_PREFERENCES_INSTANCE, MODE_PRIVATE);
+        return PreferenceManager.getDefaultSharedPreferences(pContext);
     }
 }

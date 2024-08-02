@@ -5,6 +5,8 @@ import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.model.ElementSubtype;
+import pro.quizer.quizer3.model.mappers.MapperQuizer;
+import pro.quizer.quizer3.objectbox.models.ElementPassedOB;
 
 import static pro.quizer.quizer3.MainActivity.AVIA;
 
@@ -45,12 +47,15 @@ public class TransFragment extends ScreenFragment {
 
     @Override
     protected void onReady() {
-
+        Log.d("T-A-R", "onReady TR: " + nextElementId);
+        st("Trans +++");
         if (!AVIA) {
             ElementFragment fragment = new ElementFragment();
             fragment.setStartElement(nextElementId, restored);
             if (!restored) {
+//                Log.d("T-A-R", "TRANS FR nextElementId: " + nextElementId + " " + checkQuotaJump(nextElementId));
                 if (nextElementId != 0 && nextElementId != -1 && checkQuotaJump(nextElementId)) fillPassedQuotas();
+                st("Trans ---");
                 replaceFragment(fragment);
             } else
                 replaceFragmentBack(fragment);
@@ -67,60 +72,82 @@ public class TransFragment extends ScreenFragment {
     }
 
     private boolean checkQuotaJump(int relativeId) {
+        st("checkQuotaJump() +++");
         boolean isQuota = false;
-        Log.d("T-A-R.TransFragment", "======= checkQuotaJump: " + relativeId);
+//        Log.d("T-A-R.TransFragment", "======= checkQuotaJump: " + relativeId);
         ElementItemR currentElement = getElement(relativeId);
         if (currentElement.getRelative_parent_id() != null && currentElement.getRelative_parent_id() != 0 &&
                 getElement(currentElement.getRelative_parent_id()).getSubtype().equals(ElementSubtype.QUOTA)) {
             isQuota = true;
             quotaElementsList = getElement(currentElement.getRelative_parent_id()).getElements();
+//            if(!quotaElementsList.isEmpty()) {
+//                for(int i = 0; i < quotaElementsList.size(); i++) {
+//                    Log.d("T-A-R", "checkQuotaJump (" + i + ") ID: " + quotaElementsList.get(i).getRelative_id());
+//                }
+//            }
         }
-//        Log.d("T-A-R.TransFragment", "checkQuotaJump: " + isQuota);
+        st("checkQuotaJump() ---");
         return isQuota;
     }
 
     private void fillPassedQuotas() {
+        Log.d("T-A-R", "fillPassedQuotas: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        Log.d("T-A-R", "startElementId: " + startElementId + " nextElementId:" + nextElementId);
+        st("fillPassedQuotas() +++");
 //        Log.d("T-A-R.TransFragment", "=== quotaElementsList: " + quotaElementsList.size());
 //        Log.d("T-A-R.TransFragment", "=== startElementId: " + startElementId);
-        int startPosition = 0;
+        int startPosition = -1;
         for (int i = 0; i < quotaElementsList.size(); i++) {
             if (quotaElementsList.get(i).getRelative_id().equals(startElementId)) {
                 startPosition = i;
                 break;
             }
         }
-
-        if(startPosition == 0) {
+        Log.d("T-A-R", "startPosition: " + startPosition);
+        if (startPosition == -1) {
             for (int i = 0; i < quotaElementsList.size(); i++) {
                 if (!quotaElementsList.get(i).getRelative_id().equals(nextElementId)) {
+                    Log.d("T-A-R", "savePassedElement: (-1)");
+                    savePassedElement(quotaElementsList.get(i).getRelative_id());
+                } else break;
+            }
+        } else if (startPosition == 0) {
+            for (int i = 1; i < quotaElementsList.size(); i++) {
+                if (!quotaElementsList.get(i).getRelative_id().equals(nextElementId)) {
+                    Log.d("T-A-R", "savePassedElement: (0)");
                     savePassedElement(quotaElementsList.get(i).getRelative_id());
                 } else break;
             }
         } else if (startPosition != (quotaElementsList.size() - 1)) {
             for (int i = startPosition + 1; i < quotaElementsList.size(); i++) {
+                Log.d("T-A-R", "i: " + i);
                 if (!quotaElementsList.get(i).getRelative_id().equals(nextElementId)) {
+                    Log.d("T-A-R", "savePassedElement: (2)");
                     savePassedElement(quotaElementsList.get(i).getRelative_id());
                 } else break;
             }
         }
 
-//        List<ElementPassedR> passed = getDao().getQuotaPassedElements(getMainActivity().getToken(), true);
-//        for(ElementPassedR item : passed) {
-//            Log.d("T-A-R.TransFragment", "passed: " + item.getRelative_id());
-//        }
+        st("fillPassedQuotas() ---");
     }
 
     private void savePassedElement(int id) {
         CurrentQuestionnaireR quiz =  getQuestionnaire();
-        Log.d("T-A-R.TransFragment", "><><><><><: " + quiz);
+        Log.d("T-A-R.TransFragment", "><><><><><: " + id);
+
+        st("savePassedElement() +++");
+
         ElementItemR currentElement = getElement(id);
-        ElementPassedR elementPassedR = new ElementPassedR();
+        ElementPassedOB elementPassedR = new ElementPassedOB();
         elementPassedR.setRelative_id(id);
         elementPassedR.setProject_id(currentElement.getProjectId());
         elementPassedR.setToken(getQuestionnaire().getToken());
         elementPassedR.setHelper(true);
         elementPassedR.setFrom_quotas_block(false);
-        getDao().insertElementPassedR(elementPassedR);
+        elementPassedR.setIs_question(false);
+//        getDao().insertElementPassedR(elementPassedR);
+        getObjectBoxDao().insertElementPassedR(elementPassedR);
+        setCondComp(elementPassedR.getRelative_id());
 
         List<ElementItemR> answers = currentElement.getElements();
         for (ElementItemR answer : answers) {
@@ -128,10 +155,13 @@ public class TransFragment extends ScreenFragment {
                 elementPassedR.setRelative_id(answer.getRelative_id());
                 elementPassedR.setParent_id(answer.getRelative_parent_id());
                 elementPassedR.setFrom_quotas_block(true);
+                elementPassedR.setIs_question(false);
                 Log.d("T-A-R.TransFragment", "savePassedElement 10: " + elementPassedR.getRelative_id());
-                getDao().insertElementPassedR(elementPassedR);
+//                getDao().insertElementPassedR(elementPassedR);
+                getObjectBoxDao().insertElementPassedR(elementPassedR);
                 break;
             }
         }
+        st("savePassedElement() ---");
     }
 }

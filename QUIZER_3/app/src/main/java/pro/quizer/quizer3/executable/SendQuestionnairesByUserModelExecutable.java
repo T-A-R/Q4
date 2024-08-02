@@ -18,6 +18,7 @@ import pro.quizer.quizer3.API.QuizerAPI;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.database.models.InterStateR;
 import pro.quizer.quizer3.database.models.QuotaR;
 import pro.quizer.quizer3.database.models.TokensCounterR;
 import pro.quizer.quizer3.database.models.UserModelR;
@@ -132,9 +133,12 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
             return;
         }
 
+        Log.d("T-A-R", "onSendQuestionnaires: ========================================");
+
         String responseJson = null;
         try {
             responseJson = responseBody.string();
+            Log.d("T-A-R", "onSendQuestionnaires: " + responseJson);
         } catch (IOException e) {
             e.printStackTrace();
             onError(new Exception(mBaseActivity.getString(R.string.server_response_error) + " " + mBaseActivity.getString(R.string.error_202)));
@@ -157,6 +161,32 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                InterStateR interStateR = null;
+
+                interStateR = mBaseActivity.getMainDao().getInterState(mBaseActivity.getCurrentUser().getUser_project_id());
+
+                if (interStateR != null) {
+                    if (deletingListResponseModel.getIsBlockedInter() != null) {
+                        mBaseActivity.getMainDao().setBlockedInter(
+                                mBaseActivity.getCurrentUser().getUser_project_id(),
+                                deletingListResponseModel.getIsBlockedInter());
+                    }
+
+                    if (deletingListResponseModel.getDateStartInter() != null && deletingListResponseModel.getDateEndInter() != null) {
+                        mBaseActivity.getMainDao().setDatesInter(
+                                mBaseActivity.getCurrentUser().getUser_project_id(),
+                                deletingListResponseModel.getDateStartInter(),
+                                deletingListResponseModel.getDateEndInter());
+                    }
+                } else if (deletingListResponseModel.getIsBlockedInter() != null) {
+                    mBaseActivity.getMainDao().insertInterState(new InterStateR(
+                            mBaseActivity.getCurrentUser().getUser_project_id(),
+                            deletingListResponseModel.getIsBlockedInter(), deletingListResponseModel.getDateStartInter(),
+                            deletingListResponseModel.getDateEndInter()));
+                }
+
+
             }
             SPUtils.saveSendTimeDifference(mBaseActivity, deletingListResponseModel.getServerTime());
 
@@ -166,7 +196,7 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
                 if (userProjectId == null)
                     userProjectId = mBaseActivity.getCurrentUser().getUser_project_id();
                 for (QuotaModel model : deletingListResponseModel.getQuotas()) {
-                    quotaRList.add(new QuotaR(model.getSequence(), model.getLimit(), model.getSent(), userProjectId));
+                    quotaRList.add(new QuotaR(model.getSequence(), model.getLimit(), model.getSent(), userProjectId, model.getQuota_id()));
                 }
                 try {
                     mBaseActivity.getMainDao().clearQuotaR(userProjectId);
@@ -178,13 +208,20 @@ public class SendQuestionnairesByUserModelExecutable extends BaseExecutable impl
 
             }
 
+            try {
+                Log.d("T-A-R", "onSendQuestionnaires: " + deletingListResponseModel.isRegsDisabled());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             if (deletingListResponseModel.isRegsDisabled() != null) {
                 ConfigModel config = mBaseActivity.getCurrentUser().getConfigR();
-                config.setRegsDisabled(deletingListResponseModel.isRegsDisabled());
-                String newConfig = new Gson().toJson(config);
-                mBaseActivity.getMainDao().setConfigTime(DateUtils.getCurrentTimeMillis());
-                mBaseActivity.getMainDao().updateConfig(newConfig, mBaseActivity.getCurrentUserId(), mBaseActivity.getCurrentUser().getUser_project_id());
-                mBaseActivity.getConfigForce();
+                mBaseActivity.setUpdateConfig(deletingListResponseModel.isRegsDisabled() != config.isRegsDisabled());
+
+//                config.setRegsDisabled(deletingListResponseModel.isRegsDisabled());
+//                String newConfig = new Gson().toJson(config);
+//                mBaseActivity.getMainDao().setConfigTime(DateUtils.getCurrentTimeMillis());
+//                mBaseActivity.getMainDao().updateConfig(newConfig, mBaseActivity.getCurrentUserId(), mBaseActivity.getCurrentUser().getUser_project_id());
+//                mBaseActivity.getConfigForce();
             }
 
             if (deletingListResponseModel.getResult() != 0) {

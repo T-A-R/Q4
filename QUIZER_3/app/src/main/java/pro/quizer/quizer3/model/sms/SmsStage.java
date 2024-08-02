@@ -1,5 +1,9 @@
 package pro.quizer.quizer3.model.sms;
 
+import android.util.Log;
+
+import com.google.gson.Gson;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +11,9 @@ import java.util.Map;
 
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.database.ListIntConverter;
+import pro.quizer.quizer3.database.models.ElementItemR;
+import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.SmsReportR;
 import pro.quizer.quizer3.executable.SmsStageModelExecutable;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
@@ -54,7 +61,7 @@ public class SmsStage implements Serializable {
 //        mSmsAnswers.get(smsNumber).setmSmsStatus(pStatus);
         try {
             mContext.getMainDao().setSmsItemStatusBySmsNumber(smsNumber, pStatus);
-            mContext.getMainDao().setElementSendSms(true, questionId);
+//            mContext.getMainDao().setElementSendSms(true, questionId);
             SmsReportR report = new SmsReportR();
             report.setSent(true);
             report.setReport_id(Integer.parseInt(smsNumber));
@@ -78,12 +85,30 @@ public class SmsStage implements Serializable {
     }
 
     public void markAsSent(String smsNumber, Integer questionId) {
-
+        Log.d("T-A-R", "markAsSent " + smsNumber + ": <<<<<<<<<<<<<<<< " + mTokens);
         for (final String token : mTokens) {
-            try {
-                mContext.getMainDao().setQuestionnaireSendSms(true, token);
-            } catch (Exception e) {
-                e.printStackTrace();
+            Log.d("T-A-R", "markAsSent: <<<<<<<<<<<<<<<< " + token);
+            QuestionnaireDatabaseModelR quiz = mContext.getMainDao().getQuestionnaireByToken(token);
+            if (quiz != null) {
+                try {
+                    SentList listClass = quiz.getSentList();
+                    if (listClass.list == null) listClass.list = new ArrayList<>();
+
+                    Log.d("T-A-R", "markAsSent: ADD: " + questionId + " TO: " + token);
+                    if (!listClass.list.contains(questionId)) listClass.list.add(questionId);
+                    if (!listClass.smsNumbers.contains(smsNumber)) listClass.smsNumbers.add(smsNumber);
+                    mContext.getMainDao().setQuestionnaireSentSms(new Gson().toJson(listClass), token);
+                    mContext.getMainDao().setQuestionnaireSendSms(true, token);
+                    mContext.getMainDao().setElementSendSms(true, questionId, token);
+                    final List<ElementItemR> answers = mContext.getElement(questionId).getElements();
+                    for( ElementItemR answer : answers) {
+                        mContext.getMainDao().setElementSendSms(true, answer.getRelative_id(), token);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Log.d("T-A-R", "markAsSent: QUIZ = NULL");
             }
         }
 
@@ -92,5 +117,19 @@ public class SmsStage implements Serializable {
 
     public Map<String, SmsAnswer> getSmsAnswers() {
         return mSmsAnswers;
+    }
+
+    public static class SentList {
+        public List<Integer> list = new ArrayList<>();
+        public List<String> smsNumbers = new ArrayList<>();
+
+        public List<Integer> getList() {
+            return list == null ? new ArrayList<>() : list;
+        }
+        public List<String> getSmsNumbers() { return smsNumbers == null ? new ArrayList<>() : smsNumbers;}
+    }
+
+    public StagesModel getmStagesModel() {
+        return mStagesModel;
     }
 }

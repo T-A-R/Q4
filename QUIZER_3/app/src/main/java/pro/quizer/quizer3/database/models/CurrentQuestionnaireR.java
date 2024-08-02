@@ -76,6 +76,9 @@ public class CurrentQuestionnaireR {
     @ColumnInfo(name = "in_aborted_box")
     private boolean in_aborted_box;
 
+    @ColumnInfo(name = "cond_complete")
+    private boolean cond_complete;
+
     @ColumnInfo(name = "has_photo")
     private String has_photo;
 
@@ -97,9 +100,20 @@ public class CurrentQuestionnaireR {
     @ColumnInfo(name = "permissions")
     private String permissions;
 
+    @ColumnInfo(name = "quotas_online_checking_failed")
+    private boolean quotas_online_checking_failed;
+
+    @ColumnInfo(name = "questionnaire_route_id")
+    private Integer questionnaire_route_id;
+
+    @ColumnInfo(name = "rotation_state")
+    private String rotation_state;
+
     public CurrentQuestionnaireR() {
         this.count_interrupted = 0;
+        this.quotas_online_checking_failed = false;
         this.paused = false;
+        this.cond_complete = false;
         this.audio_number = 1;
     }
 
@@ -327,4 +341,35 @@ public class CurrentQuestionnaireR {
         this.permissions = permissions;
     }
 
+    public boolean isQuotas_online_checking_failed() {
+        return quotas_online_checking_failed;
+    }
+
+    public void setQuotas_online_checking_failed(boolean quotas_online_checking_failed) {
+        this.quotas_online_checking_failed = quotas_online_checking_failed;
+    }
+
+    public boolean isCond_complete() {
+        return cond_complete;
+    }
+
+    public void setCond_complete(boolean cond_complete) {
+        this.cond_complete = cond_complete;
+    }
+
+    public Integer getQuestionnaire_route_id() {
+        return questionnaire_route_id;
+    }
+
+    public void setQuestionnaire_route_id(Integer questionnaire_route_id) {
+        this.questionnaire_route_id = questionnaire_route_id;
+    }
+
+    public String getRotation_state() {
+        return rotation_state;
+    }
+
+    public void setRotation_state(String rotation_state) {
+        this.rotation_state = rotation_state;
+    }
 }

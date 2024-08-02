@@ -24,7 +24,7 @@ public class DeviceUtils {
         try {
             deviceId = tm.getDeviceId(); // возвращает IMEI
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
 
         if (deviceId == null) deviceId = getAndroidId(); // возвращает ANDROID_ID если не получилось получить IMEI

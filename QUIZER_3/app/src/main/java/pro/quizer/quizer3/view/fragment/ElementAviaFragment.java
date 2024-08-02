@@ -1055,7 +1055,7 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
                     elementPassedR.setFrom_quotas_block(false);
 
                     getDao().insertElementPassedR(elementPassedR);
-                    Log.d("T-L.ElementAviaFragment", "saveElement: ");
+//                    Log.d("T-L.ElementAviaFragment", "saveElement: ");
                     getDao().setWasElementShown(true, startElementId, currentElement.getUserId(), currentElement.getProjectId());
                     saved = true;
 
@@ -1942,10 +1942,6 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
         }
     }
 
-    private void st(String notes) {
-//        MainActivity.showTime(notes);
-    }
-
     @SuppressLint("RestrictedApi")
     private void showCardDialog() {
         dialogBuilder = new AlertDialog.Builder(getMainActivity());
@@ -1989,7 +1985,9 @@ public class ElementAviaFragment extends ScreenFragment implements View.OnClickL
                             element.getElementOptionsR().isAutoChecked(),
                             element.getElementOptionsR().isHelper(),
                             element.getElementOptionsR().getMin_number(),
-                            element.getElementOptionsR().getMax_number()));
+                            element.getElementOptionsR().getMax_number(),
+                            element.getChecked_in_card()
+                            ));
                     counter++;
                 }
             }

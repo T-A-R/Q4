@@ -27,9 +27,13 @@ public class AnswerState implements Serializable {
     @SerializedName("has_photo")
     private boolean has_photo;
 
+    @SerializedName("checkedInCard")
+    private boolean checkedInCard;
+
     public AnswerState() {
         this.enabled = true;
         this.has_photo = false;
+        this.checkedInCard = false;
     }
 
     public AnswerState(Integer relative_id, boolean checked, String data) {
@@ -39,6 +43,7 @@ public class AnswerState implements Serializable {
         this.enabled = true;
         this.has_photo = false;
         this.is_photo_answer = false;
+        this.checkedInCard = false;
     }
 
     public AnswerState(Integer relative_id, boolean checked, boolean open, String data, boolean enabled) {
@@ -49,6 +54,18 @@ public class AnswerState implements Serializable {
         this.enabled = enabled;
         this.has_photo = false;
         this.is_photo_answer = false;
+        this.checkedInCard = false;
+    }
+
+    public AnswerState(Integer relative_id, boolean checked, boolean open, String data, boolean enabled, boolean is_photo_answer, boolean has_photo, boolean checkedInCard) {
+        this.relative_id = relative_id;
+        this.checked = checked;
+        this.open = open;
+        this.data = data;
+        this.enabled = enabled;
+        this.is_photo_answer = is_photo_answer;
+        this.has_photo = has_photo;
+        this.checkedInCard = checkedInCard;
     }
 
     public Integer getRelative_id() {
@@ -105,5 +122,13 @@ public class AnswerState implements Serializable {
 
     public void setIsPhotoAnswer(boolean is_photo_answer) {
         this.is_photo_answer = is_photo_answer;
+    }
+
+    public boolean isCheckedInCard() {
+        return checkedInCard;
+    }
+
+    public void setCheckedInCard(boolean checkedInCard) {
+        this.checkedInCard = checkedInCard;
     }
 }

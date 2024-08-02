@@ -11,12 +11,12 @@ public final class Constants {
 
     public interface Default {
 
-        String ACTIVATION_URL = "http://188.225.11.47/wheretoredirrect_json.php";
-
+        String ACTIVATION_URL = "https://qhead.quizerplus.ru/api/v1/get-quizer-service-data";
+        String API_PATH = "/api/v1/send-data";
         String API_URL = "http://188.225.11.47/";
-
         String REG_URL = "/api/v1/registration";
-
+        String TEST_SMS_URL = "/api/v1/sms/receive/directly";
+        String ONLINE_QUOTAS_URL = "/api/v1/survey/check-quotas-free";
         String API_key = "a1d64454-4597-4c28-a047-dee22d3c8cfd";
 
         boolean DEBUG = true;
@@ -60,6 +60,7 @@ public final class Constants {
         String USER_LOGIN = "user_login";
         String GET_QUOTA = "get_quota";
         String STATISTICS = "statistics";
+        String ROUTES = "project_routes";
         String PHOTO_FILE = "photo_file";
         String PHOTO_FILE_ANSWER = "photo_file_answer";
         String AUDIO_FILE = "audio_file";
@@ -72,6 +73,7 @@ public final class Constants {
         String ABORTED = "aborted";
         String COMPLETED = "completed";
         String UNFINISHED = "unfinished";
+        String COND_COMPLETE = "cond_complete";
     }
 
     public interface LogUser {
@@ -109,6 +111,7 @@ public final class Constants {
         String UI = "ui";
         String AUDIO = "audio";
         String PHOTOS = "photos";
+        String TIMINGS = "timings";
     }
 
     public interface LogResult {

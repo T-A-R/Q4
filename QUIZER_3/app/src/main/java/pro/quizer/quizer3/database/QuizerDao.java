@@ -18,12 +18,18 @@ import pro.quizer.quizer3.database.models.ElementItemR;
 import pro.quizer.quizer3.database.models.ElementOptionsR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.database.models.EncryptionTableR;
+import pro.quizer.quizer3.database.models.InterStateR;
+import pro.quizer.quizer3.database.models.OnlineQuotaR;
 import pro.quizer.quizer3.database.models.OptionsR;
 import pro.quizer.quizer3.database.models.PhotoAnswersR;
+import pro.quizer.quizer3.database.models.PointR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
 import pro.quizer.quizer3.database.models.RegistrationR;
+import pro.quizer.quizer3.database.models.RouteR;
+import pro.quizer.quizer3.database.models.SavedElementPassedR;
+import pro.quizer.quizer3.database.models.SelectedRoutesR;
 import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.SmsAnswersR;
 import pro.quizer.quizer3.database.models.SmsItemR;
@@ -138,8 +144,11 @@ public interface QuizerDao {
     @Query("SELECT * FROM ElementDatabaseModelR WHERE token = :token")
     List<ElementDatabaseModelR> getElementByToken(String token);
 
-    @Query("UPDATE ElementDatabaseModelR SET send_sms = :send_sms WHERE relative_id = :relative_id")
-    void setElementSendSms(boolean send_sms, Integer relative_id);
+    @Query("SELECT * FROM ElementDatabaseModelR WHERE token = :token AND send_sms = :sms_status")
+    List<ElementDatabaseModelR> getElementByTokenAndSmsStatus(String token, boolean sms_status);
+
+    @Query("UPDATE ElementDatabaseModelR SET send_sms = :send_sms WHERE relative_id = :relative_id AND token = :token")
+    void setElementSendSms(boolean send_sms, Integer relative_id, String token);
 
     @Query("DELETE FROM ElementDatabaseModelR")
     void clearElementDatabaseModelR();
@@ -153,8 +162,14 @@ public interface QuizerDao {
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status AND user_id = :userId AND user_project_id = :projectId AND survey_status = :surveyStatus")
     List<QuestionnaireDatabaseModelR> getQuestionnaireForQuotas(int userId, int projectId, String status, String surveyStatus);
 
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status AND user_id = :userId AND user_project_id = :projectId AND (survey_status = :surveyStatus1 or survey_status = :surveyStatus2)")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireForQuotas(int userId, int projectId, String status, String surveyStatus1, String surveyStatus2);
+
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status AND user_id = :userId AND user_project_id = :projectId AND survey_status = :surveyStatus AND user_name = :name AND (user_date = :user_date or (user_date is null and :user_date is null))")
     List<QuestionnaireDatabaseModelR> getQuestionnaireForQuotasByUser(int userId, int projectId, String status, String surveyStatus, String name, String user_date);
+
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status AND user_id = :userId AND user_project_id = :projectId AND (survey_status = :surveyStatus1 or survey_status = :surveyStatus2) AND user_name = :name AND (user_date = :user_date or (user_date is null and :user_date is null))")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireForQuotasByUser(int userId, int projectId, String status, String surveyStatus1, String surveyStatus2, String name, String user_date);
 
     //TODO RENAME TO setQuestionnaireStatusByToken
     @Query("UPDATE QuestionnaireDatabaseModelR SET status = :status WHERE token = :token")
@@ -166,20 +181,32 @@ public interface QuizerDao {
     @Query("UPDATE QuestionnaireDatabaseModelR SET send_sms = :send_sms WHERE token = :token")
     void setQuestionnaireSendSms(boolean send_sms, String token);
 
+    @Query("UPDATE QuestionnaireDatabaseModelR SET sent_sms = :sent_sms WHERE token = :token")
+    void setQuestionnaireSentSms(String sent_sms, String token);
+
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status")
     List<QuestionnaireDatabaseModelR> getQuestionnaireByStatus(String status);
 
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND survey_status = :survey AND status = :status")
     List<QuestionnaireDatabaseModelR> getQuestionnaireSurveyStatus(int userId, String survey, String status);
 
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND (survey_status = :surveyStatus1 or survey_status = :surveyStatus2) AND status = :status")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireSurveyStatus(int userId, String surveyStatus1, String surveyStatus2, String status);
+
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND survey_status = :survey AND status = :status AND user_name = :name AND (user_date = :user_date or (user_date is null and :user_date is null))")
     List<QuestionnaireDatabaseModelR> getQuestionnaireByStatusAndName(int userId, String name, String user_date, String survey, String status);
+
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND (survey_status = :surveyStatus1 or survey_status = :surveyStatus2) AND status = :status AND user_name = :name AND (user_date = :user_date or (user_date is null and :user_date is null))")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireByStatusAndName(int userId, String name, String user_date, String surveyStatus1, String surveyStatus2, String status);
 
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status AND send_sms = :send_sms AND survey_status = :survey")
     List<QuestionnaireDatabaseModelR> getQuestionnaireForStage(int userId, String status, String survey, boolean send_sms);
 
-    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status AND send_sms = :sms_sent AND date_interview >= :timeFrom AND date_interview <= :timeTo")
-    List<QuestionnaireDatabaseModelR> getQuestionnaireWithTime(int userId, String status, boolean sms_sent, long timeFrom, long timeTo);
+//    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status AND send_sms = :sms_sent AND date_interview >= :timeFrom AND date_interview <= :timeTo")
+//    List<QuestionnaireDatabaseModelR> getQuestionnaireWithTime(int userId, String status, boolean sms_sent, long timeFrom, long timeTo);
+
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId AND status = :status AND date_interview >= :timeFrom AND date_interview <= :timeTo")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireWithTime(int userId, String status, long timeFrom, long timeTo);
 
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE user_id = :userId")
     List<QuestionnaireDatabaseModelR> getQuestionnaireByUserId(int userId);
@@ -253,6 +280,9 @@ public interface QuizerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertSmsItem(SmsItemR smsItemR);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertSmsItemList(List<SmsItemR> smsItemsList);
+
     @Query("UPDATE SmsItemR SET smsStatus = :status WHERE smsNumber = :smsNumber")
     void setSmsItemStatusBySmsNumber(String smsNumber, String status);
 
@@ -281,7 +311,13 @@ public interface QuizerDao {
     List<WarningsR> getWarningsByStatus(String warning, String status);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void saveElementPassedR(List<SavedElementPassedR> elements);
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertElementPassedR(ElementPassedR elementPassedR);
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertElementPassedR(List<ElementPassedR> elementPassedR);
 
     @Query("SELECT * FROM ElementPassedR WHERE token =:token")
     List<ElementPassedR> getAllElementsPassedR(String token);
@@ -322,6 +358,9 @@ public interface QuizerDao {
     @Query("UPDATE CurrentQuestionnaireR SET audio_number = :number")
     void setAudioNumber(int number);
 
+    @Query("UPDATE CurrentQuestionnaireR SET rotation_state = :state")
+    void setRotationState(String state);
+
     @Query("UPDATE CurrentQuestionnaireR SET current_element_id = :id ")
     void setCurrentElement(Integer id);
 
@@ -333,6 +372,9 @@ public interface QuizerDao {
 
     @Query("UPDATE CurrentQuestionnaireR SET in_aborted_box = :status ")
     void setCurrentQuestionnaireInAbortedBox(boolean status);
+
+    @Query("UPDATE CurrentQuestionnaireR SET cond_complete = :status ")
+    void setCurrentQuestionnaireCondComplete(boolean status);
 
     @Query("UPDATE CurrentQuestionnaireR SET has_photo = :has_photo ")
     void setCurrentQuestionnairePhoto(boolean has_photo);
@@ -367,6 +409,18 @@ public interface QuizerDao {
     @Query("UPDATE SettingsR SET table_speed = :data")
     void setSettingsTableSpeed(boolean data);
 
+    @Query("UPDATE SettingsR SET timings_debug = :data")
+    void setTimingsLogMode(boolean data);
+
+    @Query("UPDATE SettingsR SET send_logs = :data")
+    void setSendLogMode(boolean data);
+
+    @Query("UPDATE SettingsR SET reset_debug = :data")
+    void setResetDebug(boolean data);
+
+    @Query("UPDATE SettingsR SET need_update_config = :data")
+    void setUpdateConfig(boolean data);
+
     @Query("UPDATE SettingsR SET memory_check = :data")
     void setSettingsMemoryCheck(boolean data);
 
@@ -375,6 +429,18 @@ public interface QuizerDao {
 
     @Query("UPDATE SettingsR SET project_is_active = :data")
     void setProjectActive(boolean data);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertInterState(InterStateR stateR);
+
+    @Query("SELECT * FROM InterStateR WHERE user_project_id = :user_project_id LIMIT 1")
+    InterStateR getInterState(int user_project_id);
+
+    @Query("UPDATE InterStateR SET is_blocked_inter = :data WHERE user_project_id =:user_project_id")
+    void setBlockedInter(Integer user_project_id, boolean data);
+
+    @Query("UPDATE InterStateR SET date_start_inter = :start AND date_end_inter = :end WHERE user_project_id =:user_project_id")
+    void setDatesInter(Integer user_project_id, Long start, Long end);
 
     @Query("UPDATE SettingsR SET last_quota_time = :data")
     void setLastQuotaTime(Long data);
@@ -472,6 +538,9 @@ public interface QuizerDao {
     @Query("UPDATE RegistrationR SET status = :status WHERE id =:id")
     void setRegStatus(Integer id, String status);
 
+    @Query("UPDATE RegistrationR SET status = :status WHERE user_id =:id")
+    void setRegStatusByUserId(Integer id, String status);
+
     @Query("UPDATE RegistrationR SET phone = :phone WHERE id =:id")
     void setRegPhone(Integer id, String phone);
 
@@ -531,4 +600,64 @@ public interface QuizerDao {
 
     @Query("DELETE FROM SmsReportR WHERE user_id = :user_id")
     void clearSmsReportRByUserId(Integer user_id);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertPolygon(List<PointR> points);
+
+    @Query("SELECT * FROM PointR")
+    List<PointR> getAllPoints();
+
+    @Query("SELECT * FROM PointR WHERE route_id =:route_id")
+    List<PointR> getPolygon(Integer route_id);
+
+    @Query("DELETE FROM PointR WHERE route_id = :route_id")
+    void clearPolygonByProjectId(Integer route_id);
+
+    @Query("DELETE FROM PointR")
+    void clearAllPoints();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertRoutes(List<RouteR> routes);
+
+    @Query("SELECT * FROM RouteR")
+    List<RouteR> getAllRoutes();
+
+    @Query("SELECT * FROM RouteR WHERE project_id =:project_id AND user_project_id =:user_project_id")
+    List<RouteR> getRoutes(Integer project_id, Integer user_project_id);
+
+    @Query("SELECT * FROM RouteR WHERE route_id =:route_id AND user_project_id =:user_project_id  LIMIT 1")
+    RouteR getSelectedRoute(Integer user_project_id, Integer route_id);
+
+    @Query("DELETE FROM RouteR WHERE project_id = :user_project_id")
+    void clearRoutesByProjectId(Integer user_project_id);
+
+    @Query("DELETE FROM RouteR")
+    void clearAllRoutes();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertOnlineQuota(OnlineQuotaR onlineQuotaR);
+
+    @Query("DELETE FROM OnlineQuotaR WHERE token = :token")
+    void deleteOnlineQuota(String token);
+
+    @Query("DELETE FROM OnlineQuotaR")
+    void clearOnlineQuotas();
+
+    @Query("SELECT * FROM OnlineQuotaR WHERE token = :token LIMIT 1")
+    OnlineQuotaR getOnlineQuota(String token);
+
+    @Query("UPDATE OnlineQuotaR SET quotas = :quotas WHERE token = :token")
+    void updateOnlineQuotas(String token, String quotas);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertSelectedRoute(SelectedRoutesR selectedRoutesR);
+
+    @Query("DELETE FROM SelectedRoutesR")
+    void clearSelectedRoutes();
+
+    @Query("SELECT * FROM SelectedRoutesR WHERE user_project_id = :user_project_id LIMIT 1")
+    SelectedRoutesR getSavedSelectedRoute(Integer user_project_id);
+
+    @Query("UPDATE SelectedRoutesR SET route_id = :route_id WHERE user_project_id = :user_project_id")
+    void updateSelectedRoute(Integer route_id, Integer user_project_id);
 }

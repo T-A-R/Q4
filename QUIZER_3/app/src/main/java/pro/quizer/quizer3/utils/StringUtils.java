@@ -1,14 +1,17 @@
 package pro.quizer.quizer3.utils;
 
-import android.util.Log;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import pro.quizer.quizer3.Constants;
-import pro.quizer.quizer3.model.SubString;
 
 import static pro.quizer.quizer3.utils.DateUtils.PATTERN_TOKEN;
+
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public final class StringUtils {
 
@@ -33,4 +36,24 @@ public final class StringUtils {
         return longString.substring(0, Math.min(longString.length(), maxLenght));
     }
 
+    public static String getJson(Object object) {
+        Gson gson = new Gson();
+        return gson.toJson(object);
+    }
+
+    public static List<Integer> getListIntFromString(String string) {
+        JSONArray array = null;
+        try {
+            array = new JSONArray(string);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (array != null) {
+            Integer[] numbers = new Integer[array.length()];
+            for (int i = 0; i < array.length(); ++i) {
+                numbers[i] = array.optInt(i);
+            }
+            return Arrays.asList(numbers);
+        } else return new ArrayList<>();
+    }
 }

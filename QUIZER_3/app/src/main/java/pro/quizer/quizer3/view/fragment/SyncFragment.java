@@ -142,8 +142,8 @@ public class SyncFragment extends ScreenFragment implements View.OnClickListener
                             getDao().deleteElementDatabaseModelByToken(activity.getCurrentQuestionnaireForce().getToken());
                         }
                         getDao().clearCurrentQuestionnaireR();
-                        getDao().clearPrevElementsR();
-                        getDao().clearElementPassedR();
+                        getObjectBoxDao().clearPrevElementsR();
+                        getObjectBoxDao().clearElementPassedR();
                         activity.setCurrentQuestionnaireNull();
                         updateData(new SyncInfoExecutable(getContext()).execute());
                         mUnfinishedView.setText(getResources().getString(R.string.sync_have_unfinished_no));

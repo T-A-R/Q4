@@ -24,14 +24,18 @@ public class QuotaR {
     @ColumnInfo(name = "userProjectId")
     private Integer userProjectId;
 
+    @ColumnInfo(name = "quotaId")
+    private Integer quotaId;
+
     public QuotaR() {
     }
 
-    public QuotaR(String sequence, int limit, int done, Integer userProjectId) {
+    public QuotaR(String sequence, int limit, int done, Integer userProjectId, Integer quotaId) {
         this.sequence = sequence;
         this.limit = limit;
         this.done = done;
         this.userProjectId = userProjectId;
+        this.quotaId = quotaId;
     }
 
     public int getId() {
@@ -72,5 +76,13 @@ public class QuotaR {
 
     public void setUserProjectId(Integer userProjectId) {
         this.userProjectId = userProjectId;
+    }
+
+    public Integer getQuotaId() {
+        return quotaId;
+    }
+
+    public void setQuotaId(Integer quotaId) {
+        this.quotaId = quotaId;
     }
 }

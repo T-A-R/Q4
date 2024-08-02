@@ -4,11 +4,8 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-import androidx.room.TypeConverters;
-
-import java.util.List;
-
-import pro.quizer.quizer3.database.ListStringConverter;
+import com.google.gson.Gson;
+import pro.quizer.quizer3.model.sms.SmsStage;
 
 @Entity(indices = {@Index("token")})
 public class QuestionnaireDatabaseModelR {
@@ -99,7 +96,7 @@ public class QuestionnaireDatabaseModelR {
     private boolean send_sms = false;
 
     @ColumnInfo(name = "sent_sms")
-    private List<Integer> sent_sms;
+    private String sent_sms;
 
     @ColumnInfo(name = "used_fake_gps")
     private boolean used_fake_gps;
@@ -140,8 +137,14 @@ public class QuestionnaireDatabaseModelR {
     @ColumnInfo(name = "gps_on")
     private boolean gps_on;
 
+    @ColumnInfo(name = "quotas_online_checking_failed")
+    private boolean quotas_online_checking_failed;
+
     @ColumnInfo(name = "permissions")
     private String permissions;
+
+    @ColumnInfo(name = "questionnaire_route_id")
+    private Integer questionnaire_route_id;
 
     public QuestionnaireDatabaseModelR() {
         this.is_online = true;
@@ -483,11 +486,31 @@ public class QuestionnaireDatabaseModelR {
         this.date_end_interview = date_end_interview;
     }
 
-    public List<Integer> getSent_sms() {
+    public String getSent_sms() {
         return sent_sms;
     }
 
-    public void setSent_sms(List<Integer> sent_sms) {
+    public void setSent_sms(String sent_sms) {
         this.sent_sms = sent_sms;
+    }
+
+    public SmsStage.SentList getSentList() {
+        return sent_sms == null ? new SmsStage.SentList() : new Gson().fromJson(sent_sms, SmsStage.SentList.class);
+    }
+
+    public boolean isQuotas_online_checking_failed() {
+        return quotas_online_checking_failed;
+    }
+
+    public void setQuotas_online_checking_failed(boolean quotas_online_checking_failed) {
+        this.quotas_online_checking_failed = quotas_online_checking_failed;
+    }
+
+    public Integer getQuestionnaire_route_id() {
+        return questionnaire_route_id;
+    }
+
+    public void setQuestionnaire_route_id(Integer questionnaire_route_id) {
+        this.questionnaire_route_id = questionnaire_route_id;
     }
 }

@@ -18,11 +18,10 @@
         android:id="@+id/element_cont"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/button_panel"
+        android:layout_above="@+id/progressBar"
         android:layout_below="@+id/toolbar"
         android:layout_gravity="top"
         android:layout_marginTop="@dimen/_4sdp"
-        android:layout_marginBottom="@dimen/_4sdp"
         android:orientation="vertical">
 
         <!--TITLE-->
@@ -455,6 +454,17 @@
             android:visibility="gone" />
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_above="@+id/button_panel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_20sdp"
+        android:indeterminateOnly="true"
+
+        android:indeterminateTint="@color/colorPrimary"
+        android:visibility="gone" />
 
     <!--BUTTONS-->
     <androidx.appcompat.widget.LinearLayoutCompat

@@ -1,8 +1,13 @@
 package pro.quizer.quizer3.view.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -128,6 +133,14 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
         if (getMainActivity().isHomeRestart()) {
             replaceFragment(new HomeFragment());
+        } else {
+            boolean timingsMode = getMainActivity().isTimingsLogMode();
+            boolean needResetDebug = getMainActivity().needResetDebug();
+            if (needResetDebug) getMainActivity().setResetDebug(false);
+            else if (timingsMode) {
+                getMainActivity().setTimingsLogMode(false);
+                getMainActivity().setSendLogMode(false);
+            }
         }
 
         btnSend.setOnClickListener(this);
@@ -355,11 +368,13 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
         passwordMD5 = MD5Utils.formatPassword(login, password);
 
-        AuthRequestModel post = new AuthRequestModel(getLoginAdmin(), passwordMD5, login);
-        Gson gson = new Gson();
-        String json = gson.toJson(post);
+        if(getLoginAdmin() != null) {
+            AuthRequestModel post = new AuthRequestModel(getLoginAdmin(), passwordMD5, login);
+            Gson gson = new Gson();
+            String json = gson.toJson(post);
 
-        QuizerAPI.authUser(getServer(), json, this);
+            QuizerAPI.authUser(getServer(), json, this);
+        } else showToast("Ошибка чтения из базы данных. Попробуйте перезапустить приложение");
     }
 
     private void onLoggedInWithoutUpdateLocalData(final int pUserId) {
@@ -453,100 +468,108 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
 
     public void downloadConfig(final String pLogin, final String pPassword, final AuthResponseModel pModel) {
 
-        final ConfigRequestModel configRequestModel = new ConfigRequestModel(
-                getLoginAdmin(),
-                pLogin,
-                pPassword,
-                pModel.getConfigId()
-        );
+        if(getLoginAdmin() != null) {
+            final ConfigRequestModel configRequestModel = new ConfigRequestModel(
+                    getLoginAdmin(),
+                    pLogin,
+                    pPassword,
+                    pModel.getConfigId()
+            );
 
-        Gson gson = new Gson();
-        String json = gson.toJson(configRequestModel);
+            Gson gson = new Gson();
+            String json = gson.toJson(configRequestModel);
 
-        QuizerAPI.getConfig(getServer(), json, responseBody -> {
+            QuizerAPI.getConfig(getServer(), json, responseBody -> {
 
-            if (responseBody == null) {
-                showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_601));
-                return;
-            }
-
-            String responseJson = null;
-            try {
-                responseJson = responseBody.string();
-//                getMainActivity().copyToClipboard(responseJson);
-            } catch (IOException e) {
-                showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_602));
-            }
-
-            try {
-                getMainActivity().addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.SENT, "Load Config", responseJson);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            final GsonBuilder gsonBuilder = new GsonBuilder();
-            ConfigResponseModel configResponseModel = null;
-
-
-            try {
-                configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
-            } catch (final Exception pE) {
-                pE.printStackTrace();
-                Log.d("T-A-R.AuthFragment", "downloadConfig ERROR: " + responseJson);
-                showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_603));
-            }
-
-            if (configResponseModel != null && configResponseModel.getConfig() != null) {
-                Integer ver = configResponseModel.getConfig().getMinAppVersion();
-//                ver = 4000000;
-                if (ver != null && ver > BuildConfig.VERSION_CODE) {
-                    showDialog("Внимание!", getString(R.string.please_download_last_app_version), "Скачать", null,
-                            new ICallback() {
-                                @Override
-                                public void onStarting() {
-
-                                }
-
-                                @Override
-                                public void onSuccess() {
-                                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://quizerplus.ru/apps/quizer"));
-                                    startActivity(browserIntent);
-                                    replaceFragment(new AuthFragment());
-                                }
-
-                                @Override
-                                public void onError(Exception pException) {
-
-                                }
-                            }, null);
-                } else {
-                    if (configResponseModel.isProjectActive() != null) {
-                        try {
-                            getDao().setProjectActive(configResponseModel.isProjectActive());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (configResponseModel.getResult() != 0) {
-//                        Log.d("T-A-R.AuthFragment", ">>>>>> SET TIME 1");
-                        getDao().setConfigTime(DateUtils.getCurrentTimeMillis());
-                        isRebuildDB = true;
-                        downloadFiles(configResponseModel, pModel, pLogin, pPassword);
-                    } else {
-                        showToast(configResponseModel.getError());
-                    }
+                if (responseBody == null) {
+                    showToast(getString(R.string.server_not_response) + " " + getString(R.string.error_601));
+                    return;
                 }
-            } else {
+
+                String responseJson = null;
                 try {
-                    showToast(getString(R.string.server_response_error) + " " + configResponseModel.getError());
-                    Log.d("T-L.AuthFragment", "downloadConfig ERROR: " + configResponseModel.getError());
+                    responseJson = responseBody.string();
+                    Log.d("T-A-R", "downloadConfig: " + responseJson);
+//                getMainActivity().copyToClipboard(responseJson);
+                } catch (IOException e) {
+                    showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_602));
+                }
+
+                try {
+                    getMainActivity().addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.SENT, "Load Config", responseJson);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    showToast(getString(R.string.server_response_error));
-
                 }
-            }
-        });
+
+                final GsonBuilder gsonBuilder = new GsonBuilder();
+                ConfigResponseModel configResponseModel = null;
+
+
+                try {
+                    configResponseModel = gsonBuilder.create().fromJson(responseJson, ConfigResponseModel.class);
+                    Log.d("T-A-R", "downloadConfig 2: " + new Gson().toJson(configRequestModel));
+                } catch (final Exception pE) {
+                    pE.printStackTrace();
+                    Log.d("T-A-R.AuthFragment", "downloadConfig ERROR: " + responseJson);
+                    showToast(getString(R.string.server_response_error) + " " + getString(R.string.error_603));
+                }
+
+                if (configResponseModel != null && configResponseModel.getConfig() != null) {
+                    Integer ver = configResponseModel.getConfig().getMinAppVersion();
+                    final boolean isExit = configResponseModel.getConfig().has_registration();
+//                ver = 4000000;
+                    if (ver != null && ver > BuildConfig.VERSION_CODE) {
+                        showDialog("Внимание!", getString(R.string.please_download_last_app_version), "Скачать", null,
+                                new ICallback() {
+                                    @Override
+                                    public void onStarting() {
+
+                                    }
+
+                                    @Override
+                                    public void onSuccess() {
+                                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://quizerplus.ru/apps/quizer"));
+//                                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://quizerplus.ru/apps/exit"));
+                                        startActivity(browserIntent);
+                                        replaceFragment(new AuthFragment());
+                                    }
+
+                                    @Override
+                                    public void onError(Exception pException) {
+
+                                    }
+                                }, null);
+                    } else {
+                        if (configResponseModel.isProjectActive() != null) {
+                            try {
+                                getDao().setProjectActive(configResponseModel.isProjectActive());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        if (configResponseModel.getResult() != 0) {
+//                        Log.d("T-A-R.AuthFragment", ">>>>>> SET TIME 1");
+                            getDao().setConfigTime(DateUtils.getCurrentTimeMillis());
+                            isRebuildDB = true;
+                            downloadFiles(configResponseModel, pModel, pLogin, pPassword);
+                        } else {
+                            showToast(configResponseModel.getError());
+                        }
+                    }
+                } else {
+                    try {
+                        showToast(getString(R.string.server_response_error) + " " + configResponseModel.getError());
+                        Log.d("T-L.AuthFragment", "downloadConfig ERROR: " + configResponseModel.getError());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        showToast(getString(R.string.server_response_error));
+
+                    }
+                }
+            });
+        } else {
+            showToast("Ошибка чтения из базы данных. Попробуйте перезапустить приложение");
+        }
     }
 
     private void downloadFiles(final ConfigResponseModel pConfigResponseModel,
@@ -967,7 +990,8 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                                replaceFragment(new KeyFragment());
+//                                replaceFragment(new KeyFragment());
+                                triggerRebirth(getMainActivity());
                             }
 
                             @Override
@@ -978,5 +1002,28 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                     })
                     .setNegativeButton(R.string.view_no, null).show();
         }
+    }
+
+    private void restartApp() {
+        try {
+            Intent mStartActivity = new Intent(getContext(), MainActivity.class);
+            int mPendingIntentId = 123456;
+            PendingIntent mPendingIntent = PendingIntent.getActivity(getContext(), mPendingIntentId,    mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+            AlarmManager mgr = (AlarmManager)getContext().getSystemService(getContext().ALARM_SERVICE);
+            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+//            System.exit(0);
+            getMainActivity().finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void triggerRebirth(Context context) {
+        PackageManager packageManager = context.getPackageManager();
+        Intent intent = packageManager.getLaunchIntentForPackage(context.getPackageName());
+        ComponentName componentName = intent.getComponent();
+        Intent mainIntent = Intent.makeRestartActivityTask(componentName);
+        context.startActivity(mainIntent);
+        Runtime.getRuntime().exit(0);
     }
 }

@@ -36,8 +36,8 @@ public class QuestionnairesCountBySequenceExecutable extends BaseModelExecutable
         final SettingsR settings = activity.getSettings();
 
         final List<QuestionnaireDatabaseModelR> sentQuestionnaires = byUser ?
-                activity.getMainDao().getQuestionnaireForQuotasByUser(userId, userProjectId,QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED, settings.getUser_name(), settings.getUser_date()) :
-                activity.getMainDao().getQuestionnaireForQuotas(userId, userProjectId,QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
+                activity.getMainDao().getQuestionnaireForQuotasByUser(userId, userProjectId,QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED, Constants.QuestionnaireStatuses.COND_COMPLETE, settings.getUser_name(), settings.getUser_date()) :
+                activity.getMainDao().getQuestionnaireForQuotas(userId, userProjectId,QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED, Constants.QuestionnaireStatuses.COND_COMPLETE);
 
         for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : sentQuestionnaires) {
 

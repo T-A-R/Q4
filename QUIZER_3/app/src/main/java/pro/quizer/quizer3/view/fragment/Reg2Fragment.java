@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -98,17 +99,18 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
         if (view == btnPhoto) {
             capturePhoto();
         } else if (view == btnNext) {
-            UiUtils.setButtonEnabled(btnNext, false);
-            UiUtils.setButtonEnabled(btnPhoto, false);
-            if (camera != null) {
-                try {
-                    camera.stopPreview(); //TODO TRY CATCH
-                    camera.release();
-                } catch (Exception e) {
-                    e.printStackTrace();
+            if (mTimeToken != null) {
+                UiUtils.setButtonEnabled(btnNext, false);
+                UiUtils.setButtonEnabled(btnPhoto, false);
+                if (camera != null) {
+                    try {
+                        camera.stopPreview(); //TODO TRY CATCH
+                        camera.release();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-            if(mTimeToken != null) {
+
                 ScreenFragment reg3 = new Reg3Fragment();
                 Bundle bundle = new Bundle();
                 try {
@@ -153,8 +155,11 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
             }
 
             try {
-                File dir = new File(FileUtils.getRegStoragePath(getMainActivity()) + File.separator
-                        + user.getUser_id() + File.separator + mTimeToken);
+                File dir = new File(FileUtils.getRegStoragePath(getMainActivity())
+                        + File.separator
+                        + user.getUser_id()
+                        + File.separator
+                        + mTimeToken);
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
@@ -164,9 +169,12 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
                 return;
             }
 
-            String path = FileUtils.getRegStoragePath(getMainActivity()) + File.separator
-                    + user.getUser_id() + File.separator
-                    + mTimeToken + File.separator
+            String path = FileUtils.getRegStoragePath(getMainActivity())
+                    + File.separator
+                    + user.getUser_id()
+                    + File.separator
+                    + mTimeToken
+                    + File.separator
                     + user.getConfigR().getLoginAdmin()
                     + "^" + user.getConfigR().getProjectInfo().getProjectId()
                     + "^" + user.getLogin()
@@ -191,6 +199,8 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
 //                rotatedBitmap = bitmap;
 //            }
 
+            Log.d("T-A-R", "PHOTO PATH 1: " + path);
+
             //Save image to the file.
             if (HiddenCameraUtils.saveImageFromFile(rotatedBitmap,
                     mCameraConfig.getImageFile(),
@@ -204,16 +214,19 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
                         UiUtils.setButtonEnabled(btnNext, true);
                         cameraCont.setVisibility(View.GONE);
                         photoView.setVisibility(View.VISIBLE);
-                        Uri uri = null;
-                        if (rotatedBitmap != null) uri = getImageUri(rotatedBitmap);
-                        else
-                            getMainActivity().addLog(Constants.LogObject.UI, Constants.LogType.FILE, Constants.LogResult.ERROR, "Take photo error", "rotatedBitmap = null");
-                        if (uri != null)
-                            Picasso.with(getMainActivity())
-                                    .load(uri)
-                                    .into(photoView);
-                        else
-                            getMainActivity().addLog(Constants.LogObject.UI, Constants.LogType.FILE, Constants.LogResult.ERROR, "Take photo error", "URI = null");
+                        photoView.setImageBitmap(rotatedBitmap);
+//                        Uri uri = null;
+//                        if (rotatedBitmap != null) uri = getImageUri(rotatedBitmap);
+//                        else
+//                            getMainActivity().addLog(Constants.LogObject.UI, Constants.LogType.FILE, Constants.LogResult.ERROR, "Take photo error", "rotatedBitmap = null");
+//
+//                        Log.d("T-A-R", "PHOTO PATH 2: " + uri);
+//                        if (uri != null)
+//                            Picasso.with(getMainActivity())
+//                                    .load(uri)
+//                                    .into(photoView);
+//                        else
+//                            getMainActivity().addLog(Constants.LogObject.UI, Constants.LogType.FILE, Constants.LogResult.ERROR, "Take photo error", "URI = null");
                     }
                 });
             } else {
@@ -273,9 +286,12 @@ public class Reg2Fragment extends ScreenFragment implements View.OnClickListener
         try {
             path = MediaStore.Images.Media.insertImage(getMainActivity().getContentResolver(), inImage, "Title", null);
         } catch (Exception e) {
+            getMainActivity().addLog(Constants.LogObject.UI, Constants.LogType.FILE, Constants.LogResult.ERROR, "Take photo error","1: " + e.getMessage());
+
             try {
                 path = MediaStore.Images.Media.insertImage(getMainActivity().getContentResolver(), inImage, "IMG_" + Calendar.getInstance().getTime(), null);
             } catch (Exception exception) {
+                getMainActivity().addLog(Constants.LogObject.UI, Constants.LogType.FILE, Constants.LogResult.ERROR, "Take photo error","2: " + exception.getMessage());
                 exception.printStackTrace();
             }
             e.printStackTrace();

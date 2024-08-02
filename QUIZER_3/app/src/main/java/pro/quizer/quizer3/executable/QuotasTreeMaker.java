@@ -88,7 +88,7 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
 
         final List<QuotaR> quotasR = activity.getMainDao().getQuotaR(user_project_id);
         for (QuotaR quotaR : quotasR) {
-            quotas.add(new QuotaModel(quotaR.getSequence(), quotaR.getLimit(), quotaR.getDone(), user_id, user_project_id));
+            quotas.add(new QuotaModel(quotaR.getSequence(), quotaR.getLimit(), quotaR.getDone(), user_id, user_project_id, quotaR.getQuotaId()));
         }
         if (quotas == null || quotas.isEmpty()) return tree;
 
@@ -181,7 +181,7 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
             if (user_project_id == null)
                 user_project_id = activity.getCurrentUser().getUser_project_id();
 
-            List<QuestionnaireDatabaseModelR> offlineQuestionnaires = activity.getMainDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), user_project_id, QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
+            List<QuestionnaireDatabaseModelR> offlineQuestionnaires = activity.getMainDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), user_project_id, QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED, Constants.QuestionnaireStatuses.COND_COMPLETE);
 
             for (final QuestionnaireDatabaseModelR questionnaireDatabaseModel : offlineQuestionnaires) {
                 final List<ElementDatabaseModelR> elements = activity.getMainDao().getElementByToken(questionnaireDatabaseModel.getToken());

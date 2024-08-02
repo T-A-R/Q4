@@ -56,6 +56,18 @@ public class SettingsR {
     @ColumnInfo(name = "config_time")
     private Long config_time;
 
+    @ColumnInfo(name = "timings_debug")
+    private boolean timings_debug;
+
+    @ColumnInfo(name = "reset_debug")
+    private boolean reset_debug;
+
+    @ColumnInfo(name = "send_logs")
+    private boolean send_logs;
+
+    @ColumnInfo(name = "need_update_config")
+    private boolean need_update_config;
+
     public SettingsR() {
         this.started = false;
         this.auto_zoom = true;
@@ -65,6 +77,10 @@ public class SettingsR {
         this.project_is_active = true;
         this.root = false;
         this.registered = false;
+        this.timings_debug = false;
+        this.reset_debug = false;
+        this.send_logs = false;
+        this.need_update_config = false;
         this.config_time = -1L;
     }
 
@@ -194,5 +210,37 @@ public class SettingsR {
 
     public void setConfig_time(Long config_time) {
         this.config_time = config_time;
+    }
+
+    public boolean isTimings_debug() {
+        return timings_debug;
+    }
+
+    public void setTimings_debug(boolean timings_debug) {
+        this.timings_debug = timings_debug;
+    }
+
+    public boolean isReset_debug() {
+        return reset_debug;
+    }
+
+    public void setReset_debug(boolean reset_debug) {
+        this.reset_debug = reset_debug;
+    }
+
+    public boolean isSend_logs() {
+        return send_logs;
+    }
+
+    public void setSend_logs(boolean send_logs) {
+        this.send_logs = send_logs;
+    }
+
+    public boolean isNeed_update_config() {
+        return need_update_config;
+    }
+
+    public void setNeed_update_config(boolean need_update_config) {
+        this.need_update_config = need_update_config;
     }
 }

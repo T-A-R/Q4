@@ -6,7 +6,7 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 //@Entity
-@Entity(indices = {@Index(value = {"relative_id"} , unique = true)})
+@Entity(indices = {@Index(value = {"relative_id"} , unique = true), @Index("token"), @Index("from_quotas_block"), @Index("parent_id")})
 public class ElementPassedR {
 
     @PrimaryKey(autoGenerate = true)
@@ -45,6 +45,9 @@ public class ElementPassedR {
 
     @ColumnInfo(name = "helper")
     private Boolean helper;
+
+    @ColumnInfo(name = "is_question")
+    private Boolean is_question;
 
     public ElementPassedR() {
     }
@@ -143,5 +146,13 @@ public class ElementPassedR {
 
     public void setParent_id(Integer parent_id) {
         this.parent_id = parent_id;
+    }
+
+    public Boolean getIs_question() {
+        return is_question;
+    }
+
+    public void setIs_question(Boolean is_question) {
+        this.is_question = is_question;
     }
 }

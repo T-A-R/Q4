@@ -1,6 +1,5 @@
 package pro.quizer.quizer3.model.config;
 
-
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
@@ -107,6 +106,40 @@ public class ConfigModel implements Serializable {
     @SerializedName("min_ver_android_app")
     private Integer min_ver_android_app = 0;
 
+    @SerializedName("check_quotas_online_limit")
+    private Integer check_quotas_online_limit = 999;
+
+    @SerializedName("check_quotas_online")
+    private Boolean check_quotas_online;
+
+    @SerializedName("is_enabled_routes")
+    private Boolean is_enabled_routes = false;
+
+    @SerializedName("is_required_select_route")
+    private Boolean is_required_select_route = false;
+
+    @SerializedName("is_excess_on_route_disallowed")
+    private Boolean is_excess_on_route_disallowed = true;
+
+    @SerializedName("cond_complete")
+    private Boolean cond_complete = false;
+
+    @SerializedName("cond_complete_items")
+    private List<Integer> cond_complete_items;
+
+    @SerializedName("is_blocked_inter")
+    private Boolean is_blocked_inter = false;
+
+    @SerializedName("date_start_inter")
+    private Long date_start_inter;
+
+    @SerializedName("date_end_inter")
+    private Long date_end_inter;
+
+    @SerializedName("card_required")
+    private Boolean card_required = false;
+
+
     public String getServerUrl() {
         return server_url;
     }
@@ -133,6 +166,12 @@ public class ConfigModel implements Serializable {
 
     public boolean hasReserveChannels() {
         return getProjectInfo().getReserveChannel() != null;
+    }
+
+    public boolean isTestSmsNumber() {
+        return getProjectInfo().getReserveChannel() != null
+                && getProjectInfo().getReserveChannel().getPhones().size() == 1
+                && getProjectInfo().getReserveChannel().getPhones().get(0).getNumber().equals("+1234567890");
     }
 
     public int getAutonomousLimitCountQuestionnare() {
@@ -303,4 +342,64 @@ public class ConfigModel implements Serializable {
     }
 
     public Integer getMinAppVersion() { return min_ver_android_app; }
+
+    public Boolean isCheckQuotasOnline() {
+        return check_quotas_online;
+    }
+
+    public Integer getCheckQuotasOnlineLimit() {
+        return check_quotas_online_limit;
+    }
+
+    public Boolean isEnabledRoutes() {
+        return is_enabled_routes;
+    }
+
+    public Boolean isRequiredSelectRoute() {
+        return is_required_select_route;
+    }
+
+    public Boolean isExcessOnRouteDisallowed() {
+        return is_excess_on_route_disallowed;
+    }
+
+    public Boolean getCondComplete() {
+        return cond_complete;
+    }
+
+    public List<Integer> getCondCompleteItems() {
+        return cond_complete_items;
+    }
+
+    public Boolean getIsBlockedInter() {
+        return is_blocked_inter;
+    }
+
+    public void setIsBlockedInter(Boolean is_blocked_inter) {
+        this.is_blocked_inter = is_blocked_inter;
+    }
+
+    public Long getDateStartInter() {
+        return date_start_inter;
+    }
+
+    public void setDateStartInter(Long date_start_inter) {
+        this.date_start_inter = date_start_inter;
+    }
+
+    public Long getDateEndInter() {
+        return date_end_inter;
+    }
+
+    public void setDateEndInter(Long date_end_inter) {
+        this.date_end_inter = date_end_inter;
+    }
+
+    public Boolean isCardRequired() {
+        return card_required;
+    }
+
+    public void setCardRequired(Boolean card_required) {
+        this.card_required = card_required;
+    }
 }

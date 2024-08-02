@@ -22,13 +22,13 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Process;
-import android.os.RemoteException;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.provider.Settings;
+
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
@@ -45,6 +45,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.view.KeyEvent;
@@ -94,7 +95,9 @@ import pro.quizer.quizer3.model.config.ElementModelNew;
 import pro.quizer.quizer3.model.config.OptionsModelNew;
 import pro.quizer.quizer3.model.config.ReserveChannelModel;
 import pro.quizer.quizer3.model.config.StagesModel;
+import pro.quizer.quizer3.model.quota.QuotaModel;
 import pro.quizer.quizer3.model.view.TitleModel;
+import pro.quizer.quizer3.objectbox.ObjectBoxDao;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.DeviceUtils;
 import pro.quizer.quizer3.utils.ExpressionUtils;
@@ -121,7 +124,7 @@ import static pro.quizer.quizer3.utils.FileUtils.JPEG;
 
 public class MainActivity extends AppCompatActivity implements ViewTreeObserver.OnGlobalLayoutListener {
 
-    static public String TAG = "TARLOGS";
+    static public String TAG = "T-A-R";
     static public boolean AVIA = false;
     static public boolean DEBUG_MODE = false; //TODO FOR TESTS ONLY!
     static public boolean PLAY_MARKET = false;
@@ -154,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private boolean hasRotationContainer = false;
     private boolean mIsAudioStarted = false;
     private boolean mIsFirstStart = true;
-    private static Long alphaTime = 0L;
+    private static Long alphaTime = DateUtils.getFullCurrentTime();
 
     private int projectId;
     private int userId;
@@ -174,9 +177,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     private RelativeLayout mainCont;
 
+    private ProgressBar progressBar;
+
+//    private SettingsR mTimingsSettings = null;
+
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationRequest locationRequest;
     private Location mLocation;
+    private List<TimingLog> mTimings = new ArrayList<>();
     LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(@NonNull LocationResult locationResult) {
@@ -187,6 +195,9 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         }
     };
 
+    public List<Integer> quotaIds = new ArrayList<>();
+    public List<QuotaModel> quotas;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -194,12 +205,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 //        if (savedInstanceState == null) {
         setContentView(R.layout.activity_main);
         mainCont = findViewById(R.id.main_cont);
+        progressBar = findViewById(R.id.progressBar);
         if (AVIA)
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         else
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         Fonts.init(this);
+        Log.d("T-A-R", "onCreate: CHECK " + checkPermission());
         if (!checkPermission()) {
             requestPermission();
         }
@@ -211,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         if (!mMediaBrowser.isConnected()) {
             mMediaBrowser.connect();
         }
+        Log.d("T-A-R", ">>>>>>>>>>>>> onCreate: mMediaBrowser.isConnected() = " + mMediaBrowser.isConnected());
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         if (mIsFirstStart || savedInstanceState == null) {
             mIsFirstStart = false;
@@ -318,6 +332,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     public QuizerDao getMainDao() {
         return CoreApplication.getQuizerDatabase().getQuizerDao();
     }
+
+    public ObjectBoxDao getMainObjectBoxDao() {return CoreApplication.getObjectBoxDao();}
 
     public void showKeyboard() {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
@@ -470,6 +486,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                         elementOptionsR.setPhoto_answer_required(optionsModelNew.isPhotoAnswerRequired());
                         elementOptionsR.setMin_number(optionsModelNew.getMinNumber());
                         elementOptionsR.setMax_number(optionsModelNew.getMaxNumber());
+                        elementOptionsR.setShowRandomQuestion(optionsModelNew.getShowRandomQuestion());
+                        elementOptionsR.setHide_numbers_answers(optionsModelNew.getHideNumbersAnswers());
 
                         elementItemR.setElementOptionsR(elementOptionsR);
                     }
@@ -534,10 +552,10 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public UserModelR getCurrentUserForce() {
         try {
-            Log.d("T-A-R.MainActivity", "getCurrentUserForce: ===================");
-            Log.d("T-A-R.MainActivity", "getCurrentUserId: " + getCurrentUserId());
+//            Log.d("T-A-R.MainActivity", "getCurrentUserForce: ===================");
+//            Log.d("T-A-R.MainActivity", "getCurrentUserId: " + getCurrentUserId());
             mCurrentUser = getUserByUserId(getCurrentUserId());
-            Log.d("T-A-R.MainActivity", "mCurrentUser: " + mCurrentUser);
+//            Log.d("T-A-R.MainActivity", "mCurrentUser: " + mCurrentUser);
         } catch (Exception e) {
             showToastfromActivity(getString(R.string.db_load_error));
         }
@@ -566,6 +584,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public List<File> getPhotosAnswersByToken(final String token) {
+//        Log.d("T-A-R", "getPhotosAnswersByToken token: " + token);
+//        Log.d("T-A-R", "getPhotosAnswersByToken uid: " + getCurrentUserId());
         return FileUtils.getFilesRecursion(JPEG, FileUtils.getAnswersStoragePath(this) + File.separator
                 + getCurrentUserId() + File.separator
                 + token);
@@ -618,16 +638,23 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             final int camera = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
             final int audio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
             final int sms = ContextCompat.checkSelfPermission(getApplicationContext(), SEND_SMS);
-            final int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
-            final int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+            final int writeStorage;
+            final int readStorage;
+            if (Build.VERSION.SDK_INT <= 32) {
+                writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+                readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+            } else {
+                writeStorage = PackageManager.PERMISSION_GRANTED;
+                readStorage = PackageManager.PERMISSION_GRANTED;
+            }
             final int phoneState;
             if (Build.VERSION.SDK_INT >= 28) {
                 phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_NUMBERS);
-
             } else {
                 phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_STATE);
 
             }
+//            Log.d("T-A-R", "checkPermission: " +location+" " + camera + " " + audio + " " + sms + " " + writeStorage + " " + readStorage + " " + phoneState);
             return location == PackageManager.PERMISSION_GRANTED &&
                     camera == PackageManager.PERMISSION_GRANTED &&
                     audio == PackageManager.PERMISSION_GRANTED &&
@@ -639,8 +666,16 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             final int location = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
             final int camera = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
             final int audio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
-            final int writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
-            final int readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+            final int writeStorage;
+            final int readStorage;
+            if (Build.VERSION.SDK_INT <= 32) {
+                writeStorage = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+                readStorage = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+            } else {
+                writeStorage = PackageManager.PERMISSION_GRANTED;
+                readStorage = PackageManager.PERMISSION_GRANTED;
+            }
+
             final int phoneState;
             if (Build.VERSION.SDK_INT >= 28) {
                 phoneState = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_NUMBERS);
@@ -707,6 +742,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             case 200:
                 if (grantResults.length > 0) {
                     if (!PLAY_MARKET) {
+                        Log.d("T-A-R", "onRequestPermissionsResult: 1");
                         final boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                         final boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                         final boolean audioAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
@@ -714,7 +750,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                         final boolean readStorageAccepted = grantResults[4] == PackageManager.PERMISSION_GRANTED;
                         final boolean sendSms = grantResults[5] == PackageManager.PERMISSION_GRANTED;
                         final boolean phoneState = grantResults[6] == PackageManager.PERMISSION_GRANTED;
-
+                        Log.d("T-A-R", "onRequestPermissionsResult: " + writeStorageAccepted + " " + readStorageAccepted);
                         if (!locationAccepted
                                 || !cameraAccepted
                                 || !audioAccepted
@@ -727,6 +763,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                             return;
                         }
                     } else {
+                        Log.d("T-A-R", "onRequestPermissionsResult: 2");
                         final boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                         final boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                         final boolean audioAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
@@ -740,7 +777,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                                 || !writeStorageAccepted
                                 || !readStorageAccepted
                                 || !phoneState) {
-
+                            Log.d("T-A-R", "onRequestPermissionsResult: " +
+                                    locationAccepted + "/" +
+                                    cameraAccepted + "/" +
+                                    audioAccepted + "/" +
+                                    writeStorageAccepted + "/" +
+                                    readStorageAccepted + "/" +
+                                    phoneState
+                            );
                             showPermissionDialog();
                             return;
                         }
@@ -898,6 +942,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
             }
         } else {
+            Log.d("T-A-R", "startRecording: mIsMediaConnected = FALSE");
             addLog(Constants.LogObject.AUDIO, "startRecording", Constants.LogResult.ERROR, "Cant start audio", "mIsMediaConnected == false");
         }
         RECORDING = true;
@@ -938,6 +983,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                 default:
                     break;
             }
+        } else {
+            Log.d("T-A-R", "stopRecording: ERROR");
         }
         RECORDING = false;
     }
@@ -979,14 +1026,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
             final MediaSessionCompat.Token sesTok = mMediaBrowser.getSessionToken();
 
-            try {
-                final MediaControllerCompat mediaCntrlr = new MediaControllerCompat(MainActivity.this, sesTok);
-                MediaControllerCompat.setMediaController(MainActivity.this, mediaCntrlr);
-            } catch (final RemoteException ignored) {
-                addLog(Constants.LogObject.AUDIO, "onConnected", Constants.LogResult.ERROR, "Cant start audio", ignored.toString());
-
-                Log.d(TAG, "onConnected ERROR: " + ignored);
-            }
+            final MediaControllerCompat mediaCntrlr = new MediaControllerCompat(MainActivity.this, sesTok);
+            MediaControllerCompat.setMediaController(MainActivity.this, mediaCntrlr);
 
             buildTransportControls();
         }
@@ -1272,7 +1313,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void startCounter(Long time, int type, SmartFragment.Events listener) {
         messageListener = listener;
-        Date startDateForDialog = new Date((time + 5000) );
+        Date startDateForDialog = new Date((time + 5000));
         if (mTimerPeriodInfo != null) {
             mTimerPeriodInfo.cancel();
         }
@@ -1438,9 +1479,25 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         this.canContZeroLoc = canContZeroLoc;
     }
 
-    public static void showTime(String notes) {
-        Log.d("TIME", "deltaTime (" + notes + ") :" + (DateUtils.getFullCurrentTime() - alphaTime));
-        alphaTime = DateUtils.getFullCurrentTime();
+    public void showTime(String notes) {
+        if (getSettings().isTimings_debug()) {
+//        if (true) {
+            try {
+                Long currTime = DateUtils.getFullCurrentTime();
+                mTimings.add(new TimingLog(notes, (currTime - alphaTime), getToken()));
+                Log.d("TIME1", "deltaTime (" + notes + ") :" + (currTime - alphaTime));
+                alphaTime = currTime;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void saveTimings() {
+        for (TimingLog timing : mTimings) {
+            addLog(Constants.LogObject.TIMINGS, timing.name, Constants.LogResult.SUCCESS, timing.time.toString(), timing.token);
+        }
+        mTimings.clear();
     }
 
     public List<ElementItemR> getElementItemRList() {
@@ -1449,6 +1506,23 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         }
         return currentElementsList;
     }
+
+//    public List<ElementItemR> checkForRandoms(List<ElementItemR> list) {
+//        for (ElementItemR element : list) {
+//            if (element.getType().equals(ElementType.BOX)
+//                    && element.getElementOptionsR().getShowRandomQuestion() != null
+//                    && element.getElementOptionsR().getShowRandomQuestion()) {
+//                List<ElementItemR> subList = element.getElements();
+//                if (subList != null && subList.size() > 0) {
+//                    Random rand = new Random();
+//                    ElementItemR randomElement = subList.get(rand.nextInt(subList.size()));
+//                    subList = new ArrayList<>();
+//                    subList.add(randomElement);
+//                    element.setE
+//                }
+//            }
+//        }
+//    }
 
     public List<ElementModelFlat> getFlatElementsList() {
         if (currentElementsFlatList == null) {
@@ -1490,12 +1564,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public SettingsR getSettings() {
         SettingsR settings = getMainDao().getSettings();
+//        mTimingsSettings = settings;
         if (settings == null) {
             settings = new SettingsR();
             if (AVIA) settings.setAuto_zoom(false);
             getMainDao().insertSettings(settings);
             checkRoot();
         }
+//        mTimingsSettings = settings;
         return settings;
     }
 
@@ -1523,6 +1599,51 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                     break;
             }
         }
+    }
+
+    public boolean getWaypoint() {
+        return getSettings().isReset_debug();
+    }
+
+    public void setWaypoint(boolean value) {
+        getMainDao().setResetDebug(value);
+        getSettings();
+    }
+
+    public boolean needResetDebug() {
+        return getSettings().isReset_debug();
+    }
+
+    public void setResetDebug(boolean value) {
+        getMainDao().setResetDebug(value);
+        getSettings();
+    }
+
+    public boolean needUpdateConfig() {
+        return getSettings().isNeed_update_config();
+    }
+
+    public void setUpdateConfig(boolean value) {
+        getMainDao().setUpdateConfig(value);
+        getSettings();
+    }
+
+    public boolean isTimingsLogMode() {
+        return getSettings().isTimings_debug();
+    }
+
+    public void setTimingsLogMode(boolean value) {
+        getMainDao().setTimingsLogMode(value);
+        getSettings();
+    }
+
+    public boolean isSendLogMode() {
+        return getSettings().isSend_logs();
+    }
+
+    public void setSendLogMode(boolean value) {
+        getMainDao().setSendLogMode(value);
+        getSettings();
     }
 
     public boolean isTableSpeedMode() {
@@ -1567,7 +1688,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.d("T-A-R.MainActivity", "getConfigForce: " + mConfig);
+//        Log.d("T-A-R.MainActivity", "getConfigForce: " + mConfig);
         return mConfig;
     }
 
@@ -1628,7 +1749,11 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     public String getToken() {
-        return getCurrentQuestionnaire().getToken();
+        try {
+            return getCurrentQuestionnaire().getToken();
+        } catch (Exception e) {
+            return "0";
+        }
     }
 
     public Observable<String> getConvertedTitle(String title) {
@@ -1817,7 +1942,8 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
 //            Log.d("T-L.MainActivity", "checkSettingsAndStartLocationUpdates CODE: " + getLocationMode());
             if (isAirplaneMode()) {
-                listener.runEvent(10);
+//                listener.runEvent(10);
+                listener.runEvent(15); //TODO FOR TESTS!!!!!
             } else {
                 switch (getLocationMode()) {
                     case -1:
@@ -1957,5 +2083,25 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
             }
         });
         task.execute();
+    }
+
+    public void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgressBar() {
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    class TimingLog {
+        private String name;
+        private Long time;
+        private String token;
+
+        public TimingLog(String name, Long time, String token) {
+            this.name = name;
+            this.time = time;
+            this.token = token;
+        }
     }
 }

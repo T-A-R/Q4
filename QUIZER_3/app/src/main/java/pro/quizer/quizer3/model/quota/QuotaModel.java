@@ -1,5 +1,7 @@
 package pro.quizer.quizer3.model.quota;
 
+import android.util.Log;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -18,6 +20,8 @@ public class QuotaModel implements Serializable {
 
     private static final String SPLIT_SEQUENCE_SYMBOL = ",";
 
+    @SerializedName("quota_id")
+    private Integer quota_id;
     @SerializedName("sequence")
     private String sequence;
 
@@ -35,12 +39,13 @@ public class QuotaModel implements Serializable {
     private int userId;
     private int userProjectId;
 
-    public QuotaModel(String sequence, int limit, int done, int userId, int userProjectId) {
+    public QuotaModel(String sequence, int limit, int done, int userId, int userProjectId, Integer quota_id) {
         this.sequence = sequence;
         this.limit = limit;
         this.done = done;
         this.userId = userId;
         this.userProjectId = userProjectId;
+        this.quota_id = quota_id;
     }
 
     public void setUserId(int userId) {
@@ -99,15 +104,31 @@ public class QuotaModel implements Serializable {
         return false;
     }
 
+//    public List<QuotaTimeLineModel> getStringSet(final MainActivity mMainActivity, final HashMap<Integer, ElementModelNew> mMap) {
+//        if (mStringList == null) {
+//            final Set<Integer> pSet = getSet();
+//            final List<QuotaTimeLineModel> quotaTimeLineModels = new ArrayList<>();
+//            for (final int relativeId : pSet) {
+//                final ElementModelNew element = mMap.get(relativeId);
+//                try {
+//                    quotaTimeLineModels.add(new QuotaTimeLineModel(element.getOptions().getTitle()));
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            mStringList = quotaTimeLineModels;
+//        }
+//
+//        return mStringList;
+//    }
+
     public List<QuotaTimeLineModel> getStringSet(final MainActivity mMainActivity, final HashMap<Integer, ElementModelNew> mMap) {
         if (mStringList == null) {
-            final Set<Integer> pSet = getSet();
+            final Integer[] pSet = getArray();
             final List<QuotaTimeLineModel> quotaTimeLineModels = new ArrayList<>();
-//            Log.d(TAG, "???????????????????? getStringSet: " + mMap.size());
             for (final int relativeId : pSet) {
                 final ElementModelNew element = mMap.get(relativeId);
-//                Log.d(TAG, "getStringSet: " + element + " " + pSet);
-//                quotaTimeLineModels.add(new QuotaTimeLineModel(element.getOptions().getTitle(mMainActivity, mMap)));
                 try {
                     quotaTimeLineModels.add(new QuotaTimeLineModel(element.getOptions().getTitle()));
                 } catch (Exception e) {
@@ -164,4 +185,11 @@ public class QuotaModel implements Serializable {
         return true;
     }
 
+    public Integer getQuota_id() {
+        return quota_id;
+    }
+
+    public void setQuota_id(Integer quota_id) {
+        this.quota_id = quota_id;
+    }
 }

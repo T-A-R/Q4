@@ -1,22 +1,26 @@
 package pro.quizer.quizer3.view.fragment;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.provider.Settings;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.service.voice.AlwaysOnHotwordDetector;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -27,15 +31,17 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.maps.android.PolyUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -45,22 +51,31 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.ResponseBody;
 import pro.quizer.quizer3.API.QuizerAPI;
+import pro.quizer.quizer3.API.models.Route;
+import pro.quizer.quizer3.API.models.RoutePolygon;
+import pro.quizer.quizer3.API.models.request.LogsRequestModel;
 import pro.quizer.quizer3.API.models.request.RegistrationRequestModel;
+import pro.quizer.quizer3.API.models.request.RoutesRequestModel;
 import pro.quizer.quizer3.API.models.request.StatisticsRequestModel;
+import pro.quizer.quizer3.API.models.response.RoutesResponseModel;
 import pro.quizer.quizer3.API.models.response.StatisticsResponseModel;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
 import pro.quizer.quizer3.adapter.PhonesAdapter;
-import pro.quizer.quizer3.adapter.UsersBtnRecyclerAdapter;
+import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementDatabaseModelR;
 import pro.quizer.quizer3.database.models.ElementItemR;
+import pro.quizer.quizer3.database.models.InterStateR;
 import pro.quizer.quizer3.database.models.PhotoAnswersR;
+import pro.quizer.quizer3.database.models.PointR;
 import pro.quizer.quizer3.database.models.PrevElementsR;
 import pro.quizer.quizer3.database.models.QuestionnaireDatabaseModelR;
 import pro.quizer.quizer3.database.models.QuotaR;
 import pro.quizer.quizer3.database.models.RegistrationR;
+import pro.quizer.quizer3.database.models.RouteR;
+import pro.quizer.quizer3.database.models.SelectedRoutesR;
 import pro.quizer.quizer3.database.models.SettingsR;
 import pro.quizer.quizer3.database.models.StatisticR;
 import pro.quizer.quizer3.database.models.UserModelR;
@@ -70,7 +85,6 @@ import pro.quizer.quizer3.executable.SendQuestionnairesByUserModelExecutable;
 import pro.quizer.quizer3.executable.SyncInfoExecutable;
 import pro.quizer.quizer3.executable.UpdateQuotasExecutable;
 import pro.quizer.quizer3.executable.files.PhotosAnswersSendingExecutable;
-import pro.quizer.quizer3.executable.files.PhotosSendingByUserModelExecutable;
 import pro.quizer.quizer3.model.ElementType;
 import pro.quizer.quizer3.model.QuestionnaireStatus;
 import pro.quizer.quizer3.model.config.ActiveRegistrationData;
@@ -80,6 +94,7 @@ import pro.quizer.quizer3.model.config.PeriodModel;
 import pro.quizer.quizer3.model.quota.QuotaModel;
 import pro.quizer.quizer3.model.view.QuotasViewModel;
 import pro.quizer.quizer3.model.view.SyncViewModel;
+import pro.quizer.quizer3.objectbox.models.PrevElementsO;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.FileUtils;
 import pro.quizer.quizer3.utils.Fonts;
@@ -92,15 +107,20 @@ import pro.quizer.quizer3.view.Anim;
 import pro.quizer.quizer3.view.Toolbar;
 
 import static pro.quizer.quizer3.MainActivity.AVIA;
-import static pro.quizer.quizer3.MainActivity.DEBUG_MODE;
 import static pro.quizer.quizer3.MainActivity.TAG;
 
 public class HomeFragment extends ScreenFragment implements View.OnClickListener, QuizerAPI.SendRegCallback, SmartFragment.Events {
 
+    private final int PHONE_PERMISSION_CODE = 1;
+    private String phone = "+79104550076";
     private LinearLayout contContinue;
     private Button btnContinue;
     private Button btnDelete;
     private Button btnStart;
+    private Button btnWaypoints;
+    private Button btnMap;
+    private LinearLayout contWaypoints;
+    private TextView tvWaypointName;
     private Button btnInfo;
     private Button btnQuotas;
     private Button btnExit;
@@ -136,11 +156,19 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     private boolean isRegistrationRequired = false;
     private boolean isCodeRequired = false;
     private boolean isDialogRequired = false;
+    private boolean canStartOutsideRoute = false;
+    private boolean inRouteLimits = true;
+
+    private String mCurrentRouteName = "";
     private StatisticR finalStatistics;
     private AlertDialog infoDialog;
     private int completedCounter = 0;
     private int sentCounter = 0;
     private int notSentCounter = 0;
+
+    private boolean isRoutesEnabled = false;
+    private boolean isRequiredSelectRoute = false;
+    private RouteR selectedRoute = null;
 
     public MainActivity activity;
 
@@ -157,6 +185,15 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     @Override
     protected void onReady() {
         activity = (MainActivity) getActivity();
+        try {
+            isRoutesEnabled = getMainActivity().getConfig().isEnabledRoutes();
+            isRequiredSelectRoute = getMainActivity().getConfig().isRequiredSelectRoute();
+        } catch (Exception e) {
+            e.printStackTrace();
+            isRoutesEnabled = false;
+        }
+
+        Log.d("T-A-R", "ROUTES: " + isRoutesEnabled);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         RelativeLayout cont = findViewById(R.id.cont_home_fragment);
@@ -164,6 +201,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         btnContinue = findViewById(R.id.btn_continue);
         btnDelete = findViewById(R.id.btn_delete);
         btnStart = findViewById(R.id.btn_start);
+        btnWaypoints = findViewById(R.id.btn_waypoints);
+        btnMap = findViewById(R.id.btn_map);
+        contWaypoints = findViewById(R.id.cont_waypoints);
+        tvWaypointName = findViewById(R.id.tv_waypoint_name);
         btnInfo = findViewById(R.id.btn_info);
         btnQuotas = findViewById(R.id.btn_quotas);
         btnExit = findViewById(R.id.btn_exit);
@@ -181,6 +222,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         MainFragment.enableSideMenu(true, getMainActivity().isExit());
 
         btnStart.setOnClickListener(this);
+        btnWaypoints.setOnClickListener(this);
+        btnMap.setOnClickListener(this);
         btnInfo.setOnClickListener(this);
         btnQuotas.setOnClickListener(this);
         if (AVIA)
@@ -202,6 +245,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             btnExit.setVisibility(View.VISIBLE);
             btnDelete.setVisibility(View.GONE);
             btnInfo.setVisibility(View.GONE);
+            btnWaypoints.setVisibility(View.GONE);
             btnQuotas.setVisibility(View.GONE);
             toolbar.setVisibility(View.GONE);
 
@@ -223,6 +267,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             btnStart.startAnimation(Anim.getAppearSlide(getContext(), 500));
             btnInfo.startAnimation(Anim.getAppearSlide(getContext(), 500));
             btnQuotas.startAnimation(Anim.getAppearSlide(getContext(), 500));
+            btnWaypoints.startAnimation(Anim.getAppearSlide(getContext(), 500));
+            btnMap.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
             toolbar.setTitle(getString(R.string.home_screen));
             toolbar.showOptionsView(v -> MainFragment.showDrawer(), null);
@@ -247,6 +293,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             }
 
             sendQuestionnaires();
+            sendLogs();
 
             try {
                 if (activity != null)
@@ -269,7 +316,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
 //        if (activity.isExit() && !getCurrentUser().getConfigR().isRegsDisabled()) checkRegistration();
         if (activity.isExit()) {
-            if(getCurrentUser().getConfigR().hasReserveChannels()) {
+            if (getCurrentUser().getConfigR().hasReserveChannels()) {
                 try {
                     Log.d("T-A-R.HomeFragment", "PHONE: " + getCurrentUser().getConfigR().getProjectInfo().getReserveChannel().getPhones().get(0));
                 } catch (Exception e) {
@@ -278,12 +325,27 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             } else {
                 Log.d("T-A-R.HomeFragment", "RESERVE_CHANNEL: NULL");
             }
-            checkRegistration();
+            if (!isTimeToDownloadConfig)
+                checkRegistration();
             Log.d("T-A-R.HomeFragment", "EXIT: " + getCurrentUser().getConfigR().getExitHost());
             sendRegLogs();
         }
 //        showSnackBar("", false);
+        if (isRoutesEnabled) getRoutes();
+        checkInterStatus();
     }
+
+//    private void setPolygon() {
+//        getDao().clearPolygonByProjectId(getMainActivity().getConfig().getProjectInfo().getProjectId());
+//        List<PointR> polygon = new ArrayList<>();
+//        polygon.add(new PointR(32.08874604325848, 34.77542656211854, getMainActivity().getConfig().getProjectInfo().getProjectId()));
+//        polygon.add(new PointR(32.08436174950824, 34.78186386375429, getMainActivity().getConfig().getProjectInfo().getProjectId()));
+//        polygon.add(new PointR(32.08589627647745, 34.78349464683533, getMainActivity().getConfig().getProjectInfo().getProjectId()));
+//        polygon.add(new PointR(32.08874604325848, 34.79542656211854, getMainActivity().getConfig().getProjectInfo().getProjectId()));
+//        polygon.add(new PointR(32.08874604325848, 34.77542656211854, getMainActivity().getConfig().getProjectInfo().getProjectId()));
+//
+//        getDao().insertPolygon(polygon);
+//    }
 
     @Override
     public void runEvent(int id) {
@@ -348,45 +410,60 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     public void onClick(View view) {
         if (checkConfigTime(false)) {
             if (view == btnStart) {
-                if (isRegistrationRequired) {
-                    replaceFragment(new Reg1Fragment());
-                } else if (isCodeRequired) {
-                    replaceFragment(new Reg4Fragment(true));
-                } else {
-                    if (activity.getConfig().isGps()) {
-                        activity.checkSettingsAndStartLocationUpdates(isForceGps, this);
+                if (checkInterStatus()) {
+                    if (isRegistrationRequired) {
+                        replaceFragment(new Reg1Fragment());
+                    } else if (isCodeRequired) {
+                        replaceFragment(new Reg4Fragment(true));
                     } else {
-                        runEvent(12);
+                        if (activity.getConfig().isGps()) {
+                            activity.checkSettingsAndStartLocationUpdates(isForceGps, this);
+                        } else {
+                            runEvent(12);
+                        }
                     }
                 }
             } else if (view == btnInfo) {
+//                checkCallPermissionAndDial();
                 getInfo(true);
             } else if (view == btnQuotas) {
                 replaceFragment(new QuotasFragment());
-            } else if (view == btnContinue) {
-                activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Continue", null);
-                try {
-                    activity.stopRecording();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                try {
-                    getDao().setCurrentQuestionnairePaused(false);
-                    currentQuestionnaire.setPaused(false);
-                    int counter = currentQuestionnaire.getCount_interrupted() + 1;
-                    getDao().setInterruptedCounter(currentQuestionnaire.getConfig_id(), counter);
-                    currentQuestionnaire.setCount_interrupted(counter);
-                    getDao().updateQuestionnaireStart(true, getCurrentUserId());
-                    getDao().setOption(Constants.OptionName.QUIZ_STARTED, "true");
-                    showToast("Продолжение прерванной анкеты");
-                    startRecording();
-                    TransFragment fragment = new TransFragment();
-                    List<PrevElementsR> prevElementsRList = getDao().getPrevElementsR();
-                    fragment.setStartElement(prevElementsRList.get(prevElementsRList.size() - 1).getNextId(), true);
+            } else if (view == btnWaypoints) {
+                RoutesFragment fragment = new RoutesFragment();
+                fragment.setFirstInit(true);
+                replaceFragment(fragment);
+            } else if (view == btnMap) {
+                if (selectedRoute != null) {
+                    MapFragment fragment = new MapFragment();
+                    fragment.setRoute(selectedRoute);
                     replaceFragment(fragment);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    showToast("Ошибка продолжения прерванной анкеты");
+                }
+            } else if (view == btnContinue) {
+                if (checkInterStatus()) {
+                    activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Continue", null);
+                    try {
+                        activity.stopRecording();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        getDao().setCurrentQuestionnairePaused(false);
+                        currentQuestionnaire.setPaused(false);
+                        int counter = currentQuestionnaire.getCount_interrupted() + 1;
+                        getDao().setInterruptedCounter(currentQuestionnaire.getConfig_id(), counter);
+                        currentQuestionnaire.setCount_interrupted(counter);
+                        getDao().updateQuestionnaireStart(true, getCurrentUserId());
+                        getDao().setOption(Constants.OptionName.QUIZ_STARTED, "true");
+                        showToast("Продолжение прерванной анкеты");
+                        startRecording();
+                        TransFragment fragment = new TransFragment();
+                        List<PrevElementsO> prevElementsRList = getObjectBoxDao().getPrevElementsR();
+                        fragment.setStartElement(prevElementsRList.get(prevElementsRList.size() - 1).getNextId(), true);
+                        replaceFragment(fragment);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        showToast("Ошибка продолжения прерванной анкеты");
+                    }
                 }
             } else if (view == btnDelete) {
                 showDeleteDialog();
@@ -397,30 +474,31 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void sendQuestionnaires() {
-        new SendQuestionnairesByUserModelExecutable(getMainActivity(), mUserModel, new ICallback() {
-            @Override
-            public void onStarting() {
-                showScreensaver("Отправка анкет", true);
-            }
-
-            @Override
-            public void onSuccess() {
-                if (!isQuotaUpdated && !mIsStartAfterAuth) {
-                    makeQuotaTree();
-                    isQuotaUpdated = true;
+        if (!(activity.isExit() && activity.getConfig().isTestSmsNumber()))
+            new SendQuestionnairesByUserModelExecutable(getMainActivity(), mUserModel, new ICallback() {
+                @Override
+                public void onStarting() {
+                    showScreensaver("Отправка анкет", true);
                 }
-                sendPhotoAnswers();
-                hideScreensaver();
-                getInfo(false);
-                initSyncInfoViews();
-            }
 
-            @Override
-            public void onError(Exception pException) {
-                makeQuotaTree();
-                hideScreensaver();
-            }
-        }, false).execute();
+                @Override
+                public void onSuccess() {
+                    if (!isQuotaUpdated && !mIsStartAfterAuth) {
+                        makeQuotaTree();
+                        isQuotaUpdated = true;
+                    }
+                    sendPhotoAnswers();
+                    hideScreensaver();
+                    getInfo(false);
+                    initSyncInfoViews();
+                }
+
+                @Override
+                public void onError(Exception pException) {
+                    makeQuotaTree();
+                    hideScreensaver();
+                }
+            }, false).execute();
     }
 
     public void makeQuotaTree() {
@@ -429,6 +507,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         List<ElementItemR> quotasElements = activity.getQuotasElements();
         if (quotasElements != null && quotasElements.size() > 0)
             new UpdateQuotasTree().execute(quotasElements);
+        else getMainActivity().quotaIds = new ArrayList<>();
     }
 
     public void initViews() {
@@ -441,6 +520,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
         UiUtils.setTextOrHide(tvConfigName, projectInfo.getName());
         UiUtils.setTextOrHide(tvConfigAgreement, projectInfo.getAgreement());
+//        String text = "Анкета была прервана, так как закончились квоты: <div style=\"margin-top: 5px\">Вопрос 1 <b>[Ответ 1.2]</b> =&gt; Вопрос 2 <b>[Ответ 2.2]</b></div>";
+//        tvConfigAgreement.setText(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT), TextView.BufferType.SPANNABLE);
 
         try {
             String configId = config.getConfigId();
@@ -510,6 +591,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             mBaseActivity.requestPermission();
         }
         checkConfigTime(false);
+//        if (activity.isExit() && !isTimeToDownloadConfig && !mIsStartAfterAuth) checkRegistration();
     }
 
     @Override
@@ -559,6 +641,22 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             alertDialog.show();
         }
+    }
+
+    private void checkRouteLimits() {
+        if (isRoutesEnabled) {
+            SelectedRoutesR savedRoute = getDao().getSavedSelectedRoute(activity.getConfig().getUserProjectId());
+            if (savedRoute != null)
+                selectedRoute = getDao().getSelectedRoute(savedRoute.getUser_project_id(), savedRoute.getRoute_id());
+            if (selectedRoute == null && getCurrentUser().getConfigR().isExcessOnRouteDisallowed()) {
+                inRouteLimits = false;
+            } else if(selectedRoute != null && selectedRoute.getRoute_limit() <= selectedRoute.getRoute_rqs_count_all()) {
+                inRouteLimits = !getCurrentUser().getConfigR().isExcessOnRouteDisallowed();
+                mCurrentRouteName = selectedRoute.getRoute_name();
+                showToast("Лимит анкет на Маршруте " + mCurrentRouteName + " достигнут, выберите другой маршрут");
+            }
+        }
+
     }
 
     private boolean checkMemory() {
@@ -674,10 +772,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void startRecording() {
+        Log.d("T-A-R", "startRecording: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<,");
         if (activity.getConfig().isAudio() && activity.getConfig().isAudioRecordAll()) {
+            Log.d("T-A-R", "startRecording: START");
             try {
                 Objects.requireNonNull(activity).startRecording(0, currentQuestionnaire.getToken());
             } catch (Exception e) {
+                Log.d("T-A-R", "startRecording: ERROR");
                 activity.addLog(Constants.LogObject.AUDIO, "startRecording", Constants.LogResult.ERROR, "Cant start audio", e.toString());
                 e.printStackTrace();
             }
@@ -720,9 +821,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             pb.setVisibility(View.GONE);
             tvPbText.setVisibility(View.GONE);
             if (activity.getSettings().isProject_is_active()) {
-                if(!activity.isExit()) {
+                if (!activity.isExit()) {
                     btnContinue.setEnabled(true);
                     btnStart.setEnabled(true);
+                    Log.d("T-A-R", "=== UiUtils.setButtonEnabled(btnStart, true): 1");
                     UiUtils.setButtonEnabled(btnStart, true);
                     UiUtils.setButtonEnabled(btnContinue, true);
                 } else {
@@ -781,8 +883,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         }
 
         private ElementItemR[][] fillQuotas(ElementItemR[][] tree) {
-            Log.d(TAG, "============== fillQuotas ======================= 1");
+            Log.d("T-A-R", "============== fillQuotas ======================= 1");
             int user_id = activity.getCurrentUserId();
+
+            List<Integer> quotaIds = new ArrayList<>();
 
             Integer user_project_id;
             user_project_id = getCurrentUser().getConfigR().getUserProjectId();
@@ -793,16 +897,21 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             final List<QuotaR> quotasR = activity.getMainDao().getQuotaR(user_project_id);
             for (QuotaR quotaR : quotasR) {
-                quotas.add(new QuotaModel(quotaR.getSequence(), quotaR.getLimit(), quotaR.getDone(), user_id, user_project_id));
+                quotas.add(new QuotaModel(quotaR.getSequence(), quotaR.getLimit(), quotaR.getDone(), user_id, user_project_id, quotaR.getQuotaId()));
             }
-            offlineQuestionnaires = activity.getMainDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), user_project_id, QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED);
+            offlineQuestionnaires = activity.getMainDao().getQuestionnaireForQuotas(activity.getCurrentUserId(), user_project_id, QuestionnaireStatus.NOT_SENT, Constants.QuestionnaireStatuses.COMPLETED, Constants.QuestionnaireStatuses.COND_COMPLETE);
             if (quotas.isEmpty()) {
+                getMainActivity().quotaIds = quotaIds;
                 return tree;
             }
+
+            getMainActivity().quotas = quotas;
 
             try {
                 for (int q = 0; q < quotas.size(); q++) {
                     Integer[] sequence = quotas.get(q).getArray();
+                    quotaIds.addAll(Arrays.asList(sequence));
+//                    Log.d("T-A-R", "fillQuotas: " + new Gson().toJson(sequence));
                     int localQuota = getLocalQuotas(activity, sequence);
                     for (int i = 0; i < tree.length; i++) {
                         for (int k = 0; k < tree[i].length; k++) {
@@ -811,6 +920,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                 if (sequence.length > 1) {
                                     for (int s = 1; s < sequence.length; ) {
                                         if (sequence[s].equals(tree[temp][k].getRelative_id())) {
+//                                            Log.d("T-A-R", "fillQuotas: ID = " + sequence[s]);
                                             if (s == sequence.length - 1) {
                                                 if (tree[temp][k].getLimit() > quotas.get(q).getLimit()) {
                                                     tree[temp][k].setLimit(quotas.get(q).getLimit());
@@ -821,8 +931,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                                     int total = done + local;
                                                     int limit = tree[temp][k].getLimit();
                                                     if (total >= limit) {
+//                                                        Log.d("T-A-R", "fillQuotas: setEnabled(false) = " + tree[temp][k].getRelative_id());
                                                         tree[temp][k].setEnabled(false);
                                                         for (int x = temp - 1; x >= 0; x--) {
+//                                                            Log.d("T-A-R", "fillQuotas: setEnabled(false) = " + tree[x][k].getRelative_id());
                                                             tree[x][k].setEnabled(false);
                                                         }
                                                     }
@@ -858,11 +970,22 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                     publishProgress((int) progress);
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                // ADD PRINT E
             }
 //            showTree(tree); // Для отладки
             publishProgress(100);
+            getMainActivity().quotaIds = quotaIds;
             return tree;
+        }
+
+        private void showTree(ElementItemR[][] tree) {
+            Log.d("T-A-R", ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> showTree: ");
+            for (int i = 0; i < tree[0].length; i++) {
+                for (int k = 0; k < tree.length; k++) {
+                    System.out.print(tree[k][i].getRelative_id() + "/" + tree[k][i].isEnabled() + " ");
+                }
+                System.out.println(".");
+            }
         }
 
         public int getLocalQuotas(MainActivity activity, Integer[] sequence) {
@@ -1007,8 +1130,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             try {
                 abortedUserQuestionnairesList = getDao().getQuestionnaireByStatusAndName(userId, settings.getUser_name(), settings.getUser_date(), Constants.QuestionnaireStatuses.ABORTED, Constants.LogStatus.NOT_SENT);
                 abortedQuestionnairesList = getDao().getQuestionnaireSurveyStatus(userId, Constants.QuestionnaireStatuses.ABORTED, Constants.LogStatus.NOT_SENT);
-                correctedUserQuestionnairesList = getDao().getQuestionnaireByStatusAndName(userId, settings.getUser_name(), settings.getUser_date(), Constants.QuestionnaireStatuses.COMPLETED, Constants.LogStatus.NOT_SENT);
-                correctedQuestionnairesList = getDao().getQuestionnaireSurveyStatus(userId, Constants.QuestionnaireStatuses.COMPLETED, Constants.LogStatus.NOT_SENT);
+                correctedUserQuestionnairesList = getDao().getQuestionnaireByStatusAndName(userId, settings.getUser_name(), settings.getUser_date(), Constants.QuestionnaireStatuses.COMPLETED, Constants.QuestionnaireStatuses.COND_COMPLETE, Constants.LogStatus.NOT_SENT);
+                correctedQuestionnairesList = getDao().getQuestionnaireSurveyStatus(userId, Constants.QuestionnaireStatuses.COMPLETED, Constants.QuestionnaireStatuses.COND_COMPLETE, Constants.LogStatus.NOT_SENT);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1090,7 +1213,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         UserModelR userModel = activity.getCurrentUser();
         ConfigModel configModel = activity.getConfig();
         SettingsR settings = activity.getSettings();
-        Log.d("T-A-R.HomeFragment", "getInfo: (" + settings.getUser_name() +")");
         StatisticsRequestModel requestModel = new StatisticsRequestModel(configModel.getLoginAdmin(), userModel.getPassword(), userModel.getLogin(), settings.getUser_name(), settings.getUser_date());
         Gson gson = new Gson();
         String json = gson.toJson(requestModel);
@@ -1153,9 +1275,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void showStatistics(StatisticR statistics) {
-        Gson gson = new Gson();
-        String json = gson.toJson(statistics);
-        Log.d("T-L.HomeFragment", "showStatistics: " + json);
         if (statistics == null) {
             ShowStatistics task = new ShowStatistics();
             task.execute();
@@ -1191,7 +1310,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             ImageView closeBtn = layoutView.findViewById(R.id.btn_dialog_close);
 
             if (activity != null && !activity.getSettings().isProject_is_active()) {
-                int count = getDao().getQuestionnaireSurveyStatus(activity.getCurrentUserId(), Constants.QuestionnaireStatuses.COMPLETED, Constants.LogStatus.NOT_SENT).size();
+                int count = getDao().getQuestionnaireSurveyStatus(activity.getCurrentUserId(), Constants.QuestionnaireStatuses.COMPLETED, Constants.QuestionnaireStatuses.COND_COMPLETE, Constants.LogStatus.NOT_SENT).size();
                 UiUtils.setTextOrHide(inactiveCount, (String.format(getString(R.string.inactive_on_device),
                         String.valueOf(count))));
                 inactiveCount.setVisibility(View.VISIBLE);
@@ -1308,10 +1427,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         } else {
                             getDao().deleteElementDatabaseModelByToken(currentQuestionnaire.getToken());
                         }
-                        Log.d("T-A-R.", "CLEAR: 5");
                         getDao().clearCurrentQuestionnaireR();
-                        getDao().clearPrevElementsR();
-                        getDao().clearElementPassedR();
+                        getObjectBoxDao().clearPrevElementsR();
+                        getObjectBoxDao().clearElementPassedR();
                         activity.setCurrentQuestionnaireNull();
                         contContinue.setVisibility(View.GONE);
                         currentQuestionnaire = null;
@@ -1343,7 +1461,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                     } else {
                                         boolean mCheckTime = checkTime();
                                         boolean mCheckMemory = checkMemory();
-                                        if (mCheckTime && (canContWithZeroGps || checkGps()) && mCheckMemory) {
+                                        if (inRouteLimits && mCheckTime && (canContWithZeroGps || checkGps()) && mCheckMemory && (isOnRoute() || !isRoutesEnabled)) {
                                             startQuestionnaire();
                                         } else if (!mCheckTime) {
                                             activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check time false.", null);
@@ -1351,6 +1469,10 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                                         } else if (!mCheckMemory) {
                                             activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check memory false.", null);
                                             showToast("Недостаточно памяти");
+                                        } else if (isRoutesEnabled && !isOnRoute()) {
+                                            activity.runOnUiThread(this::showNotInRouteDialog);
+                                        } else if(!inRouteLimits) {
+                                            showToast("Лимит анкет на Маршруте " + mCurrentRouteName + " достигнут, выберите другой маршрут");
                                         } else {
                                             activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check GPS false.", null);
                                             showToast("Невозможно начать без координат GPS");
@@ -1367,9 +1489,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             if (isNeedUpdate) {
                 updateLocalConfig();
             } else {
-                if (checkTime() && (canContWithZeroGps || checkGps()) && checkMemory()) {
+                if (inRouteLimits && checkTime() && (canContWithZeroGps || checkGps()) && checkMemory()) {
                     activity.addLog(Constants.LogObject.UI, Constants.LogType.DIALOG, Constants.LogResult.ERROR, "Start quiz from dialog without dialog.", null);
                     startQuestionnaire();
+                } else if(!inRouteLimits) {
+                    showToast("Лимит анкет на Маршруте " + mCurrentRouteName + " достигнут, выберите другой маршрут");
                 }
             }
         }
@@ -1385,7 +1509,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void updateLocalConfig() {
-        Log.d(TAG, "updateLocalConfig: START !");
         String newConfig = null;
 
         newConfig = activity.getCurrentUser().getConfig_new();
@@ -1411,10 +1534,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                             initViews();
                             if (currentQuestionnaire != null)
                                 if (saveQuestionnaireToDatabase(currentQuestionnaire, true)) {
-                                    Log.d("T-A-R.", "CLEAR: 6");
                                     getDao().clearCurrentQuestionnaireR();
-                                    getDao().clearPrevElementsR();
-                                    getDao().clearElementPassedR();
+                                    getObjectBoxDao().clearPrevElementsR();
+                                    getObjectBoxDao().clearElementPassedR();
                                     activity.setCurrentQuestionnaireNull();
                                     currentQuestionnaire = null;
                                 }
@@ -1434,6 +1556,24 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         Long updateDate = getMainActivity().getConfigForce().getConfigUpdateDate();
         if (updateDate != null) {
             isTimeToDownloadConfig = DateUtils.getCurrentTimeMillis() >= updateDate;
+        }
+        boolean updateFromSmsReg = activity.needUpdateConfig();
+
+        try {
+            if (updateFromSmsReg) {
+                isTimeToDownloadConfig = updateFromSmsReg;
+                getMainActivity().runOnUiThread(() -> {
+                    tvPbText.setVisibility(View.VISIBLE);
+                    tvPbText.setText("В настройки проекта были внесены изменения. Для продолжения работы, пожалуйста, обновите конфиг");
+                });
+
+            } else {
+                getMainActivity().runOnUiThread(() -> {
+                    tvPbText.setVisibility(View.GONE);
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         final MainActivity activity = getMainActivity();
@@ -1572,13 +1712,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void checkRegistration() {
-        Log.d("T-A-R.HomeFragment", "checkRegistration: <<<<<<<<<<<<<<<<");
         if (getCurrentUser().getConfigR().has_registration()) {
             PeriodModel workPeriod = null;
             PeriodModel regPeriod = null;
             PeriodModel nextWorkPeriod = null;
             PeriodModel nextRegPeriod = null;
             long currentTime = DateUtils.getCurrentTimeMillis();
+            Log.d("T-A-R", "currentTime: " + currentTime);
             ConfigModel configModel = activity.getConfig();
             RegistrationR phoneReg = getDao().getRegistrationR(getCurrentUserId());
             RegistrationR activeReg = null;
@@ -1598,6 +1738,11 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             List<PeriodModel> regPeriods = configModel.getRegistrationPeriods();
             List<PeriodModel> workPeriods = configModel.getWork_periods();
+//            List<PeriodModel> regPeriods = new ArrayList<>();
+//            List<PeriodModel> workPeriods = new ArrayList<>();
+//            regPeriods.add(new PeriodModel(1708592666l, 1708602666l)); //TODO FOR TESTS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+//            workPeriods.add(new PeriodModel(1708612666l, 1708622666l)); //TODO FOR TESTS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+//            workPeriods.add(new PeriodModel(1693765600l, 1693865600l)); //TODO FOR TESTS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
             if (workPeriods != null && workPeriods.size() > 0) {
                 boolean isFound = false;
@@ -1635,6 +1780,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 isFound = false;
                 for (PeriodModel period : regPeriods) {
                     if (currentTime > period.getStart() && currentTime < period.getEnd()) {
+                        Log.d("T-A-R", "<><><>< checkRegistration: " + currentTime + " / " + period.getStart());
                         regPeriod = period;
                         if (phoneReg != null && phoneReg.getReg_time() > period.getStart() && phoneReg.getReg_time() < period.getEnd()) {
                             activeReg = phoneReg;
@@ -1661,39 +1807,68 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             if (nextRegPeriod != null)
                 Log.d("T-A-R.HomeFragment", "nextRegPeriod: " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextRegPeriod.getStart()) + " / " + nextRegPeriod.getStart());
 
+            Log.d("T-A-R", "???? checkRegistration: TRUE? " + regDisabled + " / NOT NULL: " + nextWorkPeriod + " / FALSE: " + getCurrentUser().getConfigR().hasReserveChannels());
             if (regPeriod == null) {
+                Log.d("T-A-R", "checkRegistration: 16");
                 isRegistrationRequired = true;
-                btnStart.setText("Регистрация");
                 UiUtils.setButtonEnabled(btnStart, false);
-                if (!regDisabled && nextRegPeriod != null) {
-                    String info = "Внимание! Период регистрации начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextRegPeriod.getStart() * 1000L) + "!";
-                    tvRegInfo.setText(info);
-                    tvRegInfo.setVisibility(View.VISIBLE);
-                    activity.startCounter(nextRegPeriod.getStart() * 1000L, 1, this);
-                } else if (regDisabled && nextWorkPeriod != null && !getCurrentUser().getConfigR().hasReserveChannels()) {
-                    String info = "Внимание! Рабочий период начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextWorkPeriod.getStart() * 1000L) + "!";
-                    tvRegInfo.setText(info);
-                    tvRegInfo.setVisibility(View.VISIBLE);
-                    activity.startCounter(nextWorkPeriod.getStart() * 1000L, 2, this);
-                    btnStart.setText("Начать");
-                    UiUtils.setButtonEnabled(btnStart, false);
-                    isCodeRequired = false;
-                    isRegistrationRequired = false;
+                if (regDisabled) {
+                    Log.d("T-A-R", "checkRegistration: 17");
+                    if (nextRegPeriod != null) {
+                        String info = "Внимание! Рабочий период начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextWorkPeriod.getStart() * 1000L) + "!";
+                        tvRegInfo.setText(info);
+                        tvRegInfo.setVisibility(View.VISIBLE);
+                        activity.startCounter(nextWorkPeriod.getStart() * 1000L, 2, this);
+                        btnStart.setText("Начать");
+                        isCodeRequired = false;
+                        isRegistrationRequired = false;
+                    }
+                } else {
+                    Log.d("T-A-R", "checkRegistration: 18");
+                    if (nextRegPeriod != null) {
+                        String info = "Внимание! Период регистрации начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextRegPeriod.getStart() * 1000L) + "!";
+                        tvRegInfo.setText(info);
+                        tvRegInfo.setVisibility(View.VISIBLE);
+                        activity.startCounter(nextRegPeriod.getStart() * 1000L, 1, this);
+                        btnStart.setText("Регистрация");
+                    }
                 }
+//                if (!regDisabled && nextRegPeriod != null) {
+//                    String info = "Внимание! Период регистрации начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextRegPeriod.getStart() * 1000L) + "!";
+//                    tvRegInfo.setText(info);
+//                    tvRegInfo.setVisibility(View.VISIBLE);
+//                    activity.startCounter(nextRegPeriod.getStart() * 1000L, 1, this);
+//                } else if (regDisabled && nextWorkPeriod != null && !getCurrentUser().getConfigR().hasReserveChannels()) {
+//                    String info = "Внимание! Рабочий период начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextWorkPeriod.getStart() * 1000L) + "!";
+//                    tvRegInfo.setText(info);
+//                    tvRegInfo.setVisibility(View.VISIBLE);
+//                    activity.startCounter(nextWorkPeriod.getStart() * 1000L, 2, this);
+//                    btnStart.setText("Начать");
+//                    UiUtils.setButtonEnabled(btnStart, false);
+//                    isCodeRequired = false;
+//                    isRegistrationRequired = false;
+//                }
             } else {
+                Log.d("T-A-R", "checkRegistration: 1");
                 if (workPeriod == null) {
+                    Log.d("T-A-R", "checkRegistration: 2");
                     if (activeReg == null) {
+                        Log.d("T-A-R", "checkRegistration: 3");
                         btnStart.setText("Регистрация");
                         UiUtils.setButtonEnabled(btnStart, true);
                         isRegistrationRequired = true;
                     } else {
+                        Log.d("T-A-R", "checkRegistration: 4");
                         isRegistrationRequired = false;
                         if (activeReg.isCode()) {
+                            Log.d("T-A-R", "checkRegistration: 5");
                             btnStart.setText("Ввести код");
                             UiUtils.setButtonEnabled(btnStart, true);
                             isCodeRequired = true;
-                        } else if (activeReg.isAccepted() || activeReg.smsClosed()) {
+                        } else if (activeReg.isAccepted() || activeReg.smsClosed() || regDisabled) {
+                            Log.d("T-A-R", "checkRegistration: 6");
                             if (nextWorkPeriod != null) {
+                                Log.d("T-A-R", "checkRegistration: 7");
                                 String info = "Внимание! Рабочий период начнётся в " + DateUtils.getFormattedDate(DateUtils.PATTERN_TIMER, nextWorkPeriod.getStart() * 1000L) + "!";
                                 tvRegInfo.setText(info);
                                 tvRegInfo.setVisibility(View.VISIBLE);
@@ -1709,34 +1884,47 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                         isDialogRequired = false;
                     }
                 } else {
-                    if (activeReg == null) {
+                    Log.d("T-A-R", "checkRegistration: 8");
+                    if (activeReg == null && !regDisabled) {
+                        Log.d("T-A-R", "checkRegistration: 9");
                         btnStart.setText("Регистрация");
                         UiUtils.setButtonEnabled(btnStart, true);
                         isRegistrationRequired = true;
-                    } else {
+                    } else if (!regDisabled) {
+                        Log.d("T-A-R", "checkRegistration: 10 ");
                         isRegistrationRequired = false;
                         if (activeReg.isCode()) {
+                            Log.d("T-A-R", "checkRegistration: 11");
                             btnStart.setText("Ввести код");
                             UiUtils.setButtonEnabled(btnStart, true);
                             isCodeRequired = true;
                         } else if (activeReg.getStatus().equals(Constants.Registration.NOT_SENT)) {
+                            Log.d("T-A-R", "checkRegistration: 12");
                             btnStart.setText("Регистрация");
                             UiUtils.setButtonEnabled(btnStart, true);
                             isRegistrationRequired = true;
                         } else {
-                            Log.d("T-A-R.HomeFragment", "checkRegistration: 1");
+                            Log.d("T-A-R", "checkRegistration: 14");
                             btnStart.setText("Начать");
                             UiUtils.setButtonEnabled(btnStart, true);
                             activity.startCounter(workPeriod.getEnd() * 1000L, 3, this);
                             isCodeRequired = false;
                             isDialogRequired = true;
                         }
+                    } else {
+                        Log.d("T-A-R", "checkRegistration: 15");
+                        btnStart.setText("Начать");
+                        UiUtils.setButtonEnabled(btnStart, true);
+                        activity.startCounter(workPeriod.getEnd() * 1000L, 3, this);
+                        isCodeRequired = false;
+                        isDialogRequired = true;
                     }
                 }
             }
 
             checkRegForSend();
 
+//            if (!regDisabled && (isDialogRequired || (activeReg != null && activeReg.getPhone().equals("")))) {
             if (isDialogRequired || (activeReg != null && activeReg.getPhone().equals(""))) {
                 if (getCurrentUser().getConfigR().hasReserveChannels() && mIsStartAfterAuth) {
                     showPhoneRegDialog(phonesList);
@@ -1812,6 +2000,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void start() {
+        Log.d("T-A-R", "start: isTimeToDownloadConfig = " + isTimeToDownloadConfig);
         boolean mCheckGps = canContWithZeroGps || checkGps();
         new Thread(() -> {
             if (!isTimeToDownloadConfig) {
@@ -1824,13 +2013,15 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             isStartBtnPressed = true;
             if (isTimeToDownloadConfig) {
+                isTimeToDownloadConfig = false;
                 activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. Reload config", null);
                 reloadConfig();
             } else if (currentQuestionnaire == null && !isNeedUpdate) {
                 activity.addLog(Constants.LogObject.KEY, "onClick", Constants.LogResult.PRESSED, "Start. Without delete old", null);
                 boolean mCheckTime = checkTime();
                 boolean mCheckMemory = checkMemory();
-                if (mCheckTime && mCheckGps && mCheckMemory) {
+                boolean mIsOnRoute = isOnRoute();
+                if (mCheckTime && mCheckGps && mCheckMemory && (mIsOnRoute || !isRoutesEnabled)) {
                     startQuestionnaire();
                 } else if (!mCheckTime) {
                     activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check time false.", null);
@@ -1838,6 +2029,8 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 } else if (!mCheckMemory) {
                     activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check memory false.", null);
                     showToast("Недостаточно памяти");
+                } else if (isRoutesEnabled && !mIsOnRoute) {
+                    activity.runOnUiThread(this::showNotInRouteDialog);
                 } else {
                     activity.addLog(Constants.LogObject.WARNINGS, Constants.LogType.SETTINGS, Constants.LogResult.ERROR, "Check GPS false.", null);
                     showToast("Невозможно начать без координат GPS");
@@ -1878,10 +2071,9 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
                 if (config.isSaveAborted()) {
                     saveQuestionnaireToDatabase(currentQuestionnaire, true);
                 } else {
-                    Log.d("T-A-R.", "CLEAR: 7");
                     getDao().clearCurrentQuestionnaireR();
-                    getDao().clearPrevElementsR();
-                    getDao().clearElementPassedR();
+                    getObjectBoxDao().clearPrevElementsR();
+                    getObjectBoxDao().clearElementPassedR();
                     activity.setCurrentQuestionnaireNull();
                     currentQuestionnaire = null;
                 }
@@ -1910,7 +2102,13 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         if (mIsUsedFakeGps)
             currentQuestionnaire.setFake_gps_time(DateUtils.getCurrentTimeMillis());
         currentQuestionnaire.setQuestion_start_time(DateUtils.getCurrentTimeMillis());
-        getDao().insertPrevElementsR(new PrevElementsR(0, 0));
+        if (isRoutesEnabled) {
+            SelectedRoutesR savedRoute = getDao().getSavedSelectedRoute(activity.getConfig().getUserProjectId());
+            if (savedRoute != null) currentQuestionnaire.setQuestionnaire_route_id(savedRoute.getRoute_id());
+        }
+
+
+        getObjectBoxDao().insertPrevElementsR(new PrevElementsO(0, 0));
         Log.d("T-A-R.HomeFragment", "startQuestionnaire: INCERT QUIZ <<<<<<<<<<<<<<<<<<");
         getDao().insertCurrentQuestionnaireR(currentQuestionnaire);
         getDao().clearWasElementShown(false);
@@ -1933,6 +2131,7 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
 
             activity.addLog(Constants.LogObject.QUESTIONNAIRE, "START", Constants.LogResult.SUCCESS, currentQuestionnaire.getToken(), null);
 //            activity.runOnUiThread(this::hideScreensaver);
+            st("START +++");
             replaceFragment(isAvia() ? new ElementAviaFragment() : new ElementFragment());
         } else {
             if (activity != null) {
@@ -1979,11 +2178,6 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
             RecyclerView rv = layoutView.findViewById(R.id.rv_phones);
             Button regBtn = layoutView.findViewById(R.id.btn_reg_phone);
 
-//            try {
-////                phonesList = getCurrentUser().getConfigR().getUserSettings().getRegPhones();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
             if (phonesList.size() > 0) {
                 PhonesAdapter adapter = new PhonesAdapter(phonesList, phone -> {
                     try {
@@ -2053,6 +2247,273 @@ public class HomeFragment extends ScreenFragment implements View.OnClickListener
         else
             mTextView.setGravity(Gravity.CENTER_HORIZONTAL);
         snack.show();
+    }
+
+    private void sendLogs() {
+        if (getMainActivity().getSettings().isSend_logs())
+            try {
+                List<AppLogsR> logs = getDao().getAllLogsWithStatus(Constants.LogStatus.NOT_SENT);
+                if (logs.size() > 0) {
+                    showScreensaver(false);
+                    LogsRequestModel logsRequestModel = new LogsRequestModel(getLoginAdmin(), logs);
+                    Gson gson = new Gson();
+                    String json = gson.toJson(logsRequestModel);
+                    QuizerAPI.sendLogs(getServer(), json, new QuizerAPI.SendLogsCallback() {
+                        @Override
+                        public void onSendLogs(boolean ok) {
+                            hideScreensaver();
+                            if (!ok) {
+                                showToast(getString(R.string.send_logs_error));
+                                return;
+                            }
+
+                            try {
+                                getDao().setLogsStatus(Constants.LogStatus.SENT);
+//                                showToast(getString(R.string.send_logs_success));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                } else {
+                    Log.d("T-A-R", "sendLogs: NO LOGS");
+                }
+            } catch (Exception e) {
+                Log.d(TAG, "BaseActivity.getDao().clearAppLogsByLogin: " + e.getMessage());
+            }
+    }
+
+    public void callPhone() {
+        Intent i = new Intent(Intent.ACTION_CALL);
+        i.setData(Uri.parse("tel:" + phone));
+        startActivity(i);
+    }
+
+    private void checkCallPermissionAndDial() {
+        if (ActivityCompat.checkSelfPermission(getMainActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getMainActivity(), new String[]{Manifest.permission.CALL_PHONE}, PHONE_PERMISSION_CODE);
+        } else {
+            callPhone();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PHONE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                callPhone();
+            }
+        } else {
+            showToast("Требуется разрешение на совершение звонков");
+        }
+    }
+
+    private void getRoutes() {
+        Log.d("T-A-R", "getRoutes: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        UserModelR userModel = activity.getCurrentUser();
+        ConfigModel configModel = activity.getConfig();
+        SettingsR settings = activity.getSettings();
+
+        RoutesRequestModel requestModel = new RoutesRequestModel(configModel.getLoginAdmin(), userModel.getPassword(), userModel.getLogin(), settings.getUser_name(), settings.getUser_date());
+        Gson gson = new Gson();
+        String json = gson.toJson(requestModel);
+        String mServerUrl = configModel.getServerUrl();
+
+        Log.d("T-A-R", "getRoutes URL: " + configModel.getServerUrl());
+
+        QuizerAPI.getRoutes(mServerUrl, json, responseBody -> {
+            if (responseBody == null) {
+                showToast("Нет ответа от сервера");
+                return;
+            }
+            String responseJson;
+            try {
+                responseJson = responseBody.string();
+            } catch (IOException e) {
+                showToast("Ответ сервера не найден");
+                return;
+            }
+
+            Log.d("T-A-R", "getRoutes: " + responseJson);
+
+            RoutesResponseModel routesResponseModel;
+
+            try {
+                routesResponseModel = new GsonBuilder().create().fromJson(responseJson, RoutesResponseModel.class);
+            } catch (final Exception pE) {
+                pE.printStackTrace();
+                showToast("Ошибка ответа сервера");
+                return;
+            }
+
+            if (routesResponseModel != null && routesResponseModel.getProjectRoutes() != null && !routesResponseModel.getProjectRoutes().isEmpty()) {
+                getDao().clearAllPoints();
+                getDao().clearAllRoutes();
+
+                List<Route> routes = routesResponseModel.getProjectRoutes();
+                List<RouteR> routesR = new ArrayList<>();
+                List<PointR> pointsR = new ArrayList<>();
+                for (Route item : routes) {
+                    RouteR route = new RouteR();
+                    route.user_project_id = activity.getConfig().getUserProjectId();
+                    route.project_id = activity.getConfig().getProjectInfo().getProjectId();
+                    route.route_limit = item.getRoute_limit();
+                    route.route_id = item.getRoute_id();
+                    route.route_name = item.getRoute_name();
+                    route.route_rqs_count_all = item.getRoute_rqs_count_all();
+                    route.route_rqs_count_correct_inter = item.getRoute_rqs_count_correct_inter();
+                    route.route_rqs_count_correct_login = item.getRoute_rqs_count_correct_login();
+                    route.selected = false;
+
+                    routesR.add(route);
+
+                    List<RoutePolygon> points = item.getRoute_polygon();
+                    for (RoutePolygon polygon : points) {
+                        PointR pointR = new PointR();
+                        pointR.route_id = item.getRoute_id();
+                        pointR.polygon_id = polygon.getPolygonId();
+                        pointR.point_id = polygon.getPointId();
+                        try {
+                            pointR.x = Double.parseDouble(polygon.getX());
+                            pointR.y = Double.parseDouble(polygon.getY());
+                            pointsR.add(pointR);
+//                            Log.d("T-A-R", "Point (" + points.indexOf(polygon) + ") :" + pointR.x + ":" + pointR.y);
+                        } catch (NumberFormatException e) {
+                            Log.d("T-A-R", "getPoint ERROR:" + polygon.getX() + ":" + polygon.getY());
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+
+                if (!pointsR.isEmpty()) {
+                    getDao().insertRoutes(routesR);
+                    getDao().insertPolygon(pointsR);
+                    initWaypoints();
+                }
+            } else {
+                showToast("Список маршрутов пуст");
+//                getMainActivity().copyToClipboard(responseJson);
+                return;
+            }
+        });
+    }
+
+    private boolean isOnRoute() {
+        if (!isRoutesEnabled) return true;
+        if (canStartOutsideRoute) return true;
+        boolean inside = false;
+        if (activity.getLocation() == null || activity.getLocation().getLongitude() == 0 || activity.getLocation().getLatitude() == 0) {
+            return false;
+        } else {
+//            List<RouteR> routes = getDao().getRoutes(activity.getConfig().getProjectInfo().getProjectId(), activity.getConfig().getUserProjectId());
+//            for (RouteR route : routes) {
+            if (selectedRoute != null) {
+                HashMap<Integer, List<LatLng>> polygonsMap = new HashMap<>();
+                List<PointR> pointsR = getDao().getPolygon(selectedRoute.route_id);
+                if (pointsR.size() > 1) {
+                    for (PointR point : pointsR) {
+                        List<LatLng> polOnMap = polygonsMap.get(point.polygon_id);
+                        if (polOnMap == null) polOnMap = new ArrayList<>();
+
+                        polOnMap.add(new LatLng(point.x, point.y));
+                        polygonsMap.put(point.polygon_id, polOnMap);
+                    }
+                    for (HashMap.Entry<Integer, List<LatLng>> entry : polygonsMap.entrySet()) {
+                        Integer key = entry.getKey();
+                        List<LatLng> value = entry.getValue();
+
+                        inside = PolyUtil.containsLocation(new LatLng(activity.getLocation().getLatitude(), activity.getLocation().getLongitude()), value, true);
+//                        if (inside) break;
+                    }
+
+                }
+//                if (inside) break;
+            }
+        }
+        //            inside = PolyUtil.containsLocation(new LatLng(point.getLatitude(), point.getLongitude()), polygonsMap.get(0), true);
+        return inside;
+    }
+
+    private void showNotInRouteDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getMainActivity());
+        dialogBuilder.setCancelable(false);
+        View layoutView = getLayoutInflater().inflate(getMainActivity().isAutoZoom() ? R.layout.dialog_not_in_route_auto : R.layout.dialog_not_in_route_auto, null);
+        Button noBtn = layoutView.findViewById(R.id.btn_wrong_name);
+        Button yesBtn = layoutView.findViewById(R.id.btn_right_name);
+
+        noBtn.setOnClickListener(v -> {
+            activateButtons();
+            infoDialog.dismiss();
+        });
+
+        yesBtn.setOnClickListener(v -> {
+            canStartOutsideRoute = true;
+            infoDialog.dismiss();
+            onClick(btnStart);
+        });
+
+        dialogBuilder.setView(layoutView);
+        infoDialog = dialogBuilder.create();
+        infoDialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+        infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if (getMainActivity() != null && !getMainActivity().isFinishing())
+            infoDialog.show();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void initWaypoints() {
+        Log.d("T-A-R", "initWaypoints: <<<<<<<<<<<<<<<<<<<<<<<<<<");
+        if (isRoutesEnabled) {
+            contWaypoints.setVisibility(View.VISIBLE);
+            tvWaypointName.setVisibility(View.VISIBLE);
+            Log.d("T-A-R", "initWaypoints getUserProjectId: " + activity.getConfig().getUserProjectId());
+            for (RouteR item : getDao().getAllRoutes()) {
+                Log.d("T-A-R", "item: " + new Gson().toJson(item).toString());
+            }
+            SelectedRoutesR savedRoute = getDao().getSavedSelectedRoute(activity.getConfig().getUserProjectId());
+            if (savedRoute != null)
+                selectedRoute = getDao().getSelectedRoute(savedRoute.getUser_project_id(), savedRoute.getRoute_id());
+            Log.d("T-A-R", "initWaypoints: " + selectedRoute);
+            if (selectedRoute == null) {
+                RoutesFragment fragment = new RoutesFragment();
+                fragment.setFirstInit(true);
+                replaceFragment(fragment);
+            } else {
+                tvWaypointName.setText("Маршрут: " + selectedRoute.route_name);
+                checkRouteLimits();
+            }
+
+        } else {
+            contWaypoints.setVisibility(View.GONE);
+            tvWaypointName.setVisibility(View.GONE);
+        }
+    }
+
+    private boolean checkInterStatus() {
+        boolean isActive = true;
+        InterStateR state = null;
+        long currentTime = DateUtils.getCurrentTimeMillis();
+        try {
+            state = getDao().getInterState(getCurrentUser().getUser_project_id());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (state != null) {
+            if (state.getIs_blocked_inter() || (state.getDate_end_inter() != null && state.getDate_end_inter() < currentTime)) {
+                UiUtils.setButtonEnabled(btnStart, false);
+                UiUtils.setButtonEnabled(btnContinue, false);
+                tvRegInfo.setVisibility(View.VISIBLE);
+                tvRegInfo.setText(R.string.inter_blocked);
+                isActive = false;
+            } else {
+//                UiUtils.setButtonEnabled(btnStart, true);
+//                UiUtils.setButtonEnabled(btnContinue, true);
+//                tvRegInfo.setVisibility(View.GONE);
+            }
+        }
+        return isActive;
     }
 }
 

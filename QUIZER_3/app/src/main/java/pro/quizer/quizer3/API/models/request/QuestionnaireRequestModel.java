@@ -22,7 +22,7 @@ public class QuestionnaireRequestModel implements Serializable {
     private final String gps;
     private final String gps_network;
     private final String survey_status;
-    private final boolean send_sms;
+    private final List<Integer> sent_sms;
     private final boolean root;
     private final Long gps_time;
     private final Long gps_time_network;
@@ -46,6 +46,8 @@ public class QuestionnaireRequestModel implements Serializable {
     private final Boolean has_sim;
     private final boolean gps_on;
     private final String permissions;
+    private final boolean quotas_online_checking_failed;
+    private final Integer questionnaire_route_id;
 
     public QuestionnaireRequestModel(int billing_questions,
                                      int questionnaire_id,
@@ -60,7 +62,7 @@ public class QuestionnaireRequestModel implements Serializable {
                                      String gps,
                                      String gps_network,
                                      String survey_status,
-                                     boolean send_sms,
+                                     List<Integer> sent_sms,
                                      Long gps_time,
                                      Long gps_time_network,
                                      String token,
@@ -83,7 +85,9 @@ public class QuestionnaireRequestModel implements Serializable {
                                      boolean airplane_mode,
                                      Boolean has_sim,
                                      boolean gps_on,
-                                     String permissions) {
+                                     String permissions,
+                                     boolean quotas_online_checking_failed,
+                                     Integer questionnaire_route_id) {
         this.gps_time = gps_time;
         this.gps_time_network = gps_time_network;
         this.billing_questions = billing_questions;
@@ -99,7 +103,7 @@ public class QuestionnaireRequestModel implements Serializable {
         this.gps = gps;
         this.gps_network = gps_network;
         this.survey_status = survey_status;
-        this.send_sms = send_sms;
+        this.sent_sms = sent_sms;
         this.token = token;
         this.elements = new ArrayList<>();
         this.auth_time_difference = auth_time_difference;
@@ -122,6 +126,8 @@ public class QuestionnaireRequestModel implements Serializable {
         this.airplane_mode = airplane_mode;
         this.gps_on = gps_on;
         this.permissions = permissions;
+        this.quotas_online_checking_failed = quotas_online_checking_failed;
+        this.questionnaire_route_id = questionnaire_route_id;
     }
 
     public void addElement(final ElementRequestModel pElement) {

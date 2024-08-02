@@ -37,14 +37,14 @@ public class QuizerAPI {
     /**
      * Отправка ключа.
      */
-    static public void sendKey(String url, String json, final SendKeyCallback listener) {
+    static public void sendKey(String url, String key, final SendKeyCallback listener) {
 
-        Log.d(TAG, "sendKey: " + json);
+        Log.d(TAG, "sendKey: " + key);
 
-        Map<String, String> fields = new HashMap<>();
-        fields.put(Constants.ServerFields.JSON_DATA, json);
+//        Map<String, String> fields = new HashMap<>();
+//        fields.put(Constants.ServerFields.JSON_DATA, json);
 
-        CoreApplication.getQuizerApi().sendKey(url, fields).enqueue(new Callback<ResponseBody>() {
+        CoreApplication.getQuizerApi().sendKey(url, key).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 Log.d(TAG, "QuizerAPI.sendKey.onResponse() Message: " + response.message());
@@ -205,6 +205,30 @@ public class QuizerAPI {
 
     public interface GetStatisticsCallback {
         void onGetStatisticsCallback(ResponseBody data);
+    }
+
+    static public void getRoutes(String url, String json, final GetRoutesCallback listener) {
+
+        Map<String, String> fields = new HashMap<>();
+        fields.put(Constants.ServerFields.JSON_DATA, json);
+
+        CoreApplication.getQuizerApi().getRoutes(url, fields).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d(TAG, "QuizerAPI.getRoutes.onResponse() Message: " + response.message());
+                listener.onGetRoutesCallback(response.body());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d(TAG, "QuizerAPI.getRoutes.onFailure() " + t);
+                listener.onGetRoutesCallback(null);
+            }
+        });
+    }
+
+    public interface GetRoutesCallback {
+        void onGetRoutesCallback(ResponseBody data);
     }
 
     /**
@@ -401,5 +425,93 @@ public class QuizerAPI {
 
     public interface SendRegCallback {
         void onSendRegCallback(ResponseBody data, Integer id);
+    }
+
+    static public void sendSms(String url, String sms, String phone, int id, final SendSmsCallback listener) {
+
+        RequestBody description = RequestBody.create(MultipartBody.FORM, "");
+        List<MultipartBody.Part> parts = new ArrayList<>();
+
+        parts.add(prepareRegPart("text", sms));
+        parts.add(prepareRegPart("sender", phone));
+
+        Log.d("T-A-R.QuizerAPI", "sendSms: " + sms + " sender: " + phone);
+
+        CoreApplication.getQuizerApi().sendFiles(url, description, parts).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d("T-A-R.QuizerAPI", "QuizerAPI.sendSms.onResponse() Code: " + response.code() + " Message: " + response.message());
+//                if(response.headers().get("X-QProject") != null) {
+                if (response.code() == 202 || response.code() == 200) {
+                    listener.onSendSmsCallback(response.body(), id);
+                } else {
+                    try {
+                        if (response.body() != null) {
+                            Log.d("T-A-R.QuizerAPI", "QuizerAPI.sendSms.onResponse() SERVER ERROR: " + response.body().string());
+                        }
+                        if (response.errorBody() != null)
+                            Log.d("T-A-R.QuizerAPI", "QuizerAPI.sendSms.onResponse() SERVER ERROR: " + response.errorBody().string());
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    listener.onSendSmsCallback(null, id);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d("T-A-R.QuizerAPI", "QuizerAPI.sendSms.onFailure() " + t);
+                listener.onSendSmsCallback(null, id);
+            }
+        });
+    }
+
+    public interface SendSmsCallback {
+        void onSendSmsCallback(ResponseBody data, Integer id);
+    }
+
+    static public void checkOnlineQuota(String url, String token, String login, List<Integer> ids,  boolean isLast, final CheckOnlineQuotaCallback listener) {
+
+
+
+        Map<String, Object> fields = new HashMap<>();
+        fields.put("inter_login", login);;
+        fields.put("quotas_ids", ids);
+
+        Log.d(TAG, "checkOnlineQuota QToken: " + token + " " + new Gson().toJson(fields));
+
+        CoreApplication.getQuizerApi().checkOnlineQuota(url, token, login, ids).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d("T-A-R.QuizerAPI", "QuizerAPI.checkOnlineQuota.onResponse() Code: " + response.code() + " Message: " + response.message());
+//                if(response.headers().get("X-QProject") != null) {
+                if (response.code() == 202 || response.code() == 200) {
+                    listener.onCheckOnlineQuotaCallback(response.body(), isLast);
+                } else {
+                    try {
+                        if (response.body() != null) {
+                            Log.d("T-A-R.QuizerAPI", "QuizerAPI.checkOnlineQuota.onResponse() SERVER ERROR: " + response.body().string());
+                        }
+                        if (response.errorBody() != null)
+                            Log.d("T-A-R.QuizerAPI", "QuizerAPI.checkOnlineQuota.onResponse() SERVER ERROR: " + response.errorBody().string());
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    listener.onCheckOnlineQuotaCallback(null, isLast);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d("T-A-R.QuizerAPI", "QuizerAPI.checkOnlineQuota.onFailure() " + t);
+                listener.onCheckOnlineQuotaCallback(null, isLast);
+            }
+        });
+    }
+
+    public interface CheckOnlineQuotaCallback {
+        void onCheckOnlineQuotaCallback(ResponseBody data, Boolean isLast);
     }
 }

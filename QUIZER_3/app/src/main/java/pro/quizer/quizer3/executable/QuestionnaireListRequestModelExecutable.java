@@ -60,7 +60,7 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
                     questionnaireDatabaseModel.getGps(),
                     questionnaireDatabaseModel.getGps_network(),
                     questionnaireDatabaseModel.getSurvey_status(),
-                    questionnaireDatabaseModel.getSend_sms(),
+                    questionnaireDatabaseModel.getSentList().list,
                     questionnaireDatabaseModel.getGps_time(),
                     questionnaireDatabaseModel.getGps_time_network(),
                     questionnaireDatabaseModel.getToken(),
@@ -83,21 +83,26 @@ public class QuestionnaireListRequestModelExecutable extends BaseModelExecutable
                     questionnaireDatabaseModel.isAirplane_mode(),
                     questionnaireDatabaseModel.getHas_sim(),
                     questionnaireDatabaseModel.isGps_on(),
-                    questionnaireDatabaseModel.getPermissions()
+                    questionnaireDatabaseModel.getPermissions(),
+                    questionnaireDatabaseModel.isQuotas_online_checking_failed(),
+                    questionnaireDatabaseModel.getQuestionnaire_route_id()
+
             );
 
             final List<ElementDatabaseModelR> elements = activity.getMainDao().getElementByToken(questionnaireDatabaseModel.getToken());
 
             for (final ElementDatabaseModelR element : elements) {
                 if (element.isHelper() == null || !element.isHelper()) {
-                    final ElementRequestModel elementRequestModel = new ElementRequestModel(
+                    ElementRequestModel elementRequestModel = new ElementRequestModel(
                             element.getRelative_id(),
-                            element.getDuration(),
-                            element.getClick_rank(),
-                            element.getRank(),
-                            element.getValue(),
-                            element.getSend_sms()
+                            element.getDuration()
                     );
+
+                    if(element.getRank() != null) elementRequestModel.setRank(element.getRank());
+                    if(element.getValue() != null && !element.getValue().isEmpty()) elementRequestModel.setValue(element.getValue());
+
+                    if(element.getCard_showed() != null) elementRequestModel.setCard_showed(element.getCard_showed());
+                    if(element.getChecked_in_card() != null) elementRequestModel.setChecked_in_card(element.getChecked_in_card());
 
                     questionnaireRequestModel.addElement(elementRequestModel);
                 }

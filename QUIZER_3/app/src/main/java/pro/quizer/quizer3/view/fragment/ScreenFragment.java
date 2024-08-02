@@ -2,11 +2,14 @@ package pro.quizer.quizer3.view.fragment;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.text.HtmlCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -18,6 +21,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,6 +43,7 @@ import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.model.config.ConfigModel;
 import pro.quizer.quizer3.utils.DateUtils;
 import pro.quizer.quizer3.utils.FontUtils;
+import pro.quizer.quizer3.utils.UiUtils;
 import pro.quizer.quizer3.view.activity.ScreenActivity;
 import pro.quizer.quizer3.model.User;
 
@@ -53,6 +58,8 @@ public abstract class ScreenFragment extends SmartFragment {
     private int requestCodeFragment;
 
     final int RequestCameraPermissionID = 1001;
+
+    AlertDialog dialog;
 
     public ScreenFragment(int layoutSrc) {
         super(layoutSrc);
@@ -118,6 +125,7 @@ public abstract class ScreenFragment extends SmartFragment {
     }
 
     public void showScreensaver(String title, boolean full) {
+        Log.d("T-A-R", "showScreensaver: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 //        hideKeyboard();
         if (main != null)
             try {
@@ -273,7 +281,7 @@ public abstract class ScreenFragment extends SmartFragment {
         if (configReloadTime == null) configReloadTime = -1L;
         Long configTime = getDao().getSettings().getConfig_time();
 //        Log.d("T-A-R.ScreenFragment", ">>>>> checkConfigTime: " + configTime + " / " + configReloadTime);
-        if (configReloadTime != -1L && configTime != -1L  && configReloadTime < DateUtils.getCurrentTimeMillis() && configTime < configReloadTime) {
+        if (configReloadTime != -1L && configTime != -1L && configReloadTime < DateUtils.getCurrentTimeMillis() && configTime < configReloadTime) {
             showClearDbAlertDialog("ВНИМАНИЕ! Перед началом работы должна быть обновлена база данных приложения!",
                     "Сейчас база приложения будет очищена и потребуется заново ввести ключ, логин и пароль при наличии Интернет!");
             return false;
@@ -360,6 +368,58 @@ public abstract class ScreenFragment extends SmartFragment {
 
             alertDialog.show();
         }
+    }
+
+    public void showHtmlDialog(String message, String yes, String no, ICallback listener) {
+        st("showInfoDialog() +++");
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getMainActivity());
+        View layoutView = getLayoutInflater().inflate(getMainActivity().isAutoZoom() ? R.layout.dialog_html_auto : R.layout.dialog_html_auto, null);
+        TextView messageTv = layoutView.findViewById(R.id.tv_message);
+        Button yesBtn = layoutView.findViewById(R.id.btn_yes);
+        Button noBtn = layoutView.findViewById(R.id.btn_no);
+
+        if (message != null && !message.isEmpty()) {
+            messageTv.setText(HtmlCompat.fromHtml(message, HtmlCompat.FROM_HTML_MODE_COMPACT));
+        }
+
+        if (yes != null && !yes.isEmpty()) {
+            yesBtn.setText(yes);
+            if (listener != null)
+                yesBtn.setOnClickListener(v -> {
+                    listener.onSuccess();
+                    if (dialog != null) {
+                        dialog.dismiss();
+                    }
+                });
+        } else {
+            yesBtn.setVisibility(View.GONE);
+        }
+
+        if (no != null && !no.isEmpty()) {
+            noBtn.setText(no);
+            if (listener != null)
+                noBtn.setOnClickListener(v -> {
+                    listener.onError(null);
+                    if (dialog != null) {
+                        dialog.dismiss();
+                    }
+                });
+        } else {
+            noBtn.setVisibility(View.GONE);
+        }
+
+        dialogBuilder.setView(layoutView);
+        dialog = dialogBuilder.create();
+        dialog.setCancelable(false);
+        try {
+            dialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        MainActivity activity = getMainActivity();
+        if (activity != null && !activity.isFinishing())
+            dialog.show();
     }
 
 }

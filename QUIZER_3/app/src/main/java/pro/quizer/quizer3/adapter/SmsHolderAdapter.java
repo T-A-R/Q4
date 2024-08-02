@@ -3,6 +3,7 @@ package pro.quizer.quizer3.adapter;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,7 +61,10 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
 
         for (int i = 0; i < smsStage.getSmsAnswers().size(); i++) {
 //            Log.d("T-A-R.SmsHolderAdapter", "MAKE TEXT: " + smsStage.getSmsAnswers().get(keys[i]).toString());
-            mSmsItems.add(new SmsItem(smsStage.getSmsAnswers().get(keys[i]).getSmsIndex(), smsStage.getSmsAnswers().get(keys[i]).toString(), smsStage.getSmsAnswers().get(keys[i]).getmSmsStatus()));
+            mSmsItems.add(new SmsItem(smsStage.getSmsAnswers().get(keys[i]).getSmsIndex(),
+                    smsStage.getSmsAnswers().get(keys[i]).toString(),
+                    smsStage.getSmsAnswers().get(keys[i]).getmSmsStatus(),
+                    smsStage.getSmsAnswers().get(keys[i]).getQuizCount() == 0));
         }
     }
 
@@ -77,10 +81,16 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
         String status = null;
         try {
             status = mBaseActivity.getMainDao().getSmsItemBySmsNumber(mSmsItems.get(position).getSmsNumber()).get(0).getSmsStatus();
+//            Log.d("T-A-R", ">>> sms: " + mSmsItems.get(position).getSmsNumber() + status);
         } catch (Exception e) {
             mBaseActivity.showToastfromActivity(mBaseActivity.getString(R.string.db_load_error));
         }
-        if (status != null)
+        if (mSmsItems.get(position).isEmpty()) {
+            holder.mSendSmsBtn.setBackground(ContextCompat.getDrawable(mBaseActivity, R.drawable.button_background_gray));
+            holder.mSendSmsBtn.setOnClickListener(v -> {
+                mBaseActivity.showToastLongFromActivity("Отчёт является пустым и не может быть отправлен");
+            });
+        } else if (status != null) {
             if (status.equals(Constants.SmsStatus.SENT)) {
                 holder.mSmsStatus.setText(Constants.Sms.SENT);
                 holder.mSendSmsBtn.setBackground(ContextCompat.getDrawable(mBaseActivity, R.drawable.button_background_red));
@@ -93,38 +103,39 @@ public class SmsHolderAdapter extends RecyclerView.Adapter<SmsHolderAdapter.SmsV
                 holder.mSmsCont.setBackground(ContextCompat.getDrawable(mBaseActivity, R.drawable.bg_shadow));
             }
 
-        holder.mCopySms.setOnClickListener(v -> SystemUtils.copyText(SmsUtils.formatSmsPrefix(mSmsItems.get(position).getSmsText(), mBaseActivity), mBaseActivity));
+            holder.mCopySms.setOnClickListener(v -> SystemUtils.copyText(SmsUtils.formatSmsPrefix(mSmsItems.get(position).getSmsText(), mBaseActivity), mBaseActivity));
 
-        holder.mSendSmsBtn.setOnClickListener(v -> {
-            List<String> mSmsNumbers = new ArrayList<>();
-            mSmsNumbers.add(mSmsItems.get(position).getSmsNumber());
+            holder.mSendSmsBtn.setOnClickListener(v -> {
+                List<String> mSmsNumbers = new ArrayList<>();
+                mSmsNumbers.add(mSmsItems.get(position).getSmsNumber());
 
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(mBaseActivity, R.style.AlertDialogTheme);
-            alertDialog.setCancelable(false);
-            alertDialog.setTitle(R.string.dialog_sms_sending);
-            alertDialog.setMessage(String.format(mBaseActivity.getString(R.string.dialog_sms_sending_confirmation), mSmsItems.get(position).getSmsNumber()));
-            alertDialog.setPositiveButton(R.string.view_button_send, (dialog, which) -> SmsUtils.sendSms(mBaseActivity, new ICallback() {
-                @Override
-                public void onStarting() {
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(mBaseActivity, R.style.AlertDialogTheme);
+                alertDialog.setCancelable(false);
+                alertDialog.setTitle(R.string.dialog_sms_sending);
+                alertDialog.setMessage(String.format(mBaseActivity.getString(R.string.dialog_sms_sending_confirmation), mSmsItems.get(position).getSmsNumber()));
+                alertDialog.setPositiveButton(R.string.view_button_send, (dialog, which) -> SmsUtils.sendSms(mBaseActivity, new ICallback() {
+                    @Override
+                    public void onStarting() {
+                    }
+
+                    @Override
+                    public void onSuccess() {
+                        Log.d(TAG, "onSuccess: ");
+                        notifyItemChanged(position);
+                    }
+
+                    @Override
+                    public void onError(Exception pException) {
+                        Log.d(TAG, "onError: ");
+                    }
+                }, Collections.singletonList(smsStage), mSmsNumbers));
+                alertDialog.setNegativeButton(R.string.view_cancel, (dialog, which) -> dialog.cancel());
+
+                if (!mBaseActivity.isFinishing()) {
+                    alertDialog.show();
                 }
-
-                @Override
-                public void onSuccess() {
-                    Log.d(TAG, "onSuccess: ");
-                    notifyItemChanged(position);
-                }
-
-                @Override
-                public void onError(Exception pException) {
-                    Log.d(TAG, "onError: ");
-                }
-            }, Collections.singletonList(smsStage), mSmsNumbers));
-            alertDialog.setNegativeButton(R.string.view_cancel, (dialog, which) -> dialog.cancel());
-
-            if (!mBaseActivity.isFinishing()) {
-                alertDialog.show();
-            }
-        });
+            });
+        }
     }
 
     @Override

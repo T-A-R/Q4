@@ -11,6 +11,7 @@ import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
 import pro.quizer.quizer3.database.models.ElementPassedR;
 import pro.quizer.quizer3.model.config.ElementModelNew;
+import pro.quizer.quizer3.objectbox.models.ElementPassedOB;
 import pro.quizer.quizer3.utils.Evaluator.TreeBooleanEvaluator;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
@@ -57,18 +58,19 @@ public final class ConditionUtils {
             return pTitle;
         }
 
-        List<ElementPassedR> elementsPassed = null;
+        List<ElementPassedOB> elementsPassed = null;
         try {
             final CurrentQuestionnaireR questionnaireR = pBaseActivity.getMainDao().getCurrentQuestionnaireR();
             final String token = questionnaireR.getToken();
-            elementsPassed = pBaseActivity.getMainDao().getAllElementsPassedR(token);
+//            elementsPassed = pBaseActivity.getMainDao().getAllElementsPassedR(token);
+            elementsPassed = pBaseActivity.getMainObjectBoxDao().getAllElementsPassedR(token);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        ElementPassedR elementItemR = null;
+        ElementPassedOB elementItemR = null;
         if (elementsPassed != null && elementsPassed.size() > 0) {
-            for (ElementPassedR elementPassedR : elementsPassed) {
+            for (ElementPassedOB elementPassedR : elementsPassed) {
                 if (elementPassedR.getRelative_id().equals(index)) {
                     elementItemR = elementPassedR;
                 }
@@ -194,12 +196,13 @@ public final class ConditionUtils {
             return pExpression;
         }
 
-        List<ElementPassedR> elementsPassed = null;
+        List<ElementPassedOB> elementsPassed = null;
         try {
             final CurrentQuestionnaireR questionnaireR = pBaseActivity.getCurrentQuestionnaire();
             final String token = questionnaireR.getToken();
 //            Log.d(TAG, "formatCondition: TOKEN " + token);
-            elementsPassed = pBaseActivity.getMainDao().getAllElementsPassedR(token);
+//            elementsPassed = pBaseActivity.getMainDao().getAllElementsPassedR(token);
+            elementsPassed = pBaseActivity.getMainObjectBoxDao().getAllElementsPassedR(token);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -211,9 +214,9 @@ public final class ConditionUtils {
 //        if(elementsPassed != null)  Log.d(TAG, "formatCondition PASSED LIST: " + elementsPassed.size());
 //        else Log.d(TAG, "formatCondition PASSED LIST: " + elementsPassed);
 
-        ElementPassedR elementItemR = null;
+        ElementPassedOB elementItemR = null;
         if (elementsPassed != null && elementsPassed.size() > 0) {
-            for (ElementPassedR elementPassedR : elementsPassed) {
+            for (ElementPassedOB elementPassedR : elementsPassed) {
 //                Log.d(TAG, "formatCondition: " + elementPassedR.getRelative_id());
                 if (elementPassedR.getRelative_id().equals(index)) {
                     elementItemR = elementPassedR;
@@ -227,7 +230,7 @@ public final class ConditionUtils {
         return formatCondition(pExpression.replace(ELEMENT_INDEX + condition, replaceString), pMap, pBaseActivity);
     }
 
-    private static String getReplaceString(final String field, final ElementModelNew element, ElementPassedR elementPassedR, final MainActivity pBaseActivity, final HashMap<Integer, ElementModelNew> pMap) {
+    private static String getReplaceString(final String field, final ElementModelNew element, ElementPassedOB elementPassedR, final MainActivity pBaseActivity, final HashMap<Integer, ElementModelNew> pMap) {
         switch (field) {
             case ConditionType.TITLE:
                 return element.getOptions().getTitle(pBaseActivity, pMap);

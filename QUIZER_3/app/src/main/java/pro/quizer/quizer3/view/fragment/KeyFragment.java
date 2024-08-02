@@ -101,11 +101,7 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
             ActivationRequestModel activationRequestModel = new ActivationRequestModel(key);
             Gson gson = new Gson();
             String json = gson.toJson(activationRequestModel);
-//            addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY,
-//                    getString(R.string.log_send_key),
-//                    Constants.LogResult.SENT,
-//                    getString(R.string.log_try_to_send_key) + " : " + key, json);
-            QuizerAPI.sendKey(Constants.Default.ACTIVATION_URL, json, this);
+            QuizerAPI.sendKey(Constants.Default.ACTIVATION_URL, key, this);
         }
     }
 
@@ -160,11 +156,12 @@ public class KeyFragment extends ScreenFragment implements View.OnClickListener,
         }
 
         if (activationModel != null) {
-            if (activationModel.getResult() != 0) {
+            if (activationModel.getError() == null) {
                 saveActivationBundle(activationModel);
 //                addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.log_send_key), Constants.LogResult.SUCCESS, getString(R.string.log_send_key_success), responseJson);
                 replaceFragment(new AuthFragment());
             } else {
+                Log.d("T-A-R", "onSendKey: " + activationModel.getError());
                 showToast(activationModel.getError());
 //                addLog(Constants.LogUser.ANDROID, Constants.LogType.SERVER, Constants.LogObject.KEY, getString(R.string.log_send_key), Constants.LogResult.ERROR, activationModel.getError(), responseJson);
             }

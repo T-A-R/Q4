@@ -42,7 +42,7 @@ public class SmsAnswer implements Serializable {
     }
 
     public void setQuizCount(Integer mQuizCount) {
-        Log.d("T-A-R.SmsAnswer", "setQuizCount: " + mQuizCount);
+//        Log.d("T-A-R.SmsAnswer", "setQuizCount: " + mQuizCount);
         this.mQuizCount = mQuizCount;
     }
 

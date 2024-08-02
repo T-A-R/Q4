@@ -6,14 +6,20 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 //import android.arch.persistence.room.TypeConverters;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 //import pro.quizer.quizer3.database.ElementOptionsRConverter;
 
 import static pro.quizer.quizer3.view.fragment.SmartFragment.getDao;
 
+import android.util.Log;
 
-@Entity(indices = {@Index("relative_id")})
+import pro.quizer.quizer3.model.ElementType;
+
+
+@Entity(indices = {@Index("relative_id"), @Index("userId"), @Index("projectId")})
 public class ElementItemR {
 
     @PrimaryKey(autoGenerate = true)
@@ -62,12 +68,23 @@ public class ElementItemR {
     @ColumnInfo(name = "limit")
     private Integer limit;
 
+    @ColumnInfo(name = "showed_in_card")
+    private Boolean showed_in_card;
+
+    @ColumnInfo(name = "checked_in_card")
+    private Boolean checked_in_card;
+
+//    @ColumnInfo(name = "elements")
+//    public transient List<ElementItemR> elements;
+
     public ElementItemR() {
         this.was_shown = false;
         this.enabled = true;
         this.done = 0;
         this.limit = 999999;
         this.shown_at_id = -102;
+        this.showed_in_card = false;
+        this.checked_in_card = false;
     }
 
     public ElementItemR(String configId, int userId, int projectId, int questionnaireId, String type, String subtype, Integer relative_id, Integer relative_parent_id) {
@@ -83,6 +100,8 @@ public class ElementItemR {
         this.checked = false;
         this.enabled = true;
         this.shown_at_id = -102;
+        this.showed_in_card = false;
+        this.checked_in_card = false;
     }
 
     public static ElementItemR clone(ElementItemR item) {
@@ -206,14 +225,31 @@ public class ElementItemR {
     }
 
     public List<ElementItemR> getElements() {
+//        Log.d("T-A-R.ElementItemR", "===== getElements(): " + relative_id);
         List<ElementItemR> elements = null;
         try {
             elements = getDao().getChildElements(relative_id);
+            if (elements != null
+                    && elements.size() > 1
+                    && type.equals(ElementType.BOX)
+                    && getElementOptionsR().getShowRandomQuestion() != null
+                    && getElementOptionsR().getShowRandomQuestion()) {
+
+                Random rand = new Random();
+                ElementItemR randomElement = elements.get(rand.nextInt(elements.size()));
+                Log.d("T-A-R.ElementItemR", "randomElement: " + randomElement.getElementOptionsR().getTitle());
+                elements = new ArrayList<>();
+                elements.add(randomElement);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return elements;
     }
+
+//    public void setElements(List<ElementItemR> elements) {
+//        this.elements = elements;
+//    }
 
     public boolean isEnabled() {
         return enabled;
@@ -245,5 +281,21 @@ public class ElementItemR {
 
     public void setShown_at_id(Integer shown_at_id) {
         this.shown_at_id = shown_at_id;
+    }
+
+    public Boolean getShowed_in_card() {
+        return showed_in_card;
+    }
+
+    public void setShowed_in_card(Boolean showed_in_card) {
+        this.showed_in_card = showed_in_card;
+    }
+
+    public Boolean getChecked_in_card() {
+        return checked_in_card;
+    }
+
+    public void setChecked_in_card(Boolean checked_in_card) {
+        this.checked_in_card = checked_in_card;
     }
 }

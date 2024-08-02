@@ -40,12 +40,19 @@ public class ElementDatabaseModelR {
     private String type;
 
     @ColumnInfo(name = "send_sms")
-    private boolean send_sms;
+    private Boolean send_sms;
 
     @ColumnInfo(name = "helper")
     private Boolean helper;
 
+    @ColumnInfo(name = "card_showed")
+    private Boolean card_showed;
+
+    @ColumnInfo(name = "checked_in_card")
+    private Boolean checked_in_card;
+
     public ElementDatabaseModelR() {
+        this.send_sms = false;
     }
 
     public ElementDatabaseModelR(String token, Integer relative_id, Integer relative_parent_id,
@@ -143,11 +150,11 @@ public class ElementDatabaseModelR {
         this.type = type;
     }
 
-    public boolean getSend_sms() {
+    public Boolean getSend_sms() {
         return send_sms;
     }
 
-    public void setSend_sms(boolean send_sms) {
+    public void setSend_sms(Boolean send_sms) {
         this.send_sms = send_sms;
     }
 
@@ -157,5 +164,21 @@ public class ElementDatabaseModelR {
 
     public void setHelper(Boolean helper) {
         this.helper = helper;
+    }
+
+    public Boolean getCard_showed() {
+        return card_showed;
+    }
+
+    public void setCard_showed(Boolean card_showed) {
+        this.card_showed = card_showed;
+    }
+
+    public Boolean getChecked_in_card() {
+        return checked_in_card;
+    }
+
+    public void setChecked_in_card(Boolean checked_in_card) {
+        this.checked_in_card = checked_in_card;
     }
 }

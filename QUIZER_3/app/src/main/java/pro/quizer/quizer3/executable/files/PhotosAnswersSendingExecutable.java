@@ -27,6 +27,7 @@ public class PhotosAnswersSendingExecutable extends AbstractFilesSendingByUserMo
 
     @Override
     public List<File> getFiles() {
+        Log.d("T-A-R", "getFiles: <<<<<<<<<<<<<<<<<<<<<<<<<<<");
         final Context context = getContext();
         List<File> files = new ArrayList<>();
 
@@ -38,9 +39,11 @@ public class PhotosAnswersSendingExecutable extends AbstractFilesSendingByUserMo
 
             if (!tokens.isEmpty())
                 for (String token : tokens) {
+                    Log.d("T-A-R", "getFiles getPhotosAnswersByToken: <<<");
                     files.addAll(((MainActivity) context).getPhotosAnswersByToken(token));
                 }
         }
+        Log.d("T-A-R", "getFiles getPhotosAnswersByToken: " + files.size());
         return files;
     }
 

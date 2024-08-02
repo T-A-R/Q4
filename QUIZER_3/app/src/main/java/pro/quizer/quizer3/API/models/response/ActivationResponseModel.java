@@ -6,32 +6,27 @@ import java.io.Serializable;
 
 public class ActivationResponseModel implements Serializable {
 
-    @SerializedName("result")
-    private int result;
+//    @SerializedName("result")
+//    private int result;
 
-    @SerializedName("server")
-    private String server;
+    @SerializedName("service_url")
+    private String service_url;
 
-    @SerializedName("login_admin")
-    private String login_admin;
+    @SerializedName("service_key")
+    private String service_key;
 
-    @SerializedName("error")
-    private String error;
-
-    public int getResult() {
-        return result;
-    }
+    @SerializedName("message")
+    private String message;
 
     public String getServer() {
-        return server;
+        return service_url;
     }
 
     public String getLoginAdmin() {
-        return login_admin;
+        return service_key;
     }
 
     public String getError() {
-        return error;
+        return message;
     }
-
 }

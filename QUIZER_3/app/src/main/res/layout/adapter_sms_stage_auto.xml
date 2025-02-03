@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/_6sdp"
+    android:layout_marginRight="@dimen/_6sdp"
+    android:layout_marginBottom="@dimen/_6sdp"
+    android:background="@drawable/sms_frame"
+    android:orientation="vertical"
+    android:id="@+id/sms_stage_cont">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/sms_time_interval"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="@dimen/_6sdp"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_15ssp"
+                tools:text="08:00 - 09:00" />
+
+            <TextView
+                android:id="@+id/sms_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_12ssp"
+                tools:text="Не завершена" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/sms_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_shadow"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/sms_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_marginLeft="@dimen/_6sdp"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:textColor="@android:color/black"
+                android:visibility="visible"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:layout_weight="1"
+                tools:text="#1 5 5 5 5 5"
+                 />
+
+            <TextView
+                android:id="@+id/sms_status2"
+                android:layout_width="@dimen/_44sdp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_marginLeft="@dimen/_6sdp"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="@dimen/_12ssp"
+                android:layout_weight="0.6"
+                android:text="Не отправлено" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/sms_copy"
+                android:layout_width="@dimen/_18sdp"
+                android:layout_height="@dimen/_18sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="4dp"
+                android:layout_marginRight="@dimen/_6sdp"
+                android:src="@drawable/ic_copy" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/sms_retry"
+            style="@style/ButtonGreen"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginTop="@dimen/_9sdp"
+            android:layout_marginBottom="@dimen/_6sdp"
+            android:layout_marginLeft="@dimen/_6sdp"
+            android:layout_marginRight="@dimen/_6sdp"
+            android:textSize="@dimen/_14ssp"
+            android:text="@string/view_button_send" />
+
+    </LinearLayout>
+
+</LinearLayout>

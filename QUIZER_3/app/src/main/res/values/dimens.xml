@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="progress_bar_frame_size">56dp</dimen>
+    <dimen name="progress_bar_size">36dp</dimen>
+
+    <dimen name="row_height">@dimen/_42sdp</dimen>
+    <dimen name="column_header_height">@dimen/_120sdp</dimen>
+    <dimen name="column_small_header_height">@dimen/_48sdp</dimen>
+    <dimen name="checkbox_size">36dp</dimen>
+    <dimen name="button_corner_radius">4dp</dimen>
+    <dimen name="button_corner_radius_avia">56dp</dimen>
+
+</resources>

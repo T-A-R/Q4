@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cont_key_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="@dimen/_40sdp"
+    android:layout_marginRight="@dimen/_40sdp">
+
+    <LinearLayout
+        android:id="@+id/cont_image"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_90sdp"
+        android:layout_marginTop="@dimen/_42sdp"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/quizer" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <pro.quizer.quizer3.view.element.edittext.ResizableEditText
+            android:id="@+id/et_activation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_50sdp"
+            android:layout_marginBottom="@dimen/_20sdp"
+            android:hint="@string/et_enter_key"
+            android:inputType="textVisiblePassword"
+            android:maxLength="20"
+            android:maxLines="1"
+            android:textSize="@dimen/_16ssp" />
+
+        <Button
+            android:id="@+id/btn_send_activation"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:maxLines="1"
+            android:text="@string/button_send"
+            android:textSize="@dimen/_14ssp" />
+
+    </LinearLayout>
+
+    <include layout="@layout/view_progress" />
+
+</FrameLayout>

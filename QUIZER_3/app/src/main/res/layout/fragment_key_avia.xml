@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/brand_color_avia"
+    android:orientation="vertical"
+    android:paddingLeft="56dp"
+    android:paddingRight="56dp"
+    android:id="@+id/cont_key_fragment">
+
+    <LinearLayout
+        android:id="@+id/cont_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="112dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:orientation="vertical"
+            android:src="@drawable/ic_rossya" />
+
+        <pro.quizer.quizer3.view.element.edittext.ResizableEditText
+            android:id="@+id/et_activation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:hint="@string/et_enter_key"
+            android:inputType="textVisiblePassword"
+            android:maxLines="1"
+            android:textColor="@android:color/white"
+            android:textColorHint="@color/gray"
+            android:backgroundTint="@android:color/white"
+            android:textSize="@dimen/_10ssp" />
+
+        <pro.quizer.quizer3.view.element.button.ResizableButton
+            android:id="@+id/btn_send_activation"
+            style="@style/ButtonAvia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAllCaps="true"
+            android:textSize="@dimen/_10ssp"
+            android:text="@string/button_send" />
+
+    </LinearLayout>
+
+    <include layout="@layout/view_progress" />
+
+</FrameLayout>

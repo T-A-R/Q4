@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cont_uik_select_fragment"
+    android:layout_width="match_parent"
+    android:background="@color/colorWhite"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btn_finish"
+        android:layout_marginStart="@dimen/_30sdp"
+        android:layout_marginTop="@dimen/_30sdp"
+        android:layout_marginEnd="@dimen/_30sdp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/uik_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Укажите Ваш УИК по прописке"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_16ssp" />
+
+            <EditText
+                android:id="@+id/uik"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:hint="@string/uik_hint"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:maxLines="1"
+                android:textSize="@dimen/_16ssp" />
+
+            <Button
+                android:id="@+id/btn_apply_uik"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:maxLines="1"
+                android:text="Применить"
+                android:textSize="@dimen/_14ssp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:gravity="center"
+                android:text="ИЛИ"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_16ssp" />
+
+            <TextView
+                android:id="@+id/address_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Укажите улицу и дом по прописке"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_16ssp" />
+
+            <EditText
+                android:id="@+id/address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:ems="10"
+                android:hint="Адрес"
+                android:imeOptions="actionDone"
+                android:maxLength="160"
+                android:maxLines="2"
+                android:textSize="@dimen/_16ssp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/search_uik_info"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_10ssp" />
+
+            <Button
+                android:id="@+id/btn_search"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:maxLines="1"
+                android:text="Найти адрес"
+                android:textSize="@dimen/_14ssp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btn_finish"
+        style="@style/ButtonRed"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_36sdp"
+        android:layout_marginHorizontal="@dimen/_30sdp"
+        android:layout_marginVertical="@dimen/_26sdp"
+        android:layout_alignParentBottom="true"
+        android:maxLines="1"
+        android:text="Завершить анкету"
+        android:textSize="@dimen/_14ssp" />
+
+</RelativeLayout>

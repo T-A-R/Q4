@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorWhite"
+    android:id="@+id/sync_cont">
+
+    <pro.quizer.quizer3.view.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+                android:id="@+id/project_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center|top"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:text="@string/project_not_active" />
+
+            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                android:id="@+id/user_name_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:gravity="center_horizontal"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="user4" />
+
+            <include layout="@layout/view_divider"/>
+
+            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                android:layout_marginTop="12dp"
+                android:id="@+id/have_unfinished"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:visibility="visible"
+                tools:text="ПУСТО" />
+
+            <Button
+                android:id="@+id/btn_delete"
+                style="@style/ButtonRed"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="12dp"
+                android:layout_weight="3"
+                android:maxLines="1"
+                android:text="Очистить очередь"
+                android:textSize="@dimen/_12ssp" />
+
+            <include layout="@layout/view_divider"/>
+
+            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                android:layout_marginTop="12dp"
+                android:id="@+id/sended_q_from_this_device"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:visibility="gone"
+                tools:text="ПУСТО" />
+
+            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                android:id="@+id/sended_q_in_session"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:visibility="gone"
+                tools:text="ПУСТО" />
+
+            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                android:id="@+id/unsended_q"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                tools:text="ПУСТО" />
+
+            <Button
+                android:layout_marginBottom="12dp"
+                android:id="@+id/send_q"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/button_send_quiz" />
+
+            <include layout="@layout/view_divider"/>
+
+            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                android:layout_marginTop="12dp"
+                android:id="@+id/unsended_audio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                tools:text="ПУСТО" />
+
+            <Button
+                android:layout_marginBottom="12dp"
+                android:id="@+id/send_audio"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/button_send_audio" />
+
+            <include layout="@layout/view_divider"/>
+
+            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                android:layout_marginTop="12dp"
+                android:id="@+id/unsended_photo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                tools:text="ПУСТО" />
+
+            <Button
+                android:id="@+id/send_photo"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/button_send_photo" />
+
+            <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+                android:layout_marginTop="12dp"
+                android:id="@+id/unsended_photo_answers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                tools:text="ПУСТО" />
+
+            <Button
+                android:id="@+id/send_photo_answers"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/button_send_photo_answers" />
+
+            <Button
+                android:id="@+id/send_reg"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/button_send_reg"
+                android:visibility="gone"/>
+
+            <Button
+                android:id="@+id/sync_sms"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/button_sms" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <include layout="@layout/view_progress" />
+
+</RelativeLayout>

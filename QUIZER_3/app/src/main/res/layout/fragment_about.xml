@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite">
+
+    <pro.quizer.quizer3.view.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/quizer_logo"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_90sdp"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/_40sdp"
+        android:layout_marginTop="@dimen/_62sdp"
+        android:layout_marginRight="@dimen/_40sdp"
+        android:src="@drawable/quizer" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_160sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:fadeScrollbars="false"
+        android:scrollbarAlwaysDrawVerticalTrack="false"
+        android:scrollbarSize="@dimen/_16sdp"
+        android:scrollbarStyle="outsideInset"
+        android:scrollbarThumbVertical="@drawable/button_background_green"
+        android:scrollbarTrackVertical="@color/lightGray2"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_30sdp"
+            android:layout_marginRight="@dimen/_30sdp"
+            android:orientation="vertical">
+
+            <pro.quizer.quizer3.view.element.textview.LargeResizableTextView
+                android:id="@+id/contacts_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:gravity="center"
+                android:text="@string/_7_909_214_48_33"
+                android:textColor="@android:color/black" />
+
+            <pro.quizer.quizer3.view.element.textview.LargeResizableTextView
+                android:id="@+id/contacts_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:gravity="center"
+                android:text="@string/e_mail_sales_quizer_pro"
+                android:textColor="@android:color/black" />
+
+            <pro.quizer.quizer3.view.element.textview.LargeResizableTextView
+                android:id="@+id/version_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="16dp"
+                android:foregroundGravity="center_vertical"
+                android:gravity="center_horizontal"
+                android:textSize="18sp"
+                tools:text="Версия 3.0.1" />
+
+            <TextView
+                android:id="@+id/tv_config"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textSize="12sp"
+                android:textColor="@android:color/black" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</FrameLayout>

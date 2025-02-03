@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/input_name_cont"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_round"
+    android:fitsSystemWindows="true"
+    android:keepScreenOn="true"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title_show_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:layout_gravity="center_horizontal"
+        android:textAlignment="center"
+        android:text="УИК респондента не найден либо выбранный УИК респондента находится за пределами территории, на которой проводится Экзит-Пол"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_16ssp" />
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_right_name"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:text="Попробовать\nеще"
+            android:textSize="@dimen/_10ssp" />
+
+        <Button
+            android:id="@+id/btn_wrong_name"
+            style="@style/ButtonRed"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:text="Завершить"
+            android:textSize="@dimen/_10ssp" />
+
+
+
+    </LinearLayout>
+
+</LinearLayout>

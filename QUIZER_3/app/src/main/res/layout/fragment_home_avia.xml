@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cont_home_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true"
+    android:saveEnabled="false">
+
+    <pro.quizer.quizer3.view.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/bg_home" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="56dp"
+            android:paddingTop="16dp"
+            android:paddingRight="56dp"
+            android:paddingBottom="16dp">
+
+            <TextView
+                android:id="@+id/config_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="Экзит пул" />
+
+            <TextView
+                android:id="@+id/config_agreement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/config_name"
+                android:layout_marginTop="8dp"
+                android:gravity="center|top"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:visibility="gone"
+                tools:text="Экзит пул agreement..." />
+
+            <TextView
+                android:id="@+id/count_all"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                tools:text="Всего собрано: 10" />
+
+            <TextView
+                android:id="@+id/count_sent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/count_all"
+                android:layout_marginTop="8dp"
+                android:textColor="@android:color/white"
+                tools:text="Отправлено: 10" />
+
+            <TextView
+                android:id="@+id/current_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:visibility="gone"
+                tools:text="Экзит пул agreement..." />
+
+            <Button
+                android:id="@+id/btn_start"
+                style="@style/ButtonAviaWithoutBorder"
+                android:layout_width="156dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/button_start_avia"
+                android:textSize="@dimen/_10ssp" />
+
+            <LinearLayout
+                android:id="@+id/cont_continue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:visibility="visible">
+
+            <Button
+                android:id="@+id/btn_continue"
+                style="@style/ButtonAviaWithoutBorder"
+                android:layout_width="156dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/button_continue"
+                android:textSize="@dimen/_10ssp" />
+
+                <Button
+                    android:id="@+id/btn_delete"
+                    style="@style/ButtonAviaWithoutBorder"
+                    android:layout_width="@dimen/_36sdp"
+                    android:layout_height="@dimen/_36sdp"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="3"
+                    android:maxLines="1"
+                    android:text="X"
+                    android:textSize="@dimen/_12ssp" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_exit"
+                style="@style/ButtonAviaWithoutBorder"
+                android:layout_width="156dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/button_exit"
+                android:textSize="@dimen/_10ssp" />
+
+            <Button
+                android:id="@+id/btn_quotas"
+                style="@style/ButtonAviaWithoutBorder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btn_start"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:text="@string/button_quotas"
+                android:textSize="@dimen/_10ssp" />
+
+            <Button
+                android:id="@+id/btn_info"
+                style="@style/ButtonAviaWithoutBorder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btn_start"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:text="@string/button_quotas"
+                android:textSize="@dimen/_10ssp" />
+
+
+        </RelativeLayout>
+
+        <include layout="@layout/view_progress" />
+
+    </FrameLayout>
+</RelativeLayout>

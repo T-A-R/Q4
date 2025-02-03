@@ -1,0 +1,2 @@
+include ':app', ':subProject:multispinner', ':subProject:hiddencamera', ':subProject:searchablespinnerlibrary', ':subProject:adaptivetable'
+

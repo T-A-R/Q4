@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_shadow"
+    android:id="@+id/sms_cont"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+            android:id="@+id/sms_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginLeft="@dimen/_6sdp"
+            android:layout_marginStart="@dimen/_6sdp"
+            android:textColor="@android:color/black"
+            android:layout_toStartOf="@+id/sms_status"
+            android:visibility="visible"
+            android:textSize="@dimen/_12ssp"
+            android:layout_alignParentStart="true"
+            tools:text="#1 5 5 5 5 5" />
+
+        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+            android:id="@+id/sms_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginHorizontal="@dimen/_6sdp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_toStartOf="@+id/sms_copy_btn"
+            android:layout_weight="1"
+            android:textSize="@dimen/_12ssp"
+            android:text="Не отправлено" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/sms_copy_btn"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_6sdp"
+            android:src="@drawable/ic_copy" />
+
+    </RelativeLayout>
+
+    <pro.quizer.quizer3.view.element.button.ResizableButton
+        android:id="@+id/send_sms_btn"
+        style="@style/ButtonGreen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/view_button_send" />
+
+
+</LinearLayout>

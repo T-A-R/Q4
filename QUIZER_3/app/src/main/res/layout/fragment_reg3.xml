@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cont_reg3_fragment"
+    android:layout_width="match_parent"
+    android:background="@color/colorWhite"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/quizer_logo"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_90sdp"
+        android:layout_marginLeft="@dimen/_40sdp"
+        android:layout_marginTop="@dimen/_30sdp"
+        android:layout_marginRight="@dimen/_40sdp"
+        android:src="@drawable/quizer" />
+
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_300sdp"
+        android:layout_above="@+id/btn_next"
+        android:layout_below="@+id/quizer_logo"
+        android:layout_marginLeft="@dimen/_30sdp"
+        android:layout_marginTop="@dimen/_30sdp"
+        android:layout_marginRight="@dimen/_30sdp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+                android:id="@+id/reg_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/enter_uik"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_20ssp" />
+
+            <pro.quizer.quizer3.view.element.edittext.ResizableEditText
+                android:id="@+id/uik"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:hint="@string/uik_hint"
+                android:inputType="number"
+                android:imeOptions="actionDone"
+                android:maxLines="1"
+                android:textSize="@dimen/_16ssp" />
+
+            <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+                android:id="@+id/phone_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/enter_phone"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_20ssp" />
+
+            <pro.quizer.quizer3.view.element.edittext.ResizableEditText
+                android:id="@+id/phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:hint="@string/phone_hint"
+                android:maxLength="16"
+                android:ems="10"
+                android:inputType="number"
+                android:imeOptions="actionDone"
+                android:maxLines="1"
+                android:textSize="@dimen/_16ssp" />
+
+            <LinearLayout
+                android:id="@+id/detected_phone_cont"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <pro.quizer.quizer3.view.element.textview.MediumResizableTextView
+                    android:id="@+id/detected_phone_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="+7(123)456-78-90"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/_20ssp" />
+
+                <ImageView
+                    android:id="@+id/btn_clear_phone"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center_vertical"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_close"
+                    app:tint="@color/brand_color_avia" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btn_next"
+        style="@style/ButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_36sdp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/_30sdp"
+        android:maxLines="1"
+        android:text="@string/button_next"
+        android:textSize="@dimen/_14ssp" />
+
+</RelativeLayout>

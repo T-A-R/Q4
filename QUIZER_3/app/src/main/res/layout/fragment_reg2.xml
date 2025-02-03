@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cont_reg2_fragment"
+    android:layout_width="match_parent"
+    android:background="@color/colorWhite"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/photo_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btns_cont"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/_30sdp"
+        android:layout_marginTop="@dimen/_40sdp"
+        android:layout_marginRight="@dimen/_30sdp"
+        android:src="@drawable/quizer"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/camera_cont"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btns_cont"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/_30sdp"
+        android:layout_marginTop="@dimen/_40sdp"
+        android:layout_marginRight="@dimen/_30sdp"
+        android:src="@drawable/quizer" />
+
+    <LinearLayout
+        android:id="@+id/btns_cont"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/_30sdp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_photo"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:layout_marginRight="@dimen/_4sdp"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="@string/button_photo"
+            android:textSize="@dimen/_14ssp" />
+
+        <Button
+            android:id="@+id/btn_next"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:layout_marginLeft="@dimen/_4sdp"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="@string/button_send"
+            android:textSize="@dimen/_14ssp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minWidth="10000dp"
+    android:minHeight="10000dp"
+    android:background="@drawable/dialog_round"
+    android:orientation="vertical"
+    android:id="@+id/address_select_cont">
+
+    <RelativeLayout
+        android:id="@+id/search_address_cont"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/etAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/view_search"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:hint="Поиск"
+
+            android:imeOptions="actionDone"
+            android:maxLines="1"
+            android:textSize="@dimen/_16ssp" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/view_search"
+            android:layout_width="@dimen/_26sdp"
+            android:layout_height="@dimen/_26sdp"
+            android:layout_gravity="end"
+            android:src="@drawable/search_square"
+            android:layout_alignParentEnd="true"
+            android:visibility="visible"
+            tools:visibility="visible" />
+
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/address_list"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/search_address_cont"
+        android:layout_above="@+id/btn_no_address"
+        tools:listitem="@layout/holder_address_uik"
+        android:layout_marginTop="@dimen/_4sdp">
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/btn_no_address"
+        style="@style/ButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_36sdp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_26sdp"
+        android:maxLines="1"
+        android:text="нет подходящего адреса"
+        android:textSize="@dimen/_14ssp" />
+
+</RelativeLayout>

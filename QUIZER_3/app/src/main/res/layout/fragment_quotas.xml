@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/search_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/brand_color"
+        android:padding="8dp"
+        android:orientation="vertical">
+
+        <pro.quizer.quizer3.view.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/search_frame"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <pro.quizer.quizer3.view.element.edittext.ResizableEditText
+                    android:id="@+id/search_edit_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:hint="@string/view_hint_search"
+                    android:maxLength="30"
+                    android:maxLines="1" />
+
+                <ImageView
+                    android:id="@+id/clear_search_icon"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center_vertical"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_close"
+                    android:tint="@color/brand_color" />
+
+            </LinearLayout>
+
+            <pro.quizer.quizer3.view.element.customswitch.ResizableSwitch
+                android:id="@+id/not_completed_only_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:text="@string/view_switch_hide_completed_quotas"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/search_frame"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+            android:id="@+id/quota_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/quota_not_renew_after_send"
+            android:textColor="@android:color/holo_red_dark"
+            android:visibility="gone"/>
+
+        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+            android:id="@+id/quota_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/quota_not_renew_after_finish"
+            android:textColor="@android:color/holo_red_dark"
+            android:visibility="gone"/>
+
+        <pro.quizer.quizer3.view.element.textview.SmallResizableTextView
+            android:id="@+id/quota_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/quota_renew_time"
+            android:textColor="@android:color/black"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/info_quotas"
+                style="@style/ButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="8dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/view_button_info"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/details_quotas"
+                style="@style/ButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="8dp"
+                android:maxLines="1"
+                android:layout_weight="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/view_button_hide_details"
+                android:layout_marginStart="8dp" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/refresh_quotas"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:maxLines="1"
+            android:textSize="@dimen/_12ssp"
+            android:text="@string/view_button_refresh" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/quotas_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <include layout="@layout/view_empty_text" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <include layout="@layout/view_progress" />
+
+</RelativeLayout>

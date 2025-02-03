@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/input_name_cont"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_round"
+    android:fitsSystemWindows="true"
+    android:layout_margin="@dimen/_18sdp"
+    android:keepScreenOn="true"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title_show_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:layout_gravity="center_horizontal"
+        android:textAlignment="center"
+        android:text="Вы точно хотите выйти?\nАнкета при этом не сохранится"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_16ssp" />
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_no"
+            style="@style/ButtonRed"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:text="Нет"
+            android:textSize="@dimen/_16ssp" />
+
+        <Button
+            android:id="@+id/btn_yes"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:text="Да"
+            android:textSize="@dimen/_16ssp" />
+
+
+
+    </LinearLayout>
+
+</LinearLayout>

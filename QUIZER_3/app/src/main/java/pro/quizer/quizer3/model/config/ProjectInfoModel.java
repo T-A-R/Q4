@@ -31,6 +31,9 @@ public class ProjectInfoModel implements Serializable {
     @SerializedName("thank_you_picture")
     private String thank_you_picture;
 
+    @SerializedName("element_detect_absentee")
+    private ElementModelNew absentee_element;
+
     @SerializedName("elements")
     private List<ElementModelNew> elements;
 
@@ -85,4 +88,7 @@ public class ProjectInfoModel implements Serializable {
         return reserve_channel;
     }
 
+    public ElementModelNew getAbsenteeElement() {
+        return absentee_element;
+    }
 }

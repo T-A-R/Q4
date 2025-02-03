@@ -146,6 +146,9 @@ public class QuestionnaireDatabaseModelR {
     @ColumnInfo(name = "questionnaire_route_id")
     private Integer questionnaire_route_id;
 
+    @ColumnInfo(name = "on_route")
+    private Boolean on_route;
+
     public QuestionnaireDatabaseModelR() {
         this.is_online = true;
     }
@@ -512,5 +515,13 @@ public class QuestionnaireDatabaseModelR {
 
     public void setQuestionnaire_route_id(Integer questionnaire_route_id) {
         this.questionnaire_route_id = questionnaire_route_id;
+    }
+
+    public Boolean isOn_route() {
+        return on_route;
+    }
+
+    public void setOn_route(Boolean on_route) {
+        this.on_route = on_route;
     }
 }

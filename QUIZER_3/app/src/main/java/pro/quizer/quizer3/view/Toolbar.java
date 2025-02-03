@@ -16,7 +16,7 @@ import pro.quizer.quizer3.R;
 public class Toolbar extends RelativeLayout implements Serializable {
 
     private ImageView mIcon;
-    private ImageView mLogo;
+    public ImageView mLogo;
     private TextView mTitle;
     private View mCloseView;
     private View mInfoView;

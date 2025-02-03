@@ -479,7 +479,7 @@ public class QuizerAPI {
         fields.put("inter_login", login);;
         fields.put("quotas_ids", ids);
 
-        Log.d(TAG, "checkOnlineQuota QToken: " + token + " " + new Gson().toJson(fields));
+//        Log.d(TAG, "checkOnlineQuota QToken: " + token + " " + new Gson().toJson(fields));
 
         CoreApplication.getQuizerApi().checkOnlineQuota(url, token, login, ids).enqueue(new Callback<ResponseBody>() {
             @Override
@@ -513,5 +513,113 @@ public class QuizerAPI {
 
     public interface CheckOnlineQuotaCallback {
         void onCheckOnlineQuotaCallback(ResponseBody data, Boolean isLast);
+    }
+
+    static public void getAddressDatabaseVersion(String url, String token, String admin_key, Integer project_id, final GetAddressDatabaseVersionCallback listener) {
+
+        Log.d("T-A-R.QuizerAPI", "getAddressDatabaseVersion URL: " + url + " , @Header(QToken): " + token + " , @Field(admin_key): " + admin_key + " , @Field(project_id): " + project_id);
+        CoreApplication.getQuizerApi().getAddressDatabaseVersion(url, token, admin_key, project_id).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d("T-A-R.QuizerAPI", "QuizerAPI.getAddressDatabaseVersion.onResponse() Code: " + response.code() + " Message: " + response.message());
+                if (response.code() == 202 || response.code() == 200) {
+                    listener.onGetAddressDatabaseVersionCallback(response.body());
+                } else {
+                    try {
+                        if (response.body() != null) {
+                            Log.d("T-A-R.QuizerAPI", "QuizerAPI.getAddressDatabaseVersion.onResponse() SERVER ERROR: " + response.body().string());
+                        }
+                        if (response.errorBody() != null)
+                            Log.d("T-A-R.QuizerAPI", "QuizerAPI.getAddressDatabaseVersion.onResponse() SERVER ERROR: " + response.errorBody().string());
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    listener.onGetAddressDatabaseVersionCallback(null);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d("T-A-R.QuizerAPI", "QuizerAPI.getAddressDatabaseVersion.onFailure() " + t);
+                listener.onGetAddressDatabaseVersionCallback(null);
+            }
+        });
+    }
+
+    public interface GetAddressDatabaseVersionCallback {
+        void onGetAddressDatabaseVersionCallback(ResponseBody data);
+    }
+
+    static public void downloadAddressDatabase(String url, String token, String admin_key, Integer project_id, Integer page, final DownloadAddressDatabaseCallback listener) {
+
+        Log.d("T-A-R.QuizerAPI", "downloadAddressDatabase URL: " + url + " , @Header(QToken): " + token + " , @Field(admin_key): " + admin_key + " , @Field(project_id): " + project_id);
+        CoreApplication.getQuizerApi().downloadAddressDatabase(url, token, admin_key, project_id, page).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d("T-A-R.QuizerAPI", "QuizerAPI.downloadAddressDatabase.onResponse() Code: " + response.code() + " Message: " + response.message());
+                if (response.code() == 202 || response.code() == 200) {
+                    listener.onDownloadAddressDatabaseCallback(response.body());
+                } else {
+                    try {
+                        if (response.body() != null) {
+                            Log.d("T-A-R.QuizerAPI", "QuizerAPI.downloadAddressDatabase.onResponse() SERVER ERROR: " + response.body().string());
+                        }
+                        if (response.errorBody() != null)
+                            Log.d("T-A-R.QuizerAPI", "QuizerAPI.downloadAddressDatabase.onResponse() SERVER ERROR: " + response.errorBody().string());
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    listener.onDownloadAddressDatabaseCallback(null);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d("T-A-R.QuizerAPI", "QuizerAPI.downloadAddressDatabase.onFailure() " + t);
+                listener.onDownloadAddressDatabaseCallback(null);
+            }
+        });
+    }
+
+    public interface DownloadAddressDatabaseCallback {
+        void onDownloadAddressDatabaseCallback(ResponseBody data);
+    }
+
+    static public void searchAddress(String url, String token, String admin_key, Integer project_id, String address, Integer page, final SearchAddressCallback listener) {
+
+        Log.d("T-A-R.QuizerAPI", "searchAddress URL: " + url + " , @Header(QToken): " + token + " , @Field(admin_key): " + admin_key + " , @Field(project_id): " + project_id + " , @Field(address): " + address);
+        CoreApplication.getQuizerApi().addressSearch(url, token, admin_key, project_id, address, page).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d("T-A-R.QuizerAPI", "QuizerAPI.searchAddress.onResponse() Code: " + response.code() + " Message: " + response.message());
+                if (response.code() == 202 || response.code() == 200) {
+                    listener.onSearchAddressCallback(response.body());
+                } else {
+                    try {
+                        if (response.body() != null) {
+                            Log.d("T-A-R.QuizerAPI", "QuizerAPI.searchAddress.onResponse() SERVER ERROR: " + response.body().string());
+                        }
+                        if (response.errorBody() != null)
+                            Log.d("T-A-R.QuizerAPI", "QuizerAPI.searchAddress.onResponse() SERVER ERROR: " + response.errorBody().string());
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    listener.onSearchAddressCallback(null);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.d("T-A-R.QuizerAPI", "QuizerAPI.searchAddress.onFailure() " + t);
+                listener.onSearchAddressCallback(null);
+            }
+        });
+    }
+
+    public interface SearchAddressCallback {
+        void onSearchAddressCallback(ResponseBody data);
     }
 }

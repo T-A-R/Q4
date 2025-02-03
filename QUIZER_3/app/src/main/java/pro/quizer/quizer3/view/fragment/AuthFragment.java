@@ -403,7 +403,7 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
     }
 
     private void makeSmsDatabase() {
-        if (getCurrentUser().getConfigR().getProjectInfo().getReserveChannel() != null) {
+        if (getCurrentUser() != null && getCurrentUser().getConfigR() != null && getCurrentUser().getConfigR().getProjectInfo().getReserveChannel() != null) {
             try {
                 getDao().clearSmsDatabase();
             } catch (Exception e) {
@@ -653,8 +653,10 @@ public class AuthFragment extends ScreenFragment implements View.OnClickListener
                 Log.d("T-A-R.AuthFragment", "onAuthUser: " + savedUserModel.getUser_id());
 
                 if (savedUserModel != null) {
-                    showToast(getString(R.string.saved_data_login));
-                    onLoggedInWithoutUpdateLocalData(savedUserModel.getUser_id());
+                    if (checkConfigTime(true)) {
+                        showToast(getString(R.string.saved_data_login));
+                        onLoggedInWithoutUpdateLocalData(savedUserModel.getUser_id());
+                    }
                 } else {
                     showToast(getString(R.string.wrong_login_or_pass));
                 }

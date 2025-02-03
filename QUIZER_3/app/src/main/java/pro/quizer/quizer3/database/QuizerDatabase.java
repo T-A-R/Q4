@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
 import pro.quizer.quizer3.database.models.ActivationModelR;
+import pro.quizer.quizer3.database.models.AddressR;
 import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.SavedElementPassedR;
@@ -40,6 +41,7 @@ import pro.quizer.quizer3.database.models.WarningsR;
         PointR.class,
         QuotaR.class,
         RouteR.class,
+        AddressR.class,
         AppLogsR.class,
         SmsItemR.class,
         OptionsR.class,
@@ -67,7 +69,7 @@ import pro.quizer.quizer3.database.models.WarningsR;
         SavedElementPassedR.class,
         CurrentQuestionnaireR.class,
         ElementDatabaseModelR.class,
-        QuestionnaireDatabaseModelR.class}, version = 144       )
+        QuestionnaireDatabaseModelR.class}, version = 160       )
 @TypeConverters({ListStringConverter.class, ListIntConverter.class})
 
 public abstract class QuizerDatabase extends RoomDatabase {

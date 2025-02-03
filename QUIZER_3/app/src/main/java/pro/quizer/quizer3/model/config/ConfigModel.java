@@ -93,6 +93,18 @@ public class ConfigModel implements Serializable {
     @SerializedName("exit_host")
     private String exit_host;
 
+    @SerializedName("absentee_change_uik_title")
+    private String absentee_change_uik_title ;
+
+    @SerializedName("absentee_change_addr_title")
+    private String absentee_change_addr_title ;
+
+    @SerializedName("required_download_db")
+    private Boolean required_download_db = true;
+
+    @SerializedName("exit_uiks")
+    private List<String> exit_uiks;
+
     @SerializedName("config_forced_update_date")
     private Long config_forced_update_date;
 
@@ -138,6 +150,12 @@ public class ConfigModel implements Serializable {
 
     @SerializedName("card_required")
     private Boolean card_required = false;
+
+    @SerializedName("extern_addresses_ver")
+    private Long extern_addresses_ver;
+
+    @SerializedName("is_route_limit_geolocation")
+    private Boolean is_route_limit_geolocation;
 
 
     public String getServerUrl() {
@@ -402,4 +420,33 @@ public class ConfigModel implements Serializable {
     public void setCardRequired(Boolean card_required) {
         this.card_required = card_required;
     }
+
+    public List<String> getExitUiks() {
+        return exit_uiks;
+    }
+
+    public void setExitUiks(List<String> exit_uiks) {
+        this.exit_uiks = exit_uiks;
+    }
+
+    public String getAbsenteeChangeUikInfo() {
+        return absentee_change_uik_title;
+    }
+
+    public String getAbsenteeChangeAddrInfo() {
+        return absentee_change_addr_title;
+    }
+
+    public Boolean getRequired_download_db() {
+        return required_download_db;
+    }
+
+    public Long getExternAddressesVer() {
+        return extern_addresses_ver;
+    }
+
+    public Boolean getIsRouteLimitGeolocation() {
+        return is_route_limit_geolocation;
+    }
+
 }

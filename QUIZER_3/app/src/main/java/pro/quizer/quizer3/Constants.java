@@ -17,6 +17,10 @@ public final class Constants {
         String REG_URL = "/api/v1/registration";
         String TEST_SMS_URL = "/api/v1/sms/receive/directly";
         String ONLINE_QUOTAS_URL = "/api/v1/survey/check-quotas-free";
+        String ADDRESS_VER_URL = "/api/v1/address/version";
+        String ADDRESS_DOWNLOAD_URL = "/api/v1/address/download";
+        String ADDRESS_SEARCH_URL = "/api/v1/address/search";
+
         String API_key = "a1d64454-4597-4c28-a047-dee22d3c8cfd";
 
         boolean DEBUG = true;

@@ -107,6 +107,14 @@
                 android:textSize="16sp"
                 android:visibility="gone"/>
 
+            <pro.quizer.quizer3.view.element.customswitch.ResizableSwitch
+                android:id="@+id/uik_question_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                android:text="Работать БЕЗ учёта проголосовавших не на домашних участках"
+                android:textSize="16sp" />
+
             <Button
                 android:id="@+id/send_data"
                 style="@style/ButtonStyle"
@@ -184,6 +192,17 @@
                 android:maxLines="1"
                 android:textSize="@dimen/_12ssp"
                 android:text="@string/button_delete_files" />
+
+            <Button
+                android:id="@+id/clear_address_db"
+                style="@style/ButtonRed"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/clear_address_db" />
 
             <Button
                 android:id="@+id/clear_db"

@@ -109,12 +109,31 @@ public class CurrentQuestionnaireR {
     @ColumnInfo(name = "rotation_state")
     private String rotation_state;
 
+    @ColumnInfo(name = "is_first_element")
+    private boolean is_first_element;
+
+    @ColumnInfo(name = "first_element_id")
+    private Integer first_element_id;
+
+    @ColumnInfo(name = "in_uik_question")
+    private Boolean in_uik_question;
+
+    @ColumnInfo(name = "is_use_absentee")
+    private Boolean is_use_absentee;
+
+    @ColumnInfo(name = "on_route")
+    private Boolean on_route;
+
     public CurrentQuestionnaireR() {
         this.count_interrupted = 0;
         this.quotas_online_checking_failed = false;
         this.paused = false;
         this.cond_complete = false;
+        this.is_first_element = true;
         this.audio_number = 1;
+        this.first_element_id = 0;
+        this.in_uik_question = false;
+        this.is_use_absentee = false;
     }
 
     public int getId() {
@@ -371,5 +390,45 @@ public class CurrentQuestionnaireR {
 
     public void setRotation_state(String rotation_state) {
         this.rotation_state = rotation_state;
+    }
+
+    public boolean isIs_first_element() {
+        return is_first_element;
+    }
+
+    public void setIs_first_element(boolean is_first_element) {
+        this.is_first_element = is_first_element;
+    }
+
+    public Integer getFirst_element_id() {
+        return first_element_id;
+    }
+
+    public void setFirst_element_id(Integer first_element_id) {
+        this.first_element_id = first_element_id;
+    }
+
+    public Boolean getIn_uik_question() {
+        return in_uik_question;
+    }
+
+    public void setIn_uik_question(Boolean in_uik_question) {
+        this.in_uik_question = in_uik_question;
+    }
+
+    public Boolean getIs_use_absentee() {
+        return is_use_absentee;
+    }
+
+    public void setIs_use_absentee(Boolean is_use_absentee) {
+        this.is_use_absentee = is_use_absentee;
+    }
+
+    public Boolean getOn_route() {
+        return on_route;
+    }
+
+    public void setOn_route(Boolean on_route) {
+        this.on_route = on_route;
     }
 }

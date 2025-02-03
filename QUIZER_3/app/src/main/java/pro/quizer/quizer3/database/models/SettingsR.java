@@ -68,6 +68,15 @@ public class SettingsR {
     @ColumnInfo(name = "need_update_config")
     private boolean need_update_config;
 
+    @ColumnInfo(name = "address_database")
+    private Long address_database;
+
+    @ColumnInfo(name = "is_address_enabled")
+    private boolean is_address_enabled;
+
+    @ColumnInfo(name = "uik_question_disabled")
+    private boolean uik_question_disabled;
+
     public SettingsR() {
         this.started = false;
         this.auto_zoom = true;
@@ -82,6 +91,9 @@ public class SettingsR {
         this.send_logs = false;
         this.need_update_config = false;
         this.config_time = -1L;
+        this.address_database = 0L;
+        this.is_address_enabled = true;
+        this.uik_question_disabled = false;
     }
 
     public int getId() {
@@ -242,5 +254,29 @@ public class SettingsR {
 
     public void setNeed_update_config(boolean need_update_config) {
         this.need_update_config = need_update_config;
+    }
+
+    public Long getAddress_database() {
+        return address_database;
+    }
+
+    public void setAddress_database(Long address_database) {
+        this.address_database = address_database;
+    }
+
+    public boolean isIs_address_enabled() {
+        return is_address_enabled;
+    }
+
+    public void setIs_address_enabled(boolean is_address_enabled) {
+        this.is_address_enabled = is_address_enabled;
+    }
+
+    public boolean isUik_question_disabled() {
+        return uik_question_disabled;
+    }
+
+    public void setUik_question_disabled(boolean uik_question_disabled) {
+        this.uik_question_disabled = uik_question_disabled;
     }
 }

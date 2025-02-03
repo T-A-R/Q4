@@ -132,6 +132,15 @@ public class ElementOptionsR {
     @ColumnInfo(name = "hide_numbers_answers")
     private Boolean hide_numbers_answers;
 
+    @ColumnInfo(name = "optional_question")
+    private Boolean optional_question;
+
+    @ColumnInfo(name = "is_cancel_survey")
+    private Boolean is_cancel_survey;
+
+    @ColumnInfo(name = "is_use_absentee")
+    private Boolean is_use_absentee;
+
     public ElementOptionsR() {
     }
 
@@ -453,7 +462,6 @@ public class ElementOptionsR {
 
     public Boolean getShowRandomQuestion() {
         return showRandomQuestion;
-//        return true; //TODO FOR TESTS
     }
 
     public void setShowRandomQuestion(Boolean showRandomQuestion) {
@@ -466,5 +474,29 @@ public class ElementOptionsR {
 
     public void setHide_numbers_answers(Boolean hide_numbers_answers) {
         this.hide_numbers_answers = hide_numbers_answers;
+    }
+
+    public Boolean getOptional_question() {
+        return optional_question;
+    }
+
+    public void setOptional_question(Boolean optional_question) {
+        this.optional_question = optional_question;
+    }
+
+    public Boolean getIs_cancel_survey() {
+        return is_cancel_survey;
+    }
+
+    public void setIs_cancel_survey(Boolean is_cancel_survey) {
+        this.is_cancel_survey = is_cancel_survey;
+    }
+
+    public Boolean getIs_use_absentee() {
+        return is_use_absentee;
+    }
+
+    public void setIs_use_absentee(Boolean is_use_absentee) {
+        this.is_use_absentee = is_use_absentee;
     }
 }

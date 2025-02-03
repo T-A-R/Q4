@@ -146,6 +146,7 @@ public class TransFragment extends ScreenFragment {
         elementPassedR.setFrom_quotas_block(false);
         elementPassedR.setIs_question(false);
 //        getDao().insertElementPassedR(elementPassedR);
+        Log.d("T-A-R.TransFragment", ">>> savePassedElement 1: " + elementPassedR.getRelative_id());
         getObjectBoxDao().insertElementPassedR(elementPassedR);
         setCondComp(elementPassedR.getRelative_id());
 
@@ -158,6 +159,7 @@ public class TransFragment extends ScreenFragment {
                 elementPassedR.setIs_question(false);
                 Log.d("T-A-R.TransFragment", "savePassedElement 10: " + elementPassedR.getRelative_id());
 //                getDao().insertElementPassedR(elementPassedR);
+                Log.d("T-A-R.TransFragment", ">>> savePassedElement 2: " + elementPassedR.getRelative_id());
                 getObjectBoxDao().insertElementPassedR(elementPassedR);
                 break;
             }

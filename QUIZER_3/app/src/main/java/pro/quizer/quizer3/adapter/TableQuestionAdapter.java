@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.cleveroad.adaptivetablelayout.LinkedAdaptiveTableAdapter;
 import com.cleveroad.adaptivetablelayout.OnItemClickListener;
 import com.cleveroad.adaptivetablelayout.ViewHolderImpl;
+import com.google.gson.Gson;
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
@@ -528,7 +529,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                             if (isPolyanswer) {
                                 notifyItemChanged(row, column);
                             } else {
-                                for(int i = 0; i < mAnswersState.length; i++) {
+                                for (int i = 0; i < mAnswersState.length; i++) {
                                     notifyItemChanged(row, i + 1);
                                 }
                             }
@@ -550,7 +551,7 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                             if (isPolyanswer) {
                                 notifyItemChanged(row, column);
                             } else {
-                                for(int i = 0; i < mAnswersState.length; i++) {
+                                for (int i = 0; i < mAnswersState.length; i++) {
                                     notifyItemChanged(i + 1, column);
                                 }
                             }
@@ -859,16 +860,18 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 if (mAnswersState[i][k].isChecked()) {
                     answersCounter++;
                     ElementOptionsR opt = mContext.getMainDao().getElementOptionsR(mAnswersState[i][k].getRelative_id());
-                    if(opt.isUnchecker()) isUnCheckerSelected = true;
+                    if (opt.isUnchecker()) isUnCheckerSelected = true;
                 }
             }
 
-
+            Log.d("T-A-R.TableQuestion", "isCompleted answers: " + answersCounter);
             if (answersCounter > 0) {
-                if(isUnCheckerSelected) return true;
+                if (isUnCheckerSelected) return true;
                 Integer min = mQuestions.get(i).getElementOptionsR().getMin_answers();
                 Integer max = mQuestions.get(i).getElementOptionsR().getMax_answers();
-                if (min != null && answersCounter < min) {
+                if (min != null && answersCounter < min
+                        && mQuestions.get(i).getElementOptionsR().getOptional_question() != null
+                        && !mQuestions.get(i).getElementOptionsR().getOptional_question()) {
                     completed = false;
                     mContext.showToastfromActivity("В строке " + (i + 1) + " выберите минимум " + min + " ответа");
                     return completed;
@@ -882,12 +885,17 @@ public class TableQuestionAdapter extends LinkedAdaptiveTableAdapter<ViewHolderI
                 } else {
                     completed = true;
                 }
+            } else if (mQuestions.get(i).getElementOptionsR().getOptional_question() != null && mQuestions.get(i).getElementOptionsR().getOptional_question()) {
+                completed = true;
             } else {
                 completed = false;
+                Log.d("T-A-R.TableQuestion", "isCompleted: " + new Gson().toJson(mCurrentElement));
+
                 mContext.showToastfromActivity("Пожалуйста ответьте на все вопросы");
                 return completed;
             }
         }
+
         return completed;
     }
 

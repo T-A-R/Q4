@@ -137,6 +137,15 @@ public class OptionsModelNew implements Serializable {
     @SerializedName("hide_numbers_answers")
     private Boolean hide_numbers_answers;
 
+    @SerializedName("optional_question")
+    private Boolean optional_question;
+
+    @SerializedName("is_cancel_survey")
+    private Boolean is_cancel_survey;
+
+    @SerializedName("is_use_absentee")
+    private Boolean is_use_absentee;
+
     public String getData() {
         return data;
     }
@@ -418,5 +427,21 @@ public class OptionsModelNew implements Serializable {
 
     public void setHideNumbersAnswers(Boolean hide_numbers_answers) {
         this.hide_numbers_answers = hide_numbers_answers;
+    }
+
+    public Boolean isOptionalQuestion() {
+        return optional_question;
+    }
+
+    public void setOptionalQuestion(Boolean optional_question) {
+        this.optional_question = optional_question;
+    }
+
+    public Boolean isCancelSurvey() {
+        return is_cancel_survey;
+    }
+
+    public Boolean isUseAbsentee() {
+        return is_use_absentee;
     }
 }

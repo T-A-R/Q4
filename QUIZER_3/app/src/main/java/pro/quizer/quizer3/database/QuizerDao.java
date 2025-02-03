@@ -9,6 +9,7 @@ import androidx.room.Query;
 import java.util.List;
 
 import pro.quizer.quizer3.database.models.ActivationModelR;
+import pro.quizer.quizer3.database.models.AddressR;
 import pro.quizer.quizer3.database.models.AppLogsR;
 import pro.quizer.quizer3.database.models.CrashLogs;
 import pro.quizer.quizer3.database.models.CurrentQuestionnaireR;
@@ -170,6 +171,12 @@ public interface QuizerDao {
 
     @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status AND user_id = :userId AND user_project_id = :projectId AND (survey_status = :surveyStatus1 or survey_status = :surveyStatus2) AND user_name = :name AND (user_date = :user_date or (user_date is null and :user_date is null))")
     List<QuestionnaireDatabaseModelR> getQuestionnaireForQuotasByUser(int userId, int projectId, String status, String surveyStatus1, String surveyStatus2, String name, String user_date);
+
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status AND user_id = :userId AND user_project_id = :projectId AND (survey_status = :surveyStatus1 or survey_status = :surveyStatus2) AND questionnaire_route_id = :routeId AND on_route = :on_route")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireWithRoutes(int userId, int projectId, String status, String surveyStatus1, String surveyStatus2, Integer routeId, boolean on_route);
+
+    @Query("SELECT * FROM QuestionnaireDatabaseModelR WHERE status = :status AND user_id = :userId AND user_project_id = :projectId AND (survey_status = :surveyStatus1 or survey_status = :surveyStatus2) AND questionnaire_route_id = :routeId")
+    List<QuestionnaireDatabaseModelR> getQuestionnaireWithRoutes(int userId, int projectId, String status, String surveyStatus1, String surveyStatus2, Integer routeId);
 
     //TODO RENAME TO setQuestionnaireStatusByToken
     @Query("UPDATE QuestionnaireDatabaseModelR SET status = :status WHERE token = :token")
@@ -370,6 +377,18 @@ public interface QuizerDao {
     @Query("UPDATE CurrentQuestionnaireR SET paused = :paused ")
     void setCurrentQuestionnairePaused(boolean paused);
 
+    @Query("UPDATE CurrentQuestionnaireR SET in_uik_question = :inUikQuestion ")
+    void setCurrentQuestionnaireInUikQuestion(boolean inUikQuestion);
+
+    @Query("UPDATE CurrentQuestionnaireR SET first_element_id = :first_element_id ")
+    void setCurrentQuestionnaireFirstElementId(int first_element_id);
+
+    @Query("UPDATE CurrentQuestionnaireR SET registered_uik = :uik")
+    void setCurrentQuestionnaireUik(String uik);
+
+    @Query("UPDATE CurrentQuestionnaireR SET is_use_absentee = :is_use_absentee")
+    void setCurrentQuestionnaireIsUseAbsentee(boolean is_use_absentee);
+
     @Query("UPDATE CurrentQuestionnaireR SET in_aborted_box = :status ")
     void setCurrentQuestionnaireInAbortedBox(boolean status);
 
@@ -397,8 +416,14 @@ public interface QuizerDao {
     @Query("SELECT * FROM SettingsR LIMIT 1")
     SettingsR getSettings();
 
+    @Query("UPDATE SettingsR SET address_database = :ver")
+    void setSettingsAddressDBVer(Long ver);
+
     @Query("UPDATE SettingsR SET started = :data")
     void setSettingsStarted(boolean data);
+
+    @Query("UPDATE SettingsR SET uik_question_disabled = :data")
+    void setUikQuestionDisabled(boolean data);
 
     @Query("UPDATE SettingsR SET auto_zoom = :data")
     void setSettingsAutoZoom(boolean data);
@@ -426,6 +451,9 @@ public interface QuizerDao {
 
     @Query("UPDATE SettingsR SET dark_mode = :data")
     void setSettingsDarkMode(boolean data);
+
+    @Query("UPDATE SettingsR SET is_address_enabled = :data")
+    void useLocalAddressSearch(boolean data);
 
     @Query("UPDATE SettingsR SET project_is_active = :data")
     void setProjectActive(boolean data);
@@ -660,4 +688,31 @@ public interface QuizerDao {
 
     @Query("UPDATE SelectedRoutesR SET route_id = :route_id WHERE user_project_id = :user_project_id")
     void updateSelectedRoute(Integer route_id, Integer user_project_id);
+
+    //================================================================================================
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAddress(List<AddressR> addresses);
+
+    @Query("DELETE FROM AddressR")
+    void clearAddresses();
+
+    @Query("SELECT * FROM AddressR WHERE street LIKE :street AND house LIKE :house AND project_id = :projectId")
+    List<AddressR> findAddress(String street, String house, int projectId);
+
+    @Query("SELECT * FROM AddressR WHERE street LIKE :street AND project_id = :projectId")
+    List<AddressR> findAddress1(String street, int projectId);
+
+    @Query("SELECT * FROM AddressR WHERE street = :street AND project_id = :projectId")
+    List<AddressR> findAddress2(String street, int projectId);
+
+    @Query("SELECT * FROM AddressR WHERE project_id = :projectId")
+    List<AddressR> findAddress3(int projectId);
+
+    @Query("SELECT * FROM AddressR WHERE city LIKE :city AND house LIKE :house AND project_id = :projectId")
+    List<AddressR> findAddress4(String city, String house, int projectId);
+
+    @Query("SELECT * FROM AddressR WHERE city LIKE :city AND project_id = :projectId")
+    List<AddressR> findAddress5(String city, int projectId);
+
 }

@@ -20,6 +20,8 @@ import pro.quizer.quizer3.model.quota.QuotaModel;
 
 import static pro.quizer.quizer3.MainActivity.TAG;
 
+import com.google.gson.Gson;
+
 public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItemR[][]> {
 
     private List<ElementItemR> quotaList;
@@ -93,6 +95,7 @@ public class QuotasTreeMaker extends BaseModelExecutableWithCallback<ElementItem
         if (quotas == null || quotas.isEmpty()) return tree;
 
         for (int q = 0; q < quotas.size(); q++) {
+            Log.d("T-A-R.QuotasTreeMaker", "fillQuotas: " + new Gson().toJson(quotas.get(q)) );
             Integer[] sequence = quotas.get(q).getArray();
 
             for (int i = 0; i < tree.length; i++) {

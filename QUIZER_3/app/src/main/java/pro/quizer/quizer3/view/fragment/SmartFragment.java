@@ -567,6 +567,16 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         }
     }
 
+    public void initPreExitQuestion() {
+        try {
+            elementItemRList = getMainActivity().getElementItemRList();
+            currentQuestionnaire = getMainActivity().getCurrentQuestionnaire();
+        } catch (Exception e) {
+            Log.d(TAG, "initCurrentElements: ERROR");
+            e.printStackTrace();
+        }
+    }
+
     public void initElements() {
         try {
             elementItemRList = getMainActivity().getElementItemRList();
@@ -692,6 +702,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         Map<Integer, List<Integer>> limitedMapBlock = new HashMap<>();
 //        List<ElementPassedR> passedElements = getDao().getAllElementsPassedR(getMainActivity().getCurrentQuestionnaire().getToken());
         List<ElementPassedOB> passedElements = getObjectBoxDao().getAllElementsPassedR(getMainActivity().getCurrentQuestionnaire().getToken());
+//        Log.d("T-A-R.SmartFragment", "getPassedQuotasMap: " + new Gson().toJson(passedElements));
         if (passedElements == null || passedElements.size() == 0) {
             return null;
         }
@@ -1049,6 +1060,7 @@ public abstract class SmartFragment extends HiddenCameraFragment {
         questionnaireDatabaseModel.setSend_time_difference(SPUtils.getSendTimeDifference(getContext()));
         questionnaireDatabaseModel.setSend_sms(false);
         questionnaireDatabaseModel.setQuotas_online_checking_failed(currentQuiz.isQuotas_online_checking_failed());
+        questionnaireDatabaseModel.setOn_route(currentQuiz.getOn_route());
 
         try {
             getDao().insertQuestionnaire(questionnaireDatabaseModel);

@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.io.File;
@@ -14,6 +15,7 @@ import java.util.List;
 import pro.quizer.quizer3.Constants;
 import pro.quizer.quizer3.MainActivity;
 import pro.quizer.quizer3.R;
+import pro.quizer.quizer3.executable.ClearAddressesExecutable;
 import pro.quizer.quizer3.executable.DeleteUsersExecutable;
 import pro.quizer.quizer3.executable.ICallback;
 import pro.quizer.quizer3.executable.SendAllQuestionnairesExecutable;
@@ -41,11 +43,13 @@ public class ServiceFragment extends ScreenFragment {
     private Button mClearDataQuizer;
     private Button mClearFiles;
     private Button mClearDbButton;
+    private Button mClearAddressDbButton;
     private Button mUploadDataButton;
     private Button mUploadFTPDataButton;
     private Button mLogsButton;
     private ResizableSwitch mTimerSwitch;
     private ResizableSwitch mSendLogsSwitch;
+    private ResizableSwitch mDisableUikQuestionSwitch;
 
     private TextView mUsersCount;
     private String mUsersCountString;
@@ -77,6 +81,7 @@ public class ServiceFragment extends ScreenFragment {
         mSendAudioButton = findViewById(R.id.send_audio);
         mSendPhotoButton = findViewById(R.id.send_photo);
         mClearDbButton = findViewById(R.id.clear_db);
+        mClearAddressDbButton = findViewById(R.id.clear_address_db);
         mClearDataQuizer = findViewById(R.id.clear_data_quizer);
         mClearFiles = findViewById(R.id.clear_files);
         mUploadDataButton = findViewById(R.id.upload_data);
@@ -90,6 +95,7 @@ public class ServiceFragment extends ScreenFragment {
         mUnsendedAudio = findViewById(R.id.unsended_audio_files_count);
         mUnsendePhoto = findViewById(R.id.unsended_photo_files_count);
         mDeviceId = findViewById(R.id.device_id);
+        mDisableUikQuestionSwitch = findViewById(R.id.uik_question_switch);
 
         if (isAvia()) {
             mSendDataButton.setTypeface(Fonts.getAviaText());
@@ -98,6 +104,7 @@ public class ServiceFragment extends ScreenFragment {
             mClearDataQuizer.setTypeface(Fonts.getAviaText());
             mClearFiles.setTypeface(Fonts.getAviaText());
             mClearDbButton.setTypeface(Fonts.getAviaText());
+            mClearAddressDbButton.setTypeface(Fonts.getAviaText());
             mUploadDataButton.setTypeface(Fonts.getAviaText());
             mUploadFTPDataButton.setTypeface(Fonts.getAviaText());
             mLogsButton.setTypeface(Fonts.getAviaText());
@@ -116,6 +123,7 @@ public class ServiceFragment extends ScreenFragment {
         mClearDataQuizer.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mClearFiles.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mClearDbButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
+        mClearAddressDbButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mUploadDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
         mUploadFTPDataButton.startAnimation(Anim.getAppearSlide(getContext(), 500));
 
@@ -245,6 +253,17 @@ public class ServiceFragment extends ScreenFragment {
 
         });
 
+        mClearAddressDbButton.setOnClickListener(view -> {
+            if (getActivity() != null && !getActivity().isFinishing()) {
+                try {
+                    showClearAddressDbAlertDialog();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        });
+
         mClearFiles.setOnClickListener(view -> {
             if (getActivity() != null && !getActivity().isFinishing()) {
                 new CleanUpFilesExecutable(activity, new ICallback() {
@@ -320,6 +339,18 @@ public class ServiceFragment extends ScreenFragment {
 //                addLog("android", Constants.LogType.BUTTON, Constants.LogObject.LOG, getString(R.string.button_press), Constants.LogResult.PRESSED, getString(R.string.button_logs), null);
             replaceFragment(new LogsFragment());
         });
+
+//        if (getMainActivity().getConfig().getProjectInfo().getAbsenteeElement() != null) {
+//            mDisableUikQuestionSwitch.setVisibility(View.VISIBLE);
+//            mDisableUikQuestionSwitch.setChecked(getMainActivity().isDisableUikQuestion());
+//            mDisableUikQuestionSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
+//
+//                isNeedUpdateMap = true;
+//                activity.setDisableUikQuestion(b);
+//            });
+//        } else {
+//            mDisableUikQuestionSwitch.setVisibility(View.GONE);
+//        }
     }
 
     public void showClearDbAlertDialog() {
@@ -366,6 +397,35 @@ public class ServiceFragment extends ScreenFragment {
                                     e.printStackTrace();
                                 }
                                 replaceFragment(new KeyFragment());
+                            }
+
+                            @Override
+                            public void onError(Exception pException) {
+                                updateData(new ServiceInfoExecutable(activity).execute());
+                            }
+                        }).execute();
+                    })
+                    .setNegativeButton(R.string.view_no, null).show();
+        }
+    }
+
+    public void showClearAddressDbAlertDialog() {
+        MainActivity activity = getMainActivity();
+        if (activity != null && !activity.isFinishing()) {
+            new AlertDialog.Builder(activity, R.style.AlertDialogStyleRed)
+                    .setCancelable(false)
+                    .setTitle("Очистка базы адресов")
+                    .setMessage(R.string.dialog_clear_address_db_warning)
+                    .setPositiveButton(R.string.view_yes, (dialog, which) -> {
+                        showScreensaver(getString(R.string.notification_clear_db), true);
+                        new ClearAddressesExecutable(activity, new ICallback() {
+                            @Override
+                            public void onStarting() {
+                            }
+
+                            @Override
+                            public void onSuccess() {
+                                hideScreensaver();
                             }
 
                             @Override

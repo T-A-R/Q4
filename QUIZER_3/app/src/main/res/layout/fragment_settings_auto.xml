@@ -204,6 +204,58 @@
 
             </LinearLayout>
 
+            <pro.quizer.quizer3.view.element.customswitch.ResizableSwitch
+                android:id="@+id/uik_question_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                android:text="Работать без учёта проголосовавших не на домашних участках"
+                android:textSize="16sp"
+                android:visibility="gone"/>
+
+            <pro.quizer.quizer3.view.element.customswitch.ResizableSwitch
+                android:id="@+id/address_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                android:text="Использовать оффлайн базу адресов при отсутствии связи с сервером"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/download_address"
+                style="@style/ButtonGreen"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:maxLines="1"
+                android:text="Загрузить базу адресов"
+                android:textSize="@dimen/_12ssp"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/address_db_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginBottom="@dimen/_6sdp"
+                android:text="0"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_12ssp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/delete_address"
+                style="@style/ButtonRed"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center_horizontal"
+                android:maxLines="1"
+                android:text="Удалить базу адресов"
+                android:textSize="@dimen/_12ssp"
+                android:visibility="gone"/>
+
             <Button
                 android:id="@+id/renew_registration"
                 style="@style/ButtonGreen"

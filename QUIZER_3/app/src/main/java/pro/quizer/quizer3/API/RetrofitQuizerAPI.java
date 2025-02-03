@@ -91,4 +91,19 @@ public interface RetrofitQuizerAPI {
     @Headers("Accept: application/json")
     @POST()
     Call<ResponseBody> sendKey(@Url String apiname, @Field("mobile_key") String mobile_key);
+
+    @FormUrlEncoded
+    @Headers("Accept: application/json")
+    @POST()
+    Call<ResponseBody> getAddressDatabaseVersion(@Url String apiname, @Header("QToken") String token, @Field("admin_key") String admin_key, @Field("project_id") Integer project_id);
+
+    @FormUrlEncoded
+    @Headers("Accept: application/json")
+    @POST()
+    Call<ResponseBody> downloadAddressDatabase(@Url String apiname, @Header("QToken") String token, @Field("admin_key") String admin_key, @Field("project_id") Integer project_id, @Field("page") Integer page);
+
+    @FormUrlEncoded
+    @Headers("Accept: application/json")
+    @POST()
+    Call<ResponseBody> addressSearch(@Url String apiname, @Header("QToken") String token, @Field("admin_key") String admin_key, @Field("project_id") Integer project_id, @Field("address") String address, @Field("page") Integer page);
 }

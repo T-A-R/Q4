@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     private HashMap<Integer, ElementModelNew> mTempMap;
     private CurrentQuestionnaireR currentQuestionnaire = null;
     private List<ElementItemR> currentElementsList = null;
+    private List<ElementItemR> preExitElementsList = null;
     private List<ElementModelFlat> currentElementsFlatList = null;
     private MainFragment mainFragment;
 
@@ -333,7 +334,9 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         return CoreApplication.getQuizerDatabase().getQuizerDao();
     }
 
-    public ObjectBoxDao getMainObjectBoxDao() {return CoreApplication.getObjectBoxDao();}
+    public ObjectBoxDao getMainObjectBoxDao() {
+        return CoreApplication.getObjectBoxDao();
+    }
 
     public void showKeyboard() {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
@@ -353,6 +356,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
             initDataForRebuild();
             currentElementsList = new ArrayList<>();
+            preExitElementsList = new ArrayList<>();
             generateMap(getElements(), true);
             if (currentElementsList.size() > 0) {
                 getMainDao().insertListElementItemR(currentElementsList);
@@ -390,7 +394,13 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
     }
 
     private List<ElementModelNew> getElements() {
-        return getConfig().getProjectInfo().getElements();
+        List<ElementModelNew> list = new ArrayList<>();
+        if (getConfig().getProjectInfo().getAbsenteeElement() != null && !isDisableUikQuestion()) {
+            Log.d("T-A-R.MainActivity", "getElements: LIST ADD EXIT");
+            list.add(getConfig().getProjectInfo().getAbsenteeElement());
+        }
+        list.addAll(getConfig().getProjectInfo().getElements());
+        return list;
     }
 
     private void initDataForRebuild() {
@@ -488,6 +498,9 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
                         elementOptionsR.setMax_number(optionsModelNew.getMaxNumber());
                         elementOptionsR.setShowRandomQuestion(optionsModelNew.getShowRandomQuestion());
                         elementOptionsR.setHide_numbers_answers(optionsModelNew.getHideNumbersAnswers());
+                        elementOptionsR.setOptional_question(optionsModelNew.isOptionalQuestion());
+                        elementOptionsR.setIs_cancel_survey(optionsModelNew.isCancelSurvey());
+                        elementOptionsR.setIs_use_absentee(optionsModelNew.isUseAbsentee());
 
                         elementItemR.setElementOptionsR(elementOptionsR);
                     }
@@ -1507,6 +1520,14 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         return currentElementsList;
     }
 
+    public List<ElementItemR> getPreExitElements() {
+        if (preExitElementsList == null) {
+            ElementModelNew raw = getConfig().getProjectInfo().getAbsenteeElement();
+        }
+
+        return preExitElementsList;
+    }
+
 //    public List<ElementItemR> checkForRandoms(List<ElementItemR> list) {
 //        for (ElementItemR element : list) {
 //            if (element.getType().equals(ElementType.BOX)
@@ -1535,6 +1556,7 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
         if (currentQuestionnaire == null) {
 //            Log.d("T-A-R.MainActivity", "getCurrentQuestionnaire: NULL");
             CurrentQuestionnaireR quiz = getMainDao().getCurrentQuestionnaireR();
+            Log.d("T-A-R.MainActivity", "MAIN getCurrentQuestionnaire: " + quiz);
             currentQuestionnaire = quiz;
 //            Log.d("T-A-R.MainActivity", "getCurrentQuestionnaire: " + quiz);
             return quiz;
@@ -1670,6 +1692,21 @@ public class MainActivity extends AppCompatActivity implements ViewTreeObserver.
 
     public void setDarkMode(boolean dark) {
         getMainDao().setSettingsDarkMode(dark);
+        getSettings();
+    }
+
+    public boolean isDisableUikQuestion() {
+        Log.d("T-A-R.MainActivity", "isDisableUikQuestion: " + getSettings().isUik_question_disabled());
+        return getSettings().isUik_question_disabled();
+    }
+
+    public void setDisableUikQuestion(boolean data) {
+        getMainDao().setUikQuestionDisabled(data);
+        getSettings();
+    }
+
+    public void useLocalAddressSearch(boolean dark) {
+        getMainDao().useLocalAddressSearch(dark);
         getSettings();
     }
 
